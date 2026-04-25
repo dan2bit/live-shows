@@ -1,4 +1,4 @@
-# songs-for-my-funeral — Live Shows Project
+# live-shows
 
 Comprehensive live concert tracking and YouTube bootleg management system for the `@dan2bit` YouTube channel. Managed collaboratively with Claude (Anthropic) via MCP tools.
 
@@ -7,14 +7,13 @@ Comprehensive live concert tracking and YouTube bootleg management system for th
 ## Repository Structure
 
 ```
-live-shows/
 ├── PROJECT.md                        ← this file
 ├── ANALYSIS_WORKFLOWS.md             ← quarterly/monthly research workflows
 ├── EMAIL_WORKFLOWS.md                ← inbox processing routines
 ├── TASKS.md                          ← outstanding tasks
 ├── index.html                        ← browser-based show dashboard
 ├── live_shows_current.tsv            ← confirmed shows (attended + upcoming)
-├── live_shows_potential.tsv          ← shows under consideration (Buy/Choose/Pass)
+├── live_shows_potential.tsv          ← shows under consideration (Buy/Choose/Sell/Pass)
 ├── artists.tsv                       ← artist follow list with show history
 ├── venues.tsv                        ← venue details (parking, transit, seating)
 ├── autograph_books_combined.tsv      ← autograph book inventory
@@ -40,7 +39,9 @@ live-shows/
 **Known issue:** The GitHub MCP `create_or_update_file` tool strips trailing tabs from each line. For rows where Playlist URL is empty and Notes is the last non-empty field, the notes text lands in the Playlist URL column. The `parseTsv()` function in `index.html` compensates for this at parse time by detecting non-URL content in the Playlist URL column and swapping it to Notes.
 
 ### live_shows_potential.tsv
-17-column TSV. Decision values: `Buy`, `Choose`, `Pass`. Sort order: Buy → Choose → Pass (alpha within group), date ascending within each group. Re-sort the full file on every row change. Prev Show and Next Show columns reference only **purchased upcoming shows** — never potential shows, never attended shows.
+17-column TSV. Decision values: `Buy`, `Choose`, `Sell`, `Pass`. Sort order: Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every row change. Prev Show and Next Show columns reference only **purchased upcoming shows** — never potential shows, never attended shows.
+
+`Sell` is read-only — applied when tickets for a confirmed show have been listed for resale. It cannot be set via the index.html dropdown; changes require manual Claude operation touching both `live_shows_current.tsv` and `live_shows_potential.tsv`.
 
 ### artists.tsv
 One row per artist. Tracks: Times Seen, First Seen, Most Recent Seen, YouTube Channel, Spotify URL, Photo (Y), Book Autograph (Y), Hat Autograph (Y), VIP Count.
@@ -58,7 +59,7 @@ Parking, transit, seating, box office hours, and notes per venue.
 - Always fetch a fresh SHA immediately before each `create_or_update_file` call — stale SHAs cause failures
 - Always push full file content — never attempt targeted/patch commits; this has clobbered files
 - `push_files` with empty string content silently commits empty blobs — always use `create_or_update_file`
-- Large files (50KB+) such as `live_shows_history.tsv`, `youtube_create_playlists.py` → present in conversation for manual check-in
+- Large files (50KB+) such as `youtube_create_playlists.py` → present in conversation for manual check-in
 - No commits without explicit confirmation from Dan
 - **index.html** → always write via Python and present the file; never commit via MCP (JSON encoding issue strips Unicode)
 
@@ -110,6 +111,7 @@ When closing a GitHub playlist issue, edit the issue **body** to add `Playlist: 
 - **Hat signing eligibility:** Female musicians only. Do not infer gender for all `artists.tsv` entries — apply only when context makes it clear (e.g., during show processing or explicit mention).
 - **Autograph book check:** Required before every new calendar event creation.
 - Artist Interaction field values: `Photo`, `Autograph`, `Both`, or blank.
+- **HAT: flag:** Add `HAT:` prefix to Notes / Memories in upcoming and potential rows to trigger the 🎩 HAT badge in index.html.
 
 ---
 
@@ -136,7 +138,7 @@ Defined in `EMAIL_WORKFLOWS.md`. Summary:
 - Channel: `@dan2bit` (OAuth under `dan2bit@gmail.com` — **not** `redhat.bootlegs`)
 - Scripts: `youtube_create_playlists.py`, `youtube_fix_descriptions.py`
 - Use setlist.fm for song ordering within playlists
-- Python venv: `live-shows/.venv/`; credentials via `.env` + `python-dotenv`
+- Python venv: `.venv/`; credentials via `.env` + `python-dotenv`
 
 ---
 
