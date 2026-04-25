@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>live-shows</title>
+<link rel="icon" type="image/png" sizes="32x32" href="https://dan2bit.github.io/songs-for-my-funeral/live-shows/red_hat_icon_guitar.png">
+<link rel="shortcut icon" type="image/png" href="https://dan2bit.github.io/songs-for-my-funeral/live-shows/red_hat_icon_guitar.png"> 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+  :root {
+    --bg:        #0f0f0f;
+    --surface:   #1a1a1a;
+    --surface2:  #222222;
+    --border:    #2e2e2e;
+    --border2:   #3a3a3a;
+    --text:      #e8e4dc;
+    --text-muted:#9a928a;
+    --text-dim:  #8e8a7a;
+    --amber:     #e8a020;
+    --amber-dim: #7a5210;
+    --amber-bg:  #1e1608;
+    --green:     #4a9a5a;
+    --green-dim: #1e4a28;
+    --green-bg:  #0e1e12;
+    --yellow:    #c8a830;
+    --yellow-dim:#5a4a10;
+    --yellow-bg: #181408;
+    --red:       #d05555;
+    --red-dim:   #5a1a1a;
+    --red-bg:    #180e0e;
+    --gray:      #878380;
+    --gray-dim:  #3a3530;
+    --gray-bg:   #141414;
+    --today-bg:  #1e0e0e;
+    --soon-bg:   #1a1408;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-title { font-family: var(--mono); font-size: 13px; color: var(--amber); letter-spacing: 0.02em; flex: 1; white-space: nowrap; }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .fetched-at { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+  .btn {
+    font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 3px;
+    border: 1px solid var(--border2); background: var(--surface2); color: var(--text-muted);
+    cursor: pointer; transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--amber-dim); color: var(--amber); }
+  .btn-auth { position: relative; }
+  .btn-auth.authed { border-color: var(--green-dim); color: var(--green); }
+  .btn-auth.authed::after { content: '●'; font-size: 8px; color: var(--green); position: absolute; top: 2px; right: 2px; }
+
+  .tab-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 20px;
+    gap: 0;
+  }
+  .tabs { display: flex; flex: 0 0 auto; }
+  .tab {
+    font-family: var(--mono); font-size: 12px; padding: 10px 16px; cursor: pointer;
+    border-bottom: 2px solid transparent; color: var(--text-muted);
+    transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+  .tab-badge {
+    display: inline-block; background: var(--surface2); color: var(--text-dim);
+    font-size: 10px; padding: 1px 5px; border-radius: 10px; margin-left: 5px; vertical-align: middle;
+  }
+
+  /* On This Day — fills the right space in the tab row */
+  .on-this-day {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0 6px 20px;
+    border-left: 1px solid var(--border);
+    min-width: 0;
+    overflow: hidden;
+  }
+  .otd-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .otd-items {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .otd-item {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .otd-year {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .otd-artist {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .otd-venue {
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .otd-sep { color: var(--border2); font-size: 11px; flex-shrink: 0; }
+  .otd-links { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .otd-none { font-size: 12px; color: var(--text-dim); font-style: italic; }
+
+  @media (max-width: 900px) {
+    .on-this-day { display: none; }
+  }
+
+  .panel { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  .section-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; margin-top: 24px; }
+  .section-header:first-child { margin-top: 0; }
+  .section-title { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+  .section-count { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+
+  .loading { font-family: var(--mono); font-size: 12px; color: var(--text-dim); padding: 40px 0; text-align: center; }
+  .loading::after { content: ''; display: inline-block; width: 12px; animation: dots 1.2s steps(4, end) infinite; }
+  @keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} }
+  .error-msg {
+    font-family: var(--mono); font-size: 12px; color: var(--red); padding: 16px;
+    background: var(--red-bg); border: 1px solid var(--red-dim); border-radius: 4px; margin: 20px 0;
+  }
+
+  .shows-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .shows-table th {
+    font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px;
+    border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface);
+  }
+  .shows-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .shows-table tr:hover td { background: var(--surface2); }
+
+  .row-today td { background: var(--today-bg) !important; }
+  .row-soon td  { background: var(--soon-bg)  !important; }
+  .row-today:hover td { filter: brightness(1.08); }
+  .row-soon:hover td  { filter: brightness(1.08); }
+
+  .attended-table .shows-table td { padding: 6px 10px; font-size: 12px; }
+  .attended-table .shows-table tr { color: var(--text-muted); }
+  .attended-table .shows-table tr:hover { color: var(--text); }
+
+  .cell-date { font-family: var(--mono); font-size: 12px; color: var(--amber); white-space: nowrap; }
+  .cell-date .day-of-week { color: var(--text-dim); font-size: 11px; display: block; }
+  .cell-artist { font-weight: 500; }
+  .cell-support { color: var(--text-muted); font-size: 12px; }
+  .cell-venue { color: var(--text-muted); font-size: 12px; }
+  .cell-venue a { color: var(--text-muted); text-decoration: none; }
+  .cell-venue a:hover { color: var(--amber); }
+  .cell-seat { font-size: 12px; color: var(--text-muted); }
+  .cell-notes { max-width: 280px; }
+  .notes-text { color: var(--text-muted); font-size: 12px; line-height: 1.4; cursor: pointer; }
+  .notes-text.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .notes-toggle { font-family: var(--mono); font-size: 10px; color: var(--text-dim); cursor: pointer; margin-top: 2px; display: inline-block; }
+  .notes-toggle:hover { color: var(--amber); }
+
+  .icon-link { display: inline-block; font-size: 13px; text-decoration: none; color: var(--text-dim); transition: color 0.15s; margin-left: 4px; }
+  .icon-link:hover { color: var(--amber); }
+
+  .badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
+  .badge-ticket    { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+  .badge-vip       { background: var(--amber-bg); color: var(--amber);      border: 1px solid var(--amber-dim); }
+  .badge-hat       { background: #1a0e08;         color: #d08040;           border: 1px solid #7a3a10; }
+  .badge-book      { background: #1a1420;         color: #a080c0;           border: 1px solid #4a2a70; }
+  .badge-merch     { background: var(--red-bg);   color: #c07060;           border: 1px solid var(--red-dim); }
+  .badge-paper     { background: var(--surface2); color: #7090a0;           border: 1px solid #2a4050; }
+  .badge-boxoffice { background: var(--green-bg); color: var(--green);      border: 1px solid var(--green-dim); }
+
+  .attended-details summary {
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim); cursor: pointer;
+    padding: 10px 0; letter-spacing: 0.04em; list-style: none; user-select: none;
+  }
+  .attended-details summary::before { content: '▶  '; }
+  .attended-details[open] summary::before { content: '▼  '; }
+  .attended-details summary:hover { color: var(--text-muted); }
+
+  .potential-group { margin-bottom: 28px; }
+  .group-header {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    border-radius: 4px 4px 0 0; border: 1px solid; border-bottom: none;
+    font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .group-header-buy    { background: var(--green-bg);  border-color: var(--green-dim);  color: var(--green); }
+  .group-header-choose { background: var(--yellow-bg); border-color: var(--yellow-dim); color: var(--yellow); }
+  .group-header-sell   { background: #0e1a1a;          border-color: #1a4a4a;           color: #40a0a0; }
+  .group-header-pass   { background: var(--gray-bg);   border-color: var(--gray-dim);   color: var(--gray); }
+  .group-count { opacity: 0.6; }
+  .group-table-wrap { border: 1px solid; border-radius: 0 0 4px 4px; overflow: hidden; }
+  .group-table-buy    { border-color: var(--green-dim); }
+  .group-table-choose { border-color: var(--yellow-dim); }
+  .group-table-sell   { border-color: #1a4a4a; }
+  .group-table-pass   { border-color: var(--gray-dim); }
+
+  .pot-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .pot-table th {
+    font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px;
+    border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface);
+  }
+  .pot-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .pot-table tr:last-child td { border-bottom: none; }
+  .pot-table tr:hover td { background: var(--surface2); }
+  .pot-table .row-sell td { color: #40a0a0; }
+  .pot-table .row-sell:hover td { color: #60c0c0; }
+  .pot-table .row-pass td { color: #8a8480; }
+  .pot-table .row-pass:hover td { color: var(--text-muted); }
+
+  .cell-decision-ro { font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+  .cell-decision-ro.buy    { color: var(--green); }
+  .cell-decision-ro.choose { color: var(--yellow); }
+  .cell-decision-ro.sell   { color: #40a0a0; }
+  .cell-decision-ro.pass   { color: var(--gray); }
+
+  .decision-select {
+    font-family: var(--mono); font-size: 11px; background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border2); border-radius: 3px; padding: 3px 6px; cursor: pointer; outline: none;
+  }
+  .decision-select:focus { border-color: var(--amber-dim); }
+
+  .cell-watching { font-size: 12px; color: var(--amber); font-family: var(--mono); white-space: nowrap; }
+  .cell-price    { font-family: var(--mono); font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .cell-context  { font-size: 11px; color: var(--text-dim); max-width: 200px; line-height: 1.6; }
+  .cell-tier     { font-family: var(--mono); font-size: 10px; white-space: nowrap; }
+  .tier-strong        { color: var(--amber); }
+  .tier-medium        { color: var(--text-muted); }
+  .tier-medium-strong { color: #c09040; }
+  .tier-low           { color: var(--text-dim); }
+
+  .cell-pot-notes { font-size: 12px; color: var(--text-muted); max-width: 280px; line-height: 1.4; }
+  .cell-pot-notes.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+
+  .save-indicator { font-family: var(--mono); font-size: 10px; margin-left: 6px; }
+  .save-ok  { color: var(--green); }
+  .save-err { color: var(--red); }
+
+  .pass-details summary {
+    font-family: var(--mono); font-size: 11px; color: var(--gray); cursor: pointer; padding: 10px 12px;
+    list-style: none; user-select: none; background: var(--gray-bg); border: 1px solid var(--gray-dim); border-radius: 4px;
+  }
+  .pass-details summary::before { content: '▶  '; }
+  .pass-details[open] summary::before { content: '▼  '; }
+  .pass-details[open] summary { border-radius: 4px 4px 0 0; border-bottom: none; }
+  .pass-details .group-table-wrap { border-top: none; border-radius: 0 0 4px 4px; }
+
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 24px; width: 360px; max-width: 90vw; }
+  .modal h3 { font-family: var(--mono); font-size: 12px; color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+  .modal p { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .modal p a { color: var(--amber); }
+  .modal input[type="password"] {
+    width: 100%; font-family: var(--mono); font-size: 12px; background: var(--bg);
+    border: 1px solid var(--border2); border-radius: 3px; color: var(--text);
+    padding: 8px 10px; margin-bottom: 12px; outline: none;
+  }
+  .modal input[type="password"]:focus { border-color: var(--amber-dim); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-save  { background: var(--amber-bg); border-color: var(--amber-dim); color: var(--amber); }
+  .btn-save:hover { background: #2a1c08; }
+  .btn-clear { background: var(--red-bg); border-color: var(--red-dim); color: var(--red); }
+
+  .cell-venue-mobile { display: none; }
+
+  @media (max-width: 768px) {
+    .panel { padding: 12px; }
+    .col-support, .col-seat { display: none; }
+    .cell-notes { max-width: 160px; }
+    .col-watching, .col-tier, .col-price, .col-context { display: none; }
+    .cell-pot-notes { max-width: 160px; }
+    .cell-venue-mobile {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .cell-venue-mobile a { color: var(--text-muted); text-decoration: none; }
+  }
+
+  /* Portrait phones: fixed layout, Date narrow, Notes visible but truncated */
+  @media (max-width: 480px) {
+    .shows-table { table-layout: fixed; width: 100%; }
+    .shows-table th:first-child,
+    .shows-table td:first-child { width: 52px; }
+    .shows-table th:last-child,
+    .shows-table td:last-child { width: 90px; }
+    .cell-notes { max-width: 90px; }
+    /* Artist cell gets the remaining space and wraps freely */
+    .cell-artist { word-break: break-word; }
+    /* Hide the inline notes duplicate at this breakpoint — notes column is visible */
+    .cell-notes-inline { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-title">live-shows</div>
+  <div class="header-actions">
+    <span class="fetched-at" id="fetchedAt">—</span>
+    <button class="btn" id="refreshBtn" onclick="loadData()">↺ refresh</button>
+    <button class="btn btn-auth" id="authBtn" onclick="openAuthModal()">🔑 auth</button>
+  </div>
+</header>
+
+<div class="tab-row">
+  <nav class="tabs">
+    <div class="tab active" data-tab="shows" onclick="switchTab('shows')">
+      Shows <span class="tab-badge" id="showsBadge">—</span>
+    </div>
+    <div class="tab" data-tab="potential" onclick="switchTab('potential')">
+      Potential <span class="tab-badge" id="potBadge">—</span>
+    </div>
+  </nav>
+  <div class="on-this-day">
+    <span class="otd-label">On this day</span>
+    <div class="otd-items" id="otdItems"><span class="otd-none">—</span></div>
+  </div>
+</div>
+
+<div class="panel active" id="panel-shows">
+  <div id="showsContent"><div class="loading">Loading</div></div>
+</div>
+<div class="panel" id="panel-potential">
+  <div id="potContent"><div class="loading">Loading</div></div>
+</div>
+
+<div class="modal-backdrop" id="authModal">
+  <div class="modal">
+    <h3>GitHub Authentication</h3>
+    <p>
+      Paste a fine-grained Personal Access Token scoped to
+      <code>dan2bit/songs-for-my-funeral</code> with Contents read/write permission.<br><br>
+      See <a href="https://github.com/dan2bit/songs-for-my-funeral/issues/29" target="_blank">
+      issue #29</a> for step-by-step setup instructions.
+    </p>
+    <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn btn-clear" onclick="clearPat()">Clear saved</button>
+      <button class="btn" onclick="closeAuthModal()">Cancel</button>
+      <button class="btn btn-save" onclick="savePat()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const OWNER = 'dan2bit';
+const REPO  = 'songs-for-my-funeral';
+const CURRENT_PATH   = 'live-shows/live_shows_current.tsv';
+const POTENTIAL_PATH = 'live-shows/live_shows_potential.tsv';
+const HISTORY_YEARS  = [2021, 2022, 2023, 2024, 2025];
+const PAT_KEY = 'ghpat_sfmf';
+
+let currentRows   = [];
+let potentialRows = [];
+let authed = false;
+
+async function ghFetch(path, opts = {}) {
+  const pat = localStorage.getItem(PAT_KEY);
+  const headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (pat) headers['Authorization'] = `token ${pat}`;
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
+  const res = await fetch(url, { cache: 'no-store', ...opts, headers: { ...headers, ...(opts.headers || {}) } });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
+  return res.json();
+}
+
+function parseTsv(text) {
+  const lines = text.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const headers = lines[0].split('\t').map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const vals = line.split('\t');
+    // Pad to header length so trailing empty columns aren't lost
+    while (vals.length < headers.length) vals.push('');
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+    // Fix MCP trailing-tab stripping: if Playlist URL is not a URL but Notes is empty,
+    // notes text landed in the wrong column — swap it back.
+    const pu = obj['Playlist URL'] || '';
+    if (pu && !pu.startsWith('http') && !(obj['Notes / Memories'] || '')) {
+      obj['Notes / Memories'] = pu;
+      obj['Playlist URL'] = '';
+    }
+    return obj;
+  });
+}
+
+function serializeTsv(rows, headers) {
+  return [headers.join('\t'), ...rows.map(r => headers.map(h => r[h] || '').join('\t'))].join('\n') + '\n';
+}
+
+const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function parseISODate(s) {
+  const m = (s || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
+}
+function formatShowDate(s) { const d = parseISODate(s); return d ? `${MONTHS[d.getMonth()]} ${d.getDate()}` : s; }
+function dayOfWeek(s)      { const d = parseISODate(s); return d ? DAYS[d.getDay()] : ''; }
+function daysFromNow(s) {
+  const d = parseISODate(s); if (!d) return 999;
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.floor((d - now) / 86400000);
+}
+function gcalUrl(artist) {
+  const now   = new Date();
+  const pad   = n => String(n).padStart(2, '0');
+  const start = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  const end   = `${now.getFullYear()+1}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  return `https://calendar.google.com/calendar/r/search?q=${encodeURIComponent(artist)}&start=${start}&end=${end}`;
+}
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+const VENUE_SHORT = {
+  'Wolf Trap Filene Center': 'Wolf Trap',
+  'Rams Head On Stage':      'Rams Head',
+  'Barns at Wolf Trap':      'Barns',
+  'The State Theatre':       'State Theatre',
+  'The Birchmere':           'Birchmere',
+  'Live at Hub City Vinyl':  'Hub City',
+  'The Anthem':              'Anthem',
+};
+function shortVenueName(full) {
+  return VENUE_SHORT[full] || (full||'').split(',')[0].trim();
+}
+
+// ── On This Day ────────────────────────────────────────────
+
+async function loadOnThisDay() {
+  const now   = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day   = String(now.getDate()).padStart(2, '0');
+  const mmdd  = `${month}-${day}`;
+
+  const results = await Promise.allSettled(
+    HISTORY_YEARS.map(yr => ghFetch(`live-shows/history/${yr}.tsv`))
+  );
+
+  const matches = [];
+  results.forEach((res, i) => {
+    if (res.status !== 'fulfilled') return;
+    const raw  = atob(res.value.content.replace(/\n/g, ''));
+    const rows = parseTsv(raw);
+    rows.forEach(r => {
+      const date = (r['Show Date'] || '').trim();
+      if (date.endsWith(mmdd)) matches.push(r);
+    });
+  });
+
+  matches.sort((a, b) => (a['Show Date'] || '').localeCompare(b['Show Date'] || ''));
+
+  const el = document.getElementById('otdItems');
+  if (!matches.length) {
+    el.innerHTML = '<span class="otd-none">no shows on this day</span>';
+    return;
+  }
+
+  el.innerHTML = matches.map(r => {
+    const year     = (r['Show Date'] || '').slice(0, 4);
+    const artist   = esc(r['Artist'] || '');
+    const rawVenue = (r['Venue'] || '');
+    const venue    = esc(rawVenue.split(',')[0].trim());
+    const setlist  = r['Setlist.fm URL'] || '';
+    const playlist = r['Playlist URL']   || '';
+    const links = [
+      setlist  ? `<a class="icon-link" href="${esc(setlist)}"  target="_blank" title="Setlist.fm">♫</a>` : '',
+      playlist ? `<a class="icon-link" href="${esc(playlist)}" target="_blank" title="YouTube playlist">▶</a>` : '',
+    ].join('');
+    return `<span class="otd-item">
+      <span class="otd-year">${year}</span>
+      <span class="otd-artist">${artist}</span>
+      <span class="otd-sep">·</span>
+      <span class="otd-venue">${venue}</span>
+      ${links ? `<span class="otd-links">${links}</span>` : ''}
+    </span>`;
+  }).join('<span class="otd-sep" style="margin:0 4px">|</span>');
+}
+
+// ── Badges ───────────────────────────────────────────────────
+
+function ticketLabel(access) {
+  const a = (access||'').toLowerCase();
+  if (a.includes('axs'))          return ['AXS', false];
+  if (a.includes('ticketmaster')) return ['TM', false];
+  if (a.includes('opendate'))     return ['Opendate', false];
+  if (a.includes('eventbrite'))   return ['Eventbrite', false];
+  if (a.includes('eventim') || a.includes('see tickets')) return ['Eventim', false];
+  if (a.includes('paper'))        return ['PAPER', true];
+  if (a.includes('freshtix'))     return ['Freshtix', false];
+  return access ? [access.split(' ')[0], false] : [null, false];
+}
+
+function buildBadges(row) {
+  const notes    = (row['Notes / Memories'] || '').toLowerCase();
+  const seat     = (row['Seat Info / GA']   || '').toLowerCase();
+  const access   = (row['Ticket Access']    || '').toLowerCase();
+  const playlist = (row['Playlist URL']     || '').toLowerCase();
+  const allText  = notes + ' ' + seat + ' ' + access + ' ' + playlist;
+
+  const isVip      = allText.includes('vip');
+  const isWolfTrap = (row['Venue Name'] || '').includes('Wolf Trap Filene');
+  const faceValue  = parseFloat((row['Face Value (per ticket)'] || '').replace(/[^0-9.]/g, '')) || 0;
+  const isMerch    = !isVip && !isWolfTrap && faceValue >= 100;
+  const isHat      = (row['Notes / Memories'] || '').includes('HAT:');
+  const isBook     = (row['Notes / Memories'] || '').includes('BRING RHBS') ||
+                     (row['Notes / Memories'] || '').includes('BRING APS');
+  const isBoxOffice = (row['Notes / Memories'] || '').toLowerCase().includes('box office');
+
+  const badges = [];
+  const [label, isPaper] = ticketLabel(row['Ticket Access'] || '');
+  if (label)       badges.push(`<span class="badge ${isPaper ? 'badge-paper' : 'badge-ticket'}">${esc(label)}</span>`);
+  if (isVip)       badges.push('<span class="badge badge-vip">⭐ VIP</span>');
+  if (isHat)       badges.push('<span class="badge badge-hat">🎩 HAT</span>');
+  if (isBook)      badges.push('<span class="badge badge-book">📚 BOOK</span>');
+  if (isMerch)     badges.push('<span class="badge badge-merch">💸 MERCH</span>');
+  if (isBoxOffice) badges.push('<span class="badge badge-boxoffice">🎟 BOX OFFICE</span>');
+  return badges.length ? `<div class="badges">${badges.join('')}</div>` : '';
+}
+
+// ── Shows tab ────────────────────────────────────────────────
+
+function renderUpcomingRow(row, idx) {
+  const days = daysFromNow(row['Show Date']);
+  const cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
+  const notes = esc(row['Notes / Memories']||'');
+  const venueHtml = row['Venue Event URL']
+    ? `<a href="${esc(row['Venue Event URL'])}" target="_blank">${esc(row['Venue Name'])}</a>`
+    : esc(row['Venue Name']);
+  const seat = esc(row['Seat Info / GA']||'');
+  // Mobile-only subtitle: venue + seat folded under artist name
+  const mobileVenueLine = row['Venue Name']
+    ? `<div class="cell-venue-mobile">${esc(shortVenueName(row['Venue Name']))}${seat ? ` · ${seat}` : ''}</div>`
+    : '';
+  return `
+  <tr class="${cls}">
+    <td class="cell-date">${formatShowDate(row['Show Date'])}<span class="day-of-week">${dayOfWeek(row['Show Date'])}</span></td>
+    <td>
+      <div class="cell-artist">${esc(row['Artist'])}${parseInt(row['Ticket Quantity']||'1',10) > 1 ? ` <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">(${row['Ticket Quantity']})</span>` : ''}<a class="icon-link" href="${gcalUrl(row['Artist'])}" target="_blank" title="Search Google Calendar">📅</a></div>
+      ${row['Supporting Artist'] ? `<div class="cell-support">w/ ${esc(row['Supporting Artist'])}</div>` : ''}
+      ${mobileVenueLine}
+      ${buildBadges(row)}
+      ${notes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${notes}</div>` : ''}
+    </td>
+    <td class="cell-venue col-support">${venueHtml}</td>
+    <td class="cell-seat col-seat">${seat}</td>
+    <td class="cell-notes">${notes ? `
+      <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${notes}</div>
+      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : ''}</td>
+  </tr>`;
+}
+
+function renderAttendedRow(row, idx) {
+  const notes = esc(row['Notes / Memories']||'');
+  // Show short venue name (first comma-segment) under date instead of day-of-week
+  const shortVenue = esc(shortVenueName(row['Venue Name']||''));
+  return `
+  <tr>
+    <td class="cell-date">${formatShowDate(row['Show Date'])}<span class="day-of-week">${shortVenue}</span></td>
+    <td class="cell-artist">${esc(row['Artist'])}</td>
+    <td class="cell-venue col-support">${esc(row['Venue Name'])}</td>
+    <td>
+      ${row['Setlist.fm URL'] ? `<a class="icon-link" href="${esc(row['Setlist.fm URL'])}" target="_blank" title="Setlist.fm">♫</a>` : ''}
+      ${row['Playlist URL']   ? `<a class="icon-link" href="${esc(row['Playlist URL'])}" target="_blank" title="YouTube playlist">▶</a>` : ''}
+    </td>
+    <td class="cell-notes">${notes ? `<div class="notes-text collapsed" id="n-at-${idx}" onclick="toggleNotes('n-at-${idx}',null)">${notes}</div>` : ''}</td>
+  </tr>`;
+}
+
+function renderShows() {
+  const upcoming = currentRows.filter(r=>r['Status']==='upcoming').sort((a,b)=>(a['Show Date']||'').localeCompare(b['Show Date']||''));
+  const attended = currentRows.filter(r=>r['Status']==='attended').sort((a,b)=>(b['Show Date']||'').localeCompare(a['Show Date']||''));
+  document.getElementById('showsBadge').textContent = upcoming.length;
+  document.getElementById('showsContent').innerHTML = `
+  <div class="section-header">
+    <span class="section-title">Upcoming</span>
+    <span class="section-count">${upcoming.length} shows</span>
+  </div>
+  <table class="shows-table">
+    <thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>
+    <tbody>${upcoming.map((r,i)=>renderUpcomingRow(r,i)).join('')}</tbody>
+  </table>
+  <details class="attended-details" style="margin-top:28px">
+    <summary>Attended (${attended.length} shows)</summary>
+    <div class="attended-table" style="margin-top:8px">
+      <table class="shows-table">
+        <thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>
+        <tbody>${attended.map((r,i)=>renderAttendedRow(r,i)).join('')}</tbody>
+      </table>
+    </div>
+  </details>`;
+}
+
+// ── Potential tab ─────────────────────────────────────────────────
+
+function tierHtml(tier) {
+  const t = (tier||'').toLowerCase();
+  const cls = t.includes('strong') && t.includes('medium') ? 'tier-medium-strong'
+    : t==='strong' ? 'tier-strong' : t==='low' ? 'tier-low' : 'tier-medium';
+  return `<span class="cell-tier ${cls}">${esc(tier)}</span>`;
+}
+
+function decisionHtml(row, idx) {
+  const d   = row['Decision']||'';
+  const cls = d.toLowerCase().startsWith('buy') ? 'buy' : d.toLowerCase()==='choose' ? 'choose' : d.toLowerCase()==='sell' ? 'sell' : 'pass';
+  if (d.toLowerCase()==='sell' || !authed) return `<span class="cell-decision-ro ${cls}">${esc(d)}</span>`;
+  const opts = ['Buy','Choose','Pass'].map(v =>
+    `<option value="${v}"${d.toLowerCase().startsWith(v.toLowerCase())?' selected':''}>${v}</option>`
+  ).join('');
+  return `<select class="decision-select" data-row="${idx}" onchange="handleDecisionChange(this)">${opts}</select>
+          <span class="save-indicator" id="save-${idx}"></span>`;
+}
+
+function faceCellHtml(r) {
+  const price = esc(r['Face Price'] || '');
+  const isBuy = (r['Decision'] || '').toLowerCase().startsWith('buy');
+  const purchaseUrl = r['Purchase URL'] || '';
+  const buyLink = authed && isBuy && purchaseUrl
+    ? `<a class="icon-link" href="${esc(purchaseUrl)}" target="_blank" title="Buy tickets">🎟</a>`
+    : '';
+  return `${price}${buyLink}`;
+}
+
+function renderPotentialGroup(rows, groupKey, label) {
+  if (!rows.length) return '';
+  const tbody = rows.map(r => {
+    const gi = potentialRows.indexOf(r);
+    const notes = esc(r['Notes']||'');
+    const venueUrl = r['Event URL'] || r['Purchase URL'] || '';
+    const venueShort = shortVenueName(r['Venue']||'');
+    const venueHtml = venueUrl
+      ? `<a href="${esc(venueUrl)}" target="_blank" style="color:var(--text-muted);text-decoration:none">${esc(venueShort)}</a>`
+      : esc(venueShort);
+    const prev = esc(r['Prev Show (2026)']||'');
+    const next = esc(r['Next Show (2026)']||'');
+    const contextHtml = [prev, next].filter(Boolean).map(s => `<div>${s}</div>`).join('');
+    return `
+    <tr class="row-${groupKey}">
+      <td style="white-space:nowrap">${decisionHtml(r,gi)}</td>
+      <td class="cell-date">${formatShowDate(r['Date'])}<span class="day-of-week">${dayOfWeek(r['Date'])}</span></td>
+      <td>
+        <div class="cell-artist">${esc(r['Artist'])}${(r['Notes']||'').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>' : ''}</div>
+        ${r['Support']?`<div class="cell-support">w/ ${esc(r['Support'])}</div>`:''}
+      </td>
+      <td>${venueHtml}<div style="font-size:11px;color:var(--text-dim);margin-top:2px">${esc(r['Venue City']||'')}</div></td>
+      <td class="col-tier">${tierHtml(r['Tier']||'')}</td>
+      <td class="col-price cell-price">${faceCellHtml(r)}</td>
+      <td class="col-watching">${r['Watching For']?`<span class="cell-watching">⚠ ${esc(r['Watching For'])}</span>`:''}</td>
+      <td class="col-context cell-context">${contextHtml}</td>
+      <td class="cell-pot-notes">${notes?`<div class="cell-pot-notes collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>`:''}</td>
+    </tr>`;
+  }).join('');
+  const table = `<table class="pot-table">
+    <thead><tr><th>Decision</th><th>Date</th><th>Artist</th><th>Venue</th><th class="col-tier">Tier</th><th class="col-price">Face</th><th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th></tr></thead>
+    <tbody>${tbody}</tbody></table>`;
+  if (groupKey === 'pass') return `
+    <div class="potential-group"><details class="pass-details">
+      <summary>Pass <span class="group-count">(${rows.length})</span></summary>
+      <div class="group-table-wrap group-table-pass">${table}</div>
+    </details></div>`;
+  return `
+    <div class="potential-group">
+      <div class="group-header group-header-${groupKey}">${label} <span class="group-count">(${rows.length})</span></div>
+      <div class="group-table-wrap group-table-${groupKey}">${table}</div>
+    </div>`;
+}
+
+function renderPotential() {
+  const s = [...potentialRows].sort((a,b)=>(a['Date']||'').localeCompare(b['Date']||''));
+  const buy    = s.filter(r=>(r['Decision']||'').toLowerCase().startsWith('buy'));
+  const choose = s.filter(r=>(r['Decision']||'').toLowerCase()==='choose');
+  const sell   = s.filter(r=>(r['Decision']||'').toLowerCase()==='sell');
+  const pass   = s.filter(r=>(r['Decision']||'').toLowerCase()==='pass');
+  document.getElementById('potBadge').textContent = buy.length + '+' + choose.length;
+  document.getElementById('potContent').innerHTML =
+    renderPotentialGroup(buy,'buy','🟢 Buy') +
+    renderPotentialGroup(choose,'choose','🟡 Choose') +
+    renderPotentialGroup(sell,'sell','🏷 Sell') +
+    renderPotentialGroup(pass,'pass','Pass') ||
+    '<p class="loading" style="animation:none">No data</p>';
+}
+
+// ── Decision editing ────────────────────────────────────────────────────
+
+async function handleDecisionChange(select) {
+  const idx    = parseInt(select.dataset.row);
+  const newVal = select.value;
+  const ind    = document.getElementById(`save-${idx}`);
+  ind.textContent = '…'; ind.className = 'save-indicator';
+  try {
+    const fileData = await ghFetch(POTENTIAL_PATH);
+    const rawText  = atob(fileData.content.replace(/\n/g,''));
+    const headers  = rawText.split('\n')[0].split('\t').map(h=>h.trim());
+    const rows     = parseTsv(rawText);
+    rows[idx]['Decision'] = newVal;
+    potentialRows[idx]['Decision'] = newVal;
+    rows.sort((a,b) => {
+      const rank = r => (r['Decision']||'').toLowerCase().startsWith('buy') ? 0
+        : (r['Decision']||'').toLowerCase()==='choose' ? 1
+        : (r['Decision']||'').toLowerCase()==='sell' ? 2 : 3;
+      return rank(a) - rank(b) || (a['Date']||'').localeCompare(b['Date']||'');
+    });
+    const pat = localStorage.getItem(PAT_KEY);
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${POTENTIAL_PATH}`, {
+      method: 'PUT',
+      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':`token ${pat}`, 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        message: `potential: update ${potentialRows[idx]['Artist']} decision`,
+        content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))),
+        sha: fileData.sha
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    potentialRows = rows;
+    ind.textContent = '✓'; ind.className = 'save-indicator save-ok';
+    setTimeout(() => renderPotential(), 600);
+  } catch(e) {
+    console.error(e); ind.textContent = '✗'; ind.className = 'save-indicator save-err';
+  }
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────
+
+function toggleNotes(textId, toggleId) {
+  const el = document.getElementById(textId); if (!el) return;
+  el.classList.toggle('collapsed');
+  const tog = toggleId && document.getElementById(toggleId);
+  if (tog) tog.textContent = el.classList.contains('collapsed') ? 'more' : 'less';
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id===`panel-${name}`));
+}
+
+function openAuthModal()  { document.getElementById('patInput').value=''; document.getElementById('authModal').classList.add('open'); }
+function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
+function savePat() {
+  const val = document.getElementById('patInput').value.trim(); if (!val) return;
+  localStorage.setItem(PAT_KEY, val); authed = true;
+  document.getElementById('authBtn').classList.add('authed');
+  closeAuthModal(); renderPotential();
+}
+function clearPat() {
+  localStorage.removeItem(PAT_KEY); authed = false;
+  document.getElementById('authBtn').classList.remove('authed');
+  closeAuthModal(); renderPotential();
+}
+document.getElementById('authModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAuthModal(); });
+
+// ── Boot ────────────────────────────────────────────────────────────────
+
+async function loadData() {
+  document.getElementById('showsContent').innerHTML = '<div class="loading">Loading</div>';
+  document.getElementById('potContent').innerHTML   = '<div class="loading">Loading</div>';
+  try {
+    const [curData, potData] = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
+    currentRows   = parseTsv(atob(curData.content.replace(/\n/g,'')));
+    potentialRows = parseTsv(atob(potData.content.replace(/\n/g,'')));
+    renderShows(); renderPotential();
+    const now = new Date();
+    document.getElementById('fetchedAt').textContent = `fetched ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  } catch(e) {
+    const msg = `<div class="error-msg">Error: ${esc(e.message)}</div>`;
+    document.getElementById('showsContent').innerHTML = msg;
+    document.getElementById('potContent').innerHTML   = msg;
+  }
+}
+
+if (localStorage.getItem(PAT_KEY)) { authed = true; document.getElementById('authBtn').classList.add('authed'); }
+loadData();
+loadOnThisDay(); // runs independently — doesn't block the main data load
+</script>
+</body>
+</html>

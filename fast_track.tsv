@@ -1,0 +1,39 @@
+# Fast Track Artists — live-shows/fast_track.tsv
+#
+# PURPOSE: Pre-authorized buy list for artists with no DC show history (or no headlining
+# history) where a local show should be treated as an immediate buy without going through
+# the potential list evaluation cycle.
+#
+# DISCIPLINE: This file is ONLY for artists who would NOT already be caught as a strong
+# buy based on show history. If an artist has been seen multiple times or has a strong
+# prior history (Kingfish, Larkin Poe, The Lone Bellow, ZZ Ward, etc.), they do NOT
+# belong here — they are handled automatically by the existing tier system.
+#
+# CAP DEFAULTS (apply when column is blank):
+#   Price Cap:    $100 all-in
+#   Distance Cap: Regional (DC/MD/VA + Baltimore, ~60mi radius from Arlington)
+#   Venue Cap:    Mid (Small venues + 9:30 Club, Wolf Trap Barns, State Theatre, Rams Head Live)
+#
+# VENUE CAP VALUES:
+#   Small  = Birchmere, Hamilton Live, Rams Head On Stage, Hub City Vinyl, Jammin' Java,
+#             Collective Encore, Union Stage, Wolf Trap Barns (acoustic room)
+#   Mid    = Small + 9:30 Club, State Theatre, Rams Head Live, other ~500-1200 cap rooms
+#   Large  = Mid + Wolf Trap Filene Center, The Anthem, similar 2000+ cap rooms
+#
+# DISTANCE CAP VALUES:
+#   Local    = DC/MD/VA, Annapolis — regular driving range
+#   Regional = Local + Baltimore, up to ~60 miles from Arlington
+#   Extended = Regional + up to ~90 miles (requires strong pull)
+#
+# When a cap is exceeded, surface as a normal Choose recommendation in live_shows_potential
+# rather than a Fast Track buy. All three caps must be satisfied for Fast Track treatment.
+#
+# BOOK CHECK: Pre-filled from autograph_books_combined.tsv so Routines 3/5 don't need
+# to look it up separately. Update here when book status changes.
+#
+Artist	Tier	Why Fast Track	Price Cap	Distance Cap	Venue Cap	Book Check	Notes
+Nikki Hill	Strong	BMA nominee; Alligator Records artist; blues-soul powerhouse; no DC history found	 	 	 	RHBS	Female artist — hat signing eligible. Plays with full band including horns.
+Angelique Francis	Strong	Rising blues-rock female guitarist; BMA nominee; critically acclaimed; not yet seen	 	 	 	 	Young Canadian guitarist-vocalist. Exactly the profile of artists that should be caught early.
+Danielle Ponder	Medium-Strong	NPR Tiny Desk; critically acclaimed soul-blues vocalist; not yet seen	 	 	 	 	Female artist — hat signing eligible. Strong critical consensus but no local show history.
+Evan Nicole Bell	Strong	No. 1 Roots Music Report; AMA Top Albums; Baker Artist Award 2025; Columbia MD local; not yet seen	 	Local	 	 	Female artist — hat signing eligible. Multi-instrumentalist — writes/produces/engineers/plays all instruments except drums. Grew up in Columbia MD. Sophomore album slated 2026. Not in either autograph book.
+Gov't Mule	Strong	Warren Haynes project; deep blues-rock; APS-adjacent; not yet seen as headliner	 	 	Small	 	Venue cap tightened — they play large rooms that don't fit. Birchmere/Hamilton/Rams Head scale only.
