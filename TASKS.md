@@ -1,4 +1,4 @@
-# songs-for-my-funeral — Archive Task List
+# live-shows — Archive Task List
 
 Collaborative task list for the live show archive project.
 
@@ -8,7 +8,7 @@ Collaborative task list for the live show archive project.
 
 ### A. Potential shows monitoring
 
-At the start of every inbox processing session, open `live-shows/live_shows_potential.tsv`
+At the start of every inbox processing session, open `live_shows_potential.tsv`
 and apply the following checks to any row that has a value in the `Watching For` column:
 
 **If `Watching For` = `low ticket / sold out`** (applies to any `Buy` row):
@@ -40,7 +40,7 @@ Current rows with `Watching For` values (update this list as rows are added/reso
 
 ### B. Potential shows list
 
-See `live-shows/live_shows_potential.tsv` for the full list of uncommitted shows with
+See `live_shows_potential.tsv` for the full list of uncommitted shows with
 ticket links, pricing, and notes. The `Watching For` column is the authoritative source
 for what needs monitoring — the table above is kept in sync with it.
 
@@ -48,10 +48,14 @@ for what needs monitoring — the table above is kept in sync with it.
 Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes |
 Prev Show (2026) | Next Show (2026) | Notes
 
-**Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Pass`
+**Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Sell`, `Pass`
 
-**Sort order:** Primary sort alpha on Decision (`Buy` → `Choose` → `Pass`),
+**Sort order:** Primary sort alpha on Decision (`Buy` → `Choose` → `Sell` → `Pass`),
 secondary sort by show date ascending within each group.
+
+**`Sell` decision:** Read-only — applied when tickets for a confirmed show have been
+listed for resale. Cannot be set via the index.html dropdown. Requires manual Claude
+operation touching both `live_shows_current.tsv` and `live_shows_potential.tsv`.
 
 **Maintenance rules:**
 - **Purchased:** remove via Routine 1 Step 6 when ticket confirmed
@@ -64,13 +68,13 @@ secondary sort by show date ascending within each group.
 
 ## 📋 Open Issues
 
-Project tasks are tracked as GitHub issues. See the [issues list](https://github.com/dan2bit/songs-for-my-funeral/issues) for full details.
+Project tasks are tracked as GitHub issues. See the [issues list](https://github.com/dan2bit/live-shows/issues) for full details.
 
 | # | Title | Labels |
 |---|-------|--------|
-| [#21](https://github.com/dan2bit/songs-for-my-funeral/issues/21) | Upload found videos and create playlists for 11 no-playlist shows | playlist, backlog |
-| [#22](https://github.com/dan2bit/songs-for-my-funeral/issues/22) | Design and implement rolling migration + archive architecture | architecture, backlog |
-| [#23](https://github.com/dan2bit/songs-for-my-funeral/issues/23) | Review and potentially include pre-pandemic show history (2002–2019) | research, backlog |
-| [#24](https://github.com/dan2bit/songs-for-my-funeral/issues/24) | Sync Facebook concert photo album to rhbl Google Photos | photos, backlog |
+| [#21](https://github.com/dan2bit/live-shows/issues/21) | Upload found videos and create playlists for 11 no-playlist shows | playlist, backlog |
+| [#22](https://github.com/dan2bit/live-shows/issues/22) | Design and implement rolling migration + archive architecture | architecture, backlog |
+| [#23](https://github.com/dan2bit/live-shows/issues/23) | Review and potentially include pre-pandemic show history (2002–2019) | research, backlog |
+| [#24](https://github.com/dan2bit/live-shows/issues/24) | Sync Facebook concert photo album to rhbl Google Photos | photos, backlog |
 
 Per-show YouTube playlist issues are opened automatically by Routine 2 when post-show notes are processed — search issues for `label:playlist` to see the full queue.
