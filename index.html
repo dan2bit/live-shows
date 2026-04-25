@@ -614,8 +614,10 @@ function buildBadges(row) {
 function renderUpcomingRow(row, idx) {
   const days = daysFromNow(row['Show Date']);
   const cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
-  const rawNotes = row['Notes / Memories']||'';
-  const notes    = esc(authed ? rawNotes : stripPrivateNotes(rawNotes));
+  const rawNotes     = row['Notes / Memories']||'';
+  const privateNotes = row['Private Notes']||'';
+  const notes        = esc(rawNotes);
+  const fullNotes    = esc(privateNotes ? rawNotes + (rawNotes ? ' · ' : '') + privateNotes : rawNotes);
   const venueHtml = row['Venue Event URL']
     ? `<a href="${esc(row['Venue Event URL'])}" target="_blank">${esc(row['Venue Name'])}</a>`
     : esc(row['Venue Name']);
@@ -634,18 +636,21 @@ function renderUpcomingRow(row, idx) {
       ${row['Supporting Artist'] ? `<div class="cell-support">w/ ${esc(row['Supporting Artist'])}</div>` : ''}
       ${mobileVenueLine}
       ${badgesHtml}
-      ${notes && authed ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${notes}</div>` : ''}
+      ${authed && fullNotes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${fullNotes}</div>` : (notes && !authed ? `<div class="cell-notes-inline notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}
     </td>
     <td class="cell-venue col-support">${venueHtml}</td>
     <td class="cell-seat col-seat">${seat}</td>
-    <td class="cell-notes">${notes && authed ? `
-      <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${notes}</div>
+    <td class="cell-notes">${authed && fullNotes ? `
+      <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${fullNotes}</div>
       <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : (notes && !authed ? `<div class="notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}</td>
   </tr>`;
 }
 
 function renderAttendedRow(row, idx) {
-  const notes = esc(row['Notes / Memories']||'');
+  const rawNotes     = row['Notes / Memories']||'';
+  const privateNotes = row['Private Notes']||'';
+  const notes    = esc(rawNotes);
+  const fullNotes = esc(privateNotes ? rawNotes + (rawNotes ? ' · ' : '') + privateNotes : rawNotes);
   // Show short venue name (first comma-segment) under date instead of day-of-week
   const shortVenue = esc(shortVenueName(row['Venue Name']||''));
   return `
@@ -657,19 +662,8 @@ function renderAttendedRow(row, idx) {
       ${row['Setlist.fm URL'] ? `<a class="icon-link" href="${esc(row['Setlist.fm URL'])}" target="_blank" title="Setlist.fm">♫</a>` : ''}
       ${row['Playlist URL']   ? `<a class="icon-link" href="${esc(row['Playlist URL'])}" target="_blank" title="YouTube playlist">▶</a>` : ''}
     </td>
-    <td class="cell-notes">${notes ? `<div class="notes-text collapsed" id="n-at-${idx}" onclick="toggleNotes('n-at-${idx}',null)">${notes}</div>` : ''}</td>
+    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text collapsed" id="n-at-${idx}" onclick="toggleNotes('n-at-${idx}',null)">${authed ? fullNotes : notes}</div>` : ''}</td>
   </tr>`;
-}
-
-function stripPrivateNotes(notes) {
-  // Remove order numbers, seat references, and other private data from notes for bystander view
-  return (notes || '')
-    .replace(/Order #[\w\-\/]+[^;]*/gi, '')
-    .replace(/ORD:[^;\n]*/gi, '')
-    .replace(/HAT:[^.]*\./gi, '')   // keep HAT flag but strip name for anon
-    .replace(/no refunds/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
 }
 
 function renderShows() {
@@ -696,24 +690,26 @@ function renderShows() {
       <span class="recommend-cta" title="Coming soon">Suggest a show ↗</span>
     </div>` : '';
   document.getElementById('showsBadge').textContent = upcoming.length;
-  document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + `
-  <div class="section-header">
-    <span class="section-title">Upcoming</span>
-    <span class="section-count">${upcoming.length} shows</span>
-  </div>
-  <table class="shows-table">
-    <thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>
-    <tbody>${upcoming.map((r,i)=>renderUpcomingRow(r,i)).join('')}</tbody>
-  </table>
-  <details class="attended-details" style="margin-top:28px">
-    <summary>Attended (${attended.length} shows)</summary>
-    <div class="attended-table" style="margin-top:8px">
-      <table class="shows-table">
-        <thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>
-        <tbody>${attended.map((r,i)=>renderAttendedRow(r,i)).join('')}</tbody>
-      </table>
-    </div>
-  </details>`;
+  const upcomingHtml = [
+    '<div class="section-header">',
+    '<span class="section-title">Upcoming</span>',
+    '<span class="section-count">' + upcoming.length + ' shows</span>',
+    '</div>',
+    '<table class="shows-table">',
+    '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>',
+    '<tbody>' + upcoming.map((r,i) => renderUpcomingRow(r,i)).join('') + '</tbody>',
+    '</table>'
+  ].join('');
+  const attendedHtml = [
+    '<details class="attended-details" style="margin-top:28px">',
+    '<summary>Attended (' + attended.length + ' shows)</summary>',
+    '<div class="attended-table" style="margin-top:8px">',
+    '<table class="shows-table">',
+    '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>',
+    '<tbody>' + attended.map((r,i) => renderAttendedRow(r,i)).join('') + '</tbody>',
+    '</table></div></details>'
+  ].join('');
+  document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + upcomingHtml + attendedHtml;
 }
 
 // ── Potential tab ─────────────────────────────────────────────────
@@ -910,12 +906,12 @@ function savePat() {
   const val = document.getElementById('patInput').value.trim(); if (!val) return;
   localStorage.setItem(PAT_KEY, val); authed = true;
   document.getElementById('authBtn').classList.add('authed');
-  closeAuthModal(); renderPotential();
+  closeAuthModal(); renderShows(); renderPotential();
 }
 function clearPat() {
   localStorage.removeItem(PAT_KEY); authed = false;
   document.getElementById('authBtn').classList.remove('authed');
-  closeAuthModal(); renderPotential();
+  closeAuthModal(); renderShows(); renderPotential();
 }
 document.getElementById('authModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAuthModal(); });
 
