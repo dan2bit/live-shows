@@ -72,9 +72,10 @@ Project tasks are tracked as GitHub issues. See the [issues list](https://github
 
 | # | Title | Labels |
 |---|-------|--------|
-| [#21](https://github.com/dan2bit/live-shows/issues/21) | Upload found videos and create playlists for 11 no-playlist shows | playlist, backlog |
-| [#22](https://github.com/dan2bit/live-shows/issues/22) | Design and implement rolling migration + archive architecture | architecture, backlog |
-| [#23](https://github.com/dan2bit/live-shows/issues/23) | Review and potentially include pre-pandemic show history (2002–2019) | research, backlog |
-| [#24](https://github.com/dan2bit/live-shows/issues/24) | Sync Facebook concert photo album to rhbl Google Photos | photos, backlog |
+| [#3](https://github.com/dan2bit/live-shows/issues/3) | Upload found videos and create playlists for 11 no-playlist shows | playlist, backlog |
+| [#4](https://github.com/dan2bit/live-shows/issues/4) | Review and potentially include pre-pandemic show history (2002–2019) | research, backlog |
+| [#5](https://github.com/dan2bit/live-shows/issues/5) | 📬 Inbox label hygiene — Gmail filter setup and artist follow service audit | backlog |
+| [#6](https://github.com/dan2bit/live-shows/issues/6) | Public-facing mode for index.html | enhancement |
+| [#7](https://github.com/dan2bit/live-shows/issues/7) | 🔑 UI PAT setup — create, test, and store GitHub token for Decision editing | enhancement |
 
 Per-show YouTube playlist issues are opened automatically by Routine 2 when post-show notes are processed — search issues for `label:playlist` to see the full queue.
