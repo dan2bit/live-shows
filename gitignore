@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+
+# Credentials and secrets — never commit these
+.env
+client_secrets.json
+token.json
+
+# Google Drive stub files (macOS backup excludes these)
+*.gdoc
+*.gsheet
+*.gslides
+*.gdraw
+*.gform
+*.gmaps
+*.gsite
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+logs/*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
