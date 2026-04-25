@@ -298,6 +298,24 @@
   .pass-details .group-table-wrap { border-top: none; border-radius: 0 0 4px 4px; }
 
   .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+  .about-modal { max-width: 480px; }
+  .about-modal h3 { color: var(--amber); margin-bottom: 10px; }
+  .about-modal p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+  .about-modal .about-links { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .about-modal .about-link { font-family: var(--mono); font-size: 12px; color: var(--amber); text-decoration: none; padding: 6px 10px; border: 1px solid var(--amber-dim); border-radius: 3px; background: var(--amber-bg); }
+  .about-modal .about-link:hover { background: #2a1c08; }
+  .hat-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; font-size: 22px; line-height: 1; opacity: 0.85; transition: opacity 0.15s; }
+  .hat-btn:hover { opacity: 1; }
+  .bystander-banner { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
+  .bystander-banner .recommend-cta { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--amber); border: 1px solid var(--amber-dim); border-radius: 3px; padding: 4px 10px; background: var(--amber-bg); cursor: not-allowed; opacity: 0.6; white-space: nowrap; }
+  .for-sale-card { background: var(--surface); border: 1px solid #1a4a4a; border-radius: 6px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .for-sale-card .fsc-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #40a0a0; margin-bottom: 4px; }
+  .for-sale-card .fsc-artist { font-size: 16px; font-weight: 600; color: var(--text); }
+  .for-sale-card .fsc-detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .for-sale-card .fsc-buy-btn { margin-left: auto; display: inline-block; background: #0e1a1a; border: 1px solid #1a4a4a; border-radius: 4px; color: #40a0a0; font-family: var(--mono); font-size: 12px; padding: 10px 20px; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+  .for-sale-card .fsc-buy-btn:hover { background: #142424; color: #60c0c0; }
+  .revoke-btn { font-family: var(--mono); font-size: 10px; color: var(--red); background: var(--red-bg); border: 1px solid var(--red-dim); border-radius: 3px; padding: 2px 7px; cursor: pointer; margin-left: 6px; }
+  .revoke-btn:hover { background: #2a1010; }
   .modal-backdrop.open { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 24px; width: 360px; max-width: 90vw; }
   .modal h3 { font-family: var(--mono); font-size: 12px; color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
@@ -349,7 +367,12 @@
 <body>
 
 <header class="site-header">
-  <div class="site-title">live-shows</div>
+  <div style="display:flex;align-items:center;gap:10px;flex:1">
+    <button class="hat-btn" onclick="openAboutModal()" title="About @dan2bit">
+      <img src="https://dan2bit.github.io/live-shows/red_hat_icon_guitar.png" alt="red hat" style="width:28px;height:28px;object-fit:contain;">
+    </button>
+    <div class="site-title">live-shows</div>
+  </div>
   <div class="header-actions">
     <span class="fetched-at" id="fetchedAt">—</span>
     <button class="btn" id="refreshBtn" onclick="loadData()">↺ refresh</button>
@@ -377,6 +400,22 @@
 </div>
 <div class="panel" id="panel-potential">
   <div id="potContent"><div class="loading">Loading</div></div>
+</div>
+
+<div class="modal-backdrop" id="aboutModal">
+  <div class="modal about-modal">
+    <h3>@dan2bit</h3>
+    <p>GenX DC native. Live music obsessive. I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch.</p>
+    <p>This page tracks where I've been and where I'm going. If you know something I should see, there'll be a way to tell me soon.</p>
+    <div class="about-links">
+      <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">▶ @dan2bit on YouTube — bootleg recordings</a>
+      <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">🎵 Music links — Linktree</a>
+      <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">📷 Guitar Gods & Goddesses — photo album</a>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn" onclick="closeAboutModal()">Close</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-backdrop" id="authModal">
@@ -575,30 +614,33 @@ function buildBadges(row) {
 function renderUpcomingRow(row, idx) {
   const days = daysFromNow(row['Show Date']);
   const cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
-  const notes = esc(row['Notes / Memories']||'');
+  const rawNotes = row['Notes / Memories']||'';
+  const notes    = esc(authed ? rawNotes : stripPrivateNotes(rawNotes));
   const venueHtml = row['Venue Event URL']
     ? `<a href="${esc(row['Venue Event URL'])}" target="_blank">${esc(row['Venue Name'])}</a>`
     : esc(row['Venue Name']);
-  const seat = esc(row['Seat Info / GA']||'');
-  // Mobile-only subtitle: venue + seat folded under artist name
+  const seat = authed ? esc(row['Seat Info / GA']||'') : '';
+  const qty  = parseInt(row['Ticket Quantity']||'1',10);
+  const calLink = authed ? `<a class="icon-link" href="${gcalUrl(row['Artist'])}" target="_blank" title="Search Google Calendar">📅</a>` : '';
   const mobileVenueLine = row['Venue Name']
     ? `<div class="cell-venue-mobile">${esc(shortVenueName(row['Venue Name']))}${seat ? ` · ${seat}` : ''}</div>`
     : '';
+  const badgesHtml = authed ? buildBadges(row) : '';
   return `
   <tr class="${cls}">
     <td class="cell-date">${formatShowDate(row['Show Date'])}<span class="day-of-week">${dayOfWeek(row['Show Date'])}</span></td>
     <td>
-      <div class="cell-artist">${esc(row['Artist'])}${parseInt(row['Ticket Quantity']||'1',10) > 1 ? ` <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">(${row['Ticket Quantity']})</span>` : ''}<a class="icon-link" href="${gcalUrl(row['Artist'])}" target="_blank" title="Search Google Calendar">📅</a></div>
+      <div class="cell-artist">${esc(row['Artist'])}${authed && qty > 1 ? ` <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">(${row['Ticket Quantity']})</span>` : ''}${calLink}</div>
       ${row['Supporting Artist'] ? `<div class="cell-support">w/ ${esc(row['Supporting Artist'])}</div>` : ''}
       ${mobileVenueLine}
-      ${buildBadges(row)}
-      ${notes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${notes}</div>` : ''}
+      ${badgesHtml}
+      ${notes && authed ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${notes}</div>` : ''}
     </td>
     <td class="cell-venue col-support">${venueHtml}</td>
     <td class="cell-seat col-seat">${seat}</td>
-    <td class="cell-notes">${notes ? `
+    <td class="cell-notes">${notes && authed ? `
       <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${notes}</div>
-      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : ''}</td>
+      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : (notes && !authed ? `<div class="notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}</td>
   </tr>`;
 }
 
@@ -619,11 +661,42 @@ function renderAttendedRow(row, idx) {
   </tr>`;
 }
 
+function stripPrivateNotes(notes) {
+  // Remove order numbers, seat references, and other private data from notes for bystander view
+  return (notes || '')
+    .replace(/Order #[\w\-\/]+[^;]*/gi, '')
+    .replace(/ORD:[^;\n]*/gi, '')
+    .replace(/HAT:[^.]*\./gi, '')   // keep HAT flag but strip name for anon
+    .replace(/no refunds/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function renderShows() {
   const upcoming = currentRows.filter(r=>r['Status']==='upcoming').sort((a,b)=>(a['Show Date']||'').localeCompare(b['Show Date']||''));
   const attended = currentRows.filter(r=>r['Status']==='attended').sort((a,b)=>(b['Show Date']||'').localeCompare(a['Show Date']||''));
+  const sellRows = potentialRows.filter(r=>(r['Decision']||'').toLowerCase()==='sell');
+  const forSaleHtml = sellRows.length ? `
+    <div style="margin-bottom:20px">
+      <div class="section-header"><span class="section-title" style="color:#40a0a0">🏷 For Sale</span><span class="section-count">${sellRows.length} listing${sellRows.length>1?'s':''}</span></div>
+      ${sellRows.map(r=>`
+      <div class="for-sale-card">
+        <div>
+          <div class="fsc-label">Tickets available</div>
+          <div class="fsc-artist">${esc(r['Artist'])}</div>
+          <div class="fsc-detail">${formatShowDate(r['Date'])} · ${esc(r['Venue']||'')} · ${esc(r['Venue City']||'')}</div>
+          <div class="fsc-detail" style="margin-top:4px;font-family:var(--mono);color:#40a0a0">${esc(r['Face Price']||'')} / ticket</div>
+        </div>
+        ${r['Purchase URL'] ? `<a class="fsc-buy-btn" href="${esc(r['Purchase URL'])}" target="_blank">Buy tickets →</a>` : ''}
+      </div>`).join('')}
+    </div>` : '';
+  const bystanderBanner = !authed ? `
+    <div class="bystander-banner">
+      <span>👋 Browsing as a visitor — some details are hidden. Know something I should see?</span>
+      <span class="recommend-cta" title="Coming soon">Suggest a show ↗</span>
+    </div>` : '';
   document.getElementById('showsBadge').textContent = upcoming.length;
-  document.getElementById('showsContent').innerHTML = `
+  document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + `
   <div class="section-header">
     <span class="section-title">Upcoming</span>
     <span class="section-count">${upcoming.length} shows</span>
@@ -655,7 +728,13 @@ function tierHtml(tier) {
 function decisionHtml(row, idx) {
   const d   = row['Decision']||'';
   const cls = d.toLowerCase().startsWith('buy') ? 'buy' : d.toLowerCase()==='choose' ? 'choose' : d.toLowerCase()==='sell' ? 'sell' : 'pass';
-  if (d.toLowerCase()==='sell' || !authed) return `<span class="cell-decision-ro ${cls}">${esc(d)}</span>`;
+  if (d.toLowerCase()==='sell') {
+    const revokeBtn = authed
+      ? `<button class="revoke-btn" onclick="handleRevoke(${idx})" title="Remove listing from potentials">✕ revoke</button>`
+      : '';
+    return `<span class="cell-decision-ro sell">${esc(d)}</span>${revokeBtn}`;
+  }
+  if (!authed) return `<span class="cell-decision-ro ${cls}">${esc(d)}</span>`;
   const opts = ['Buy','Choose','Pass'].map(v =>
     `<option value="${v}"${d.toLowerCase().startsWith(v.toLowerCase())?' selected':''}>${v}</option>`
   ).join('');
@@ -665,10 +744,14 @@ function decisionHtml(row, idx) {
 
 function faceCellHtml(r) {
   const price = esc(r['Face Price'] || '');
-  const isBuy = (r['Decision'] || '').toLowerCase().startsWith('buy');
+  const dec = (r['Decision'] || '').toLowerCase();
   const purchaseUrl = r['Purchase URL'] || '';
-  const buyLink = authed && isBuy && purchaseUrl
-    ? `<a class="icon-link" href="${esc(purchaseUrl)}" target="_blank" title="Buy tickets">🎟</a>`
+  // Show buy link for Buy and Choose when authed; show sell link always for Sell
+  const isSell = dec === 'sell';
+  const showLink = isSell ? purchaseUrl : (authed && (dec.startsWith('buy') || dec === 'choose') && purchaseUrl);
+  const linkTitle = isSell ? 'View listing' : 'Buy tickets';
+  const buyLink = showLink
+    ? `<a class="icon-link" href="${esc(purchaseUrl)}" target="_blank" title="${linkTitle}">🎟</a>`
     : '';
   return `${price}${buyLink}`;
 }
@@ -734,6 +817,37 @@ function renderPotential() {
 
 // ── Decision editing ────────────────────────────────────────────────────
 
+async function handleRevoke(idx) {
+  if (!confirm(`Remove this Sell row from potentials? This cannot be undone.`)) return;
+  const ind = document.getElementById(`save-${idx}`);
+  if (ind) { ind.textContent = '…'; ind.className = 'save-indicator'; }
+  try {
+    const fileData = await ghFetch(POTENTIAL_PATH);
+    const rawText  = atob(fileData.content.replace(/\n/g,''));
+    const headers  = rawText.split('\n')[0].split('\t').map(h=>h.trim());
+    const rows     = parseTsv(rawText);
+    const artist   = rows[idx]['Artist'] || 'show';
+    rows.splice(idx, 1);
+    potentialRows.splice(idx, 1);
+    const pat = localStorage.getItem(PAT_KEY);
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${POTENTIAL_PATH}`, {
+      method: 'PUT',
+      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':`token ${pat}`, 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        message: `potential: remove ${artist} Sell row (ticket sold or revoked)`,
+        content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))),
+        sha: fileData.sha
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    potentialRows = rows;
+    setTimeout(() => renderPotential(), 400);
+  } catch(e) {
+    console.error(e);
+    alert('Error removing row: ' + e.message);
+  }
+}
+
 async function handleDecisionChange(select) {
   const idx    = parseInt(select.dataset.row);
   const newVal = select.value;
@@ -785,6 +899,11 @@ function switchTab(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id===`panel-${name}`));
 }
 
+function openAboutModal()  { document.getElementById('aboutModal').classList.add('open'); }
+function closeAboutModal() { document.getElementById('aboutModal').classList.remove('open'); }
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('aboutModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAboutModal(); });
+});
 function openAuthModal()  { document.getElementById('patInput').value=''; document.getElementById('authModal').classList.add('open'); }
 function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
 function savePat() {
