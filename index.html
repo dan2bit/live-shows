@@ -221,13 +221,16 @@
   .badge-paper     { background: var(--surface2); color: #7090a0;           border: 1px solid #2a4050; }
   .badge-boxoffice { background: var(--green-bg); color: var(--green);      border: 1px solid var(--green-dim); }
 
-  .attended-details summary {
-    font-family: var(--mono); font-size: 11px; color: var(--text-dim); cursor: pointer;
-    padding: 10px 0; letter-spacing: 0.04em; list-style: none; user-select: none;
+  .inner-tab-row { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; gap: 0; }
+  .inner-tab {
+    font-family: var(--mono); font-size: 11px; padding: 8px 14px; cursor: pointer;
+    border-bottom: 2px solid transparent; color: var(--text-dim);
+    transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; user-select: none;
   }
-  .attended-details summary::before { content: '▶  '; }
-  .attended-details[open] summary::before { content: '▼  '; }
-  .attended-details summary:hover { color: var(--text-muted); }
+  .inner-tab:hover { color: var(--text-muted); }
+  .inner-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+  .inner-panel { display: none; }
+  .inner-panel.active { display: block; }
 
   .potential-group { margin-bottom: 28px; }
   .group-header {
@@ -680,6 +683,7 @@ function renderShows() {
           <div class="fsc-artist">${esc(r['Artist'])}</div>
           <div class="fsc-detail">${formatShowDate(r['Date'])} · ${esc(r['Venue']||'')} · ${esc(r['Venue City']||'')}</div>
           <div class="fsc-detail" style="margin-top:4px;font-family:var(--mono);color:#40a0a0">${esc(r['Face Price']||'')} / ticket</div>
+          <div class="fsc-detail" style="margin-top:2px;font-family:var(--mono);font-size:11px;color:var(--text-dim)">${(()=>{const m=(r['Watching For']||'').match(/(\d+)/);return m?m[1]+' ticket'+(m[1]==='1'?'':'s')+' available':'tickets available';})()}</div>
         </div>
         ${r['Purchase URL'] ? `<a class="fsc-buy-btn" href="${esc(r['Purchase URL'])}" target="_blank">Buy tickets →</a>` : ''}
       </div>`).join('')}
@@ -689,27 +693,35 @@ function renderShows() {
       <span>👋 Browsing as a visitor — some details are hidden. Know something I should see?</span>
       <span class="recommend-cta" title="Coming soon">Suggest a show ↗</span>
     </div>` : '';
-  document.getElementById('showsBadge').textContent = upcoming.length;
-  const upcomingHtml = [
-    '<div class="section-header">',
-    '<span class="section-title">Upcoming</span>',
-    '<span class="section-count">' + upcoming.length + ' shows</span>',
-    '</div>',
+  document.getElementById('showsBadge').textContent = attended.length + '+' + upcoming.length;
+  // Default inner tab: Attended for bystanders, Upcoming for authed
+  const defaultInner = authed ? 'upcoming' : 'attended';
+  const upcomingTable = [
     '<table class="shows-table">',
     '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>',
     '<tbody>' + upcoming.map((r,i) => renderUpcomingRow(r,i)).join('') + '</tbody>',
     '</table>'
   ].join('');
-  const attendedHtml = [
-    '<details class="attended-details" style="margin-top:28px">',
-    '<summary>Attended (' + attended.length + ' shows)</summary>',
-    '<div class="attended-table" style="margin-top:8px">',
+  const attendedTable = [
+    '<div class="attended-table">',
     '<table class="shows-table">',
     '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>',
     '<tbody>' + attended.map((r,i) => renderAttendedRow(r,i)).join('') + '</tbody>',
-    '</table></div></details>'
+    '</table></div>'
   ].join('');
-  document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + upcomingHtml + attendedHtml;
+  const innerTabRow = [
+    '<div class="inner-tab-row">',
+    '<div class="inner-tab' + (defaultInner==='attended'?' active':'') + '" data-inner="attended" onclick="switchInnerTab(&apos;attended&apos;)">',
+    'Attended <span class="tab-badge">' + attended.length + '</span></div>',
+    '<div class="inner-tab' + (defaultInner==='upcoming'?' active':'') + '" data-inner="upcoming" onclick="switchInnerTab(&apos;upcoming&apos;)">',
+    'Upcoming <span class="tab-badge">' + upcoming.length + '</span></div>',
+    '</div>'
+  ].join('');
+  const innerPanels = [
+    '<div class="inner-panel' + (defaultInner==='attended'?' active':'') + '" id="inner-attended">' + attendedTable + '</div>',
+    '<div class="inner-panel' + (defaultInner==='upcoming'?' active':'') + '" id="inner-upcoming">' + upcomingTable + '</div>'
+  ].join('');
+  document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + innerTabRow + innerPanels;
 }
 
 // ── Potential tab ─────────────────────────────────────────────────
@@ -882,6 +894,11 @@ async function handleDecisionChange(select) {
 }
 
 // ── Utilities ─────────────────────────────────────────────────────────
+
+function switchInnerTab(name) {
+  document.querySelectorAll('.inner-tab').forEach(t => t.classList.toggle('active', t.dataset.inner===name));
+  document.querySelectorAll('.inner-panel').forEach(p => p.classList.toggle('active', p.id==='inner-'+name));
+}
 
 function toggleNotes(textId, toggleId) {
   const el = document.getElementById(textId); if (!el) return;
