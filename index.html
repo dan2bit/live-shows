@@ -18,9 +18,9 @@
     --text:      #e8e4dc;
     --text-muted:#9a928a;
     --text-dim:  #8e8a7a;
-    --amber:     #e8a020;
-    --amber-dim: #7a5210;
-    --amber-bg:  #1e1608;
+    --amber:     #c83020;
+    --amber-dim: #7a1a10;
+    --amber-bg:  #1e0808;
     --green:     #4a9a5a;
     --green-dim: #1e4a28;
     --green-bg:  #0e1e12;
@@ -281,7 +281,7 @@
   .cell-tier     { font-family: var(--mono); font-size: 10px; white-space: nowrap; }
   .tier-strong        { color: var(--amber); }
   .tier-medium        { color: var(--text-muted); }
-  .tier-medium-strong { color: #c09040; }
+  .tier-medium-strong { color: #c04030; }
   .tier-low           { color: var(--text-dim); }
 
   .cell-pot-notes { font-size: 12px; color: var(--text-muted); max-width: 280px; line-height: 1.4; }
@@ -307,8 +307,8 @@
   .about-modal .about-links { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .about-modal .about-link { font-family: var(--mono); font-size: 12px; color: var(--amber); text-decoration: none; padding: 6px 10px; border: 1px solid var(--amber-dim); border-radius: 3px; background: var(--amber-bg); }
   .about-modal .about-link:hover { background: #2a1c08; }
-  .hat-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; font-size: 22px; line-height: 1; opacity: 0.85; transition: opacity 0.15s; }
-  .hat-btn:hover { opacity: 1; }
+  .hat-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; font-size: 22px; line-height: 1; opacity: 0.85; transition: opacity 0.15s, transform 0.15s; }
+  .hat-btn:hover { opacity: 1; transform: rotate(-8deg) scale(1.08); }
   .bystander-banner { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
   .bystander-banner .recommend-cta { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--amber); border: 1px solid var(--amber-dim); border-radius: 3px; padding: 4px 10px; background: var(--amber-bg); cursor: not-allowed; opacity: 0.6; white-space: nowrap; }
   .for-sale-card { background: var(--surface); border: 1px solid #1a4a4a; border-radius: 6px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -798,7 +798,7 @@ function renderPotentialGroup(rows, groupKey, label) {
     <tbody>${tbody}</tbody></table>`;
   if (groupKey === 'pass') return `
     <div class="potential-group"><details class="pass-details">
-      <summary>Pass <span class="group-count">(${rows.length})</span></summary>
+      <summary>Shows I think I will pass on <span class="group-count">(${rows.length})</span></summary>
       <div class="group-table-wrap group-table-pass">${table}</div>
     </details></div>`;
   return `
@@ -816,9 +816,9 @@ function renderPotential() {
   const pass   = s.filter(r=>(r['Decision']||'').toLowerCase()==='pass');
   document.getElementById('potBadge').textContent = buy.length + '+' + choose.length;
   document.getElementById('potContent').innerHTML =
-    renderPotentialGroup(buy,'buy','🟢 Buy') +
-    renderPotentialGroup(choose,'choose','🟡 Choose') +
-    renderPotentialGroup(sell,'sell','🏷 Sell') +
+    renderPotentialGroup(buy,'buy','🟢 Buy — shows I plan to attend') +
+    renderPotentialGroup(choose,'choose','🟡 Choose — shows I am considering') +
+    renderPotentialGroup(sell,'sell','🏷 For Sale — tickets available') +
     renderPotentialGroup(pass,'pass','Pass') ||
     '<p class="loading" style="animation:none">No data</p>';
 }
