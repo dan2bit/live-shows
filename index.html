@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>live-shows</title>
-<link rel="icon" type="image/png" sizes="32x32" href="https://dan2bit.github.io/songs-for-my-funeral/live-shows/red_hat_icon_guitar.png">
-<link rel="shortcut icon" type="image/png" href="https://dan2bit.github.io/songs-for-my-funeral/live-shows/red_hat_icon_guitar.png"> 
+<link rel="icon" type="image/png" sizes="32x32" href="https://dan2bit.github.io/live-shows/red_hat_icon_guitar.png">
+<link rel="shortcut icon" type="image/png" href="https://dan2bit.github.io/live-shows/red_hat_icon_guitar.png"> 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
@@ -384,9 +384,7 @@
     <h3>GitHub Authentication</h3>
     <p>
       Paste a fine-grained Personal Access Token scoped to
-      <code>dan2bit/songs-for-my-funeral</code> with Contents read/write permission.<br><br>
-      See <a href="https://github.com/dan2bit/songs-for-my-funeral/issues/29" target="_blank">
-      issue #29</a> for step-by-step setup instructions.
+      <code>dan2bit/live-shows</code> with Contents and Issues read/write permission.
     </p>
     <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
     <div class="modal-actions">
@@ -399,11 +397,11 @@
 
 <script>
 const OWNER = 'dan2bit';
-const REPO  = 'songs-for-my-funeral';
-const CURRENT_PATH   = 'live-shows/live_shows_current.tsv';
-const POTENTIAL_PATH = 'live-shows/live_shows_potential.tsv';
+const REPO  = 'live-shows';
+const CURRENT_PATH   = 'live_shows_current.tsv';
+const POTENTIAL_PATH = 'live_shows_potential.tsv';
 const HISTORY_YEARS  = [2021, 2022, 2023, 2024, 2025];
-const PAT_KEY = 'ghpat_sfmf';
+const PAT_KEY = 'ghpat_liveshows';
 
 let currentRows   = [];
 let potentialRows = [];
@@ -488,7 +486,7 @@ async function loadOnThisDay() {
   const mmdd  = `${month}-${day}`;
 
   const results = await Promise.allSettled(
-    HISTORY_YEARS.map(yr => ghFetch(`live-shows/history/${yr}.tsv`))
+    HISTORY_YEARS.map(yr => ghFetch(`history/${yr}.tsv`))
   );
 
   const matches = [];
