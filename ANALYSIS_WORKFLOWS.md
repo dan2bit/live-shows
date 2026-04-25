@@ -24,7 +24,7 @@ https://www.bandsintown.com/c/washington-dc?came_from=278&utm_medium=web&utm_sou
 Parse the page and save the full listing as:
 
 ```
-live-shows/web-src/rhbl-bandsintown-dc-recommends.tsv
+web-src/rhbl-bandsintown-dc-recommends.tsv
 ```
 
 Schema: `Artist | Venue | Date | Event URL`
@@ -55,7 +55,7 @@ https://www.hereforthebands.com/washington-dc
 Parse the page and save the full listing as:
 
 ```
-live-shows/web-src/rhbl-hereforthebands-dc.tsv
+web-src/rhbl-hereforthebands-dc.tsv
 ```
 
 Schema: `Artist | Venue | Date | Venue URL`
@@ -82,7 +82,7 @@ separately via email.
 Blues cruises, major festivals, and annual award nominees are curated signals
 for discovering artists in the taste profile who aren't yet on the radar.
 This workflow cross-references those external sources against `artists.tsv`
-and feeds new discoveries into `new_artist_research.tsv`.
+and feeds new discoveries into `follows/new_artist_research.tsv`.
 
 ### Sources to check each quarter
 
@@ -118,7 +118,7 @@ and feeds new discoveries into `new_artist_research.tsv`.
      tracked for upcoming shows
    - **Medium tier** (in autograph books but not seen) — flag for review
    - **New name** (not in either) — research and add to
-     `new_artist_research.tsv` if they fit the taste profile
+     `follows/new_artist_research.tsv` if they fit the taste profile
 3. For any Strong-tier discoveries playing DC/MD/VA in the near term,
    surface as a potential buy recommendation
 4. For any Strong-tier new discoveries not yet followed, consider adding
@@ -126,7 +126,7 @@ and feeds new discoveries into `new_artist_research.tsv`.
 
 ### Output
 
-New artist discoveries go into `live-shows/new_artist_research.tsv`.
+New artist discoveries go into `follows/new_artist_research.tsv`.
 No separate output file — the workflow produces either TSV additions
 or conversation-level recommendations.
 
@@ -217,7 +217,7 @@ row where a preferred ticket tier sold out before a decision was reached.
 
 ### What to do
 
-1. Fetch `live-shows/live_shows_potential.tsv` from the repo
+1. Fetch `live_shows_potential.tsv` from the repo
 2. For every **Buy** and **Choose** row that has a `Purchase URL` or `Event URL`:
    open the page in Claude in Chrome and check current ticket availability
 3. **Opendate venues (Jammin' Java, Union Stage, Pearl Street, Howard):** read
@@ -231,7 +231,7 @@ row where a preferred ticket tier sold out before a decision was reached.
 
 ### Out of scope
 
-- Pass rows — no action needed
+- Pass and Sell rows — no action needed
 - Rows with no `Purchase URL` and no `Event URL` — nothing to check
 - Rows where the `Watching For` field is already "sold out" or the show is free
   (e.g. NGA lottery) — note but do not re-check unless specifically asked
