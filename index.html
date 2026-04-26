@@ -614,6 +614,14 @@ function buildBadges(row) {
 
 // ── Shows tab ────────────────────────────────────────────────
 
+function seatType(seat) {
+  const s = (seat || '').toLowerCase();
+  if (!s) return null;
+  if (s.includes('vip')) return null; // already badged
+  if (s.includes('ga') || s.includes('standing')) return 'GA';
+  return 'Seated';
+}
+
 function renderUpcomingRow(row, idx) {
   const days = daysFromNow(row['Show Date']);
   const cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
@@ -627,8 +635,12 @@ function renderUpcomingRow(row, idx) {
   const seat = authed ? esc(row['Seat Info / GA']||'') : '';
   const qty  = parseInt(row['Ticket Quantity']||'1',10);
   const calLink = authed ? `<a class="icon-link" href="${gcalUrl(row['Artist'])}" target="_blank" title="Search Google Calendar">📅</a>` : '';
+  const sType = seatType(row['Seat Info / GA'] || '');
+  const seatBadge = !authed && sType
+    ? `<span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:1px 5px;margin-left:5px">${sType}</span>`
+    : '';
   const mobileVenueLine = row['Venue Name']
-    ? `<div class="cell-venue-mobile">${esc(shortVenueName(row['Venue Name']))}${seat ? ` · ${seat}` : ''}</div>`
+    ? `<div class="cell-venue-mobile">${esc(shortVenueName(row['Venue Name']))}${seat ? ` · ${seat}` : ''}${seatBadge}</div>`
     : '';
   const badgesHtml = authed ? buildBadges(row) : '';
   return `
@@ -642,7 +654,7 @@ function renderUpcomingRow(row, idx) {
       ${authed && fullNotes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${fullNotes}</div>` : (notes && !authed ? `<div class="cell-notes-inline notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}
     </td>
     <td class="cell-venue col-support">${venueHtml}</td>
-    <td class="cell-seat col-seat">${seat}</td>
+    <td class="cell-seat col-seat">${authed ? seat : (sType ? `<span style='font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:1px 5px'>${sType}</span>` : '')}</td>
     <td class="cell-notes">${authed && fullNotes ? `
       <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${fullNotes}</div>
       <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : (notes && !authed ? `<div class="notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}</td>
@@ -798,7 +810,7 @@ function renderPotentialGroup(rows, groupKey, label) {
     <tbody>${tbody}</tbody></table>`;
   if (groupKey === 'pass') return `
     <div class="potential-group"><details class="pass-details">
-      <summary>Shows I think I will pass on <span class="group-count">(${rows.length})</span></summary>
+      <summary>⚪ Pass - considered, but not going<span class="group-count">(${rows.length})</span></summary>
       <div class="group-table-wrap group-table-pass">${table}</div>
     </details></div>`;
   return `
@@ -816,10 +828,10 @@ function renderPotential() {
   const pass   = s.filter(r=>(r['Decision']||'').toLowerCase()==='pass');
   document.getElementById('potBadge').textContent = buy.length + '+' + choose.length;
   document.getElementById('potContent').innerHTML =
-    renderPotentialGroup(buy,'buy','🟢 Buy — shows I plan to attend') +
+    renderPotentialGroup(buy,'buy','🟢 Buy — not purchased but probably going') +
     renderPotentialGroup(choose,'choose','🟡 Choose — shows I am considering') +
-    renderPotentialGroup(sell,'sell','🏷 For Sale — tickets available') +
-    renderPotentialGroup(pass,'pass','Pass') ||
+    renderPotentialGroup(sell,'sell','🏷 For Sale — buy my tickets') +
+    renderPotentialGroup(pass,'pass','⚪ Pass') ||
     '<p class="loading" style="animation:none">No data</p>';
 }
 
