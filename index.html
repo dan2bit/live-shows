@@ -468,13 +468,6 @@ function parseTsv(text) {
     while (vals.length < headers.length) vals.push('');
     const obj = {};
     headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
-    // Fix MCP trailing-tab stripping: if Playlist URL is not a URL but Notes is empty,
-    // notes text landed in the wrong column — swap it back.
-    const pu = obj['Playlist URL'] || '';
-    if (pu && !pu.startsWith('http') && !(obj['Notes / Memories'] || '')) {
-      obj['Notes / Memories'] = pu;
-      obj['Playlist URL'] = '';
-    }
     return obj;
   });
 }
@@ -677,7 +670,7 @@ function renderAttendedRow(row, idx) {
       ${row['Setlist.fm URL'] ? `<a class="icon-link" href="${esc(row['Setlist.fm URL'])}" target="_blank" title="Setlist.fm">♫</a>` : ''}
       ${row['Playlist URL']   ? `<a class="icon-link" href="${esc(row['Playlist URL'])}" target="_blank" title="YouTube playlist">▶</a>` : ''}
     </td>
-    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text${authed?' collapsed':' '}" id="n-at-${idx}"${authed?` onclick="toggleNotes('n-at-${idx}',null)"`:''} >${authed ? fullNotes : notes}</div>` : ''}</td>
+    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text${authed?' collapsed':''}" id="n-at-${idx}"${authed?` onclick="toggleNotes('n-at-${idx}',null)"`:''} >${authed ? fullNotes : notes}</div>` : ''}</td>
   </tr>`;
 }
 
