@@ -96,7 +96,6 @@
     font-size: 10px; padding: 1px 5px; border-radius: 10px; margin-left: 5px; vertical-align: middle;
   }
 
-  /* On This Day — fills the right space in the tab row */
   .on-this-day {
     margin-left: auto;
     display: flex;
@@ -107,58 +106,17 @@
     min-width: 0;
     overflow: hidden;
   }
-  .otd-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .otd-items {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    min-width: 0;
-  }
-  .otd-item {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-    min-width: 0;
-    overflow: hidden;
-  }
-  .otd-year {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    flex-shrink: 0;
-  }
-  .otd-artist {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .otd-venue {
-    font-size: 11px;
-    color: var(--text-dim);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .otd-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+  .otd-items { display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
+  .otd-item { display: flex; align-items: baseline; gap: 5px; min-width: 0; overflow: hidden; }
+  .otd-year { font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
+  .otd-artist { font-size: 12px; font-weight: 500; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .otd-venue { font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .otd-sep { color: var(--border2); font-size: 11px; flex-shrink: 0; }
   .otd-links { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
   .otd-none { font-size: 12px; color: var(--text-dim); font-style: italic; }
 
-  @media (max-width: 900px) {
-    .on-this-day { display: none; }
-  }
+  @media (max-width: 900px) { .on-this-day { display: none; } }
 
   .panel { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; }
   .panel.active { display: block; }
@@ -171,17 +129,10 @@
   .loading { font-family: var(--mono); font-size: 12px; color: var(--text-dim); padding: 40px 0; text-align: center; }
   .loading::after { content: ''; display: inline-block; width: 12px; animation: dots 1.2s steps(4, end) infinite; }
   @keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} }
-  .error-msg {
-    font-family: var(--mono); font-size: 12px; color: var(--red); padding: 16px;
-    background: var(--red-bg); border: 1px solid var(--red-dim); border-radius: 4px; margin: 20px 0;
-  }
+  .error-msg { font-family: var(--mono); font-size: 12px; color: var(--red); padding: 16px; background: var(--red-bg); border: 1px solid var(--red-dim); border-radius: 4px; margin: 20px 0; }
 
   .shows-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .shows-table th {
-    font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px;
-    border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface);
-  }
+  .shows-table th { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface); }
   .shows-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .shows-table tr:hover td { background: var(--surface2); }
 
@@ -203,9 +154,10 @@
   .cell-venue a:hover { color: var(--amber); }
   .cell-seat { font-size: 12px; color: var(--text-muted); }
   .cell-notes { max-width: 280px; }
-  .notes-text { color: var(--text-muted); font-size: 12px; line-height: 1.4; cursor: pointer; }
-  .notes-text.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .notes-toggle { font-family: var(--mono); font-size: 10px; color: var(--text-dim); cursor: pointer; margin-top: 2px; display: inline-block; }
+  .notes-text { color: var(--text-muted); font-size: 12px; line-height: 1.4; }
+  .notes-text.collapsible { cursor: pointer; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .notes-text.collapsible.expanded { display: block; }
+  .notes-toggle { font-family: var(--mono); font-size: 10px; color: var(--text-dim); cursor: pointer; margin-top: 2px; display: none; }
   .notes-toggle:hover { color: var(--amber); }
 
   .icon-link { display: inline-block; font-size: 13px; text-decoration: none; color: var(--text-dim); transition: color 0.15s; margin-left: 4px; }
@@ -220,24 +172,17 @@
   .badge-merch     { background: var(--red-bg);   color: #c07060;           border: 1px solid var(--red-dim); }
   .badge-paper     { background: var(--surface2); color: #7090a0;           border: 1px solid #2a4050; }
   .badge-boxoffice { background: var(--green-bg); color: var(--green);      border: 1px solid var(--green-dim); }
+  .badge-seat      { background: var(--surface2); color: var(--text-dim);   border: 1px solid var(--border); font-family: var(--mono); font-size: 10px; padding: 1px 5px; border-radius: 2px; }
 
   .inner-tab-row { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; gap: 0; }
-  .inner-tab {
-    font-family: var(--mono); font-size: 11px; padding: 8px 14px; cursor: pointer;
-    border-bottom: 2px solid transparent; color: var(--text-dim);
-    transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; user-select: none;
-  }
+  .inner-tab { font-family: var(--mono); font-size: 11px; padding: 8px 14px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--text-dim); transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; user-select: none; }
   .inner-tab:hover { color: var(--text-muted); }
   .inner-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
   .inner-panel { display: none; }
   .inner-panel.active { display: block; }
 
   .potential-group { margin-bottom: 28px; }
-  .group-header {
-    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-    border-radius: 4px 4px 0 0; border: 1px solid; border-bottom: none;
-    font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
-  }
+  .group-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 4px 4px 0 0; border: 1px solid; border-bottom: none; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
   .group-header-buy    { background: var(--green-bg);  border-color: var(--green-dim);  color: var(--green); }
   .group-header-choose { background: var(--yellow-bg); border-color: var(--yellow-dim); color: var(--yellow); }
   .group-header-sell   { background: #0e1a1a;          border-color: #1a4a4a;           color: #40a0a0; }
@@ -250,11 +195,7 @@
   .group-table-pass   { border-color: var(--gray-dim); }
 
   .pot-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .pot-table th {
-    font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px;
-    border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface);
-  }
+  .pot-table th { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface); }
   .pot-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .pot-table tr:last-child td { border-bottom: none; }
   .pot-table tr:hover td { background: var(--surface2); }
@@ -269,10 +210,7 @@
   .cell-decision-ro.sell   { color: #40a0a0; }
   .cell-decision-ro.pass   { color: var(--gray); }
 
-  .decision-select {
-    font-family: var(--mono); font-size: 11px; background: var(--surface2); color: var(--text);
-    border: 1px solid var(--border2); border-radius: 3px; padding: 3px 6px; cursor: pointer; outline: none;
-  }
+  .decision-select { font-family: var(--mono); font-size: 11px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); border-radius: 3px; padding: 3px 6px; cursor: pointer; outline: none; }
   .decision-select:focus { border-color: var(--amber-dim); }
 
   .cell-watching { font-size: 12px; color: var(--amber); font-family: var(--mono); white-space: nowrap; }
@@ -285,16 +223,12 @@
   .tier-low           { color: var(--text-dim); }
 
   .cell-pot-notes { font-size: 12px; color: var(--text-muted); max-width: 280px; line-height: 1.4; }
-  .cell-pot-notes.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
 
   .save-indicator { font-family: var(--mono); font-size: 10px; margin-left: 6px; }
   .save-ok  { color: var(--green); }
   .save-err { color: var(--red); }
 
-  .pass-details summary {
-    font-family: var(--mono); font-size: 11px; color: var(--gray); cursor: pointer; padding: 10px 12px;
-    list-style: none; user-select: none; background: var(--gray-bg); border: 1px solid var(--gray-dim); border-radius: 4px;
-  }
+  .pass-details summary { font-family: var(--mono); font-size: 11px; color: var(--gray); cursor: pointer; padding: 10px 12px; list-style: none; user-select: none; background: var(--gray-bg); border: 1px solid var(--gray-dim); border-radius: 4px; }
   .pass-details summary::before { content: '▶  '; }
   .pass-details[open] summary::before { content: '▼  '; }
   .pass-details[open] summary { border-radius: 4px 4px 0 0; border-bottom: none; }
@@ -324,11 +258,7 @@
   .modal h3 { font-family: var(--mono); font-size: 12px; color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
   .modal p { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
   .modal p a { color: var(--amber); }
-  .modal input[type="password"] {
-    width: 100%; font-family: var(--mono); font-size: 12px; background: var(--bg);
-    border: 1px solid var(--border2); border-radius: 3px; color: var(--text);
-    padding: 8px 10px; margin-bottom: 12px; outline: none;
-  }
+  .modal input[type="password"] { width: 100%; font-family: var(--mono); font-size: 12px; background: var(--bg); border: 1px solid var(--border2); border-radius: 3px; color: var(--text); padding: 8px 10px; margin-bottom: 12px; outline: none; }
   .modal input[type="password"]:focus { border-color: var(--amber-dim); }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
   .btn-save  { background: var(--amber-bg); border-color: var(--amber-dim); color: var(--amber); }
@@ -343,26 +273,16 @@
     .cell-notes { max-width: 160px; }
     .col-watching, .col-tier, .col-price, .col-context { display: none; }
     .cell-pot-notes { max-width: 160px; }
-    .cell-venue-mobile {
-      display: block;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .cell-venue-mobile { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     .cell-venue-mobile a { color: var(--text-muted); text-decoration: none; }
   }
 
-  /* Portrait phones: fixed layout, Date narrow, Notes visible but truncated */
   @media (max-width: 480px) {
     .shows-table { table-layout: fixed; width: 100%; }
-    .shows-table th:first-child,
-    .shows-table td:first-child { width: 52px; }
-    .shows-table th:last-child,
-    .shows-table td:last-child { width: 90px; }
+    .shows-table th:first-child, .shows-table td:first-child { width: 52px; }
+    .shows-table th:last-child,  .shows-table td:last-child  { width: 90px; }
     .cell-notes { max-width: 90px; }
-    /* Artist cell gets the remaining space and wraps freely */
     .cell-artist { word-break: break-word; }
-    /* Hide the inline notes duplicate at this breakpoint — notes column is visible */
     .cell-notes-inline { display: none; }
   }
 </style>
@@ -411,10 +331,10 @@
     <p>GenX DC native. Live music obsessive. I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch.</p>
     <p>This page tracks where I've been and where I'm going. If you know something I should see, there'll be a way to tell me soon.</p>
     <div class="about-links">
-      <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">▶ @dan2bit on YouTube — bootleg recordings</a>
-      <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">🎵 Music links — Linktree</a>
-      <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">🎩 Hat autographs</a>
-      <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">📷 Guitar Gods & Goddesses — photo album</a>
+      <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube — bootleg recordings</a>
+      <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links — Linktree</a>
+      <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a>
+      <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses — photo album</a>
     </div>
     <div class="modal-actions" style="margin-top:16px">
       <button class="btn" onclick="closeAboutModal()">Close</button>
@@ -425,10 +345,7 @@
 <div class="modal-backdrop" id="authModal">
   <div class="modal">
     <h3>GitHub Authentication</h3>
-    <p>
-      Paste a fine-grained Personal Access Token scoped to
-      <code>the repo</code> with Contents and Issues read/write permission.
-    </p>
+    <p>Paste a fine-grained Personal Access Token scoped to <code>the repo</code> with Contents and Issues read/write permission.</p>
     <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
     <div class="modal-actions">
       <button class="btn btn-clear" onclick="clearPat()">Clear saved</button>
@@ -450,57 +367,61 @@ let currentRows   = [];
 let potentialRows = [];
 let authed = false;
 
-async function ghFetch(path, opts = {}) {
-  const pat = localStorage.getItem(PAT_KEY);
-  const headers = { 'Accept': 'application/vnd.github.v3+json' };
-  if (pat) headers['Authorization'] = `token ${pat}`;
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
-  const res = await fetch(url, { cache: 'no-store', ...opts, headers: { ...headers, ...(opts.headers || {}) } });
-  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
+async function ghFetch(path, opts) {
+  opts = opts || {};
+  var pat = localStorage.getItem(PAT_KEY);
+  var headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (pat) headers['Authorization'] = 'token ' + pat;
+  var url = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + path;
+  var res = await fetch(url, Object.assign({ cache: 'no-store' }, opts, { headers: Object.assign(headers, opts.headers || {}) }));
+  if (!res.ok) throw new Error('GitHub API ' + res.status + ': ' + res.statusText);
   return res.json();
 }
 
 function parseTsv(text) {
-  const lines = text.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
-  const headers = lines[0].split('\t').map(h => h.trim());
-  return lines.slice(1).map(line => {
-    const vals = line.split('\t');
-    // Pad to header length so trailing empty columns aren't lost
+  var lines = text.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  var headers = lines[0].split('\t').map(function(h) { return h.trim(); });
+  return lines.slice(1).map(function(line) {
+    var vals = line.split('\t');
     while (vals.length < headers.length) vals.push('');
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+    var obj = {};
+    headers.forEach(function(h, i) { obj[h] = (vals[i] || '').trim(); });
     return obj;
   });
 }
 
 function serializeTsv(rows, headers) {
-  return [headers.join('\t'), ...rows.map(r => headers.map(h => r[h] || '').join('\t'))].join('\n') + '\n';
+  return [headers.join('\t')].concat(rows.map(function(r) {
+    return headers.map(function(h) { return r[h] || ''; }).join('\t');
+  })).join('\n') + '\n';
 }
 
-const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function parseISODate(s) {
-  const m = (s || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  var m = (s || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
   return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
 }
-function formatShowDate(s) { const d = parseISODate(s); return d ? `${MONTHS[d.getMonth()]} ${d.getDate()}` : s; }
-function dayOfWeek(s)      { const d = parseISODate(s); return d ? DAYS[d.getDay()] : ''; }
+function formatShowDate(s) { var d = parseISODate(s); return d ? MONTHS[d.getMonth()] + ' ' + d.getDate() : s; }
+function dayOfWeek(s)      { var d = parseISODate(s); return d ? DAYS[d.getDay()] : ''; }
 function daysFromNow(s) {
-  const d = parseISODate(s); if (!d) return 999;
-  const now = new Date(); now.setHours(0,0,0,0);
+  var d = parseISODate(s); if (!d) return 999;
+  var now = new Date(); now.setHours(0,0,0,0);
   return Math.floor((d - now) / 86400000);
 }
 function gcalUrl(artist) {
-  const now   = new Date();
-  const pad   = n => String(n).padStart(2, '0');
-  const start = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
-  const end   = `${now.getFullYear()+1}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
-  return `https://calendar.google.com/calendar/r/search?q=${encodeURIComponent(artist)}&start=${start}&end=${end}`;
+  var now = new Date();
+  var pad = function(n) { return String(n).padStart(2, '0'); };
+  var start = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate());
+  var end   = (now.getFullYear()+1) + pad(now.getMonth()+1) + pad(now.getDate());
+  return 'https://calendar.google.com/calendar/r/search?q=' + encodeURIComponent(artist) + '&start=' + start + '&end=' + end;
 }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-const VENUE_SHORT = {
+var VENUE_SHORT = {
   'Wolf Trap Filene Center': 'Wolf Trap',
   'Rams Head On Stage':      'Rams Head',
   'Barns at Wolf Trap':      'Barns',
@@ -513,62 +434,53 @@ function shortVenueName(full) {
   return VENUE_SHORT[full] || (full||'').split(',')[0].trim();
 }
 
-// ── On This Day ────────────────────────────────────────────
+// ── On This Day ──────────────────────────────────────────────────────
 
 async function loadOnThisDay() {
-  const now   = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day   = String(now.getDate()).padStart(2, '0');
-  const mmdd  = `${month}-${day}`;
+  var now   = new Date();
+  var month = String(now.getMonth() + 1).padStart(2, '0');
+  var day   = String(now.getDate()).padStart(2, '0');
+  var mmdd  = month + '-' + day;
 
-  const results = await Promise.allSettled(
-    HISTORY_YEARS.map(yr => ghFetch(`history/${yr}.tsv`))
+  var results = await Promise.allSettled(
+    HISTORY_YEARS.map(function(yr) { return ghFetch('history/' + yr + '.tsv'); })
   );
 
-  const matches = [];
-  results.forEach((res, i) => {
+  var matches = [];
+  results.forEach(function(res) {
     if (res.status !== 'fulfilled') return;
-    const raw  = atob(res.value.content.replace(/\n/g, ''));
-    const rows = parseTsv(raw);
-    rows.forEach(r => {
-      const date = (r['Show Date'] || '').trim();
-      if (date.endsWith(mmdd)) matches.push(r);
+    var raw  = atob(res.value.content.replace(/\n/g, ''));
+    var rows = parseTsv(raw);
+    rows.forEach(function(r) {
+      if ((r['Show Date'] || '').trim().endsWith(mmdd)) matches.push(r);
     });
   });
+  matches.sort(function(a,b) { return (a['Show Date']||'').localeCompare(b['Show Date']||''); });
 
-  matches.sort((a, b) => (a['Show Date'] || '').localeCompare(b['Show Date'] || ''));
-
-  const el = document.getElementById('otdItems');
-  if (!matches.length) {
-    el.innerHTML = '<span class="otd-none">no shows on this day</span>';
-    return;
-  }
-
-  el.innerHTML = matches.map(r => {
-    const year     = (r['Show Date'] || '').slice(0, 4);
-    const artist   = esc(r['Artist'] || '');
-    const rawVenue = (r['Venue'] || '');
-    const venue    = esc(rawVenue.split(',')[0].trim());
-    const setlist  = r['Setlist.fm URL'] || '';
-    const playlist = r['Playlist URL']   || '';
-    const links = [
-      setlist  ? `<a class="icon-link" href="${esc(setlist)}"  target="_blank" title="Setlist.fm">♫</a>` : '',
-      playlist ? `<a class="icon-link" href="${esc(playlist)}" target="_blank" title="YouTube playlist">▶</a>` : '',
-    ].join('');
-    return `<span class="otd-item">
-      <span class="otd-year">${year}</span>
-      <span class="otd-artist">${artist}</span>
-      <span class="otd-sep">·</span>
-      <span class="otd-venue">${venue}</span>
-      ${links ? `<span class="otd-links">${links}</span>` : ''}
-    </span>`;
+  var el = document.getElementById('otdItems');
+  if (!matches.length) { el.innerHTML = '<span class="otd-none">no shows on this day</span>'; return; }
+  el.innerHTML = matches.map(function(r) {
+    var year   = (r['Show Date']||'').slice(0,4);
+    var artist = esc(r['Artist']||'');
+    var venue  = esc((r['Venue']||'').split(',')[0].trim());
+    var setlist  = r['Setlist.fm URL'] || '';
+    var playlist = r['Playlist URL']   || '';
+    var links = (setlist  ? '<a class="icon-link" href="' + esc(setlist)  + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
+              + (playlist ? '<a class="icon-link" href="' + esc(playlist) + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '');
+    return '<span class="otd-item">'
+      + '<span class="otd-year">' + year + '</span>'
+      + '<span class="otd-artist">' + artist + '</span>'
+      + '<span class="otd-sep">·</span>'
+      + '<span class="otd-venue">' + venue + '</span>'
+      + (links ? '<span class="otd-links">' + links + '</span>' : '')
+      + '</span>';
   }).join('<span class="otd-sep" style="margin:0 4px">|</span>');
 }
 
-// ── Badges ───────────────────────────────────────────────────
+// ── Authed badges (shown only to authed users) ───────────────────────
 
 function ticketLabel(access) {
-  const a = (access||'').toLowerCase();
+  var a = (access||'').toLowerCase();
   if (a.includes('axs'))          return ['AXS', false];
   if (a.includes('ticketmaster')) return ['TM', false];
   if (a.includes('opendate'))     return ['Opendate', false];
@@ -580,285 +492,362 @@ function ticketLabel(access) {
 }
 
 function buildBadges(row) {
-  const notes    = (row['Notes / Memories'] || '').toLowerCase();
-  const seat     = (row['Seat Info / GA']   || '').toLowerCase();
-  const access   = (row['Ticket Access']    || '').toLowerCase();
-  const playlist = (row['Playlist URL']     || '').toLowerCase();
-  const allText  = notes + ' ' + seat + ' ' + access + ' ' + playlist;
-
-  const isVip      = allText.includes('vip');
-  const isWolfTrap = (row['Venue Name'] || '').includes('Wolf Trap Filene');
-  const faceValue  = parseFloat((row['Face Value (per ticket)'] || '').replace(/[^0-9.]/g, '')) || 0;
-  const isMerch    = !isVip && !isWolfTrap && faceValue >= 100;
-  const isHat      = (row['Notes / Memories'] || '').includes('HAT:');
-  const isBook     = (row['Notes / Memories'] || '').includes('BRING RHBS') ||
-                     (row['Notes / Memories'] || '').includes('BRING APS');
-  const isBoxOffice = (row['Notes / Memories'] || '').toLowerCase().includes('box office');
-
-  const badges = [];
-  const [label, isPaper] = ticketLabel(row['Ticket Access'] || '');
-  if (label)       badges.push(`<span class="badge ${isPaper ? 'badge-paper' : 'badge-ticket'}">${esc(label)}</span>`);
-  if (isVip)       badges.push('<span class="badge badge-vip">⭐ VIP</span>');
-  if (isHat)       badges.push('<span class="badge badge-hat">🎩 HAT</span>');
-  if (isBook)      badges.push('<span class="badge badge-book">📚 BOOK</span>');
-  if (isMerch)     badges.push('<span class="badge badge-merch">💸 MERCH</span>');
-  if (isBoxOffice) badges.push('<span class="badge badge-boxoffice">🎟 BOX OFFICE</span>');
-  return badges.length ? `<div class="badges">${badges.join('')}</div>` : '';
+  var notes   = (row['Notes / Memories'] || '').toLowerCase();
+  var seat    = (row['Seat Info / GA']   || '').toLowerCase();
+  var access  = (row['Ticket Access']    || '').toLowerCase();
+  var allText = notes + ' ' + seat + ' ' + access;
+  var isVip      = allText.includes('vip');
+  var isWolfTrap = (row['Venue Name'] || '').includes('Wolf Trap Filene');
+  var faceValue  = parseFloat((row['Face Value (per ticket)'] || '').replace(/[^0-9.]/g, '')) || 0;
+  var isMerch    = !isVip && !isWolfTrap && faceValue >= 100;
+  var isHat      = (row['Notes / Memories'] || '').includes('HAT:');
+  var isBook     = (row['Notes / Memories'] || '').includes('BRING RHBS') || (row['Notes / Memories'] || '').includes('BRING APS');
+  var isBoxOffice = (row['Notes / Memories'] || '').toLowerCase().includes('box office');
+  var badges = [];
+  var tl = ticketLabel(row['Ticket Access'] || '');
+  var label = tl[0], isPaper = tl[1];
+  if (label)       badges.push('<span class="badge ' + (isPaper ? 'badge-paper' : 'badge-ticket') + '">' + esc(label) + '</span>');
+  if (isVip)       badges.push('<span class="badge badge-vip">&#11088; VIP</span>');
+  if (isHat)       badges.push('<span class="badge badge-hat">&#127913; HAT</span>');
+  if (isBook)      badges.push('<span class="badge badge-book">&#128218; BOOK</span>');
+  if (isMerch)     badges.push('<span class="badge badge-merch">&#128184; MERCH</span>');
+  if (isBoxOffice) badges.push('<span class="badge badge-boxoffice">&#127903; BOX OFFICE</span>');
+  return badges.length ? '<div class="badges">' + badges.join('') + '</div>' : '';
 }
 
-// ── Shows tab ────────────────────────────────────────────────
-
-function seatType(seat) {
-  const s = (seat || '').toLowerCase();
-  if (!s) return null;
-  if (s.includes('vip')) return null; // already badged
-  if (s.includes('ga') || s.includes('standing')) return 'GA';
-  return 'Seated';
+function seatTypeBadge(seat) {
+  var s = (seat || '').toLowerCase();
+  if (!s || s.includes('vip')) return '';
+  var label = (s.includes('ga') || s.includes('standing')) ? 'GA' : 'Seated';
+  return '<span class="badge badge-seat">' + label + '</span>';
 }
 
-function renderUpcomingRow(row, idx) {
-  const days = daysFromNow(row['Show Date']);
-  const cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
-  const rawNotes     = row['Notes / Memories']||'';
-  const privateNotes = row['Private Notes']||'';
-  const notes        = esc(rawNotes);
-  const fullNotes    = esc(privateNotes ? rawNotes + (rawNotes ? ' · ' : '') + privateNotes : rawNotes);
-  const venueHtml = row['Venue Event URL']
-    ? `<a href="${esc(row['Venue Event URL'])}" target="_blank">${esc(row['Venue Name'])}</a>`
+// ── UPCOMING: two completely separate render functions ───────────────
+
+function renderUpcomingRowBystander(row, idx) {
+  var days = daysFromNow(row['Show Date']);
+  var cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
+  var publicNote = esc(row['Notes / Memories'] || '');
+  var venueHtml = row['Venue Event URL']
+    ? '<a href="' + esc(row['Venue Event URL']) + '" target="_blank">' + esc(row['Venue Name']) + '</a>'
     : esc(row['Venue Name']);
-  const seat = authed ? esc(row['Seat Info / GA']||'') : '';
-  const qty  = parseInt(row['Ticket Quantity']||'1',10);
-  const calLink = authed ? `<a class="icon-link" href="${gcalUrl(row['Artist'])}" target="_blank" title="Search Google Calendar">📅</a>` : '';
-  const sType = seatType(row['Seat Info / GA'] || '');
-  const seatBadge = !authed && sType
-    ? `<span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:1px 5px;margin-left:5px">${sType}</span>`
+  var seatBadge = seatTypeBadge(row['Seat Info / GA'] || '');
+  var mobileVenueLine = row['Venue Name']
+    ? '<div class="cell-venue-mobile">' + esc(shortVenueName(row['Venue Name'])) + (seatBadge ? ' ' + seatBadge : '') + '</div>'
     : '';
-  const mobileVenueLine = row['Venue Name']
-    ? `<div class="cell-venue-mobile">${esc(shortVenueName(row['Venue Name']))}${seat ? ` · ${seat}` : ''}${seatBadge}</div>`
-    : '';
-  const badgesHtml = authed ? buildBadges(row) : '';
-  return `
-  <tr class="${cls}">
-    <td class="cell-date">${formatShowDate(row['Show Date'])}<span class="day-of-week">${dayOfWeek(row['Show Date'])}</span></td>
-    <td>
-      <div class="cell-artist">${esc(row['Artist'])}${authed && qty > 1 ? ` <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">(${row['Ticket Quantity']})</span>` : ''}${calLink}</div>
-      ${row['Supporting Artist'] ? `<div class="cell-support">w/ ${esc(row['Supporting Artist'])}</div>` : ''}
-      ${mobileVenueLine}
-      ${badgesHtml}
-      ${authed && fullNotes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${fullNotes}</div>` : (notes && !authed ? `<div class="cell-notes-inline notes-text" id="n-up-anon-${idx}">${notes}</div>` : '')}
-    </td>
-    <td class="cell-venue col-support">${venueHtml}</td>
-    <td class="cell-seat col-seat">${authed ? seat : (sType ? `<span style='font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:1px 5px'>${sType}</span>` : '')}</td>
-    <td class="cell-notes">${authed && fullNotes ? `
-      <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${fullNotes}</div>
-      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')" style="display:none">more</span>` : (notes && !authed ? `<div class="notes-text" id="n-up-${idx}">${notes}</div>` : '')}</td>
-  </tr>`;
+  return '<tr class="' + cls + '">'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + dayOfWeek(row['Show Date']) + '</span></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist']) + '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   mobileVenueLine
+    + '</td>'
+    + '<td class="cell-venue col-support">' + venueHtml + '</td>'
+    + '<td class="cell-seat col-seat">' + seatBadge + '</td>'
+    + '<td class="cell-notes">' + (publicNote ? '<div class="notes-text">' + publicNote + '</div>' : '') + '</td>'
+    + '</tr>';
 }
 
-function renderAttendedRow(row, idx) {
-  const rawNotes     = row['Notes / Memories']||'';
-  const privateNotes = row['Private Notes']||'';
-  const notes    = esc(rawNotes);
-  const fullNotes = esc(privateNotes ? rawNotes + (rawNotes ? ' · ' : '') + privateNotes : rawNotes);
-  // Show short venue name (first comma-segment) under date instead of day-of-week
-  const shortVenue = esc(shortVenueName(row['Venue Name']||''));
-  return `
-  <tr>
-    <td class="cell-date">${formatShowDate(row['Show Date'])}<span class="day-of-week">${shortVenue}</span></td>
-    <td class="cell-artist">${esc(row['Artist'])}</td>
-    <td class="cell-venue col-support">${esc(row['Venue Name'])}</td>
-    <td>
-      ${row['Setlist.fm URL'] ? `<a class="icon-link" href="${esc(row['Setlist.fm URL'])}" target="_blank" title="Setlist.fm">♫</a>` : ''}
-      ${row['Playlist URL']   ? `<a class="icon-link" href="${esc(row['Playlist URL'])}" target="_blank" title="YouTube playlist">▶</a>` : ''}
-    </td>
-    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text${authed?' collapsed':''}" id="n-at-${idx}"${authed?` onclick="toggleNotes('n-at-${idx}',null)"`:''} >${authed ? fullNotes : notes}</div>` : ''}</td>
-  </tr>`;
+function renderUpcomingRowAuthed(row, idx) {
+  var days = daysFromNow(row['Show Date']);
+  var cls  = days <= 1 ? 'row-today' : days <= 7 ? 'row-soon' : '';
+  var publicNote  = row['Notes / Memories'] || '';
+  var privateNote = row['Private Notes'] || '';
+  var fullNote = privateNote ? publicNote + (publicNote ? ' \u00b7 ' : '') + privateNote : publicNote;
+  var fullNoteEsc = esc(fullNote);
+  var venueHtml = row['Venue Event URL']
+    ? '<a href="' + esc(row['Venue Event URL']) + '" target="_blank">' + esc(row['Venue Name']) + '</a>'
+    : esc(row['Venue Name']);
+  var seat = esc(row['Seat Info / GA'] || '');
+  var qty  = parseInt(row['Ticket Quantity'] || '1', 10);
+  var calLink = '<a class="icon-link" href="' + gcalUrl(row['Artist']) + '" target="_blank" title="Google Calendar">&#128197;</a>';
+  var mobileVenueLine = row['Venue Name']
+    ? '<div class="cell-venue-mobile">' + esc(shortVenueName(row['Venue Name'])) + (seat ? ' \u00b7 ' + seat : '') + '</div>'
+    : '';
+  var notesHtml = '';
+  if (fullNoteEsc) {
+    notesHtml = '<div class="notes-text collapsible" id="n-up-' + idx + '" onclick="toggleNote(this, \'nt-up-' + idx + '\')">' + fullNoteEsc + '</div>'
+              + '<span class="notes-toggle" id="nt-up-' + idx + '" onclick="toggleNote(document.getElementById(\'n-up-' + idx + '\'), this)">more</span>';
+  }
+  return '<tr class="' + cls + '">'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + dayOfWeek(row['Show Date']) + '</span></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist'])
+    +     (qty > 1 ? ' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">(' + row['Ticket Quantity'] + ')</span>' : '')
+    +     calLink
+    +   '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   mobileVenueLine
+    +   buildBadges(row)
+    + '</td>'
+    + '<td class="cell-venue col-support">' + venueHtml + '</td>'
+    + '<td class="cell-seat col-seat">' + seat + '</td>'
+    + '<td class="cell-notes">' + notesHtml + '</td>'
+    + '</tr>';
 }
+
+// ── ATTENDED: two completely separate render functions ───────────────
+
+function renderAttendedRowBystander(row, idx) {
+  var publicNote = esc(row['Notes / Memories'] || '');
+  var shortVenue = esc(shortVenueName(row['Venue Name'] || ''));
+  return '<tr>'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + shortVenue + '</span></td>'
+    + '<td class="cell-artist">' + esc(row['Artist']) + '</td>'
+    + '<td class="cell-venue col-support">' + esc(row['Venue Name']) + '</td>'
+    + '<td>'
+    +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
+    +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
+    + '</td>'
+    + '<td class="cell-notes">' + (publicNote ? '<div class="notes-text">' + publicNote + '</div>' : '') + '</td>'
+    + '</tr>';
+}
+
+function renderAttendedRowAuthed(row, idx) {
+  var publicNote  = row['Notes / Memories'] || '';
+  var privateNote = row['Private Notes'] || '';
+  var fullNote = privateNote ? publicNote + (publicNote ? ' \u00b7 ' : '') + privateNote : publicNote;
+  var fullNoteEsc = esc(fullNote);
+  var shortVenue = esc(shortVenueName(row['Venue Name'] || ''));
+  var notesHtml = '';
+  if (fullNoteEsc) {
+    notesHtml = '<div class="notes-text collapsible" id="n-at-' + idx + '" onclick="toggleNote(this, \'nt-at-' + idx + '\')">' + fullNoteEsc + '</div>'
+              + '<span class="notes-toggle" id="nt-at-' + idx + '" onclick="toggleNote(document.getElementById(\'n-at-' + idx + '\'), this)">more</span>';
+  }
+  return '<tr>'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + shortVenue + '</span></td>'
+    + '<td class="cell-artist">' + esc(row['Artist']) + '</td>'
+    + '<td class="cell-venue col-support">' + esc(row['Venue Name']) + '</td>'
+    + '<td>'
+    +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
+    +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
+    + '</td>'
+    + '<td class="cell-notes">' + notesHtml + '</td>'
+    + '</tr>';
+}
+
+// ── POTENTIAL GROUP: two completely separate render functions ─────────
+
+function renderPotentialRowBystander(r, gi) {
+  var publicNote = esc(r['Notes'] || '');
+  var venueUrl   = r['Event URL'] || r['Purchase URL'] || '';
+  var venueShort = shortVenueName(r['Venue'] || '');
+  var venueHtml  = venueUrl
+    ? '<a href="' + esc(venueUrl) + '" target="_blank" style="color:var(--text-muted);text-decoration:none">' + esc(venueShort) + '</a>'
+    : esc(venueShort);
+  var dec = r['Decision'] || '';
+  var cls = dec.toLowerCase().startsWith('buy') ? 'buy' : dec.toLowerCase() === 'choose' ? 'choose' : dec.toLowerCase() === 'sell' ? 'sell' : 'pass';
+  var prev = esc(r['Prev Show (2026)'] || '');
+  var next = esc(r['Next Show (2026)'] || '');
+  var contextHtml = [prev, next].filter(Boolean).map(function(s) { return '<div>' + s + '</div>'; }).join('');
+  var isSell = dec.toLowerCase() === 'sell';
+  var priceHtml = esc(r['Face Price'] || '');
+  if (isSell && r['Purchase URL']) {
+    priceHtml += ' <a class="icon-link" href="' + esc(r['Purchase URL']) + '" target="_blank" title="View listing">&#127903;</a>';
+  }
+  return '<tr class="row-' + cls + '">'
+    + '<td style="white-space:nowrap"><span class="cell-decision-ro ' + cls + '">' + esc(dec) + '</span></td>'
+    + '<td class="cell-date">' + formatShowDate(r['Date']) + '<span class="day-of-week">' + dayOfWeek(r['Date']) + '</span></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(r['Artist']) + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
+    +   (r['Support'] ? '<div class="cell-support">w/ ' + esc(r['Support']) + '</div>' : '')
+    + '</td>'
+    + '<td>' + venueHtml + '<div style="font-size:11px;color:var(--text-dim);margin-top:2px">' + esc(r['Venue City'] || '') + '</div></td>'
+    + '<td class="col-tier">' + tierHtml(r['Tier'] || '') + '</td>'
+    + '<td class="col-price cell-price">' + priceHtml + '</td>'
+    + '<td class="col-watching">' + (r['Watching For'] ? '<span class="cell-watching">&#9888; ' + esc(r['Watching For']) + '</span>' : '') + '</td>'
+    + '<td class="col-context cell-context">' + contextHtml + '</td>'
+    + '<td class="cell-pot-notes">' + (publicNote ? '<div>' + publicNote + '</div>' : '') + '</td>'
+    + '</tr>';
+}
+
+function renderPotentialRowAuthed(r, gi) {
+  var publicNote  = r['Notes'] || '';
+  var privateNote = r['Private Notes'] || '';
+  var sentinel    = privateNote === '-';
+  var fullNote    = (!sentinel && privateNote) ? publicNote + (publicNote ? ' \u00b7 ' : '') + privateNote : publicNote;
+  var fullNoteEsc = esc(fullNote);
+  var venueUrl   = r['Event URL'] || r['Purchase URL'] || '';
+  var venueShort = shortVenueName(r['Venue'] || '');
+  var venueHtml  = venueUrl
+    ? '<a href="' + esc(venueUrl) + '" target="_blank" style="color:var(--text-muted);text-decoration:none">' + esc(venueShort) + '</a>'
+    : esc(venueShort);
+  var prev = esc(r['Prev Show (2026)'] || '');
+  var next = esc(r['Next Show (2026)'] || '');
+  var contextHtml = [prev, next].filter(Boolean).map(function(s) { return '<div>' + s + '</div>'; }).join('');
+  var notesHtml = fullNoteEsc
+    ? '<div class="cell-pot-notes" style="cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" onclick="this.style.display=\'block\';this.style.cursor=\'default\'">' + fullNoteEsc + '</div>'
+    : '';
+  var dec = r['Decision'] || '';
+  var isSell = dec.toLowerCase() === 'sell';
+  var decHtml;
+  if (isSell) {
+    decHtml = '<span class="cell-decision-ro sell">' + esc(dec) + '</span>'
+            + '<button class="revoke-btn" onclick="handleRevoke(' + gi + ')" title="Remove listing">&#10005; revoke</button>';
+  } else {
+    var opts = ['Buy','Choose','Pass'].map(function(v) {
+      return '<option value="' + v + '"' + (dec.toLowerCase().startsWith(v.toLowerCase()) ? ' selected' : '') + '>' + v + '</option>';
+    }).join('');
+    decHtml = '<select class="decision-select" data-row="' + gi + '" onchange="handleDecisionChange(this)">' + opts + '</select>'
+            + '<span class="save-indicator" id="save-' + gi + '"></span>';
+  }
+  var priceHtml = esc(r['Face Price'] || '');
+  var purchaseUrl = r['Purchase URL'] || '';
+  var showLink = isSell ? purchaseUrl : ((dec.toLowerCase().startsWith('buy') || dec.toLowerCase() === 'choose') && purchaseUrl);
+  if (showLink) {
+    priceHtml += ' <a class="icon-link" href="' + esc(purchaseUrl) + '" target="_blank" title="' + (isSell ? 'View listing' : 'Buy tickets') + '">&#127903;</a>';
+  }
+  return '<tr class="row-' + dec.toLowerCase() + '">'
+    + '<td style="white-space:nowrap">' + decHtml + '</td>'
+    + '<td class="cell-date">' + formatShowDate(r['Date']) + '<span class="day-of-week">' + dayOfWeek(r['Date']) + '</span></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(r['Artist']) + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
+    +   (r['Support'] ? '<div class="cell-support">w/ ' + esc(r['Support']) + '</div>' : '')
+    + '</td>'
+    + '<td>' + venueHtml + '<div style="font-size:11px;color:var(--text-dim);margin-top:2px">' + esc(r['Venue City'] || '') + '</div></td>'
+    + '<td class="col-tier">' + tierHtml(r['Tier'] || '') + '</td>'
+    + '<td class="col-price cell-price">' + priceHtml + '</td>'
+    + '<td class="col-watching">' + (r['Watching For'] ? '<span class="cell-watching">&#9888; ' + esc(r['Watching For']) + '</span>' : '') + '</td>'
+    + '<td class="col-context cell-context">' + contextHtml + '</td>'
+    + '<td class="cell-pot-notes">' + notesHtml + '</td>'
+    + '</tr>';
+}
+
+// ── Shows rendering ──────────────────────────────────────────────────
 
 function renderShows() {
-  const upcoming = currentRows.filter(r=>r['Status']==='upcoming').sort((a,b)=>(a['Show Date']||'').localeCompare(b['Show Date']||''));
-  const attended = currentRows.filter(r=>r['Status']==='attended').sort((a,b)=>(b['Show Date']||'').localeCompare(a['Show Date']||''));
-  const sellRows = potentialRows.filter(r=>(r['Decision']||'').toLowerCase()==='sell');
-  const forSaleHtml = sellRows.length ? `
-    <div style="margin-bottom:20px">
-      <div class="section-header"><span class="section-title" style="color:#40a0a0">🏷 For Sale</span><span class="section-count">${sellRows.length} listing${sellRows.length>1?'s':''}</span></div>
-      ${sellRows.map(r=>`
-      <div class="for-sale-card">
-        <div>
-          <div class="fsc-label">Tickets available</div>
-          <div class="fsc-artist">${esc(r['Artist'])}</div>
-          <div class="fsc-detail">${formatShowDate(r['Date'])} · ${esc(r['Venue']||'')} · ${esc(r['Venue City']||'')}</div>
-          <div class="fsc-detail" style="margin-top:4px;font-family:var(--mono);color:#40a0a0">${esc(r['Face Price']||'')} / ticket</div>
-          <div class="fsc-detail" style="margin-top:2px;font-family:var(--mono);font-size:11px;color:var(--text-dim)">${(()=>{const m=(r['Watching For']||'').match(/(\d+)/);return m?m[1]+' ticket'+(m[1]==='1'?'':'s')+' available':'tickets available';})()}</div>
-        </div>
-        ${r['Purchase URL'] ? `<a class="fsc-buy-btn" href="${esc(r['Purchase URL'])}" target="_blank">Buy tickets →</a>` : ''}
-      </div>`).join('')}
-    </div>` : '';
-  const bystanderBanner = !authed ? `
-    <div class="bystander-banner">
-      <span>👋 Browsing as a visitor — some details are hidden. Know something I should see?</span>
-      <span class="recommend-cta" title="Coming soon">Suggest a show ↗</span>
-    </div>` : '';
+  var upcoming = currentRows.filter(function(r) { return r['Status'] === 'upcoming'; })
+    .sort(function(a,b) { return (a['Show Date']||'').localeCompare(b['Show Date']||''); });
+  var attended = currentRows.filter(function(r) { return r['Status'] === 'attended'; })
+    .sort(function(a,b) { return (b['Show Date']||'').localeCompare(a['Show Date']||''); });
+
+  var sellRows = potentialRows.filter(function(r) { return (r['Decision']||'').toLowerCase() === 'sell'; });
+  var forSaleHtml = '';
+  if (sellRows.length) {
+    forSaleHtml = '<div style="margin-bottom:20px">'
+      + '<div class="section-header"><span class="section-title" style="color:#40a0a0">&#127991; For Sale</span><span class="section-count">' + sellRows.length + ' listing' + (sellRows.length > 1 ? 's' : '') + '</span></div>'
+      + sellRows.map(function(r) {
+          var m = (r['Watching For']||'').match(/(\d+)/);
+          var qty = m ? m[1] + ' ticket' + (m[1]==='1' ? '' : 's') + ' available' : 'tickets available';
+          return '<div class="for-sale-card">'
+            + '<div>'
+            +   '<div class="fsc-label">Tickets available</div>'
+            +   '<div class="fsc-artist">' + esc(r['Artist']) + '</div>'
+            +   '<div class="fsc-detail">' + formatShowDate(r['Date']) + ' &middot; ' + esc(r['Venue']||'') + ' &middot; ' + esc(r['Venue City']||'') + '</div>'
+            +   '<div class="fsc-detail" style="margin-top:4px;font-family:var(--mono);color:#40a0a0">' + esc(r['Face Price']||'') + ' / ticket</div>'
+            +   '<div class="fsc-detail" style="margin-top:2px;font-family:var(--mono);font-size:11px;color:var(--text-dim)">' + qty + '</div>'
+            + '</div>'
+            + (r['Purchase URL'] ? '<a class="fsc-buy-btn" href="' + esc(r['Purchase URL']) + '" target="_blank">Buy tickets &#8594;</a>' : '')
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  var bystanderBanner = !authed
+    ? '<div class="bystander-banner"><span>&#128075; Browsing as a visitor — some details are hidden. Know something I should see?</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>'
+    : '';
+
   document.getElementById('showsBadge').textContent = attended.length + '+' + upcoming.length;
-  // Default inner tab: Attended for bystanders, Upcoming for authed
-  const defaultInner = authed ? 'upcoming' : 'attended';
-  const upcomingTable = [
-    '<table class="shows-table">',
-    '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>',
-    '<tbody>' + upcoming.map((r,i) => renderUpcomingRow(r,i)).join('') + '</tbody>',
-    '</table>'
-  ].join('');
-  const attendedTable = [
-    '<div class="attended-table">',
-    '<table class="shows-table">',
-    '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>',
-    '<tbody>' + attended.map((r,i) => renderAttendedRow(r,i)).join('') + '</tbody>',
-    '</table></div>'
-  ].join('');
-  const innerTabRow = [
-    '<div class="inner-tab-row">',
-    '<div class="inner-tab' + (defaultInner==='attended'?' active':'') + '" data-inner="attended" onclick="switchInnerTab(&apos;attended&apos;)">',
-    'Attended <span class="tab-badge">' + attended.length + '</span></div>',
-    '<div class="inner-tab' + (defaultInner==='upcoming'?' active':'') + '" data-inner="upcoming" onclick="switchInnerTab(&apos;upcoming&apos;)">',
-    'Upcoming <span class="tab-badge">' + upcoming.length + '</span></div>',
-    '</div>'
-  ].join('');
-  const innerPanels = [
-    '<div class="inner-panel' + (defaultInner==='attended'?' active':'') + '" id="inner-attended">' + attendedTable + '</div>',
-    '<div class="inner-panel' + (defaultInner==='upcoming'?' active':'') + '" id="inner-upcoming">' + upcomingTable + '</div>'
-  ].join('');
+
+  var upcomingTbody, attendedTbody;
+  if (authed) {
+    upcomingTbody = upcoming.map(function(r,i) { return renderUpcomingRowAuthed(r,i); }).join('');
+    attendedTbody = attended.map(function(r,i) { return renderAttendedRowAuthed(r,i); }).join('');
+  } else {
+    upcomingTbody = upcoming.map(function(r,i) { return renderUpcomingRowBystander(r,i); }).join('');
+    attendedTbody = attended.map(function(r,i) { return renderAttendedRowBystander(r,i); }).join('');
+  }
+
+  var upcomingTable = '<table class="shows-table">'
+    + '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead>'
+    + '<tbody>' + upcomingTbody + '</tbody></table>';
+
+  var attendedTable = '<div class="attended-table"><table class="shows-table">'
+    + '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>'
+    + '<tbody>' + attendedTbody + '</tbody></table></div>';
+
+  var defaultInner = authed ? 'upcoming' : 'attended';
+  var innerTabRow = '<div class="inner-tab-row">'
+    + '<div class="inner-tab' + (defaultInner==='attended' ? ' active' : '') + '" data-inner="attended" onclick="switchInnerTab(&apos;attended&apos;)">Attended <span class="tab-badge">' + attended.length + '</span></div>'
+    + '<div class="inner-tab' + (defaultInner==='upcoming' ? ' active' : '') + '" data-inner="upcoming" onclick="switchInnerTab(&apos;upcoming&apos;)">Upcoming <span class="tab-badge">' + upcoming.length + '</span></div>'
+    + '</div>';
+
+  var innerPanels = '<div class="inner-panel' + (defaultInner==='attended' ? ' active' : '') + '" id="inner-attended">' + attendedTable + '</div>'
+    + '<div class="inner-panel' + (defaultInner==='upcoming' ? ' active' : '') + '" id="inner-upcoming">' + upcomingTable + '</div>';
+
   document.getElementById('showsContent').innerHTML = forSaleHtml + bystanderBanner + innerTabRow + innerPanels;
+  requestAnimationFrame(revealToggles);
 }
 
-// ── Potential tab ─────────────────────────────────────────────────
+// ── Potential rendering ──────────────────────────────────────────────
 
 function tierHtml(tier) {
-  const t = (tier||'').toLowerCase();
-  const cls = t.includes('strong') && t.includes('medium') ? 'tier-medium-strong'
+  var t = (tier||'').toLowerCase();
+  var cls = (t.includes('strong') && t.includes('medium')) ? 'tier-medium-strong'
     : t==='strong' ? 'tier-strong' : t==='low' ? 'tier-low' : 'tier-medium';
-  return `<span class="cell-tier ${cls}">${esc(tier)}</span>`;
-}
-
-function decisionHtml(row, idx) {
-  const d   = row['Decision']||'';
-  const cls = d.toLowerCase().startsWith('buy') ? 'buy' : d.toLowerCase()==='choose' ? 'choose' : d.toLowerCase()==='sell' ? 'sell' : 'pass';
-  if (d.toLowerCase()==='sell') {
-    const revokeBtn = authed
-      ? `<button class="revoke-btn" onclick="handleRevoke(${idx})" title="Remove listing from potentials">✕ revoke</button>`
-      : '';
-    return `<span class="cell-decision-ro sell">${esc(d)}</span>${revokeBtn}`;
-  }
-  if (!authed) return `<span class="cell-decision-ro ${cls}">${esc(d)}</span>`;
-  const opts = ['Buy','Choose','Pass'].map(v =>
-    `<option value="${v}"${d.toLowerCase().startsWith(v.toLowerCase())?' selected':''}>${v}</option>`
-  ).join('');
-  return `<select class="decision-select" data-row="${idx}" onchange="handleDecisionChange(this)">${opts}</select>
-          <span class="save-indicator" id="save-${idx}"></span>`;
-}
-
-function faceCellHtml(r) {
-  const price = esc(r['Face Price'] || '');
-  const dec = (r['Decision'] || '').toLowerCase();
-  const purchaseUrl = r['Purchase URL'] || '';
-  // Show buy link for Buy and Choose when authed; show sell link always for Sell
-  const isSell = dec === 'sell';
-  const showLink = isSell ? purchaseUrl : (authed && (dec.startsWith('buy') || dec === 'choose') && purchaseUrl);
-  const linkTitle = isSell ? 'View listing' : 'Buy tickets';
-  const buyLink = showLink
-    ? `<a class="icon-link" href="${esc(purchaseUrl)}" target="_blank" title="${linkTitle}">🎟</a>`
-    : '';
-  return `${price}${buyLink}`;
+  return '<span class="cell-tier ' + cls + '">' + esc(tier) + '</span>';
 }
 
 function renderPotentialGroup(rows, groupKey, label) {
   if (!rows.length) return '';
-  const tbody = rows.map(r => {
-    const gi = potentialRows.indexOf(r);
-    const rawNotes    = r['Notes']||'';
-    const privNotes   = r['Private Notes']||'';
-    const notes       = esc(rawNotes);
-    const fullNotes   = esc(privNotes && privNotes !== '-' ? rawNotes + (rawNotes ? ' · ' : '') + privNotes : rawNotes);
-    const venueUrl = r['Event URL'] || r['Purchase URL'] || '';
-    const venueShort = shortVenueName(r['Venue']||'');
-    const venueHtml = venueUrl
-      ? `<a href="${esc(venueUrl)}" target="_blank" style="color:var(--text-muted);text-decoration:none">${esc(venueShort)}</a>`
-      : esc(venueShort);
-    const prev = esc(r['Prev Show (2026)']||'');
-    const next = esc(r['Next Show (2026)']||'');
-    const contextHtml = [prev, next].filter(Boolean).map(s => `<div>${s}</div>`).join('');
-    return `
-    <tr class="row-${groupKey}">
-      <td style="white-space:nowrap">${decisionHtml(r,gi)}</td>
-      <td class="cell-date">${formatShowDate(r['Date'])}<span class="day-of-week">${dayOfWeek(r['Date'])}</span></td>
-      <td>
-        <div class="cell-artist">${esc(r['Artist'])}${(r['Notes']||'').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>' : ''}</div>
-        ${r['Support']?`<div class="cell-support">w/ ${esc(r['Support'])}</div>`:''}
-      </td>
-      <td>${venueHtml}<div style="font-size:11px;color:var(--text-dim);margin-top:2px">${esc(r['Venue City']||'')}</div></td>
-      <td class="col-tier">${tierHtml(r['Tier']||'')}</td>
-      <td class="col-price cell-price">${faceCellHtml(r)}</td>
-      <td class="col-watching">${r['Watching For']?`<span class="cell-watching">⚠ ${esc(r['Watching For'])}</span>`:''}</td>
-      <td class="col-context cell-context">${contextHtml}</td>
-      <td class="cell-pot-notes">${(authed?fullNotes:notes)?`<div class="cell-pot-notes${authed?' collapsed':''}"${authed?` onclick="this.classList.toggle('collapsed')"`:''}>${authed?fullNotes:notes}</div>`:''}</td>
-    </tr>`;
-  }).join('');
-  const table = `<table class="pot-table">
-    <thead><tr><th>Decision</th><th>Date</th><th>Artist</th><th>Venue</th><th class="col-tier">Tier</th><th class="col-price">Face</th><th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th></tr></thead>
-    <tbody>${tbody}</tbody></table>`;
-  if (groupKey === 'pass') return `
-    <div class="potential-group"><details class="pass-details">
-      <summary>⚪ Pass - considered, but not going <span class="group-count">(${rows.length})</span></summary>
-      <div class="group-table-wrap group-table-pass">${table}</div>
-    </details></div>`;
-  return `
-    <div class="potential-group">
-      <div class="group-header group-header-${groupKey}">${label} <span class="group-count">(${rows.length})</span></div>
-      <div class="group-table-wrap group-table-${groupKey}">${table}</div>
-    </div>`;
+  var tbody;
+  if (authed) {
+    tbody = rows.map(function(r) { return renderPotentialRowAuthed(r, potentialRows.indexOf(r)); }).join('');
+  } else {
+    tbody = rows.map(function(r) { return renderPotentialRowBystander(r, potentialRows.indexOf(r)); }).join('');
+  }
+  var table = '<table class="pot-table">'
+    + '<thead><tr><th>Decision</th><th>Date</th><th>Artist</th><th>Venue</th>'
+    + '<th class="col-tier">Tier</th><th class="col-price">Face</th>'
+    + '<th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th>'
+    + '</tr></thead><tbody>' + tbody + '</tbody></table>';
+  if (groupKey === 'pass') {
+    return '<div class="potential-group"><details class="pass-details">'
+      + '<summary>&#9711; Pass - considered, but not going <span class="group-count">(' + rows.length + ')</span></summary>'
+      + '<div class="group-table-wrap group-table-pass">' + table + '</div>'
+      + '</details></div>';
+  }
+  return '<div class="potential-group">'
+    + '<div class="group-header group-header-' + groupKey + '">' + label + ' <span class="group-count">(' + rows.length + ')</span></div>'
+    + '<div class="group-table-wrap group-table-' + groupKey + '">' + table + '</div>'
+    + '</div>';
 }
 
 function renderPotential() {
-  const s = [...potentialRows].sort((a,b)=>(a['Date']||'').localeCompare(b['Date']||''));
-  const buy    = s.filter(r=>(r['Decision']||'').toLowerCase().startsWith('buy'));
-  const choose = s.filter(r=>(r['Decision']||'').toLowerCase()==='choose');
-  const sell   = s.filter(r=>(r['Decision']||'').toLowerCase()==='sell');
-  const pass   = s.filter(r=>(r['Decision']||'').toLowerCase()==='pass');
+  var s = potentialRows.slice().sort(function(a,b) { return (a['Date']||'').localeCompare(b['Date']||''); });
+  var buy    = s.filter(function(r) { return (r['Decision']||'').toLowerCase().startsWith('buy'); });
+  var choose = s.filter(function(r) { return (r['Decision']||'').toLowerCase() === 'choose'; });
+  var sell   = s.filter(function(r) { return (r['Decision']||'').toLowerCase() === 'sell'; });
+  var pass   = s.filter(function(r) { return (r['Decision']||'').toLowerCase() === 'pass'; });
   document.getElementById('potBadge').textContent = buy.length + '+' + choose.length;
-  document.getElementById('potContent').innerHTML =
-    renderPotentialGroup(buy,'buy','🟢 Buy — not purchased but probably going') +
-    renderPotentialGroup(choose,'choose','🟡 Choose — shows I am considering') +
-    renderPotentialGroup(sell,'sell','🏷 For Sale — buy my tickets') +
-    renderPotentialGroup(pass,'pass','⚪ Pass - considered, but not going') ||
-    '<p class="loading" style="animation:none">No data</p>';
+  var html = renderPotentialGroup(buy,    'buy',    '&#129001; Buy — not purchased but probably going')
+           + renderPotentialGroup(choose, 'choose', '&#128993; Choose — shows I am considering')
+           + renderPotentialGroup(sell,   'sell',   '&#127991; For Sale — buy my tickets')
+           + renderPotentialGroup(pass,   'pass',   'Pass');
+  document.getElementById('potContent').innerHTML = html || '<p class="loading" style="animation:none">No data</p>';
 }
 
-// ── Decision editing ────────────────────────────────────────────────────
+// ── Decision editing ─────────────────────────────────────────────────
 
 async function handleRevoke(idx) {
-  if (!confirm(`Remove this Sell row from potentials? This cannot be undone.`)) return;
-  const ind = document.getElementById(`save-${idx}`);
-  if (ind) { ind.textContent = '…'; ind.className = 'save-indicator'; }
+  if (!confirm('Remove this Sell row from potentials? This cannot be undone.')) return;
   try {
-    const fileData = await ghFetch(POTENTIAL_PATH);
-    const rawText  = atob(fileData.content.replace(/\n/g,''));
-    const headers  = rawText.split('\n')[0].split('\t').map(h=>h.trim());
-    const rows     = parseTsv(rawText);
-    const artist   = rows[idx]['Artist'] || 'show';
+    var fileData = await ghFetch(POTENTIAL_PATH);
+    var rawText  = atob(fileData.content.replace(/\n/g,''));
+    var headers  = rawText.split('\n')[0].split('\t').map(function(h) { return h.trim(); });
+    var rows     = parseTsv(rawText);
+    var artist   = rows[idx]['Artist'] || 'show';
     rows.splice(idx, 1);
     potentialRows.splice(idx, 1);
-    const pat = localStorage.getItem(PAT_KEY);
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${POTENTIAL_PATH}`, {
+    var pat = localStorage.getItem(PAT_KEY);
+    var res = await fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + POTENTIAL_PATH, {
       method: 'PUT',
-      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':`token ${pat}`, 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        message: `potential: remove ${artist} Sell row (ticket sold or revoked)`,
-        content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))),
-        sha: fileData.sha
-      })
+      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':'token ' + pat, 'Content-Type':'application/json' },
+      body: JSON.stringify({ message: 'potential: remove ' + artist + ' Sell row (revoked)', content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))), sha: fileData.sha })
     });
     if (!res.ok) throw new Error(await res.text());
     potentialRows = rows;
-    setTimeout(() => renderPotential(), 400);
+    setTimeout(function() { renderPotential(); }, 400);
   } catch(e) {
     console.error(e);
     alert('Error removing row: ' + e.message);
@@ -866,82 +855,77 @@ async function handleRevoke(idx) {
 }
 
 async function handleDecisionChange(select) {
-  const idx    = parseInt(select.dataset.row);
-  const newVal = select.value;
-  const ind    = document.getElementById(`save-${idx}`);
+  var idx    = parseInt(select.dataset.row);
+  var newVal = select.value;
+  var ind    = document.getElementById('save-' + idx);
   ind.textContent = '…'; ind.className = 'save-indicator';
   try {
-    const fileData = await ghFetch(POTENTIAL_PATH);
-    const rawText  = atob(fileData.content.replace(/\n/g,''));
-    const headers  = rawText.split('\n')[0].split('\t').map(h=>h.trim());
-    const rows     = parseTsv(rawText);
+    var fileData = await ghFetch(POTENTIAL_PATH);
+    var rawText  = atob(fileData.content.replace(/\n/g,''));
+    var headers  = rawText.split('\n')[0].split('\t').map(function(h) { return h.trim(); });
+    var rows     = parseTsv(rawText);
     rows[idx]['Decision'] = newVal;
     potentialRows[idx]['Decision'] = newVal;
-    rows.sort((a,b) => {
-      const rank = r => (r['Decision']||'').toLowerCase().startsWith('buy') ? 0
-        : (r['Decision']||'').toLowerCase()==='choose' ? 1
-        : (r['Decision']||'').toLowerCase()==='sell' ? 2 : 3;
+    rows.sort(function(a,b) {
+      var rank = function(r) {
+        var d = (r['Decision']||'').toLowerCase();
+        return d.startsWith('buy') ? 0 : d==='choose' ? 1 : d==='sell' ? 2 : 3;
+      };
       return rank(a) - rank(b) || (a['Date']||'').localeCompare(b['Date']||'');
     });
-    const pat = localStorage.getItem(PAT_KEY);
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${POTENTIAL_PATH}`, {
+    var pat = localStorage.getItem(PAT_KEY);
+    var res = await fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + POTENTIAL_PATH, {
       method: 'PUT',
-      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':`token ${pat}`, 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        message: `potential: update ${potentialRows[idx]['Artist']} decision`,
-        content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))),
-        sha: fileData.sha
-      })
+      headers: { 'Accept':'application/vnd.github.v3+json', 'Authorization':'token ' + pat, 'Content-Type':'application/json' },
+      body: JSON.stringify({ message: 'potential: update ' + (potentialRows[idx]['Artist']||'') + ' decision', content: btoa(unescape(encodeURIComponent(serializeTsv(rows, headers)))), sha: fileData.sha })
     });
     if (!res.ok) throw new Error(await res.text());
     potentialRows = rows;
-    ind.textContent = '✓'; ind.className = 'save-indicator save-ok';
-    setTimeout(() => renderPotential(), 600);
+    ind.textContent = '&#10003;'; ind.className = 'save-indicator save-ok';
+    setTimeout(function() { renderPotential(); }, 600);
   } catch(e) {
-    console.error(e); ind.textContent = '✗'; ind.className = 'save-indicator save-err';
+    console.error(e); ind.textContent = '&#10007;'; ind.className = 'save-indicator save-err';
   }
 }
 
-// ── Utilities ─────────────────────────────────────────────────────────
+// ── Utilities ────────────────────────────────────────────────────────
 
-function switchInnerTab(name) {
-  document.querySelectorAll('.inner-tab').forEach(t => t.classList.toggle('active', t.dataset.inner===name));
-  document.querySelectorAll('.inner-panel').forEach(p => p.classList.toggle('active', p.id==='inner-'+name));
-  requestAnimationFrame(revealToggles);
-}
-
-function toggleNotes(textId, toggleId) {
-  const el = document.getElementById(textId); if (!el) return;
-  el.classList.toggle('collapsed');
-  const tog = toggleId && document.getElementById(toggleId);
-  if (tog) tog.textContent = el.classList.contains('collapsed') ? 'more' : 'less';
+function toggleNote(el, tog) {
+  if (!el) return;
+  var expanded = el.classList.toggle('expanded');
+  if (typeof tog === 'string') tog = document.getElementById(tog);
+  if (tog) tog.textContent = expanded ? 'less' : 'more';
 }
 
 function revealToggles() {
-  // Show the 'more' toggle only if the notes-text element is actually clamped
-  document.querySelectorAll('.notes-text.collapsed').forEach(el => {
-    const toggleId = el.id ? el.id.replace('n-up-', 'nt-up-') : null;
-    const tog = toggleId && document.getElementById(toggleId);
+  document.querySelectorAll('.notes-text.collapsible').forEach(function(el) {
+    var togId = el.id ? el.id.replace('n-up-','nt-up-').replace('n-at-','nt-at-') : null;
+    var tog = togId ? document.getElementById(togId) : null;
     if (!tog) return;
-    // Element is clamped if scrollHeight > clientHeight
-    tog.style.display = el.scrollHeight > el.clientHeight + 2 ? '' : 'none';
+    tog.style.display = el.scrollHeight > el.clientHeight + 2 ? 'inline-block' : 'none';
   });
 }
 
+function switchInnerTab(name) {
+  document.querySelectorAll('.inner-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.inner===name); });
+  document.querySelectorAll('.inner-panel').forEach(function(p) { p.classList.toggle('active', p.id==='inner-'+name); });
+  requestAnimationFrame(revealToggles);
+}
+
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id===`panel-${name}`));
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab===name); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.toggle('active', p.id==='panel-'+name); });
 }
 
 function openAboutModal()  { document.getElementById('aboutModal').classList.add('open'); }
 function closeAboutModal() { document.getElementById('aboutModal').classList.remove('open'); }
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('aboutModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAboutModal(); });
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('aboutModal').addEventListener('click', function(e) { if (e.target===e.currentTarget) closeAboutModal(); });
 });
 function openAuthModal()  { document.getElementById('patInput').value=''; document.getElementById('authModal').classList.add('open'); }
 function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
 function savePat() {
-  const val = document.getElementById('patInput').value.trim(); if (!val) return;
+  var val = document.getElementById('patInput').value.trim(); if (!val) return;
   localStorage.setItem(PAT_KEY, val); authed = true;
   document.getElementById('authBtn').classList.add('authed');
   closeAuthModal(); renderShows(); renderPotential();
@@ -951,22 +935,23 @@ function clearPat() {
   document.getElementById('authBtn').classList.remove('authed');
   closeAuthModal(); renderShows(); renderPotential();
 }
-document.getElementById('authModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAuthModal(); });
+document.getElementById('authModal').addEventListener('click', function(e) { if (e.target===e.currentTarget) closeAuthModal(); });
 
-// ── Boot ────────────────────────────────────────────────────────────────
+// ── Boot ─────────────────────────────────────────────────────────────
 
 async function loadData() {
   document.getElementById('showsContent').innerHTML = '<div class="loading">Loading</div>';
   document.getElementById('potContent').innerHTML   = '<div class="loading">Loading</div>';
   try {
-    const [curData, potData] = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
+    var results = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
+    var curData = results[0], potData = results[1];
     currentRows   = parseTsv(atob(curData.content.replace(/\n/g,'')));
     potentialRows = parseTsv(atob(potData.content.replace(/\n/g,'')));
-    renderShows(); renderPotential(); requestAnimationFrame(revealToggles);
-    const now = new Date();
-    document.getElementById('fetchedAt').textContent = `fetched ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+    renderShows(); renderPotential();
+    var now = new Date();
+    document.getElementById('fetchedAt').textContent = 'fetched ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   } catch(e) {
-    const msg = `<div class="error-msg">Error: ${esc(e.message)}</div>`;
+    var msg = '<div class="error-msg">Error: ' + esc(e.message) + '</div>';
     document.getElementById('showsContent').innerHTML = msg;
     document.getElementById('potContent').innerHTML   = msg;
   }
@@ -974,7 +959,7 @@ async function loadData() {
 
 if (localStorage.getItem(PAT_KEY)) { authed = true; document.getElementById('authBtn').classList.add('authed'); }
 loadData();
-loadOnThisDay(); // runs independently — doesn't block the main data load
+loadOnThisDay();
 </script>
 </body>
 </html>
