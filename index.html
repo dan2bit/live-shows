@@ -805,7 +805,7 @@ function renderPotentialGroup(rows, groupKey, label) {
       <td class="col-price cell-price">${faceCellHtml(r)}</td>
       <td class="col-watching">${r['Watching For']?`<span class="cell-watching">⚠ ${esc(r['Watching For'])}</span>`:''}</td>
       <td class="col-context cell-context">${contextHtml}</td>
-      <td class="cell-pot-notes">${(authed?fullNotes:notes)?`<div class="cell-pot-notes${authed?' collapsed':' '}"${authed?` onclick="this.classList.toggle('collapsed')"`:''} >${authed?fullNotes:notes}</div>`:''}</td>
+      <td class="cell-pot-notes">${(authed?fullNotes:notes)?`<div class="cell-pot-notes${authed?' collapsed':''}"${authed?` onclick="this.classList.toggle('collapsed')"`:''}>${authed?fullNotes:notes}</div>`:''}</td>
     </tr>`;
   }).join('');
   const table = `<table class="pot-table">
