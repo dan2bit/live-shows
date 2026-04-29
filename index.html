@@ -651,13 +651,13 @@ function renderUpcomingRow(row, idx) {
       ${row['Supporting Artist'] ? `<div class="cell-support">w/ ${esc(row['Supporting Artist'])}</div>` : ''}
       ${mobileVenueLine}
       ${badgesHtml}
-      ${authed && fullNotes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${fullNotes}</div>` : (notes && !authed ? `<div class="cell-notes-inline notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}
+      ${authed && fullNotes ? `<div class="cell-notes-inline notes-text collapsed" id="n-up-m-${idx}" onclick="toggleNotes('n-up-m-${idx}',null)">${fullNotes}</div>` : (notes && !authed ? `<div class="cell-notes-inline notes-text" id="n-up-anon-${idx}">${notes}</div>` : '')}
     </td>
     <td class="cell-venue col-support">${venueHtml}</td>
     <td class="cell-seat col-seat">${authed ? seat : (sType ? `<span style='font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:1px 5px'>${sType}</span>` : '')}</td>
     <td class="cell-notes">${authed && fullNotes ? `
       <div class="notes-text collapsed" id="n-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">${fullNotes}</div>
-      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')">more</span>` : (notes && !authed ? `<div class="notes-text collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>` : '')}</td>
+      <span class="notes-toggle" id="nt-up-${idx}" onclick="toggleNotes('n-up-${idx}','nt-up-${idx}')" style="display:none">more</span>` : (notes && !authed ? `<div class="notes-text" id="n-up-${idx}">${notes}</div>` : '')}</td>
   </tr>`;
 }
 
@@ -677,7 +677,7 @@ function renderAttendedRow(row, idx) {
       ${row['Setlist.fm URL'] ? `<a class="icon-link" href="${esc(row['Setlist.fm URL'])}" target="_blank" title="Setlist.fm">♫</a>` : ''}
       ${row['Playlist URL']   ? `<a class="icon-link" href="${esc(row['Playlist URL'])}" target="_blank" title="YouTube playlist">▶</a>` : ''}
     </td>
-    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text collapsed" id="n-at-${idx}" onclick="toggleNotes('n-at-${idx}',null)">${authed ? fullNotes : notes}</div>` : ''}</td>
+    <td class="cell-notes">${(authed ? fullNotes : notes) ? `<div class="notes-text${authed?' collapsed':' '}" id="n-at-${idx}"${authed?` onclick="toggleNotes('n-at-${idx}',null)"`:''} >${authed ? fullNotes : notes}</div>` : ''}</td>
   </tr>`;
 }
 
@@ -780,7 +780,10 @@ function renderPotentialGroup(rows, groupKey, label) {
   if (!rows.length) return '';
   const tbody = rows.map(r => {
     const gi = potentialRows.indexOf(r);
-    const notes = esc(r['Notes']||'');
+    const rawNotes    = r['Notes']||'';
+    const privNotes   = r['Private Notes']||'';
+    const notes       = esc(rawNotes);
+    const fullNotes   = esc(privNotes && privNotes !== '-' ? rawNotes + (rawNotes ? ' · ' : '') + privNotes : rawNotes);
     const venueUrl = r['Event URL'] || r['Purchase URL'] || '';
     const venueShort = shortVenueName(r['Venue']||'');
     const venueHtml = venueUrl
@@ -802,7 +805,7 @@ function renderPotentialGroup(rows, groupKey, label) {
       <td class="col-price cell-price">${faceCellHtml(r)}</td>
       <td class="col-watching">${r['Watching For']?`<span class="cell-watching">⚠ ${esc(r['Watching For'])}</span>`:''}</td>
       <td class="col-context cell-context">${contextHtml}</td>
-      <td class="cell-pot-notes">${notes?`<div class="cell-pot-notes collapsed" onclick="this.classList.toggle('collapsed')">${notes}</div>`:''}</td>
+      <td class="cell-pot-notes">${(authed?fullNotes:notes)?`<div class="cell-pot-notes${authed?' collapsed':' '}"${authed?` onclick="this.classList.toggle('collapsed')"`:''} >${authed?fullNotes:notes}</div>`:''}</td>
     </tr>`;
   }).join('');
   const table = `<table class="pot-table">
@@ -810,7 +813,7 @@ function renderPotentialGroup(rows, groupKey, label) {
     <tbody>${tbody}</tbody></table>`;
   if (groupKey === 'pass') return `
     <div class="potential-group"><details class="pass-details">
-      <summary>⚪ Pass - considered, but not going<span class="group-count">(${rows.length})</span></summary>
+      <summary>⚪ Pass - considered, but not going <span class="group-count">(${rows.length})</span></summary>
       <div class="group-table-wrap group-table-pass">${table}</div>
     </details></div>`;
   return `
@@ -831,7 +834,7 @@ function renderPotential() {
     renderPotentialGroup(buy,'buy','🟢 Buy — not purchased but probably going') +
     renderPotentialGroup(choose,'choose','🟡 Choose — shows I am considering') +
     renderPotentialGroup(sell,'sell','🏷 For Sale — buy my tickets') +
-    renderPotentialGroup(pass,'pass','⚪ Pass') ||
+    renderPotentialGroup(pass,'pass','Pass') ||
     '<p class="loading" style="animation:none">No data</p>';
 }
 
@@ -910,6 +913,7 @@ async function handleDecisionChange(select) {
 function switchInnerTab(name) {
   document.querySelectorAll('.inner-tab').forEach(t => t.classList.toggle('active', t.dataset.inner===name));
   document.querySelectorAll('.inner-panel').forEach(p => p.classList.toggle('active', p.id==='inner-'+name));
+  requestAnimationFrame(revealToggles);
 }
 
 function toggleNotes(textId, toggleId) {
@@ -917,6 +921,17 @@ function toggleNotes(textId, toggleId) {
   el.classList.toggle('collapsed');
   const tog = toggleId && document.getElementById(toggleId);
   if (tog) tog.textContent = el.classList.contains('collapsed') ? 'more' : 'less';
+}
+
+function revealToggles() {
+  // Show the 'more' toggle only if the notes-text element is actually clamped
+  document.querySelectorAll('.notes-text.collapsed').forEach(el => {
+    const toggleId = el.id ? el.id.replace('n-up-', 'nt-up-') : null;
+    const tog = toggleId && document.getElementById(toggleId);
+    if (!tog) return;
+    // Element is clamped if scrollHeight > clientHeight
+    tog.style.display = el.scrollHeight > el.clientHeight + 2 ? '' : 'none';
+  });
 }
 
 function switchTab(name) {
@@ -953,7 +968,7 @@ async function loadData() {
     const [curData, potData] = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
     currentRows   = parseTsv(atob(curData.content.replace(/\n/g,'')));
     potentialRows = parseTsv(atob(potData.content.replace(/\n/g,'')));
-    renderShows(); renderPotential();
+    renderShows(); renderPotential(); requestAnimationFrame(revealToggles);
     const now = new Date();
     document.getElementById('fetchedAt').textContent = `fetched ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
   } catch(e) {
