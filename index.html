@@ -372,7 +372,7 @@
 <header class="site-header">
   <div style="display:flex;align-items:center;gap:10px;flex:1">
     <button class="hat-btn" onclick="openAboutModal()" title="About @dan2bit">
-      <img src="https://dan2bit.github.io/live-shows/red_hat_icon_guitar.png" alt="red hat" style="width:28px;height:28px;object-fit:contain;">
+      <img src="https://dan2bit.github.io/live-shows/red_hat_icon.png" alt="red hat" style="width:28px;height:28px;object-fit:contain;">
     </button>
     <div class="site-title">live-shows</div>
   </div>
@@ -407,12 +407,13 @@
 
 <div class="modal-backdrop" id="aboutModal">
   <div class="modal about-modal">
-    <h3>@dan2bit</h3>
+    <h3>Who is @dan2bit?</h3>
     <p>GenX DC native. Live music obsessive. I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch.</p>
     <p>This page tracks where I've been and where I'm going. If you know something I should see, there'll be a way to tell me soon.</p>
     <div class="about-links">
       <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">▶ @dan2bit on YouTube — bootleg recordings</a>
       <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">🎵 Music links — Linktree</a>
+      <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">🎩 Hat autographs</a>
       <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">📷 Guitar Gods & Goddesses — photo album</a>
     </div>
     <div class="modal-actions" style="margin-top:16px">
@@ -426,7 +427,7 @@
     <h3>GitHub Authentication</h3>
     <p>
       Paste a fine-grained Personal Access Token scoped to
-      <code>dan2bit/live-shows</code> with Contents and Issues read/write permission.
+      <code>the repo</code> with Contents and Issues read/write permission.
     </p>
     <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
     <div class="modal-actions">
@@ -827,7 +828,7 @@ function renderPotential() {
     renderPotentialGroup(buy,'buy','🟢 Buy — not purchased but probably going') +
     renderPotentialGroup(choose,'choose','🟡 Choose — shows I am considering') +
     renderPotentialGroup(sell,'sell','🏷 For Sale — buy my tickets') +
-    renderPotentialGroup(pass,'pass','Pass') ||
+    renderPotentialGroup(pass,'pass','⚪ Pass - considered, but not going') ||
     '<p class="loading" style="animation:none">No data</p>';
 }
 
