@@ -628,10 +628,6 @@ function renderAttendedRowAuthed(row, idx) {
 
 // ── POTENTIAL GROUP: two completely separate render functions ─────────
 
-function bitUrl(artist) {
-  return 'https://www.bandsintown.com/a/' + encodeURIComponent((artist || '').toLowerCase().replace(/ /g, '-'));
-}
-
 function renderPotentialRowBystander(r, gi) {
   var publicNote = esc(r['Notes'] || '');
   var venueUrl   = r['Event URL'] || r['Purchase URL'] || '';
@@ -653,7 +649,7 @@ function renderPotentialRowBystander(r, gi) {
     + '<td style="white-space:nowrap"><span class="cell-decision-ro ' + cls + '">' + esc(dec) + '</span></td>'
     + '<td class="cell-date">' + formatShowDate(r['Date']) + '<span class="day-of-week">' + dayOfWeek(r['Date']) + '</span></td>'
     + '<td>'
-    +   '<div class="cell-artist"><a href="' + bitUrl(r['Artist']) + '" target="_blank" style="color:inherit;text-decoration:none">' + esc(r['Artist']) + '</a>' + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
+    +   '<div class="cell-artist">' + (r['BIT URL'] && r['BIT URL'] !== '-' ? '<a href="' + esc(r['BIT URL']) + '" target="_blank" style="color:inherit;text-decoration:none">' + esc(r['Artist']) + '</a>' : esc(r['Artist'])) + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
     +   (r['Support'] ? '<div class="cell-support">w/ ' + esc(r['Support']) + '</div>' : '')
     + '</td>'
     + '<td>' + venueHtml + '<div style="font-size:11px;color:var(--text-dim);margin-top:2px">' + esc(r['Venue City'] || '') + '</div></td>'
@@ -705,7 +701,7 @@ function renderPotentialRowAuthed(r, gi) {
     + '<td style="white-space:nowrap">' + decHtml + '</td>'
     + '<td class="cell-date">' + formatShowDate(r['Date']) + '<span class="day-of-week">' + dayOfWeek(r['Date']) + '</span></td>'
     + '<td>'
-    +   '<div class="cell-artist"><a href="' + bitUrl(r['Artist']) + '" target="_blank" style="color:inherit;text-decoration:none">' + esc(r['Artist']) + '</a>' + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
+    +   '<div class="cell-artist">' + (r['BIT URL'] && r['BIT URL'] !== '-' ? '<a href="' + esc(r['BIT URL']) + '" target="_blank" style="color:inherit;text-decoration:none">' + esc(r['Artist']) + '</a>' : esc(r['Artist'])) + ((r['Notes'] || '').includes('HAT:') ? '<span class="badge badge-hat" style="margin-left:6px">&#127913; HAT</span>' : '') + '</div>'
     +   (r['Support'] ? '<div class="cell-support">w/ ' + esc(r['Support']) + '</div>' : '')
     + '</td>'
     + '<td>' + venueHtml + '<div style="font-size:11px;color:var(--text-dim);margin-top:2px">' + esc(r['Venue City'] || '') + '</div></td>'
