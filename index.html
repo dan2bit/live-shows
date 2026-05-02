@@ -598,6 +598,7 @@ function renderAttendedRowBystander(row, idx) {
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
+    +   (row['Photo URL'] && row['Photo URL'] !== '-' ? '<a class="icon-link" href="' + esc(row['Photo URL']) + '" target="_blank" title="Artist photo">&#128247;</a>' : '')
     + '</td>'
     + '<td class="cell-notes">' + (publicNote ? '<div class="notes-text">' + publicNote + '</div>' : '') + '</td>'
     + '</tr>';
@@ -621,6 +622,7 @@ function renderAttendedRowAuthed(row, idx) {
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
+    +   (row['Photo URL'] && row['Photo URL'] !== '-' ? '<a class="icon-link" href="' + esc(row['Photo URL']) + '" target="_blank" title="Artist photo">&#128247;</a>' : '')
     + '</td>'
     + '<td class="cell-notes">' + notesHtml + '</td>'
     + '</tr>';
