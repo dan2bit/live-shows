@@ -235,8 +235,8 @@
   .pass-details .group-table-wrap { border-top: none; border-radius: 0 0 4px 4px; }
 
   .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
-  .about-modal { max-width: 480px; padding: 0; overflow: hidden; }
-  .about-hero { position: relative; width: 100%; aspect-ratio: 16/9; max-height: 270px; overflow: hidden; background: #0a0a0a; flex-shrink: 0; }
+  .about-modal { width: 480px; max-width: 92vw; padding: 0; overflow: hidden; }
+  .about-hero { position: relative; width: calc(100% + 48px); margin: -24px -24px 0 -24px; aspect-ratio: 16/9; max-height: 270px; overflow: hidden; background: #0a0a0a; flex-shrink: 0; }
   .about-hero-img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
   .about-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 100%); pointer-events: none; }
   .about-hero-text { position: absolute; top: 0; left: 0; right: 0; padding: 16px 20px; }
@@ -345,7 +345,7 @@
       <button class="about-close-btn" onclick="closeAboutModal()">&#10005;</button>
     </div>
     <div class="about-body">
-      <p>I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
+      <p>I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
       <div class="about-links">
         <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube — bootlegs</a>
         <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links — Linktree</a>
@@ -353,7 +353,7 @@
         <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses — photo album</a>
       </div>
       <div class="modal-actions" style="margin-top:14px">
-       Life is short. Buy the tickets.<button class="btn" onclick="closeAboutModal()">Close</button>
+       Life is short. Buy the tickets.
       </div>
     </div>
   </div>
