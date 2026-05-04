@@ -235,10 +235,18 @@
   .pass-details .group-table-wrap { border-top: none; border-radius: 0 0 4px 4px; }
 
   .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
-  .about-modal { max-width: 480px; }
-  .about-modal h3 { color: var(--amber); margin-bottom: 10px; }
-  .about-modal p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
-  .about-modal .about-links { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .about-modal { max-width: 480px; padding: 0; overflow: hidden; }
+  .about-hero { position: relative; width: 100%; aspect-ratio: 16/9; max-height: 270px; overflow: hidden; background: #0a0a0a; flex-shrink: 0; }
+  .about-hero-img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+  .about-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 100%); pointer-events: none; }
+  .about-hero-text { position: absolute; top: 0; left: 0; right: 0; padding: 16px 20px; }
+  .about-hero-handle { font-family: var(--mono); font-size: 11px; color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+  .about-hero-tagline { font-family: var(--sans); font-size: 18px; font-weight: 500; color: var(--text); line-height: 1.25; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
+  .about-close-btn { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 3px; color: var(--text-muted); font-family: var(--mono); font-size: 11px; padding: 2px 8px; cursor: pointer; line-height: 1.6; transition: background 0.15s; }
+  .about-close-btn:hover { background: rgba(0,0,0,0.75); color: var(--text); }
+  .about-body { padding: 16px 20px 20px; }
+  .about-body p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+  .about-modal .about-links { display: flex; flex-direction: column; gap: 7px; }
   .about-modal .about-link { font-family: var(--mono); font-size: 12px; color: var(--amber); text-decoration: none; padding: 6px 10px; border: 1px solid var(--amber-dim); border-radius: 3px; background: var(--amber-bg); }
   .about-modal .about-link:hover { background: #2a1c08; }
   .hat-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; font-size: 22px; line-height: 1; opacity: 0.85; transition: opacity 0.15s, transform 0.15s; }
@@ -327,17 +335,26 @@
 
 <div class="modal-backdrop" id="aboutModal">
   <div class="modal about-modal">
-    <h3>Who is @dan2bit?</h3>
-    <p>GenX DC native. Live music obsessive. I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch.</p>
-    <p>This page tracks where I've been and where I'm going. If you know something I should see, there'll be a way to tell me soon.</p>
-    <div class="about-links">
-      <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube — bootlegs</a>
-      <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links — Linktree</a>
-      <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a>
-      <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses — photo album</a>
+    <div class="about-hero">
+      <img src="https://dan2bit.github.io/live-shows/galactic930_16x9_960.jpg" alt="Galactic at 9:30 Club Jan 2025 - photo by Paula Levin-Alcorn" class="about-hero-img">
+      <div class="about-hero-overlay"></div>
+      <div class="about-hero-text">
+        <div class="about-hero-handle">@dan2bit</div>
+        <div class="about-hero-tagline">GenX DC native.<br>Dealing with my polyjamorous live music fixation.</div>
+      </div>
+      <button class="about-close-btn" onclick="closeAboutModal()">&#10005;</button>
     </div>
-    <div class="modal-actions" style="margin-top:16px">
-      <button class="btn" onclick="closeAboutModal()">Close</button>
+    <div class="about-body">
+      <p>I haunt small venues across the DC/MD/VA area — blues, blues-rock, Americana, roots — and post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
+      <div class="about-links">
+        <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube — bootlegs</a>
+        <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links — Linktree</a>
+        <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a>
+        <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses — photo album</a>
+      </div>
+      <div class="modal-actions" style="margin-top:14px">
+        <button class="btn" onclick="closeAboutModal()">Close</button>
+      </div>
     </div>
   </div>
 </div>
@@ -799,7 +816,7 @@ function renderPotentialGroup(rows, groupKey, label) {
     tbody = rows.map(function(r) { return renderPotentialRowBystander(r, potentialRows.indexOf(r)); }).join('');
   }
   var table = '<table class="pot-table">'
-    + '<thead><tr><th>-</th><th>Date</th><th>Artist</th><th>Venue</th>'
+    + '<thead><tr><th></th><th>Date</th><th>Artist</th><th>Venue</th>'
     + '<th class="col-tier">Tier</th><th class="col-price">Face</th>'
     + '<th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th>'
     + '</tr></thead><tbody>' + tbody + '</tbody></table>';
@@ -915,7 +932,7 @@ function switchInnerTab(name) {
 }
 
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab===name); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab===name); });\
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.toggle('active', p.id==='panel-'+name); });
 }
 
