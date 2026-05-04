@@ -282,7 +282,7 @@
     .shows-table th:first-child, .shows-table td:first-child { width: 52px; }
     .shows-table th:last-child,  .shows-table td:last-child  { width: 90px; }
     .cell-notes { max-width: 90px; }
-    .cell-artist { word-break: break-word; }
+    .cell-artist { overflow-wrap: break-word; }
     .cell-notes-inline { display: none; }
   }
 </style>
@@ -799,7 +799,7 @@ function renderPotentialGroup(rows, groupKey, label) {
     tbody = rows.map(function(r) { return renderPotentialRowBystander(r, potentialRows.indexOf(r)); }).join('');
   }
   var table = '<table class="pot-table">'
-    + '<thead><tr><th>Decision</th><th>Date</th><th>Artist</th><th>Venue</th>'
+    + '<thead><tr><th>-</th><th>Date</th><th>Artist</th><th>Venue</th>'
     + '<th class="col-tier">Tier</th><th class="col-price">Face</th>'
     + '<th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th>'
     + '</tr></thead><tbody>' + tbody + '</tbody></table>';
