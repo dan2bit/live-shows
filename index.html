@@ -642,7 +642,11 @@ function renderAttendedRowBystander(row, idx) {
   var shortVenue = esc(shortVenueName(row['Venue Name'] || ''));
   return '<tr>'
     + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '</td>'
-    + '<td><div class="cell-artist">' + esc(row['Artist']) + '</div><div class="cell-support">' + shortVenue + '</div></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist']) + '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   '<div class="cell-venue-mobile">' + shortVenue + '</div>'
+    + '</td>'
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
@@ -664,9 +668,13 @@ function renderAttendedRowAuthed(row, idx) {
               + '<span class="notes-toggle" id="nt-at-' + idx + '" onclick="toggleNote(document.getElementById(\'n-at-' + idx + '\'), this)">more</span>';
   }
   return '<tr>'
-    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + shortVenue + '</span></td>'
-    + '<td class="cell-artist">' + esc(row['Artist']) + '</td>'
-    + '<td class="cell-venue col-support">' + esc(row['Venue Name']) + '</td>'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '</td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist']) + '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   '<div class="cell-venue-mobile">' + shortVenue + '</div>'
+    +   buildBadges(row)
+    + '</td>'
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
