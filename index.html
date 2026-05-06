@@ -35,6 +35,8 @@
     --gray-bg:   #141414;
     --today-bg:  #1e0e0e;
     --soon-bg:   #1a1408;
+    --otd-bg:    #0e1a10;
+    --otd-border:#1a4a28;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
   }
@@ -140,6 +142,8 @@
   .row-soon td  { background: var(--soon-bg)  !important; }
   .row-today:hover td { filter: brightness(1.08); }
   .row-soon:hover td  { filter: brightness(1.08); }
+  .row-otd td   { background: var(--otd-bg) !important; }
+  .row-otd:hover td { filter: brightness(1.1); }
 
   .attended-table .shows-table td { padding: 6px 10px; font-size: 12px; }
   .attended-table .shows-table tr { color: var(--text-muted); }
@@ -173,6 +177,7 @@
   .badge-paper     { background: var(--surface2); color: #7090a0;           border: 1px solid #2a4050; }
   .badge-boxoffice { background: var(--green-bg); color: var(--green);      border: 1px solid var(--green-dim); }
   .badge-seat      { background: var(--surface2); color: var(--text-dim);   border: 1px solid var(--border); font-family: var(--mono); font-size: 10px; padding: 1px 5px; border-radius: 2px; }
+  .badge-otd       { background: var(--otd-bg);   color: #4aaa6a;           border: 1px solid var(--otd-border); }
 
   .inner-tab-row { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; gap: 0; }
   .inner-tab { font-family: var(--mono); font-size: 11px; padding: 8px 14px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--text-dim); transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; user-select: none; }
@@ -180,6 +185,10 @@
   .inner-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
   .inner-panel { display: none; }
   .inner-panel.active { display: block; }
+
+  .history-year-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .history-year-label { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--amber); }
+  .history-year-count { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
 
   .potential-group { margin-bottom: 28px; }
   .group-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 4px 4px 0 0; border: 1px solid; border-bottom: none; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -313,8 +322,11 @@
 
 <div class="tab-row">
   <nav class="tabs">
-    <div class="tab active" data-tab="shows" onclick="switchTab('shows')">
+    <div class="tab" data-tab="shows" onclick="switchTab('shows')">
       Shows <span class="tab-badge" id="showsBadge">—</span>
+    </div>
+    <div class="tab" data-tab="history" onclick="switchTab('history')">
+      History <span class="tab-badge" id="historyBadge">—</span>
     </div>
     <div class="tab" data-tab="potential" onclick="switchTab('potential')">
       Potential <span class="tab-badge" id="potBadge">—</span>
@@ -326,8 +338,11 @@
   </div>
 </div>
 
-<div class="panel active" id="panel-shows">
+<div class="panel" id="panel-shows">
   <div id="showsContent"><div class="loading">Loading</div></div>
+</div>
+<div class="panel" id="panel-history">
+  <div id="historyContent"><div class="loading">Loading</div></div>
 </div>
 <div class="panel" id="panel-potential">
   <div id="potContent"><div class="loading">Loading</div></div>
@@ -384,6 +399,14 @@ let currentRows   = [];
 let potentialRows = [];
 let authed = false;
 
+// history cache: keyed by year, value = parsed rows array (null = not yet loaded)
+var historyData = {};
+HISTORY_YEARS.forEach(function(yr) { historyData[yr] = null; });
+
+// today's MM-DD for OTD badge matching
+var _now = new Date();
+var _todayMmDd = String(_now.getMonth() + 1).padStart(2,'0') + '-' + String(_now.getDate()).padStart(2,'0');
+
 async function ghFetch(path, opts) {
   opts = opts || {};
   var pat = localStorage.getItem(PAT_KEY);
@@ -427,6 +450,11 @@ function daysFromNow(s) {
   var now = new Date(); now.setHours(0,0,0,0);
   return Math.floor((d - now) / 86400000);
 }
+function isOtdMatch(s) {
+  // returns true if the show date's MM-DD matches today
+  var m = (s || '').match(/^\d{4}-(\d{2}-\d{2})/);
+  return m ? m[1] === _todayMmDd : false;
+}
 function gcalUrl(artist) {
   var now = new Date();
   var pad = function(n) { return String(n).padStart(2, '0'); };
@@ -442,13 +470,17 @@ var VENUE_SHORT = {
   'Wolf Trap Filene Center': 'Wolf Trap',
   'Rams Head On Stage':      'Rams Head',
   'Barns at Wolf Trap':      'Barns',
+  'Wolf Trap Farm Park (The Barns)': 'Barns',
+  'Wolf Trap Farm Park (Filene Center)': 'Wolf Trap',
   'The State Theatre':       'State Theatre',
   'The Birchmere':           'Birchmere',
   'Live at Hub City Vinyl':  'Hub City',
   'The Anthem':              'Anthem',
 };
 function shortVenueName(full) {
-  return VENUE_SHORT[full] || (full||'').split(',')[0].trim();
+  // history Venue field is "Venue Name, City, State, Country" — split on first comma
+  var name = (full||'').split(',')[0].trim();
+  return VENUE_SHORT[name] || name;
 }
 
 // ── On This Day ──────────────────────────────────────────────────────
@@ -466,7 +498,7 @@ async function loadOnThisDay() {
   var matches = [];
   results.forEach(function(res) {
     if (res.status !== 'fulfilled') return;
-    var raw  = atob(res.value.content.replace(/\n/g, ''));
+    var raw  = decodeURIComponent(escape(atob(res.value.content.replace(/\n/g, ''))));
     var rows = parseTsv(raw);
     rows.forEach(function(r) {
       if ((r['Show Date'] || '').trim().endsWith(mmdd)) matches.push(r);
@@ -603,20 +635,25 @@ function renderUpcomingRowAuthed(row, idx) {
     + '</tr>';
 }
 
-// ── ATTENDED: two completely separate render functions ───────────────
+// ── ATTENDED (current year): two completely separate render functions ─
 
 function renderAttendedRowBystander(row, idx) {
   var publicNote = esc(row['Notes / Memories'] || '');
   var shortVenue = esc(shortVenueName(row['Venue Name'] || ''));
   return '<tr>'
     + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '</td>'
-    + '<td><div class="cell-artist">' + esc(row['Artist']) + '</div><div class="cell-support">' + shortVenue + '</div></td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist']) + '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   '<div class="cell-venue-mobile">' + shortVenue + '</div>'
+    + '</td>'
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
     +   (row['Photo URL'] && row['Photo URL'] !== '-' ? '<a class="icon-link" href="' + esc(row['Photo URL']) + '" target="_blank" title="Artist photo">&#128247;</a>' : '')
     + '</td>'
-    + '<td class="cell-notes">' + (publicNote ? '<div class="notes-text collapsible" onclick="this.classList.toggle(\'expanded\')">' + publicNote + '</div>' : '') + '</td>'    + '</tr>';
+    + '<td class="cell-notes">' + (publicNote ? '<div class="notes-text collapsible" onclick="this.classList.toggle(\'expanded\')">' + publicNote + '</div>' : '') + '</td>'
+    + '</tr>';
 }
 
 function renderAttendedRowAuthed(row, idx) {
@@ -631,9 +668,13 @@ function renderAttendedRowAuthed(row, idx) {
               + '<span class="notes-toggle" id="nt-at-' + idx + '" onclick="toggleNote(document.getElementById(\'n-at-' + idx + '\'), this)">more</span>';
   }
   return '<tr>'
-    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '<span class="day-of-week">' + shortVenue + '</span></td>'
-    + '<td class="cell-artist">' + esc(row['Artist']) + '</td>'
-    + '<td class="cell-venue col-support">' + esc(row['Venue Name']) + '</td>'
+    + '<td class="cell-date">' + formatShowDate(row['Show Date']) + '</td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist']) + '</div>'
+    +   (row['Supporting Artist'] ? '<div class="cell-support">w/ ' + esc(row['Supporting Artist']) + '</div>' : '')
+    +   '<div class="cell-venue-mobile">' + shortVenue + '</div>'
+    +   buildBadges(row)
+    + '</td>'
     + '<td>'
     +   (row['Setlist.fm URL'] ? '<a class="icon-link" href="' + esc(row['Setlist.fm URL']) + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
     +   (row['Playlist URL']   ? '<a class="icon-link" href="' + esc(row['Playlist URL'])   + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
@@ -641,6 +682,144 @@ function renderAttendedRowAuthed(row, idx) {
     + '</td>'
     + '<td class="cell-notes">' + notesHtml + '</td>'
     + '</tr>';
+}
+
+// ── HISTORY rows: adapter shims map history schema → display ─────────
+
+function renderHistoryRow(row, idx) {
+  // Adapt history schema field names to match the attended render expectations
+  var venueRaw    = row['Venue'] || '';
+  var venueName   = venueRaw.split(',')[0].trim();
+  var supportActs = row['Supporting Acts'] || '';
+  var notes       = row['Notes / Memories'] || '';
+  var setlist     = row['Setlist.fm URL'] || '';
+  var playlist    = row['Playlist URL'] || '';
+  var photo       = row['Photo URL'] || '';
+  var showDate    = row['Show Date'] || '';
+
+  var isOtd = isOtdMatch(showDate);
+  var rowCls = isOtd ? 'row-otd' : '';
+
+  var otdBadge = isOtd
+    ? ' <span class="badge badge-otd">&#128197; On this day</span>'
+    : '';
+
+  var notesEsc = esc(notes);
+  var notesHtml = notesEsc
+    ? '<div class="notes-text collapsible" id="n-h-' + idx + '" onclick="toggleNote(this, \'nt-h-' + idx + '\')">' + notesEsc + '</div>'
+      + '<span class="notes-toggle" id="nt-h-' + idx + '" onclick="toggleNote(document.getElementById(\'n-h-' + idx + '\'), this)">more</span>'
+    : '';
+
+  return '<tr class="' + rowCls + '">'
+    + '<td class="cell-date">' + formatShowDate(showDate) + otdBadge + '</td>'
+    + '<td>'
+    +   '<div class="cell-artist">' + esc(row['Artist'] || '') + '</div>'
+    +   (supportActs ? '<div class="cell-support">w/ ' + esc(supportActs) + '</div>' : '')
+    +   '<div class="cell-venue-mobile">' + esc(shortVenueName(venueRaw)) + '</div>'
+    + '</td>'
+    + '<td class="cell-venue col-support">' + esc(venueName) + '</td>'
+    + '<td>'
+    +   (setlist  ? '<a class="icon-link" href="' + esc(setlist)  + '" target="_blank" title="Setlist.fm">&#9835;</a>' : '')
+    +   (playlist ? '<a class="icon-link" href="' + esc(playlist) + '" target="_blank" title="YouTube playlist">&#9654;</a>' : '')
+    +   (photo && photo !== '-' ? '<a class="icon-link" href="' + esc(photo) + '" target="_blank" title="Artist photo">&#128247;</a>' : '')
+    + '</td>'
+    + '<td class="cell-notes">' + notesHtml + '</td>'
+    + '</tr>';
+}
+
+// ── History panel rendering ──────────────────────────────────────────
+
+function renderHistoryYear(yr) {
+  var rows = historyData[yr];
+  if (!rows) {
+    return '<div class="loading">Loading</div>';
+  }
+  var sorted = rows.slice().sort(function(a,b) {
+    return (b['Show Date']||'').localeCompare(a['Show Date']||'');
+  });
+  var tbody = sorted.map(function(r, i) { return renderHistoryRow(r, yr + '-' + i); }).join('');
+  return '<div class="history-year-header">'
+    + '<span class="history-year-label">' + yr + '</span>'
+    + '<span class="history-year-count">' + sorted.length + ' show' + (sorted.length !== 1 ? 's' : '') + '</span>'
+    + '</div>'
+    +  '<div class="attended-table"><table class="shows-table">'
+    + '<thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th class="col-support" style="width:120px">Venue</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'    
+    + '<tbody>' + tbody + '</tbody>'
+    + '</table></div>';
+}
+
+async function loadHistoryYear(yr) {
+  if (historyData[yr] !== null) return; // already loaded
+  try {
+    var data = await ghFetch('history/' + yr + '.tsv');
+    var raw  = atob(data.content.replace(/\n/g, ''));
+    historyData[yr] = parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
+  } catch(e) {
+    historyData[yr] = [];
+    console.error('Failed to load history/' + yr + '.tsv:', e);
+  }
+}
+
+function renderHistoryPanel() {
+  var mostRecent = HISTORY_YEARS[HISTORY_YEARS.length - 1];
+
+  // Build inner tab row (newest first)
+  var innerTabRow = '<div class="inner-tab-row">'
+    + HISTORY_YEARS.slice().reverse().map(function(yr) {
+        var cnt = historyData[yr] ? historyData[yr].length : '—';
+        var isActive = yr === mostRecent;
+        return '<div class="inner-tab' + (isActive ? ' active' : '') + '" data-inner="hist-' + yr + '" onclick="switchHistoryTab(' + yr + ')">'
+          + yr + ' <span class="tab-badge" id="histBadge-' + yr + '">' + cnt + '</span>'
+          + '</div>';
+      }).join('')
+    + '</div>';
+
+  // Build inner panels
+  var innerPanels = HISTORY_YEARS.slice().reverse().map(function(yr) {
+    var isActive = yr === mostRecent;
+    return '<div class="inner-panel' + (isActive ? ' active' : '') + '" id="inner-hist-' + yr + '">'
+      + renderHistoryYear(yr)
+      + '</div>';
+  }).join('');
+
+  // Total count badge
+  var total = HISTORY_YEARS.reduce(function(sum, yr) {
+    return sum + (historyData[yr] ? historyData[yr].length : 0);
+  }, 0);
+  document.getElementById('historyBadge').textContent = total || '—';
+
+  document.getElementById('historyContent').innerHTML = innerTabRow + innerPanels;
+  requestAnimationFrame(revealToggles);
+}
+
+async function switchHistoryTab(yr) {
+  // Switch inner tab UI immediately
+  document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.inner === 'hist-' + yr);
+  });
+  document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'inner-hist-' + yr);
+  });
+
+  // Lazy load if needed
+  if (historyData[yr] === null) {
+    var panel = document.getElementById('inner-hist-' + yr);
+    if (panel) panel.innerHTML = '<div class="loading">Loading</div>';
+    await loadHistoryYear(yr);
+    var badge = document.getElementById('histBadge-' + yr);
+    if (badge) badge.textContent = historyData[yr] ? historyData[yr].length : 0;
+    if (panel) {
+      panel.innerHTML = renderHistoryYear(yr);
+      requestAnimationFrame(revealToggles);
+    }
+    // Update total badge
+    var total = HISTORY_YEARS.reduce(function(sum, y) {
+      return sum + (historyData[y] ? historyData[y].length : 0);
+    }, 0);
+    document.getElementById('historyBadge').textContent = total || '—';
+  } else {
+    requestAnimationFrame(revealToggles);
+  }
 }
 
 // ── POTENTIAL GROUP: two completely separate render functions ─────────
@@ -780,13 +959,14 @@ function renderShows() {
     + '<tbody>' + upcomingTbody + '</tbody></table>';
 
   var attendedTable = '<div class="attended-table"><table class="shows-table">'
-    + '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>'
+    + '<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>'
     + '<tbody>' + attendedTbody + '</tbody></table></div>';
-
+    
+  // Authed defaults to Upcoming; bystander defaults to Attended
   var defaultInner = authed ? 'upcoming' : 'attended';
   var innerTabRow = '<div class="inner-tab-row">'
-    + '<div class="inner-tab' + (defaultInner==='attended' ? ' active' : '') + '" data-inner="attended" onclick="switchInnerTab(&apos;attended&apos;)">Attended <span class="tab-badge">' + attended.length + '</span></div>'
-    + '<div class="inner-tab' + (defaultInner==='upcoming' ? ' active' : '') + '" data-inner="upcoming" onclick="switchInnerTab(&apos;upcoming&apos;)">Upcoming <span class="tab-badge">' + upcoming.length + '</span></div>'
+    + '<div class="inner-tab' + (defaultInner==='attended' ? ' active' : '') + '" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended <span class="tab-badge">' + attended.length + '</span></div>'
+    + '<div class="inner-tab' + (defaultInner==='upcoming' ? ' active' : '') + '" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">' + upcoming.length + '</span></div>'
     + '</div>';
 
   var innerPanels = '<div class="inner-panel' + (defaultInner==='attended' ? ' active' : '') + '" id="inner-attended">' + attendedTable + '</div>'
@@ -916,7 +1096,7 @@ function toggleNote(el, tog) {
 
 function revealToggles() {
   document.querySelectorAll('.notes-text.collapsible').forEach(function(el) {
-    var togId = el.id ? el.id.replace('n-up-','nt-up-').replace('n-at-','nt-at-') : null;
+    var togId = el.id ? el.id.replace('n-up-','nt-up-').replace('n-at-','nt-at-').replace('n-h-','nt-h-') : null;
     var tog = togId ? document.getElementById(togId) : null;
     if (!tog) return;
     tog.style.display = el.scrollHeight > el.clientHeight + 2 ? 'inline-block' : 'none';
@@ -924,14 +1104,27 @@ function revealToggles() {
 }
 
 function switchInnerTab(name) {
-  document.querySelectorAll('.inner-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.inner===name); });
-  document.querySelectorAll('.inner-panel').forEach(function(p) { p.classList.toggle('active', p.id==='inner-'+name); });
+  document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.inner===name);
+  });
+  document.querySelectorAll('#inner-attended, #inner-upcoming').forEach(function(p) {
+    p.classList.toggle('active', p.id==='inner-'+name);
+  });
   requestAnimationFrame(revealToggles);
 }
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab===name); });
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.toggle('active', p.id==='panel-'+name); });
+  // Lazy-load most recent history year on first visit to History tab
+  if (name === 'history') {
+    var mostRecent = HISTORY_YEARS[HISTORY_YEARS.length - 1];
+    if (historyData[mostRecent] === null) {
+      switchHistoryTab(mostRecent);
+    } else {
+      requestAnimationFrame(revealToggles);
+    }
+  }
 }
 
 function openAboutModal()  { document.getElementById('aboutModal').classList.add('open'); }
@@ -962,8 +1155,8 @@ async function loadData() {
   try {
     var results = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
     var curData = results[0], potData = results[1];
-    currentRows   = parseTsv(atob(curData.content.replace(/\n/g,'')));
-    potentialRows = parseTsv(atob(potData.content.replace(/\n/g,'')));
+    currentRows   = parseTsv(decodeURIComponent(escape(atob(curData.content.replace(/\n/g,'')))));
+    potentialRows = parseTsv(decodeURIComponent(escape(atob(potData.content.replace(/\n/g,'')))));    
     renderShows(); renderPotential();
     var now = new Date();
     document.getElementById('fetchedAt').textContent = 'fetched ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
@@ -974,7 +1167,30 @@ async function loadData() {
   }
 }
 
+// Set default active tab and load data
 if (localStorage.getItem(PAT_KEY)) { authed = true; document.getElementById('authBtn').classList.add('authed'); }
+
+// Default tab: History for bystander, Shows for authed
+var defaultTab = authed ? 'shows' : 'history';
+document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab===defaultTab); });
+document.querySelectorAll('.panel').forEach(function(p) { p.classList.toggle('active', p.id==='panel-'+defaultTab); });
+
+// Pre-populate history panel shell (tabs only, content lazy-loaded)
+// Most recent year loaded eagerly on boot for bystander; lazy for authed
+(async function() {
+  var mostRecent = HISTORY_YEARS[HISTORY_YEARS.length - 1];
+  // Always render the panel shell so tabs are present
+  // Eagerly load most recent year for bystander (default tab is History)
+  if (!authed) {
+    await loadHistoryYear(mostRecent);
+  }
+  renderHistoryPanel();
+  // If bystander, trigger the active year render now
+  if (!authed) {
+    requestAnimationFrame(revealToggles);
+  }
+})();
+
 loadData();
 loadOnThisDay();
 </script>
