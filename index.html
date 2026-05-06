@@ -498,7 +498,7 @@ async function loadOnThisDay() {
   var matches = [];
   results.forEach(function(res) {
     if (res.status !== 'fulfilled') return;
-    var raw  = atob(res.value.content.replace(/\n/g, ''));
+    var raw  = decodeURIComponent(escape(atob(res.value.content.replace(/\n/g, ''))));
     var rows = parseTsv(raw);
     rows.forEach(function(r) {
       if ((r['Show Date'] || '').trim().endsWith(mmdd)) matches.push(r);
@@ -745,7 +745,7 @@ async function loadHistoryYear(yr) {
   try {
     var data = await ghFetch('history/' + yr + '.tsv');
     var raw  = atob(data.content.replace(/\n/g, ''));
-    historyData[yr] = parseTsv(raw);
+    historyData[yr] = parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
   } catch(e) {
     historyData[yr] = [];
     console.error('Failed to load history/' + yr + '.tsv:', e);
@@ -1147,8 +1147,8 @@ async function loadData() {
   try {
     var results = await Promise.all([ghFetch(CURRENT_PATH), ghFetch(POTENTIAL_PATH)]);
     var curData = results[0], potData = results[1];
-    currentRows   = parseTsv(atob(curData.content.replace(/\n/g,'')));
-    potentialRows = parseTsv(atob(potData.content.replace(/\n/g,'')));
+    currentRows   = parseTsv(decodeURIComponent(escape(atob(curData.content.replace(/\n/g,'')))));
+    potentialRows = parseTsv(decodeURIComponent(escape(atob(potData.content.replace(/\n/g,'')))));    
     renderShows(); renderPotential();
     var now = new Date();
     document.getElementById('fetchedAt').textContent = 'fetched ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
