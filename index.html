@@ -734,8 +734,8 @@ function renderHistoryYear(yr) {
     + '<span class="history-year-label">' + yr + '</span>'
     + '<span class="history-year-count">' + sorted.length + ' show' + (sorted.length !== 1 ? 's' : '') + '</span>'
     + '</div>'
-    + '<div class="attended-table"><table class="shows-table">'
-    + '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>'
+    +  '<div class="attended-table"><table class="shows-table">'
+    + '<thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th class="col-support" style="width:120px">Venue</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'    
     + '<tbody>' + tbody + '</tbody>'
     + '</table></div>';
 }
@@ -951,9 +951,9 @@ function renderShows() {
     + '<tbody>' + upcomingTbody + '</tbody></table>';
 
   var attendedTable = '<div class="attended-table"><table class="shows-table">'
-    + '<thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th>Links</th><th>Notes</th></tr></thead>'
+    + '<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>'
     + '<tbody>' + attendedTbody + '</tbody></table></div>';
-
+    
   // Authed defaults to Upcoming; bystander defaults to Attended
   var defaultInner = authed ? 'upcoming' : 'attended';
   var innerTabRow = '<div class="inner-tab-row">'
