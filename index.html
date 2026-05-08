@@ -557,12 +557,22 @@ function renderShows(){
   var sellRows=potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
   var fsbGroup='';
   if(sellRows.length){
-    var btns=sellRows.map(function(r){
-      var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';
-      var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;
-      return'<button class="forsale-btn" onclick="openForSaleModal('+idx+')">&#127991; '+esc(sn)+' ('+qty+')</button>';
-    }).join('');
-    fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
+    var isNarrow=window.innerWidth<=768;
+    if(isNarrow&&sellRows.length>1){
+      var opts=sellRows.map(function(r){
+        var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';
+        var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;
+        return'<option value="'+idx+'">&#127991; '+esc(sn)+' ('+qty+')</option>';
+      }).join('');
+      fsbGroup='<div class="forsale-tab-group"><select class="forsale-select" onchange="if(this.value)openForSaleModal(parseInt(this.value));this.value=\'\'"><option value="">&#127991; For Sale</option>'+opts+'</select></div>';
+    }else{
+      var btns=sellRows.map(function(r){
+        var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';
+        var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;
+        return'<button class="forsale-btn" onclick="openForSaleModal('+idx+')">&#127991; '+esc(sn)+' ('+qty+')</button>';
+      }).join('');
+      fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
+    }
   }
   var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor — some details are hidden. Know something I should see?</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
