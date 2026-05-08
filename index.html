@@ -74,6 +74,7 @@
   .cell-venue a:hover{color:var(--amber);}
   .cell-seat{font-size:12px;color:var(--text-muted);}
   .cell-notes{max-width:340px;}
+  .cell-cost{font-family:var(--mono);font-size:11px;color:var(--text-dim);white-space:nowrap;}
   .notes-text{color:var(--text-muted);font-size:12px;line-height:1.4;}
   .notes-text.collapsible{cursor:pointer;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
   .notes-text.collapsible.expanded{display:block;}
@@ -194,7 +195,7 @@
   .cell-venue-mobile{font-size:11px;color:var(--text-muted);margin-top:2px;display:none;}
   @media(max-width:768px){
     .panel{padding:12px;}
-    .col-support,.col-seat{display:none;}
+    .col-support,.col-seat,.col-cost{display:none;}
     .cell-notes{max-width:220px;}
     .col-watching,.col-tier,.col-price,.col-context{display:none;}
     .cell-pot-notes{max-width:160px;}
@@ -379,7 +380,7 @@ function buildBadges(row){
 }
 function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('vip'))return'';return'<span class="badge badge-seat">'+(s.includes('ga')||s.includes('standing')?'GA':'Seated')+'</span>';}
 
-// ── Schema normalization (unified attended + history) ─────────────────
+// ── Schema normalization ──────────────────────────────────────────────
 function normalizeRow(row){
   return{
     artist:row['Artist']||'',
@@ -391,6 +392,7 @@ function normalizeRow(row){
     setlist:row['Setlist.fm URL']||'',
     playlist:row['Playlist URL']||'',
     photo:row['Photo URL']||'',
+    totalCost:row['Total Cost']||'',
   };
 }
 
@@ -422,7 +424,7 @@ function renderUpcomingRowAuthed(row,idx){
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
 
-// ── Unified attended + history rows ──────────────────────────────────
+// ── Attended rows ─────────────────────────────────────────────────────
 function renderAttendedRowBystander(row,idx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
@@ -441,12 +443,14 @@ function renderAttendedRowAuthed(row,idx){
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
   var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var cost=n.totalCost&&n.totalCost!=='-'?esc(n.totalCost):'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
-    +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div>'+buildBadges(row)+'</td>'
+    +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
     +(n.photo&&n.photo!=='-'?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+    +'<td class="cell-cost col-cost">'+cost+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
 
@@ -461,7 +465,7 @@ function renderHistoryYear(yr){
 }
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
-  try{var data=await ghFetch('history/'+yr+'.tsv');historyData[yr]=parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));}
+  try{var data=await ghFetch('history/'+yr+'.tsv');historyData[yr]=parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));} 
   catch(e){historyData[yr]=[];console.error('Failed to load history/'+yr+'.tsv:',e);}
 }
 function renderHistoryPanel(){
@@ -580,7 +584,10 @@ function renderShows(){
   var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
   var aTbody=authed?attended.map(function(r,i){return renderAttendedRowAuthed(r,i);}).join(''):attended.map(function(r,i){return renderAttendedRowBystander(r,i);}).join('');
   var uTable='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>'+uTbody+'</tbody></table>';
-  var aTable='<div class="attended-table"><table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead><tbody>'+aTbody+'</tbody></table></div>';
+  var aTableHead=authed
+    ?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>'
+    :'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
+  var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
   var itr='<div class="inner-tab-row">'
     +'<div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended <span class="tab-badge">'+attended.length+'</span></div>'
