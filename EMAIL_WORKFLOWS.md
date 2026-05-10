@@ -120,7 +120,7 @@ must NOT be added here.
 ### Cap defaults
 
 | Cap | Default | Narrower options |
-|-----|---------|-----------------|
+|-----|---------|--------------------|
 | Price Cap | $100 all-in | Any lower dollar amount |
 | Distance Cap | Regional (DC/MD/VA + Baltimore, ~60 mi) | Local (DC/MD/VA only) / Extended (~90 mi) |
 | Venue Cap | Mid (Small rooms + 9:30 Club, Wolf Trap Barns, State Theatre, ~500-1200 cap) | Small (Birchmere/Hamilton/Rams Head/Hub City tier only) / Large (adds Wolf Trap Filene, The Anthem) |
@@ -373,9 +373,16 @@ If already in potential list:
 
 If new, check `fast_track.tsv` first (see Fast Track Protocol).
 
-When adding a row: fetch fresh SHA, add row, re-sort (`Buy` -> `Choose` -> `Sell` -> `Pass`), commit.
+**Confirmation required before any potentials write.** Present the full proposed set of
+changes in conversation -- new rows, row updates, and date-pruning removals -- and wait
+for explicit confirmation from Dan before committing anything to `live_shows_potential.tsv`.
+Do not write speculatively.
 
-**Date pruning:** Remove any row whose show date has passed per the date confirmed in Step 0.
+After confirmation: fetch fresh SHA, apply all approved changes, re-sort
+(`Buy` -> `Choose` -> `Sell` -> `Pass`), commit.
+
+**Date pruning:** Identify any row whose show date has passed per the date confirmed in
+Step 0. Include these in the confirmation step above -- do not remove silently.
 
 **Step 3 -- Check autograph books**
 
