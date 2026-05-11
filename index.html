@@ -691,7 +691,7 @@ async function loadData(){
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
 }
 if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn').classList.add('authed');}
-var defaultTab=authed?'shows':'history';
+var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
 (async function(){
