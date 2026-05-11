@@ -149,6 +149,16 @@ The sequence for every potential list write:
 3. Re-sort the full file: `Buy` -> `Choose` -> `Sell` -> `Pass`, date ascending within each group
 4. Commit using `create_or_update_file` with the freshly fetched `sha`
 
+### Prev/Next Show bracket rule
+
+**Brackets are only calculated for Buy and Choose rows.** Sell and Pass rows always
+have empty (`-`) Prev/Next columns. Brackets represent the surrounding purchased upcoming
+shows to help evaluate density -- a show you're not attending has no need for this context.
+
+When a Buy or Choose row is downgraded to Pass or Sell, clear its brackets at the same time.
+When recalculating brackets after a new purchase (Routine 1 Step 5b), only update Buy and
+Choose rows -- never populate brackets on Pass or Sell rows.
+
 ---
 
 ## live_shows_current.tsv Write Protocol
@@ -247,7 +257,8 @@ Apply sentinel `-` to col16 (Setlist URL) and col22 (Playlist URL) per write pro
 
 **Step 5b -- Update Prev/Next Show in `live_shows_potential.tsv`**
 
-Scan every potential row and update brackets where the new show falls.
+Scan every **Buy and Choose** row and update brackets where the new show falls. Do not
+populate or modify brackets on Pass or Sell rows (see bracket rule above).
 
 **Step 6 -- Remove from `live_shows_potential.tsv` if present**
 
