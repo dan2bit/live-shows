@@ -333,6 +333,18 @@ Label: `playlist`
 
 Body includes show details, notes, and the playlist creation workflow. Skip if no footage.
 
+**playlist creation workflow -- if only the videos have been uploaded and tagged**
+
+1. Activate venv: `source .venv/bin/activate`
+2. Dry run: `python3 youtube_create_playlists.py --new-show YYYY-MM-DD --dry-run`
+3. Create: `python3 youtube_create_playlists.py --new-show YYYY-MM-DD --update-history`
+
+**skip to here if playlist already created manually on the channel**
+4. Add the playlist URL to this issue body: `Playlist: https://...`
+5. Add the URL to `live_shows_current.tsv` col22 (Playlist URL) for YYYY-MM-DD or have Claude do it
+6. Close this issue or have Claude do it
+
+
 **Step 7 -- Create activity log draft MANDATORY**
 
 Subject: `[LOG] Routine 2 -- [Artist] post-show -- YYYY-MM-DD`
