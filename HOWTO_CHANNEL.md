@@ -84,10 +84,28 @@ source .venv/bin/activate
 python3 youtube_create_playlists.py --auth-only
 ```
 
-A browser window opens. Log in as `dan2bit@gmail.com` and approve access.
+A browser window opens. **Sign in as `dan2bit@gmail.com` — not `redhat.bootlegs`.**
+When prompted to choose an identity, select the **@dan2bit brand channel**,
+not the gmail account itself. The brand channel is what owns the videos and playlists.
 `token.json` is written to the repo root (gitignored). Future runs refresh
-it automatically — you will only need to repeat this if `token.json` is
-deleted or the token is revoked.
+it automatically.
+
+### 5. Fixing invalid_grant errors
+
+If a script fails with `google.auth.exceptions.RefreshError: invalid_grant`,
+the cached token is stale. Delete it and re-authenticate:
+
+```bash
+rm token.json
+python3 youtube_create_playlists.py --auth-only
+```
+
+In the browser flow: sign in as `dan2bit@gmail.com` (not `redhat.bootlegs`),
+then select the **@dan2bit brand channel** identity, not the gmail account.
+A fresh `token.json` will be written and subsequent runs will work normally.
+
+Common causes: venv was recreated, token expired after extended inactivity,
+or the wrong Google account was selected during a previous auth flow.
 
 ---
 
@@ -261,6 +279,8 @@ python3 youtube_create_playlists.py --fix-descriptions \
 ## Notes
 
 - OAuth account is `dan2bit@gmail.com` — not `redhat.bootlegs`
+- In the browser auth flow, always select the **@dan2bit brand channel** identity,
+  not the gmail account itself
 - Videos must be uploaded to YouTube Studio before running any script —
   the script matches by upload date and video title
 - Private videos are fine; draft/unsubmitted videos will not appear
