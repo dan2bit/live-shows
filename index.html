@@ -375,7 +375,7 @@ function buildBadges(row){
   if((row['Notes / Memories']||'').includes('HAT:'))badges.push('<span class="badge badge-hat">&#127913; HAT</span>');
   if((row['Notes / Memories']||'').includes('BRING RHBS')||(row['Notes / Memories']||'').includes('BRING APS'))badges.push('<span class="badge badge-book">&#128218; BOOK</span>');
   if(!isVip&&!isWT&&fv>=100)badges.push('<span class="badge badge-merch">&#128184; MERCH</span>');
-  if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">&#1 27903; BOX OFFICE</span>');
+  if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">&#127903; BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('vip'))return'';return'<span class="badge badge-seat">'+(s.includes('ga')||s.includes('standing')?'GA':'Seated')+'</span>';}
