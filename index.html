@@ -366,8 +366,7 @@ function ticketLabel(access){
 }
 function buildBadges(row){
   if(!row['Ticket Access']&&!row['Face Value (per ticket)'])return'';
-  var notes=(row['Notes / Memories']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+seat+' '+access;
-  var isVip=all.includes('vip'),isWT=(row['Venue Name']||'').includes('Wolf Trap Filene');
+  var notes=(row['Notes / Memories']||'').toLowerCase(),pvt=(row['Private Notes']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+pvt+' '+seat+' '+access;  var isVip=all.includes('vip'),isWT=(row['Venue Name']||'').includes('Wolf Trap Filene');
   var fv=parseFloat((row['Face Value (per ticket)']||'').replace(/[^0-9.]/g,''))||0;
   var badges=[],tl=ticketLabel(row['Ticket Access']||''),label=tl[0],isPaper=tl[1];
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
