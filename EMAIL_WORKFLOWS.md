@@ -404,8 +404,9 @@ Do not write speculatively.
 After confirmation: fetch fresh SHA, apply all approved changes, re-sort
 (`Buy` -> `Choose` -> `Sell` -> `Pass`), commit.
 
-**Date pruning:** Identify any row whose show date has passed per the date confirmed in
-Step 0. Include these in the confirmation step above -- do not remove silently.
+**Date pruning:** Identify any row in `live_shows_potential.tsv` whose show date has
+passed per the date confirmed in Step 0, regardless of Decision (Buy, Choose, Sell,
+or Pass). Include these removals in the confirmation step above -- do not remove silently.
 
 **Step 3 -- Check autograph books**
 
