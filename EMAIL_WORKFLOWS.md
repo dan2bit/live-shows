@@ -422,6 +422,8 @@ After confirmation: fetch fresh SHA, apply all approved changes, re-sort
 passed per the date confirmed in Step 0, regardless of Decision (Buy, Choose, Sell,
 or Pass). Include these removals in the confirmation step above -- do not remove silently.
 
+after removing a past-dated row, for each removed artist check `artists.tsv` and `new_artist_research.tsv`; 
+if absent from both, add to `new_artist_research.tsv` with tier and a note derived from the potentials row.
 
 **Step 3 -- Check autograph books**
 
