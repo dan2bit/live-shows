@@ -214,11 +214,25 @@ to the calendar event title.
 
 **Step 3 -- Check autograph books**
 
-Look up the headliner in `autograph_books_combined.tsv`.
+**Step 3 -- Check autograph books**
 
-- If in **RHBS**: prepend `BRING RHBS -- [Artist] p.[N]` to the calendar event description
-- If in **APS**: prepend `BRING APS -- [Artist] p.[N]`
+Look up the headliner and any known supporting acts in `autograph_books_combined.tsv`.
 
+- If in **RHBS** and **not yet signed**: prepend `BRING RHBS -- [Artist] p.[N]` to the calendar event description
+- If in **APS** and **not yet signed**: prepend `BRING APS -- [Artist] p.[N]`
+- If already signed: no reminder needed
+
+**Hat signing eligibility:** Female or female-presenting artists only, or bands with
+female members. Before flagging a hat signer, verify gender via web search if not
+already known. Also check `autograph_books_combined.tsv` to confirm she has not
+already signed the hat.
+
+**Venue likelihood for artist interaction:**
+- **Yes (likely):** Pearl Street Warehouse, Hamilton Live, Collective Encore, Union Stage, Jammin' Java
+- **Maybe (artist's choice):** 9:30 Club, The Birchmere
+- **No (unlikely):** Wolf Trap Filene Center, The Anthem, Lincoln Theatre 
+if the venue is not on the prior list, include a question for Dan to confirm
+ 
 **Step 4 -- Create calendar event**
 
 Calendar: `redhat.bootlegs@gmail.com` -- Dan Concert Calendar
@@ -408,9 +422,18 @@ After confirmation: fetch fresh SHA, apply all approved changes, re-sort
 passed per the date confirmed in Step 0, regardless of Decision (Buy, Choose, Sell,
 or Pass). Include these removals in the confirmation step above -- do not remove silently.
 
+
 **Step 3 -- Check autograph books**
 
-Include book reminder in any recommendation or calendar event description.
+For any show recommendation, look up the artist in `autograph_books_combined.tsv`:
+- If in RHBS or APS and **not yet signed**: note the bring reminder in the recommendation
+- If already signed: omit the reminder
+
+For hat signing: verify the artist is female or female-presenting (web search if
+uncertain), and confirm not already signed before flagging as a hat signer.
+
+Venue likelihood for autographs applies here too — factor into how prominently the
+interaction angle is surfaced in the recommendation.
 
 **Step 4 -- Create on-sale reminder event (Case B only)**
 
