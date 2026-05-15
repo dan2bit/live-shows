@@ -177,6 +177,11 @@ For each newly added artist, look them up in `follows_master.tsv` and assess:
   an off-cycle run of Workflow 1 (BIT DC Recommends) or Workflow 2 (HFTB)
   is warranted to check current listings immediately rather than waiting for
   the monthly cadence.
+  
+**Autograph books as a taste signal:** The presence of an artist in RHBS or APS
+is a valid supporting factor when evaluating alignment to taste tiers, but it is
+one factor among many — not determinative. RHBS's roster is more central to Dan's
+core taste than APS. An APS entry alone is not sufficient to elevate tier.
 
 ### Output
 
