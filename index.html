@@ -590,7 +590,7 @@ function renderShows(){
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
   var itr='<div class="inner-tab-row">'
-    +'<div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended <span class="tab-badge">'+attended.length+'</span></div>'
+    +'<div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div>'
     +'<div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div>'
     +fsbGroup+'</div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div>'
