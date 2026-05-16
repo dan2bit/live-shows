@@ -525,6 +525,10 @@ The plain-text snippet is truncated — the full HTML body contains:
 - Get Tickets / Buy link (encoded as `=3D` in quoted-printable; decode before using)
 - the buy link will be masked for email tracking, but will resolve/redirect correctly for 
     the relevant venue ticketing service if presented in conversation
+    
+When processing a Just Announced thread: always fetch the full thread body, extract
+date, venue and purchase link, surface all 3 in conversation before any potentials write.
+Flag for potential Fast Track or Strong tier check before adding to potentials.
 
 **Step 2 -- Check `follows/follows_master.tsv`**
 
