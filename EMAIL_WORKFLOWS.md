@@ -517,6 +517,15 @@ this is a reminder -- skip entirely.** No log draft needed for pure reminders.
 
 Search `label:artist-follow -label:processed`. Apply reminder suppression before proceeding.
 
+**BIT "Just Announced" emails require full HTML body parsing.** 
+The subject line `Just Announced: [Artist] in [City]` signals a potentially actionable new show.
+The plain-text snippet is truncated — the full HTML body contains:
+- Show date (look for a `<p>` near a calendar icon image)
+- Venue (look for a `<p>` near a location pin image)
+- Get Tickets / Buy link (encoded as `=3D` in quoted-printable; decode before using)
+- the buy link will be masked for email tracking, but will resolve/redirect correctly for 
+    the relevant venue ticketing service if presented in conversation
+
 **Step 2 -- Check `follows/follows_master.tsv`**
 
 - Artist not present -> add a new row (present for approval first)
