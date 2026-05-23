@@ -9,9 +9,12 @@ subscription management.
 
 ---
 
-## Step 0 — Establish Current Date and Time MANDATORY
+## Step 0 — Pre-Flight MANDATORY
 
-**This step runs before every routine invocation and before any analysis workflow.**
+**This step runs before every routine invocation, without exception. If any part
+fails, stop immediately — do not proceed with email analysis.**
+
+### 0a — Time calibration
 
 Call `time:get_current_time` (timezone: `America/New_York`) and record the result.
 Use this date for:
@@ -23,6 +26,18 @@ Use this date for:
 Never rely on the model's internal knowledge of the current date. The time MCP is
 the sole authority on what day it is.
 
+### 0b — Fetch live context
+
+Fetch both files from the repo and hold them in context for the full routine:
+
+1. `live_shows_current.tsv` — extract all rows where Status = `upcoming`: artist, date, venue
+2. `live_shows_potential.tsv` — extract all rows: artist, date, decision
+
+**If `time:get_current_time` fails, or if either file fetch fails, stop immediately
+and ask Dan to check MCP connectivity before retrying. Do not proceed.**
+
+These two files are used to suppress duplicate recommendations (Step 0b cross-reference
+in Routines 3, 4, and 5) and to drive date pruning (Routine 3).
 ---
 
 ## Gmail Label System
@@ -401,29 +416,31 @@ gift card opportunity.
 **Non-Ticketmaster forwarded emails:** Surface the subscription management link so you
 can re-target to redhat.bootlegs@gmail.com.
 
-**Step 2 -- Check `live_shows_potential.tsv` and `fast_track.tsv`**
+**Step 2 -- Cross-reference current shows and potentials**
 
-If already in potential list:
-- Pass -> skip silently
-- Buy -> remind Dan to complete purchase
-- Choose -> present as normal recommendation
+Using the data fetched in Step 0b, for every artist/show surfaced in Step 1:
 
-If new, check `fast_track.tsv` first (see Fast Track Protocol).
+1. **Check `live_shows_current.tsv`:** if the artist already has an upcoming row,
+   skip silently — the show is already purchased.
+
+2. **Check `live_shows_potential.tsv`:**
+   - Pass → skip silently
+   - Buy → remind Dan to complete the purchase if not yet done
+   - Choose → present as a normal recommendation
+   - Not present → check `fast_track.tsv` first (see Fast Track Protocol)
 
 **Confirmation required before any potentials write.** Present the full proposed set of
-changes in conversation -- new rows, row updates, and date-pruning removals -- and wait
+changes in conversation — new rows, row updates, and date-pruning removals — and wait
 for explicit confirmation from Dan before committing anything to `live_shows_potential.tsv`.
 Do not write speculatively.
 
-After confirmation: fetch fresh SHA, apply all approved changes, re-sort
-(`Buy` -> `Choose` -> `Sell` -> `Pass`), commit.
-
 **Date pruning:** Identify any row in `live_shows_potential.tsv` whose show date has
-passed per the date confirmed in Step 0, regardless of Decision (Buy, Choose, Sell,
-or Pass). Include these removals in the confirmation step above -- do not remove silently.
+passed per the date confirmed in Step 0a, regardless of Decision. Include these removals
+in the confirmation step above — do not remove silently.
 
-after removing a past-dated row, for each removed artist check `artists.tsv` and `new_artist_research.tsv`; 
-if absent from both, add to `new_artist_research.tsv` with tier and a note derived from the potentials row.
+After removing a past-dated row, for each removed artist check `artists.tsv` and
+`new_artist_research.tsv`; if absent from both, add to `new_artist_research.tsv` with
+tier and a note derived from the potentials row.
 
 **Step 3 -- Check autograph books**
 
@@ -481,6 +498,19 @@ Search `label:artist-mail -label:processed`.
 Also check `in:promotions -label:processed` for unlabeled newsletters that bypassed
 the filter -- requires manual action in Gmail to move to Primary and label.
 
+**Step 1b -- Cross-reference current shows and potentials**
+
+Using the data fetched in Step 0b, for any DC/MD/VA show date mentioned in the email:
+
+1. **Check `live_shows_current.tsv`:** if the artist already has an upcoming row for
+   this date, skip silently.
+
+2. **Check `live_shows_potential.tsv`:**
+   - Pass → skip silently
+   - Buy → remind Dan to complete the purchase if on sale
+   - Choose → surface as a reminder that it's pending a decision
+   - Not present → proceed to Step 2
+   
 **Step 2 -- Classify and act on content**
 
 - **Tour announcements / new shows:** calendar check, buy recommendation or on-sale event
