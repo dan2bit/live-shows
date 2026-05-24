@@ -562,13 +562,19 @@ function runSearch(){
   requestAnimationFrame(revealToggles);
 }
 function debounceSearch(){clearTimeout(_srchTimer);_srchTimer=setTimeout(runSearch,250);}
+function clearSearch(){
+  var a=document.getElementById('srchArtist'),v=document.getElementById('srchVenue'),r=document.getElementById('srchResults');
+  if(a)a.value='';if(v)v.value='';
+  if(r)r.innerHTML='<div class="search-empty">Type to search across all shows</div>';
+  if(a)a.focus();
+}
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'</div>'    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'    +'</div>';
-  var itr='<div class="inner-tab-row">'    +'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()">Search</div>'    +HISTORY_YEARS.slice().reverse().map(function(yr){
+  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'<button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button>'    +'</div>'    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'    +'</div>';
+  var itr='<div class="inner-tab-row">'    +HISTORY_YEARS.slice().reverse().map(function(yr){
       var cnt=historyData[yr]?historyData[yr].length:'—';
       return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
-    }).join('')+'</div>';
+    }).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div>'+'</div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){
     return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';
   }).join('');
