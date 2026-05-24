@@ -115,6 +115,12 @@
   .history-year-header{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
   .history-year-label{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--amber);}
   .history-year-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+  .search-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+  .search-input{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--border2);border-radius:3px;color:var(--text);padding:6px 10px;outline:none;flex:1;min-width:120px;}
+  .search-input:focus{border-color:var(--amber-dim);}
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);padding-bottom:8px;}
+  .search-empty{font-family:var(--mono);font-size:12px;color:var(--text-dim);padding:20px 0;text-align:center;}
   .potential-group{margin-bottom:28px;}
   .group-header{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px 4px 0 0;border:1px solid;border-bottom:none;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;}
   .group-header-buy{background:var(--green-bg);border-color:var(--green-dim);color:var(--green);}
@@ -192,7 +198,8 @@
   .bystander-banner .recommend-cta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--amber-dim);border-radius:3px;padding:4px 10px;background:var(--amber-bg);cursor:not-allowed;opacity:.6;white-space:nowrap;}
   .revoke-btn{font-family:var(--mono);font-size:10px;color:var(--red);background:var(--red-bg);border:1px solid var(--red-dim);border-radius:3px;padding:2px 7px;cursor:pointer;margin-left:6px;}
   .revoke-btn:hover{background:#2a1010;}
-  .cell-venue-mobile{font-size:11px;color:var(--text-muted);margin-top:2px;display:none;}
+  /* venue sub-line always visible (not mobile-only) */
+  .cell-venue-mobile{font-size:11px;color:var(--text-muted);margin-top:2px;}
   @media(max-width:768px){
     .panel{padding:12px;}
     .col-support,.col-seat,.col-cost{display:none;}
@@ -297,6 +304,8 @@ var historyData={};
 HISTORY_YEARS.forEach(function(yr){historyData[yr]=null;});
 var _now=new Date();
 var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate()).padStart(2,'0');
+var _srchTimer=null;
+var _allYearsLoaded=false;
 
 async function ghFetch(path,opts){
   opts=opts||{};
@@ -326,6 +335,7 @@ var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function parseISODate(s){var m=(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
 function formatShowDate(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate():s;}
+function formatShowDateYear(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():s;}
 function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';}
 function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date();now.setHours(0,0,0,0);return Math.floor((d-now)/86400000);}
 function isOtdMatch(s){var m=(s||'').match(/^\d{4}-(\d{2}-\d{2})/);return m?m[1]===_todayMmDd:false;}
@@ -449,6 +459,19 @@ function renderAttendedRowBystander(row,idx){
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
+function renderAttendedRowSearch(row,idx){
+  // Search variant: date shows year, no OTD logic needed
+  var n=normalizeRow(row);
+  var ne=esc(n.notes);
+  var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
+  return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+    +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+    +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
+    +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+    +'<td class="cell-notes">'+nh+'</td></tr>';
+}
 function renderAttendedRowAuthed(row,idx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
@@ -479,19 +502,94 @@ async function loadHistoryYear(yr){
   try{var data=await ghFetch('history/'+yr+'.tsv');historyData[yr]=parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));} 
   catch(e){historyData[yr]=[];console.error('Failed to load history/'+yr+'.tsv:',e);}
 }
+async function ensureAllYearsLoaded(){
+  if(_allYearsLoaded)return;
+  var unloaded=HISTORY_YEARS.filter(function(yr){return historyData[yr]===null;});
+  if(unloaded.length){
+    await Promise.allSettled(unloaded.map(function(yr){return loadHistoryYear(yr);}));
+    HISTORY_YEARS.forEach(function(yr){
+      var b=document.getElementById('histBadge-'+yr);
+      if(b&&historyData[yr])b.textContent=historyData[yr].length;
+    });
+    var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
+    document.getElementById('historyBadge').textContent=total||'—';
+  }
+  _allYearsLoaded=true;
+  populateSearchDatalists();
+}
+function allAttendedRows(){
+  var rows=[];
+  HISTORY_YEARS.forEach(function(yr){if(historyData[yr])rows=rows.concat(historyData[yr]);});
+  currentRows.filter(function(r){return r['Status']==='attended';}).forEach(function(r){rows.push(r);});
+  rows.sort(function(a,b){
+    var da=a['Show Date']||a['Date']||'',db=b['Show Date']||b['Date']||'';
+    return db.localeCompare(da);
+  });
+  return rows;
+}
+function populateSearchDatalists(){
+  var rows=allAttendedRows();
+  var artists=new Set(),venues=new Set();
+  rows.forEach(function(r){
+    var n=normalizeRow(r);
+    if(n.artist)artists.add(n.artist);
+    if(n.support)n.support.split(/[/,]/).forEach(function(s){var t=s.trim();if(t)artists.add(t);});
+    if(n.venueName)venues.add(shortVenueName(n.venueName));
+  });
+  var al=document.getElementById('srchArtistList'),vl=document.getElementById('srchVenueList');
+  if(al)al.innerHTML=Array.from(artists).sort().map(function(a){return'<option value="'+esc(a)+'">';}).join('');
+  if(vl)vl.innerHTML=Array.from(venues).sort().map(function(v){return'<option value="'+esc(v)+'">';}).join('');
+}
+function runSearch(){
+  var qa=(document.getElementById('srchArtist')||{}).value||'';
+  var qv=(document.getElementById('srchVenue')||{}).value||'';
+  var resultsEl=document.getElementById('srchResults');
+  if(!resultsEl)return;
+  if(!qa&&!qv){resultsEl.innerHTML='<div class="search-empty">Type to search across all shows</div>';return;}
+  var la=qa.toLowerCase(),lv=qv.toLowerCase();
+  var rows=allAttendedRows().filter(function(r){
+    var n=normalizeRow(r);
+    var artistOk=!la||(n.artist.toLowerCase().includes(la)||n.support.toLowerCase().includes(la));
+    var venueOk=!lv||(n.venueName.toLowerCase().includes(lv)||shortVenueName(n.venueName).toLowerCase().includes(lv));
+    return artistOk&&venueOk;
+  });
+  if(!rows.length){resultsEl.innerHTML='<div class="search-empty">No matches</div>';return;}
+  var tbody=rows.map(function(r,i){return renderAttendedRowSearch(r,i);}).join('');
+  resultsEl.innerHTML='<div class="search-count">'+rows.length+' match'+(rows.length!==1?'es':'')+'</div>'
+    +'<div class="attended-table"><table class="shows-table"><thead><tr>'
+    +'<th style="width:80px">Date</th><th>Artist</th><th style="width:40px">Links</th><th>Notes</th>'
+    +'</tr></thead><tbody>'+tbody+'</tbody></table></div>';
+  requestAnimationFrame(revealToggles);
+}
+function debounceSearch(){clearTimeout(_srchTimer);_srchTimer=setTimeout(runSearch,250);}
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){
-    var cnt=historyData[yr]?historyData[yr].length:'—';
-    return'<div class="inner-tab'+(yr===mr?' active':'')+'\" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
-  }).join('')+'</div>';
-  var ip=HISTORY_YEARS.slice().reverse().map(function(yr){
-    return'<div class="inner-panel'+(yr===mr?' active':'')+'\" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';
+  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'</div>'    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'    +'</div>';
+  var itr='<div class="inner-tab-row">'    +'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()">Search</div>'    +HISTORY_YEARS.slice().reverse().map(function(yr){
+      var cnt=historyData[yr]?historyData[yr].length:'—';
+      return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
+    }).join('')+'</div>';
+  var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){
+    return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';
   }).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
   document.getElementById('historyBadge').textContent=total||'—';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
+}
+async function switchHistorySearch(){
+  document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-search');});
+  document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-search');});
+  if(!_allYearsLoaded){
+    var srchEl=document.getElementById('srchResults');
+    if(srchEl)srchEl.innerHTML='<div class="loading">Loading show history</div>';
+    await ensureAllYearsLoaded();
+    runSearch();
+  }else{
+    var inp=document.getElementById('srchArtist');
+    if(inp&&!inp.value)inp.focus();
+    else runSearch();
+  }
 }
 async function switchHistoryTab(yr){
   document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-'+yr);});
