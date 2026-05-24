@@ -206,6 +206,7 @@
     .cell-notes{max-width:220px;}
     .col-watching,.col-tier,.col-price,.col-context{display:none;}
     .cell-pot-notes{max-width:160px;}
+    .cell-venue-mobile{display:block;}
   }
   @media(max-width:480px){
     .shows-table{table-layout:fixed;width:100%;}
@@ -391,6 +392,7 @@ function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('v
 
 // ── Schema normalization ──────────────────────────────────────────────
 function normalizeRow(row){
+  function cleanUrl(v){var s=(v||'').trim();return(s===''||s==='-')?'':s;}
   return{
     artist:row['Artist']||'',
     support:row['Supporting Artist']||row['Supporting Acts']||'',
@@ -398,11 +400,21 @@ function normalizeRow(row){
     showDate:row['Show Date']||'',
     notes:row['Notes / Memories']||'',
     pvtNotes:row['Private Notes']||'',
-    setlist:row['Setlist.fm URL']||'',
-    playlist:row['Playlist URL']||'',
-    photo:row['Photo URL']||'',
+    setlist:cleanUrl(row['Setlist.fm URL']),
+    playlist:cleanUrl(row['Playlist URL']),
+    photo:cleanUrl(row['Photo URL']),
     totalCost:row['Total Cost']||'',
   };
+}
+
+// ── Total spend helper ────────────────────────────────────────────────
+function totalSpend(row){
+  var fields=['Total Cost','Food & Bev','Parking','Merch'];
+  var sum=fields.reduce(function(acc,f){
+    var v=parseFloat((row[f]||'').replace(/[^0-9.]/g,''));
+    return acc+(isNaN(v)?0:v);
+  },0);
+  return sum>0?'$'+sum.toFixed(2):'';
 }
 
 // ── Upcoming rows ─────────────────────────────────────────────────────
@@ -444,20 +456,20 @@ function renderAttendedRowBystander(row,idx){
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
-    +(n.photo&&n.photo!=='-'?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+    +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
 function renderAttendedRowSearch(row,idx){
   // Search variant: date shows year, no OTD logic needed
   var n=normalizeRow(row);
   var ne=esc(n.notes);
-  var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\')">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
+  var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
-    +(n.photo&&n.photo!=='-'?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+    +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
 function renderAttendedRowAuthed(row,idx){
@@ -465,24 +477,24 @@ function renderAttendedRowAuthed(row,idx){
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
   var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
-  var cost=n.totalCost&&n.totalCost!=='-'?esc(n.totalCost):'';
+  var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
-    +(n.photo&&n.photo!=='-'?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
-    +'<td class="cell-cost col-cost">'+cost+'</td>'
+    +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+    +'<td class="cell-cost col-cost">'+esc(cost)+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
 
-// ── History + Search ──────────────────────────────────────────────────
+// ── History panel ─────────────────────────────────────────────────────
 function renderHistoryYear(yr){
   var rows=historyData[yr];if(!rows)return'<div class="loading">Loading</div>';
   var sorted=rows.slice().sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var tbody=sorted.map(function(r,i){return renderAttendedRowBystander(r,yr+'-'+i);}).join('');
   return'<div class="history-year-header"><span class="history-year-label">'+yr+'</span><span class="history-year-count">'+sorted.length+' show'+(sorted.length!==1?'s':'')+'</span></div>'
-    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th>Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
+    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
 async function loadHistoryYear(yr){
@@ -552,42 +564,18 @@ function runSearch(){
 function debounceSearch(){clearTimeout(_srchTimer);_srchTimer=setTimeout(runSearch,250);}
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var searchPanel='<div class="inner-panel" id="inner-hist-search">'
-    +'<div class="search-bar">'
-    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'
-    +'<datalist id="srchArtistList"></datalist>'
-    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'
-    +'<datalist id="srchVenueList"></datalist>'
-    +'</div>'
-    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'
-    +'</div>';
-  var itr='<div class="inner-tab-row">'
-    +'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()">Search</div>'
-    +HISTORY_YEARS.slice().reverse().map(function(yr){
+  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'</div>'    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'    +'</div>';
+  var itr='<div class="inner-tab-row">'    +'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()">Search</div>'    +HISTORY_YEARS.slice().reverse().map(function(yr){
       var cnt=historyData[yr]?historyData[yr].length:'—';
-      return'<div class="inner-tab'+(yr===mr?' active':'')+'\" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
+      return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
     }).join('')+'</div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){
-    return'<div class="inner-panel'+(yr===mr?' active':'')+'\" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';
+    return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';
   }).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
   document.getElementById('historyBadge').textContent=total||'—';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
-}
-async function switchHistoryTab(yr){
-  document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-'+yr);});
-  document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-'+yr);});
-  if(historyData[yr]===null){
-    var panel=document.getElementById('inner-hist-'+yr);
-    if(panel)panel.innerHTML='<div class="loading">Loading</div>';
-    await loadHistoryYear(yr);
-    var badge=document.getElementById('histBadge-'+yr);
-    if(badge)badge.textContent=historyData[yr]?historyData[yr].length:0;
-    if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
-    var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'—';
-  }else{requestAnimationFrame(revealToggles);}
 }
 async function switchHistorySearch(){
   document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-search');});
@@ -602,6 +590,20 @@ async function switchHistorySearch(){
     if(inp&&!inp.value)inp.focus();
     else runSearch();
   }
+}
+async function switchHistoryTab(yr){
+  document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-'+yr);});
+  document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-'+yr);});
+  if(historyData[yr]===null){
+    var panel=document.getElementById('inner-hist-'+yr);
+    if(panel)panel.innerHTML='<div class="loading">Loading</div>';
+    await loadHistoryYear(yr);
+    var badge=document.getElementById('histBadge-'+yr);
+    if(badge)badge.textContent=historyData[yr]?historyData[yr].length:0;
+    if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
+    var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
+    document.getElementById('historyBadge').textContent=total||'—';
+  }else{requestAnimationFrame(revealToggles);}
 }
 
 // ── For Sale modal ────────────────────────────────────────────────────
@@ -622,6 +624,7 @@ function closeForSaleModal(){document.getElementById('forsaleModal').classList.r
 
 // ── Potential rows ────────────────────────────────────────────────────
 function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium';return'<span class="cell-tier '+cls+'">'+esc(tier)+'</span>';}
+
 function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
@@ -696,7 +699,7 @@ function renderShows(){
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
   var itr='<div class="inner-tab-row">'
-    +'<div class="inner-tab'+(di==='attended'?' active':'')+'\" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026) <span class="tab-badge">'+attended.length+'</span></div>'
+    +'<div class="inner-tab'+(di==='attended'?' active':'')+'\" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div>'
     +'<div class="inner-tab'+(di==='upcoming'?' active':'')+'\" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div>'
     +fsbGroup+'</div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'\" id="inner-attended">'+aTable+'</div>'
