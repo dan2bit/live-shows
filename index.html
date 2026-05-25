@@ -600,12 +600,16 @@ async function switchHistorySearch(){
 async function switchHistoryTab(yr){
   document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-'+yr);});
   document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-'+yr);});
+  var panel=document.getElementById('inner-hist-'+yr);
   if(historyData[yr]===null){
-    var panel=document.getElementById('inner-hist-'+yr);
     if(panel)panel.innerHTML='<div class="loading">Loading</div>';
     await loadHistoryYear(yr);
+  }
+  // Always re-render when data is available — fixes #30: Search pre-fetches year data
+  // but panel still shows boot-time Loading placeholder until explicitly re-rendered
+  if(historyData[yr]!==null){
     var badge=document.getElementById('histBadge-'+yr);
-    if(badge)badge.textContent=historyData[yr]?historyData[yr].length:0;
+    if(badge)badge.textContent=historyData[yr].length;
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
     var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
     document.getElementById('historyBadge').textContent=total||'—';
