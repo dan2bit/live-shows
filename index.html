@@ -542,6 +542,7 @@ function populateSearchDatalists(){
     if(n.support)n.support.split(/[/,]/).forEach(function(s){var t=s.trim();if(t)artists.add(t);});
     if(n.venueName)venues.add(shortVenueName(n.venueName));
   });
+  // Chrome ignores this function and just sorts the values the way it wants
   function artSort(s){return s.replace(/^(The|A|An)\s+/i,'').toLowerCase();}
   var al=document.getElementById('srchArtistList'),vl=document.getElementById('srchVenueList');
   if(al)al.innerHTML=Array.from(artists).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(a){return'<option value="'+esc(a)+'">';}).join('');
