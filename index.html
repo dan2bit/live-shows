@@ -52,6 +52,9 @@
   .loading{font-family:var(--mono);font-size:12px;color:var(--text-dim);padding:40px 0;text-align:center;}
   .loading::after{content:'';display:inline-block;width:12px;animation:dots 1.2s steps(4,end) infinite;}
   @keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+  .hat-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:14px;}
+  .hat-loading-img{width:40px;height:40px;object-fit:contain;animation:hat-pulse 1.6s ease-in-out infinite;}
+  @keyframes hat-pulse{0%{opacity:.2;transform:scale(.88) rotate(-5deg);}50%{opacity:1;transform:scale(1.1) rotate(5deg);}100%{opacity:.2;transform:scale(.88) rotate(-5deg);}}
   .error-msg{font-family:var(--mono);font-size:12px;color:var(--red);padding:16px;background:var(--red-bg);border:1px solid var(--red-dim);border-radius:4px;margin:20px 0;}
   .shows-table{width:100%;border-collapse:collapse;font-size:13px;}
   .shows-table th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface);}
@@ -497,10 +500,13 @@ function renderHistoryYear(yr){
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
+function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/red_hat_icon.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
-  try{var data=await ghFetch('history/'+yr+'.tsv');historyData[yr]=parseTsv(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));} 
-  catch(e){historyData[yr]=[];console.error('Failed to load history/'+yr+'.tsv:',e);}
+  try{
+    var results=await Promise.all([ghFetch('history/'+yr+'.tsv'),new Promise(function(r){setTimeout(r,1500);})]);
+    historyData[yr]=parseTsv(decodeURIComponent(escape(atob(results[0].content.replace(/\n/g,'')))));
+  }catch(e){historyData[yr]=[];console.error('Failed to load history/'+yr+'.tsv:',e);}
 }
 async function ensureAllYearsLoaded(){
   if(_allYearsLoaded)return;
@@ -545,7 +551,7 @@ function runSearch(){
   var qv=(document.getElementById('srchVenue')||{}).value||'';
   var resultsEl=document.getElementById('srchResults');
   if(!resultsEl)return;
-  if(!qa&&!qv){resultsEl.innerHTML='<div class="search-empty">Type to search across all shows</div>';return;}
+  if(!qa&&!qv){resultsEl.innerHTML=buildSearchEmptyState();return;}
   var la=qa.toLowerCase(),lv=qv.toLowerCase();
   var rows=allAttendedRows().filter(function(r){
     var n=normalizeRow(r);
@@ -565,12 +571,36 @@ function debounceSearch(){clearTimeout(_srchTimer);_srchTimer=setTimeout(runSear
 function clearSearch(){
   var a=document.getElementById('srchArtist'),v=document.getElementById('srchVenue'),r=document.getElementById('srchResults');
   if(a)a.value='';if(v)v.value='';
-  if(r)r.innerHTML='<div class="search-empty">Type to search across all shows</div>';
+  if(r)r.innerHTML=buildSearchEmptyState();
   if(a)a.focus();
+}
+function buildSearchEmptyState(){
+  var rows=allAttendedRows();
+  var artists=new Set(),venues=new Set();
+  rows.forEach(function(r){
+    var n=normalizeRow(r);
+    if(n.artist)artists.add(n.artist);
+    if(n.support)n.support.split(/[/,]/).forEach(function(s){var t=s.trim();if(t)artists.add(t);});
+    if(n.venueName)venues.add(shortVenueName(n.venueName));
+  });
+  var firstDate=new Date(2021,6,11);
+  var now=new Date();now.setHours(0,0,0,0);
+  var days=Math.floor((now-firstDate)/86400000);
+  var sc=rows.length,ac=artists.size,vc=venues.size;
+  if(!sc)return'<div class="search-empty">Type to search across all shows</div>';
+  return'<div style="padding:28px 0 20px;text-align:center">'
+    +'<div style="display:flex;justify-content:center;gap:0;margin-bottom:18px">'
+    +'<div style="padding:12px 22px;border:1px solid var(--border);border-radius:3px 0 0 3px"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+sc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Shows</div></div>'
+    +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+ac+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Artists</div></div>'
+    +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+vc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Venues</div></div>'
+    +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none;border-radius:0 3px 3px 0"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+days.toLocaleString()+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Days</div></div>'
+    +'</div>'
+    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 \u00b7 Oliver Wood \u00b7 Patio Stage at Strathmore</span></div>'
+    +'</div>';
 }
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist or supporting act\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'<button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button>'    +'</div>'    +'<div id="srchResults"><div class="search-empty">Type to search across all shows</div></div>'    +'</div>';
+  var searchPanel='<div class="inner-panel" id="inner-hist-search">'    +'<div class="search-bar">'    +'<input class="search-input" id="srchArtist" placeholder="Artist\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchArtistList"></datalist>'    +'<input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off">'    +'<datalist id="srchVenueList"></datalist>'    +'<button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button>'    +'</div>'    +'<div id="srchResults">'+buildSearchEmptyState()+'</div>'    +'</div>';
   var itr='<div class="inner-tab-row">'    +HISTORY_YEARS.slice().reverse().map(function(yr){
       var cnt=historyData[yr]?historyData[yr].length:'—';
       return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';
@@ -588,7 +618,7 @@ async function switchHistorySearch(){
   document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-search');});
   if(!_allYearsLoaded){
     var srchEl=document.getElementById('srchResults');
-    if(srchEl)srchEl.innerHTML='<div class="loading">Loading show history</div>';
+    if(srchEl)srchEl.innerHTML=hatLoadingHtml();
     await ensureAllYearsLoaded();
     runSearch();
   }else{
@@ -602,7 +632,7 @@ async function switchHistoryTab(yr){
   document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-'+yr);});
   var panel=document.getElementById('inner-hist-'+yr);
   if(historyData[yr]===null){
-    if(panel)panel.innerHTML='<div class="loading">Loading</div>';
+    if(panel)panel.innerHTML=hatLoadingHtml();
     await loadHistoryYear(yr);
   }
   // Always re-render when data is available — fixes #30: Search pre-fetches year data
