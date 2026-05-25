@@ -504,7 +504,7 @@ function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loadin
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
-    var results=await Promise.all([ghFetch('history/'+yr+'.tsv'),new Promise(function(r){setTimeout(r,1500);})]);
+    var results=await Promise.all([ghFetch('history/'+yr+'.tsv'),new Promise(function(r){setTimeout(r,2400);})]);
     historyData[yr]=parseTsv(decodeURIComponent(escape(atob(results[0].content.replace(/\n/g,'')))));
   }catch(e){historyData[yr]=[];console.error('Failed to load history/'+yr+'.tsv:',e);}
 }
@@ -542,9 +542,10 @@ function populateSearchDatalists(){
     if(n.support)n.support.split(/[/,]/).forEach(function(s){var t=s.trim();if(t)artists.add(t);});
     if(n.venueName)venues.add(shortVenueName(n.venueName));
   });
+  function artSort(s){return s.replace(/^(The|A|An)\s+/i,'').toLowerCase();}
   var al=document.getElementById('srchArtistList'),vl=document.getElementById('srchVenueList');
-  if(al)al.innerHTML=Array.from(artists).sort().map(function(a){return'<option value="'+esc(a)+'">';}).join('');
-  if(vl)vl.innerHTML=Array.from(venues).sort().map(function(v){return'<option value="'+esc(v)+'">';}).join('');
+  if(al)al.innerHTML=Array.from(artists).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(a){return'<option value="'+esc(a)+'">';}).join('');
+  if(vl)vl.innerHTML=Array.from(venues).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(v){return'<option value="'+esc(v)+'">';}).join('');
 }
 function runSearch(){
   var qa=(document.getElementById('srchArtist')||{}).value||'';
