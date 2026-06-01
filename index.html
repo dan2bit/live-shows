@@ -210,7 +210,7 @@
   .ft-table tr:last-child td{border-bottom:none;}
   .ft-table tr:hover td{background:var(--surface2);}
   .ft-artist{font-weight:500;}
-  .ft-why{font-size:12px;color:var(--text-muted);line-height:1.5;max-width:300px;}
+  .ft-why{font-size:12px;color:var(--text-muted);line-height:1.5;max-width:300px;position:relative;}
   .ft-caps{font-size:11px;font-family:var(--mono);color:var(--text-muted);line-height:1.8;}
   .ft-caps .ft-cap-hl{color:var(--amber);}
   .ft-link{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:2px;text-decoration:none;border:1px solid;white-space:nowrap;display:inline-block;}
@@ -223,6 +223,25 @@
   .th-ft-caps{display:none;}
   .col-ft-caps.authed-visible{display:table-cell;}
   .th-ft-caps.authed-visible{display:table-cell;}
+  .notes-edit-btn{position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-dim);opacity:0;transition:opacity .15s;padding:2px 4px;border-radius:2px;line-height:1;font-family:var(--mono);}
+  .cell-notes{position:relative;max-width:340px;}
+  .cell-notes:hover .notes-edit-btn,.cell-notes:focus-within .notes-edit-btn{opacity:1;}
+  .cell-pot-notes{position:relative;}
+  .cell-pot-notes:hover .notes-edit-btn,.cell-pot-notes:focus-within .notes-edit-btn{opacity:1;}
+  .ft-why:hover .notes-edit-btn,.ft-why:focus-within .notes-edit-btn{opacity:1;}
+  @media(hover:none){.notes-edit-btn{opacity:.6;}}
+  .notes-edit-wrap{display:flex;flex-direction:column;gap:6px;}
+  .notes-textarea{font-family:var(--sans);font-size:12px;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:6px 8px;width:100%;resize:vertical;min-height:60px;field-sizing:content;outline:none;line-height:1.5;}
+  .notes-textarea:focus{border-color:var(--amber);}
+  .notes-edit-actions{display:flex;gap:6px;align-items:center;}
+  .notes-save-btn{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;}
+  .notes-save-btn:hover{background:#142414;}
+  .notes-cancel-btn{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:3px;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);cursor:pointer;}
+  .notes-cancel-btn:hover{border-color:var(--amber-dim);color:var(--amber);}
+  .notes-save-ind{font-family:var(--mono);font-size:10px;}
+  .notes-switch-btn{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;border:1px solid var(--border2);background:none;color:var(--text-dim);cursor:pointer;margin-left:auto;}
+  .notes-switch-btn:hover{border-color:var(--amber-dim);color:var(--amber);}
+  .notes-field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.04em;}
   @media(max-width:768px){
     .panel{padding:12px;}
     .col-support,.col-seat,.col-cost{display:none;}
@@ -442,6 +461,130 @@ function totalSpend(row){
   return sum>0?'$'+sum.toFixed(2):'';
 }
 
+// ── Inline notes editing ─────────────────────────────────────────────
+function makeEditBtn(cellId,fileKey,rowIdx,field,label){
+  return'<button class="notes-edit-btn" title="Edit '+label+'" onclick="startEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">&#9998;</button>';
+}
+function _fieldAlternate(fileKey,field){
+  if(fileKey==='current'){
+    if(field==='Notes / Memories')return'Private Notes';
+    if(field==='Private Notes')return'Notes / Memories';
+  }
+  if(fileKey==='potential'){
+    if(field==='Notes')return'Private Notes';
+    if(field==='Private Notes')return'Notes';
+  }
+  return null;
+}
+function _fieldLabel(field){
+  if(field==='Notes / Memories')return'Public';
+  if(field==='Private Notes')return'Private';
+  if(field==='Notes')return'Public';
+  return field;
+}
+function switchEditField(cellId,fileKey,rowIdx,field){
+  var ta=document.getElementById('ta-'+cellId);if(!ta)return;
+  var alt=_fieldAlternate(fileKey,field);if(!alt)return;
+  var altVal='';
+  if(fileKey==='current')altVal=(currentRows[rowIdx]||{})[alt]||'';
+  else if(fileKey==='potential')altVal=(potentialRows[rowIdx]||{})[alt]||'';
+  ta.value=altVal;
+  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  var saveBtn=document.getElementById('savebtn-'+cellId);
+  var switchBtn=document.getElementById('switchbtn-'+cellId);
+  var lbl=document.getElementById('fieldlbl-'+cellId);
+  if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
+  if(switchBtn)switchBtn.setAttribute('onclick','switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
+  if(switchBtn)switchBtn.textContent='\u2192 '+_fieldLabel(field);
+  if(lbl)lbl.textContent=_fieldLabel(alt);
+}
+function startEdit(cellId,fileKey,rowIdx,field){
+  var cell=document.getElementById(cellId);if(!cell)return;
+  var current='';
+  if(fileKey==='current'){current=(currentRows[rowIdx]||{})[field]||'';}
+  else if(fileKey==='potential'){current=(potentialRows[rowIdx]||{})[field]||'';}
+  else if(fileKey==='fasttrack'){current=(fastTrackRows[rowIdx]||{})[field]||'';}
+  else if(fileKey.startsWith('history:')){var yr=parseInt(fileKey.split(':')[1]);current=((historyData[yr]||[])[rowIdx]||{})[field]||'';}
+  var ind='ind-'+cellId;
+  var alt=_fieldAlternate(fileKey,field);
+  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">\u2192 '+_fieldLabel(alt)+'</button>':'';
+  var labelHtml=alt?'<span class="notes-field-label" id="fieldlbl-'+cellId+'">'+_fieldLabel(field)+'</span>':'';
+  cell.innerHTML='<div class="notes-edit-wrap">'
+    +labelHtml
+    +'<textarea class="notes-textarea" id="ta-'+cellId+'" rows="3">'+esc(current)+'</textarea>'
+    +'<div class="notes-edit-actions">'
+    +'<button class="notes-save-btn" id="savebtn-'+cellId+'" onclick="saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">Save</button>'
+    +'<button class="notes-cancel-btn" onclick="cancelEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">Cancel</button>'
+    +'<span class="notes-save-ind save-indicator" id="'+ind+'"></span>'
+    +switchHtml
+    +'</div></div>';
+  var ta=document.getElementById('ta-'+cellId);
+  if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}
+}
+function cancelEdit(cellId,fileKey,rowIdx,field){
+  if(fileKey==='current'){renderShows();}
+  else if(fileKey==='potential'){renderPotential();}
+  else if(fileKey==='fasttrack'){renderTourHere();}
+  else if(fileKey.startsWith('history:')){
+    var yr=parseInt(fileKey.split(':')[1]);
+    var panel=document.getElementById('inner-hist-'+yr);
+    if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
+  }
+}
+async function saveEdit(cellId,fileKey,rowIdx,field){
+  var ta=document.getElementById('ta-'+cellId);if(!ta)return;
+  var newVal=ta.value;
+  var ind=document.getElementById('ind-'+cellId);
+  if(ind){ind.textContent='…';ind.className='notes-save-ind save-indicator';}
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='✗ no auth';ind.className='notes-save-ind save-err';}return;}
+  try{
+    if(fileKey==='current'){
+      var fd=await ghFetch(CURRENT_PATH);
+      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+      var rows=parseTsv(raw);
+      rows[rowIdx][field]=newVal;currentRows[rowIdx][field]=newVal;
+      var msgArtist=rows[rowIdx]['Artist']||'show';
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'current: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      if(!res.ok)throw new Error(await res.text());
+    } else if(fileKey==='potential'){
+      var fd=await ghFetch(POTENTIAL_PATH);
+      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+      var rows=parseTsv(raw);
+      rows[rowIdx][field]=newVal;potentialRows[rowIdx][field]=newVal;
+      var msgArtist=rows[rowIdx]['Artist']||'show';
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      if(!res.ok)throw new Error(await res.text());
+    } else if(fileKey==='fasttrack'){
+      var fd=await ghFetch(FAST_TRACK_PATH);
+      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+      var rows=parseFastTrack(raw);
+      rows[rowIdx][field]=newVal;fastTrackRows[rowIdx][field]=newVal;
+      var msgArtist=rows[rowIdx]['Artist']||'artist';
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+FAST_TRACK_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'fast_track: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeFastTrack(rows,headers)))),sha:fd.sha})});
+      if(!res.ok)throw new Error(await res.text());
+    } else if(fileKey.startsWith('history:')){
+      var yr=parseInt(fileKey.split(':')[1]);
+      var histPath='history/'+yr+'.tsv';
+      var fd=await ghFetch(histPath);
+      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+      var rows=parseTsv(raw);
+      rows[rowIdx][field]=newVal;historyData[yr][rowIdx][field]=newVal;
+      var msgArtist=rows[rowIdx]['Artist']||'show';
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      if(!res.ok)throw new Error(await res.text());
+    }
+    if(ind){ind.textContent='✓';ind.className='notes-save-ind save-ok';}
+    setTimeout(function(){cancelEdit(cellId,fileKey,rowIdx,field);},600);
+  }catch(e){
+    console.error(e);
+    if(ind){ind.textContent='✗ '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
+  }
+}
+
 // ── Upcoming rows ─────────────────────────────────────────────────────
 function renderUpcomingRowBystander(row,idx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
@@ -454,7 +597,7 @@ function renderUpcomingRowBystander(row,idx){
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
-function renderUpcomingRowAuthed(row,idx){
+function renderUpcomingRowAuthed(row,idx,origIdx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
   var pn=row['Notes / Memories']||'',pvt=row['Private Notes']||'';
   var fn=pvt?pn+(pn?' \u00b7 ':'')+pvt:pn,fne=esc(fn);
@@ -462,12 +605,14 @@ function renderUpcomingRowAuthed(row,idx){
   var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
   var cal='<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">&#128197;</a>';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' \u00b7 '+seat:'')+'</div>':'';
+  var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
+  var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty>1?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
-    +'<td class="cell-notes">'+nh+'</td></tr>';
+    +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
 
 // ── Attended rows ─────────────────────────────────────────────────────
@@ -496,11 +641,13 @@ function renderAttendedRowSearch(row,idx){
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
-function renderAttendedRowAuthed(row,idx){
+function renderAttendedRowAuthed(row,idx,origIdx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
   var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
+  var cellId='cell-at-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
@@ -509,14 +656,30 @@ function renderAttendedRowAuthed(row,idx){
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-cost col-cost">'+esc(cost)+'</td>'
-    +'<td class="cell-notes">'+nh+'</td></tr>';
+    +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
 
 // ── History panel ─────────────────────────────────────────────────────
 function renderHistoryYear(yr){
   var rows=historyData[yr];if(!rows)return'<div class="loading">Loading</div>';
   var sorted=rows.slice().sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
-  var tbody=sorted.map(function(r,i){return renderAttendedRowBystander(r,yr+'-'+i);}).join('');
+  var origIdx=sorted.map(function(r){return rows.indexOf(r);});
+  var tbody=sorted.map(function(r,i){
+    var oi=origIdx[i];
+    var cellId='cell-hist-'+yr+'-'+i;
+    var n=normalizeRow(r),isOtd=isOtdMatch(n.showDate);
+    var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
+    var ne=esc(n.notes);
+    var editBtn=authed?makeEditBtn(cellId,'history:'+yr,oi,'Notes / Memories','notes'):'';
+    var nh=ne?'<div class="notes-text collapsible" id="n-hist-'+yr+'-'+i+'" onclick="toggleNote(this,\'nt-hist-'+yr+'-'+i+'\')">'+ne+'</div><span class="notes-toggle" id="nt-hist-'+yr+'-'+i+'" onclick="toggleNote(document.getElementById(\'n-hist-'+yr+'-'+i+'\'),this)">more</span>':'';
+    return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
+      +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+      +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+      +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+      +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
+      +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
+      +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
+  }).join('');
   return'<div class="history-year-header"><span class="history-year-label">'+yr+'</span><span class="history-year-count">'+sorted.length+' show'+(sorted.length!==1?'s':'')+'</span></div>'
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
@@ -690,6 +853,8 @@ function renderPotentialRowAuthed(r,gi){
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',isSell=dec.toLowerCase()==='sell';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
+  var potCellId='cell-pot-'+gi;
+  var potEditBtn=makeEditBtn(potCellId,'potential',gi,'Notes','notes');
   var nh=fne?'<div class="cell-pot-notes" style="cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" onclick="this.style.display=\'block\';this.style.cursor=\'default\'">'+fne+'</div>':'';
   var dh;
   if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
@@ -703,7 +868,7 @@ function renderPotentialRowAuthed(r,gi){
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching">&#9888; '+esc(r['Watching For'])+'</span>':'')+'</td>'
-    +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes">'+nh+'</td></tr>';
+    +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
 // ── Shows rendering ───────────────────────────────────────────────────
@@ -724,8 +889,10 @@ function renderShows(){
   }
   var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor — some details are hidden. Know something I should see?</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
-  var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
-  var aTbody=authed?attended.map(function(r,i){return renderAttendedRowAuthed(r,i);}).join(''):attended.map(function(r,i){return renderAttendedRowBystander(r,i);}).join('');
+  var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
+  var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
+  var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i,upOrigIdx[i]);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
+  var aTbody=authed?attended.map(function(r,i){return renderAttendedRowAuthed(r,i,atOrigIdx[i]);}).join(''):attended.map(function(r,i){return renderAttendedRowBystander(r,i);}).join('');
   var uTable='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>'+uTbody+'</tbody></table>';
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
@@ -788,11 +955,17 @@ async function handleDecisionChange(select){
 // ── Please Tour Here ──────────────────────────────────────────────────
 var fastTrackRows=[];
 var FAST_TRACK_PATH='fast_track.tsv';
+var _fastTrackComments='';
 function parseFastTrack(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
-  lines=lines.filter(function(l){return l.trim()&&!l.startsWith('#');});
-  var headers=lines[0].split('\t').map(function(h){return h.trim();});
-  return lines.slice(1).map(function(line){
+  var commentLines=[];
+  var dataLines=lines.filter(function(l){
+    if(l.trim().startsWith('#')){commentLines.push(l);return false;}
+    return l.trim();
+  });
+  _fastTrackComments=commentLines.join('\n');
+  var headers=dataLines[0].split('\t').map(function(h){return h.trim();});
+  return dataLines.slice(1).map(function(line){
     var vals=line.split('\t');
     while(vals.length<headers.length)vals.push('');
     var obj={};
@@ -800,12 +973,16 @@ function parseFastTrack(text){
     return obj;
   });
 }
+function serializeFastTrack(rows,headers){
+  var data=serializeTsv(rows,headers);
+  return _fastTrackComments?_fastTrackComments+'\n'+data:data;
+}
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
   var banner='<div class="bystander-banner"><span>Artists I have never caught live yet \u2014 any DC/MD/VA date would be a strong buy.</span><span class="recommend-cta" title="Coming soon">Suggest a show \u2197</span></div>';
   var thCaps=authed?'th-ft-caps authed-visible':'th-ft-caps';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th class="'+thCaps+'">Caps</th><th style="width:110px">Links</th></tr></thead>';
-  var tbody=fastTrackRows.map(function(r){
+  var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'',tierCls=tier.toLowerCase().includes('strong')&&tier.toLowerCase().includes('medium')?'tier-medium-strong':tier==='Strong'?'tier-strong':'tier-medium';
     var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
@@ -817,7 +994,7 @@ function renderTourHere(){
     var capsHtml='<div class="ft-caps"><span'+(priceDef?'':' class="ft-cap-hl"')+'>Price</span> '+(priceCap.trim()||'$100')+'<br><span'+(distDef?'':' class="ft-cap-hl"')+'>Dist\u00a0\u00a0</span> '+(distCap.trim()||'Regional')+'<br><span'+(venueDef?'':' class="ft-cap-hl"')+'>Venue</span> '+(venueCap.trim()||'Mid')+'</div>';
     return'<tr><td><div class="ft-artist">'+esc(r['Artist']||'')+(isHat?' <span class="badge badge-hat">&#127913; HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
       +'<td><span class="cell-tier '+tierCls+'">'+esc(tier)+'</span></td>'
-      +'<td><div class="ft-why">'+esc(r['Why Fast Track']||'')+'</div></td>'
+      +'<td><div class="ft-why" id="cell-ft-why-'+ri+'">'+makeEditBtn('cell-ft-why-'+ri,'fasttrack',ri,'Why Fast Track','Why')+esc(r['Why Fast Track']||'')+'</div></td>'
       +'<td class="'+capsCls+'">'+capsHtml+'</td>'
       +'<td><div class="ft-links">'+(tourUrl?'<a class="ft-link ft-link-tour" href="'+esc(tourUrl)+'" target="_blank">Tour &#8599;</a>':'')+(spotUrl?'<a class="ft-link ft-link-sp" href="'+esc(spotUrl)+'" target="_blank">Spotify</a>':'')+'</div></td>'
       +'</tr>';
@@ -891,6 +1068,7 @@ document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('acti
   if(!authed)await loadHistoryYear(mr);
   renderHistoryPanel();
   if(!authed)requestAnimationFrame(revealToggles);
+  if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
 loadData();
 loadOnThisDay();
