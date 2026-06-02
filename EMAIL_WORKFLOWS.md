@@ -44,9 +44,10 @@ in Routines 3, 4, and 5) and to drive date pruning (Routine 3).
 
 Four labels are in use on the redhat.bootlegs inbox:
 
-**`processed`** -- Applied manually by you after any email workflow completes. I always
-include `-label:processed` in my search queries so previously handled emails are never
-re-processed. At the end of each routine I will remind you to apply this label.
+**`processed`** -- Applied to emails after any email workflow completes, to prevent
+re-processing. I always include `-label:processed` in my search queries.
+**Applying `processed` requires explicit confirmation from Dan** — see Processed Label
+Protocol below.
 
 **`ticket-alert`** -- Applied manually (or via a Gmail filter) to incoming venue/artist
 newsletter emails. Routine 3 searches `label:ticket-alert -label:processed`.
@@ -58,10 +59,6 @@ newsletter subscriptions. Routine 4 searches `label:artist-mail -label:processed
 **`artist-follow`** -- Applied automatically by Gmail filter (Bandsintown and Songkick
 sender addresses) or manually for other sources. Routine 5 searches
 `label:artist-follow -label:processed`.
-
-**What I cannot do:** I can read labels and search by them, but I cannot apply, remove,
-or create labels, mark emails as read, or create Gmail filters. All label management
-is manual.
 
 **Label IDs:**
 - `processed` = `Label_421272830174798850`
@@ -76,6 +73,27 @@ is manual.
 | 3 -- On-sale alert | `label:ticket-alert -label:processed` |
 | 4 -- Artist newsletter | `label:artist-mail -label:processed` |
 | 5 -- Artist follow / signup | `label:artist-follow -label:processed` |
+
+---
+
+## Processed Label Protocol
+
+**Applying `processed` always requires explicit confirmation from Dan — no exceptions.**
+
+The sequence at the end of every routine invocation:
+
+1. Complete all routine steps (TSV writes, calendar events, autograph checks, etc.)
+2. Write the activity log draft
+3. Present a summary of all threads to be labeled, by thread ID and subject
+4. **Wait for Dan to confirm** before calling `label_thread` on any thread
+5. Apply `processed` to all confirmed threads
+
+Labeling does not need to be included in the activity log draft. The confirmation
+request is the final step of every routine, after the draft is written.
+
+**Never apply `processed` speculatively or as part of a batch without confirmation.**
+Even if Dan says "process the inbox" or "run all routines", the label step still
+requires a separate explicit go-ahead.
 
 ---
 
@@ -229,8 +247,6 @@ to the calendar event title.
 
 **Step 3 -- Check autograph books**
 
-**Step 3 -- Check autograph books**
-
 Look up the headliner and any known supporting acts in `autograph_books_combined.tsv`.
 
 - If in **RHBS** and **not yet signed**: prepend `BRING RHBS -- [Artist] p.[N]` to the calendar event description
@@ -301,7 +317,8 @@ A purchased ticket means the artist enters the history-based tier system.
 
 Subject: `[LOG] Routine 1 -- [Artist] ticket -- YYYY-MM-DD`
 
-**Final step:** Remind you to apply the `processed` label.
+**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
+confirmation before applying any labels.
 
 ---
 
@@ -378,7 +395,8 @@ Body includes show details, notes, and the playlist creation workflow. Skip if n
 
 Subject: `[LOG] Routine 2 -- [Artist] post-show -- YYYY-MM-DD`
 
-**Final step:** Remind you to apply the `processed` label.
+**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
+confirmation before applying any labels.
 
 ### artists.tsv update rules for Routine 2
 
@@ -469,7 +487,8 @@ Pre-sale code: [CODE]    <- if present
 
 Subject: `[LOG] Routine 3 -- [source] -- YYYY-MM-DD`
 
-**Final step:** Remind you to apply the `processed` label.
+**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
+confirmation before applying any labels.
 
 ---
 
@@ -525,7 +544,8 @@ For any DC/MD/VA show recommendation.
 
 Subject: `[LOG] Routine 4 -- [Artist] newsletter -- YYYY-MM-DD`
 
-**Final step:** Remind you to apply the `processed` label.
+**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
+confirmation before applying any labels.
 
 ---
 
@@ -580,7 +600,8 @@ Subject: `[LOG] Routine 5 -- [Artist] [source] -- YYYY-MM-DD`
 
 No log draft for pure reminders.
 
-**Final step:** Remind you to apply the `processed` label.
+**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
+confirmation before applying any labels.
 
 ---
 
