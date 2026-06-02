@@ -242,6 +242,11 @@
   .notes-switch-btn{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;border:1px solid var(--border2);background:none;color:var(--text-dim);cursor:pointer;margin-left:auto;}
   .notes-switch-btn:hover{border-color:var(--amber-dim);color:var(--amber);}
   .notes-field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.04em;}
+  @media(max-width:600px){
+    .tabs{flex-wrap:wrap;}
+    .tab{flex:0 0 50%;text-align:center;border-bottom:2px solid transparent;margin-bottom:0;}
+    .tab-row{padding:0;}
+  }
   @media(max-width:768px){
     .panel{padding:12px;}
     .col-support,.col-seat,.col-cost{display:none;}
@@ -278,7 +283,7 @@
     <div class="tab" data-tab="shows" onclick="switchTab('shows')">Shows <span class="tab-badge" id="showsBadge">—</span></div>
     <div class="tab" data-tab="history" onclick="switchTab('history')">History <span class="tab-badge" id="historyBadge">—</span></div>
     <div class="tab" data-tab="potential" onclick="switchTab('potential')">Potential <span class="tab-badge" id="potBadge">—</span></div>
-    <div class="tab" data-tab="tourhere" onclick="switchTab('tourhere')">Please Tour Here <span class="tab-badge" id="tourhereBadge">—</span></div>
+    <div class="tab" data-tab="tourhere" onclick="switchTab('tourhere')">Waiting <span class="tab-badge" id="tourhereBadge">—</span></div>
   </nav>
   <div class="on-this-day">
     <span class="otd-label">On this day</span>
