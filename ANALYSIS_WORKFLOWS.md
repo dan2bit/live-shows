@@ -10,38 +10,66 @@ not inbox events.
 ## Workflow 1 — Bandsintown DC Recommends Refresh
 
 **Cadence:** Monthly — 1st Tuesday of each month
-**Trigger:** Recurring calendar event "🔄 Re-fetch Bandsintown DC Recommends page"
+**Trigger:** Recurring calendar event "🔄 Re-fetch Recommendations pages"
 **Account:** rhbl (redhat.bootlegs@gmail.com)
+
+### Pre-scrape manual prep (required)
+
+The BIT DC Recommends page uses **progressive disclosure** — artists load as you
+scroll and some sections are collapsed. You must:
+1. Open the URL yourself
+2. Scroll to the very bottom of the page
+3. Click "View All" on any collapsed sections
+
+**Do this before handing off to Claude in Chrome.** If you skip it, Claude will
+only capture the first screenful and the file will be incomplete.
 
 ### What to do
 
-Use Claude in Chrome (logged in as rhbl) to fetch:
+Use Claude in Chrome (logged in as rhbl) to fetch the fully loaded page:
 
 ```
 https://www.bandsintown.com/c/washington-dc?came_from=278&utm_medium=web&utm_source=city_page&utm_campaign=recommended_event&recommended_artists_filter=Recommended
 ```
 
-Parse the page and save the full listing as:
+Parse and save as:
 
 ```
 web-src/rhbl-bandsintown-dc-recommends.tsv
 ```
 
-Schema: `Artist | Venue | Date | Event URL`
+Schema: `Artist | Venue/Event | Date | Time | Tracking`
 
-Then ask Claude to diff the new file against the previous version and surface
-any artists not previously present. Flag by tier:
+### Artist diff analysis
 
-- **Strong** (artist seen before) — surface immediately for review
-- **Medium** (artist in autograph books) — surface for review
-- **Low** (artist not in either) — log only, no action needed
+Diff the new file against the previous version to find new and removed artists.
+The goal of the diff is **finding artists of interest** — not just confirming
+already-known shows.
+
+For every artist that is new (present in the new file but not the old):
+
+**1. Cross-reference against all five sources:**
+- `live_shows_current.tsv` (upcoming rows) — already purchased, note and skip
+- `live_shows_potential.tsv` (all decisions) — already evaluated, note decision
+- `fast_track.tsv` — pre-authorized buy; surface any open date immediately
+- `follows/follows_master.tsv` — tracked follow; note tier and surface show
+- `follows/new_artist_research.tsv` — in research pipeline; note and surface
+
+**2. Flag by tier for artists not already tracked:**
+- **Strong** (seen before, in `artists.tsv`) — surface immediately; likely a buy
+- **Medium** (in autograph books but not yet seen) — surface for review
+- **New name** (not in any of the above) — note in conversation; no file action
+  unless the taste profile fit is strong enough to add to NAR
+
+Do not silently discard new entries. Every new artist name should appear in the
+diff output, even if the conclusion is "pass."
 
 ---
 
 ## Workflow 2 — HereForTheBands DC Region Refresh
 
 **Cadence:** Monthly — 1st Tuesday of each month (same session as Workflow 1)
-**Trigger:** Recurring calendar event "🔄 Re-fetch Bandsintown DC Recommends page"
+**Trigger:** Recurring calendar event "🔄 Re-fetch Recommendations pages"
 **Account:** rhbl (redhat.bootlegs@gmail.com)
 
 ### What to do
@@ -52,7 +80,7 @@ Use Claude in Chrome (logged in as rhbl) to fetch:
 https://www.hereforthebands.com/washington-dc
 ```
 
-Parse the page and save the full listing as:
+Scroll to bottom before scraping to load all events. Parse and save as:
 
 ```
 web-src/rhbl-hereforthebands-dc.tsv
@@ -61,10 +89,27 @@ web-src/rhbl-hereforthebands-dc.tsv
 Schema: `Artist | Venue | Date | Venue URL`
 
 Note: HFTB provides one URL per venue, not per event — all shows at the same
-venue share the same URL.
+venue share the same Venue URL.
 
-Then diff against the previous version and flag new entries by tier (same
-tiers as Workflow 1).
+### Artist diff analysis
+
+Diff the new file against the previous version. Because HFTB entries are show
+listings (not a follow list), the meaningful signal is **new artist names**
+appearing for the first time, not churn in show listings for already-known artists.
+
+For every artist name appearing in new rows that wasn't in any old row:
+
+**Cross-reference against all five sources** (same as Workflow 1):
+- `live_shows_current.tsv` — already purchased, note and skip
+- `live_shows_potential.tsv` — already evaluated, note decision
+- `fast_track.tsv` — surface immediately
+- `follows/follows_master.tsv` — note tier and surface show
+- `follows/new_artist_research.tsv` — note and surface
+
+**Flag by tier** (same tier logic as Workflow 1).
+
+Also note new venues appearing in HFTB for the first time — these may represent
+new booking relationships worth tracking in `venues.tsv`.
 
 Note: The rhbl account receives venue newsletters directly from Rams Head On
 Stage, Hamilton Live, and Wolf Trap — those gaps in HFTB coverage are handled
@@ -72,7 +117,42 @@ separately via email.
 
 ---
 
-## Workflow 3 — Quarterly Artist Research: Festivals & Awards
+## Workflow 3 — Fast Track Tour Page Scrape
+
+**Cadence:** Monthly — same session as Workflows 1 and 2
+**Trigger:** Recurring calendar event "🔄 Re-fetch Recommendations pages"
+
+### Pre-scrape manual prep (required)
+
+Before opening Claude in Chrome, **ask Claude for the current list of tour page
+URLs and their corresponding `follows/` filenames** from
+`follows/fast-track-artist-tour-pages.tsv`. Open all tabs at once before handing
+off — it is much faster than opening them one at a time mid-session.
+
+### What to do
+
+For each artist in `follows/fast-track-artist-tour-pages.tsv`:
+
+1. Open their tour page URL in Claude in Chrome
+2. Click "All Shows", "Load More", or equivalent expansion controls before scraping
+3. Capture upcoming dates only (ignore past events)
+4. Overwrite the corresponding `follows/fast-track-[artist]-tour-dates.tsv`
+
+Schema: `Date | Day | Time | Event/Venue | Venue | City | State (or Country if non-USA)`
+
+If no upcoming events exist: leave the file with the header row only, and update
+the Notes column in `fast-track-artist-tour-pages.tsv`.
+
+### DMV scan
+
+After all files are updated, ask Claude to scan each file for dates within the
+DMV region (~60 miles of Arlington VA: DC/MD/VA + Baltimore). Any hit is a
+**Fast Track buy** — surface immediately. Do not add out-of-region dates to any
+potentials list.
+
+---
+
+## Workflow 4 — Quarterly Artist Research: Festivals & Awards
 
 **Cadence:** Quarterly — 1st Tuesday of January, April, July, and October
 **Trigger:** Recurring calendar event "🔍 Quarterly Artist Research — Festivals & Awards"
@@ -132,7 +212,7 @@ or conversation-level recommendations.
 
 ---
 
-## Workflow 4 — Fast Track Entry: Follow Coverage Audit
+## Workflow 5 — Fast Track Entry: Follow Coverage Audit
 
 **Cadence:** Ad hoc — run whenever a new artist is added to `fast_track.tsv`
 **Trigger:** Editing `fast_track.tsv` (no calendar event; part of the same session)
@@ -177,7 +257,7 @@ For each newly added artist, look them up in `follows_master.tsv` and assess:
   an off-cycle run of Workflow 1 (BIT DC Recommends) or Workflow 2 (HFTB)
   is warranted to check current listings immediately rather than waiting for
   the monthly cadence.
-  
+
 **Autograph books as a taste signal:** The presence of an artist in RHBS or APS
 is a valid supporting factor when evaluating alignment to taste tiers, but it is
 one factor among many — not determinative. RHBS's roster is more central to Dan's
@@ -205,7 +285,7 @@ note to check her BIT page directly for any current DC-area dates.
 
 ---
 
-## Workflow 5 — Potentials Availability Check
+## Workflow 6 — Potentials Availability Check
 
 **Cadence:** On demand
 **Trigger:** Say "check availability" or "availability check" in a project conversation
