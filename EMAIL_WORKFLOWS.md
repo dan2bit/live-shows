@@ -1,4 +1,4 @@
-# Email Workflows — Live Show Archive
+## Email Workflows — Live Show Archive
 
 Five standing routines for processing emails from the **redhat.bootlegs@gmail.com** inbox.
 None are automatic — you trigger each by starting a new conversation in this project
@@ -105,21 +105,28 @@ invocation, without exception.**
 At the end of every routine, I create a draft email in the redhat.bootlegs inbox
 as a persistent log of what was processed and what actions were taken.
 
-**Subject format:** `[LOG] Routine N -- [brief descriptor] -- YYYY-MM-DD`
+**Subject format:** `[LOG] Routine N — [brief descriptor] — YYYY-MM-DD`
+
+Examples:
+- `[LOG] Routine 1 — Gov't Mule ticket — 2026-06-03`
+- `[LOG] Routine 2 — Vanessa Collier post-show — 2026-05-09`
+- `[LOG] Routine 3 — Birchmere / Wolf Trap / Hub City newsletters — 2026-06-03`
+- `[LOG] Routine 4 — Danielle Nicole / Galactic / Southern Avenue — 2026-06-03`
+- `[LOG] Routine 5 — Kingsley Flood BIT alert — 2026-01-15`
+
+**Searching the log:** Use `subject:[LOG]` in Gmail to find all log drafts.
 
 **Draft body includes:**
 - Which email(s) were processed (sender, subject, date)
 - Every action taken: calendar events created or updated, TSV rows added,
   on-sale reminders created, recommendations made
-- Any skipped items and why
+- Any skipped items and why (including calendar conflicts)
 - Any manual follow-up items
 
 **One draft per routine invocation.** Draft creation is non-blocking -- if it fails,
 the summary stays in conversation.
 
 **Pure reminder emails (BIT/Songkick) require no log draft** -- see Routine 5.
-
-**Searching the log:** Use `subject:[LOG]` in Gmail to find all log drafts.
 
 ---
 
@@ -261,9 +268,9 @@ already signed the hat.
 **Venue likelihood for artist interaction:**
 - **Yes (likely):** Pearl Street Warehouse, Hamilton Live, Collective Encore, Union Stage, Jammin' Java
 - **Maybe (artist's choice):** 9:30 Club, The Birchmere
-- **No (unlikely):** Wolf Trap Filene Center, The Anthem, Lincoln Theatre 
+- **No (unlikely):** Wolf Trap Filene Center, The Anthem, Lincoln Theatre
 if the venue is not on the prior list, include a question for Dan to confirm
- 
+
 **Step 4 -- Create calendar event**
 
 Calendar: `redhat.bootlegs@gmail.com` -- Dan Concert Calendar
@@ -315,7 +322,7 @@ A purchased ticket means the artist enters the history-based tier system.
 
 **Step 8 -- Create activity log draft MANDATORY**
 
-Subject: `[LOG] Routine 1 -- [Artist] ticket -- YYYY-MM-DD`
+Subject: `[LOG] Routine 1 — [Artist] ticket — YYYY-MM-DD`
 
 **Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
 confirmation before applying any labels.
@@ -393,7 +400,7 @@ Body includes show details, notes, and the playlist creation workflow. Skip if n
 
 **Step 7 -- Create activity log draft MANDATORY**
 
-Subject: `[LOG] Routine 2 -- [Artist] post-show -- YYYY-MM-DD`
+Subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`
 
 **Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
 confirmation before applying any labels.
@@ -422,11 +429,27 @@ tagged `ticket-alert`.
 
 Search `label:ticket-alert -label:processed`. Classify each artist mention:
 
-**Case A -- Tickets already on sale:** Filter to Strong/Medium tier artists, check calendar,
-present tiered recommendations with ticket links. No calendar event created.
+**Case A -- Tickets already on sale:** Filter to Strong/Medium tier artists, apply the
+calendar conflict rule below, then present tiered recommendations with ticket links.
+No calendar event created.
 
 **Case B -- Specific future on-sale time given:** Only Strong tier artists with confirmed
-open date. Create an on-sale reminder calendar event (Step 4).
+open date. Apply the calendar conflict rule before creating an on-sale reminder (Step 4).
+
+**Calendar conflict rule (applies before any recommendation or potentials write):**
+For every show date surfaced, query the Dan Concert Calendar before making any
+recommendation or writing any potential row:
+
+- **Date has a timed show event already booked:** skip silently — conflict with existing purchase.
+- **Date has an all-day `NO SHOWS` block:**
+  - **Strong tier:** add a Pass row with `Watching For` = `[block description] calendar conflict [date range]`
+    (e.g., `Beach Week calendar conflict Jul 25–Aug 1`). This suppresses future re-analysis
+    when the same show keeps appearing in newsletters.
+  - **Medium tier or lower:** skip silently — not worth tracking.
+- **Date is open:** proceed with the recommendation as normal.
+
+Never recommend a show, create an on-sale reminder, or write a potential row without
+first confirming the date is open in the calendar.
 
 **IMP newsletter:** Also flag any The Atlantis show featuring a local DC artist as a
 gift card opportunity.
@@ -485,7 +508,7 @@ Pre-sale code: [CODE]    <- if present
 
 **Step 5 -- Create activity log draft MANDATORY**
 
-Subject: `[LOG] Routine 3 -- [source] -- YYYY-MM-DD`
+Subject: `[LOG] Routine 3 — [source(s)] — YYYY-MM-DD`
 
 **Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
 confirmation before applying any labels.
@@ -529,10 +552,20 @@ Using the data fetched in Step 0b, for any DC/MD/VA show date mentioned in the e
    - Buy → remind Dan to complete the purchase if on sale
    - Choose → surface as a reminder that it's pending a decision
    - Not present → proceed to Step 2
-   
+
 **Step 2 -- Classify and act on content**
 
-- **Tour announcements / new shows:** calendar check, buy recommendation or on-sale event
+For any DC/MD/VA show surfaced that is not suppressed by Step 1b, apply the
+**calendar conflict rule** before making any recommendation or writing any potential row:
+
+- **Date has a timed show event already booked:** skip silently.
+- **Date has an all-day `NO SHOWS` block:**
+  - **Strong tier:** add a Pass row with `Watching For` = `[block description] calendar conflict [date range]`.
+  - **Medium tier or lower:** skip silently.
+- **Date is open:** proceed with the recommendation.
+
+Then classify and act:
+- **Tour announcements / new shows:** buy recommendation or on-sale event (after conflict check above)
 - **Pre-sale codes:** on-sale calendar event with code in description
 - **New music releases:** surface the info; no file action needed
 
@@ -542,7 +575,7 @@ For any DC/MD/VA show recommendation.
 
 **Step 4 -- Create activity log draft MANDATORY**
 
-Subject: `[LOG] Routine 4 -- [Artist] newsletter -- YYYY-MM-DD`
+Subject: `[LOG] Routine 4 — [Artist(s)] newsletter — YYYY-MM-DD`
 
 **Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
 confirmation before applying any labels.
@@ -567,15 +600,15 @@ this is a reminder -- skip entirely.** No log draft needed for pure reminders.
 
 Search `label:artist-follow -label:processed`. Apply reminder suppression before proceeding.
 
-**BIT "Just Announced" emails require full HTML body parsing.** 
+**BIT "Just Announced" emails require full HTML body parsing.**
 The subject line `Just Announced: [Artist] in [City]` signals a potentially actionable new show.
 The plain-text snippet is truncated — the full HTML body contains:
 - Show date (look for a `<p>` near a calendar icon image)
 - Venue (look for a `<p>` near a location pin image)
 - Get Tickets / Buy link (encoded as `=3D` in quoted-printable; decode before using)
-- the buy link will be masked for email tracking, but will resolve/redirect correctly for 
+- the buy link will be masked for email tracking, but will resolve/redirect correctly for
     the relevant venue ticketing service if presented in conversation
-    
+
 When processing a Just Announced thread: always fetch the full thread body, extract
 date, venue and purchase link, surface all 3 in conversation before any potentials write.
 Flag for potential Fast Track or Strong tier check before adding to potentials.
@@ -592,11 +625,12 @@ Surface any gaps in conversation. Do not automatically add to services -- confir
 
 **Step 4 -- Process any show content**
 
-Check `fast_track.tsv` first, then handle as Routine 4 Step 2.
+Apply the **calendar conflict rule** (same as Routine 3 Step 1) before any recommendation
+or potentials write. Then check `fast_track.tsv` first, and handle as Routine 4 Step 2.
 
 **Step 5 -- Create activity log draft MANDATORY**
 
-Subject: `[LOG] Routine 5 -- [Artist] [source] -- YYYY-MM-DD`
+Subject: `[LOG] Routine 5 — [Artist] [source] — YYYY-MM-DD`
 
 No log draft for pure reminders.
 
