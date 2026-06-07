@@ -243,7 +243,7 @@ ticket quantity, face value, fees, total cost, purchase date, order numbers.
 **Step 2 -- Apply venue defaults**
 
 | Venue | Doors | Show | Notes |
-|-------|-------|------|-------|
+|-------|-------|------|
 | The Birchmere | 5:00 PM | 7:30 PM | GA; seating begins 6:30 PM; always free parking |
 | Hamilton Live | 6:30 PM | 8:00 PM | $13 parking |
 | Rams Head On Stage | 1 hr before show | -- | -- |
@@ -451,6 +451,13 @@ recommendation or writing any potential row:
 Never recommend a show, create an on-sale reminder, or write a potential row without
 first confirming the date is open in the calendar.
 
+**Songkick source note:** Songkick was acquired by Suno (AI music generation company)
+in November 2025; all user data transferred to Suno in April 2026. During Routine 3
+processing, if an artist show surfaces that appears **first or exclusively on Songkick**
+(i.e., not yet visible on BIT, Seated, or the venue's own site), flag this in the
+recommendation summary so Dan can decide whether to act on Songkick-sourced data.
+Do not suppress the recommendation — just note the source provenance.
+
 **IMP newsletter:** Also flag any The Atlantis show featuring a local DC artist as a
 gift card opportunity.
 
@@ -650,6 +657,12 @@ for show dates.
 
 **Google Calendar MCP fails on Android.** Switch to macOS desktop before retrying
 calendar operations.
+
+**Songkick ownership note:** Songkick was acquired by Suno (AI music generation) in
+November 2025 as part of a WMG copyright settlement. All Songkick user data transferred
+to Suno in April 2026. Dan has chosen not to expand Songkick follows or delete the
+account (data can age). New artists are followed on BIT and Seated only. See
+`follows/follows_master.tsv` Songkick column for current coverage.
 
 **YouTube pipeline is separate.** Tracked via GitHub issues (label: `playlist`).
 Scripts run manually after videos are uploaded to YouTube Studio.
