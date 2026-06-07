@@ -243,7 +243,7 @@ ticket quantity, face value, fees, total cost, purchase date, order numbers.
 **Step 2 -- Apply venue defaults**
 
 | Venue | Doors | Show | Notes |
-|-------|-------|------|
+|-------|-------|------|-------|
 | The Birchmere | 5:00 PM | 7:30 PM | GA; seating begins 6:30 PM; always free parking |
 | Hamilton Live | 6:30 PM | 8:00 PM | $13 parking |
 | Rams Head On Stage | 1 hr before show | -- | -- |
@@ -348,16 +348,23 @@ Search `from:dan2bit -label:processed`, find the matching calendar event and
 
 Append spending and setlist info. Only for upcoming or same-day events -- never past shows.
 
-**Step 3 -- Append row to `spending.tsv` MANDATORY**
+**Step 3 -- Append row to `spending.tsv` MANDATORY — DO NOT SKIP**
+
+**Always fetch `spending.tsv` fresh from the repo immediately before appending.**
+Do not rely on a locally cached copy — the file may have been updated since pre-flight.
 
 Append one row:
 ```
 Show Date | Artist | Ticket Cost | Food & Bev | Parking | Merch | Artist Interaction | Show Total | Notes
 ```
-Commit directly to `main`.
+Commit directly to `main`. This step is required even if all spending amounts are zero.
 
 **`spending.tsv` is the sole long-term authority for spending data.** The spending
-columns in `live_shows_current.tsv` are a convenience scratch pad for the current year only.
+columns in `live_shows_current.tsv` are a convenience scratch pad for the current year
+only and are not guaranteed to be complete. A missing `spending.tsv` row cannot be
+reconstructed from the activity log alone — it must be committed at the time of
+show-notes processing. If this step is skipped for any reason, flag it explicitly
+in the activity log draft and correct it before closing the routine.
 
 **Step 4 -- Update autograph records (if applicable)**
 
