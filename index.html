@@ -116,6 +116,16 @@
   .forsale-modal .fs-notes{font-size:12px;color:var(--text-muted);line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
   .forsale-modal .fs-buy-btn{display:block;margin-top:16px;text-align:center;text-decoration:none;background:#0e1a1a;border:1px solid #2a6a6a;border-radius:4px;color:#40a0a0;font-family:var(--mono);font-size:13px;padding:12px 20px;transition:background .15s,color .15s;}
   .forsale-modal .fs-buy-btn:hover{background:#142424;color:#60c0c0;}
+  .multiset-modal{width:440px;max-width:92vw;}
+  .multiset-event{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px;}
+  .multiset-list{display:flex;flex-direction:column;gap:2px;}
+  .multiset-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);}
+  .multiset-item:hover{border-color:var(--border2);}
+  .multiset-order{font-family:var(--mono);font-size:10px;color:var(--text-dim);width:16px;flex-shrink:0;text-align:right;}
+  .multiset-artist{flex:1;font-size:13px;color:var(--text-muted);}
+  .multiset-link{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:2px;text-decoration:none;border:1px solid var(--amber-dim);background:var(--amber-bg);color:var(--amber);white-space:nowrap;flex-shrink:0;}
+  .multiset-link:hover{color:#e8b040;}
+  .multiset-loading{font-family:var(--mono);font-size:12px;color:var(--text-dim);padding:16px 0;text-align:center;}
   .history-year-header{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
   .history-year-label{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--amber);}
   .history-year-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
@@ -273,21 +283,21 @@
     <div class="site-title">live-shows</div>
   </div>
   <div class="header-actions">
-    <span class="fetched-at" id="fetchedAt">—</span>
-    <button class="btn" id="refreshBtn" onclick="loadData()">↺ refresh</button>
-    <button class="btn btn-auth" id="authBtn" onclick="openAuthModal()">🔑 auth</button>
+    <span class="fetched-at" id="fetchedAt">&#8212;</span>
+    <button class="btn" id="refreshBtn" onclick="loadData()">&#8634; refresh</button>
+    <button class="btn btn-auth" id="authBtn" onclick="openAuthModal()">&#128273; auth</button>
   </div>
 </header>
 <div class="tab-row">
   <nav class="tabs">
-    <div class="tab" data-tab="shows" onclick="switchTab('shows')">Shows <span class="tab-badge" id="showsBadge">—</span></div>
-    <div class="tab" data-tab="history" onclick="switchTab('history')">History <span class="tab-badge" id="historyBadge">—</span></div>
-    <div class="tab" data-tab="potential" onclick="switchTab('potential')">Potential <span class="tab-badge" id="potBadge">—</span></div>
-    <div class="tab" data-tab="tourhere" onclick="switchTab('tourhere')">Waiting <span class="tab-badge" id="tourhereBadge">—</span></div>
+    <div class="tab" data-tab="shows" onclick="switchTab('shows')">Shows <span class="tab-badge" id="showsBadge">&#8212;</span></div>
+    <div class="tab" data-tab="history" onclick="switchTab('history')">History <span class="tab-badge" id="historyBadge">&#8212;</span></div>
+    <div class="tab" data-tab="potential" onclick="switchTab('potential')">Potential <span class="tab-badge" id="potBadge">&#8212;</span></div>
+    <div class="tab" data-tab="tourhere" onclick="switchTab('tourhere')">Waiting <span class="tab-badge" id="tourhereBadge">&#8212;</span></div>
   </nav>
   <div class="on-this-day">
     <span class="otd-label">On this day</span>
-    <div class="otd-items" id="otdItems"><span class="otd-none">—</span></div>
+    <div class="otd-items" id="otdItems"><span class="otd-none">&#8212;</span></div>
   </div>
 </div>
 <div class="panel" id="panel-shows"><div id="showsContent"><div class="loading">Loading</div></div></div>
@@ -310,10 +320,10 @@
     <div class="about-body">
       <p>I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
       <div class="about-links">
-        <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube — bootlegs</a>
-        <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links — Linktree</a>
+        <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube &#8212; bootlegs</a>
+        <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links &#8212; Linktree</a>
         <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a>
-        <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses — photo album</a>
+        <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses &#8212; photo album</a>
       </div>
       <div class="modal-actions" style="margin-top:14px">Life is short. Buy the tickets.</div>
     </div>
@@ -325,7 +335,7 @@
   <div class="modal">
     <h3>GitHub Authentication</h3>
     <p>Paste a fine-grained Personal Access Token scoped to <code>the repo</code> with Contents and Issues read/write permission.</p>
-    <input type="password" id="patInput" placeholder="github_pat_…" autocomplete="off">
+    <input type="password" id="patInput" placeholder="github_pat_&#8230;" autocomplete="off">
     <div class="modal-actions">
       <button class="btn btn-clear" onclick="clearPat()">Clear saved</button>
       <button class="btn" onclick="closeAuthModal()">Cancel</button>
@@ -341,6 +351,17 @@
     <div id="forsaleModalBody"></div>
     <div class="modal-actions" style="margin-top:12px">
       <button class="btn" onclick="closeForSaleModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Multi-setlist modal -->
+<div class="modal-backdrop" id="multisetModal">
+  <div class="modal multiset-modal">
+    <h3>&#9835; Setlists</h3>
+    <div id="multisetModalBody"><div class="multiset-loading">Loading&#8230;</div></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn" onclick="closeMultisetModal()">Close</button>
     </div>
   </div>
 </div>
@@ -410,7 +431,7 @@ async function loadOnThisDay(){
     var year=(r['Show Date']||'').slice(0,4),artist=esc(r['Artist']||''),venue=esc((r['Venue']||'').split(',')[0].trim());
     var setlist=r['Setlist.fm URL']||'',playlist=r['Playlist URL']||'';
     var links=(setlist?'<a class="icon-link" href="'+esc(setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')+(playlist?'<a class="icon-link" href="'+esc(playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'');
-    return'<span class="otd-item"><span class="otd-year">'+year+'</span><span class="otd-artist">'+artist+'</span><span class="otd-sep">·</span><span class="otd-venue">'+venue+'</span>'+(links?'<span class="otd-links">'+links+'</span>':'')+'</span>';
+    return'<span class="otd-item"><span class="otd-year">'+year+'</span><span class="otd-artist">'+artist+'</span><span class="otd-sep">&middot;</span><span class="otd-venue">'+venue+'</span>'+(links?'<span class="otd-links">'+links+'</span>':'')+'</span>';
   }).join('<span class="otd-sep" style="margin:0 4px">|</span>');
 }
 
@@ -438,6 +459,13 @@ function buildBadges(row){
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('vip'))return'';return'<span class="badge badge-seat">'+(s.includes('ga')||s.includes('standing')?'GA':'Seated')+'</span>';}
+
+// ── setlistIconHtml helper ────────────────────────────────────────────
+function setlistIconHtml(s){
+  if(!s||s==='-')return'';
+  if(s.startsWith('MULTI:')){var key=s.slice(6);return'<button class="icon-link" style="background:none;border:none;cursor:pointer;padding:0;font-size:13px;" onclick="openMultisetModal(\''+key+'\')" title="Setlists">&#9835;</button>';}
+  return'<a class="icon-link" href="'+esc(s)+'" target="_blank" title="Setlist.fm">&#9835;</a>';
+}
 
 // ── Schema normalization ──────────────────────────────────────────────
 function normalizeRow(row){
@@ -540,8 +568,8 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
   var ta=document.getElementById('ta-'+cellId);if(!ta)return;
   var newVal=ta.value;
   var ind=document.getElementById('ind-'+cellId);
-  if(ind){ind.textContent='…';ind.className='notes-save-ind save-indicator';}
-  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='✗ no auth';ind.className='notes-save-ind save-err';}return;}
+  if(ind){ind.textContent='\u2026';ind.className='notes-save-ind save-indicator';}
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='\u2717 no auth';ind.className='notes-save-ind save-err';}return;}
   try{
     if(fileKey==='current'){
       var fd=await ghFetch(CURRENT_PATH);
@@ -582,11 +610,11 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
       if(!res.ok)throw new Error(await res.text());
     }
-    if(ind){ind.textContent='✓';ind.className='notes-save-ind save-ok';}
+    if(ind){ind.textContent='\u2713';ind.className='notes-save-ind save-ok';}
     setTimeout(function(){cancelEdit(cellId,fileKey,rowIdx,field);},600);
   }catch(e){
     console.error(e);
-    if(ind){ind.textContent='✗ '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
+    if(ind){ind.textContent='\u2717 '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
   }
 }
 
@@ -629,7 +657,7 @@ function renderAttendedRowBystander(row,idx){
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
-    +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+    +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
@@ -641,7 +669,7 @@ function renderAttendedRowSearch(row,idx){
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
-    +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+    +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
@@ -657,7 +685,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
-    +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+    +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
     +'<td class="cell-cost col-cost">'+esc(cost)+'</td>'
@@ -680,7 +708,7 @@ function renderHistoryYear(yr){
     return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
       +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
       +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
-      +'<td style="white-space:nowrap">'+(n.setlist?'<a class="icon-link" href="'+esc(n.setlist)+'" target="_blank" title="Setlist.fm">&#9835;</a>':'')
+      +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
       +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">&#9654;</a>':'')
       +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">&#128247;</a>':'')+'</td>'
       +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
@@ -707,7 +735,7 @@ async function ensureAllYearsLoaded(){
       if(b&&historyData[yr])b.textContent=historyData[yr].length;
     });
     var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'—';
+    document.getElementById('historyBadge').textContent=total||'&#8212;';
   }
   _allYearsLoaded=true;
   populateSearchDatalists();
@@ -791,10 +819,10 @@ function buildSearchEmptyState(){
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   var searchPanel='<div class="inner-panel" id="inner-hist-search"><div class="search-bar"><input class="search-input" id="srchArtist" placeholder="Artist\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchArtistList"></datalist><input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchVenueList"></datalist><button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button></div><div id="srchResults">'+buildSearchEmptyState()+'</div></div>';
-  var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){var cnt=historyData[yr]?historyData[yr].length:'—';return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';}).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div></div>';
+  var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){var cnt=historyData[yr]?historyData[yr].length:'&#8212;';return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';}).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div></div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';}).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-  document.getElementById('historyBadge').textContent=total||'—';
+  document.getElementById('historyBadge').textContent=total||'&#8212;';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
 }
@@ -813,7 +841,7 @@ async function switchHistoryTab(yr){
     if(badge)badge.textContent=historyData[yr].length;
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
     var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'—';
+    document.getElementById('historyBadge').textContent=total||'&#8212;';
   }else{requestAnimationFrame(revealToggles);}
 }
 
@@ -892,7 +920,7 @@ function renderShows(){
       fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
     }
   }
-  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor — some details are hidden. Know something I should see?</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>':'';
+  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor &#8212; some details are hidden. Know something I should see?</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
   var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
@@ -924,7 +952,7 @@ function renderPotential(){
   var sell=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
   var pass=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='pass';});
   document.getElementById('potBadge').textContent=buy.length+'+'+choose.length;
-  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy','&#129001; Buy — not purchased but probably going')+renderPotentialGroup(choose,'choose','&#128993; Choose — shows I am considering')+renderPotentialGroup(sell,'sell','&#127991; For Sale — buy my tickets')+renderPotentialGroup(pass,'pass','Pass')||'<p class="loading" style="animation:none">No data</p>';
+  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy','&#129001; Buy &#8212; not purchased but probably going')+renderPotentialGroup(choose,'choose','&#128993; Choose &#8212; shows I am considering')+renderPotentialGroup(sell,'sell','&#127991; For Sale &#8212; buy my tickets')+renderPotentialGroup(pass,'pass','Pass')||'<p class="loading" style="animation:none">No data</p>';
   if(fastTrackRows.length)renderTourHere();
 }
 
@@ -943,7 +971,7 @@ async function handleRevoke(idx){
 }
 async function handleDecisionChange(select){
   var idx=parseInt(select.dataset.row),newVal=select.value,ind=document.getElementById('save-'+idx);
-  ind.textContent='…';ind.className='save-indicator';
+  ind.textContent='\u2026';ind.className='save-indicator';
   try{
     var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
@@ -984,7 +1012,7 @@ function serializeFastTrack(rows,headers){
 }
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
-  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet \u2014 any DC/MD/VA date would be a strong buy.</span><span class="recommend-cta" title="Coming soon">Suggest a show \u2197</span></div>';
+  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span><span class="recommend-cta" title="Coming soon">Suggest a show &#8599;</span></div>';
   var thCaps=authed?'th-ft-caps authed-visible':'th-ft-caps';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th class="'+thCaps+'">Caps</th><th style="width:110px">Links</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
@@ -1050,7 +1078,33 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
   document.getElementById('authModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAuthModal();});
   document.getElementById('forsaleModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeForSaleModal();});
+  document.getElementById('multisetModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeMultisetModal();});
 });
+
+// ── Multi-setlist modal ───────────────────────────────────────────────
+var _setlistsData=null;
+async function _loadSetlists(){
+  if(_setlistsData)return _setlistsData;
+  var fd=await ghFetch('setlists.json');
+  _setlistsData=JSON.parse(decodeURIComponent(escape(atob(fd.content.replace(/\n/g,'')))));
+  return _setlistsData;
+}
+function openMultisetModal(dateKey){
+  var body=document.getElementById('multisetModalBody');
+  body.innerHTML='<div class="multiset-loading">Loading&#8230;</div>';
+  document.getElementById('multisetModal').classList.add('open');
+  _loadSetlists().then(function(data){
+    var entry=data[dateKey];
+    if(!entry){body.innerHTML='<div class="multiset-loading">No setlist data found.</div>';return;}
+    var items=entry.setlists.map(function(s,i){
+      return'<div class="multiset-item"><span class="multiset-order">'+(i+1)+'.</span>'
+        +'<span class="multiset-artist">'+esc(s.artist)+'</span>'
+        +'<a class="multiset-link" href="'+esc(s.url)+'" target="_blank">setlist.fm &#8599;</a></div>';
+    }).join('');
+    body.innerHTML='<div class="multiset-event">'+esc(entry.event)+'</div><div class="multiset-list">'+items+'</div>';
+  }).catch(function(e){body.innerHTML='<div class="multiset-loading">Error: '+esc(e.message)+'</div>';});
+}
+function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
 // ── Boot ──────────────────────────────────────────────────────────────
 async function loadData(){
