@@ -585,8 +585,10 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
       var rows=parseTsv(raw);
-      rows[rowIdx][field]=newVal;potentialRows[rowIdx][field]=newVal;
-      var msgArtist=rows[rowIdx]['Artist']||'show';
+      var _pt=potentialRows[rowIdx],_pfi=rows.findIndex(function(r){return r['Artist']===_pt['Artist']&&r['Date']===_pt['Date'];});
+      if(_pfi<0)throw new Error('Potential row not found: '+(_pt['Artist']||''));
+      rows[_pfi][field]=newVal;potentialRows[rowIdx][field]=newVal;
+      var msgArtist=rows[_pfi]['Artist']||'show';
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
       if(!res.ok)throw new Error(await res.text());
     } else if(fileKey==='fasttrack'){
@@ -962,7 +964,10 @@ async function handleRevoke(idx){
   try{
     var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
-    var artist=rows[idx]['Artist']||'show';rows.splice(idx,1);potentialRows.splice(idx,1);
+    var _target=potentialRows[idx];
+    var _fi=rows.findIndex(function(r){return r['Artist']===_target['Artist']&&r['Date']===_target['Date'];});
+    if(_fi<0)throw new Error('Row not found in file: '+(_target['Artist']||''));
+    var artist=rows[_fi]['Artist']||'show';rows.splice(_fi,1);potentialRows.splice(idx,1);
     var pat=localStorage.getItem(PAT_KEY);
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: remove '+artist+' Sell row (revoked)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
     if(!res.ok)throw new Error(await res.text());
@@ -975,7 +980,10 @@ async function handleDecisionChange(select){
   try{
     var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
-    rows[idx]['Decision']=newVal;potentialRows[idx]['Decision']=newVal;
+    var _target=potentialRows[idx];
+    var _fi=rows.findIndex(function(r){return r['Artist']===_target['Artist']&&r['Date']===_target['Date'];});
+    if(_fi<0)throw new Error('Row not found in file: '+(_target['Artist']||''));
+    rows[_fi]['Decision']=newVal;potentialRows[idx]['Decision']=newVal;
     rows.sort(function(a,b){var rank=function(r){var d=(r['Decision']||'').toLowerCase();return d.startsWith('buy')?0:d==='choose'?1:d==='sell'?2:3;};return rank(a)-rank(b)||(a['Date']||'').localeCompare(b['Date']||'');});
     var pat=localStorage.getItem(PAT_KEY);
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
