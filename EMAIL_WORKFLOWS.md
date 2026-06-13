@@ -133,18 +133,17 @@ the summary stays in conversation.
 ## Calendar Availability Rule
 
 **A date is unavailable if it has a timed show event OR an all-day `NO SHOWS` block.**
+Always query the calendar for both before any recommendation or potentials write.
 
-Always query the calendar for both timed and all-day events. Treat either as unavailable:
-- A timed event (any show already booked)
-- An all-day event titled **NO SHOWS**
+All calendar mechanics — event titles, descriptions, locations, reminders, the NO SHOWS
+block spec, and the on-sale event format — live in **`CALENDAR_WORKFLOWS.md`**, which is the
+authority on **how** every event is built. The routines below decide **when** an event is
+created; see that file for **how**. Key carry-overs:
 
-**Never update calendar events for past shows.** Calendar edits only apply to upcoming
-events -- past events are read-only.
-
-**Prev/Next Show belongs in `live_shows_potential.tsv` only.** Do not include it in
-calendar event descriptions or `live_shows_current.tsv` rows.
-
-**Confirm before creating a calendar event for an unpurchased show.**
+- **Never update calendar events for past shows** — edits apply to upcoming/same-day only.
+- **Prev/Next Show belongs in `live_shows_potential.tsv` only** — never in calendar
+  descriptions or `live_shows_current.tsv`.
+- **Confirm before creating a calendar event for an unpurchased show.**
 
 ---
 
@@ -273,34 +272,12 @@ if the venue is not on the prior list, include a question for Dan to confirm
 
 **Step 4 -- Create calendar event**
 
-Calendar: `redhat.bootlegs@gmail.com` -- Dan Concert Calendar
-
-Event title format:
-- Single electronic ticket, no other suffixes: `[Artist]` (omit the count)
-- Multiple tickets or PAPER/VIP: `[Artist] (N)`, `[Artist] (N PAPER)`, `[Artist] (N VIP)`
-
-Description format:
-```
-BRING RHBS -- [Artist] p.[N]          <- only if in autograph book
-
-[Order # / Ref] ([Ticketer])
-Ticket access: [method]
-Payment: [card/method] / Face $X.XX / Fees $X.XX / Total $X.XX
-[Supporting act line if applicable]
-[Any special notes]
-
-[Seat / GA info]
-Doors: [time] / Show: [time]
-
-High ticket cost -- cool it on merch tonight   <- face value >= $100, NOT VIP, NOT Wolf Trap Filene
-```
-
-Location field: use the **parking address** from `venues.tsv`, not the venue street address.
-
-Reminders: 24 hours (1440 min) and 3 hours (180 min) popup.
-
-**Merch caution rule:** face value per ticket >= $100, not VIP, not Wolf Trap Filene Center,
-not evaluated on order total for multi-ticket orders.
+Create the **show event** per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**.
+Apply the autograph-book result from Step 3 to the description. In brief: title is `[Artist]`
+(with `(N)`/`(N PAPER)`/`(N VIP)` suffix as applicable); Location is the **parking-lot
+address from `venues.tsv`** for venues without on-site parking (feeds driving directions),
+else the venue address; reminders 24 h + 3 h. Full title/description/location/merch-caution
+rules are in the calendar file.
 
 **Step 5 -- Commit new row to `live_shows_current.tsv`**
 
@@ -347,6 +324,7 @@ Search `from:dan2bit -label:processed`, find the matching calendar event and
 **Step 2 -- Update the calendar event**
 
 Append spending and setlist info. Only for upcoming or same-day events -- never past shows.
+See **`CALENDAR_WORKFLOWS.md` → Updating a show event**.
 
 **Step 3 -- Append row to `spending.tsv` MANDATORY — DO NOT SKIP**
 
@@ -511,14 +489,11 @@ interaction angle is surfaced in the recommendation.
 
 **Step 4 -- Create on-sale reminder event (Case B only)**
 
-Title: `ON SALE: [Artist]`
-Timing: start 5 minutes before on-sale time, duration 15 minutes.
-Reminders: 24 hours and 5 minutes.
-
-```
-[Ticket URL]
-Pre-sale code: [CODE]    <- if present
-```
+Create the **ticket purchase (on-sale) event** per
+**`CALENDAR_WORKFLOWS.md` → Event Type 3**. In brief: title `ON SALE: [Artist]`; start
+**exactly 5 minutes before the on-sale time**; description must carry a **deep-link purchase
+URL** (resolve any redirect/tracking URL and confirm with Dan first), plus pre-sale code if
+present; reminders 24 h + 5 min.
 
 **Step 5 -- Create activity log draft MANDATORY**
 
