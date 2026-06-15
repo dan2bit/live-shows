@@ -1,167 +1,89 @@
-# live-shows
+# live-shows — Data Schemas & Repo Conventions
 
-Comprehensive live concert tracking and YouTube bootleg management system for the `@dan2bit` YouTube channel. Managed collaboratively with Claude (Anthropic) via MCP tools.
-
----
-
-## Repository Structure
-
-```
-├── PROJECT.md                        ← this file
-├── ANALYSIS_WORKFLOWS.md             ← quarterly/monthly research workflows
-├── EMAIL_WORKFLOWS.md                ← inbox processing routines
-├── TASKS.md                          ← outstanding tasks
-├── index.html                        ← browser-based show dashboard
-├── live_shows_current.tsv            ← confirmed shows (attended + upcoming)
-├── live_shows_potential.tsv          ← shows under consideration (Buy/Choose/Sell/Pass)
-├── artists.tsv                       ← artist follow list with show history
-├── venues.tsv                        ← venue details (parking, transit, seating)
-├── autograph_books_combined.tsv      ← autograph book inventory
-├── spending.tsv                      ← annual spending summary
-├── fast_track.tsv                    ← quick-add artist pipeline
-├── rollover.py                       ← year-end rollover script
-├── youtube_*.py                      ← YouTube playlist management scripts
-├── follows/                          ← artist follow lists by tier
-│   └── new_artist_research.tsv       ← newly researched artists
-├── web-src/                          ← raw service exports (prefixed by account)
-├── history/                          ← archived yearly show history
-├── archive/                          ← superseded files
-└── logs/                             ← script run logs
-```
+Reference for the data-file layouts and the repository/commit conventions used when editing this project with Claude. Operational procedures live in the workflow docs (see `README.md` for the map); this file should rarely need updating.
 
 ---
 
-## Core Data Files
+## Data file schemas
 
-### live_shows_current.tsv
-24-column TSV. Rows are either `attended` or `upcoming`, ordered chronologically. Columns: Show ID, Artist, Supporting Artist, Show Date, Doors Time, Start Time, Venue Name, Venue Address, Venue Event URL, Seat Info / GA, Ticket Access, Ticket Quantity, Face Value (per ticket), Fees, Total Cost, Purchase Date, Setlist.fm URL, Status, Food & Bev, Parking, Merch, Artist Interaction, Playlist URL, Notes / Memories.
+### live_shows_current.tsv — 26 columns
 
-**Known issue:** The GitHub MCP `create_or_update_file` tool strips trailing tabs from each line. For rows where Playlist URL is empty and Notes is the last non-empty field, the notes text lands in the Playlist URL column. The `parseTsv()` function in `index.html` compensates for this at parse time by detecting non-URL content in the Playlist URL column and swapping it to Notes.
+Rows are `attended` or `upcoming`, ordered chronologically by Show Date.
 
-### live_shows_potential.tsv
-17-column TSV. Decision values: `Buy`, `Choose`, `Sell`, `Pass`. Sort order: Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every row change. Prev Show and Next Show columns reference only **purchased upcoming shows** — never potential shows, never attended shows.
+1. Show ID
+2. Artist
+3. Supporting Artist
+4. Show Date
+5. Doors Time
+6. Start Time
+7. Venue Name
+8. Venue Address
+9. Venue Event URL
+10. Seat Info / GA
+11. Ticket Access
+12. Ticket Quantity
+13. Face Value (per ticket)
+14. Fees
+15. Total Cost
+16. Purchase Date
+17. Setlist.fm URL
+18. Status
+19. Food & Bev
+20. Parking
+21. Merch
+22. Artist Interaction
+23. Playlist URL
+24. Notes / Memories
+25. Private Notes
+26. Photo URL
 
-`Sell` is read-only — applied when tickets for a confirmed show have been listed for resale. It cannot be set via the index.html dropdown; changes require manual Claude operation touching both `live_shows_current.tsv` and `live_shows_potential.tsv`.
+**Multi-act shows:** when a date has multiple performers, column 17 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists.json` — support acts first, headliner last.
+
+**Known issue — trailing-tab strip:** the GitHub MCP `create_or_update_file` tool strips trailing tabs from each line, so rows that end in empty columns can arrive short. The `parseTsv()` function in `index.html` compensates at parse time by padding/realigning rows back to the full column count.
+
+### live_shows_potential.tsv — 17 columns
+
+`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes`
+
+- **Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Sell`, `Pass`. Never leave Decision blank — use `Choose` for undecided.
+- **Sort:** Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every change.
+- **Prev/Next Show brackets:** reference only purchased upcoming shows (status `upcoming` in `live_shows_current.tsv`) — never potentials, never attended shows. Re-check on every purchase or move to attended.
+- **`Sell`** is read-only — set when a confirmed ticket is listed for resale; not editable via the index.html dropdown.
 
 ### artists.tsv
-One row per artist. Tracks: Times Seen, First Seen, Most Recent Seen, YouTube Channel, Spotify URL, Photo (Y), Book Autograph (Y), Hat Autograph (Y), VIP Count.
+
+One row per artist: Times Seen, First Seen, Most Recent Seen, YouTube Channel, Spotify URL, Photo (Y), Book Autograph (Y), Hat Autograph (Y), VIP Count.
 
 ### venues.tsv
-Parking, transit, seating, box office hours, and notes per venue.
+
+One row per venue: parking, transit, seating, box office hours, notes. Canonical source for venue defaults.
 
 ---
 
-## Workflow Rules
+## Repository & commit conventions
 
-### GitHub Commits
-- **TSVs and HTML/config files** → commit directly to `main` via MCP `create_or_update_file`
-- **Executable files** (`.py`, `.sh`, `.js`, `.pl`) → PR branch required; Dan merges
-- Always fetch a fresh SHA immediately before each `create_or_update_file` call — stale SHAs cause failures
-- Always push full file content — never attempt targeted/patch commits; this has clobbered files
-- `push_files` with empty string content silently commits empty blobs — always use `create_or_update_file`
-- Large files (50KB+) such as `youtube_create_playlists.py` → present in conversation for manual check-in
-- No commits without explicit confirmation from Dan
-- **index.html** → always write via Python and present the file; never commit via MCP (JSON encoding issue strips Unicode)
-
-### Potentials Bracket Rule
-Prev Show and Next Show in `live_shows_potential.tsv` reference only **purchased upcoming shows** (status = `upcoming` in `live_shows_current.tsv`). Potentials, attended shows, and shows under consideration are never used as brackets. Re-check all brackets whenever a new show is purchased or a show moves to attended.
-
-### Playlist Issues
-When closing a GitHub playlist issue, edit the issue **body** to add `Playlist: <url>` before closing. Comments are not readable via MCP — only the issue body is.
-
-### Calendar
-- Concert calendar: `redhat.bootlegs@gmail.com` ("Dan Concert Calendar")
-- Search concert events against `redhat.bootlegs@gmail.com`, not `primary`
-- Fall back to `timeMin`/`timeMax` date-bounded listing when `q` search returns nothing
-- Calendar MCP may fail silently on Android — ask Dan to switch to macOS desktop before retrying
+- **Non-executable files** (`.tsv`, `.json`, `.md`, `index.html`, config) → commit directly to `main` via MCP `create_or_update_file`. The official MCP binary handles Unicode correctly.
+- **Executable scripts** (`.py`, `.sh`, `.js`) → PR branch; Dan merges.
+- **index.html** → simple/non-logic edits may commit directly to `main`; significant logic changes go via a PR branch.
+- Always **fetch a fresh SHA** immediately before each `create_or_update_file` call — a SHA from earlier in the session is stale after any intervening commit to that file.
+- Always **push full file content** — never targeted/patch commits (they have clobbered files).
+- **Large files (50KB+)** commit fine via `create_or_update_file` — attempt it first; fall back to manual check-in only if it fails.
+- Use `delete_file` to remove a file. Avoid `push_files` with empty content (it silently commits empty blobs).
+- **No commits without explicit confirmation from Dan.**
 
 ---
 
-## Ticket Service Notes
+## Artist interaction
 
-| Service | Venues | Notes |
-|---|---|---|
-| AXS | Rams Head On Stage | Mobile app; paper ticket at box office saves fees |
-| Opendate | Jammin' Java, Union Stage, Pearl Street, Howard Theatre | Never infer sold out from SVG badge — text only |
-| Eventim | Hamilton Live, Hub City Vinyl | Remind Dan to photo barcode for Google Wallet |
-| Eventbrite | Collective Encore | Remind Dan to photo barcode for Google Wallet |
-| Ticketmaster SafeTix | 9:30 Club, Wolf Trap (some), general | Mobile only |
-| Wolf Trap | Wolf Trap Filene Center | Paper ticket (donor); no fees |
-| HyltonCenter.org | Hylton Performing Arts Center | Own platform |
+- **Hat signing:** female musicians only. Do not infer gender across all `artists.tsv` entries — apply only when context makes it clear (e.g., during show processing or explicit mention).
+- **Autograph book check:** required before creating any new calendar event.
+- **Artist Interaction values:** `Photo`, `Autograph`, `Both`, or blank.
+- **`HAT:` flag:** prefix Notes / Memories in upcoming and potential rows to trigger the 🎩 badge in `index.html`.
 
 ---
 
-## Venue Defaults
+## Reference
 
-| Venue | Parking | Notes |
-|---|---|---|
-| Rams Head On Stage | $9.45 | AXS Mobile |
-| Hamilton Live | $13.00 | Eventim/See Tickets |
-| The Birchmere | Free | Doors 6:00 PM / Show 7:30 PM |
-| Wolf Trap Filene Center | Free | Paper ticket / donor; $0 food/bev (Lary donor) |
-| 9:30 Club | $0 | Street / garage varies |
-| Collective Encore | $0 | Free lot |
-| Jammin' Java | $0 | Free on-site |
-| Hylton Performing Arts Center | Free | Tower Lot; HyltonCenter.org |
-
----
-
-## Artist Interaction Rules
-
-- **Hat signing eligibility:** Female musicians only. Do not infer gender for all `artists.tsv` entries — apply only when context makes it clear (e.g., during show processing or explicit mention).
-- **Autograph book check:** Required before every new calendar event creation.
-- Artist Interaction field values: `Photo`, `Autograph`, `Both`, or blank.
-- **HAT: flag:** Add `HAT:` prefix to Notes / Memories in upcoming and potential rows to trigger the 🎩 HAT badge in index.html.
-
----
-
-## Email Inbox Routines
-
-Defined in `EMAIL_WORKFLOWS.md`. Summary:
-
-| Routine | Query | Purpose |
-|---|---|---|
-| 1 | `from:dan2bit -label:processed` | Show notes from Dan |
-| 3 | `label:ticket-alert -label:processed` | Venue newsletters, ticket alerts |
-| 4 | `label:artist-mail -label:processed` | Artist mailing lists |
-
-- `processed` label ID: `Label_421272830174798850`
-- `ticket-alert` label ID: `Label_8111132848568068688`
-- Applying `processed` label is always manual — flag at end of each routine
-- `rhbl` account receives direct venue newsletters from Rams Head, Hamilton Live, Wolf Trap
-- Flag if 7+ days since last inbox run
-
----
-
-## YouTube Channel
-
-- Channel: `@dan2bit` (OAuth under `dan2bit@gmail.com` — **not** `redhat.bootlegs`)
-- Scripts: `youtube_create_playlists.py`, `youtube_fix_descriptions.py`
-- Use setlist.fm for song ordering within playlists
-- Python venv: `.venv/`; credentials via `.env` + `python-dotenv`
-
----
-
-## Quarterly & Monthly Workflows
-
-- **Quarterly artist research:** First Tuesday of Jan/Apr/Jul/Oct — next: Jul 7, 2026
-- **Monthly BIT DC Recommends + HereForTheBands DC region:** Shared recurring calendar event
-- **Inbox processing:** Flag if 7+ days since last run
-
----
-
-## Spending Budget
-
-- Monthly budget: $500
-- For multi-ticket orders: 1 ticket counts against budget; additional tickets tracked separately as "shared" (to collect from others)
-- Wolf Trap food/bev: $0 (Lary Chinowsky donor pre-show access included)
-
----
-
-## Key People
-
-- **Lary Chinowsky** — frequent concert companion; Wolf Trap donor; source of recommendations
-- **Jennifer** — concert companion for Sarah McLachlan (Jul 5), Trombone Shorty (Jul 18), Jon Batiste (Aug 21)
-- **Bob Lubbehusen** — blues community contact; source of recommendations
-- **Ed Warburton** — blues community contact
-- **Steve Goodman** — blues community contact
+- **Spending budget:** $500/month. Multi-ticket orders count 1 ticket against budget; extras tracked as "shared." Wolf Trap food/bev = $0 (Lary donor access).
+- **YouTube channel:** `@dan2bit`, OAuth under `dan2bit@gmail.com` (not `redhat.bootlegs`). See `HOWTO_CHANNEL.md`.
+- **Key people:** Lary Chinowsky (frequent companion; Wolf Trap donor; recommendations), Jennifer (occasional companion), Bob Lubbehusen, Ed Warburton, Steve Goodman (blues-community contacts; recommendations).
