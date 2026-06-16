@@ -414,7 +414,7 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 var VENUE_SHORT={'Wolf Trap Filene Center':'Wolf Trap','Rams Head On Stage':'Rams Head','Barns at Wolf Trap':'Barns','Wolf Trap Farm Park (The Barns)':'Barns','Wolf Trap Farm Park (Filene Center)':'Wolf Trap','The State Theatre':'State Theatre','The Birchmere':'Birchmere','Live at Hub City Vinyl':'Hub City','The Anthem':'Anthem'};
 function shortVenueName(full){var name=(full||'').split(',')[0].trim();return VENUE_SHORT[name]||name;}
 
-// ── On This Day ───────────────────────────────────────────────────────
+// ── On This Day ──────────────────────────────────
 async function loadOnThisDay(){
   var now=new Date(),mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
   var results=await Promise.allSettled(HISTORY_YEARS.map(function(yr){return ghFetch('history/'+yr+'.tsv');}));
@@ -435,7 +435,7 @@ async function loadOnThisDay(){
   }).join('<span class="otd-sep" style="margin:0 4px">|</span>');
 }
 
-// ── Badges ────────────────────────────────────────────────────────────
+// ── Badges ──────────────────────────────────────
 function ticketLabel(access){
   var a=(access||'').toLowerCase();
   if(a.includes('axs'))return['AXS',false];if(a.includes('ticketmaster'))return['TM',false];
@@ -460,14 +460,14 @@ function buildBadges(row){
 }
 function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('vip'))return'';return'<span class="badge badge-seat">'+(s.includes('ga')||s.includes('standing')?'GA':'Seated')+'</span>';}
 
-// ── setlistIconHtml helper ────────────────────────────────────────────
+// ── setlistIconHtml helper ──────────────────────────
 function setlistIconHtml(s){
   if(!s||s==='-')return'';
   if(s.startsWith('MULTI:')){var key=s.slice(6);return'<button class="icon-link" style="background:none;border:none;cursor:pointer;padding:0;font-size:13px;" onclick="openMultisetModal(\''+key+'\')" title="Setlists">&#9835;</button>';}
   return'<a class="icon-link" href="'+esc(s)+'" target="_blank" title="Setlist.fm">&#9835;</a>';
 }
 
-// ── Schema normalization ──────────────────────────────────────────────
+// ── Schema normalization ─────────────────────────
 function normalizeRow(row){
   function cleanUrl(v){var s=(v||'').trim();return(s===''||s==='-')?'':s;}
   return{
@@ -484,7 +484,7 @@ function normalizeRow(row){
   };
 }
 
-// ── Total spend helper ────────────────────────────────────────────────
+// ── Total spend helper ───────────────────────────
 function totalSpend(row){
   var fields=['Total Cost','Food & Bev','Parking','Merch'];
   var sum=fields.reduce(function(acc,f){
@@ -494,7 +494,7 @@ function totalSpend(row){
   return sum>0?'$'+sum.toFixed(2):'';
 }
 
-// ── Inline notes editing ─────────────────────────────────────────────
+// ── Inline notes editing ────────────────────────
 function makeEditBtn(cellId,fileKey,rowIdx,field,label){
   return'<button class="notes-edit-btn" title="Edit '+label+'" onclick="startEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">&#9998;</button>';
 }
@@ -620,7 +620,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
   }
 }
 
-// ── Upcoming rows ─────────────────────────────────────────────────────
+// ── Upcoming rows ──────────────────────────────────
 function renderUpcomingRowBystander(row,idx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
   var pn=esc(row['Notes / Memories']||'');
@@ -650,7 +650,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
 
-// ── Attended rows ─────────────────────────────────────────────────────
+// ── Attended rows ──────────────────────────────────
 function renderAttendedRowBystander(row,idx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">&#128197; On this day</span>':'';
@@ -694,7 +694,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
 
-// ── History panel ─────────────────────────────────────────────────────
+// ── History panel ──────────────────────────────────
 function renderHistoryYear(yr){
   var rows=historyData[yr];if(!rows)return'<div class="loading">Loading</div>';
   var sorted=rows.slice().sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
@@ -847,7 +847,7 @@ async function switchHistoryTab(yr){
   }else{requestAnimationFrame(revealToggles);}
 }
 
-// ── For Sale modal ────────────────────────────────────────────────────
+// ── For Sale modal ─────────────────────────────────
 function openForSaleModal(idx){
   var r=potentialRows[idx];if(!r)return;
   var m=(r['Watching For']||'').match(/(\d+)/),qty=m?parseInt(m[1],10):1;
@@ -863,7 +863,7 @@ function openForSaleModal(idx){
 }
 function closeForSaleModal(){document.getElementById('forsaleModal').classList.remove('open');}
 
-// ── Potential rows ────────────────────────────────────────────────────
+// ── Potential rows ─────────────────────────────────
 function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium';return'<span class="cell-tier '+cls+'">'+esc(tier)+'</span>';}
 function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
@@ -906,7 +906,7 @@ function renderPotentialRowAuthed(r,gi){
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
-// ── Shows rendering ───────────────────────────────────────────────────
+// ── Shows rendering ─────────────────────────────────
 function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
   var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
@@ -939,7 +939,7 @@ function renderShows(){
   if(fastTrackRows.length)renderTourHere();
 }
 
-// ── Potential rendering ───────────────────────────────────────────────
+// ── Potential rendering ─────────────────────────
 function renderPotentialGroup(rows,groupKey,label){
   if(!rows.length)return'';
   var tbody=authed?rows.map(function(r){return renderPotentialRowAuthed(r,potentialRows.indexOf(r));}).join(''):rows.map(function(r){return renderPotentialRowBystander(r,potentialRows.indexOf(r));}).join('');
@@ -958,7 +958,7 @@ function renderPotential(){
   if(fastTrackRows.length)renderTourHere();
 }
 
-// ── Decision editing ──────────────────────────────────────────────────
+// ── Decision editing ─────────────────────────────
 async function handleRevoke(idx){
   if(!confirm('Remove this Sell row from potentials? This cannot be undone.'))return;
   try{
@@ -993,7 +993,7 @@ async function handleDecisionChange(select){
   }catch(e){console.error(e);ind.textContent='&#10007;';ind.className='save-indicator save-err';}
 }
 
-// ── Please Tour Here ──────────────────────────────────────────────────
+// ── Please Tour Here ────────────────────────────
 var fastTrackRows=[];
 var FAST_TRACK_PATH='fast_track.tsv';
 var _fastTrackComments='';
@@ -1055,7 +1055,7 @@ async function loadTourHere(){
   }
 }
 
-// ── Utilities ─────────────────────────────────────────────────────────
+// ── Utilities ────────────────────────────────────
 function toggleNote(el,tog){if(!el)return;var ex=el.classList.toggle('expanded');if(typeof tog==='string')tog=document.getElementById(tog);if(tog)tog.textContent=ex?'less':'more';}
 function revealToggles(){
   document.querySelectorAll('.notes-text.collapsible').forEach(function(el){
@@ -1089,20 +1089,22 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('multisetModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeMultisetModal();});
 });
 
-// ── Multi-setlist modal ───────────────────────────────────────────────
-var _setlistsData=null;
-async function _loadSetlists(){
-  if(_setlistsData)return _setlistsData;
-  var fd=await ghFetch('setlists.json');
-  _setlistsData=JSON.parse(decodeURIComponent(escape(atob(fd.content.replace(/\n/g,'')))));
-  return _setlistsData;
+// ── Multi-setlist modal ─────────────────────────
+var _setlistsCache={};
+async function _loadSetlistsForYear(year){
+  if(_setlistsCache[year]!==undefined)return _setlistsCache[year];
+  try{
+    var fd=await ghFetch('setlists/'+year+'.json');
+    _setlistsCache[year]=JSON.parse(decodeURIComponent(escape(atob(fd.content.replace(/\n/g,'')))));
+  }catch(e){_setlistsCache[year]=null;}
+  return _setlistsCache[year];
 }
 function openMultisetModal(dateKey){
   var body=document.getElementById('multisetModalBody');
   body.innerHTML='<div class="multiset-loading">Loading&#8230;</div>';
   document.getElementById('multisetModal').classList.add('open');
-  _loadSetlists().then(function(data){
-    var entry=data[dateKey];
+  _loadSetlistsForYear(dateKey.slice(0,4)).then(function(data){
+    var entry=data&&data[dateKey];
     if(!entry){body.innerHTML='<div class="multiset-loading">No setlist data found.</div>';return;}
     var items=entry.setlists.map(function(s,i){
       return'<div class="multiset-item"><span class="multiset-order">'+(i+1)+'.</span>'
@@ -1114,7 +1116,7 @@ function openMultisetModal(dateKey){
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
-// ── Boot ──────────────────────────────────────────────────────────────
+// ── Boot ───────────────────────────────────────
 async function loadData(){
   document.getElementById('showsContent').innerHTML='<div class="loading">Loading</div>';
   document.getElementById('potContent').innerHTML='<div class="loading">Loading</div>';
