@@ -737,7 +737,7 @@ async function ensureAllYearsLoaded(){
       if(b&&historyData[yr])b.textContent=historyData[yr].length;
     });
     var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'&#8212;';
+    document.getElementById('historyBadge').textContent=total||'\u2014';
   }
   _allYearsLoaded=true;
   populateSearchDatalists();
@@ -824,7 +824,7 @@ function renderHistoryPanel(){
   var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){var cnt=historyData[yr]?historyData[yr].length:'&#8212;';return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';}).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div></div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';}).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-  document.getElementById('historyBadge').textContent=total||'&#8212;';
+  document.getElementById('historyBadge').textContent=total||'\u2014';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
 }
@@ -843,7 +843,7 @@ async function switchHistoryTab(yr){
     if(badge)badge.textContent=historyData[yr].length;
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
     var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'&#8212;';
+    document.getElementById('historyBadge').textContent=total||'\u2014';
   }else{requestAnimationFrame(revealToggles);}
 }
 
@@ -988,9 +988,9 @@ async function handleDecisionChange(select){
     var pat=localStorage.getItem(PAT_KEY);
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
     if(!res.ok)throw new Error(await res.text());
-    potentialRows=rows;ind.textContent='&#10003;';ind.className='save-indicator save-ok';
+    potentialRows=rows;ind.textContent='\u2713';ind.className='save-indicator save-ok';
     setTimeout(function(){renderPotential();renderShows();},600);
-  }catch(e){console.error(e);ind.textContent='&#10007;';ind.className='save-indicator save-err';}
+  }catch(e){console.error(e);ind.textContent='\u2717';ind.className='save-indicator save-err';}
 }
 
 // ── Please Tour Here ────────────────────────────
