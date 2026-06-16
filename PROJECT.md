@@ -37,7 +37,7 @@ Rows are `attended` or `upcoming`, ordered chronologically by Show Date.
 25. Private Notes
 26. Photo URL
 
-**Multi-act shows:** when a date has multiple performers, column 17 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists.json` — support acts first, headliner last.
+**Multi-act shows:** when a date has multiple performers, column 17 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists/<year>.json` (split by year, named for the show’s year) — support acts first, headliner last.
 
 **Known issue — trailing-tab strip:** the GitHub MCP `create_or_update_file` tool strips trailing tabs from each line, so rows that end in empty columns can arrive short. The `parseTsv()` function in `index.html` compensates at parse time by padding/realigning rows back to the full column count.
 

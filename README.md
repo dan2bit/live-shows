@@ -17,7 +17,7 @@ Dashboard (GitHub Pages): **https://dan2bit.github.io/live-shows/**
 | `fast_track.tsv` | Pre-authorized quick-buy artist list |
 | `autograph_books_combined.tsv` | Autograph book inventory |
 | `spending.tsv` | Annual spending summary |
-| `setlists.json` | Per-date multi-act setlist links (MULTI shows) |
+| `setlists/<year>.json` | Per-date multi-act setlist links (MULTI shows), one file per year |
 | `index.html` | Browser-based dashboard (served via GitHub Pages) |
 
 ## Directories
