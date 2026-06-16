@@ -86,4 +86,4 @@ One row per venue: parking, transit, seating, box office hours, notes. Canonical
 
 - **Spending budget:** $500/month. Multi-ticket orders count 1 ticket against budget; extras tracked as "shared." Wolf Trap food/bev = $0 (Lary donor access).
 - **YouTube channel:** `@dan2bit`, OAuth under `dan2bit@gmail.com` (not `redhat.bootlegs`). See `HOWTO_CHANNEL.md`.
-- **Key people:** Lary Chinowsky (frequent companion; Wolf Trap donor; recommendations), Jennifer (occasional companion), Bob Lubbehusen, Ed Warburton, Steve Goodman (blues-community contacts; recommendations).
+- **Key people:** Lary Chinowsky (frequent companion; Wolf Trap donor; recommendations), Jennifer (occasional companion), Bob Lubbehusen, Ed Warburton, Steve Goodman (blues-community contacts; recommendations), Joe Murphy (Friday Night Tunes DJ, tastemaker)
