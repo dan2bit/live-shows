@@ -538,6 +538,16 @@ function renderPotentialRowAuthed(r,gi){
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
+// ── Recommend CTA gating (debug phase) ──────────
+function recommendCtaHtml(){
+  // While RECOMMEND_DEBUG is on, only authed users get a working Suggest button;
+  // bystanders see it disabled. Flip RECOMMEND_DEBUG off (recommend.js) to open it to all.
+  var enabled=authed||(typeof RECOMMEND_DEBUG==='undefined'||!RECOMMEND_DEBUG);
+  return enabled
+    ?'<span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">Suggest a show &#8599;</span>'
+    :'<span class="recommend-cta" title="Suggestions are coming soon" aria-disabled="true">Suggest a show &#8599;</span>';
+}
+
 // ── Shows rendering ─────────────────────────────────
 function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
@@ -554,7 +564,7 @@ function renderShows(){
       fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
     }
   }
-  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor &#8212; some details are hidden. Know something I should see?</span><span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">Suggest a show &#8599;</span></div>':'';
+  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor &#8212; some details are hidden. Know something I should see?</span>'+recommendCtaHtml()+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
   var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
@@ -652,7 +662,7 @@ function serializeFastTrack(rows,headers){
 }
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
-  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span><span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">Suggest a show &#8599;</span></div>';
+  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml()+'</div>';
   var thCaps=authed?'th-ft-caps authed-visible':'th-ft-caps';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th class="'+thCaps+'">Caps</th><th style="width:110px">Links</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
