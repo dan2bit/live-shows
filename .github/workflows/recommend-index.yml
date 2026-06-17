@@ -1,0 +1,46 @@
+name: Build recommend_index.json
+
+# Regenerate recommend_index.json whenever a source file changes on main.
+# recommend_index.json is intentionally NOT in the paths filter, so the commit
+# this workflow makes does not retrigger it (and pushes by GITHUB_TOKEN don't
+# trigger workflows anyway). workflow_dispatch lets you run it by hand.
+on:
+  push:
+    branches: [main]
+    paths:
+      - artists.tsv
+      - fast_track.tsv
+      - live_shows_potential.tsv
+      - follows/follows_master.tsv
+      - recommend_aliases.tsv
+      - build_recommend_index.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recommend-index
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate index
+        run: python3 build_recommend_index.py
+      - name: Commit if changed
+        run: |
+          git add recommend_index.json
+          if git diff --cached --quiet; then
+            echo "recommend_index.json unchanged - nothing to commit."
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "ci: regenerate recommend_index.json [skip ci]"
+            git push
+          fi
