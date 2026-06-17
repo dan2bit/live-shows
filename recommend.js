@@ -106,7 +106,10 @@ async function recArtistCheck(){
   var idx;try{idx=await recLoadIndex();}catch(e){res.innerHTML='<p class="rec-err">Couldn\u2019t load the artist index \u2014 please try again.</p>';return;}
   var m=recMatchIndex(name,idx);recState.candidate=m.record;
   if(m.record&&m.dist<=1)return recKnownArtist();
-  if(m.record&&m.dist===2){
+  // "Did you mean" band: allow a looser edit distance for longer names
+  // (e.g. Susan -> Suzanne); the user still confirms before it counts as known.
+  var dymMax=recNorm(name).length>=8?3:2;
+  if(m.record&&m.dist>=2&&m.dist<=dymMax){
     res.innerHTML='<p class="rec-msg">Did you mean <strong>'+esc(m.record.canonical)+'</strong>?</p>'
       +'<div class="modal-actions" style="margin-top:8px">'
       +'<button class="btn" onclick="recKnownArtist()">Yes, that\u2019s them</button>'
@@ -120,9 +123,16 @@ function recAck(r){
   var name=esc(r.canonical||''),st=r.status||'';
   if(st==='seen'){
     var t=esc(String(r.times_seen||''));
+    var first=esc(r.first_seen||''),recent=esc(r.most_recent_seen||'');
+    var dates;
+    if(t==='1'){
+      var only=first||recent;
+      dates=only?'<span class="rec-sub">Date: '+only+'</span><br>':'';
+    }else{
+      dates='<span class="rec-sub">First: '+(first||'\u2014')+' \u00b7 Most recent: '+(recent||'\u2014')+'</span><br>';
+    }
     return'Yep \u2014 I\u2019ve caught <strong>'+name+'</strong>'+(t?' '+t+' time'+(t==='1'?'':'s'):'')+' already.<br>'
-      +'<span class="rec-sub">First: '+esc(r.first_seen||'\u2014')+' \u00b7 Most recent: '+esc(r.most_recent_seen||'\u2014')+'</span><br>'
-      +'Thanks for thinking of me.';
+      +dates+'Thanks for thinking of me.';
   }
   if(st==='fast_track')return'<strong>'+name+'</strong> is already on my fast-track list \u2014 any DC/MD/VA date is an instant buy. Thanks for the rec!';
   if(st==='potential'){
@@ -157,7 +167,7 @@ function recPathShow(){
   recState.pots=pots;
   var shortcut='';
   if(pots.length){
-    shortcut='<label class="rec-label">Is it one of these?</label><div class="rec-pot-list">'
+    shortcut='<label class="rec-label">Is it one of these '+pots.length+'?</label><div class="rec-pot-list">'
       +pots.map(function(r,i){return'<button class="rec-pot-item" onclick="recShowFromPot('+i+')">'+esc(r['Artist']||'')+'<span>'+esc(r['Date']||'')+(r['Venue']?' \u00b7 '+esc(r['Venue']):'')+'</span></button>';}).join('')
       +'</div><p class="rec-or">\u2014 or enter a different show \u2014</p>';
   }
