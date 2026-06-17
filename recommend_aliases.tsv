@@ -1,0 +1,23 @@
+# recommend_aliases.tsv — manual alias map for the recommendation lookup index.
+#
+# One row per surface form the automatic rules (de-invert "X, The", de-accent,
+# strip apostrophes/punctuation, drop a trailing " Band") can NOT derive.
+# Consumed by build_recommend_index.py.
+#
+#   Alias     = a spelling someone might type, or that a service uses
+#   Canonical = any name that already resolves in the index (the build script
+#               normalizes it, so exact spelling/case/accents don't matter)
+#
+# Lines beginning with # are ignored. Re-run build_recommend_index.py after edits
+# (or just let the GitHub Action regenerate it on commit).
+#
+# Examples of what does NOT need an entry (handled automatically):
+#   "The Lone Bellow"  <-> "Lone Bellow, The"        (de-invert)
+#   "Ana Popovic"      <-> "Ana Popović"             (de-accent)
+#   "Keb Mo"           <-> "Keb' Mo'"                 (strip apostrophes)
+#   "Ally Venable"     <-> "Ally Venable Band"        (drop trailing Band)
+#
+Alias	Canonical
+Billy F Gibbons	Billy Gibbons
+Trombone Shorty	Trombone Shorty & Orleans Avenue
+Kingfish	Christone 'Kingfish' Ingram
