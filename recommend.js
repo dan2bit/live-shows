@@ -1,11 +1,18 @@
 // ── Recommendation feature (issue #10) ──────────
 var RECOMMEND_DEBUG=true;                 // DEBUG: preview the issue text instead of POSTing
-var ARTISTS_PATH='artists.tsv',VENUES_PATH='venues.tsv';
+var INDEX_PATH='recommend_index.json',VENUES_PATH='venues.tsv';
 var REC_RATE_KEY='rec_submits',REC_RATE_MAX=2;
-var recArtistsCache=null,recVenuesCache=null,recState={};
+var recIndexCache=null,recVenuesCache=null,recState={};
 
 function recStripCtl(s){return(s||'').replace(/[\u0000-\u001f\u007f]/g,'').trim();}
-function recNorm(s){return(s||'').toLowerCase().replace(/^\s*(the|a|an)\s+/,'').replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();}
+// Normalization MUST match build_recommend_index.py: de-accent, lowercase,
+// drop one leading article, punctuation -> space, collapse whitespace.
+function recNorm(s){
+  s=(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+  s=s.toLowerCase().replace(/^\s*(the|a|an)\s+/,'');
+  s=s.replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+  return s;
+}
 function recLev(a,b){
   var m=a.length,n=b.length,i,j,d=[];
   if(!m)return n;if(!n)return m;
@@ -30,17 +37,30 @@ async function recLoadTsv(path,cacheGet,cacheSet){
   var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
   var rows=parseTsv(raw);cacheSet(rows);return rows;
 }
-function recLoadArtists(){return recLoadTsv(ARTISTS_PATH,function(){return recArtistsCache;},function(r){recArtistsCache=r;});}
 function recLoadVenues(){return recLoadTsv(VENUES_PATH,function(){return recVenuesCache;},function(r){recVenuesCache=r;});}
 
-function recMatchArtist(name,rows){
-  var q=recNorm(name),best=null,bestD=99;
-  for(var i=0;i<rows.length;i++){
-    var a=rows[i]['Artist']||'';if(!a)continue;
-    var dd=recLev(q,recNorm(a));
-    if(dd<bestD){bestD=dd;best=rows[i];}
+// Recommendation lookup index (recommend_index.json): denormalized artist
+// name variants -> canonical records with status/metadata. Built by
+// build_recommend_index.py from artists/fast_track/potential/follows.
+async function recLoadIndex(){
+  if(recIndexCache)return recIndexCache;
+  var fd=await ghFetch(INDEX_PATH);
+  var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+  recIndexCache=JSON.parse(raw);
+  return recIndexCache;
+}
+// Exact variant lookup first (O(1)); Levenshtein over variant keys only as a typo fallback.
+function recMatchIndex(name,idx){
+  var q=recNorm(name);
+  var variants=idx.variants||{},records=idx.records||[];
+  if(q&&Object.prototype.hasOwnProperty.call(variants,q))return{record:records[variants[q]],dist:0};
+  var best=null,bestD=99;
+  for(var key in variants){
+    if(!Object.prototype.hasOwnProperty.call(variants,key))continue;
+    var dd=recLev(q,key);
+    if(dd<bestD){bestD=dd;best=records[variants[key]];}
   }
-  return{row:best,dist:bestD};
+  return{record:best,dist:bestD};
 }
 
 function openRecommendModal(){recState={};document.getElementById('recommendModal').classList.add('open');recRenderIntake();}
@@ -83,11 +103,11 @@ async function recArtistCheck(){
   recState.who=recStripCtl(document.getElementById('recArtWho').value);
   recState.note=recStripCtl(document.getElementById('recArtNote').value);
   res.innerHTML='<p class="rec-msg">Checking\u2026</p>';
-  var rows;try{rows=await recLoadArtists();}catch(e){res.innerHTML='<p class="rec-err">Couldn\u2019t load the artist list \u2014 please try again.</p>';return;}
-  var m=recMatchArtist(name,rows);recState.candidate=m.row;
-  if(m.row&&m.dist<=1)return recKnownArtist();
-  if(m.row&&m.dist===2){
-    res.innerHTML='<p class="rec-msg">Did you mean <strong>'+esc(m.row['Artist'])+'</strong>?</p>'
+  var idx;try{idx=await recLoadIndex();}catch(e){res.innerHTML='<p class="rec-err">Couldn\u2019t load the artist index \u2014 please try again.</p>';return;}
+  var m=recMatchIndex(name,idx);recState.candidate=m.record;
+  if(m.record&&m.dist<=1)return recKnownArtist();
+  if(m.record&&m.dist===2){
+    res.innerHTML='<p class="rec-msg">Did you mean <strong>'+esc(m.record.canonical)+'</strong>?</p>'
       +'<div class="modal-actions" style="margin-top:8px">'
       +'<button class="btn" onclick="recKnownArtist()">Yes, that\u2019s them</button>'
       +'<button class="btn btn-save" onclick="recArtistUnknown()">No \u2014 suggest anyway</button></div>';
@@ -95,15 +115,30 @@ async function recArtistCheck(){
   }
   recArtistUnknown();
 }
+// Status-aware acknowledgment text for an already-known artist.
+function recAck(r){
+  var name=esc(r.canonical||''),st=r.status||'';
+  if(st==='seen'){
+    var t=esc(String(r.times_seen||''));
+    return'Yep \u2014 I\u2019ve caught <strong>'+name+'</strong>'+(t?' '+t+' time'+(t==='1'?'':'s'):'')+' already.<br>'
+      +'<span class="rec-sub">First: '+esc(r.first_seen||'\u2014')+' \u00b7 Most recent: '+esc(r.most_recent_seen||'\u2014')+'</span><br>'
+      +'Thanks for thinking of me.';
+  }
+  if(st==='fast_track')return'<strong>'+name+'</strong> is already on my fast-track list \u2014 any DC/MD/VA date is an instant buy. Thanks for the rec!';
+  if(st==='potential'){
+    var d=(r.decision||'').toLowerCase();
+    if(d.indexOf('buy')===0||d==='choose')return'<strong>'+name+'</strong> is already on my radar \u2014 currently a \u201c'+esc(r.decision)+'\u201d in my potentials. Thanks!';
+    return'I\u2019ve actually already weighed <strong>'+name+'</strong> and passed for now \u2014 but I appreciate the rec!';
+  }
+  if(st==='follow')return'I\u2019m already following <strong>'+name+'</strong>, watching for a DC/MD/VA date. Thanks for thinking of me!';
+  return'<strong>'+name+'</strong> is already on my list \u2014 thanks for thinking of me!';
+}
 function recKnownArtist(){
-  var r=recState.candidate,t=esc(r['Times Seen']||'');
+  var r=recState.candidate;
   var gift='';
-  if(r['Spotify URL']&&r['Spotify URL']!=='-')gift+='<a class="rec-gift" href="'+esc(r['Spotify URL'])+'" target="_blank">Spotify &#8599;</a> ';
-  if(r['YouTube Channel']&&r['YouTube Channel']!=='-')gift+='<a class="rec-gift" href="'+esc(r['YouTube Channel'])+'" target="_blank">YouTube &#8599;</a>';
-  recBody('<p class="rec-ack">Yep \u2014 I\u2019ve caught <strong>'+esc(r['Artist'])+'</strong>'
-    +(t?' '+t+' time'+(t==='1'?'':'s'):'')+' already.<br>'
-    +'<span class="rec-sub">First: '+esc(r['First Seen']||'\u2014')+' \u00b7 Most recent: '+esc(r['Most Recent Seen']||'\u2014')+'</span><br>'
-    +'Thanks for thinking of me.</p>'
+  if(r.spotify)gift+='<a class="rec-gift" href="'+esc(r.spotify)+'" target="_blank">Spotify &#8599;</a> ';
+  if(r.youtube)gift+='<a class="rec-gift" href="'+esc(r.youtube)+'" target="_blank">YouTube &#8599;</a>';
+  recBody('<p class="rec-ack">'+recAck(r)+'</p>'
     +(gift?'<div style="margin-top:8px">'+gift+'</div>':'')
     +'<div class="modal-actions" style="margin-top:14px"><button class="btn" onclick="recRenderIntake()">\u2190 Suggest another</button><button class="btn" onclick="closeRecommendModal()">Close</button></div>');
 }
