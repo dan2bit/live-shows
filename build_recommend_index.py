@@ -48,7 +48,7 @@ HARVEST_POTENTIAL_SUPPORT = True
 SKIP_POTENTIAL_AGGREGATE = re.compile(r"festival|blues summit", re.I)
 
 
-# ── normalization ─────────────────────────────────────────────────
+# ── normalization ───────────────────────────────────────────────────────────
 def strip_accents(s):
     return "".join(c for c in unicodedata.normalize("NFKD", s)
                    if not unicodedata.combining(c))
@@ -100,7 +100,7 @@ def display_name(raw):
     return raw
 
 
-# ── TSV reading ───────────────────────────────────────────────
+# ── TSV reading ─────────────────────────────────────────────────────────────
 def read_tsv(path, skip_hash=False):
     if not path.exists():
         print("WARN: missing source %s" % path, file=sys.stderr)
@@ -126,7 +126,7 @@ def yt_url(v):
     return v
 
 
-# ── load sources ─────────────────────────────────────────────
+# ── load sources ────────────────────────────────────────────────────────────
 def blank_rec(name, status, **kw):
     rec = dict(name=name, status=status, decision="", tier="",
                times_seen="", first_seen="", most_recent_seen="",
@@ -174,7 +174,7 @@ def load_records():
     return recs
 
 
-# ── merge by shared variant key (union-find) ──────────────────────────
+# ── merge by shared variant key (union-find) ────────────────────────────────
 def merge(recs):
     parent = list(range(len(recs)))
 
@@ -206,7 +206,7 @@ def merge(recs):
     return list(clusters.values()), rec_keys
 
 
-# ── cluster -> canonical record ───────────────────────────────────
+# ── cluster -> canonical record ─────────────────────────────────────────────
 def rank_of(rec):
     s = rec["status"]
     if s == "seen":
@@ -292,7 +292,7 @@ def build():
 
     # Manual aliases (irregular surface forms the rules can't derive).
     if ALIASES.exists():
-        for row in read_tsv(ALIASES):
+        for row in read_tsv(ALIASES, skip_hash=True):
             alias = row.get("Alias", "")
             canon = row.get("Canonical", "")
             if not alias or not canon:
