@@ -1,0 +1,60 @@
+name: Cache-bust static assets
+
+# Rewrites the ?v= query strings on app.js, recommend.js, and styles.css
+# in index.html to the current commit SHA whenever any of those files change.
+# This forces browsers (and GitHub Pages CDN) to fetch the new versions
+# immediately rather than serving a stale cached copy.
+#
+# The commit this workflow makes uses [skip ci] so it doesn't retrigger
+# other workflows. Pushes by GITHUB_TOKEN don't trigger workflows anyway,
+# but the tag is belt-and-suspenders.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - app.js
+      - recommend.js
+      - styles.css
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cache-bust
+  cancel-in-progress: false
+
+jobs:
+  bust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rewrite asset version strings in index.html
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT="${SHA:0:8}"
+
+          # Replace any existing ?v=... or no version at all, for each asset.
+          # Patterns handle both: href="styles.css" and href="styles.css?v=abc123"
+          sed -i \
+            -e "s|href=\"styles\.css\(?\([^\"]*\)\)\?\"|href=\"styles.css?v=${SHORT}\"|g" \
+            -e "s|src=\"app\.js\(?\([^\"]*\)\)\?\"|src=\"app.js?v=${SHORT}\"|g" \
+            -e "s|src=\"recommend\.js\(?\([^\"]*\)\)\?\"|src=\"recommend.js?v=${SHORT}\"|g" \
+            index.html
+
+          echo "Updated asset references to ?v=${SHORT}"
+          grep -E '(app\.js|recommend\.js|styles\.css)' index.html
+
+      - name: Commit if changed
+        run: |
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "index.html unchanged — nothing to commit."
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "ci: cache-bust static assets [skip ci]"
+            git push
+          fi
