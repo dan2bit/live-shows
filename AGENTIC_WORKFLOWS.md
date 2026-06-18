@@ -139,6 +139,8 @@ Direct artist mailing lists and Bandsintown/Songkick notifications. Agent extrac
 
 **Key constraint:** Scripts require a Python venv and OAuth credentials under the YouTube channel's Google account (separate from the dedicated Gmail account if the channel predates the project). Scripts are committed to a PR branch and merged by hand — never auto-committed to main.
 
+**Tracking and closing the loop:** Open GitHub issues (labeled `playlist`) track shows where videos exist but the playlist hasn't been created yet. When a playlist is ready, pasting the URL into the chat session or posting it as a comment on the open issue are both enough to close the loop. The conversational path (chat) has the agent update `live_shows_current.tsv`, stamp the issue body with the URL for archival, and close the issue in one step. The issue comment path triggers a GitHub Actions workflow (`close-playlist-issue.yml`) that parses the URL from the comment, writes it to the TSV, and closes the issue automatically — no chat session needed. This is one of the simpler automation patterns in the project: a human action (creating the YouTube playlist) triggers a single step, in whichever channel is more convenient at the time, that handles all the downstream bookkeeping.
+
 **Minimal implementation for forkers:** The YouTube workflow is the most infrastructure-heavy part of this project. A forker would need a YouTube channel, OAuth credentials, and Python comfort. The scripts are documented but this workflow is explicitly optional.
 
 ---
