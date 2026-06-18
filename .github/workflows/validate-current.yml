@@ -1,0 +1,24 @@
+name: Validate current shows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - live_shows_current.tsv
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate column count and sentinels
+        run: python scripts/validate_current.py
