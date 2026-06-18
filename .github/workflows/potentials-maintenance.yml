@@ -1,0 +1,52 @@
+name: Potentials maintenance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - live_shows_potential.tsv
+      - live_shows_current.tsv
+  workflow_dispatch:
+
+jobs:
+  prune-and-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prune past-dated Pass rows from potentials
+        id: prune
+        run: python scripts/prune_potentials.py
+
+      - name: Commit pruned potentials (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (
+            git add live_shows_potential.tsv follows/new_artist_research.tsv
+            git commit -m "auto: prune past-dated potentials [skip ci]"
+            git push
+          )
+
+      - name: Check Prev/Next brackets
+        id: brackets
+        # Run as a warning — non-zero exit annotates the workflow run
+        # but does not block the push (continue-on-error: true)
+        continue-on-error: true
+        run: python scripts/check_brackets.py
+
+      - name: Summarize bracket issues
+        if: steps.brackets.outcome == 'failure'
+        run: |
+          echo "::warning::One or more Prev/Next bracket mismatches found in live_shows_potential.tsv — run scripts/check_brackets.py locally to review."
