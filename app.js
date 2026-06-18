@@ -564,7 +564,7 @@ function renderShows(){
       fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
     }
   }
-  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Browsing as a visitor &#8212; some details are hidden. Know something I should see?</span>'+recommendCtaHtml()+'</div>':'';
+  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history. Know something I should see?</span>'+recommendCtaHtml()+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
   var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
