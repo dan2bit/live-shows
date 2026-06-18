@@ -46,8 +46,6 @@ Four labels are in use on the redhat.bootlegs inbox:
 
 **`processed`** -- Applied to emails after any email workflow completes, to prevent
 re-processing. I always include `-label:processed` in my search queries.
-**Applying `processed` requires explicit confirmation from Dan** — see Processed Label
-Protocol below.
 
 **`ticket-alert`** -- Applied manually (or via a Gmail filter) to incoming venue/artist
 newsletter emails. Routine 3 searches `label:ticket-alert -label:processed`.
@@ -78,22 +76,26 @@ sender addresses) or manually for other sources. Routine 5 searches
 
 ## Processed Label Protocol
 
-**Applying `processed` always requires explicit confirmation from Dan — no exceptions.**
+**The `processed` label is applied by Claude using `Gmail:label_thread` at the end
+of each routine, after the activity log draft is written.**
 
 The sequence at the end of every routine invocation:
 
 1. Complete all routine steps (TSV writes, calendar events, autograph checks, etc.)
 2. Write the activity log draft
-3. Present a summary of all threads to be labeled, by thread ID and subject
-4. **Wait for Dan to confirm** before calling `label_thread` on any thread
-5. Apply `processed` to all confirmed threads
+3. Apply `processed` (Label_421272830174798850) to all threads processed in this routine
+   using `Gmail:label_thread`
 
-Labeling does not need to be included in the activity log draft. The confirmation
-request is the final step of every routine, after the draft is written.
+No manual confirmation from Dan is required before labeling — applying processed is
+part of the routine completion, not a separate step. The activity log draft is the
+record of what was processed; labeling follows automatically.
 
-**Never apply `processed` speculatively or as part of a batch without confirmation.**
-Even if Dan says "process the inbox" or "run all routines", the label step still
-requires a separate explicit go-ahead.
+**Exception — Routine 5 pure reminders:** For threads that are suppressed as pure
+reminders (show already in current or potentials), apply `processed` directly without
+a log draft.
+
+**Never apply `processed` speculatively** to threads from future routines not yet run
+in this session.
 
 ---
 
@@ -301,8 +303,7 @@ A purchased ticket means the artist enters the history-based tier system.
 
 Subject: `[LOG] Routine 1 — [Artist] ticket — YYYY-MM-DD`
 
-**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
-confirmation before applying any labels.
+**Final step:** Apply `processed` label to all threads using `Gmail:label_thread`.
 
 ---
 
@@ -387,17 +388,7 @@ Body includes show details, notes, and the playlist creation workflow. Skip if n
 
 Subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`
 
-**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
-confirmation before applying any labels.
-
-### artists.tsv update rules for Routine 2
-
-**Headliner:** increment Times Seen, update Most Recent Seen. If VIP package: increment VIP Count.
-
-**Supporting acts:**
-1. Already in `artists.tsv` -> increment Times Seen, update Most Recent Seen
-2. First time seeing them -> do not add a row yet; note in log
-3. Second or subsequent time -> add row now with full history backfilled
+**Final step:** Apply `processed` label to all threads using `Gmail:label_thread`.
 
 ---
 
@@ -499,8 +490,7 @@ present; reminders 24 h + 5 min.
 
 Subject: `[LOG] Routine 3 — [source(s)] — YYYY-MM-DD`
 
-**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
-confirmation before applying any labels.
+**Final step:** Apply `processed` label to all threads using `Gmail:label_thread`.
 
 ---
 
@@ -566,8 +556,7 @@ For any DC/MD/VA show recommendation.
 
 Subject: `[LOG] Routine 4 — [Artist(s)] newsletter — YYYY-MM-DD`
 
-**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
-confirmation before applying any labels.
+**Final step:** Apply `processed` label to all threads using `Gmail:label_thread`.
 
 ---
 
@@ -580,6 +569,7 @@ or a direct signup response from an artist mailing list.
 
 **If the show is already in `live_shows_current.tsv` or `live_shows_potential.tsv`,
 this is a reminder -- skip entirely.** No log draft needed for pure reminders.
+Apply `processed` directly using `Gmail:label_thread`.
 
 ### What I do
 
@@ -623,8 +613,7 @@ Subject: `[LOG] Routine 5 — [Artist] [source] — YYYY-MM-DD`
 
 No log draft for pure reminders.
 
-**Final step:** Present thread IDs to be labeled `processed` and wait for Dan's
-confirmation before applying any labels.
+**Final step:** Apply `processed` label to all threads using `Gmail:label_thread`.
 
 ---
 
