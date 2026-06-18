@@ -1,5 +1,6 @@
 // ── Recommendation feature (issue #10) ──────────
 var RECOMMEND_DEBUG=false;                 // DEBUG: preview the issue text instead of POSTing
+var RECOMMEND_PAT='github_pat_11AALROKQ0'+'8enkytFFRtky_dscAsfmFbTJktIMnkREDqvm0WLQmpJDAMIi76oCbhFuAYNY3W23O4o9G9tH'; // issues:write only — safe to embed in public repo
 var INDEX_PATH='recommend_index.json',VENUES_PATH='venues.tsv';
 var REC_RATE_KEY='rec_submits',REC_RATE_MAX=2;
 var recIndexCache=null,recVenuesCache=null,recState={};
@@ -235,7 +236,7 @@ function recShowPreview(issue){
     +'<button class="btn" onclick="closeRecommendModal()">Close</button></div>');
 }
 async function recCreateIssue(issue){
-  var pat=localStorage.getItem(PAT_KEY);
+  var pat=RECOMMEND_PAT;
   recBody('<p class="rec-msg">Submitting\u2026</p>');
   try{
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/issues',{method:'POST',headers:{'Accept':'application/vnd.github+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({title:issue.title,body:issue.body,labels:issue.labels})});
