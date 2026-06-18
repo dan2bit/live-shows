@@ -1,5 +1,5 @@
 // ── Recommendation feature (issue #10) ──────────
-var RECOMMEND_DEBUG=true;                 // DEBUG: preview the issue text instead of POSTing
+var RECOMMEND_DEBUG=false;                 // DEBUG: preview the issue text instead of POSTing
 var INDEX_PATH='recommend_index.json',VENUES_PATH='venues.tsv';
 var REC_RATE_KEY='rec_submits',REC_RATE_MAX=2;
 var recIndexCache=null,recVenuesCache=null,recState={};
