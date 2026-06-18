@@ -1,0 +1,97 @@
+name: Close playlist issue
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  close-playlist:
+    # Only run when:
+    # 1. The comment is on an issue (not a PR)
+    # 2. The issue title starts with "Playlist:"
+    # 3. The comment contains a YouTube playlist URL
+    # 4. The issue is open (we will close it after updating the TSV)
+    if: |
+      github.event.issue.pull_request == null &&
+      startsWith(github.event.issue.title, 'Playlist:') &&
+      contains(github.event.comment.body, 'youtube.com/playlist')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract date and URL from issue
+        id: extract
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          python3 - << 'PYEOF'
+          import re, os, sys
+
+          title = os.environ["ISSUE_TITLE"]
+          comment = os.environ["COMMENT_BODY"]
+
+          # Extract show date from title: "Playlist: Artist — YYYY-MM-DD (Venue)"
+          title_re = re.compile(r'Playlist:\s+.+?\s+[—–-]+\s+(\d{4}-\d{2}-\d{2})')
+          tm = title_re.search(title)
+          if not tm:
+              print(f"ERROR: could not extract date from title: {title!r}", file=sys.stderr)
+              sys.exit(1)
+          show_date = tm.group(1)
+
+          # Extract YouTube URL from comment body
+          url_re = re.compile(
+              r'https?://(?:www\.)?youtube\.com/playlist\?list=[\w-]+',
+              re.IGNORECASE
+          )
+          um = url_re.search(comment)
+          if not um:
+              print(f"ERROR: no YouTube playlist URL found in comment", file=sys.stderr)
+              sys.exit(1)
+          playlist_url = um.group(0)
+
+          # Write to GITHUB_OUTPUT
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"show_date={show_date}\n")
+              f.write(f"playlist_url={playlist_url}\n")
+
+          print(f"show_date={show_date}")
+          print(f"playlist_url={playlist_url}")
+          PYEOF
+
+      - name: Update playlist URL in live_shows_current.tsv
+        run: |
+          python scripts/close_playlist_issue.py \
+            "${{ steps.extract.outputs.show_date }}" \
+            "${{ steps.extract.outputs.playlist_url }}"
+
+      - name: Commit updated TSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (
+            git add live_shows_current.tsv
+            git commit -m "playlist: ${{ steps.extract.outputs.show_date }} — added URL from issue #${{ github.event.issue.number }} [skip ci]"
+            git push
+          )
+
+      - name: Close the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --comment "Playlist URL written to live_shows_current.tsv automatically."
