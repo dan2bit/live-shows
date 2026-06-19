@@ -411,7 +411,7 @@ async function fetchHistoryFiles(){
 }
 
 // ── Hat loading spinner ────────────────────────────────────────────────────
-function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 
 // ── Init ───────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', ()=>{
