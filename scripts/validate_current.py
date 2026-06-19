@@ -20,7 +20,7 @@ Exits non-zero on any violation so the GitHub Actions workflow fails visibly.
 import sys
 from pathlib import Path
 
-CURRENT_PATH = Path("live_shows_current.tsv")
+CURRENT_PATH = Path("data/live_shows_current.tsv")
 EXPECTED_COLS = 19
 
 # Column indices (0-based) — new public schema

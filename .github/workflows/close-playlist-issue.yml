@@ -83,7 +83,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git diff --quiet || (
-            git add live_shows_current.tsv
+            git add data/live_shows_current.tsv
             git commit -m "playlist: ${{ steps.extract.outputs.show_date }} — added URL from issue #${{ github.event.issue.number }} [skip ci]"
             git push
           )

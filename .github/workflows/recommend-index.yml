@@ -8,12 +8,12 @@ on:
   push:
     branches: [main]
     paths:
-      - artists.tsv
-      - fast_track.tsv
-      - live_shows_potential.tsv
+      - data/artists.tsv
+      - data/fast_track.tsv
+      - data/live_shows_potential.tsv
       - follows/follows_master.tsv
-      - recommend_aliases.tsv
-      - build_recommend_index.py
+      - data/recommend_aliases.tsv
+      - build_recommend_index.py  # moves to scripts/ in PR2
   workflow_dispatch:
 
 permissions:
@@ -35,9 +35,9 @@ jobs:
         run: python3 build_recommend_index.py
       - name: Commit if changed
         run: |
-          git add recommend_index.json
+          git add data/recommend_index.json
           if git diff --cached --quiet; then
-            echo "recommend_index.json unchanged - nothing to commit."
+            echo "data/recommend_index.json unchanged - nothing to commit."
           else
             git config user.name  "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
