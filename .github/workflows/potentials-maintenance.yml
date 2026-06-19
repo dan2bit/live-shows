@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - live_shows_potential.tsv
-      - live_shows_current.tsv
+      - data/live_shows_potential.tsv
+      - data/live_shows_current.tsv
   workflow_dispatch:
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git diff --quiet || (
-            git add live_shows_potential.tsv follows/new_artist_research.tsv
+            git add data/live_shows_potential.tsv follows/new_artist_research.tsv
             git commit -m "auto: prune past-dated potentials [skip ci]"
             git pull --rebase
             git push
