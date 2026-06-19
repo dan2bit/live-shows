@@ -1,5 +1,7 @@
 
 const OWNER='dan2bit',REPO='live-shows',CURRENT_PATH='live_shows_current.tsv',POTENTIAL_PATH='live_shows_potential.tsv';
+const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
 var historyData={};
@@ -9,15 +11,40 @@ var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate
 var _srchTimer=null;
 var _allYearsLoaded=false;
 
-async function ghFetch(path,opts){
+async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
   var pat=localStorage.getItem(PAT_KEY);
   var headers={'Accept':'application/vnd.github.v3+json'};
   if(pat)headers['Authorization']='token '+pat;
-  var url='https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path;
+  var url='https://api.github.com/repos/'+(owner||OWNER)+'/'+(repo||REPO)+'/contents/'+path;
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
   if(!res.ok)throw new Error('GitHub API '+res.status+': '+res.statusText);
   return res.json();
+}
+function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,''))));}
+async function mergePrivateData(){
+  if(!authed)return;
+  try{
+    var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={};
+    parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[(r['Artist']||'')+'\u241F'+(r['Show Date']||'')]=r;});
+    currentRows.forEach(function(r){var p=cmap[(r['Artist']||'')+'\u241F'+(r['Show Date']||'')];if(p)CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});});
+  }catch(e){console.warn('private current merge skipped:',e.message);}
+  try{
+    var pp=await ghFetch(POTENTIAL_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),pmap={};
+    parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[(r['Artist']||'')+'\u241F'+(r['Date']||'')]=r;});
+    potentialRows.forEach(function(r){var p=pmap[(r['Artist']||'')+'\u241F'+(r['Date']||'')];if(p&&p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];});
+  }catch(e){console.warn('private potential merge skipped:',e.message);}
+}
+async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
+  var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
+  var fd=await ghFetch(path,{},OWNER_PRIVATE,REPO_PRIVATE);
+  var raw=_decodeB64(fd.content);
+  var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+  var rows=parseTsv(raw);
+  var fi=rows.findIndex(function(r){return keyFields.every(function(k){return (r[k]||'')===(keyVals[k]||'');});});
+  if(fi<0){var nr={};headers.forEach(function(h){nr[h]='';});keyFields.forEach(function(k){nr[k]=keyVals[k]||'';});nr[field]=newVal;rows.push(nr);}else{rows[fi][field]=newVal;}
+  var res=await fetch('https://api.github.com/repos/'+OWNER_PRIVATE+'/'+REPO_PRIVATE+'/contents/'+path,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:path+': update '+(keyVals['Artist']||'')+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+  if(!res.ok)throw new Error(await res.text());
 }
 function parseTsv(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
@@ -79,7 +106,7 @@ function ticketLabel(access){
 function buildBadges(row){
   if(!row['Ticket Access']&&!row['Face Value (per ticket)'])return'';
   var notes=(row['Notes / Memories']||'').toLowerCase(),pvt=(row['Private Notes']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+pvt+' '+seat+' '+access;
-  var isVip=all.includes('vip'),isWT=(row['Venue Name']||'').includes('Wolf Trap Filene');
+  var isVip=(row['VIP']||'').trim().toUpperCase()==='Y',isWT=(row['Venue Name']||'').includes('Wolf Trap Filene');
   var fv=parseFloat((row['Face Value (per ticket)']||'').replace(/[^0-9.]/g,''))||0;
   var badges=[],tl=ticketLabel(row['Ticket Access']||''),label=tl[0],isPaper=tl[1];
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
@@ -90,7 +117,8 @@ function buildBadges(row){
   if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">&#127903; BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
-function seatTypeBadge(seat){var s=(seat||'').toLowerCase();if(!s||s.includes('vip'))return'';return'<span class="badge badge-seat">'+(s.includes('ga')||s.includes('standing')?'GA':'Seated')+'</span>';}
+function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
+function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">&#11088; VIP</span>');if((row['Group']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-group">&#128101; Group</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
 
 // ── setlistIconHtml helper ──────────────────────────
 function setlistIconHtml(s){
@@ -203,7 +231,10 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
   if(ind){ind.textContent='\u2026';ind.className='notes-save-ind save-indicator';}
   var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='\u2717 no auth';ind.className='notes-save-ind save-err';}return;}
   try{
-    if(fileKey==='current'){
+    if(fileKey==='current'&&field==='Private Notes'){
+      await _savePrivateSidecar(CURRENT_PRIVATE_PATH,['Show Date','Artist'],{'Show Date':currentRows[rowIdx]['Show Date'],'Artist':currentRows[rowIdx]['Artist']},field,newVal);
+      currentRows[rowIdx][field]=newVal;
+    } else if(fileKey==='current'){
       var fd=await ghFetch(CURRENT_PATH);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
@@ -212,6 +243,9 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var msgArtist=rows[rowIdx]['Artist']||'show';
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'current: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
       if(!res.ok)throw new Error(await res.text());
+    } else if(fileKey==='potential'&&field==='Private Notes'){
+      await _savePrivateSidecar(POTENTIAL_PRIVATE_PATH,['Artist','Date'],{'Artist':potentialRows[rowIdx]['Artist'],'Date':potentialRows[rowIdx]['Date']},field,newVal);
+      potentialRows[rowIdx][field]=newVal;
     } else if(fileKey==='potential'){
       var fd=await ghFetch(POTENTIAL_PATH);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
@@ -257,10 +291,10 @@ function renderUpcomingRowBystander(row,idx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
   var pn=esc(row['Notes / Memories']||'');
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
-  var sb=seatTypeBadge(row['Seat Info / GA']||'');
+  var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
   return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+'</td>'
+    +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
@@ -663,22 +697,16 @@ function serializeFastTrack(rows,headers){
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
   var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml()+'</div>';
-  var thCaps=authed?'th-ft-caps authed-visible':'th-ft-caps';
-  var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th class="'+thCaps+'">Caps</th><th style="width:110px">Links</th></tr></thead>';
+  var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th style="width:110px">Links</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'',tierCls=tier.toLowerCase().includes('strong')&&tier.toLowerCase().includes('medium')?'tier-medium-strong':tier==='Strong'?'tier-strong':'tier-medium';
     var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
     var spotUrl=r['Spotify URL']||'';
-    var capsCls=authed?'col-ft-caps authed-visible':'col-ft-caps';
-    var distCap=r['Distance Cap']||'Regional',priceCap=r['Price Cap']||'$100',venueCap=r['Venue Cap']||'Mid';
-    var distDef=!distCap||distCap.trim()==='Regional'||distCap.trim()==='',priceDef=!priceCap||priceCap.trim()==='$100'||priceCap.trim()==='',venueDef=!venueCap||venueCap.trim()==='Mid'||venueCap.trim()==='';
-    var capsHtml='<div class="ft-caps"><span'+(priceDef?'':' class="ft-cap-hl"')+'>Price</span> '+(priceCap.trim()||'$100')+'<br><span'+(distDef?'':' class="ft-cap-hl"')+'>Dist\u00a0\u00a0</span> '+(distCap.trim()||'Regional')+'<br><span'+(venueDef?'':' class="ft-cap-hl"')+'>Venue</span> '+(venueCap.trim()||'Mid')+'</div>';
     return'<tr><td><div class="ft-artist">'+esc(r['Artist']||'')+(isHat?' <span class="badge badge-hat">&#127913; HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
       +'<td><span class="cell-tier '+tierCls+'">'+esc(tier)+'</span></td>'
       +'<td><div class="ft-why" id="cell-ft-why-'+ri+'">'+makeEditBtn('cell-ft-why-'+ri,'fasttrack',ri,'Why Fast Track','Why')+esc(r['Why Fast Track']||'')+'</div></td>'
-      +'<td class="'+capsCls+'">'+capsHtml+'</td>'
       +'<td><div class="ft-links">'+(tourUrl?'<a class="ft-link ft-link-tour" href="'+esc(tourUrl)+'" target="_blank">Tour &#8599;</a>':'')+(spotUrl?'<a class="ft-link ft-link-sp" href="'+esc(spotUrl)+'" target="_blank">Spotify</a>':'')+'</div></td>'
       +'</tr>';
   }).join('');
@@ -722,8 +750,8 @@ function openAboutModal(){document.getElementById('aboutModal').classList.add('o
 function closeAboutModal(){document.getElementById('aboutModal').classList.remove('open');}
 function openAuthModal(){document.getElementById('patInput').value='';document.getElementById('authModal').classList.add('open');}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
-function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
@@ -766,8 +794,9 @@ async function loadData(){
   document.getElementById('potContent').innerHTML='<div class="loading">Loading</div>';
   try{
     var results=await Promise.all([ghFetch(CURRENT_PATH),ghFetch(POTENTIAL_PATH)]);
-    currentRows=parseTsv(decodeURIComponent(escape(atob(results[0].content.replace(/\n/g,'')))));
-    potentialRows=parseTsv(decodeURIComponent(escape(atob(results[1].content.replace(/\n/g,'')))));
+    currentRows=parseTsv(_decodeB64(results[0].content));
+    potentialRows=parseTsv(_decodeB64(results[1].content));
+    await mergePrivateData();
     renderShows();renderPotential();
     document.getElementById('fetchedAt').textContent='fetched '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
