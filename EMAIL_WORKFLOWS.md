@@ -190,6 +190,11 @@ The sequence for every potential list write:
 3. Re-sort the full file: `Buy` -> `Choose` -> `Sell` -> `Pass`, date ascending within each group
 4. Commit using `create_or_update_file` with the freshly fetched `sha`
 
+**Private notes for a potential** (purchasing reminders, fee-avoidance, promo codes,
+box-office tips) go to `live-shows-private/potential_private.tsv`, keyed by `Artist` +
+`Date` -- not a column in the public file (the old Private Notes column was removed in
+PR #59).
+
 ### Prev/Next Show bracket rule
 
 **Brackets are only calculated for Buy and Choose rows.** Sell and Pass rows always
@@ -204,10 +209,17 @@ Choose rows -- never populate brackets on Pass or Sell rows.
 
 ## live_shows_current.tsv Write Protocol
 
-**Sentinel rule:** Every row must have exactly 25 columns. For upcoming rows, cols 16
-(Setlist URL) and 22 (Playlist URL) must never be empty -- use `-` as a sentinel if
+**Sentinel rule:** Every row must have exactly 19 columns. For upcoming rows, cols 13
+(Setlist URL) and 16 (Playlist URL) must never be empty -- use `-` as a sentinel if
 there is no real value. This prevents MCP trailing-tab stripping from collapsing columns
 and shifting note content into the wrong column.
+
+**Public/private split (since PR #59):** The public file carries only denormalized
+flags -- `Seat Type` (`GA`|`Seated`), `VIP` (`Y`), `Group` (`Y`) -- plus show metadata,
+public Notes / Memories, and Photo URL. All financial and seat detail (Seat Info,
+Ticket Quantity, Face Value, Fees, Total Cost, Purchase Date, Food & Bev, Parking,
+Merch, Private Notes) lives in `live-shows-private/current_private.tsv`, keyed by
+`Show Date` + `Artist`. Write both files together (see Routine 1 Step 5).
 
 ---
 
@@ -281,10 +293,19 @@ address from `venues.tsv`** for venues without on-site parking (feeds driving di
 else the venue address; reminders 24 h + 3 h. Full title/description/location/merch-caution
 rules are in the calendar file.
 
-**Step 5 -- Commit new row to `live_shows_current.tsv`**
+**Step 5 -- Commit new row to `live_shows_current.tsv` (public) and `current_private.tsv` (private)**
 
-Insert in date order, commit directly to `main`. Status = `upcoming`.
-Apply sentinel `-` to col16 (Setlist URL) and col22 (Playlist URL) per write protocol above.
+Write **two rows** (see the `live_shows_current.tsv` Write Protocol above for the split):
+
+- **Public** -> `live_shows_current.tsv` (live-shows, 19 cols): insert in date order,
+  Status = `upcoming`, denormalized `Seat Type` (`GA`|`Seated`), `VIP` (`Y` for a VIP
+  package), `Group` (`Y` for a multi-ticket/group order), public Notes / Memories, and
+  sentinel `-` on col13 (Setlist URL) and col16 (Playlist URL). Commit directly to `main`.
+- **Private** -> `live-shows-private/current_private.tsv`, keyed `Show Date` + `Artist`:
+  Seat Info / GA, Ticket Quantity, Face Value (per ticket), Fees, Total Cost, Purchase
+  Date, Food & Bev, Parking, Merch, and Private Notes (order numbers, promo codes,
+  box-office reminders, seat assignments). This is where the financial/seat data from
+  Step 1 lands. Commit to the private repo's `main`.
 
 **Step 5b -- Update Prev/Next Show in `live_shows_potential.tsv`**
 
@@ -295,9 +316,11 @@ populate or modify brackets on Pass or Sell rows (see bracket rule above).
 
 Fetch fresh SHA, remove row, re-sort, commit.
 
-**Step 7 -- Remove from `fast_track.tsv` if present**
+**Step 7 -- Remove from `fast_track.tsv` (and `fast_track_caps.tsv`) if present**
 
-A purchased ticket means the artist enters the history-based tier system.
+A purchased ticket means the artist enters the history-based tier system. Remove the
+artist's row from both `fast_track.tsv` and its `fast_track_caps.tsv` sidecar (PR #59)
+so the two stay in sync.
 
 **Step 8 -- Create activity log draft MANDATORY**
 
@@ -338,9 +361,10 @@ Show Date | Artist | Ticket Cost | Food & Bev | Parking | Merch | Artist Interac
 ```
 Commit directly to `main`. This step is required even if all spending amounts are zero.
 
-**`spending.tsv` is the sole long-term authority for spending data.** The spending
-columns in `live_shows_current.tsv` are a convenience scratch pad for the current year
-only and are not guaranteed to be complete. A missing `spending.tsv` row cannot be
+**`spending.tsv` is the sole long-term authority for spending data.** The per-show cost
+breakdown also lives in `live-shows-private/current_private.tsv` (a purchase-time
+snapshot), but that is not the authority, and the public `live_shows_current.tsv`
+carries no cost columns at all. A missing `spending.tsv` row cannot be
 reconstructed from the activity log alone — it must be committed at the time of
 show-notes processing. If this step is skipped for any reason, flag it explicitly
 in the activity log draft and correct it before closing the routine.
@@ -359,7 +383,9 @@ If hat autograph:
 **Step 5 -- Commit all file changes directly to `main`**
 
 TSV files commit directly to `main` -- no PR needed. Commit all changed files together:
-- `live_shows_current.tsv` -- status -> attended, spending, setlist, notes, interaction filled
+- `live_shows_current.tsv` -- status -> attended; Setlist, Notes / Memories, Artist
+  Interaction filled (cost actuals -> `spending.tsv`; update
+  `live-shows-private/current_private.tsv` for actual Food & Bev / Parking / Merch)
 - `artists.tsv` -- always included; apply counting policy
 - `autograph_books_combined.tsv` -- if applicable
 
@@ -380,7 +406,7 @@ Body includes show details, notes, and the playlist creation workflow. Skip if n
 
 **skip to here if playlist already created manually on the channel**
 4. Add the playlist URL to this issue body: `Playlist: https://...`
-5. Add the URL to `live_shows_current.tsv` col22 (Playlist URL) for YYYY-MM-DD or have Claude do it
+5. Add the URL to `live_shows_current.tsv` col16 (Playlist URL) for YYYY-MM-DD or have Claude do it
 6. Close this issue or have Claude do it
 
 
