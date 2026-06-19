@@ -13,7 +13,7 @@ on:
       - data/live_shows_potential.tsv
       - follows/follows_master.tsv
       - data/recommend_aliases.tsv
-      - build_recommend_index.py  # moves to scripts/ in PR2
+      - scripts/build_recommend_index.py
   workflow_dispatch:
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Generate index
-        run: python3 build_recommend_index.py
+        run: python3 scripts/build_recommend_index.py
       - name: Commit if changed
         run: |
           git add data/recommend_index.json
