@@ -19,7 +19,7 @@ Privacy-split architecture (since PR #59):
      <PATH>/history_private/<year>.tsv (preserves seat info + private notes for posterity)
   5. Prunes that row from <PATH>/current_private.tsv so it doesn't accumulate orphans
 
-  Per-show spend is NOT re-archived here — spending.tsv is the authority for money and
+  Per-show spend is NOT re-archived here — live-shows-private/spending.tsv is the authority for money and
   already holds it once a show moves to 'attended'. The full private row (cost columns
   included) is archived as-is purely because it's the cheapest lossless thing to keep.
 
@@ -166,7 +166,7 @@ def current_to_history(row: dict) -> dict:
     Convert a public live_shows_current.tsv row to the abbreviated history format.
 
     Money, seat, quantity and private-notes columns no longer exist in the public
-    source (they live in the private sidecar / spending.tsv), so there is nothing to
+    source (they live in the private sidecar / live-shows-private/spending.tsv), so there is nothing to
     drop here — only public fields are read.
 
     Venue is the bare Venue Name; the app keys display off the substring before the
