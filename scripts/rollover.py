@@ -3,7 +3,7 @@
 rollover.py — Migrate attended shows from live_shows_current.tsv to history/<year>.tsv
 
 Usage:
-    python3 rollover.py --year 2026 [--private-repo PATH] [--dry-run] [--force]
+    python3 scripts/rollover.py --year 2026 [--private-repo PATH] [--dry-run] [--force]
 
 For each attended row in live_shows_current.tsv whose Show Date falls within <year>:
   1. Converts it to the abbreviated public history format
@@ -113,9 +113,9 @@ def resolve_paths(year: int, private_repo: str = None) -> tuple:
 
     private_current / private_archive are None when --private-repo is not given.
     """
-    script_dir = Path(__file__).parent
-    current_path = script_dir / "live_shows_current.tsv"
-    history_path = script_dir / "history" / f"{year}.tsv"
+    script_dir = Path(__file__).parent.parent  # repo root (script is in scripts/)
+    current_path = script_dir / "data" / "live_shows_current.tsv"
+    history_path = script_dir / "data" / "history" / f"{year}.tsv"
 
     private_current = private_archive = None
     if private_repo:

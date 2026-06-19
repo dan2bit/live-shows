@@ -15,7 +15,7 @@ Sources (status precedence high -> low):
   4. follows/follows_master.tsv -> "follow"      (follow list; tier)
 
 Run from the repo root:
-    python3 build_recommend_index.py
+    python3 scripts/build_recommend_index.py
 
 Writes recommend_index.json and prints a build + collision summary to stderr.
 No third-party dependencies (stdlib only).
@@ -28,7 +28,7 @@ import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent  # repo root (script is at root until PR2)
+ROOT = Path(__file__).resolve().parent.parent  # repo root (script is in scripts/)
 
 ARTISTS   = ROOT / "data" / "artists.tsv"
 FASTTRACK = ROOT / "data" / "fast_track.tsv"
