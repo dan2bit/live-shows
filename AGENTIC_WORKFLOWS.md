@@ -103,7 +103,7 @@ Direct artist mailing lists and Bandsintown/Songkick notifications. Agent extrac
 
 **What it does:** Keeps a Google Calendar in sync with `live_shows_current.tsv` — one event per confirmed show, with structured fields in the description.
 
-**Data sources read:** `live_shows_current.tsv`, `venues.tsv`, `autograph_books_combined.tsv`
+**Data sources read:** `live_shows_current.tsv`, `live-shows-private/current_private.tsv` (seat/section, order number, payment -- moved out of the public file in PR #59), `venues.tsv`, `autograph_books_combined.tsv`
 **Data written:** Google Calendar (dedicated account)
 
 **Event structure:** Each calendar event includes artist, venue, doors/show times, parking notes, ticket service, order number, seat/section, and any artist interaction goals. The description is structured enough that the calendar becomes a portable show guide — everything you need the night of the show is in the event.
