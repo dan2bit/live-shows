@@ -1,7 +1,7 @@
-// ── Recommendation feature (issue #10) ──────────
+// ── Recommendation feature (issue #10) ──────────────────
 var RECOMMEND_DEBUG=false;                 // DEBUG: preview the issue text instead of POSTing
 var RECOMMEND_PAT='github_pat_11AALROKQ0'+'8enkytFFRtky_dscAsfmFbTJktIMnkREDqvm0WLQmpJDAMIi76oCbhFuAYNY3W23O4o9G9tH'; // issues:write only — safe to embed in public repo
-var INDEX_PATH='recommend_index.json',VENUES_PATH='venues.tsv';
+var INDEX_PATH='data/recommend_index.json',VENUES_PATH='data/venues.tsv';
 var REC_RATE_KEY='rec_submits',REC_RATE_MAX=2;
 var recIndexCache=null,recVenuesCache=null,recState={};
 

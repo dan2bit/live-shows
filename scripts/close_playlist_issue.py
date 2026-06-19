@@ -24,7 +24,7 @@ Exits:
 import sys
 from pathlib import Path
 
-CURRENT_PATH = Path("live_shows_current.tsv")
+CURRENT_PATH = Path("data/live_shows_current.tsv")
 PLAYLIST_COL = 16  # 0-based
 SHOW_DATE_COL = 3
 EXPECTED_COLS = 19
