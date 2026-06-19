@@ -1,9 +1,5 @@
 name: Build recommend_index.json
 
-# Regenerate recommend_index.json whenever a source file changes on main.
-# recommend_index.json is intentionally NOT in the paths filter, so the commit
-# this workflow makes does not retrigger it (and pushes by GITHUB_TOKEN don't
-# trigger workflows anyway). workflow_dispatch lets you run it by hand.
 on:
   push:
     branches: [main]
@@ -11,7 +7,7 @@ on:
       - data/artists.tsv
       - data/fast_track.tsv
       - data/live_shows_potential.tsv
-      - follows/follows_master.tsv
+      - tools/research/follows/follows_master.tsv
       - data/recommend_aliases.tsv
       - scripts/build_recommend_index.py
   workflow_dispatch:
