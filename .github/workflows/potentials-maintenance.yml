@@ -34,7 +34,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git diff --quiet || (
-            git add data/live_shows_potential.tsv follows/new_artist_research.tsv
+            git add data/live_shows_potential.tsv tools/research/follows/new_artist_research.tsv
             git commit -m "auto: prune past-dated potentials [skip ci]"
             git pull --rebase
             git push
@@ -42,8 +42,6 @@ jobs:
 
       - name: Check Prev/Next brackets
         id: brackets
-        # Run as a warning — non-zero exit annotates the workflow run
-        # but does not block the push (continue-on-error: true)
         continue-on-error: true
         run: python scripts/check_brackets.py
 

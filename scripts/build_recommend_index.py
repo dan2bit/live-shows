@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parent.parent  # repo root (script is in scripts
 ARTISTS   = ROOT / "data" / "artists.tsv"
 FASTTRACK = ROOT / "data" / "fast_track.tsv"
 POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
-FOLLOWS   = ROOT / "follows" / "follows_master.tsv"
+FOLLOWS   = ROOT / "tools" / "research" / "follows" / "follows_master.tsv"
 ALIASES   = ROOT / "data" / "recommend_aliases.tsv"
 OUTPUT    = ROOT / "data" / "recommend_index.json"
 

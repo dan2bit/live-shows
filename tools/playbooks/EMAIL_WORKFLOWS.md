@@ -524,7 +524,7 @@ Subject: `[LOG] Routine 3 — [source(s)] — YYYY-MM-DD`
 
 ### Subscribed artists
 
-Canonical source: `Direct Mail` column in `follows/follows_master.tsv`.
+Canonical source: `Direct Mail` column in `tools/research/follows/follows_master.tsv`.
 
 Quick reference (as of 2026-04): Albert Castiglia, Allison Russell, Amythyst Kiah,
 Buffalo Nichols, Bywater Call, Christone 'Kingfish' Ingram, Daniel Donato, Ghalia Volt,
@@ -616,7 +616,7 @@ When processing a Just Announced thread: always fetch the full thread body, extr
 date, venue and purchase link, surface all 3 in conversation before any potentials write.
 Flag for potential Fast Track or Strong tier check before adding to potentials.
 
-**Step 2 -- Check `follows/follows_master.tsv`**
+**Step 2 -- Check `tools/research/follows/follows_master.tsv`**
 
 - Artist not present -> add a new row (present for approval first)
 - Service not marked -> note discrepancy
@@ -657,7 +657,7 @@ calendar operations.
 November 2025 as part of a WMG copyright settlement. All Songkick user data transferred
 to Suno in April 2026. Dan has chosen not to expand Songkick follows or delete the
 account (data can age). New artists are followed on BIT and Seated only. See
-`follows/follows_master.tsv` Songkick column for current coverage.
+`tools/research/follows/follows_master.tsv` Songkick column for current coverage.
 
 **YouTube pipeline is separate.** Tracked via GitHub issues (label: `playlist`).
 Scripts run manually after videos are uploaded to YouTube Studio.
