@@ -9,25 +9,6 @@
 # prior history (Kingfish, Larkin Poe, The Lone Bellow, ZZ Ward, etc.), they do NOT
 # belong here — they are handled automatically by the existing tier system.
 #
-# CAP DEFAULTS (apply when column is blank):
-#   Price Cap:    $100 all-in
-#   Distance Cap: Regional (DC/MD/VA + Baltimore, ~60mi radius from Arlington)
-#   Venue Cap:    Mid (Small venues + 9:30 Club, Wolf Trap Barns, State Theatre, Rams Head Live)
-#
-# VENUE CAP VALUES:
-#   Small  = Birchmere, Hamilton Live, Rams Head On Stage, Hub City Vinyl, Jammin' Java,
-#             Collective Encore, Union Stage, Wolf Trap Barns (acoustic room)
-#   Mid    = Small + 9:30 Club, State Theatre, Rams Head Live, other ~500-1200 cap rooms
-#   Large  = Mid + Wolf Trap Filene Center, The Anthem, similar 2000+ cap rooms
-#
-# DISTANCE CAP VALUES:
-#   Local    = DC/MD/VA, Annapolis — regular driving range
-#   Regional = Local + Baltimore, up to ~60 miles from Arlington
-#   Extended = Regional + up to ~90 miles (requires strong pull)
-#
-# When a cap is exceeded, surface as a normal Choose recommendation in live_shows_potential
-# rather than a Fast Track buy. All three caps must be satisfied for Fast Track treatment.
-#
 # BOOK CHECK: Pre-filled from autograph_books_combined.tsv so Routines 3/5 don't need
 # to look it up separately. Update here when book status changes.
 #
@@ -35,11 +16,11 @@
 # and award shows don't count). Blank = has played the region, just haven't caught them.
 # Tour URL: artist's own tour page preferred; use BIT URL if no dedicated page.
 #
-Artist	Tier	Why Fast Track	Price Cap	Distance Cap	Venue Cap	Book Check	Notes	Tour URL	First Tour	Spotify URL
-Nikki Hill	Strong	BMA nominee; Alligator Records artist; blues-soul powerhouse; has toured DC/MD/VA, just missed her	 	 	 	RHBS	Female artist — hat signing eligible. Plays with full band including horns.	https://nikkihillrocks.com/tour		https://open.spotify.com/artist/0FyGHBqMNKEBN2HECXZ5Nk
-Angelique Francis	Strong	Rising blues-rock guitarist; BMA nominee; critically acclaimed; festivals and cruises only, not yet toured DC/MD/VA	 	 	 	 	Female artist — hat signing eligible. Young Canadian guitarist-vocalist.	https://angeliquefrancis.net/shows	Y	https://open.spotify.com/artist/5aIqB5nVVvmFsvSdExz408
-Danielle Ponder	Medium-Strong	NPR Tiny Desk; soul-blues vocalist; seen once in a Wolf Trap multi-artist lineup — want a proper headlining set	 	 	 	 	Female artist — hat signing eligible. Strong critical consensus.	https://danielleponder.com/tour		https://open.spotify.com/artist/2j0FtBCQ3NN6dBWGb2eLAE
-Evan Nicole Bell	Strong	No. 1 Roots Music Report; AMA Top Albums; Baker Artist Award 2025; Columbia MD local; not yet touring at scale	 	Local	 	 	Female artist — hat signing eligible. Multi-instrumentalist — writes/produces/engineers/plays all instruments except drums. Grew up in Columbia MD. Sophomore album slated 2026. Not in either autograph book.	https://evannicolebell.com/pages/tour	Y	https://open.spotify.com/artist/5ZEzR5JFEJkNpKHXkxODpF
-Gov't Mule	Strong	Warren Haynes project; deep blues-rock; APS-adjacent; has played large DC venues, need a small-room date	 	 	Small	 	Venue cap tightened — they play large rooms that don't fit. Birchmere/Hamilton/Rams Head scale only.	https://www.bandsintown.com/a/3266-gov't-mule		https://open.spotify.com/artist/1f9zCQpkHhE91hTFNaE0Ml
-Garret T. Willie	Strong	25yo BC Indigenous blues-rock; Tom Hambridge-produced; opened for Kingfish, Ariel Posen, Joe Bonamassa Blues Cruise; not yet seen	 	 	 	 	Lary Chinowsky rec. Currently Western Canada / UK only — no US East Coast shows yet. Watch for first DMV date.	https://garrettwillie.com/tour	Y	https://open.spotify.com/artist/3kEtdS2pH24sD4M7rB8Rqk
-Beth Hart	Strong	Powerhouse blues-rock vocalist; frequent Joe Bonamassa collaborator; has toured DC/MD/VA before; strong follow, not yet caught in show history	 	 	 	 	Female artist — hat signing eligible. Frequent Joe Bonamassa collaborator. Not in either autograph book (checked). follows_master tier Strong, note says 'seen' but no tracked DC show history.	https://www.bethhart.com/tour-3-2/		https://open.spotify.com/artist/30TrHDLNCKQVTYWOn9QqOC
+Artist	Tier	Why Fast Track	Book Check	Notes	Tour URL	First Tour	Spotify URL
+Nikki Hill	Strong	BMA nominee; Alligator Records artist; blues-soul powerhouse; has toured DC/MD/VA, just missed her	RHBS	Female artist — hat signing eligible. Plays with full band including horns.	https://nikkihillrocks.com/tour		https://open.spotify.com/artist/0FyGHBqMNKEBN2HECXZ5Nk
+Angelique Francis	Strong	Rising blues-rock guitarist; BMA nominee; critically acclaimed; festivals and cruises only, not yet toured DC/MD/VA		Female artist — hat signing eligible. Young Canadian guitarist-vocalist.	https://angeliquefrancis.net/shows	Y	https://open.spotify.com/artist/5aIqB5nVVvmFsvSdExz408
+Danielle Ponder	Medium-Strong	NPR Tiny Desk; soul-blues vocalist; seen once in a Wolf Trap multi-artist lineup — want a proper headlining set		Female artist — hat signing eligible. Strong critical consensus.	https://danielleponder.com/tour		https://open.spotify.com/artist/2j0FtBCQ3NN6dBWGb2eLAE
+Evan Nicole Bell	Strong	No. 1 Roots Music Report; AMA Top Albums; Baker Artist Award 2025; Columbia MD local; not yet touring at scale		Female artist — hat signing eligible. Multi-instrumentalist — writes/produces/engineers/plays all instruments except drums. Grew up in Columbia MD. Sophomore album slated 2026. Not in either autograph book.	https://evannicolebell.com/pages/tour	Y	https://open.spotify.com/artist/5ZEzR5JFEJkNpKHXkxODpF
+Gov't Mule	Strong	Warren Haynes project; deep blues-rock; APS-adjacent; has played large DC venues, need a small-room date		Venue cap tightened — they play large rooms that don't fit. Birchmere/Hamilton/Rams Head scale only.	https://www.bandsintown.com/a/3266-gov't-mule		https://open.spotify.com/artist/1f9zCQpkHhE91hTFNaE0Ml
+Garret T. Willie	Strong	25yo BC Indigenous blues-rock; Tom Hambridge-produced; opened for Kingfish, Ariel Posen, Joe Bonamassa Blues Cruise; not yet seen		Lary Chinowsky rec. Currently Western Canada / UK only — no US East Coast shows yet. Watch for first DMV date.	https://garrettwillie.com/tour	Y	https://open.spotify.com/artist/3kEtdS2pH24sD4M7rB8Rqk
+Beth Hart	Strong	Powerhouse blues-rock vocalist; frequent Joe Bonamassa collaborator; has toured DC/MD/VA before; strong follow, not yet caught in show history		Female artist — hat signing eligible. Frequent Joe Bonamassa collaborator. Not in either autograph book (checked). follows_master tier Strong, note says 'seen' but no tracked DC show history.	https://www.bethhart.com/tour-3-2/		https://open.spotify.com/artist/30TrHDLNCKQVTYWOn9QqOC
