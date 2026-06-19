@@ -4,13 +4,15 @@ validate_current.py
 
 Validates live_shows_current.tsv on every push that touches it.
 
-Checks:
-  1. Column count — every row must have exactly 26 columns.
-  2. Sentinel values — upcoming rows must have:
-       - Setlist.fm URL == '-'
-       - Playlist URL == '-'
-       - Private Notes not blank or empty
-  3. Status values — every row must have status 'upcoming' or 'attended'.
+Checks (public, post-privacy-split schema — 19 columns):
+  1. Column count — every row must have exactly 19 columns.
+  2. Status values — every row must have status 'upcoming' or 'attended'.
+  3. Flag columns — Seat Type must be 'GA' or 'Seated'; VIP and Group must be
+     'Y' or blank. (These replace the old Private Notes sentinel, which moved to
+     the live-shows-private sidecar, and catch a column-shift corruption well.)
+  4. Sentinel values — upcoming rows must have:
+       - Setlist.fm URL == '-' (or blank)
+       - Playlist URL == '-' (or blank)
 
 Exits non-zero on any violation so the GitHub Actions workflow fails visibly.
 """
@@ -19,15 +21,19 @@ import sys
 from pathlib import Path
 
 CURRENT_PATH = Path("live_shows_current.tsv")
-EXPECTED_COLS = 26
+EXPECTED_COLS = 19
 
-# Column indices (0-based)
-COL_STATUS = 17
-COL_SETLIST = 16
-COL_PLAYLIST = 22
-COL_PRIVATE = 24
+# Column indices (0-based) — new public schema
+COL_SEAT_TYPE = 9
+COL_VIP = 10
+COL_GROUP = 11
+COL_SETLIST = 13
+COL_STATUS = 14
+COL_PLAYLIST = 16
 
 VALID_STATUSES = {"upcoming", "attended"}
+VALID_SEAT_TYPES = {"GA", "Seated"}
+VALID_FLAGS = {"", "Y"}
 
 
 def main() -> int:
@@ -64,11 +70,26 @@ def main() -> int:
                 f"(expected 'upcoming' or 'attended')"
             )
 
-        # 3. Sentinel checks for upcoming rows
+        # 3. Flag columns
+        seat = cols[COL_SEAT_TYPE].strip()
+        if seat not in VALID_SEAT_TYPES:
+            errors.append(
+                f"Row {i} ({row_id}): invalid Seat Type {cols[COL_SEAT_TYPE]!r} "
+                f"(expected 'GA' or 'Seated')"
+            )
+        if cols[COL_VIP].strip() not in VALID_FLAGS:
+            errors.append(
+                f"Row {i} ({row_id}): invalid VIP {cols[COL_VIP]!r} (expected 'Y' or blank)"
+            )
+        if cols[COL_GROUP].strip() not in VALID_FLAGS:
+            errors.append(
+                f"Row {i} ({row_id}): invalid Group {cols[COL_GROUP]!r} (expected 'Y' or blank)"
+            )
+
+        # 4. Sentinel checks for upcoming rows
         if status == "upcoming":
             setlist = cols[COL_SETLIST].strip()
             playlist = cols[COL_PLAYLIST].strip()
-            private = cols[COL_PRIVATE].strip()
 
             if setlist and setlist != "-":
                 errors.append(
@@ -77,11 +98,6 @@ def main() -> int:
             if playlist and playlist != "-":
                 errors.append(
                     f"Row {i} ({row_id}): upcoming row has non-sentinel Playlist URL: {playlist!r}"
-                )
-            if not private:
-                errors.append(
-                    f"Row {i} ({row_id}): upcoming row has blank Private Notes "
-                    f"(use '-' if nothing to note)"
                 )
 
     if errors:

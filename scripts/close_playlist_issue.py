@@ -13,7 +13,8 @@ Arguments:
     playlist_url  YouTube playlist URL from the closing comment
 
 Finds the matching row in live_shows_current.tsv by Show Date and writes
-the playlist URL to the Playlist URL column (col index 22, 0-based).
+the playlist URL to the Playlist URL column (col index 16, 0-based, in the
+19-column public post-privacy-split schema).
 
 Exits:
     0  — success (row found and updated, or URL already set to same value)
@@ -24,9 +25,9 @@ import sys
 from pathlib import Path
 
 CURRENT_PATH = Path("live_shows_current.tsv")
-PLAYLIST_COL = 22  # 0-based
+PLAYLIST_COL = 16  # 0-based
 SHOW_DATE_COL = 3
-EXPECTED_COLS = 26
+EXPECTED_COLS = 19
 
 
 def main() -> int:
