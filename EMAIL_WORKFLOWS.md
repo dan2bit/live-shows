@@ -161,7 +161,7 @@ must NOT be added here.
 ### Cap defaults
 
 | Cap | Default | Narrower options |
-|-----|---------|--------------------|
+|-----|---------|---------|
 | Price Cap | $100 all-in | Any lower dollar amount |
 | Distance Cap | Regional (DC/MD/VA + Baltimore, ~60 mi) | Local (DC/MD/VA only) / Extended (~90 mi) |
 | Venue Cap | Mid (Small rooms + 9:30 Club, Wolf Trap Barns, State Theatre, ~500-1200 cap) | Small (Birchmere/Hamilton/Rams Head/Hub City tier only) / Large (adds Wolf Trap Filene, The Anthem) |
@@ -256,7 +256,7 @@ ticket quantity, face value, fees, total cost, purchase date, order numbers.
 **Step 2 -- Apply venue defaults**
 
 | Venue | Doors | Show | Notes |
-|-------|-------|------|-------|
+|-------|-------|------|------|
 | The Birchmere | 5:00 PM | 7:30 PM | GA; seating begins 6:30 PM; always free parking |
 | Hamilton Live | 6:30 PM | 8:00 PM | $13 parking |
 | Rams Head On Stage | 1 hr before show | -- | -- |
@@ -350,9 +350,9 @@ Search `from:dan2bit -label:processed`, find the matching calendar event and
 Append spending and setlist info. Only for upcoming or same-day events -- never past shows.
 See **`CALENDAR_WORKFLOWS.md` → Updating a show event**.
 
-**Step 3 -- Append row to `spending.tsv` MANDATORY — DO NOT SKIP**
+**Step 3 -- Append row to `live-shows-private/spending.tsv` MANDATORY — DO NOT SKIP**
 
-**Always fetch `spending.tsv` fresh from the repo immediately before appending.**
+**Always fetch `live-shows-private/spending.tsv` fresh from the private repo immediately before appending.**
 Do not rely on a locally cached copy — the file may have been updated since pre-flight.
 
 Append one row:
@@ -361,13 +361,11 @@ Show Date | Artist | Ticket Cost | Food & Bev | Parking | Merch | Artist Interac
 ```
 Commit directly to `main`. This step is required even if all spending amounts are zero.
 
-**`spending.tsv` is the sole long-term authority for spending data.** The per-show cost
+**`live-shows-private/spending.tsv` is the sole long-term authority for spending data.** The per-show cost
 breakdown also lives in `live-shows-private/current_private.tsv` (a purchase-time
-snapshot), but that is not the authority, and the public `live_shows_current.tsv`
-carries no cost columns at all. A missing `spending.tsv` row cannot be
+snapshot), but that is not the authority. A missing `spending.tsv` row cannot be
 reconstructed from the activity log alone — it must be committed at the time of
-show-notes processing. If this step is skipped for any reason, flag it explicitly
-in the activity log draft and correct it before closing the routine.
+show-notes processing. **If the write to the private repo fails for any reason, present the full row data in the conversation before closing the routine**, flag it in the activity log draft, and correct it before closing.
 
 **Step 4 -- Update autograph records (if applicable)**
 
@@ -384,7 +382,7 @@ If hat autograph:
 
 TSV files commit directly to `main` -- no PR needed. Commit all changed files together:
 - `live_shows_current.tsv` -- status -> attended; Setlist, Notes / Memories, Artist
-  Interaction filled (cost actuals -> `spending.tsv`; update
+  Interaction filled (cost actuals -> `live-shows-private/spending.tsv`; update
   `live-shows-private/current_private.tsv` for actual Food & Bev / Parking / Merch)
 - `artists.tsv` -- always included; apply counting policy
 - `autograph_books_combined.tsv` -- if applicable
