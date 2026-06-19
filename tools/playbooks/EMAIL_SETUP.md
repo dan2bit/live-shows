@@ -77,7 +77,7 @@ filter on the sender address once subscribed.
 
 ## Artist Newsletter Subscriptions
 
-Canonical source: `Direct Mail` column in `follows/follows_master.tsv`.
+Canonical source: `Direct Mail` column in `tools/research/follows/follows_master.tsv`.
 
 ### Subscribed ✅
 
@@ -104,7 +104,7 @@ Trombone Shorty & Orleans Avenue, Vanessa Collier, The War and Treaty.
 
 Account: **rhbl** (redhat.bootlegs@gmail.com)
 Gmail filter: BIT sender addresses → `artist-follow` (auto-labeled, no manual action)
-Artist follow list: managed via `follows/follows_master.tsv` (BIT column)
+Artist follow list: managed via `tools/research/follows/follows_master.tsv` (BIT column)
 Worklist: `web-src/rhbl-bandsintown.tsv`
 
 ### Songkick
