@@ -1,7 +1,7 @@
 // app.js — live-shows front-end logic
 // See README for architecture notes.
 
-// ── Configuration ──────────────────────────────────────────────────────────
+// ── Configuration ────────────────────────────────────────────────────────
 const REPO_OWNER = 'dan2bit';
 const REPO_NAME  = 'live-shows';
 const PRIVATE_REPO_NAME = 'live-shows-private';
@@ -147,7 +147,7 @@ async function openMultiset(multiKey){
   document.getElementById('multisetModalBody').innerHTML = '<div class="multiset-loading">Loading&#8230;</div>';
   const dateKey = multiKey.replace('MULTI:','');
   try {
-    const text = await ghFetch('setlists.json');
+    const text = await ghFetch('data/setlists.json');
     const data = JSON.parse(text);
     const entries = data[dateKey];
     if(!entries||!entries.length){ document.getElementById('multisetModalBody').innerHTML='<p>No setlists found.</p>'; return; }
@@ -275,7 +275,7 @@ function renderDecisionActions(r, i){
 async function handleDecisionChange(sel, artist, date){
   const newDec = sel.value;
   try {
-    const text = await ghFetch('live_shows_potential.tsv');
+    const text = await ghFetch('data/live_shows_potential.tsv');
     const rows = parseTsv(text);
     const idx = rows.findIndex(r=>r['Artist']===artist && r['Date']===date);
     if(idx===-1){ showToast('Row not found'); return; }
@@ -289,7 +289,7 @@ async function handleDecisionChange(sel, artist, date){
 async function handleRevoke(artist, date){
   if(!confirm(`Remove ${artist} from potentials?`)) return;
   try {
-    const text = await ghFetch('live_shows_potential.tsv');
+    const text = await ghFetch('data/live_shows_potential.tsv');
     const rows = parseTsv(text);
     const filtered = rows.filter(r=>!(r['Artist']===artist && r['Date']===date));
     await commitPotential(filtered, `revoke: ${artist}`);
@@ -304,12 +304,12 @@ async function commitPotential(rows, msg){
   const pat = getPat();
   if(!pat) throw new Error('Not authenticated');
   // Get current SHA
-  const metaRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/live_shows_potential.tsv`,
+  const metaRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/live_shows_potential.tsv`,
     { headers: { Authorization: `token ${pat}`, Accept: 'application/vnd.github.v3+json' } });
   const meta = await metaRes.json();
   const sha = meta.sha;
   const content = btoa(unescape(encodeURIComponent(tsv)));
-  const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/live_shows_potential.tsv`, {
+  const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/live_shows_potential.tsv`, {
     method: 'PUT',
     headers: { Authorization: `token ${pat}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: msg, content, sha })
@@ -361,10 +361,10 @@ async function loadData(){
   document.getElementById('refreshBtn').disabled = true;
   try {
     const [currentText, historyTexts, potText, tourhereText] = await Promise.all([
-      ghFetch('live_shows_current.tsv'),
+      ghFetch('data/live_shows_current.tsv'),
       fetchHistoryFiles(),
-      ghFetch('live_shows_potential.tsv'),
-      ghFetch('fast_track.tsv'),
+      ghFetch('data/live_shows_potential.tsv'),
+      ghFetch('data/fast_track.tsv'),
     ]);
 
     _currentRows = parseTsv(currentText);
@@ -399,11 +399,11 @@ async function fetchHistoryFiles(){
     const pat = getPat();
     const headers = { Accept: 'application/vnd.github.v3+json' };
     if(pat) headers['Authorization'] = `token ${pat}`;
-    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/history`, { headers });
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/history`, { headers });
     if(!res.ok) return [];
     const files = await res.json();
     const tsvFiles = files.filter(f=>f.name.endsWith('.tsv'));
-    return Promise.all(tsvFiles.map(f=>ghFetch(`history/${f.name}`)));
+    return Promise.all(tsvFiles.map(f=>ghFetch(`data/history/${f.name}`)));
   } catch(e){
     console.warn('fetchHistoryFiles failed:', e);
     return [];
