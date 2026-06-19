@@ -28,14 +28,14 @@ import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent  # repo root (script is at root until PR2)
 
-ARTISTS   = ROOT / "artists.tsv"
-FASTTRACK = ROOT / "fast_track.tsv"
-POTENTIAL = ROOT / "live_shows_potential.tsv"
+ARTISTS   = ROOT / "data" / "artists.tsv"
+FASTTRACK = ROOT / "data" / "fast_track.tsv"
+POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
 FOLLOWS   = ROOT / "follows" / "follows_master.tsv"
-ALIASES   = ROOT / "recommend_aliases.tsv"
-OUTPUT    = ROOT / "recommend_index.json"
+ALIASES   = ROOT / "data" / "recommend_aliases.tsv"
+OUTPUT    = ROOT / "data" / "recommend_index.json"
 
 # Metadata precedence (which source wins a field when several have it).
 STATUS_ORDER = ["seen", "fast_track", "potential", "follow"]

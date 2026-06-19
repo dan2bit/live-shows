@@ -19,7 +19,7 @@ from datetime import date
 from pathlib import Path
 
 TODAY = date.today()
-POTENTIALS_PATH = Path("live_shows_potential.tsv")
+POTENTIALS_PATH = Path("data/live_shows_potential.tsv")
 NAR_PATH = Path("follows/new_artist_research.tsv")
 
 

@@ -17,8 +17,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-POTENTIALS_PATH = Path("live_shows_potential.tsv")
-CURRENT_PATH = Path("live_shows_current.tsv")
+POTENTIALS_PATH = Path("data/live_shows_potential.tsv")
+CURRENT_PATH = Path("data/live_shows_current.tsv")
 
 
 def extract_first_date(date_str: str) -> date | None:
