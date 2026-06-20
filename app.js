@@ -11,6 +11,38 @@ var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate
 var _srchTimer=null;
 var _allYearsLoaded=false;
 
+// ── Config (#69) ───────────────────────────
+// Per-fork personalization loaded from config.yaml at boot. Any missing key falls
+// back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
+const DEFAULT_CONFIG={site:{title:'live-shows'}};
+var SITE_CONFIG=DEFAULT_CONFIG;
+function _cfgMerge(base,over){
+  var out=Object.assign({},base);
+  for(var k in over){
+    if(over[k]&&typeof over[k]==='object'&&!Array.isArray(over[k]))out[k]=_cfgMerge(base[k]||{},over[k]);
+    else if(over[k]!==undefined&&over[k]!==null)out[k]=over[k];
+  }
+  return out;
+}
+async function loadConfig(){
+  try{
+    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok)throw new Error('config.yaml '+res.status);
+    var parsed=(typeof jsyaml!=='undefined')?jsyaml.load(await res.text()):null;
+    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
+  }catch(e){console.warn('config load failed, using defaults:',e);SITE_CONFIG=DEFAULT_CONFIG;}
+  window.SITE_CONFIG=SITE_CONFIG;
+  return SITE_CONFIG;
+}
+function applyConfig(cfg){
+  cfg=cfg||SITE_CONFIG;
+  if(cfg.site&&cfg.site.title){
+    document.title=cfg.site.title;
+    var st=document.querySelector('.site-title');
+    if(st)st.textContent=cfg.site.title;
+  }
+}
+
 async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
   var pat=localStorage.getItem(PAT_KEY);
@@ -811,5 +843,6 @@ document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('acti
   if(!authed)requestAnimationFrame(revealToggles);
   if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
+loadConfig().then(applyConfig);
 loadData();
 loadOnThisDay();
