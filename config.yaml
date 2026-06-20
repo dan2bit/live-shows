@@ -8,3 +8,21 @@ site:
   repo: live-shows
   private_owner: dan2bit
   private_repo: live-shows-private
+  # Brand/identity (#69 phase 3). Asset paths below are RELATIVE to repo root and are
+  # expanded in app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply
+  # time, because relative asset URLs 404 on this project-pages (github.io) setup. A
+  # custom-domain fork may serve these paths differently — see docs/FORK_SETUP.md.
+  # pages_base: https://example.com   # uncomment to override the derived github.io base
+  favicon: static/favicon.png
+  brand_icon: static/brand-hat.png
+  about_handle: "@dan2bit"
+  about_tagline: GenX DC native with a live music fixation
+  about_text: "I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg recordings from what I catch. This page tracks where I've been and where I'm going."
+  about_hero_image: static/hero.jpg
+  about_footer: Life is short. Buy the tickets.
+
+about_links:
+  youtube: https://www.youtube.com/@dan2bit
+  linktree: https://linktr.ee/dan2bit
+  autographs: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
+  photos: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
