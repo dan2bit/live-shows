@@ -48,6 +48,31 @@ function applyConfig(cfg){
   if(s.repo)REPO=s.repo;
   if(s.private_owner)OWNER_PRIVATE=s.private_owner;
   if(s.private_repo)REPO_PRIVATE=s.private_repo;
+  // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
+  // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
+  // this project-pages setup; s.pages_base overrides the derived base for custom domains.
+  function _asset(p){
+    if(!p)return p;
+    if(/^https?:\/\//.test(p))return p;
+    var base=(s.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
+    return base+'/'+String(p).replace(/^\/+/,'');
+  }
+  function _txt(sel,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.textContent=v;}
+  function _attr(sel,a,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.setAttribute(a,v);}
+  if(s.favicon){var fav=_asset(s.favicon);document.querySelectorAll('link[rel~="icon"]').forEach(function(l){l.setAttribute('href',fav);});}
+  if(s.brand_icon)_attr('.hat-btn img','src',_asset(s.brand_icon));
+  if(s.about_handle){_txt('.about-hero-handle',s.about_handle);_attr('.hat-btn','title','About '+s.about_handle);}
+  if(s.about_tagline)_txt('.about-hero-tagline',s.about_tagline);
+  if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
+  if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
+  if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
+  var al=cfg.about_links;
+  if(al){
+    var anchors=document.querySelectorAll('#aboutModal .about-links .about-link');
+    ['youtube','linktree','autographs','photos'].forEach(function(k,i){
+      if(al[k]&&anchors[i])anchors[i].setAttribute('href',al[k]);
+    });
+  }
 }
 
 async function ghFetch(path,opts,owner,repo){
