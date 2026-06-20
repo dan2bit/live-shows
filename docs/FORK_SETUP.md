@@ -38,6 +38,28 @@ Used by the MCP server and the automation playbooks to read and write the repo o
 - **Permissions:** Contents → Read and write · Issues → Read and write · Pull requests → Read and write · Workflows → Read and write
 - **Where it lives:** your password manager (canonical copy), and wherever your automation/MCP reads it (e.g. the MCP connector config). Not in `.env`, not committed.
 
+## GitHub Pages & asset URLs
+
+The site is built to run from **GitHub Pages**, and there is one Pages-specific wrinkle worth understanding before you change the brand assets (favicon, hat icon, hero image). Everything else is path-agnostic.
+
+In `config.yaml`, the asset fields hold **repo-relative paths**:
+
+```yaml
+site:
+  favicon: static/favicon.png
+  brand_icon: static/brand-hat.png
+  about_hero_image: static/hero.jpg
+```
+
+At load time `app.js` expands each of these into an absolute `https://<owner>.github.io/<repo>/<path>` URL, derived from your `site.owner` and `site.repo`. **This expansion is required, not cosmetic.** On a GitHub *project page* (served from `<user>.github.io/<repo>/`), a bare relative asset URL resolves against the current page path and 404s, so the absolute form is the only one that works here. Doing the expansion in code keeps `config.yaml` short and portable: change `owner`/`repo` and the asset URLs follow automatically.
+
+**Custom domains and user/org pages behave differently.** If you serve from a custom domain, or from a user/organization page (site root, with no `/<repo>/` segment in the path), relative paths may resolve fine on their own and the github.io derivation will not point at your host. Two ways to handle it:
+
+- Set `site.pages_base` to your site's base URL (e.g. `https://example.com`). `app.js` uses it verbatim as the base instead of deriving `<owner>.github.io/<repo>`.
+- Or put fully-qualified absolute URLs (starting `https://`) directly in the asset fields. Any value that already begins with `http(s)://` is passed through untouched.
+
+> Note: this only affects the three image asset fields. The site code files (`app.js`, `styles.css`, `recommend.js`) and `config.yaml` itself load as plain relative URLs and must stay that way.
+
 ---
 
 *Remaining setup sections — Pages, `config.yaml`, data files, private sidecar — to be written as the fork process is exercised.*
