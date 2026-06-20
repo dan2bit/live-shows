@@ -537,7 +537,7 @@ function renderPotentialRowBystander(r,gi){
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
   var isSell=dec.toLowerCase()==='sell',ph=esc(r['Face Price']||'');
-  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🏟</a>';
+  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a>';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
@@ -562,7 +562,7 @@ function renderPotentialRowAuthed(r,gi){
   if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
-  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🏟</a>';
+  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
