@@ -1,6 +1,8 @@
 
-const OWNER='dan2bit',REPO='live-shows',CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+let OWNER='dan2bit',REPO='live-shows';
+const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
+let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';
+const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -14,7 +16,7 @@ var _allYearsLoaded=false;
 // ── Config (#69) ───────────────────────────
 // Per-fork personalization loaded from config.yaml at boot. Any missing key falls
 // back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
-const DEFAULT_CONFIG={site:{title:'live-shows'}};
+const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
 var SITE_CONFIG=DEFAULT_CONFIG;
 function _cfgMerge(base,over){
   var out=Object.assign({},base);
@@ -36,10 +38,40 @@ async function loadConfig(){
 }
 function applyConfig(cfg){
   cfg=cfg||SITE_CONFIG;
-  if(cfg.site&&cfg.site.title){
-    document.title=cfg.site.title;
+  var s=cfg.site||{};
+  if(s.title){
+    document.title=s.title;
     var st=document.querySelector('.site-title');
-    if(st)st.textContent=cfg.site.title;
+    if(st)st.textContent=s.title;
+  }
+  if(s.owner)OWNER=s.owner;
+  if(s.repo)REPO=s.repo;
+  if(s.private_owner)OWNER_PRIVATE=s.private_owner;
+  if(s.private_repo)REPO_PRIVATE=s.private_repo;
+  // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
+  // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
+  // this project-pages setup; s.pages_base overrides the derived base for custom domains.
+  function _asset(p){
+    if(!p)return p;
+    if(/^https?:\/\//.test(p))return p;
+    var base=(s.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
+    return base+'/'+String(p).replace(/^\/+/,'');
+  }
+  function _txt(sel,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.textContent=v;}
+  function _attr(sel,a,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.setAttribute(a,v);}
+  if(s.favicon){var fav=_asset(s.favicon);document.querySelectorAll('link[rel~="icon"]').forEach(function(l){l.setAttribute('href',fav);});}
+  if(s.brand_icon)_attr('.hat-btn img','src',_asset(s.brand_icon));
+  if(s.about_handle){_txt('.about-hero-handle',s.about_handle);_attr('.hat-btn','title','About '+s.about_handle);}
+  if(s.about_tagline)_txt('.about-hero-tagline',s.about_tagline);
+  if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
+  if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
+  if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
+  var al=cfg.about_links;
+  if(al){
+    var anchors=document.querySelectorAll('#aboutModal .about-links .about-link');
+    ['youtube','linktree','autographs','photos'].forEach(function(k,i){
+      if(al[k]&&anchors[i])anchors[i].setAttribute('href',al[k]);
+    });
   }
 }
 
@@ -781,8 +813,8 @@ function openAboutModal(){document.getElementById('aboutModal').classList.add('o
 function closeAboutModal(){document.getElementById('aboutModal').classList.remove('open');}
 function openAuthModal(){document.getElementById('patInput').value='';document.getElementById('authModal').classList.add('open');}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
-function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
+async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');_gearVisible();closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');_gearVisible();closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
@@ -819,6 +851,48 @@ function openMultisetModal(dateKey){
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
+// -- Config editor (#77) --
+function _gearVisible(){
+  var gear=document.getElementById('configGearBtn');if(!gear)return;
+  var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
+  gear.style.display=(authed&&webEdit)?'':'none';
+}
+async function openConfigEditor(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  st.textContent='loading...';
+  document.getElementById('configModal').classList.add('open');
+  try{
+    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok)throw new Error('config.yaml '+res.status);
+    ta.value=await res.text();
+    st.textContent='loaded from repo';
+  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
+}
+function closeConfigEditor(){document.getElementById('configModal').classList.remove('open');}
+function reloadConfigPreview(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  try{
+    var parsed=jsyaml.load(ta.value);
+    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
+    window.SITE_CONFIG=SITE_CONFIG;
+    applyConfig(SITE_CONFIG);
+    _gearVisible();
+    st.textContent='preview applied to this session (not committed)';
+  }catch(e){st.textContent='YAML error: '+e.message;}
+}
+async function commitConfig(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){st.textContent='not authed - cannot commit';return;}
+  try{jsyaml.load(ta.value);}catch(e){st.textContent='YAML error (not committed): '+e.message;return;}
+  st.textContent='committing...';
+  try{
+    var fd=await ghFetch('config.yaml');
+    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
+    if(!res.ok)throw new Error(await res.text());
+    st.textContent='committed - live ~1 min after Pages redeploys';
+  }catch(e){st.textContent='commit failed: '+e.message;}
+}
+
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
   document.getElementById('showsContent').innerHTML='<div class="loading">Loading</div>';
@@ -836,13 +910,15 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
-(async function(){
+(async function boot(){
+  await loadConfig();
+  applyConfig(SITE_CONFIG);
+  _gearVisible();
+  loadData();
+  loadOnThisDay();
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   if(!authed)await loadHistoryYear(mr);
   renderHistoryPanel();
   if(!authed)requestAnimationFrame(revealToggles);
   if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
-loadConfig().then(applyConfig);
-loadData();
-loadOnThisDay();
