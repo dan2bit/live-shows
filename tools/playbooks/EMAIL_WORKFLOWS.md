@@ -486,9 +486,15 @@ Do not write speculatively.
 passed per the date confirmed in Step 0a, regardless of Decision. Include these removals
 in the confirmation step above — do not remove silently.
 
-After removing a past-dated row, for each removed artist check `artists.tsv` and
-`new_artist_research.tsv`; if absent from both, add to `new_artist_research.tsv` with
-tier and a note derived from the potentials row.
+After removing a past-dated row, for each removed artist check `artists.tsv`,
+`follows_master.tsv`, and `new_artist_research.tsv`; if absent from all, add to
+`new_artist_research.tsv` with tier and a note derived from the potentials row.
+
+**Pass-prune / event triage into NAR.** (1) Never create an NAR row for an artist
+already in `artists.tsv` or `follows_master.tsv`. (2) For a festival or multi-artist
+event, don't write the event itself as an artist row — triage the **actual setlist.fm
+bill** (openers + guests, not the tour/marketing slug) and add only not-already-tracked
+artists as individual rows.
 
 **Step 3 -- Check autograph books**
 
