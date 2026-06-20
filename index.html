@@ -20,6 +20,7 @@
     <span class="fetched-at" id="fetchedAt">&#8212;</span>
     <button class="btn" id="refreshBtn" onclick="loadData()">&#8634; refresh</button>
     <button class="btn btn-auth" id="authBtn" onclick="openAuthModal()">&#128273; auth</button>
+    <button class="btn" id="configGearBtn" onclick="openConfigEditor()" title="Edit site config" style="display:none">&#9881;</button>
   </div>
 </header>
 <div class="tab-row">
@@ -105,6 +106,22 @@
   <div class="modal recommend-modal">
     <h3>&#128172; Suggest</h3>
     <div id="recommendModalBody"></div>
+  </div>
+</div>
+
+<!-- Config editor modal (#77) -->
+<div class="modal-backdrop" id="configModal" onclick="if(event.target===this)closeConfigEditor()">
+  <div class="modal config-modal" style="max-width:760px;width:92%">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <h3 style="margin:0">&#9881; config.yaml</h3>
+      <span id="configEditorStatus" style="font-family:var(--mono);font-size:11px;color:var(--text-dim)"></span>
+    </div>
+    <textarea id="configEditorText" spellcheck="false" autocomplete="off" style="width:100%;box-sizing:border-box;min-height:340px;margin-top:10px;font-family:var(--mono);font-size:12px;line-height:1.5;white-space:pre;overflow:auto;tab-size:2"></textarea>
+    <div class="modal-actions" style="margin-top:12px">
+      <button class="btn" onclick="reloadConfigPreview()" title="Apply to this session only - no commit">&#8635; Reload preview</button>
+      <button class="btn" onclick="closeConfigEditor()">Cancel</button>
+      <button class="btn btn-save" onclick="commitConfig()" title="Commit config.yaml to the repo">&#8593; Commit</button>
+    </div>
   </div>
 </div>
 
