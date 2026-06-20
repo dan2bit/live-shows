@@ -813,8 +813,8 @@ function openAboutModal(){document.getElementById('aboutModal').classList.add('o
 function closeAboutModal(){document.getElementById('aboutModal').classList.remove('open');}
 function openAuthModal(){document.getElementById('patInput').value='';document.getElementById('authModal').classList.add('open');}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
-function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
+async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');_gearVisible();closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');_gearVisible();closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
@@ -851,6 +851,48 @@ function openMultisetModal(dateKey){
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
+// -- Config editor (#77) --
+function _gearVisible(){
+  var gear=document.getElementById('configGearBtn');if(!gear)return;
+  var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
+  gear.style.display=(authed&&webEdit)?'':'none';
+}
+async function openConfigEditor(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  st.textContent='loading...';
+  document.getElementById('configModal').classList.add('open');
+  try{
+    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok)throw new Error('config.yaml '+res.status);
+    ta.value=await res.text();
+    st.textContent='loaded from repo';
+  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
+}
+function closeConfigEditor(){document.getElementById('configModal').classList.remove('open');}
+function reloadConfigPreview(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  try{
+    var parsed=jsyaml.load(ta.value);
+    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
+    window.SITE_CONFIG=SITE_CONFIG;
+    applyConfig(SITE_CONFIG);
+    _gearVisible();
+    st.textContent='preview applied to this session (not committed)';
+  }catch(e){st.textContent='YAML error: '+e.message;}
+}
+async function commitConfig(){
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){st.textContent='not authed - cannot commit';return;}
+  try{jsyaml.load(ta.value);}catch(e){st.textContent='YAML error (not committed): '+e.message;return;}
+  st.textContent='committing...';
+  try{
+    var fd=await ghFetch('config.yaml');
+    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
+    if(!res.ok)throw new Error(await res.text());
+    st.textContent='committed - live ~1 min after Pages redeploys';
+  }catch(e){st.textContent='commit failed: '+e.message;}
+}
+
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
   document.getElementById('showsContent').innerHTML='<div class="loading">Loading</div>';
@@ -871,6 +913,7 @@ document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('acti
 (async function boot(){
   await loadConfig();
   applyConfig(SITE_CONFIG);
+  _gearVisible();
   loadData();
   loadOnThisDay();
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
