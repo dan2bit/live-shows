@@ -1,6 +1,8 @@
 
-const OWNER='dan2bit',REPO='live-shows',CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+let OWNER='dan2bit',REPO='live-shows';
+const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
+let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';
+const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -14,7 +16,7 @@ var _allYearsLoaded=false;
 // ── Config (#69) ───────────────────────────
 // Per-fork personalization loaded from config.yaml at boot. Any missing key falls
 // back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
-const DEFAULT_CONFIG={site:{title:'live-shows'}};
+const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
 var SITE_CONFIG=DEFAULT_CONFIG;
 function _cfgMerge(base,over){
   var out=Object.assign({},base);
@@ -36,11 +38,16 @@ async function loadConfig(){
 }
 function applyConfig(cfg){
   cfg=cfg||SITE_CONFIG;
-  if(cfg.site&&cfg.site.title){
-    document.title=cfg.site.title;
+  var s=cfg.site||{};
+  if(s.title){
+    document.title=s.title;
     var st=document.querySelector('.site-title');
-    if(st)st.textContent=cfg.site.title;
+    if(st)st.textContent=s.title;
   }
+  if(s.owner)OWNER=s.owner;
+  if(s.repo)REPO=s.repo;
+  if(s.private_owner)OWNER_PRIVATE=s.private_owner;
+  if(s.private_repo)REPO_PRIVATE=s.private_repo;
 }
 
 async function ghFetch(path,opts,owner,repo){
@@ -836,13 +843,14 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
-(async function(){
+(async function boot(){
+  await loadConfig();
+  applyConfig(SITE_CONFIG);
+  loadData();
+  loadOnThisDay();
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   if(!authed)await loadHistoryYear(mr);
   renderHistoryPanel();
   if(!authed)requestAnimationFrame(revealToggles);
   if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
-loadConfig().then(applyConfig);
-loadData();
-loadOnThisDay();
