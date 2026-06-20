@@ -1,3 +1,4 @@
-# phase-0 serving test (#69) — config.yaml at Pages root
-_probe: config.yaml served from Pages root
-config_version: 0
+# live-shows site config (#69)
+# Per-fork personalization. Any missing key falls back to DEFAULT_CONFIG in app.js.
+site:
+  title: live-shows
