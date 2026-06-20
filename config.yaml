@@ -1,4 +1,10 @@
 # live-shows site config (#69)
 # Per-fork personalization. Any missing key falls back to DEFAULT_CONFIG in app.js.
+# NOTE: title is "live-shows DC" on this branch as a visible smoke test of the config
+#       override (DEFAULT_CONFIG title stays "live-shows"). Set the final value before merge.
 site:
-  title: live-shows
+  title: live-shows DC
+  owner: dan2bit
+  repo: live-shows
+  private_owner: dan2bit
+  private_repo: live-shows-private
