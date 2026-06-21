@@ -1,21 +1,3 @@
-# Fast Track Artists — live-shows/fast_track.tsv
-#
-# PURPOSE: Pre-authorized buy list for artists with no DC show history (or no headlining
-# history) where a local show should be treated as an immediate buy without going through
-# the potential list evaluation cycle.
-#
-# DISCIPLINE: This file is ONLY for artists who would NOT already be caught as a strong
-# buy based on show history. If an artist has been seen multiple times or has a strong
-# prior history (Kingfish, Larkin Poe, The Lone Bellow, ZZ Ward, etc.), they do NOT
-# belong here — they are handled automatically by the existing tier system.
-#
-# BOOK CHECK: Pre-filled from autograph_books_combined.tsv so Routines 3/5 don't need
-# to look it up separately. Update here when book status changes.
-#
-# FIRST TOUR: Y = artist has not yet toured DC/MD/VA region at all (festivals, cruises,
-# and award shows don't count). Blank = has played the region, just haven't caught them.
-# Tour URL: artist's own tour page preferred; use BIT URL if no dedicated page.
-#
 Artist	Tier	Why Fast Track	Book Check	Notes	Tour URL	First Tour	Spotify URL
 Nikki Hill	Strong	BMA nominee; Alligator Records artist; blues-soul powerhouse; has toured DC/MD/VA, just missed her	RHBS	Female artist — hat signing eligible. Plays with full band including horns.	https://nikkihillrocks.com/tour		https://open.spotify.com/artist/0FyGHBqMNKEBN2HECXZ5Nk
 Angelique Francis	Strong	Rising blues-rock guitarist; BMA nominee; critically acclaimed; festivals and cruises only, not yet toured DC/MD/VA		Female artist — hat signing eligible. Young Canadian guitarist-vocalist.	https://angeliquefrancis.net/shows	Y	https://open.spotify.com/artist/5aIqB5nVVvmFsvSdExz408
