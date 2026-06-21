@@ -110,6 +110,20 @@ Monitor tour page URLs for Fast Track artists — artists who would be immediate
 
 If a date exceeds a Fast Track cap (price, distance, venue size), present as a Choose potential instead, noting which cap was exceeded.
 
+### Fast Track data file notes
+
+Fast Track Artists data is stored in data/fast_track.tsv and loaded on demand on the Waiting tab
+1. PURPOSE: Pre-authorized buy list for artists with sparse or no DC show history (or no headlining history) 
+- where a local show should be treated as an immediate buy without going through the potential list evaluation cycle.
+2. DISCIPLINE: This file is ONLY for artists who would NOT already be caught as a strong buy based on show history.
+- If an artist has been seen multiple times or has a strong prior history (Kingfish, Larkin Poe, The Lone Bellow, ZZ Ward, etc.), 
+- they do NOT belong here — they are handled automatically by the existing tier system.
+3. FIRST TOUR: Y = artist has not yet toured DC/MD/VA region at all 
+- (festivals, cruises, and award shows don't count).
+-  Blank = has played the region, just haven't caught them.
+4. Tour URL: artist's own tour page preferred; use BIT URL if no dedicated page.
+
+
 ---
 
 ## Workflow 4 — NAR Triage
