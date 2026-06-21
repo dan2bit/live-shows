@@ -189,7 +189,7 @@ function switchEditField(cellId,fileKey,rowIdx,field){
   var saveBtn=document.getElementById('savebtn-'+cellId);
   var switchBtn=document.getElementById('switchbtn-'+cellId);
   var lbl=document.getElementById('fieldlbl-'+cellId);
-  if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')');
+  if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
   if(switchBtn)switchBtn.setAttribute('onclick','switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
   if(switchBtn)switchBtn.textContent='\u2192 '+_fieldLabel(field);
   if(lbl)lbl.textContent=_fieldLabel(alt);
@@ -203,7 +203,7 @@ function startEdit(cellId,fileKey,rowIdx,field){
   else if(fileKey.startsWith('history:')){var yr=parseInt(fileKey.split(':')[1]);current=((historyData[yr]||[])[rowIdx]||{})[field]||'';}
   var ind='ind-'+cellId;
   var alt=_fieldAlternate(fileKey,field);
-  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">'+'\u2192 '+_fieldLabel(alt)+'</button>':'';
+  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">'+'→ '+_fieldLabel(alt)+'</button>':'';
   var labelHtml=alt?'<span class="notes-field-label" id="fieldlbl-'+cellId+'">'+_fieldLabel(field)+'</span>':'';
   cell.innerHTML='<div class="notes-edit-wrap">'
     +labelHtml
@@ -231,8 +231,8 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
   var ta=document.getElementById('ta-'+cellId);if(!ta)return;
   var newVal=ta.value;
   var ind=document.getElementById('ind-'+cellId);
-  if(ind){ind.textContent='\u2026';ind.className='notes-save-ind save-indicator';}
-  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='\u2717 no auth';ind.className='notes-save-ind save-err';}return;}
+  if(ind){ind.textContent='…';ind.className='notes-save-ind save-indicator';}
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='✗ no auth';ind.className='notes-save-ind save-err';}return;}
   try{
     if(fileKey==='current'&&field==='Private Notes'){
       await _savePrivateSidecar(CURRENT_PRIVATE_PATH,['Show Date','Artist'],{'Show Date':currentRows[rowIdx]['Show Date'],'Artist':currentRows[rowIdx]['Artist']},field,newVal);
@@ -281,11 +281,11 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
       if(!res.ok)throw new Error(await res.text());
     }
-    if(ind){ind.textContent='\u2713';ind.className='notes-save-ind save-ok';}
+    if(ind){ind.textContent='✓';ind.className='notes-save-ind save-ok';}
     setTimeout(function(){cancelEdit(cellId,fileKey,rowIdx,field);},600);
   }catch(e){
     console.error(e);
-    if(ind){ind.textContent='\u2717 '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
+    if(ind){ind.textContent='✗ '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
   }
 }
 
@@ -296,7 +296,7 @@ function renderUpcomingRowBystander(row,idx){
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
-  return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
+  return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
@@ -304,15 +304,15 @@ function renderUpcomingRowBystander(row,idx){
 function renderUpcomingRowAuthed(row,idx,origIdx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
   var pn=row['Notes / Memories']||'',pvt=row['Private Notes']||'';
-  var fn=pvt?pn+(pn?' \u00b7 ':'')+pvt:pn,fne=esc(fn);
+  var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
   var cal='<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>';
-  var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' \u00b7 '+seat:'')+'</div>':'';
+  var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
-  return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
+  return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty>1?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
@@ -348,7 +348,7 @@ function renderAttendedRowSearch(row,idx){
 function renderAttendedRowAuthed(row,idx,origIdx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
-  var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
+  var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' · ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var cellId='cell-at-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
@@ -406,7 +406,7 @@ async function ensureAllYearsLoaded(){
       if(b&&historyData[yr])b.textContent=historyData[yr].length;
     });
     var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'\u2014';
+    document.getElementById('historyBadge').textContent=total||'—';
   }
   _allYearsLoaded=true;
   populateSearchDatalists();
@@ -484,16 +484,16 @@ function buildSearchEmptyState(){
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+vc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Venues</div></div>'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none;border-radius:0 3px 3px 0"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+days.toLocaleString()+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Days</div></div>'
     +'</div>'
-    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 \u00b7 Oliver Wood \u00b7 Patio Stage at Strathmore</span></div>'
+    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
     +'</div>';
 }
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var searchPanel='<div class="inner-panel" id="inner-hist-search"><div class="search-bar"><input class="search-input" id="srchArtist" placeholder="Artist\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchArtistList"></datalist><input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchVenueList"></datalist><button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button></div><div id="srchResults">'+buildSearchEmptyState()+'</div></div>';
+  var searchPanel='<div class="inner-panel" id="inner-hist-search"><div class="search-bar"><input class="search-input" id="srchArtist" placeholder="Artist…" list="srchArtistList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchArtistList"></datalist><input class="search-input" id="srchVenue" placeholder="Venue…" list="srchVenueList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchVenueList"></datalist><button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button></div><div id="srchResults">'+buildSearchEmptyState()+'</div></div>';
   var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){var cnt=historyData[yr]?historyData[yr].length:'&#8212;';return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';}).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div></div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';}).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-  document.getElementById('historyBadge').textContent=total||'\u2014';
+  document.getElementById('historyBadge').textContent=total||'—';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
 }
@@ -512,7 +512,7 @@ async function switchHistoryTab(yr){
     if(badge)badge.textContent=historyData[yr].length;
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
     var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'\u2014';
+    document.getElementById('historyBadge').textContent=total||'—';
   }else{requestAnimationFrame(revealToggles);}
 }
 
@@ -539,11 +539,11 @@ function renderPotentialRowBystander(r,gi){
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
   var isSell=dec.toLowerCase()==='sell',ph=esc(r['Face Price']||'');
-  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🏟</a>';
+  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a>';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
-    +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
+    +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
@@ -552,7 +552,7 @@ function renderPotentialRowBystander(r,gi){
 }
 function renderPotentialRowAuthed(r,gi){
   var pn=r['Notes']||'',pvt=r['Private Notes']||'',s=pvt==='-';
-  var fn=!s&&pvt?pn+(pn?' \u00b7 ':'')+pvt:pn,fne=esc(fn);
+  var fn=!s&&pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',isSell=dec.toLowerCase()==='sell';
@@ -564,10 +564,10 @@ function renderPotentialRowAuthed(r,gi){
   if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
-  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🏟</a>';
+  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
-    +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
+    +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
@@ -602,7 +602,7 @@ function renderShows(){
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
-  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
+  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>';
   document.getElementById('showsContent').innerHTML=banner+itr+ip;
   requestAnimationFrame(revealToggles);
@@ -646,7 +646,7 @@ async function handleRevoke(idx){
 }
 async function handleDecisionChange(select){
   var idx=parseInt(select.dataset.row),newVal=select.value,ind=document.getElementById('save-'+idx);
-  ind.textContent='\u2026';ind.className='save-indicator';
+  ind.textContent='…';ind.className='save-indicator';
   try{
     var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
@@ -658,9 +658,9 @@ async function handleDecisionChange(select){
     var pat=localStorage.getItem(PAT_KEY);
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
     if(!res.ok)throw new Error(await res.text());
-    potentialRows=rows;ind.textContent='\u2713';ind.className='save-indicator save-ok';
+    potentialRows=rows;ind.textContent='✓';ind.className='save-indicator save-ok';
     setTimeout(function(){renderPotential();renderShows();},600);
-  }catch(e){console.error(e);ind.textContent='\u2717';ind.className='save-indicator save-err';}
+  }catch(e){console.error(e);ind.textContent='✗';ind.className='save-indicator save-err';}
 }
 
 // ── Please Tour Here ────────────────────────────────
@@ -730,7 +730,7 @@ function revealToggles(){
   });
 }
 function switchInnerTab(name){
-  document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
+  document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t){t.classList.toggle('active',t.dataset.inner===name);});
   document.querySelectorAll('#inner-attended,#inner-upcoming').forEach(function(p){p.classList.toggle('active',p.id==='inner-'+name);});
   requestAnimationFrame(revealToggles);
 }
