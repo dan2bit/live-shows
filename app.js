@@ -1,4 +1,3 @@
-
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
 let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';
@@ -852,6 +851,7 @@ function openMultisetModal(dateKey){
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
 // -- Config editor (#77) --
+var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
 function _gearVisible(){
   var gear=document.getElementById('configGearBtn');if(!gear)return;
   var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
@@ -859,8 +859,9 @@ function _gearVisible(){
 }
 async function openConfigEditor(){
   var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  st.textContent='loading...';
   document.getElementById('configModal').classList.add('open');
+  if(_cfgDraft!==null){ta.value=_cfgDraft;st.textContent='restored your unsaved edits - Reset from repo to discard';return;}
+  st.textContent='loading...';
   try{
     var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
     if(!res.ok)throw new Error('config.yaml '+res.status);
@@ -868,7 +869,18 @@ async function openConfigEditor(){
     st.textContent='loaded from repo';
   }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
 }
-function closeConfigEditor(){document.getElementById('configModal').classList.remove('open');}
+function closeConfigEditor(){_cfgDraft=document.getElementById('configEditorText').value;document.getElementById('configModal').classList.remove('open');}
+async function revertConfigToRepo(){
+  _cfgDraft=null;
+  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
+  st.textContent='loading...';
+  try{
+    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok)throw new Error('config.yaml '+res.status);
+    ta.value=await res.text();
+    st.textContent='loaded from repo';
+  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
+}
 function reloadConfigPreview(){
   var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
   try{
@@ -889,7 +901,7 @@ async function commitConfig(){
     var fd=await ghFetch('config.yaml');
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
     if(!res.ok)throw new Error(await res.text());
-    st.textContent='committed - live ~1 min after Pages redeploys';
+    st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
   }catch(e){st.textContent='commit failed: '+e.message;}
 }
 
