@@ -147,8 +147,8 @@ function recAck(r){
 function recKnownArtist(){
   var r=recState.candidate;
   var gift='';
-  if(r.spotify)gift+='<a class="rec-gift" href="'+esc(r.spotify)+'" target="_blank">Spotify &#8599;</a> ';
-  if(r.youtube)gift+='<a class="rec-gift" href="'+esc(r.youtube)+'" target="_blank">YouTube &#8599;</a>';
+  if(r.spotify)gift+='<a class="ext-link" href="'+esc(r.spotify)+'" target="_blank">Spotify</a> ';
+  if(r.youtube)gift+='<a class="ext-link" href="'+esc(r.youtube)+'" target="_blank">YouTube</a>';
   recBody('<p class="rec-ack">'+recAck(r)+'</p>'
     +(gift?'<div style="margin-top:8px">'+gift+'</div>':'')
     +'<div class="modal-actions" style="margin-top:14px"><button class="btn" onclick="recRenderIntake()">\u2190 Suggest another</button><button class="btn" onclick="closeRecommendModal()">Close</button></div>');
@@ -242,7 +242,7 @@ async function recCreateIssue(issue){
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/issues',{method:'POST',headers:{'Accept':'application/vnd.github+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({title:issue.title,body:issue.body,labels:issue.labels})});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();recRateRecord();
-    recBody('<p class="rec-ack">Thanks \u2014 your suggestion is in. <a class="rec-gift" href="'+esc(data.html_url)+'" target="_blank">View it &#8599;</a></p>'
+    recBody('<p class="rec-ack">Thanks \u2014 your suggestion is in. <a class="ext-link" href="'+esc(data.html_url)+'" target="_blank">View it</a></p>'
       +'<div class="modal-actions" style="margin-top:12px"><button class="btn" onclick="closeRecommendModal()">Close</button></div>');
   }catch(e){
     recBody('<p class="rec-err">Couldn\u2019t submit ('+esc(String(e&&e.message||e))+'). Please try again later.</p>'
