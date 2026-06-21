@@ -2,64 +2,40 @@
 
 Concert tracking system for the [@dan2bit](https://www.youtube.com/@dan2bit) YouTube channel — attended and upcoming shows, potential purchases, venue intelligence, artist follow lists, and YouTube bootleg playlist management. Maintained collaboratively with [Claude](https://claude.ai) via MCP tools.
 
-Dashboard (GitHub Pages): **https://dan2bit.github.io/live-shows/**
+Dashboard site (GitHub Pages): **https://dan2bit.github.io/live-shows/**
 
 ---
+## Main Functionality
 
-## Key files
+_What the main dashboard site does_
 
-| File | Purpose |
-|---|---|
-| `live_shows_current.tsv` | Confirmed shows — attended and upcoming |
-| `live_shows_potential.tsv` | Shows under consideration (Buy / Choose / Sell / Pass) |
-| `artists.tsv` | Artist follow list with show history |
-| `venues.tsv` | Venue details — parking, transit, seating, box office |
-| `fast_track.tsv` | Pre-authorized quick-buy artist list |
-| `autograph_books_combined.tsv` | Autograph book inventory |
-| `spending.tsv` | Annual spending summary |
-| `setlists/<year>.json` | Per-date multi-act setlist links (MULTI shows), one file per year |
-| `index.html` | Browser-based dashboard (served via GitHub Pages) |
+### Tracking for Upcoming Shows and Potential Purchases
+Enables calendar management, driving & parking directions, prevents double or dense bookings, enables decisions on what to attend.
 
-## Directories
+### History of Attended Shows
+Aggregates setlist.fm links, artist photos, bootleg videos, badges and personal show notes for all shows since the pandemic of 2020-2021
 
-| Directory | Purpose |
-|---|---|
-| `follows/` | Artist follow lists by tier |
-| `history/` | Archived yearly show history |
-| `web-src/` | Raw service exports (prefixed by account) |
-| `archive/` | Superseded files |
-| `logs/` | Script run logs |
+### Spend and Budget Management
+Uses a separate private sidecar repo to record spending on and at shows. requires PAT authorization. 
 
-## Documentation
+### Recommendation Intake
+Allows visitors to submit 1 or 2 recommendations in a day, which get reviewed in the github issue queue
 
-| Doc | Scope |
-|---|---|
-| `PROJECT.md` | Data-file schemas and repository/commit conventions |
-| `AGENTIC_WORKFLOWS.md` | System architecture and collaboration model |
-| `ANALYSIS_WORKFLOWS.md` | Quarterly/monthly research workflows |
-| `CALENDAR_WORKFLOWS.md` | Concert calendar event rules |
-| `EMAIL_WORKFLOWS.md` | Inbox processing routines (Gmail label-based) |
-| `EMAIL_SETUP.md` | Gmail labels, filters, subscriptions, follow services |
-| `HOWTO_CHANNEL.md` | YouTube scripts, Python venv, credentials, playlist conventions |
+---
+*Work In Progress* to enable simple forking of the Main Functionality above
+---
 
-## Scripts
+## Supplemental Functionality
 
-YouTube playlist management and year-end rollover. See `HOWTO_CHANNEL.md` for environment setup (venv, credentials) and per-script usage.
+_These vibe-coded tools exist in conjunction with a dedicated set of accounts on Youtube, Spotify and Google Workspace_
 
-| Script | Purpose |
-|---|---|
-| `youtube_create_playlists.py` | Create/update YouTube playlists from show history |
-| `youtube_fix_descriptions.py` | Sync playlist descriptions |
-| `youtube_fetch.py` | Fetch video metadata from the YouTube API |
-| `youtube_correlate.py` | Correlate videos to shows |
-| `youtube_fill_handles.py` | Fill missing YouTube channel handles in `artists.tsv` |
-| `youtube_audit_blanks.py` | Audit shows missing playlist URLs |
-| `rollover.py` | Year-end migration of `live_shows_current.tsv` into `history/` |
+### Youtube Channel Management
+In `tools/youtube` - support for playlist creation and management for bootleg videos, both historical and ongoing
 
-## Setup
+### Artist Follow Management
+In `tools/research` - support for bandsintown, seated and songkick rosters, as well as direct email subscription
+Also tools for taste profile curation and new artist web exploration tools
 
-Scripts run in a local Python venv with credentials supplied via `.env` (copy from `env.example` — YouTube API key, OAuth client, Spotify, GitHub PAT). Full setup steps are in `HOWTO_CHANNEL.md`.
+### Agentic Playbooks
 
-## Dashboard
-
-`index.html` is served via GitHub Pages. Decision editing (Buy / Choose / Pass) requires a GitHub PAT entered through the 🔑 auth button.
+_In addition to repository management, there are several bespoke, ymmv automation workflow playbooks for inbox monitoring, calendar management and artist discovery in `tools/playbooks`_
