@@ -1,8 +1,7 @@
 
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';
-const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -12,68 +11,6 @@ var _now=new Date();
 var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate()).padStart(2,'0');
 var _srchTimer=null;
 var _allYearsLoaded=false;
-
-// ── Config (#69) ───────────────────────────
-// Per-fork personalization loaded from config.yaml at boot. Any missing key falls
-// back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
-const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
-var SITE_CONFIG=DEFAULT_CONFIG;
-function _cfgMerge(base,over){
-  var out=Object.assign({},base);
-  for(var k in over){
-    if(over[k]&&typeof over[k]==='object'&&!Array.isArray(over[k]))out[k]=_cfgMerge(base[k]||{},over[k]);
-    else if(over[k]!==undefined&&over[k]!==null)out[k]=over[k];
-  }
-  return out;
-}
-async function loadConfig(){
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    var parsed=(typeof jsyaml!=='undefined')?jsyaml.load(await res.text()):null;
-    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
-  }catch(e){console.warn('config load failed, using defaults:',e);SITE_CONFIG=DEFAULT_CONFIG;}
-  window.SITE_CONFIG=SITE_CONFIG;
-  return SITE_CONFIG;
-}
-function applyConfig(cfg){
-  cfg=cfg||SITE_CONFIG;
-  var s=cfg.site||{};
-  if(s.title){
-    document.title=s.title;
-    var st=document.querySelector('.site-title');
-    if(st)st.textContent=s.title;
-  }
-  if(s.owner)OWNER=s.owner;
-  if(s.repo)REPO=s.repo;
-  if(s.private_owner)OWNER_PRIVATE=s.private_owner;
-  if(s.private_repo)REPO_PRIVATE=s.private_repo;
-  // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
-  // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
-  // this project-pages setup; s.pages_base overrides the derived base for custom domains.
-  function _asset(p){
-    if(!p)return p;
-    if(/^https?:\/\//.test(p))return p;
-    var base=(s.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
-    return base+'/'+String(p).replace(/^\/+/,'');
-  }
-  function _txt(sel,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.textContent=v;}
-  function _attr(sel,a,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.setAttribute(a,v);}
-  if(s.favicon){var fav=_asset(s.favicon);document.querySelectorAll('link[rel~="icon"]').forEach(function(l){l.setAttribute('href',fav);});}
-  if(s.brand_icon)_attr('.hat-btn img','src',_asset(s.brand_icon));
-  if(s.about_handle){_txt('.about-hero-handle',s.about_handle);_attr('.hat-btn','title','About '+s.about_handle);}
-  if(s.about_tagline)_txt('.about-hero-tagline',s.about_tagline);
-  if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
-  if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
-  if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
-  var al=cfg.about_links;
-  if(al){
-    var anchors=document.querySelectorAll('#aboutModal .about-links .about-link');
-    ['youtube','linktree','autographs','photos'].forEach(function(k,i){
-      if(al[k]&&anchors[i])anchors[i].setAttribute('href',al[k]);
-    });
-  }
-}
 
 async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
@@ -130,7 +67,8 @@ var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','D
 function parseISODate(s){var m=(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
 function formatShowDate(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate():s;}
 function formatShowDateYear(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():s;}
-function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';}
+function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';
+}
 function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date();now.setHours(0,0,0,0);return Math.floor((d-now)/86400000);}
 function isOtdMatch(s){var m=(s||'').match(/^\d{4}-(\d{2}-\d{2})/);return m?m[1]===_todayMmDd:false;}
 function gcalUrl(artist){var now=new Date(),pad=function(n){return String(n).padStart(2,'0');};return'https://calendar.google.com/calendar/r/search?q='+encodeURIComponent(artist)+'&start='+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'&end='+(now.getFullYear()+1)+pad(now.getMonth()+1)+pad(now.getDate());}
@@ -265,7 +203,7 @@ function startEdit(cellId,fileKey,rowIdx,field){
   else if(fileKey.startsWith('history:')){var yr=parseInt(fileKey.split(':')[1]);current=((historyData[yr]||[])[rowIdx]||{})[field]||'';}
   var ind='ind-'+cellId;
   var alt=_fieldAlternate(fileKey,field);
-  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">\u2192 '+_fieldLabel(alt)+'</button>':'';
+  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">'+'\u2192 '+_fieldLabel(alt)+'</button>':'';
   var labelHtml=alt?'<span class="notes-field-label" id="fieldlbl-'+cellId+'">'+_fieldLabel(field)+'</span>':'';
   cell.innerHTML='<div class="notes-edit-wrap">'
     +labelHtml
@@ -372,7 +310,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var cal='<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' \u00b7 '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
-  var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
+  var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty>1?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
@@ -386,7 +324,7 @@ function renderAttendedRowBystander(row,idx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
   var ne=esc(n.notes);
-  var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
@@ -412,7 +350,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
   var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var cellId='cell-at-'+idx;
-  var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
@@ -595,13 +533,13 @@ function openForSaleModal(idx){
 function closeForSaleModal(){document.getElementById('forsaleModal').classList.remove('open');}
 
 // ── Potential rows ───────────────────────────────────
-function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium';return'<span class="cell-tier '+cls+'">'+esc(tier)+'</span>';}
+function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium',dots=t==='strong'?'●●●':t.includes('strong')&&t.includes('medium')?'●●':t==='medium'?'●':t==='low'?'◦':'';return'<span class="cell-tier '+cls+'">'+(dots?'<span class="tier-dots">'+dots+'</span> ':'')+esc(tier)+'</span>';}
 function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
   var isSell=dec.toLowerCase()==='sell',ph=esc(r['Face Price']||'');
-  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a>';
+  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🏟</a>';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
@@ -609,7 +547,7 @@ function renderPotentialRowBystander(r,gi){
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
-    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching">&#9888; '+esc(r['Watching For'])+'</span>':'')+'</td>'
+    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes">'+(pn?'<div>'+pn+'</div>':'')+'</td></tr>';
 }
 function renderPotentialRowAuthed(r,gi){
@@ -626,14 +564,14 @@ function renderPotentialRowAuthed(r,gi){
   if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
-  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
+  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🏟</a>';
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
-    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching">&#9888; '+esc(r['Watching For'])+'</span>':'')+'</td>'
+    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
@@ -641,8 +579,8 @@ function renderPotentialRowAuthed(r,gi){
 function recommendCtaHtml(){
   var enabled=authed||(typeof RECOMMEND_DEBUG==='undefined'||!RECOMMEND_DEBUG);
   return enabled
-    ?'<span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">Suggest a show &#8599;</span>'
-    :'<span class="recommend-cta" title="Suggestions are coming soon" aria-disabled="true">Suggest a show &#8599;</span>';
+    ?'<span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">+ Suggest a show</span>'
+    :'<span class="recommend-cta" title="Suggestions are coming soon" aria-disabled="true">+ Suggest a show</span>';
 }
 
 // ── Shows rendering ───────────────────────────────────
@@ -813,8 +751,8 @@ function openAboutModal(){document.getElementById('aboutModal').classList.add('o
 function closeAboutModal(){document.getElementById('aboutModal').classList.remove('open');}
 function openAuthModal(){document.getElementById('patInput').value='';document.getElementById('authModal').classList.add('open');}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');_gearVisible();closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
-function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');_gearVisible();closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
+async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
@@ -844,67 +782,12 @@ function openMultisetModal(dateKey){
     var items=entry.setlists.map(function(s,i){
       return'<div class="multiset-item"><span class="multiset-order">'+(i+1)+'.</span>'
         +'<span class="multiset-artist">'+esc(s.artist)+'</span>'
-        +'<a class="multiset-link" href="'+esc(s.url)+'" target="_blank">setlist.fm &#8599;</a></div>';
+        +'<a class="ext-link" href="'+esc(s.url)+'" target="_blank">setlist.fm</a></div>';
     }).join('');
     body.innerHTML='<div class="multiset-event">'+esc(entry.event)+'</div><div class="multiset-list">'+items+'</div>';
   }).catch(function(e){body.innerHTML='<div class="multiset-loading">Error: '+esc(e.message)+'</div>';});
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
-
-// -- Config editor (#77) --
-var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
-function _gearVisible(){
-  var gear=document.getElementById('configGearBtn');if(!gear)return;
-  var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
-  gear.style.display=(authed&&webEdit)?'':'none';
-}
-async function openConfigEditor(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  document.getElementById('configModal').classList.add('open');
-  if(_cfgDraft!==null){ta.value=_cfgDraft;st.textContent='restored your unsaved edits - Reset from repo to discard';return;}
-  st.textContent='loading...';
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    ta.value=await res.text();
-    st.textContent='loaded from repo';
-  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
-}
-function closeConfigEditor(){_cfgDraft=document.getElementById('configEditorText').value;document.getElementById('configModal').classList.remove('open');}
-async function revertConfigToRepo(){
-  _cfgDraft=null;
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  st.textContent='loading...';
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    ta.value=await res.text();
-    st.textContent='loaded from repo';
-  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
-}
-function reloadConfigPreview(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  try{
-    var parsed=jsyaml.load(ta.value);
-    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
-    window.SITE_CONFIG=SITE_CONFIG;
-    applyConfig(SITE_CONFIG);
-    _gearVisible();
-    st.textContent='preview applied to this session (not committed)';
-  }catch(e){st.textContent='YAML error: '+e.message;}
-}
-async function commitConfig(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  var pat=localStorage.getItem(PAT_KEY);if(!pat){st.textContent='not authed - cannot commit';return;}
-  try{jsyaml.load(ta.value);}catch(e){st.textContent='YAML error (not committed): '+e.message;return;}
-  st.textContent='committing...';
-  try{
-    var fd=await ghFetch('config.yaml');
-    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
-    if(!res.ok)throw new Error(await res.text());
-    st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
-  }catch(e){st.textContent='commit failed: '+e.message;}
-}
 
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
@@ -923,15 +806,12 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
-(async function boot(){
-  await loadConfig();
-  applyConfig(SITE_CONFIG);
-  _gearVisible();
-  loadData();
-  loadOnThisDay();
+(async function(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   if(!authed)await loadHistoryYear(mr);
   renderHistoryPanel();
   if(!authed)requestAnimationFrame(revealToggles);
   if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
+loadData();
+loadOnThisDay();
