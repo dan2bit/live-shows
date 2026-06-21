@@ -1,8 +1,7 @@
 
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';
-const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -12,68 +11,6 @@ var _now=new Date();
 var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate()).padStart(2,'0');
 var _srchTimer=null;
 var _allYearsLoaded=false;
-
-// ── Config (#69) ───────────────────────────
-// Per-fork personalization loaded from config.yaml at boot. Any missing key falls
-// back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
-const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
-var SITE_CONFIG=DEFAULT_CONFIG;
-function _cfgMerge(base,over){
-  var out=Object.assign({},base);
-  for(var k in over){
-    if(over[k]&&typeof over[k]==='object'&&!Array.isArray(over[k]))out[k]=_cfgMerge(base[k]||{},over[k]);
-    else if(over[k]!==undefined&&over[k]!==null)out[k]=over[k];
-  }
-  return out;
-}
-async function loadConfig(){
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    var parsed=(typeof jsyaml!=='undefined')?jsyaml.load(await res.text()):null;
-    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
-  }catch(e){console.warn('config load failed, using defaults:',e);SITE_CONFIG=DEFAULT_CONFIG;}
-  window.SITE_CONFIG=SITE_CONFIG;
-  return SITE_CONFIG;
-}
-function applyConfig(cfg){
-  cfg=cfg||SITE_CONFIG;
-  var s=cfg.site||{};
-  if(s.title){
-    document.title=s.title;
-    var st=document.querySelector('.site-title');
-    if(st)st.textContent=s.title;
-  }
-  if(s.owner)OWNER=s.owner;
-  if(s.repo)REPO=s.repo;
-  if(s.private_owner)OWNER_PRIVATE=s.private_owner;
-  if(s.private_repo)REPO_PRIVATE=s.private_repo;
-  // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
-  // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
-  // this project-pages setup; s.pages_base overrides the derived base for custom domains.
-  function _asset(p){
-    if(!p)return p;
-    if(/^https?:\/\//.test(p))return p;
-    var base=(s.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
-    return base+'/'+String(p).replace(/^\/+/,'');
-  }
-  function _txt(sel,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.textContent=v;}
-  function _attr(sel,a,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.setAttribute(a,v);}
-  if(s.favicon){var fav=_asset(s.favicon);document.querySelectorAll('link[rel~="icon"]').forEach(function(l){l.setAttribute('href',fav);});}
-  if(s.brand_icon)_attr('.hat-btn img','src',_asset(s.brand_icon));
-  if(s.about_handle){_txt('.about-hero-handle',s.about_handle);_attr('.hat-btn','title','About '+s.about_handle);}
-  if(s.about_tagline)_txt('.about-hero-tagline',s.about_tagline);
-  if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
-  if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
-  if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
-  var al=cfg.about_links;
-  if(al){
-    var anchors=document.querySelectorAll('#aboutModal .about-links .about-link');
-    ['youtube','linktree','autographs','photos'].forEach(function(k,i){
-      if(al[k]&&anchors[i])anchors[i].setAttribute('href',al[k]);
-    });
-  }
-}
 
 async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
@@ -130,7 +67,8 @@ var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','D
 function parseISODate(s){var m=(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
 function formatShowDate(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate():s;}
 function formatShowDateYear(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():s;}
-function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';}
+function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';
+}
 function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date();now.setHours(0,0,0,0);return Math.floor((d-now)/86400000);}
 function isOtdMatch(s){var m=(s||'').match(/^\d{4}-(\d{2}-\d{2})/);return m?m[1]===_todayMmDd:false;}
 function gcalUrl(artist){var now=new Date(),pad=function(n){return String(n).padStart(2,'0');};return'https://calendar.google.com/calendar/r/search?q='+encodeURIComponent(artist)+'&start='+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'&end='+(now.getFullYear()+1)+pad(now.getMonth()+1)+pad(now.getDate());}
@@ -265,7 +203,7 @@ function startEdit(cellId,fileKey,rowIdx,field){
   else if(fileKey.startsWith('history:')){var yr=parseInt(fileKey.split(':')[1]);current=((historyData[yr]||[])[rowIdx]||{})[field]||'';}
   var ind='ind-'+cellId;
   var alt=_fieldAlternate(fileKey,field);
-  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">\u2192 '+_fieldLabel(alt)+'</button>':'';
+  var switchHtml=alt?'<button class="notes-switch-btn" id="switchbtn-'+cellId+'" onclick="switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')">'+'→ '+_fieldLabel(alt)+'</button>':'';
   var labelHtml=alt?'<span class="notes-field-label" id="fieldlbl-'+cellId+'">'+_fieldLabel(field)+'</span>':'';
   cell.innerHTML='<div class="notes-edit-wrap">'
     +labelHtml
@@ -293,8 +231,8 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
   var ta=document.getElementById('ta-'+cellId);if(!ta)return;
   var newVal=ta.value;
   var ind=document.getElementById('ind-'+cellId);
-  if(ind){ind.textContent='\u2026';ind.className='notes-save-ind save-indicator';}
-  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='\u2717 no auth';ind.className='notes-save-ind save-err';}return;}
+  if(ind){ind.textContent='…';ind.className='notes-save-ind save-indicator';}
+  var pat=localStorage.getItem(PAT_KEY);if(!pat){if(ind){ind.textContent='✗ no auth';ind.className='notes-save-ind save-err';}return;}
   try{
     if(fileKey==='current'&&field==='Private Notes'){
       await _savePrivateSidecar(CURRENT_PRIVATE_PATH,['Show Date','Artist'],{'Show Date':currentRows[rowIdx]['Show Date'],'Artist':currentRows[rowIdx]['Artist']},field,newVal);
@@ -343,11 +281,11 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
       if(!res.ok)throw new Error(await res.text());
     }
-    if(ind){ind.textContent='\u2713';ind.className='notes-save-ind save-ok';}
+    if(ind){ind.textContent='✓';ind.className='notes-save-ind save-ok';}
     setTimeout(function(){cancelEdit(cellId,fileKey,rowIdx,field);},600);
   }catch(e){
     console.error(e);
-    if(ind){ind.textContent='\u2717 '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
+    if(ind){ind.textContent='✗ '+e.message.slice(0,40);ind.className='notes-save-ind save-err';}
   }
 }
 
@@ -358,7 +296,7 @@ function renderUpcomingRowBystander(row,idx){
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
-  return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
+  return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
@@ -366,15 +304,15 @@ function renderUpcomingRowBystander(row,idx){
 function renderUpcomingRowAuthed(row,idx,origIdx){
   var days=daysFromNow(row['Show Date']),cls=days<=1?'row-today':days<=7?'row-soon':'';
   var pn=row['Notes / Memories']||'',pvt=row['Private Notes']||'';
-  var fn=pvt?pn+(pn?' \u00b7 ':'')+pvt:pn,fne=esc(fn);
+  var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
   var cal='<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>';
-  var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' \u00b7 '+seat:'')+'</div>':'';
+  var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
-  var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
+  var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
-  return'<tr class="'+cls+'"><td class="cell-date">'+formatShowDate(row['Show Date'])+'<span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
+  return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty>1?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
@@ -386,7 +324,7 @@ function renderAttendedRowBystander(row,idx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
   var ne=esc(n.notes);
-  var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
@@ -410,9 +348,9 @@ function renderAttendedRowSearch(row,idx){
 function renderAttendedRowAuthed(row,idx,origIdx){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
-  var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' \u00b7 ':'')+n.pvtNotes:n.notes,fne=esc(fn);
+  var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' · ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var cellId='cell-at-'+idx;
-  var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
+  var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
@@ -468,7 +406,7 @@ async function ensureAllYearsLoaded(){
       if(b&&historyData[yr])b.textContent=historyData[yr].length;
     });
     var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'\u2014';
+    document.getElementById('historyBadge').textContent=total||'—';
   }
   _allYearsLoaded=true;
   populateSearchDatalists();
@@ -546,16 +484,16 @@ function buildSearchEmptyState(){
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+vc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Venues</div></div>'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none;border-radius:0 3px 3px 0"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+days.toLocaleString()+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Days</div></div>'
     +'</div>'
-    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 \u00b7 Oliver Wood \u00b7 Patio Stage at Strathmore</span></div>'
+    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
     +'</div>';
 }
 function renderHistoryPanel(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  var searchPanel='<div class="inner-panel" id="inner-hist-search"><div class="search-bar"><input class="search-input" id="srchArtist" placeholder="Artist\u2026" list="srchArtistList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchArtistList"></datalist><input class="search-input" id="srchVenue" placeholder="Venue\u2026" list="srchVenueList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchVenueList"></datalist><button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button></div><div id="srchResults">'+buildSearchEmptyState()+'</div></div>';
+  var searchPanel='<div class="inner-panel" id="inner-hist-search"><div class="search-bar"><input class="search-input" id="srchArtist" placeholder="Artist…" list="srchArtistList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchArtistList"></datalist><input class="search-input" id="srchVenue" placeholder="Venue…" list="srchVenueList" oninput="debounceSearch()" autocomplete="off"><datalist id="srchVenueList"></datalist><button class="btn" onclick="clearSearch()" title="Clear filters" style="flex-shrink:0">&#10005; clear</button></div><div id="srchResults">'+buildSearchEmptyState()+'</div></div>';
   var itr='<div class="inner-tab-row">'+HISTORY_YEARS.slice().reverse().map(function(yr){var cnt=historyData[yr]?historyData[yr].length:'&#8212;';return'<div class="inner-tab'+(yr===mr?' active':'')+'" data-inner="hist-'+yr+'" onclick="switchHistoryTab('+yr+')">'+yr+' <span class="tab-badge" id="histBadge-'+yr+'">'+cnt+'</span></div>';}).join('')+'<div class="inner-tab" data-inner="hist-search" onclick="switchHistorySearch()" style="margin-left:auto">&#128269; Search</div></div>';
   var ip=searchPanel+HISTORY_YEARS.slice().reverse().map(function(yr){return'<div class="inner-panel'+(yr===mr?' active':'')+'" id="inner-hist-'+yr+'">'+renderHistoryYear(yr)+'</div>';}).join('');
   var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-  document.getElementById('historyBadge').textContent=total||'\u2014';
+  document.getElementById('historyBadge').textContent=total||'—';
   document.getElementById('historyContent').innerHTML=itr+ip;
   requestAnimationFrame(revealToggles);
 }
@@ -574,7 +512,7 @@ async function switchHistoryTab(yr){
     if(badge)badge.textContent=historyData[yr].length;
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
     var total=HISTORY_YEARS.reduce(function(s,y){return s+(historyData[y]?historyData[y].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'\u2014';
+    document.getElementById('historyBadge').textContent=total||'—';
   }else{requestAnimationFrame(revealToggles);}
 }
 
@@ -595,7 +533,7 @@ function openForSaleModal(idx){
 function closeForSaleModal(){document.getElementById('forsaleModal').classList.remove('open');}
 
 // ── Potential rows ───────────────────────────────────
-function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium';return'<span class="cell-tier '+cls+'">'+esc(tier)+'</span>';}
+function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium',dots=t==='strong'?'●●●':t.includes('strong')&&t.includes('medium')?'●●':t==='medium'?'●':t==='low'?'◦':'';return'<span class="cell-tier '+cls+'">'+(dots?'<span class="tier-dots">'+dots+'</span> ':'')+esc(tier)+'</span>';}
 function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
@@ -605,16 +543,16 @@ function renderPotentialRowBystander(r,gi){
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
-    +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
+    +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
-    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching">&#9888; '+esc(r['Watching For'])+'</span>':'')+'</td>'
+    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes">'+(pn?'<div>'+pn+'</div>':'')+'</td></tr>';
 }
 function renderPotentialRowAuthed(r,gi){
   var pn=r['Notes']||'',pvt=r['Private Notes']||'',s=pvt==='-';
-  var fn=!s&&pvt?pn+(pn?' \u00b7 ':'')+pvt:pn,fne=esc(fn);
+  var fn=!s&&pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',isSell=dec.toLowerCase()==='sell';
@@ -629,20 +567,21 @@ function renderPotentialRowAuthed(r,gi){
   if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
-    +'<td class="cell-date">'+formatShowDate(r['Date'])+'<span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
+    +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
-    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching">&#9888; '+esc(r['Watching For'])+'</span>':'')+'</td>'
+    +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
-// ── Recommend CTA gating (debug phase) ────────────
-function recommendCtaHtml(){
+// ── Recommend CTA ────────────────────────────────
+function recommendCtaHtml(label){
+  label=label||'+ Suggest a show';
   var enabled=authed||(typeof RECOMMEND_DEBUG==='undefined'||!RECOMMEND_DEBUG);
   return enabled
-    ?'<span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">Suggest a show &#8599;</span>'
-    :'<span class="recommend-cta" title="Suggestions are coming soon" aria-disabled="true">Suggest a show &#8599;</span>';
+    ?'<button class="recommend-cta-header active" title="Suggest an artist or show" onclick="openRecommendModal()">'+label+'</button>'
+    :'<button class="recommend-cta-header" title="Suggestions are coming soon" aria-disabled="true" disabled>'+label+'</button>';
 }
 
 // ── Shows rendering ───────────────────────────────────
@@ -650,18 +589,10 @@ function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
   var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var sellRows=potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
-  var fsbGroup='';
-  if(sellRows.length){
-    var isNarrow=window.innerWidth<=768;
-    if(isNarrow&&sellRows.length>1){
-      var opts=sellRows.map(function(r){var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;return'<option value="'+idx+'">&#127991; '+esc(sn)+' ('+qty+')</option>';}).join('');
-      fsbGroup='<div class="forsale-tab-group"><select class="forsale-select" onchange="if(this.value)openForSaleModal(parseInt(this.value));this.value=\'\'"><option value="">&#127991; For Sale</option>'+opts+'</select></div>';
-    }else{
-      var btns=sellRows.map(function(r){var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;return'<button class="forsale-btn" onclick="openForSaleModal('+idx+')">&#127991; '+esc(sn)+' ('+qty+')</button>';}).join('');
-      fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
-    }
-  }
-  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history. Know something I should see?</span>'+recommendCtaHtml()+'</div>':'';
+  var bannerCta=sellRows.length
+    ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')"><span style="opacity:.7;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px">For Sale</span>&#127991; '+esc(sellRows[0]['Artist']||'')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
+    :recommendCtaHtml();
+  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history.</span>'+bannerCta+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
   var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
@@ -671,7 +602,7 @@ function renderShows(){
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
-  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div>'+fsbGroup+'</div>';
+  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>';
   document.getElementById('showsContent').innerHTML=banner+itr+ip;
   requestAnimationFrame(revealToggles);
@@ -715,7 +646,7 @@ async function handleRevoke(idx){
 }
 async function handleDecisionChange(select){
   var idx=parseInt(select.dataset.row),newVal=select.value,ind=document.getElementById('save-'+idx);
-  ind.textContent='\u2026';ind.className='save-indicator';
+  ind.textContent='…';ind.className='save-indicator';
   try{
     var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
@@ -727,9 +658,9 @@ async function handleDecisionChange(select){
     var pat=localStorage.getItem(PAT_KEY);
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
     if(!res.ok)throw new Error(await res.text());
-    potentialRows=rows;ind.textContent='\u2713';ind.className='save-indicator save-ok';
+    potentialRows=rows;ind.textContent='✓';ind.className='save-indicator save-ok';
     setTimeout(function(){renderPotential();renderShows();},600);
-  }catch(e){console.error(e);ind.textContent='\u2717';ind.className='save-indicator save-err';}
+  }catch(e){console.error(e);ind.textContent='✗';ind.className='save-indicator save-err';}
 }
 
 // ── Please Tour Here ────────────────────────────────
@@ -759,7 +690,7 @@ function serializeFastTrack(rows,headers){
 }
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
-  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml()+'</div>';
+  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml('+ Suggest an artist')+'</div>';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th style="width:110px">Links</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'',tierCls=tier.toLowerCase().includes('strong')&&tier.toLowerCase().includes('medium')?'tier-medium-strong':tier==='Strong'?'tier-strong':'tier-medium';
@@ -799,7 +730,7 @@ function revealToggles(){
   });
 }
 function switchInnerTab(name){
-  document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
+  document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t){t.classList.toggle('active',t.dataset.inner===name);});
   document.querySelectorAll('#inner-attended,#inner-upcoming').forEach(function(p){p.classList.toggle('active',p.id==='inner-'+name);});
   requestAnimationFrame(revealToggles);
 }
@@ -813,8 +744,8 @@ function openAboutModal(){document.getElementById('aboutModal').classList.add('o
 function closeAboutModal(){document.getElementById('aboutModal').classList.remove('open');}
 function openAuthModal(){document.getElementById('patInput').value='';document.getElementById('authModal').classList.add('open');}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');_gearVisible();closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
-function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');_gearVisible();closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
+async function savePat(){var v=document.getElementById('patInput').value.trim();if(!v)return;localStorage.setItem(PAT_KEY,v);authed=true;document.getElementById('authBtn').classList.add('authed');closeAuthModal();await mergePrivateData();renderShows();renderPotential();if(fastTrackRows.length)renderTourHere();}
+function clearPat(){localStorage.removeItem(PAT_KEY);authed=false;document.getElementById('authBtn').classList.remove('authed');closeAuthModal();loadData();if(fastTrackRows.length)renderTourHere();}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
@@ -844,67 +775,12 @@ function openMultisetModal(dateKey){
     var items=entry.setlists.map(function(s,i){
       return'<div class="multiset-item"><span class="multiset-order">'+(i+1)+'.</span>'
         +'<span class="multiset-artist">'+esc(s.artist)+'</span>'
-        +'<a class="multiset-link" href="'+esc(s.url)+'" target="_blank">setlist.fm &#8599;</a></div>';
+        +'<a class="ext-link" href="'+esc(s.url)+'" target="_blank">setlist.fm</a></div>';
     }).join('');
     body.innerHTML='<div class="multiset-event">'+esc(entry.event)+'</div><div class="multiset-list">'+items+'</div>';
   }).catch(function(e){body.innerHTML='<div class="multiset-loading">Error: '+esc(e.message)+'</div>';});
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
-
-// -- Config editor (#77) --
-var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
-function _gearVisible(){
-  var gear=document.getElementById('configGearBtn');if(!gear)return;
-  var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
-  gear.style.display=(authed&&webEdit)?'':'none';
-}
-async function openConfigEditor(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  document.getElementById('configModal').classList.add('open');
-  if(_cfgDraft!==null){ta.value=_cfgDraft;st.textContent='restored your unsaved edits - Reset from repo to discard';return;}
-  st.textContent='loading...';
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    ta.value=await res.text();
-    st.textContent='loaded from repo';
-  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
-}
-function closeConfigEditor(){_cfgDraft=document.getElementById('configEditorText').value;document.getElementById('configModal').classList.remove('open');}
-async function revertConfigToRepo(){
-  _cfgDraft=null;
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  st.textContent='loading...';
-  try{
-    var res=await fetch('config.yaml?t='+Date.now(),{cache:'no-store'});
-    if(!res.ok)throw new Error('config.yaml '+res.status);
-    ta.value=await res.text();
-    st.textContent='loaded from repo';
-  }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
-}
-function reloadConfigPreview(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  try{
-    var parsed=jsyaml.load(ta.value);
-    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
-    window.SITE_CONFIG=SITE_CONFIG;
-    applyConfig(SITE_CONFIG);
-    _gearVisible();
-    st.textContent='preview applied to this session (not committed)';
-  }catch(e){st.textContent='YAML error: '+e.message;}
-}
-async function commitConfig(){
-  var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
-  var pat=localStorage.getItem(PAT_KEY);if(!pat){st.textContent='not authed - cannot commit';return;}
-  try{jsyaml.load(ta.value);}catch(e){st.textContent='YAML error (not committed): '+e.message;return;}
-  st.textContent='committing...';
-  try{
-    var fd=await ghFetch('config.yaml');
-    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
-    if(!res.ok)throw new Error(await res.text());
-    st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
-  }catch(e){st.textContent='commit failed: '+e.message;}
-}
 
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
@@ -923,15 +799,12 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
-(async function boot(){
-  await loadConfig();
-  applyConfig(SITE_CONFIG);
-  _gearVisible();
-  loadData();
-  loadOnThisDay();
+(async function(){
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   if(!authed)await loadHistoryYear(mr);
   renderHistoryPanel();
   if(!authed)requestAnimationFrame(revealToggles);
   if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
+loadData();
+loadOnThisDay();
