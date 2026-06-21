@@ -259,6 +259,8 @@
   .notes-edit-wrap{display:flex;flex-direction:column;gap:6px;}
   .notes-textarea{font-family:var(--sans);font-size:12px;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:6px 8px;width:100%;resize:vertical;min-height:60px;field-sizing:content;outline:none;line-height:1.5;}
   .notes-textarea:focus{border-color:var(--amber);}
+  .config-textarea{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:8px 10px;width:100%;box-sizing:border-box;min-height:340px;resize:vertical;white-space:pre;overflow:auto;tab-size:2;outline:none;}
+  .config-textarea:focus{border-color:var(--amber);}
   .notes-edit-actions{display:flex;gap:6px;align-items:center;}
   .notes-save-btn{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;}
   .notes-save-btn:hover{background:#142414;}
