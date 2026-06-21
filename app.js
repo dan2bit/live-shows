@@ -189,7 +189,7 @@ function switchEditField(cellId,fileKey,rowIdx,field){
   var saveBtn=document.getElementById('savebtn-'+cellId);
   var switchBtn=document.getElementById('switchbtn-'+cellId);
   var lbl=document.getElementById('fieldlbl-'+cellId);
-  if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
+  if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+field+'\')');
   if(switchBtn)switchBtn.setAttribute('onclick','switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
   if(switchBtn)switchBtn.textContent='\u2192 '+_fieldLabel(field);
   if(lbl)lbl.textContent=_fieldLabel(alt);
@@ -590,7 +590,7 @@ function renderShows(){
   var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var sellRows=potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
   var bannerCta=sellRows.length
-    ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')">&#127991; '+esc(sellRows[0]['Artist']||'For Sale')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
+    ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')"><span style="opacity:.7;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px">For Sale</span>&#127991; '+esc(sellRows[0]['Artist']||'')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
     :recommendCtaHtml();
   var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history.</span>'+bannerCta+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
