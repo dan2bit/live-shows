@@ -116,11 +116,12 @@
       <h3 style="margin:0">&#9881; config.yaml</h3>
       <span id="configEditorStatus" style="font-family:var(--mono);font-size:11px;color:var(--text-dim)"></span>
     </div>
-    <textarea id="configEditorText" spellcheck="false" autocomplete="off" style="width:100%;box-sizing:border-box;min-height:340px;margin-top:10px;font-family:var(--mono);font-size:12px;line-height:1.5;white-space:pre;overflow:auto;tab-size:2"></textarea>
+    <textarea id="configEditorText" spellcheck="false" autocomplete="off" class="config-textarea" style="margin-top:10px"></textarea>
     <div class="modal-actions" style="margin-top:12px">
-      <button class="btn" onclick="reloadConfigPreview()" title="Apply to this session only - no commit">&#8635; Reload preview</button>
-      <button class="btn" onclick="closeConfigEditor()">Cancel</button>
-      <button class="btn btn-save" onclick="commitConfig()" title="Commit config.yaml to the repo">&#8593; Commit</button>
+      <button class="btn" onclick="reloadConfigPreview()" title="Apply the edited YAML to this page now (no commit)">&#8635; Preview</button>
+      <button class="btn" onclick="revertConfigToRepo()" title="Discard your edits and reload the committed config">Reset from repo</button>
+      <button class="btn" onclick="closeConfigEditor()" title="Hide the editor and keep your edits">Close</button>
+      <button class="btn btn-save" onclick="commitConfig()" title="Commit the edited config.yaml to the repo">&#8593; Commit</button>
     </div>
   </div>
 </div>
