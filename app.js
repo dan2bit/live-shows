@@ -575,12 +575,13 @@ function renderPotentialRowAuthed(r,gi){
     +'<td class="col-context cell-context">'+ctx+'</td><td class="cell-pot-notes" id="'+potCellId+'">'+potEditBtn+nh+'</td></tr>';
 }
 
-// ── Recommend CTA gating (debug phase) ────────────
-function recommendCtaHtml(){
+// ── Recommend CTA ────────────────────────────────
+function recommendCtaHtml(label){
+  label=label||'+ Suggest a show';
   var enabled=authed||(typeof RECOMMEND_DEBUG==='undefined'||!RECOMMEND_DEBUG);
   return enabled
-    ?'<span class="recommend-cta active" title="Suggest an artist or show" onclick="openRecommendModal()">+ Suggest a show</span>'
-    :'<span class="recommend-cta" title="Suggestions are coming soon" aria-disabled="true">+ Suggest a show</span>';
+    ?'<button class="recommend-cta-header active" title="Suggest an artist or show" onclick="openRecommendModal()">'+label+'</button>'
+    :'<button class="recommend-cta-header" title="Suggestions are coming soon" aria-disabled="true" disabled>'+label+'</button>';
 }
 
 // ── Shows rendering ───────────────────────────────────
@@ -588,18 +589,10 @@ function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
   var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var sellRows=potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
-  var fsbGroup='';
-  if(sellRows.length){
-    var isNarrow=window.innerWidth<=768;
-    if(isNarrow&&sellRows.length>1){
-      var opts=sellRows.map(function(r){var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;return'<option value="'+idx+'">&#127991; '+esc(sn)+' ('+qty+')</option>';}).join('');
-      fsbGroup='<div class="forsale-tab-group"><select class="forsale-select" onchange="if(this.value)openForSaleModal(parseInt(this.value));this.value=\'\'"><option value="">&#127991; For Sale</option>'+opts+'</select></div>';
-    }else{
-      var btns=sellRows.map(function(r){var idx=potentialRows.indexOf(r),m=(r['Watching For']||'').match(/(\d+)/),qty=m?m[1]:'?';var nm=r['Artist']||'',sn=nm.length>22?nm.split(' ').slice(0,2).join(' '):nm;return'<button class="forsale-btn" onclick="openForSaleModal('+idx+')">&#127991; '+esc(sn)+' ('+qty+')</button>';}).join('');
-      fsbGroup='<div class="forsale-tab-group"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#40a0a0;white-space:nowrap">For Sale</span>'+btns+'</div>';
-    }
-  }
-  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history. Know something I should see?</span>'+recommendCtaHtml()+'</div>':'';
+  var bannerCta=sellRows.length
+    ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')">&#127991; '+esc(sellRows[0]['Artist']||'For Sale')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
+    :recommendCtaHtml();
+  var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history.</span>'+bannerCta+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
   var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
@@ -609,7 +602,7 @@ function renderShows(){
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
-  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div>'+fsbGroup+'</div>';
+  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>';
   document.getElementById('showsContent').innerHTML=banner+itr+ip;
   requestAnimationFrame(revealToggles);
@@ -697,7 +690,7 @@ function serializeFastTrack(rows,headers){
 }
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
-  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml()+'</div>';
+  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml('+ Suggest an artist')+'</div>';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th style="width:110px">Links</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'',tierCls=tier.toLowerCase().includes('strong')&&tier.toLowerCase().includes('medium')?'tier-medium-strong':tier==='Strong'?'tier-strong':'tier-medium';
