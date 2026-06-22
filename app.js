@@ -261,17 +261,14 @@ var VENUE_SHORT={'Wolf Trap Filene Center':'Wolf Trap','Rams Head On Stage':'Ram
 function shortVenueName(full){var name=(full||'').split(',')[0].trim();return VENUE_SHORT[name]||name;}
 
 // ── On This Day ──────────────────────────────
-async function loadOnThisDay(){
-  var now=new Date(),mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  var results=await Promise.allSettled(HISTORY_YEARS.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
+// Renders the On-This-Day strip from already-loaded historyData (no fetch); reveals the
+// strip, which starts hidden (index.html) until History is first opened. Called by loadAllHistory.
+function renderOnThisDay(){
+  var el=document.getElementById('otdItems');if(!el)return;
   var matches=[];
-  results.forEach(function(res){
-    if(res.status!=='fulfilled')return;
-    var rows=parseTsv(decodeURIComponent(escape(atob(res.value.content.replace(/\n/g,'')))));
-    rows.forEach(function(r){if((r['Show Date']||'').trim().endsWith(mmdd))matches.push(r);});
-  });
+  HISTORY_YEARS.forEach(function(yr){(historyData[yr]||[]).forEach(function(r){if((r['Show Date']||'').trim().endsWith(_todayMmDd))matches.push(r);});});
   matches.sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
-  var el=document.getElementById('otdItems');
+  var strip=document.querySelector('.on-this-day');if(strip)strip.style.display='';
   if(!matches.length){el.innerHTML='<span class="otd-none">no shows on this day</span>';return;}
   el.innerHTML=matches.map(function(r){
     var year=(r['Show Date']||'').slice(0,4),artist=esc(r['Artist']||''),venue=esc((r['Venue']||'').split(',')[0].trim());
@@ -572,7 +569,7 @@ function renderHistoryYear(yr){
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
-function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
@@ -580,20 +577,34 @@ async function loadHistoryYear(yr){
     historyData[yr]=parseTsv(decodeURIComponent(escape(atob(results[0].content.replace(/\n/g,'')))));
   }catch(e){historyData[yr]=[];console.error('Failed to load data/history/'+yr+'.tsv:',e);}
 }
-async function ensureAllYearsLoaded(){
-  if(_allYearsLoaded)return;
-  var unloaded=HISTORY_YEARS.filter(function(yr){return historyData[yr]===null;});
-  if(unloaded.length){
-    await Promise.allSettled(unloaded.map(function(yr){return loadHistoryYear(yr);}));
-    HISTORY_YEARS.forEach(function(yr){
-      var b=document.getElementById('histBadge-'+yr);
-      if(b&&historyData[yr])b.textContent=historyData[yr].length;
-    });
-    var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
-    document.getElementById('historyBadge').textContent=total||'—';
-  }
-  _allYearsLoaded=true;
+// One-shot loader for every history year — the same files the On-This-Day strip needs.
+// In-flight-deduped so History-open and Search-open both await one fetch, never two.
+var _historyLoad=null;
+function loadAllHistory(){
+  if(_allYearsLoaded)return Promise.resolve();
+  if(_historyLoad)return _historyLoad;
+  _historyLoad=(async function(){
+    var unloaded=HISTORY_YEARS.filter(function(yr){return historyData[yr]===null;});
+    if(unloaded.length){
+      var results=await Promise.allSettled(unloaded.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
+      results.forEach(function(res,i){
+        var yr=unloaded[i];
+        if(res.status==='fulfilled'){try{historyData[yr]=parseTsv(_decodeB64(res.value.content));}catch(e){historyData[yr]=[];console.error('parse data/history/'+yr+'.tsv:',e);}}
+        else{historyData[yr]=[];console.error('load data/history/'+yr+'.tsv:',res.reason);}
+      });
+    }
+    _allYearsLoaded=true;
+  })();
+  return _historyLoad;
+}
+// DOM refresh once all years are cached: true per-year + total History badges, search
+// datalists, and the On-This-Day strip. Idempotent; safe from either entry point.
+function _historyLoadedDom(){
+  HISTORY_YEARS.forEach(function(yr){var b=document.getElementById('histBadge-'+yr);if(b&&historyData[yr])b.textContent=historyData[yr].length;});
+  var total=HISTORY_YEARS.reduce(function(s,yr){return s+(historyData[yr]?historyData[yr].length:0);},0);
+  var hb=document.getElementById('historyBadge');if(hb)hb.textContent=total||'—';
   populateSearchDatalists();
+  renderOnThisDay();
 }
 function allAttendedRows(){
   var rows=[];
@@ -684,7 +695,7 @@ function renderHistoryPanel(){
 async function switchHistorySearch(){
   document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-search');});
   document.querySelectorAll('[id^="inner-hist-"]').forEach(function(p){p.classList.toggle('active',p.id==='inner-hist-search');});
-  if(!_allYearsLoaded){var srchEl=document.getElementById('srchResults');if(srchEl)srchEl.innerHTML=hatLoadingHtml();await ensureAllYearsLoaded();runSearch();}else{var inp=document.getElementById('srchArtist');if(inp&&!inp.value)inp.focus();else runSearch();}
+  if(!_allYearsLoaded){var srchEl=document.getElementById('srchResults');if(srchEl)srchEl.innerHTML=hatLoadingHtml();await loadAllHistory();_historyLoadedDom();runSearch();}else{var inp=document.getElementById('srchArtist');if(inp&&!inp.value)inp.focus();else runSearch();}
 }
 async function switchHistoryTab(yr){
   document.querySelectorAll('.inner-tab[data-inner^="hist-"]').forEach(function(t){t.classList.toggle('active',t.dataset.inner==='hist-'+yr);});
@@ -920,10 +931,22 @@ function switchInnerTab(name){
   document.querySelectorAll('#inner-attended,#inner-upcoming').forEach(function(p){p.classList.toggle('active',p.id==='inner-'+name);});
   requestAnimationFrame(revealToggles);
 }
+async function openHistory(){
+  if(_allYearsLoaded){requestAnimationFrame(revealToggles);return;}
+  var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
+  var panel=document.getElementById('inner-hist-'+mr);
+  if(panel)panel.innerHTML=hatLoadingHtml();
+  // load every year (also what OTD needs); keep a ~2.4s floor so the hat animation reads,
+  // matching the old per-year loader's feel.
+  await Promise.all([loadAllHistory(),new Promise(function(r){setTimeout(r,2400);})]);
+  _historyLoadedDom();
+  HISTORY_YEARS.forEach(function(yr){var p=document.getElementById('inner-hist-'+yr);if(p&&historyData[yr])p.innerHTML=renderHistoryYear(yr);});
+  requestAnimationFrame(revealToggles);
+}
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name);});
-  if(name==='history'){var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];if(historyData[mr]===null){switchHistoryTab(mr);}else{requestAnimationFrame(revealToggles);}}
+  if(name==='history')openHistory();
   if(name==='tourhere')loadTourHere();
 }
 function openAboutModal(){document.getElementById('aboutModal').classList.add('open');}
@@ -1045,11 +1068,8 @@ document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('acti
   applyConfig(SITE_CONFIG);
   applyTheme(SITE_CONFIG);
   _gearVisible();
-  var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
-  if(!authed)await loadHistoryYear(mr);
+  // History (incl. the On-This-Day strip) is lazy now: its 5 files load on first History
+  // open, not at boot. Build the empty panel structure; the badge reads — until opened.
   renderHistoryPanel();
-  if(!authed)requestAnimationFrame(revealToggles);
-  if(authed&&historyData[mr]!==null){var _panel=document.getElementById('inner-hist-'+mr);if(_panel){_panel.innerHTML=renderHistoryYear(mr);requestAnimationFrame(revealToggles);}}
 })();
 loadData();
-loadOnThisDay();
