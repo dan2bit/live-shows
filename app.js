@@ -65,12 +65,22 @@ function applyConfig(cfg){
   if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
   if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
   if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
+  // about_links: list of {url,label} objects (#82). Rebuilt dynamically so a fork can add
+  // or remove links by editing config alone. The static anchors in index.html are the
+  // pre-JS fallback shown if config.yaml is absent or about_links is not a list.
   var al=cfg.about_links;
-  if(al){
-    var anchors=document.querySelectorAll('#aboutModal .about-links .about-link');
-    ['youtube','linktree','autographs','photos'].forEach(function(k,i){
-      if(al[k]&&anchors[i])anchors[i].setAttribute('href',al[k]);
-    });
+  if(Array.isArray(al)&&al.length){
+    var box=document.querySelector('#aboutModal .about-links');
+    if(box){
+      box.innerHTML='';
+      al.forEach(function(lnk){
+        if(!lnk||!lnk.url)return;
+        var a=document.createElement('a');
+        a.className='about-link';a.href=lnk.url;a.target='_blank';
+        a.textContent=lnk.label||lnk.url;
+        box.appendChild(a);
+      });
+    }
   }
 }
 // ── Theme (#71) ───────────────────────────
