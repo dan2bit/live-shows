@@ -119,12 +119,13 @@ function applyTheme(cfg){
   var root=document.documentElement.style;
   function set(v,k){if(v)root.setProperty(k,v);}
   // Chrome neutrals — explicit values only, no derivation
-  set(t.color_bg,'--bg');set(t.color_surface,'--surface');set(t.color_surface2,'--surface2');
-  set(t.color_border,'--border');set(t.color_border2,'--border2');
+  set(t.color_bg,'--bg');set(t.color_surface,'--surface');set(t.color_surface_bright,'--surface-bright');
+  set(t.color_border,'--border');set(t.color_border_bright,'--border-bright');
   set(t.color_text,'--text');set(t.color_text_muted,'--text-muted');set(t.color_text_dim,'--text-dim');
   // Semantic color triads — derive dim/bg if not explicitly overridden
   var pairs=[['color_accent','--amber'],['color_buy','--green'],['color_choose','--yellow'],
-             ['color_sell','--sell'],['color_pass','--gray']];
+             ['color_sell','--sell'],['color_pass','--gray'],
+             ['color_hat','--hat'],['color_book','--book']];
   pairs.forEach(function(p){
     var base=t[p[0]];if(!base)return;
     var triad=_deriveTriad(base);
@@ -132,9 +133,8 @@ function applyTheme(cfg){
     set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
     set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
   });
-  // Hat and book badge colors
-  set(t.color_hat,'--hat');set(t.color_hat_dim,'--hat-dim');set(t.color_hat_bg,'--hat-bg');
-  set(t.color_book,'--book');set(t.color_book_dim,'--book-dim');set(t.color_book_bg,'--book-bg');
+  // Hat and book badge colors are handled by the pairs loop above (their explicit
+  // _dim/_bg in config override the computed triad).
   // Status rows
   set(t.color_today_bg,'--today-bg');set(t.color_soon_bg,'--soon-bg');
   set(t.color_otd_bg,'--otd-bg');set(t.color_otd_border,'--otd-border');
