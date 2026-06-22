@@ -1,7 +1,7 @@
 
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -35,6 +35,16 @@ async function loadConfig(){
   window.SITE_CONFIG=SITE_CONFIG;
   return SITE_CONFIG;
 }
+// Resolve a config asset path to an absolute URL. Module-level (not closed over applyConfig)
+// so loading interstitials can derive the brand image from site.brand_icon too. Relative
+// paths expand to https://<owner>.github.io/<repo>/<path>; absolute paths pass through.
+function _assetUrl(p,site){
+  if(!p)return p;
+  if(/^https?:\/\//.test(p))return p;
+  site=site||(SITE_CONFIG&&SITE_CONFIG.site)||{};
+  var base=(site.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
+  return base+'/'+String(p).replace(/^\/+/,'');
+}
 function applyConfig(cfg){
   cfg=cfg||SITE_CONFIG;
   var s=cfg.site||{};
@@ -50,12 +60,7 @@ function applyConfig(cfg){
   // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
   // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
   // this project-pages setup; s.pages_base overrides the derived base for custom domains.
-  function _asset(p){
-    if(!p)return p;
-    if(/^https?:\/\//.test(p))return p;
-    var base=(s.pages_base||('https://'+OWNER+'.github.io/'+REPO)).replace(/\/+$/,'');
-    return base+'/'+String(p).replace(/^\/+/,'');
-  }
+  function _asset(p){return _assetUrl(p,s);}
   function _txt(sel,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.textContent=v;}
   function _attr(sel,a,v){if(v==null)return;var el=document.querySelector(sel);if(el)el.setAttribute(a,v);}
   if(s.favicon){var fav=_asset(s.favicon);document.querySelectorAll('link[rel~="icon"]').forEach(function(l){l.setAttribute('href',fav);});}
@@ -64,6 +69,7 @@ function applyConfig(cfg){
   if(s.about_tagline)_txt('.about-hero-tagline',s.about_tagline);
   if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
   if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
+  if(s.about_hero_alt)_attr('.about-hero-img','alt',s.about_hero_alt);
   if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
   // about_links: list of {url,label} objects (#82). Rebuilt dynamically so a fork can add
   // or remove links by editing config alone. The static anchors in index.html are the
@@ -81,6 +87,19 @@ function applyConfig(cfg){
         box.appendChild(a);
       });
     }
+  }
+  // Tab labels (#82). Keys are data-tab IDs; replace the label text node, keep the badge span.
+  var _tabs=cfg.tabs;
+  if(_tabs&&typeof _tabs==='object'){
+    Object.keys(_tabs).forEach(function(k){
+      var el=document.querySelector('.tab[data-tab="'+k+'"]');
+      if(el&&el.firstChild&&el.firstChild.nodeType===3)el.firstChild.nodeValue=_tabs[k]+' ';
+    });
+  }
+  // Waiting / Fast-Track tab show-hide (features.fast_track, #82).
+  if(!featureOn('fast_track')){
+    var _wt=document.querySelector('.tab[data-tab="tourhere"]');if(_wt)_wt.style.display='none';
+    var _wp=document.getElementById('panel-tourhere');if(_wp)_wp.style.display='none';
   }
 }
 // Feature flags (#82). A flag is ON unless config explicitly sets it to false, so a
@@ -229,8 +248,9 @@ function serializeTsv(rows,headers){
 var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function parseISODate(s){var m=(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
-function formatShowDate(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate():s;}
-function formatShowDateYear(s){var d=parseISODate(s);return d?MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():s;}
+function _dateFmt(){return(SITE_CONFIG.display&&SITE_CONFIG.display.date_format)||'mon_day';}
+function formatShowDate(s){var d=parseISODate(s);if(!d)return s;var mo=d.getMonth(),dy=d.getDate(),f=_dateFmt();if(f==='day_mon')return dy+' '+MONTHS[mo];if(f==='m_d')return(mo+1)+'/'+dy;if(f==='d_m')return dy+'/'+(mo+1);return MONTHS[mo]+' '+dy;}
+function formatShowDateYear(s){var d=parseISODate(s);if(!d)return s;var mo=d.getMonth(),dy=d.getDate(),yr=d.getFullYear(),f=_dateFmt();if(f==='day_mon')return dy+' '+MONTHS[mo]+' '+yr;if(f==='m_d')return(mo+1)+'/'+dy+'/'+yr;if(f==='d_m')return dy+'/'+(mo+1)+'/'+yr;return MONTHS[mo]+' '+dy+', '+yr;}
 function dayOfWeek(s){var d=parseISODate(s);return d?DAYS[d.getDay()]:'';
 }
 function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date();now.setHours(0,0,0,0);return Math.floor((d-now)/86400000);}
@@ -552,7 +572,7 @@ function renderHistoryYear(yr){
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
-function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
@@ -873,6 +893,7 @@ function renderTourHere(){
   document.getElementById('tourhereContent').innerHTML=banner+'<table class="ft-table">'+thead+'<tbody>'+tbody+'</tbody></table>';
 }
 async function loadTourHere(){
+  if(!featureOn('fast_track'))return;
   if(fastTrackRows.length){renderTourHere();return;}
   try{
     var fd=await ghFetch(FAST_TRACK_PATH);
