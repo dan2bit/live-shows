@@ -86,6 +86,23 @@ function applyConfig(cfg){
 // Feature flags (#82). A flag is ON unless config explicitly sets it to false, so a
 // fork that omits the features block — or any single key — keeps full behavior.
 function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
+// Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
+function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
+// Normal Ticket Number (#82 / #87): the owner's usual party size. The authed (X) count
+// shows when a show's qty differs from this; the bystander Group/Solo badge is derived
+// from a public flag at data-entry time (quantity is private). Default 1 = usually solo.
+function normalTicketNumber(){var b=SITE_CONFIG.badges;return b&&b.normal_ticket_number!=null?b.normal_ticket_number:1;}
+// Decision-stage display (#82). Stage KEYS are fixed in code (sort order, dropdown, CSS);
+// only the display copy is configurable, and stage colors live in the theme block. Falls
+// back to the built-in copy so a config without a stages block renders identically.
+function stageHeader(key){
+  var def={buy:{icon:'\uD83D\uDFE9',label:'Buy',tagline:'not purchased but probably going',sep:' \u2014 '},
+           choose:{icon:'\uD83D\uDFE1',label:'Choose',tagline:'shows I am considering',sep:' \u2014 '},
+           pass:{icon:'\u25EF',label:'Pass',tagline:'considered, but not going',sep:' - '}}[key]||{sep:' \u2014 '};
+  var d=(SITE_CONFIG.stages||{})[key]||{};
+  var icon=d.icon!=null?d.icon:def.icon,label=d.label!=null?d.label:def.label,tagline=d.tagline!=null?d.tagline:def.tagline;
+  return esc(icon)+' '+esc(label)+def.sep+esc(tagline);
+}
 // ── Theme (#71) ───────────────────────────
 // HSL helpers for deriving _dim and _bg variants from a base color.
 // A forker only needs to set the 5 base colors; triads are computed automatically.
@@ -263,7 +280,7 @@ function buildBadges(row){
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
   if((row['Notes / Memories']||'').includes('HAT:'))badges.push('<span class="badge badge-hat">🎩 HAT</span>');
   if((row['Notes / Memories']||'').includes('BRING RHBS')||(row['Notes / Memories']||'').includes('BRING APS'))badges.push('<span class="badge badge-book">📚 BOOK</span>');
-  if(!isVip&&!isWT&&fv>=100)badges.push('<span class="badge badge-merch">💸 MERCH</span>');
+  if(!isVip&&!isWT&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
   if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
@@ -460,7 +477,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty>1?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
+    +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty!=normalTicketNumber()?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
@@ -762,7 +779,7 @@ function renderPotentialGroup(rows,groupKey,label){
   if(!rows.length)return'';
   var tbody=authed?rows.map(function(r){return renderPotentialRowAuthed(r,potentialRows.indexOf(r));}).join(''):rows.map(function(r){return renderPotentialRowBystander(r,potentialRows.indexOf(r));}).join('');
   var table='<table class="pot-table"><thead><tr><th></th><th>Date</th><th>Artist</th><th>Venue</th><th class="col-tier">Tier</th><th class="col-price">Face</th><th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th></tr></thead><tbody>'+tbody+'</tbody></table>';
-  if(groupKey==='pass')return'<div class="potential-group"><details class="pass-details"><summary>&#9711; Pass - considered, but not going <span class="group-count">('+rows.length+')</span></summary><div class="group-table-wrap group-table-pass">'+table+'</div></details></div>';
+  if(groupKey==='pass')return'<div class="potential-group"><details class="pass-details"><summary>'+label+' <span class="group-count">('+rows.length+')</span></summary><div class="group-table-wrap group-table-pass">'+table+'</div></details></div>';
   return'<div class="potential-group"><div class="group-header group-header-'+groupKey+'">'+label+' <span class="group-count">('+rows.length+')</span></div><div class="group-table-wrap group-table-'+groupKey+'">'+table+'</div></div>';
 }
 function renderPotential(){
@@ -772,7 +789,7 @@ function renderPotential(){
   var sell=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
   var pass=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='pass';});
   document.getElementById('potBadge').textContent=buy.length+'+'+choose.length;
-  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy','&#129001; Buy &#8212; not purchased but probably going')+renderPotentialGroup(choose,'choose','&#128993; Choose &#8212; shows I am considering')+(featureOn('for_sale')?renderPotentialGroup(sell,'sell','&#127991; For Sale &#8212; buy my tickets'):'')+renderPotentialGroup(pass,'pass','Pass')||'<p class="loading" style="animation:none">No data</p>';
+  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy',stageHeader('buy'))+renderPotentialGroup(choose,'choose',stageHeader('choose'))+(featureOn('for_sale')?renderPotentialGroup(sell,'sell','&#127991; For Sale &#8212; buy my tickets'):'')+renderPotentialGroup(pass,'pass',stageHeader('pass'))||'<p class="loading" style="animation:none">No data</p>';
   if(fastTrackRows.length)renderTourHere();
 }
 
