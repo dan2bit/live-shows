@@ -1,9 +1,7 @@
 # live-shows site config (#69)
 # Per-fork personalization. Any missing key falls back to DEFAULT_CONFIG in app.js.
-# NOTE: title is "live-shows DC" on this branch as a visible smoke test of the config
-#       override (DEFAULT_CONFIG title stays "live-shows"). Set the final value before merge.
 site:
-  title: live-shows
+  title: live-shows           # also in index.html: <title>, og:title, og:site_name, twitter:title
   owner: dan2bit
   repo: live-shows
   private_owner: dan2bit
@@ -18,8 +16,15 @@ site:
   about_handle: "About @dan2bit"
   about_tagline: GenX DC native with a serious live music fixation
   about_text: "I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg phone recordings from what I catch. This page tracks where I've been and where I'm going."
-  about_hero_image: static/hero.jpg
+  about_hero_image: static/hero.jpg   # also in index.html: og:image, twitter:image
+  about_hero_alt: "Galactic at 9:30 Club Jan 2025"   # also in index.html: og:image:alt
   about_footer: Life is short. Buy the tickets.
+
+# Page metadata mirrored into the static <head> of index.html. Social unfurlers and crawlers
+# do NOT run app.js, so these values are documentation — app.js does not apply them at runtime.
+# If you change one, also update the matching tag in index.html (flagged there with <!-- config: -->).
+meta:
+  description: "A live-music tracker for DC/MD/VA — blues, blues-rock, Americana, and roots at small venues. Where I've been, where I'm headed, and bootlegs from the shows."   # also in index.html: <meta name="description">, og:description, twitter:description
 
 # Shown in the About modal. An extensible list — add or remove entries freely;
 # each is rendered as a link. (#82)
@@ -33,6 +38,15 @@ about_links:
   - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
     label: "📷 album: Guitar Gods & Goddesses"
 
+# Tab labels. Keys are the internal tab IDs (data-tab in index.html); only the display text
+# is editable. "tourhere" is the Waiting / Fast-Track tab — hide it entirely with
+# features.fast_track: false below. (#82)
+tabs:
+  shows: Shows
+  history: History
+  potential: Potential
+  tourhere: Waiting
+
 # Feature toggles. Each is ON unless set to false — a fork omitting a key keeps full
 # behavior. Set false to hide that subsystem entirely. (#82)
 features:
@@ -41,6 +55,14 @@ features:
   recommendations: true        # "Suggest a show" CTA + recommendation modal
   calendar_integration: true   # Google Calendar link on upcoming shows
   private_data: true           # fetch the private sidecar repo when authenticated
+  fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
+
+# Display preferences (#82).
+display:
+  # Date format for show dates:
+  #   mon_day  -> "Jun 12"   (default)   day_mon  -> "12 Jun"
+  #   m_d      -> "6/12"                 d_m      -> "12/6"
+  date_format: mon_day
 
 # Decision-stage display (#82). The stage KEYS (buy/choose/pass) are fixed in code —
 # sort order, the decision dropdown, and per-stage CSS all key off them; only the display
