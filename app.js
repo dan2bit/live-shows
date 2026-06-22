@@ -83,6 +83,9 @@ function applyConfig(cfg){
     }
   }
 }
+// Feature flags (#82). A flag is ON unless config explicitly sets it to false, so a
+// fork that omits the features block — or any single key — keeps full behavior.
+function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 // ── Theme (#71) ───────────────────────────
 // HSL helpers for deriving _dim and _bg variants from a base color.
 // A forker only needs to set the 5 base colors; triads are computed automatically.
@@ -169,7 +172,7 @@ async function ghFetch(path,opts,owner,repo){
 function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,''))));
 }
 async function mergePrivateData(){
-  if(!authed)return;
+  if(!authed||!featureOn('private_data'))return;
   try{
     var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={};
     parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[(r['Artist']||'')+'\u241F'+(r['Show Date']||'')]=r;});
@@ -451,7 +454,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
-  var cal='<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>';
+  var cal=featureOn('calendar_integration')?'<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>':'';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
@@ -721,6 +724,7 @@ function renderPotentialRowAuthed(r,gi){
 
 // ── Recommend CTA ────────────────────────────────
 function recommendCtaHtml(label){
+  if(!featureOn('recommendations'))return'';
   label=label||'+ Suggest a show';
   var enabled=authed||(typeof RECOMMEND_DEBUG==='undefined'||!RECOMMEND_DEBUG);
   return enabled
@@ -732,7 +736,7 @@ function recommendCtaHtml(label){
 function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
   var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
-  var sellRows=potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
+  var sellRows=featureOn('for_sale')?potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';}):[];
   var bannerCta=sellRows.length
     ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')"><span style="opacity:.7;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px">For Sale</span>&#127991; '+esc(sellRows[0]['Artist']||'')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
     :recommendCtaHtml();
@@ -768,7 +772,7 @@ function renderPotential(){
   var sell=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';});
   var pass=s.filter(function(r){return(r['Decision']||'').toLowerCase()==='pass';});
   document.getElementById('potBadge').textContent=buy.length+'+'+choose.length;
-  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy','&#129001; Buy &#8212; not purchased but probably going')+renderPotentialGroup(choose,'choose','&#128993; Choose &#8212; shows I am considering')+renderPotentialGroup(sell,'sell','&#127991; For Sale &#8212; buy my tickets')+renderPotentialGroup(pass,'pass','Pass')||'<p class="loading" style="animation:none">No data</p>';
+  document.getElementById('potContent').innerHTML=renderPotentialGroup(buy,'buy','&#129001; Buy &#8212; not purchased but probably going')+renderPotentialGroup(choose,'choose','&#128993; Choose &#8212; shows I am considering')+(featureOn('for_sale')?renderPotentialGroup(sell,'sell','&#127991; For Sale &#8212; buy my tickets'):'')+renderPotentialGroup(pass,'pass','Pass')||'<p class="loading" style="animation:none">No data</p>';
   if(fastTrackRows.length)renderTourHere();
 }
 
