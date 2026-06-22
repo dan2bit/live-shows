@@ -73,6 +73,78 @@ function applyConfig(cfg){
     });
   }
 }
+// ── Theme (#71) ───────────────────────────
+// HSL helpers for deriving _dim and _bg variants from a base color.
+// A forker only needs to set the 5 base colors; triads are computed automatically.
+// Explicit overrides (e.g. color_accent_dim) always win over computed values.
+function _hexToHsl(hex){
+  var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  var max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{var d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}h/=6;}
+  return[h*360,s*100,l*100];
+}
+function _hslToHex(h,s,l){
+  h/=360;s/=100;l/=100;
+  var r,g,b;
+  if(s===0){r=g=b=l;}else{
+    function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+    var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+    r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);
+  }
+  return'#'+[r,g,b].map(function(x){return Math.round(x*255).toString(16).padStart(2,'0');}).join('');
+}
+function _deriveTriad(hex){
+  var hsl=_hexToHsl(hex),h=hsl[0],s=hsl[1],l=hsl[2];
+  var dim=_hslToHex(h,s,Math.max(l*0.48,8));
+  var bg=_hslToHex(h,s*0.85,Math.max(l*0.16,5));
+  return{base:hex,dim:dim,bg:bg};
+}
+function applyTheme(cfg){
+  cfg=cfg||SITE_CONFIG;
+  var t=cfg.theme;if(!t||typeof t!=='object'||!Object.keys(t).length)return;
+  var root=document.documentElement.style;
+  function set(v,k){if(v)root.setProperty(k,v);}
+  // Chrome neutrals — explicit values only, no derivation
+  set(t.color_bg,'--bg');set(t.color_surface,'--surface');set(t.color_surface2,'--surface2');
+  set(t.color_border,'--border');set(t.color_border2,'--border2');
+  set(t.color_text,'--text');set(t.color_text_muted,'--text-muted');set(t.color_text_dim,'--text-dim');
+  // Semantic color triads — derive dim/bg if not explicitly overridden
+  var pairs=[['color_accent','--amber'],['color_buy','--green'],['color_choose','--yellow'],
+             ['color_sell','--sell'],['color_pass','--gray']];
+  pairs.forEach(function(p){
+    var base=t[p[0]];if(!base)return;
+    var triad=_deriveTriad(base);
+    set(base,p[1]);
+    set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
+    set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
+  });
+  // Hat and book badge colors
+  set(t.color_hat,'--hat');set(t.color_hat_dim,'--hat-dim');set(t.color_hat_bg,'--hat-bg');
+  set(t.color_book,'--book');set(t.color_book_dim,'--book-dim');set(t.color_book_bg,'--book-bg');
+  // Status rows
+  set(t.color_today_bg,'--today-bg');set(t.color_soon_bg,'--soon-bg');
+  set(t.color_otd_bg,'--otd-bg');set(t.color_otd_border,'--otd-border');
+  // Fonts — inject a <link> if config specifies a different font stack
+  if(t.font_mono||t.font_sans){
+    set(t.font_mono,'--mono');set(t.font_sans,'--sans');
+    // If either font name differs from the IBM Plex defaults, swap the Google Fonts import
+    var monoName=(t.font_mono||'').replace(/'/g,'').split(',')[0].trim();
+    var sansName=(t.font_sans||'').replace(/'/g,'').split(',')[0].trim();
+    var ibmMono='IBM Plex Mono',ibmSans='IBM Plex Sans';
+    if(monoName&&monoName!==ibmMono||sansName&&sansName!==ibmSans){
+      var families=[];
+      if(monoName&&monoName!==ibmMono)families.push('family='+encodeURIComponent(monoName)+':wght@400;500');
+      if(sansName&&sansName!==ibmSans)families.push('family='+encodeURIComponent(sansName)+':wght@400;500');
+      if(families.length){
+        var link=document.createElement('link');
+        link.rel='stylesheet';
+        link.href='https://fonts.googleapis.com/css2?'+families.join('&')+'&display=swap';
+        document.head.appendChild(link);
+      }
+    }
+  }
+}
 
 async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
@@ -882,6 +954,7 @@ function reloadConfigPreview(){
     SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
     window.SITE_CONFIG=SITE_CONFIG;
     applyConfig(SITE_CONFIG);
+    applyTheme(SITE_CONFIG);
     _gearVisible();
     st.textContent='preview applied to this session (not committed)';
   }catch(e){st.textContent='YAML error: '+e.message;}
@@ -918,6 +991,7 @@ document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('acti
 (async function boot(){
   await loadConfig();
   applyConfig(SITE_CONFIG);
+  applyTheme(SITE_CONFIG);
   _gearVisible();
   var mr=HISTORY_YEARS[HISTORY_YEARS.length-1];
   if(!authed)await loadHistoryYear(mr);
