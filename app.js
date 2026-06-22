@@ -1,7 +1,7 @@
 
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
-const OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private',CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
+let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
 const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
@@ -522,7 +522,7 @@ function renderHistoryYear(yr){
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
-function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
