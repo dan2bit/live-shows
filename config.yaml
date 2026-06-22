@@ -29,3 +29,45 @@ about_links:
 
 features:
   web_edit: true            # show the in-page config editor (gear) for authed users
+
+theme:
+  # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
+  # Current value #c83020 is intentionally preserved (see issue #71 / PR #81 discussion).
+  # Minimum AA-compliant value for this background: approx #ec4535.
+  color_accent: "#c83020"
+
+  # Decision group colors — _dim and _bg variants are computed automatically from the
+  # base color using HSL darkening; override them explicitly if you want fine control.
+  color_buy: "#4a9a5a"
+  color_choose: "#c8a830"
+  color_sell: "#40a0a0"
+  color_pass: "#878380"
+
+  # Page chrome — neutral scaffold, independent of accent system
+  color_bg: "#0f0f0f"
+  color_surface: "#1a1a1a"
+  color_surface2: "#222222"
+  color_border: "#2e2e2e"
+  color_border2: "#3a3a3a"
+  color_text: "#e8e4dc"
+  color_text_muted: "#9a928a"
+  color_text_dim: "#8e8a7a"
+
+  # Badge colors (hat autograph, reading book) — override to retheme these badges
+  color_hat: "#d08040"
+  color_hat_dim: "#3a2010"
+  color_hat_bg: "#1a0e08"
+  color_book: "#a080c0"
+  color_book_dim: "#3a2a50"
+  color_book_bg: "#1a1420"
+
+  # Status row tints
+  color_today_bg: "#1e0e0e"
+  color_soon_bg: "#1a1408"
+  color_otd_bg: "#0e1a10"
+  color_otd_border: "#1a4a28"
+
+  # Fonts — loaded from Google Fonts. Change both names to swap the entire typeface.
+  # To use system fonts, set fallback stacks directly: e.g. "monospace" or "sans-serif".
+  font_mono: "'IBM Plex Mono', monospace"
+  font_sans: "'IBM Plex Sans', sans-serif"
