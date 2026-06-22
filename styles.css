@@ -249,6 +249,8 @@
 
   .notes-edit-wrap{display:flex;flex-direction:column;gap:4px;}
   .notes-textarea{font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:6px 8px;resize:vertical;min-height:60px;width:100%;outline:none;}
+  .config-textarea{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:8px 10px;width:100%;box-sizing:border-box;min-height:340px;resize:vertical;white-space:pre;overflow:auto;tab-size:2;outline:none;}
+  .config-textarea:focus{border-color:var(--amber);}
   .notes-edit-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
   .notes-save-btn{font-family:var(--mono);font-size:10px;background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--text-muted);border-radius:2px;padding:2px 8px;cursor:pointer;}
   .notes-cancel-btn{font-family:var(--mono);font-size:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-dim);border-radius:2px;padding:2px 8px;cursor:pointer;}
