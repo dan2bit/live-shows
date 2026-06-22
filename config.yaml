@@ -42,6 +42,34 @@ features:
   calendar_integration: true   # Google Calendar link on upcoming shows
   private_data: true           # fetch the private sidecar repo when authenticated
 
+# Decision-stage display (#82). The stage KEYS (buy/choose/pass) are fixed in code —
+# sort order, the decision dropdown, and per-stage CSS all key off them; only the display
+# strings are editable here. Stage COLORS live in the theme block (color_buy/choose/pass).
+stages:
+  buy:
+    icon: "🟩"
+    label: Buy
+    tagline: not purchased but probably going
+  choose:
+    icon: "🟡"
+    label: Choose
+    tagline: shows I am considering
+  pass:
+    icon: "◯"
+    label: Pass
+    tagline: considered, but not going
+
+# Scalar thresholds (#82).
+merch:
+  event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
+
+# Normal Ticket Number (#82 / #87): your usual party size. A show whose ticket quantity
+# differs shows the (X) count to you and a Group/Solo badge to bystanders. The bystander
+# badge is derived when the public flag is set (quantity is private) — see #87. Default
+# 1 = usually solo.
+badges:
+  normal_ticket_number: 1
+
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
   # Current value #c83020 is intentionally preserved (see issue #71 / PR #81 discussion).
