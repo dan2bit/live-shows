@@ -572,7 +572,7 @@ function renderHistoryYear(yr){
     +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
-function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+function hatLoadingHtml(){return'<div class="hat-loading"><img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
