@@ -33,8 +33,14 @@ about_links:
   - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
     label: "📷 album: Guitar Gods & Goddesses"
 
+# Feature toggles. Each is ON unless set to false — a fork omitting a key keeps full
+# behavior. Set false to hide that subsystem entirely. (#82)
 features:
-  web_edit: true            # show the in-page config editor (gear) for authed users
+  web_edit: true               # in-page config editor (gear) for authed users
+  for_sale: true               # For Sale subsystem: sell group, listing banner, revoke
+  recommendations: true        # "Suggest a show" CTA + recommendation modal
+  calendar_integration: true   # Google Calendar link on upcoming shows
+  private_data: true           # fetch the private sidecar repo when authenticated
 
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
