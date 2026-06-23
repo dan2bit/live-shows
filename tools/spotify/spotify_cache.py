@@ -6,8 +6,8 @@ Pulls Spotify catalog **metadata** for the full set of artists that appear
 anywhere in the live-shows repo and writes a single deterministic JSON cache,
 keyed by canonical artist name. Consumers:
 
-  - artist research          -> popularity, followers, genres for a new artist
-  - follow-tier decisions    -> popularity / followers / genre fit
+  - artist research          -> popularity, followers, genres, latest release
+  - follow-tier decisions    -> popularity / followers / genre fit / recency
   - sampler MCP workflow      -> spotify_id / spotify_url as a resolution anchor
   - (optional) the site       -> clickable artist name -> Spotify page
 
@@ -15,8 +15,8 @@ AUTH
     Spotify Client Credentials (app-only) — the same SPOTIFY_CLIENT_ID /
     SPOTIFY_CLIENT_SECRET already used by tools/youtube/youtube_fill_handles.py.
     No user OAuth, no quota limit. Only endpoints still reachable app-only on a
-    Development-mode app are used: GET /artists/{id} (metadata) and GET /search
-    (id resolution).
+    Development-mode app are used: GET /artists/{id} (metadata), GET /search
+    (id resolution), and GET /artists/{id}/albums (latest release).
 
 METADATA-ONLY (no top tracks)  — updated 2026-06-22
     This cache deliberately does NOT store per-artist top tracks. Spotify's
@@ -33,9 +33,39 @@ METADATA-ONLY (no top tracks)  — updated 2026-06-22
     absent. If the app is ever promoted out of Dev mode (Extended Quota), revisit
     restoring a top_tracks field here.
 
+LATEST RELEASE  — added 2026-06-23
+    Each entry carries a `latest_release` object — the artist's most recent
+    album/single — from GET /artists/{id}/albums (a plain catalog read, reachable
+    app-only; not in the migrated-restricted set). include_groups is album,single
+    only (the releases most likely to be played at an upcoming show); compilation
+    and appears_on are excluded so a best-of or a guest feature can't make a
+    dormant artist look active. Shape:
+        "latest_release": {
+          "date": "2026-06-19", "precision": "day",   # day|month|year
+          "name": "...", "type": "single",            # album|single
+          "spotify_id": "...", "url": "..."
+        }
+    plus "latest_release_checked": "YYYY-MM-DD". `precision` is stored because
+    Spotify's release_date can be year- or month-only (back catalogue); any
+    "days since" math downstream must tolerate that. `name`/`type` make a
+    re-release / anniversary edition (a fresh date on old material) auditable by
+    eye. `latest_release` is null when the artist has no qualifying album/single.
+    NOTE: one /albums call with limit=50; a hyper-prolific artist's newest could
+    in theory fall outside the first 50, but 50 covers the roots/blues roster.
+
+    The "most recent" pick pads partial dates to the *start* of their period for
+    comparison only (a year-only 2026 sorts as 2026-01-01, so a dated 2026-06-19
+    in the same year correctly outranks it); the original release_date + precision
+    are what get stored.
+
+    Display/badging on this date (a "NEW" badge in the show lists) and recency
+    weighting in follow-tier / potentials decisions are deliberately OUT of scope
+    here — this only captures and caches the data. See #85 / follow-on tickets.
+
 USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
-    python3 spotify_cache.py --refresh       # full re-pull (metadata) for ALL
+    python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
+    python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
@@ -93,6 +123,7 @@ load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API       = "https://api.spotify.com/v1"
+MARKET            = "US"      # /artists/{id}/albums market filter (release availability)
 DELAY             = 0.3       # polite spacing between calls
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
@@ -276,15 +307,49 @@ def resolve_artist_id(name: str, url_hint: str | None, creds) -> tuple[str | Non
     return None, ""
 
 
+def _release_sort_key(rd: str) -> str:
+    # Pad a partial release_date to YYYY-MM-DD for comparison ONLY, anchored at the
+    # START of the period (year-only 2026 -> 2026-01-01), so a more precise date in
+    # the same period outranks it. The original release_date is what gets stored.
+    parts = (rd or "").split("-")
+    y = parts[0] if parts and parts[0] else "0000"
+    m = parts[1] if len(parts) > 1 and parts[1] else "01"
+    d = parts[2] if len(parts) > 2 and parts[2] else "01"
+    return f"{y.zfill(4)}-{m.zfill(2)}-{d.zfill(2)}"
+
+
+def latest_release(aid: str, creds) -> dict | None:
+    """Most recent album/single for an artist, or None if they have none.
+
+    Uses GET /artists/{id}/albums (app-only reachable). include_groups is
+    album,single only — compilations and guest features are excluded so they
+    can't masquerade as new activity. One call, limit=50.
+    """
+    data = api_get(f"/artists/{aid}/albums",
+                   {"include_groups": "album,single", "market": MARKET, "limit": 50},
+                   creds)
+    items = (data or {}).get("items", [])
+    if not items:
+        return None
+    best = max(items, key=lambda it: _release_sort_key(it.get("release_date", "")))
+    return {
+        "date": best.get("release_date", ""),
+        "precision": best.get("release_date_precision", ""),
+        "name": best.get("name", ""),
+        "type": best.get("album_type", best.get("type", "")),
+        "spotify_id": best.get("id", ""),
+        "url": (best.get("external_urls") or {}).get("spotify", ""),
+    }
+
+
 def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | None:
-    # Metadata only. Top tracks are intentionally not fetched: GET
-    # /artists/{id}/top-tracks 403s for app-only auth on a Dev-mode app after the
-    # Feb/Mar-2026 migration, and no user-OAuth path exposes an arbitrary artist's
-    # top tracks either (see the METADATA-ONLY note in the module docstring).
-    # Sampler track selection happens at assembly time via the MCP's searchSpotify.
+    # Metadata only (no top tracks — see the METADATA-ONLY docstring note), plus
+    # the artist's latest album/single (see LATEST RELEASE).
     meta = api_get(f"/artists/{aid}", {}, creds)
     if not meta:
         return None
+    rel = latest_release(aid, creds)
+    time.sleep(DELAY)
     return {
         "spotify_id": aid,
         "spotify_url": url or meta.get("external_urls", {}).get("spotify", ""),
@@ -293,6 +358,8 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | No
         "genres": meta.get("genres", []),
         "sources": sorted(sources),
         "last_refreshed": date.today().isoformat(),
+        "latest_release": rel,
+        "latest_release_checked": date.today().isoformat(),
     }
 
 
@@ -311,14 +378,72 @@ def save_cache(cache: dict) -> None:
         f.write("\n")
 
 
+# ── Latest-release-only refresh ───────────────────────────────────────────────
+
+def refresh_releases(cache: dict, creds, args) -> None:
+    """Re-pull ONLY latest_release for already-cached artists; leave the rest
+    (popularity/followers/genres) untouched. Honors --artist and --dry-run."""
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to refresh releases for "
+              "(run a normal build first, or check --artist).")
+        return
+    print(f"Refreshing latest_release for {len(names)} cached artist(s)"
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    updated = 0
+    for i, name in enumerate(names, 1):
+        entry = cache[name]
+        aid = entry.get("spotify_id")
+        if not aid:
+            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
+            continue
+        rel = latest_release(aid, creds)
+        time.sleep(DELAY)
+        old = (entry.get("latest_release") or {}).get("date")
+        new = (rel or {}).get("date")
+
+        if args.dry_run:
+            change = "unchanged" if old == new else f"{old or '∅'} → {new or '∅'}"
+            print(f"[{i}/{len(names)}] {name}  → {change}")
+            continue
+
+        entry["latest_release"] = rel
+        entry["latest_release_checked"] = date.today().isoformat()
+        if old != new:
+            updated += 1
+            print(f"[{i}/{len(names)}] {name}  → {new or '∅'}"
+                  + (f"  (was {old})" if old else ""))
+        else:
+            print(f"[{i}/{len(names)}] {name}  → {new or '∅'} (unchanged)")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Updated {updated} release date(s) across {len(names)} artist(s). "
+          f"Written: {OUTPUT_JSON}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--refresh", action="store_true",
-                    help="Re-pull metadata for ALL repo artists "
+                    help="Re-pull metadata + latest release for ALL repo artists "
                          "(default only adds artists missing from the cache).")
+    ap.add_argument("--refresh-releases", action="store_true",
+                    help="Re-pull ONLY each cached artist's latest release "
+                         "(album/single); leaves popularity/followers/genres "
+                         "untouched. Honors --artist and --dry-run.")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
     ap.add_argument("--artist", metavar="NAME",
@@ -334,6 +459,13 @@ def main() -> None:
         sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
                  "(tools/spotify/.env or environment).")
     creds = (client_id, client_secret)
+
+    # Releases-only path operates on the existing cache, not the collected repo set.
+    if args.refresh_releases:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_releases(cache, creds, args)
+        return
 
     amap = load_aliases()
     artists, url_hints = collect_artists(amap)
@@ -377,8 +509,11 @@ def main() -> None:
             continue
 
         cache[name] = entry
+        rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → pop {entry['popularity']}, "
-              f"followers {entry['followers']}, genres: {', '.join(entry['genres'][:3]) or '—'}")
+              f"followers {entry['followers']}, "
+              f"latest {rel.get('date') or '—'}, "
+              f"genres: {', '.join(entry['genres'][:3]) or '—'}")
         resolved += 1
         if resolved % SAVE_EVERY == 0:
             save_cache(cache)
