@@ -2,33 +2,47 @@
 """
 spotify_cache.py — Build data/artist_spotify.json from every artist in the repo.
 
-Pulls Spotify catalog metadata + top tracks for the full set of artists that
-appear anywhere in the live-shows repo and writes a single deterministic JSON
-cache, keyed by canonical artist name. Consumers:
+Pulls Spotify catalog **metadata** for the full set of artists that appear
+anywhere in the live-shows repo and writes a single deterministic JSON cache,
+keyed by canonical artist name. Consumers:
 
-  - sampler MCP workflow     -> top_tracks[].uri for playlist assembly (#73)
-  - artist research          -> signature songs, popularity, genres for a new artist
+  - artist research          -> popularity, followers, genres for a new artist
   - follow-tier decisions    -> popularity / followers / genre fit
-  - (optional) the site       -> clickable artist name -> top tracks
+  - sampler MCP workflow      -> spotify_id / spotify_url as a resolution anchor
+  - (optional) the site       -> clickable artist name -> Spotify page
 
 AUTH
     Spotify Client Credentials (app-only) — the same SPOTIFY_CLIENT_ID /
     SPOTIFY_CLIENT_SECRET already used by tools/youtube/youtube_fill_handles.py.
-    No user OAuth, no quota limit. ONLY non-deprecated endpoints are used:
-    GET /artists/{id} and GET /artists/{id}/top-tracks both survived the
-    2024-11-27 Web API cull. Related-artists and recommendations did NOT and are
-    intentionally absent (they 403 on a Development-mode app).
+    No user OAuth, no quota limit. Only endpoints still reachable app-only on a
+    Development-mode app are used: GET /artists/{id} (metadata) and GET /search
+    (id resolution).
+
+METADATA-ONLY (no top tracks)  — updated 2026-06-22
+    This cache deliberately does NOT store per-artist top tracks. Spotify's
+    Feb/Mar-2026 API migration (effective 2026-02-11; all Dev-mode apps by
+    2026-03-09) restricted GET /artists/{id}/top-tracks for app-only auth — it
+    now returns 403 Forbidden under Client Credentials on a Dev-mode app. The
+    user-OAuth path (the marcelmarais MCP server) is no substitute: it exposes
+    only the *user's own* top tracks (/me/top/tracks), not an arbitrary artist's,
+    and there is no public artist-top-tracks endpoint reachable from it. So track
+    selection for samplers happens at assembly time via the MCP's searchSpotify
+    (results come back in relevance order — Spotify search has no sort param —
+    so picks must be eyeballed, not trusted as a true top-10). Related-artists
+    and recommendations were removed in the 2024-11-27 cull and are likewise
+    absent. If the app is ever promoted out of Dev mode (Extended Quota), revisit
+    restoring a top_tracks field here.
 
 USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
-    python3 spotify_cache.py --refresh       # full re-pull (meta + tracks) for ALL
+    python3 spotify_cache.py --refresh       # full re-pull (metadata) for ALL
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
 
-OUTPUT  data/artist_spotify.json — deterministic (sorted keys, tracks by rank), so a
-        periodic full refresh produces small, localized diffs. Committed to the repo
-        on purpose: a fresh agentic session and the site both read it from there.
+OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
+        full refresh produces small, localized diffs. Committed to the repo on
+        purpose: a fresh agentic session and the site both read it from there.
 
 ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitignored)
         or inherited from the environment.
@@ -79,8 +93,6 @@ load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API       = "https://api.spotify.com/v1"
-MARKET            = "US"      # top-tracks popularity is global; market picks the catalog/availability
-TOP_N             = 10
 DELAY             = 0.3       # polite spacing between calls
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
@@ -265,19 +277,14 @@ def resolve_artist_id(name: str, url_hint: str | None, creds) -> tuple[str | Non
 
 
 def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | None:
+    # Metadata only. Top tracks are intentionally not fetched: GET
+    # /artists/{id}/top-tracks 403s for app-only auth on a Dev-mode app after the
+    # Feb/Mar-2026 migration, and no user-OAuth path exposes an arbitrary artist's
+    # top tracks either (see the METADATA-ONLY note in the module docstring).
+    # Sampler track selection happens at assembly time via the MCP's searchSpotify.
     meta = api_get(f"/artists/{aid}", {}, creds)
     if not meta:
         return None
-    top = api_get(f"/artists/{aid}/top-tracks", {"market": MARKET}, creds) or {}
-    tracks = []
-    for rank, t in enumerate(top.get("tracks", [])[:TOP_N], 1):
-        tracks.append({
-            "rank": rank,
-            "name": t.get("name", ""),
-            "uri": t.get("uri", ""),
-            "popularity": t.get("popularity"),
-            "album": (t.get("album") or {}).get("name", ""),
-        })
     return {
         "spotify_id": aid,
         "spotify_url": url or meta.get("external_urls", {}).get("spotify", ""),
@@ -286,7 +293,6 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | No
         "genres": meta.get("genres", []),
         "sources": sorted(sources),
         "last_refreshed": date.today().isoformat(),
-        "top_tracks": tracks,
     }
 
 
@@ -311,7 +317,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--refresh", action="store_true",
-                    help="Re-pull metadata + top tracks for ALL repo artists "
+                    help="Re-pull metadata for ALL repo artists "
                          "(default only adds artists missing from the cache).")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
@@ -371,9 +377,8 @@ def main() -> None:
             continue
 
         cache[name] = entry
-        n_tracks = len(entry["top_tracks"])
         print(f"[{i}/{len(names)}] {name}  → pop {entry['popularity']}, "
-              f"{n_tracks} tracks, genres: {', '.join(entry['genres'][:3]) or '—'}")
+              f"followers {entry['followers']}, genres: {', '.join(entry['genres'][:3]) or '—'}")
         resolved += 1
         if resolved % SAVE_EVERY == 0:
             save_cache(cache)
