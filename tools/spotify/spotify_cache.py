@@ -50,8 +50,12 @@ LATEST RELEASE  — added 2026-06-23
     "days since" math downstream must tolerate that. `name`/`type` make a
     re-release / anniversary edition (a fresh date on old material) auditable by
     eye. `latest_release` is null when the artist has no qualifying album/single.
-    NOTE: one /albums call with limit=50; a hyper-prolific artist's newest could
-    in theory fall outside the first 50, but 50 covers the roots/blues roster.
+    NOTE: one /albums call with limit=10 — the endpoint's MAX (it 400s "Invalid
+    limit" above 10, unlike most Spotify list endpoints which allow 50). Results
+    come back newest-first, so the most recent is effectively always in-window;
+    a hyper-prolific artist's newest could in theory fall past item 10, which a
+    later --refresh-releases would self-correct. (Sample across the cache once it
+    exists to confirm 10 never misses; bump to pagination only if it does.)
 
     The "most recent" pick pads partial dates to the *start* of their period for
     comparison only (a year-only 2026 sorts as 2026-01-01, so a dated 2026-06-19
@@ -124,6 +128,7 @@ load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API       = "https://api.spotify.com/v1"
 MARKET            = "US"      # /artists/{id}/albums market filter (release availability)
+ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "Invalid limit")
 DELAY             = 0.3       # polite spacing between calls
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
@@ -323,10 +328,12 @@ def latest_release(aid: str, creds) -> dict | None:
 
     Uses GET /artists/{id}/albums (app-only reachable). include_groups is
     album,single only — compilations and guest features are excluded so they
-    can't masquerade as new activity. One call, limit=50.
+    can't masquerade as new activity. One call, limit=ALBUMS_LIMIT (10 — the
+    endpoint's max; >10 returns 400 "Invalid limit"). Results are newest-first,
+    so the most recent is effectively always within the window.
     """
     data = api_get(f"/artists/{aid}/albums",
-                   {"include_groups": "album,single", "market": MARKET, "limit": 50},
+                   {"include_groups": "album,single", "market": MARKET, "limit": ALBUMS_LIMIT},
                    creds)
     items = (data or {}).get("items", [])
     if not items:
