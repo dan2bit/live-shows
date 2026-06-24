@@ -4,7 +4,10 @@ Repo: dan2bit/live-shows (public). GitHub Pages: https://dan2bit.github.io/live-
 Working dir root /. Key source files: index.html, app.js, recommend.js, styles.css.
 
 Start every session by:
-1. enumerate your available tools and specifically check for two things: github issue_write (create/update issue) and tool_search. If not available, alert Dan
+1. **Tool preflight (blocking — do this first).** Enumerate the tools actually available this session and report which of these are present: `github:issue_write` (create/update issue) and `tool_search`.
+   - If `github:issue_write` is ABSENT: STOP and alert Dan — issue triage can't happen; ask whether to proceed (commits only) or restart.
+   - If `tool_search` is ABSENT: note that this is an eager-tool session, so any deferred tools (Spotify, time, etc.) are unreachable. For most Site+Repo work the GitHub tools are enough, so this is usually fine to proceed — but say so explicitly rather than discovering it later.
+   (Whether a session gets `tool_search` is decided at session provisioning, before this prompt is read; nothing here can summon it. A fresh chat or a Sonnet session is the lever if a deferred tool is needed and missing.)
 2. Checking for open PRs awaiting merge — list them with title and status.
 3. Checking for any files presented for manual check-in but not yet committed.
 4. Reviewing the open issue list for anything that became actionable since the last session.
