@@ -13,11 +13,12 @@
 #
 # Examples of what does NOT need an entry (handled automatically):
 #   "The Lone Bellow"  <-> "Lone Bellow, The"        (de-invert)
-#   "Ana Popovic"      <-> "Ana Popović"             (de-accent)
+#   "Ana Popovic"      <-> "Ana Popović"             (de-accent)
 #   "Keb Mo"           <-> "Keb' Mo'"                 (strip apostrophes)
 #   "Ally Venable"     <-> "Ally Venable Band"        (drop trailing Band)
 #
 Alias	Canonical
 Billy F Gibbons	Billy Gibbons
 Trombone Shorty	Trombone Shorty & Orleans Avenue
+Trombone Shorty and Orleans Avenue	Trombone Shorty & Orleans Avenue
 Kingfish	Christone 'Kingfish' Ingram
