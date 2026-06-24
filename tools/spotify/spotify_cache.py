@@ -17,8 +17,9 @@ AUTH
     Spotify Client Credentials (app-only) — the same SPOTIFY_CLIENT_ID /
     SPOTIFY_CLIENT_SECRET already used by tools/youtube/youtube_fill_handles.py.
     No user OAuth, no quota limit. Only endpoints still reachable app-only on a
-    Development-mode app are used: GET /artists/{id} (existence check + URL),
-    GET /search (id resolution), and GET /artists/{id}/albums (latest release).
+    Development-mode app are used: GET /search (id resolution, only when there's
+    no stored or cached id) and GET /artists/{id}/albums (latest release). The
+    plain GET /artists/{id} call was dropped — see RATE LIMITS.
 
 METADATA-ONLY (no top tracks)  — updated 2026-06-22
     This cache deliberately does NOT store per-artist top tracks. Spotify's
@@ -45,6 +46,17 @@ STRIPPED METADATA (no popularity / followers / genres)  — added 2026-06-23
     stores them; the cache is now a resolution map (id/url) + latest_release.
     The lost popularity/genre signal is backfilled from a separate source
     (Last.fm) as its own refreshable layer, in a follow-on change — not here.
+
+RATE LIMITS  — added 2026-06-23
+    Spotify's Feb/Mar-2026 Dev-mode limits are tight: a 429 can carry a multi-HOUR
+    Retry-After (observed ~22h). So api_get caps its sleep at MAX_BACKOFF and
+    raises RateLimited on anything longer — and on exhausted retries — so the run
+    BAILS, keeping its periodic checkpoints, instead of sleeping for hours or
+    churning every remaining artist into a false 'unresolved'. To keep request
+    volume down per build: build_entry makes ONE call (latest_release); a stored
+    or cached id skips the /search; and non-artist rows (festival/event names in
+    the Artist column of Pass potentials) are dropped before resolution via
+    _is_non_artist (explicit set + "festival" substring) so they never cost a call.
 
 LATEST RELEASE  — added 2026-06-23
     Each entry carries a `latest_release` object — the artist's most recent
@@ -145,8 +157,21 @@ ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "
 DELAY             = 0.3       # polite spacing between calls
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
+MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
+DEFAULT_RETRY_AFTER = 5       # assumed wait when a 429 carries no Retry-After header
 
 _ARTIST_ID_RE = re.compile(r"artist[:/]([A-Za-z0-9]+)")
+
+
+class RateLimited(Exception):
+    """Spotify 429 with a Retry-After above MAX_BACKOFF — Dev-mode lockouts can be
+    many hours. Raised so the run bails (preserving checkpoints) instead of
+    sleeping for hours or churning every remaining artist into a false
+    'unresolved'."""
+
+    def __init__(self, retry_after: int):
+        self.retry_after = retry_after
+        super().__init__(f"rate-limited; Retry-After {retry_after}s")
 
 
 # ── Source files: (path, [artist-bearing columns], [url columns]) ─────────────
@@ -204,6 +229,18 @@ def similarity(a: str, b: str) -> float:
     return jaccard
 
 
+# Non-artist rows that pollute the collected set — festival/event names sitting
+# in the Artist column of Pass potentials. Skipped before Spotify resolution so
+# they don't waste a resolve call. The "festival" substring catches future rows;
+# add oddly-named events (no "festival" in the name) to _SKIP_ARTISTS by hand.
+_SKIP_ARTISTS = {"all things go music festival", "hot august music festival"}
+
+
+def _is_non_artist(name: str) -> bool:
+    n = _norm(name)
+    return n in _SKIP_ARTISTS or "festival" in n
+
+
 # ── TSV reading (comment-tolerant) ────────────────────────────────────────────
 
 def read_tsv_rows(path: str) -> list[dict]:
@@ -241,7 +278,7 @@ def collect_artists(amap: dict[str, str]) -> tuple[dict[str, set], dict[str, str
 
     def add(raw: str, tag: str, url: str | None = None):
         raw = (raw or "").strip()
-        if not raw:
+        if not raw or _is_non_artist(raw):
             return
         canon = canonical(raw, amap)
         artists.setdefault(canon, set()).add(tag)
@@ -279,8 +316,27 @@ def _get_token(client_id: str, client_secret: str, force: bool = False) -> str:
     return _token_cache["token"]
 
 
+def _retry_after_seconds(resp) -> int:
+    """Retry-After in seconds. Per spec it's delta-seconds or an HTTP-date; on a
+    date or an unparseable value, assume a long wait so the caller bails rather
+    than guesses. Missing header => DEFAULT_RETRY_AFTER."""
+    raw = resp.headers.get("Retry-After")
+    if raw is None:
+        return DEFAULT_RETRY_AFTER
+    try:
+        return int(raw)
+    except ValueError:
+        return MAX_BACKOFF + 1
+
+
 def api_get(path: str, params: dict, creds: tuple[str, str]) -> dict | None:
-    """GET {SPOTIFY_API}{path} with one 401 refresh-retry and basic 429 backoff."""
+    """GET {SPOTIFY_API}{path} with one 401 refresh-retry and CAPPED 429 backoff.
+
+    Raises RateLimited when Spotify asks for a wait above MAX_BACKOFF (Dev-mode
+    lockouts run to hours) — the caller checkpoints and exits instead of sleeping
+    for hours. Also raises once retries are exhausted while still throttled, so a
+    sustained 429 doesn't churn every remaining artist into a false 'unresolved'.
+    """
     url = f"{SPOTIFY_API}{path}"
     for attempt in range(4):
         token = _get_token(*creds)
@@ -290,15 +346,17 @@ def api_get(path: str, params: dict, creds: tuple[str, str]) -> dict | None:
             _get_token(*creds, force=True)
             continue
         if resp.status_code == 429:
-            wait = int(resp.headers.get("Retry-After", "2")) + 1
-            print(f"    rate-limited; sleeping {wait}s")
-            time.sleep(wait)
+            wait = _retry_after_seconds(resp)
+            if wait > MAX_BACKOFF:
+                raise RateLimited(wait)
+            print(f"    rate-limited; sleeping {wait + 1}s")
+            time.sleep(wait + 1)
             continue
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
         return resp.json()
-    return None
+    raise RateLimited(MAX_BACKOFF)
 
 
 def extract_artist_id(url: str) -> str | None:
@@ -308,11 +366,15 @@ def extract_artist_id(url: str) -> str | None:
     return m.group(1) if m else None
 
 
-def resolve_artist_id(name: str, url_hint: str | None, creds) -> tuple[str | None, str]:
-    """Prefer the id parsed from a stored Spotify URL; else search by name."""
+def resolve_artist_id(name: str, url_hint: str | None, creds,
+                      cached_id: str | None = None, cached_url: str = "") -> tuple[str | None, str]:
+    """Prefer the id parsed from a stored Spotify URL (free, picks up corrections);
+    then a cached id (avoids re-searching on --refresh); else search by name."""
     aid = extract_artist_id(url_hint or "")
     if aid:
         return aid, url_hint
+    if cached_id:
+        return cached_id, cached_url or url_hint or ""
     data = api_get("/search", {"q": name, "type": "artist", "limit": 5}, creds)
     items = (data or {}).get("artists", {}).get("items", [])
     best, best_score = None, 0.0
@@ -362,18 +424,15 @@ def latest_release(aid: str, creds) -> dict | None:
     }
 
 
-def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | None:
+def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
     # Resolution anchor (id/url) + the artist's latest album/single (see LATEST
-    # RELEASE). popularity/followers/genres are no longer stored — see STRIPPED
-    # METADATA. The /artists/{id} GET stays as an existence check + URL fallback.
-    meta = api_get(f"/artists/{aid}", {}, creds)
-    if not meta:
-        return None
+    # RELEASE). One Spotify call only: the /artists/{id} GET was dropped — after
+    # the metadata strip it returned nothing the cache keeps, so spotify_url comes
+    # from the resolver or is derived from the id.
     rel = latest_release(aid, creds)
-    time.sleep(DELAY)
     return {
         "spotify_id": aid,
-        "spotify_url": url or meta.get("external_urls", {}).get("spotify", ""),
+        "spotify_url": url or f"https://open.spotify.com/artist/{aid}",
         "sources": sorted(sources),
         "last_refreshed": date.today().isoformat(),
         "latest_release": rel,
@@ -506,7 +565,9 @@ def main() -> None:
     resolved = 0
     unresolved: list[str] = []
     for i, name in enumerate(names, 1):
-        aid, url = resolve_artist_id(name, url_hints.get(name), creds)
+        cached = cache.get(name) or {}
+        aid, url = resolve_artist_id(name, url_hints.get(name), creds,
+                                     cached.get("spotify_id"), cached.get("spotify_url", ""))
         time.sleep(DELAY)
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → unresolved")
@@ -521,11 +582,6 @@ def main() -> None:
 
         entry = build_entry(name, artists[name], aid, url, creds)
         time.sleep(DELAY)
-        if not entry:
-            print(f"[{i}/{len(names)}] {name}  → metadata fetch failed")
-            unresolved.append(name)
-            continue
-
         cache[name] = entry
         rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
@@ -557,4 +613,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except RateLimited as e:
+        hrs = e.retry_after / 3600
+        sys.exit(f"\n⚠ Spotify rate-limited (Retry-After ~{e.retry_after}s ≈ {hrs:.1f}h). "
+                 f"Progress through the last checkpoint is saved; re-run to resume "
+                 f"once the lockout clears.")
