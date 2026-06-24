@@ -2,21 +2,23 @@
 """
 spotify_cache.py — Build data/artist_spotify.json from every artist in the repo.
 
-Pulls Spotify catalog **metadata** for the full set of artists that appear
-anywhere in the live-shows repo and writes a single deterministic JSON cache,
-keyed by canonical artist name. Consumers:
+Pulls a Spotify resolution anchor (artist id + URL) and the most recent release
+for the full set of artists that appear anywhere in the live-shows repo, and
+writes a single deterministic JSON cache, keyed by canonical artist name.
+Consumers:
 
-  - artist research          -> popularity, followers, genres, latest release
-  - follow-tier decisions    -> popularity / followers / genre fit / recency
   - sampler MCP workflow      -> spotify_id / spotify_url as a resolution anchor
+  - artist research / follow  -> latest-release recency (popularity/followers/
+                                 genres are no longer available app-only — see
+                                 STRIPPED METADATA below)
   - (optional) the site       -> clickable artist name -> Spotify page
 
 AUTH
     Spotify Client Credentials (app-only) — the same SPOTIFY_CLIENT_ID /
     SPOTIFY_CLIENT_SECRET already used by tools/youtube/youtube_fill_handles.py.
     No user OAuth, no quota limit. Only endpoints still reachable app-only on a
-    Development-mode app are used: GET /artists/{id} (metadata), GET /search
-    (id resolution), and GET /artists/{id}/albums (latest release).
+    Development-mode app are used: GET /artists/{id} (existence check + URL),
+    GET /search (id resolution), and GET /artists/{id}/albums (latest release).
 
 METADATA-ONLY (no top tracks)  — updated 2026-06-22
     This cache deliberately does NOT store per-artist top tracks. Spotify's
@@ -32,6 +34,17 @@ METADATA-ONLY (no top tracks)  — updated 2026-06-22
     and recommendations were removed in the 2024-11-27 cull and are likewise
     absent. If the app is ever promoted out of Dev mode (Extended Quota), revisit
     restoring a top_tracks field here.
+
+STRIPPED METADATA (no popularity / followers / genres)  — added 2026-06-23
+    These three fields were the cache's original analytical payload. Spotify's
+    Feb/Mar-2026 Dev-mode migration removed them from the /artists/{id} response
+    under app-only (Client Credentials) auth. It's a field-level removal tied to
+    Development mode, not to the auth flow, so the user-OAuth path (the
+    marcelmarais MCP token) does NOT recover them either — only Extended Quota
+    Mode would, which is out of reach for a personal app. So build_entry no longer
+    stores them; the cache is now a resolution map (id/url) + latest_release.
+    The lost popularity/genre signal is backfilled from a separate source
+    (Last.fm) as its own refreshable layer, in a follow-on change — not here.
 
 LATEST RELEASE  — added 2026-06-23
     Each entry carries a `latest_release` object — the artist's most recent
@@ -350,8 +363,9 @@ def latest_release(aid: str, creds) -> dict | None:
 
 
 def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | None:
-    # Metadata only (no top tracks — see the METADATA-ONLY docstring note), plus
-    # the artist's latest album/single (see LATEST RELEASE).
+    # Resolution anchor (id/url) + the artist's latest album/single (see LATEST
+    # RELEASE). popularity/followers/genres are no longer stored — see STRIPPED
+    # METADATA. The /artists/{id} GET stays as an existence check + URL fallback.
     meta = api_get(f"/artists/{aid}", {}, creds)
     if not meta:
         return None
@@ -360,9 +374,6 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict | No
     return {
         "spotify_id": aid,
         "spotify_url": url or meta.get("external_urls", {}).get("spotify", ""),
-        "popularity": meta.get("popularity"),
-        "followers": (meta.get("followers") or {}).get("total"),
-        "genres": meta.get("genres", []),
         "sources": sorted(sources),
         "last_refreshed": date.today().isoformat(),
         "latest_release": rel,
@@ -388,8 +399,8 @@ def save_cache(cache: dict) -> None:
 # ── Latest-release-only refresh ───────────────────────────────────────────────
 
 def refresh_releases(cache: dict, creds, args) -> None:
-    """Re-pull ONLY latest_release for already-cached artists; leave the rest
-    (popularity/followers/genres) untouched. Honors --artist and --dry-run."""
+    """Re-pull ONLY latest_release for already-cached artists; leave the rest of
+    each entry untouched. Honors --artist and --dry-run."""
     names = sorted(cache)
     if args.artist:
         sub = args.artist.lower()
@@ -449,7 +460,7 @@ def main() -> None:
                          "(default only adds artists missing from the cache).")
     ap.add_argument("--refresh-releases", action="store_true",
                     help="Re-pull ONLY each cached artist's latest release "
-                         "(album/single); leaves popularity/followers/genres "
+                         "(album/single); leaves the rest of each entry "
                          "untouched. Honors --artist and --dry-run.")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
@@ -517,10 +528,7 @@ def main() -> None:
 
         cache[name] = entry
         rel = entry.get("latest_release") or {}
-        print(f"[{i}/{len(names)}] {name}  → pop {entry['popularity']}, "
-              f"followers {entry['followers']}, "
-              f"latest {rel.get('date') or '—'}, "
-              f"genres: {', '.join(entry['genres'][:3]) or '—'}")
+        print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
         resolved += 1
         if resolved % SAVE_EVERY == 0:
             save_cache(cache)
