@@ -7,8 +7,11 @@ quarterly inbox refresh analysis (Routine 3 deep pass), artist discovery (Gnoosi
 award nominees), and issue #19 (fork-ready template design).
 
 Start every session by:
-1. enumerate your available tools and specifically check for two things: github issue_write (create/update issue) and tool_search. If not available, alert Dan
-
+1. **Tool preflight (blocking — do this first, before any work).** Enumerate the tools actually available this session and report which of these are present: `tool_search`, `github:issue_write`, and (if the session's work needs them) Spotify, Calendar, time, and Claude-in-Chrome.
+   - If `tool_search` is ABSENT: this is an eager-tool session — every deferred tool (Spotify, Calendar, time, Chrome, Gmail) is unreachable, and `tool_search` cannot be summoned by anything in this prompt (provisioning happens before the prompt is read). STOP and tell Dan plainly which tools are present, that the deferred ones are unavailable, and ask whether to (a) proceed with the subset that works (often GitHub-only — issue/architecture/research-writeup work, no Spotify/Chrome/calendar), or (b) restart in a fresh session/chat to try to get the deferred set. Do NOT silently start work that will hit a wall three steps in.
+   - If `github:issue_write` is absent: STOP and alert Dan — most strategy work lands as issues, so this is a hard blocker.
+   - Only proceed once the tool state is stated and, if degraded, Dan has chosen the path.
+   (This has bitten before — e.g. a session with no `tool_search` that couldn't fetch the time or reach Spotify mid-task. A fresh chat, or a Sonnet session, is the lever when the deferred set is missing; this check just makes the gap visible in the first 10 seconds.)
 
 Before substantive work, check:
 - Open issues relevant to the session's focus area
