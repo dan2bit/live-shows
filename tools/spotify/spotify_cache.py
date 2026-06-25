@@ -98,7 +98,14 @@ LAST.FM ENRICHMENT  — added 2026-06-25
     signal Spotify's Dev-mode migration stripped (popularity/followers/genres).
     Populated ONLY by --refresh-lastfm; the Spotify build/refresh never reads it,
     and a Spotify --refresh PRESERVES any existing block. Needs no Spotify creds —
-    it uses the free Last.fm API (api_key only). Per-artist shape:
+    it uses the free Last.fm API (api_key only).
+    --refresh-lastfm also SEEDS: it collects the full repo artist set and creates a
+    Spotify-null skeleton (spotify_id / spotify_url / latest_release = null) for any
+    artist Spotify hasn't resolved yet, so one Last.fm pass covers the whole roster
+    even while the Spotify side drips in over the daily Dev-mode quota. The next
+    Spotify build fills those skeletons in (default add-missing mode treats a null
+    spotify_id as "not yet resolved") and preserves the lastfm block. Per-artist
+    shape:
         "lastfm": {
           "mbid": "...",                 # MusicBrainz id (cross-source join key)
           "url": "https://www.last.fm/music/...",
@@ -116,7 +123,7 @@ USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
     python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
-    python3 spotify_cache.py --refresh-lastfm    # re-pull ONLY the Last.fm block for cached artists
+    python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
     python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
@@ -508,7 +515,13 @@ def refresh_releases(cache: dict, creds, args) -> None:
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
             continue
-        rel = latest_release(aid, creds)
+        try:
+            rel = latest_release(aid, creds)
+        except RateLimited:
+            if not args.dry_run:
+                save_cache(cache)
+                print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
         time.sleep(DELAY)
         old = (entry.get("latest_release") or {}).get("date")
         new = (rel or {}).get("date")
@@ -604,19 +617,44 @@ def lastfm_artist_info(name: str, api_key: str) -> dict | None:
     }
 
 
+def _spotify_placeholder(sources: set) -> dict:
+    """Cache skeleton for an artist Last.fm has seeded but Spotify hasn't resolved
+    yet: spotify_id is null so the next Spotify build (default add-missing mode)
+    picks it up, fills in id/url/latest_release, and preserves the lastfm block."""
+    return {
+        "spotify_id": None,
+        "spotify_url": None,
+        "sources": sorted(sources),
+        "last_refreshed": None,
+        "latest_release": None,
+        "latest_release_checked": None,
+    }
+
+
 def refresh_lastfm(cache: dict, api_key: str, args) -> None:
-    """Re-pull ONLY the Last.fm block for already-cached artists; the Spotify side
-    of each entry is untouched. Independent of the Spotify build (no Spotify creds
-    needed). Honors --artist and --dry-run."""
+    """Last.fm enrichment AND seed. First ensures every repo artist has a cache
+    entry — creating a Spotify-null skeleton (see _spotify_placeholder) for any
+    Spotify hasn't reached — so one Last.fm pass covers the whole roster even while
+    the Spotify side drips in over the daily Dev-mode quota. Then writes each
+    artist's lastfm block. Existing Spotify data is left untouched. Independent of
+    Spotify (no Spotify creds, no cap). Honors --artist and --dry-run."""
+    # Seed: a null-Spotify skeleton for any repo artist not yet cached.
+    repo_artists, _ = collect_artists(load_aliases())
+    seeded = 0
+    for nm, srcs in repo_artists.items():
+        if nm not in cache:
+            cache[nm] = _spotify_placeholder(srcs)
+            seeded += 1
+
     names = sorted(cache)
     if args.artist:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
     if not names:
-        print("No cached artists to enrich "
-              "(run a normal build first, or check --artist).")
+        print("No artists to enrich (check --artist, or the repo artist sources).")
         return
-    print(f"Refreshing Last.fm enrichment for {len(names)} cached artist(s)"
+    print(f"Refreshing Last.fm enrichment for {len(names)} artist(s)"
+          + (f"  [{seeded} newly seeded]" if seeded else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     enriched = 0
@@ -725,7 +763,9 @@ def main() -> None:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
     elif not args.refresh:
-        names = [n for n in names if n not in cache]
+        # Add-missing: brand-new artists AND Last.fm-seeded skeletons with no
+        # Spotify id yet (so the drip fills them in); skip fully-resolved entries.
+        names = [n for n in names if not (cache.get(n) or {}).get("spotify_id")]
 
     if not names:
         print("Nothing to do (use --refresh to re-pull existing entries).")
@@ -734,10 +774,23 @@ def main() -> None:
 
     resolved = 0
     unresolved: list[str] = []
+
+    def _flush_on_bail():
+        # On a RateLimited bail, persist everything collected so far. Without this
+        # the exception propagates to __main__ and exits, discarding entries added
+        # since the last SAVE_EVERY checkpoint (the 76-100 lost-on-bail bug).
+        if not args.dry_run:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+
     for i, name in enumerate(names, 1):
         cached = cache.get(name) or {}
-        aid, url = resolve_artist_id(name, url_hints.get(name), creds,
-                                     cached.get("spotify_id"), cached.get("spotify_url", ""))
+        try:
+            aid, url = resolve_artist_id(name, url_hints.get(name), creds,
+                                         cached.get("spotify_id"), cached.get("spotify_url", ""))
+        except RateLimited:
+            _flush_on_bail()
+            raise
         time.sleep(DELAY)
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → unresolved")
@@ -750,7 +803,11 @@ def main() -> None:
             resolved += 1
             continue
 
-        entry = build_entry(name, artists[name], aid, url, creds)
+        try:
+            entry = build_entry(name, artists[name], aid, url, creds)
+        except RateLimited:
+            _flush_on_bail()
+            raise
         time.sleep(DELAY)
         # Preserve any Last.fm enrichment from a prior --refresh-lastfm; the Spotify
         # build/refresh owns the Spotify fields only and must not wipe the rest.
