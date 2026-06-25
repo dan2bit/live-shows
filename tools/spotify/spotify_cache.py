@@ -137,11 +137,13 @@ ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitigno
         or inherited from the environment. LASTFM_API_KEY (same .env) is required
         only for --refresh-lastfm; the Spotify build does not need it.
 
-NOTE    Canonicalization here applies only the explicit data/recommend_aliases.tsv map.
-        It does NOT replicate build_recommend_index.py's automatic normalization
-        (de-invert "X, The", de-accent, strip apostrophes, drop trailing "Band").
-        Variants not covered by the alias file may produce separate entries; share
-        that normalization here later if duplicates show up.
+NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv map
+        plus a de-invert step ("Wood Brothers, The" -> "The Wood Brothers", so the
+        sortable form artists.tsv uses shares one cache key with the natural form).
+        It does NOT (yet) replicate the rest of build_recommend_index.py's automatic
+        normalization (de-accent, strip apostrophes, drop trailing "Band"), so an
+        accent- or apostrophe-only variant can still split into two entries; fix
+        those at the source or extend this step if they accumulate.
 """
 
 import argparse
@@ -301,9 +303,25 @@ def load_aliases() -> dict[str, str]:
     return amap
 
 
+_INVERTED_ARTICLE_RE = re.compile(r"^(.*),\s*(the|a|an)$", re.IGNORECASE)
+
+
+def _deinvert(name: str) -> str:
+    """Fold a sortable inverted form into natural order: 'Wood Brothers, The' ->
+    'The Wood Brothers'. Other names pass through unchanged. artists.tsv stores the
+    inverted form for its own A-Z sort, while the history/current rows and the
+    follow lists use natural order, so the same band otherwise lands under two
+    cache keys (the inverted one and the natural one)."""
+    m = _INVERTED_ARTICLE_RE.match(name)
+    return f"{m.group(2).capitalize()} {m.group(1)}" if m else name
+
+
 def canonical(name: str, amap: dict[str, str]) -> str:
+    # Explicit nickname/expansion aliases first (Kingfish -> Christone 'Kingfish'
+    # Ingram), THEN fold the inverted 'X, The' article so the sortable form used in
+    # artists.tsv shares one cache key with the natural form used everywhere else.
     name = name.strip()
-    return amap.get(_norm(name), name)
+    return _deinvert(amap.get(_norm(name), name))
 
 
 # ── Collect the repo-wide artist universe ─────────────────────────────────────
