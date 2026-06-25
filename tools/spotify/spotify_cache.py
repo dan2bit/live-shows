@@ -57,6 +57,8 @@ RATE LIMITS  — added 2026-06-23
     or cached id skips the /search; and non-artist rows (festival/event names in
     the Artist column of Pass potentials) are dropped before resolution via
     _is_non_artist (explicit set + "festival" substring) so they never cost a call.
+    Pace the calls with --delay (default 2.0s) — raise it on a big first build to
+    stay under the limit, lower it once limits relax or for the lighter passes.
 
 LATEST RELEASE  — added 2026-06-23
     Each entry carries a `latest_release` object — the artist's most recent
@@ -117,6 +119,7 @@ USAGE
     python3 spotify_cache.py --refresh-lastfm    # re-pull ONLY the Last.fm block for cached artists
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
+    python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
 
 OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
@@ -175,7 +178,7 @@ SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API       = "https://api.spotify.com/v1"
 MARKET            = "US"      # /artists/{id}/albums market filter (release availability)
 ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "Invalid limit")
-DELAY             = 0.3       # polite spacing between calls
+DELAY             = 2.0       # default inter-call spacing (s); override per-run with --delay
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
 MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
@@ -654,6 +657,7 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
+    global DELAY
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--refresh", action="store_true",
@@ -673,9 +677,17 @@ def main() -> None:
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
+    ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
+                    help="Seconds to sleep between Spotify calls (default "
+                         "%(default)s). The build packs ~1-2 calls/artist; raise "
+                         "this to stay under Dev-mode 429 lockouts on a big run, "
+                         "lower it (e.g. 0.3) for speed once limits relax or for "
+                         "the lighter --refresh-* passes.")
     ap.add_argument("--dry-run", action="store_true",
                     help="Report what would change; write nothing.")
     args = ap.parse_args()
+
+    DELAY = args.delay
 
     # Last.fm enrichment is fully independent of Spotify — handle it before the
     # Spotify credential check so it runs with only LASTFM_API_KEY set.
