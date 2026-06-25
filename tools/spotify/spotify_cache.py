@@ -57,6 +57,8 @@ RATE LIMITS  — added 2026-06-23
     or cached id skips the /search; and non-artist rows (festival/event names in
     the Artist column of Pass potentials) are dropped before resolution via
     _is_non_artist (explicit set + "festival" substring) so they never cost a call.
+    Pace the calls with --delay (default 2.0s) — raise it on a big first build to
+    stay under the limit, lower it once limits relax or for the lighter passes.
 
 LATEST RELEASE  — added 2026-06-23
     Each entry carries a `latest_release` object — the artist's most recent
@@ -91,12 +93,40 @@ LATEST RELEASE  — added 2026-06-23
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
     here — this only captures and caches the data. See #85 / follow-on tickets.
 
+LAST.FM ENRICHMENT  — added 2026-06-25
+    A separate, independently-refreshable `lastfm` block backfills the analytical
+    signal Spotify's Dev-mode migration stripped (popularity/followers/genres).
+    Populated ONLY by --refresh-lastfm; the Spotify build/refresh never reads it,
+    and a Spotify --refresh PRESERVES any existing block. Needs no Spotify creds —
+    it uses the free Last.fm API (api_key only).
+    --refresh-lastfm also SEEDS: it collects the full repo artist set and creates a
+    Spotify-null skeleton (spotify_id / spotify_url / latest_release = null) for any
+    artist Spotify hasn't resolved yet, so one Last.fm pass covers the whole roster
+    even while the Spotify side drips in over the daily Dev-mode quota. The next
+    Spotify build fills those skeletons in (default add-missing mode treats a null
+    spotify_id as "not yet resolved") and preserves the lastfm block. Per-artist
+    shape:
+        "lastfm": {
+          "mbid": "...",                 # MusicBrainz id (cross-source join key)
+          "url": "https://www.last.fm/music/...",
+          "listeners": 123456,           # global popularity proxy (null if unknown)
+          "playcount": 9876543,
+          "tags": ["blues", "americana", ...],   # <= LASTFM_TAGS, folksonomy
+          "similar": ["...", ...]                 # <= LASTFM_SIMILAR, discovery feed
+        }
+    plus "lastfm_checked": "YYYY-MM-DD"; both absent until --refresh-lastfm runs,
+    and "lastfm" is null for an artist Last.fm can't find. Tags are crowd-sourced
+    (mood / "seen live" noise mixed with real genres) — filter before trusting
+    them as a genre signal.
+
 USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
     python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
+    python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
+    python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
 
 OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
@@ -104,13 +134,16 @@ OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
         purpose: a fresh agentic session and the site both read it from there.
 
 ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitignored)
-        or inherited from the environment.
+        or inherited from the environment. LASTFM_API_KEY (same .env) is required
+        only for --refresh-lastfm; the Spotify build does not need it.
 
-NOTE    Canonicalization here applies only the explicit data/recommend_aliases.tsv map.
-        It does NOT replicate build_recommend_index.py's automatic normalization
-        (de-invert "X, The", de-accent, strip apostrophes, drop trailing "Band").
-        Variants not covered by the alias file may produce separate entries; share
-        that normalization here later if duplicates show up.
+NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv map
+        plus a de-invert step ("Wood Brothers, The" -> "The Wood Brothers", so the
+        sortable form artists.tsv uses shares one cache key with the natural form).
+        It does NOT (yet) replicate the rest of build_recommend_index.py's automatic
+        normalization (de-accent, strip apostrophes, drop trailing "Band"), so an
+        accent- or apostrophe-only variant can still split into two entries; fix
+        those at the source or extend this step if they accumulate.
 """
 
 import argparse
@@ -154,11 +187,17 @@ SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API       = "https://api.spotify.com/v1"
 MARKET            = "US"      # /artists/{id}/albums market filter (release availability)
 ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "Invalid limit")
-DELAY             = 0.3       # polite spacing between calls
+DELAY             = 2.0       # default inter-call spacing (s); override per-run with --delay
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
 MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
 DEFAULT_RETRY_AFTER = 5       # assumed wait when a 429 carries no Retry-After header
+
+# Last.fm enrichment (separately refreshable; only --refresh-lastfm uses these)
+LASTFM_API     = "https://ws.audioscrobbler.com/2.0/"
+LASTFM_UA      = "live-shows-artist-cache/1.0 (+https://github.com/dan2bit/live-shows)"
+LASTFM_TAGS    = 5    # max tags stored per artist
+LASTFM_SIMILAR = 5    # max similar artists stored per artist
 
 _ARTIST_ID_RE = re.compile(r"artist[:/]([A-Za-z0-9]+)")
 
@@ -264,9 +303,25 @@ def load_aliases() -> dict[str, str]:
     return amap
 
 
+_INVERTED_ARTICLE_RE = re.compile(r"^(.*),\s*(the|a|an)$", re.IGNORECASE)
+
+
+def _deinvert(name: str) -> str:
+    """Fold a sortable inverted form into natural order: 'Wood Brothers, The' ->
+    'The Wood Brothers'. Other names pass through unchanged. artists.tsv stores the
+    inverted form for its own A-Z sort, while the history/current rows and the
+    follow lists use natural order, so the same band otherwise lands under two
+    cache keys (the inverted one and the natural one)."""
+    m = _INVERTED_ARTICLE_RE.match(name)
+    return f"{m.group(2).capitalize()} {m.group(1)}" if m else name
+
+
 def canonical(name: str, amap: dict[str, str]) -> str:
+    # Explicit nickname/expansion aliases first (Kingfish -> Christone 'Kingfish'
+    # Ingram), THEN fold the inverted 'X, The' article so the sortable form used in
+    # artists.tsv shares one cache key with the natural form used everywhere else.
     name = name.strip()
-    return amap.get(_norm(name), name)
+    return _deinvert(amap.get(_norm(name), name))
 
 
 # ── Collect the repo-wide artist universe ─────────────────────────────────────
@@ -478,7 +533,13 @@ def refresh_releases(cache: dict, creds, args) -> None:
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
             continue
-        rel = latest_release(aid, creds)
+        try:
+            rel = latest_release(aid, creds)
+        except RateLimited:
+            if not args.dry_run:
+                save_cache(cache)
+                print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
         time.sleep(DELAY)
         old = (entry.get("latest_release") or {}).get("date")
         new = (rel or {}).get("date")
@@ -509,9 +570,150 @@ def refresh_releases(cache: dict, creds, args) -> None:
           f"Written: {OUTPUT_JSON}")
 
 
+# ── Last.fm enrichment (separately refreshable; --refresh-lastfm only) ─────────
+
+def lastfm_get(params: dict, api_key: str) -> dict | None:
+    """GET the Last.fm 2.0 API; parsed JSON or None on transport/HTTP error.
+    Last.fm answers HTTP 200 with an {"error": N, ...} body for logical failures
+    (e.g. artist not found), so callers must check the body, not just the status."""
+    q = {**params, "api_key": api_key, "format": "json"}
+    for attempt in range(3):
+        try:
+            resp = requests.get(LASTFM_API, params=q,
+                                headers={"User-Agent": LASTFM_UA}, timeout=15)
+        except requests.RequestException:
+            return None
+        if resp.status_code == 429:
+            time.sleep(2 * (attempt + 1))
+            continue
+        if resp.status_code != 200:
+            return None
+        try:
+            return resp.json()
+        except ValueError:
+            return None
+    return None
+
+
+def _as_list(v):
+    """Last.fm gives a bare dict for a single tag/similar, a list for many, and
+    omits the key for none. Normalize to a list."""
+    if v is None:
+        return []
+    return v if isinstance(v, list) else [v]
+
+
+def _to_int(x) -> int | None:
+    try:
+        return int(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def lastfm_artist_info(name: str, api_key: str) -> dict | None:
+    """artist.getInfo -> a compact enrichment block, or None if not found / failed.
+    autocorrect=1 lets Last.fm fix minor name variants."""
+    data = lastfm_get(
+        {"method": "artist.getInfo", "artist": name, "autocorrect": "1"}, api_key)
+    if not data or "error" in data or "artist" not in data:
+        return None
+    a = data["artist"]
+    stats = a.get("stats") or {}
+    tags = [t.get("name", "").strip()
+            for t in _as_list((a.get("tags") or {}).get("tag"))
+            if isinstance(t, dict) and t.get("name")]
+    similar = [s.get("name", "").strip()
+               for s in _as_list((a.get("similar") or {}).get("artist"))
+               if isinstance(s, dict) and s.get("name")]
+    return {
+        "mbid": a.get("mbid", "") or "",
+        "url": a.get("url", "") or "",
+        "listeners": _to_int(stats.get("listeners")),
+        "playcount": _to_int(stats.get("playcount")),
+        "tags": tags[:LASTFM_TAGS],
+        "similar": similar[:LASTFM_SIMILAR],
+    }
+
+
+def _spotify_placeholder(sources: set) -> dict:
+    """Cache skeleton for an artist Last.fm has seeded but Spotify hasn't resolved
+    yet: spotify_id is null so the next Spotify build (default add-missing mode)
+    picks it up, fills in id/url/latest_release, and preserves the lastfm block."""
+    return {
+        "spotify_id": None,
+        "spotify_url": None,
+        "sources": sorted(sources),
+        "last_refreshed": None,
+        "latest_release": None,
+        "latest_release_checked": None,
+    }
+
+
+def refresh_lastfm(cache: dict, api_key: str, args) -> None:
+    """Last.fm enrichment AND seed. First ensures every repo artist has a cache
+    entry — creating a Spotify-null skeleton (see _spotify_placeholder) for any
+    Spotify hasn't reached — so one Last.fm pass covers the whole roster even while
+    the Spotify side drips in over the daily Dev-mode quota. Then writes each
+    artist's lastfm block. Existing Spotify data is left untouched. Independent of
+    Spotify (no Spotify creds, no cap). Honors --artist and --dry-run."""
+    # Seed: a null-Spotify skeleton for any repo artist not yet cached.
+    repo_artists, _ = collect_artists(load_aliases())
+    seeded = 0
+    for nm, srcs in repo_artists.items():
+        if nm not in cache:
+            cache[nm] = _spotify_placeholder(srcs)
+            seeded += 1
+
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No artists to enrich (check --artist, or the repo artist sources).")
+        return
+    print(f"Refreshing Last.fm enrichment for {len(names)} artist(s)"
+          + (f"  [{seeded} newly seeded]" if seeded else "")
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    enriched = 0
+    for i, name in enumerate(names, 1):
+        info = lastfm_artist_info(name, api_key)
+        time.sleep(DELAY)
+        listeners = (info or {}).get("listeners")
+
+        if args.dry_run:
+            shown = f"{listeners:,} listeners" if listeners is not None else "not found"
+            print(f"[{i}/{len(names)}] {name}  → {shown}")
+            continue
+
+        cache[name]["lastfm"] = info
+        cache[name]["lastfm_checked"] = date.today().isoformat()
+        if info:
+            enriched += 1
+            if listeners is not None:
+                tags = ", ".join(info["tags"][:3]) or "—"
+                print(f"[{i}/{len(names)}] {name}  → {listeners:,} listeners, tags: {tags}")
+            else:
+                print(f"[{i}/{len(names)}] {name}  → enriched (listeners unknown)")
+        else:
+            print(f"[{i}/{len(names)}] {name}  → not found on Last.fm")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Enriched {enriched}/{len(names)} artist(s) from Last.fm. "
+          f"Written: {OUTPUT_JSON}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
+    global DELAY
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--refresh", action="store_true",
@@ -521,14 +723,38 @@ def main() -> None:
                     help="Re-pull ONLY each cached artist's latest release "
                          "(album/single); leaves the rest of each entry "
                          "untouched. Honors --artist and --dry-run.")
+    ap.add_argument("--refresh-lastfm", action="store_true",
+                    help="Re-pull ONLY the Last.fm enrichment block (listeners, "
+                         "playcount, tags, similar) for cached artists. Independent "
+                         "of Spotify; needs LASTFM_API_KEY, not Spotify creds. "
+                         "Honors --artist and --dry-run.")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
+    ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
+                    help="Seconds to sleep between Spotify calls (default "
+                         "%(default)s). The build packs ~1-2 calls/artist; raise "
+                         "this to stay under Dev-mode 429 lockouts on a big run, "
+                         "lower it (e.g. 0.3) for speed once limits relax or for "
+                         "the lighter --refresh-* passes.")
     ap.add_argument("--dry-run", action="store_true",
                     help="Report what would change; write nothing.")
     args = ap.parse_args()
+
+    DELAY = args.delay
+
+    # Last.fm enrichment is fully independent of Spotify — handle it before the
+    # Spotify credential check so it runs with only LASTFM_API_KEY set.
+    if args.refresh_lastfm:
+        lastfm_key = os.environ.get("LASTFM_API_KEY", "")
+        if not lastfm_key:
+            sys.exit("LASTFM_API_KEY must be set (tools/spotify/.env or environment).")
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_lastfm(cache, lastfm_key, args)
+        return
 
     client_id     = os.environ.get("SPOTIFY_CLIENT_ID", "")
     client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
@@ -555,7 +781,9 @@ def main() -> None:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
     elif not args.refresh:
-        names = [n for n in names if n not in cache]
+        # Add-missing: brand-new artists AND Last.fm-seeded skeletons with no
+        # Spotify id yet (so the drip fills them in); skip fully-resolved entries.
+        names = [n for n in names if not (cache.get(n) or {}).get("spotify_id")]
 
     if not names:
         print("Nothing to do (use --refresh to re-pull existing entries).")
@@ -564,10 +792,23 @@ def main() -> None:
 
     resolved = 0
     unresolved: list[str] = []
+
+    def _flush_on_bail():
+        # On a RateLimited bail, persist everything collected so far. Without this
+        # the exception propagates to __main__ and exits, discarding entries added
+        # since the last SAVE_EVERY checkpoint (the 76-100 lost-on-bail bug).
+        if not args.dry_run:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+
     for i, name in enumerate(names, 1):
         cached = cache.get(name) or {}
-        aid, url = resolve_artist_id(name, url_hints.get(name), creds,
-                                     cached.get("spotify_id"), cached.get("spotify_url", ""))
+        try:
+            aid, url = resolve_artist_id(name, url_hints.get(name), creds,
+                                         cached.get("spotify_id"), cached.get("spotify_url", ""))
+        except RateLimited:
+            _flush_on_bail()
+            raise
         time.sleep(DELAY)
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → unresolved")
@@ -580,8 +821,18 @@ def main() -> None:
             resolved += 1
             continue
 
-        entry = build_entry(name, artists[name], aid, url, creds)
+        try:
+            entry = build_entry(name, artists[name], aid, url, creds)
+        except RateLimited:
+            _flush_on_bail()
+            raise
         time.sleep(DELAY)
+        # Preserve any Last.fm enrichment from a prior --refresh-lastfm; the Spotify
+        # build/refresh owns the Spotify fields only and must not wipe the rest.
+        prev = cache.get(name)
+        if prev and "lastfm" in prev:
+            entry["lastfm"] = prev["lastfm"]
+            entry["lastfm_checked"] = prev.get("lastfm_checked")
         cache[name] = entry
         rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
