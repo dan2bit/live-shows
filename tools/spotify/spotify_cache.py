@@ -91,10 +91,30 @@ LATEST RELEASE  — added 2026-06-23
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
     here — this only captures and caches the data. See #85 / follow-on tickets.
 
+LAST.FM ENRICHMENT  — added 2026-06-25
+    A separate, independently-refreshable `lastfm` block backfills the analytical
+    signal Spotify's Dev-mode migration stripped (popularity/followers/genres).
+    Populated ONLY by --refresh-lastfm; the Spotify build/refresh never reads it,
+    and a Spotify --refresh PRESERVES any existing block. Needs no Spotify creds —
+    it uses the free Last.fm API (api_key only). Per-artist shape:
+        "lastfm": {
+          "mbid": "...",                 # MusicBrainz id (cross-source join key)
+          "url": "https://www.last.fm/music/...",
+          "listeners": 123456,           # global popularity proxy (null if unknown)
+          "playcount": 9876543,
+          "tags": ["blues", "americana", ...],   # <= LASTFM_TAGS, folksonomy
+          "similar": ["...", ...]                 # <= LASTFM_SIMILAR, discovery feed
+        }
+    plus "lastfm_checked": "YYYY-MM-DD"; both absent until --refresh-lastfm runs,
+    and "lastfm" is null for an artist Last.fm can't find. Tags are crowd-sourced
+    (mood / "seen live" noise mixed with real genres) — filter before trusting
+    them as a genre signal.
+
 USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
     python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
+    python3 spotify_cache.py --refresh-lastfm    # re-pull ONLY the Last.fm block for cached artists
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
@@ -104,7 +124,8 @@ OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
         purpose: a fresh agentic session and the site both read it from there.
 
 ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitignored)
-        or inherited from the environment.
+        or inherited from the environment. LASTFM_API_KEY (same .env) is required
+        only for --refresh-lastfm; the Spotify build does not need it.
 
 NOTE    Canonicalization here applies only the explicit data/recommend_aliases.tsv map.
         It does NOT replicate build_recommend_index.py's automatic normalization
@@ -159,6 +180,12 @@ SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
 MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
 DEFAULT_RETRY_AFTER = 5       # assumed wait when a 429 carries no Retry-After header
+
+# Last.fm enrichment (separately refreshable; only --refresh-lastfm uses these)
+LASTFM_API     = "https://ws.audioscrobbler.com/2.0/"
+LASTFM_UA      = "live-shows-artist-cache/1.0 (+https://github.com/dan2bit/live-shows)"
+LASTFM_TAGS    = 5    # max tags stored per artist
+LASTFM_SIMILAR = 5    # max similar artists stored per artist
 
 _ARTIST_ID_RE = re.compile(r"artist[:/]([A-Za-z0-9]+)")
 
@@ -509,6 +536,121 @@ def refresh_releases(cache: dict, creds, args) -> None:
           f"Written: {OUTPUT_JSON}")
 
 
+# ── Last.fm enrichment (separately refreshable; --refresh-lastfm only) ─────────
+
+def lastfm_get(params: dict, api_key: str) -> dict | None:
+    """GET the Last.fm 2.0 API; parsed JSON or None on transport/HTTP error.
+    Last.fm answers HTTP 200 with an {"error": N, ...} body for logical failures
+    (e.g. artist not found), so callers must check the body, not just the status."""
+    q = {**params, "api_key": api_key, "format": "json"}
+    for attempt in range(3):
+        try:
+            resp = requests.get(LASTFM_API, params=q,
+                                headers={"User-Agent": LASTFM_UA}, timeout=15)
+        except requests.RequestException:
+            return None
+        if resp.status_code == 429:
+            time.sleep(2 * (attempt + 1))
+            continue
+        if resp.status_code != 200:
+            return None
+        try:
+            return resp.json()
+        except ValueError:
+            return None
+    return None
+
+
+def _as_list(v):
+    """Last.fm gives a bare dict for a single tag/similar, a list for many, and
+    omits the key for none. Normalize to a list."""
+    if v is None:
+        return []
+    return v if isinstance(v, list) else [v]
+
+
+def _to_int(x) -> int | None:
+    try:
+        return int(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def lastfm_artist_info(name: str, api_key: str) -> dict | None:
+    """artist.getInfo -> a compact enrichment block, or None if not found / failed.
+    autocorrect=1 lets Last.fm fix minor name variants."""
+    data = lastfm_get(
+        {"method": "artist.getInfo", "artist": name, "autocorrect": "1"}, api_key)
+    if not data or "error" in data or "artist" not in data:
+        return None
+    a = data["artist"]
+    stats = a.get("stats") or {}
+    tags = [t.get("name", "").strip()
+            for t in _as_list((a.get("tags") or {}).get("tag"))
+            if isinstance(t, dict) and t.get("name")]
+    similar = [s.get("name", "").strip()
+               for s in _as_list((a.get("similar") or {}).get("artist"))
+               if isinstance(s, dict) and s.get("name")]
+    return {
+        "mbid": a.get("mbid", "") or "",
+        "url": a.get("url", "") or "",
+        "listeners": _to_int(stats.get("listeners")),
+        "playcount": _to_int(stats.get("playcount")),
+        "tags": tags[:LASTFM_TAGS],
+        "similar": similar[:LASTFM_SIMILAR],
+    }
+
+
+def refresh_lastfm(cache: dict, api_key: str, args) -> None:
+    """Re-pull ONLY the Last.fm block for already-cached artists; the Spotify side
+    of each entry is untouched. Independent of the Spotify build (no Spotify creds
+    needed). Honors --artist and --dry-run."""
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to enrich "
+              "(run a normal build first, or check --artist).")
+        return
+    print(f"Refreshing Last.fm enrichment for {len(names)} cached artist(s)"
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    enriched = 0
+    for i, name in enumerate(names, 1):
+        info = lastfm_artist_info(name, api_key)
+        time.sleep(DELAY)
+        listeners = (info or {}).get("listeners")
+
+        if args.dry_run:
+            shown = f"{listeners:,} listeners" if listeners is not None else "not found"
+            print(f"[{i}/{len(names)}] {name}  → {shown}")
+            continue
+
+        cache[name]["lastfm"] = info
+        cache[name]["lastfm_checked"] = date.today().isoformat()
+        if info:
+            enriched += 1
+            if listeners is not None:
+                tags = ", ".join(info["tags"][:3]) or "—"
+                print(f"[{i}/{len(names)}] {name}  → {listeners:,} listeners, tags: {tags}")
+            else:
+                print(f"[{i}/{len(names)}] {name}  → enriched (listeners unknown)")
+        else:
+            print(f"[{i}/{len(names)}] {name}  → not found on Last.fm")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Enriched {enriched}/{len(names)} artist(s) from Last.fm. "
+          f"Written: {OUTPUT_JSON}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -521,6 +663,11 @@ def main() -> None:
                     help="Re-pull ONLY each cached artist's latest release "
                          "(album/single); leaves the rest of each entry "
                          "untouched. Honors --artist and --dry-run.")
+    ap.add_argument("--refresh-lastfm", action="store_true",
+                    help="Re-pull ONLY the Last.fm enrichment block (listeners, "
+                         "playcount, tags, similar) for cached artists. Independent "
+                         "of Spotify; needs LASTFM_API_KEY, not Spotify creds. "
+                         "Honors --artist and --dry-run.")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
     ap.add_argument("--artist", metavar="NAME",
@@ -529,6 +676,17 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true",
                     help="Report what would change; write nothing.")
     args = ap.parse_args()
+
+    # Last.fm enrichment is fully independent of Spotify — handle it before the
+    # Spotify credential check so it runs with only LASTFM_API_KEY set.
+    if args.refresh_lastfm:
+        lastfm_key = os.environ.get("LASTFM_API_KEY", "")
+        if not lastfm_key:
+            sys.exit("LASTFM_API_KEY must be set (tools/spotify/.env or environment).")
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_lastfm(cache, lastfm_key, args)
+        return
 
     client_id     = os.environ.get("SPOTIFY_CLIENT_ID", "")
     client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
@@ -582,6 +740,12 @@ def main() -> None:
 
         entry = build_entry(name, artists[name], aid, url, creds)
         time.sleep(DELAY)
+        # Preserve any Last.fm enrichment from a prior --refresh-lastfm; the Spotify
+        # build/refresh owns the Spotify fields only and must not wipe the rest.
+        prev = cache.get(name)
+        if prev and "lastfm" in prev:
+            entry["lastfm"] = prev["lastfm"]
+            entry["lastfm_checked"] = prev.get("lastfm_checked")
         cache[name] = entry
         rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
