@@ -140,10 +140,12 @@ ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitigno
 NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv map
         plus a de-invert step ("Wood Brothers, The" -> "The Wood Brothers", so the
         sortable form artists.tsv uses shares one cache key with the natural form).
-        It does NOT (yet) replicate the rest of build_recommend_index.py's automatic
-        normalization (de-accent, strip apostrophes, drop trailing "Band"), so an
-        accent- or apostrophe-only variant can still split into two entries; fix
-        those at the source or extend this step if they accumulate.
+        collect_artists also splits '/'-joined support bills into their individual
+        acts and folds "X Band" into a collected bare "X" (see there) — both
+        mirroring scripts/build_recommend_index.py. It does NOT replicate that
+        script's de-accent / strip-apostrophe normalization, so an accent- or
+        apostrophe-only variant can still split into two entries; fix those at the
+        source or extend this step if they accumulate.
 """
 
 import argparse
@@ -271,8 +273,10 @@ def similarity(a: str, b: str) -> float:
 # Non-artist rows that pollute the collected set — festival/event names sitting
 # in the Artist column of Pass potentials. Skipped before Spotify resolution so
 # they don't waste a resolve call. The "festival" substring catches future rows;
-# add oddly-named events (no "festival" in the name) to _SKIP_ARTISTS by hand.
-_SKIP_ARTISTS = {"all things go music festival", "hot august music festival"}
+# add oddly-named events (no "festival" in the name — e.g. a tribute/celebration
+# concert) to _SKIP_ARTISTS by hand.
+_SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
+                 "john prine celebration"}
 
 
 def _is_non_artist(name: str) -> bool:
@@ -326,6 +330,21 @@ def canonical(name: str, amap: dict[str, str]) -> str:
 
 # ── Collect the repo-wide artist universe ─────────────────────────────────────
 
+_BILL_MORE_RE = re.compile(r"\s*\+\s*\d*\s*more$", re.IGNORECASE)
+
+
+def _split_support(cell: str):
+    """Yield the individual acts on a support bill. A Support / Supporting Artist
+    cell can list several acts on one '/'-separated line ("A / B / C + more");
+    collected whole it becomes a single bogus cache key that resolves to nothing.
+    Splits on '/' and trims a trailing '+ N more', mirroring the support-harvest in
+    scripts/build_recommend_index.py so both consumers read bills the same way."""
+    for tok in (cell or "").split("/"):
+        tok = _BILL_MORE_RE.sub("", tok.strip()).strip()
+        if len(tok) > 2 and tok.lower() != "more":
+            yield tok
+
+
 def collect_artists(amap: dict[str, str]) -> tuple[dict[str, set], dict[str, str]]:
     """Return ({canonical_name: {source tags}}, {canonical_name: spotify_url_hint})."""
     artists: dict[str, set] = {}
@@ -346,8 +365,28 @@ def collect_artists(amap: dict[str, str]) -> tuple[dict[str, set], dict[str, str
         tag = _source_tag(path)
         for row in read_tsv_rows(path):
             url = next((row.get(c, "").strip() for c in url_cols if row.get(c, "").strip()), None)
-            for col in name_cols:
-                add(row.get(col, ""), tag, url if col == name_cols[0] else None)
+            # name_cols[0] is the headliner (one act, carries the url hint);
+            # name_cols[1:] are support column(s), each a possible '/'-joined bill.
+            if name_cols:
+                add(row.get(name_cols[0], ""), tag, url)
+            for col in name_cols[1:]:
+                for act in _split_support(row.get(col, "")):
+                    add(act, tag, None)
+
+    # Fold "X Band" into "X" when the bare "X" is itself a collected artist, so
+    # "Ally Venable Band" and "Ally Venable" share one entry (build_recommend_index
+    # treats them as one via a drop-Band match key). Conditional on the bare form
+    # already existing — a blanket drop-Band would mangle standalone names whose
+    # last word is "Band" (Tedeschi Trucks Band, The Dirty Dozen Brass Band) and
+    # break their Spotify resolution; a lone "Lilly Hiatt Band" with no bare twin
+    # likewise keeps its full name (it still resolves — _tokens drops "band").
+    for key in [k for k in artists if re.search(r"\S\s+[Bb]and$", k)]:
+        bare = re.sub(r"\s+[Bb]and$", "", key)
+        if bare in artists:
+            artists[bare] |= artists.pop(key)
+            if key in url_hints:
+                url_hints.setdefault(bare, url_hints[key])
+                del url_hints[key]
 
     return artists, url_hints
 
