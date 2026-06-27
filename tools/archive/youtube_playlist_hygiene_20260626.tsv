@@ -1,3 +1,5 @@
+*** This hygiene is complete. Duplicate playlists removed, dates updated ***
+
 Playlist Title	Playlist Link	Videos	Issue	Action
 Sonny Landreth LIVE @ Hamilton Live 9/15/23	https://www.youtube.com/playlist?list=PLJ7S-K0cjvGJNcwLlAEHkWF6SUBGBrVNt	9	Date mismatch / probable duplicate: titled 9/15/23, but the only Sonny Landreth Hamilton show is 2023-09-13 (setlist.fm + history). Canonical 9/13 playlist = PLJ7S-K0cjvGJhkjsjcbfiUv4e8_hLVhft (the one in data/history/2023.tsv).	Confirm whether 9/15 was a real second night. If not, correct the title date to 9/13/23, or merge its videos into the canonical playlist and delete this one.
 Kingsley Flood + Glenn Yoder & the Western States @ Pearl Street Warehouse 9/9/23	https://www.youtube.com/playlist?list=PLJ7S-K0cjvGJQaL8ICKbDYuXfLZY6WuG8	5	Duplicate of the 2023-09-09 Kingsley Flood show already tracked. Canonical playlist = PLJ7S-K0cjvGJMcYYmWW2UerHUKh5Ae3zC (the one in data/history/2023.tsv).	Merge into the canonical playlist, or keep as an alternate cut and relabel it clearly. No history change needed.
