@@ -508,6 +508,7 @@ function renderAttendedRowBystander(row,idx){
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+    +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">📷</a>':'')+'</td>'
@@ -520,6 +521,7 @@ function renderAttendedRowSearch(row,idx){
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+    +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">📷</a>':'')+'</td>'
@@ -536,6 +538,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+    +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
     +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'')
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">📷</a>':'')+'</td>'
@@ -559,13 +562,14 @@ function renderHistoryYear(yr){
     return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
       +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
       +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
+      +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
       +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
       +(n.playlist?'<a class="icon-link" href="'+esc(n.playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'')
       +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">📷</a>':'')+'</td>'
       +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
   }).join('');
   return'<div class="history-year-header"><span class="history-year-label">'+yr+'</span><span class="history-year-count">'+sorted.length+' show'+(sorted.length!==1?'s':'')+'</span></div>'
-    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
+    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th>Venue</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
 function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
@@ -651,7 +655,7 @@ function runSearch(){
   var tbody=rows.map(function(r,i){return renderAttendedRowSearch(r,i);}).join('');
   resultsEl.innerHTML='<div class="search-count">'+rows.length+' match'+(rows.length!==1?'es':'')+'</div>'
     +'<div class="attended-table"><table class="shows-table"><thead><tr>'
-    +'<th style="width:80px">Date</th><th>Artist</th><th style="width:40px">Links</th><th>Notes</th>'
+    +'<th style="width:80px">Date</th><th>Artist</th><th>Venue</th><th style="width:40px">Links</th><th>Notes</th>'
     +'</tr></thead><tbody>'+tbody+'</tbody></table></div>';
   requestAnimationFrame(revealToggles);
 }
@@ -799,7 +803,7 @@ function renderShows(){
   var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i,upOrigIdx[i]);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
   var aTbody=authed?attended.map(function(r,i){return renderAttendedRowAuthed(r,i,atOrigIdx[i]);}).join(''):attended.map(function(r,i){return renderAttendedRowBystander(r,i);}).join('');
   var uTable='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>'+uTbody+'</tbody></table>';
-  var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Links</th><th>Notes</th></tr></thead>';
+  var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
   var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
