@@ -256,6 +256,13 @@ def _tsv_sources():
         (os.path.join(DATA_DIR, "fast_track.tsv"),            ["Artist"], ["Spotify URL"]),
         (os.path.join(FOLLOWS,  "follows_master.tsv"),        ["Artist"], []),
         (os.path.join(FOLLOWS,  "new_artist_research.tsv"),   ["Artist"], []),
+        # seen_with.tsv (#97): session/sit-in/supergroup members. Read the "Seen
+        # With" column (the member); its "Spotify URL" is the member's own URL, a
+        # free resolution hint. Headliner is NOT read here — those names already
+        # come from the show files, so re-reading them adds only redundant source
+        # tags. Placed after artists.tsv so the ledger's URL wins for any member
+        # who is also a tracked headliner (first-wins in collect_artists' add()).
+        (os.path.join(DATA_DIR, "seen_with.tsv"),             ["Seen With"], ["Spotify URL"]),
     ]
     sources += [(p, ["Artist", "Supporting Artist"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "history", "*.tsv")))]
     # Multi-artist setlist files: read an "Artist" column if one exists, else skip.
@@ -306,10 +313,32 @@ def similarity(a: str, b: str) -> float:
 _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
                  "john prine celebration"}
 
+# Real-looking strings that resolve to NO single Spotify artist and should be
+# dropped before resolution so they stop costing a /search call every run
+# (#97 / #73). Keep this list TIGHT — it is NOT a dumping ground for "didn't
+# resolve". Only two kinds belong here:
+#   1. A genuine artist with zero Spotify presence (e.g. Eli Kollman — a support
+#      act seen once, no catalogue anywhere).
+#   2. A bill name that exists ONLY as an amalgamation of members who each have
+#      their own Spotify entity, with no entry for the combined name (e.g.
+#      "SatchVai Band" — Spotify lists their joint EP under Joe Satriani AND
+#      Steve Vai separately, never under "SatchVai Band"; both members are already
+#      in seen_with.tsv, so skipping the bill suppresses nothing).
+# Do NOT add combined "X & Y" bills whose components are real, separately-resolvable
+# artists you want in the cache/NAR (JD Simo & Luther Dickinson, Sarah Borges &
+# Eric Ambel, Laka Soul). Those are a SPLIT problem, not a skip — splitting
+# "&"-bills into their components is tracked in #94. Suppressing them here would
+# also hide real artists (e.g. Luther Dickinson = North Mississippi Allstars,
+# already seen). Normalised through _norm so "&"/accents match the collected names.
+_UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
+    "Eli Kollman",
+    "SatchVai Band",
+)}
+
 
 def _is_non_artist(name: str) -> bool:
     n = _norm(name)
-    return n in _SKIP_ARTISTS or "festival" in n
+    return n in _SKIP_ARTISTS or n in _UNRESOLVABLE_ARTISTS or "festival" in n
 
 
 # ── TSV reading (comment-tolerant) ────────────────────────────────────────────
