@@ -1,0 +1,59 @@
+name: Private data guard
+
+# Layer-3 backstop for the 2026-06-27 private-data leak (#76). Fails any push or
+# PR that introduces the private sidecar into this PUBLIC repo. The private
+# ledger (cost / seat / qty / private notes) and fast-track caps belong ONLY in
+# the separate dan2bit/live-shows-private repo — never at a path inside this one.
+# .gitignore discourages it locally but is bypassable with `git add -f`; this is
+# the server-side check that makes it un-mergeable once set as a required status
+# check on main (Settings -> Branches).
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Block private sidecar files in the public repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          fail=0
+
+          # 1. Path patterns — the private sidecar must never be tracked here.
+          offending="$(git ls-files | grep -E '^live-shows-private/|_private\.tsv$|_caps\.tsv$' || true)"
+          if [ -n "$offending" ]; then
+            echo "::error::Private sidecar path(s) committed to the PUBLIC repo:"
+            printf '%s\n' "$offending" | sed 's/^/  - /'
+            fail=1
+          fi
+
+          # 2. Content sniff — a private schema header smuggled in under another
+          #    name. Public TSVs carry no "Private Notes" column by design, so its
+          #    presence in a header line means a private sidecar slipped in renamed.
+          sniff="$(git ls-files '*.tsv' | while IFS= read -r f; do
+            if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
+          done)"
+          if [ -n "$sniff" ]; then
+            echo "::error::TSV(s) with a 'Private Notes' header (private schema in the public repo):"
+            printf '%s\n' "$sniff" | sed 's/^/  - /'
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then
+            echo ""
+            echo "Private financial data (cost / seat / qty / private notes / fast-track caps)"
+            echo "belongs ONLY in the separate repo dan2bit/live-shows-private — never at a path"
+            echo "inside this public repo. See issue #76 and the matching .gitignore block."
+            exit 1
+          fi
+
+          echo "OK — no private sidecar files or private-schema headers in the public repo."
