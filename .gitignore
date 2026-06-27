@@ -9,6 +9,15 @@ __pycache__/
 client_secrets.json
 token.json
 
+# Private sidecar — NEVER belongs in this PUBLIC repo. Lives only in the separate
+# dan2bit/live-shows-private repo. On 2026-06-27 an inbox routine wrote the private
+# purchasing ledger here by path instead of to that repo (see #76); it leaked the
+# full cost/seat/qty/notes data and required a history rewrite + force-push to purge.
+# This block makes it un-stageable locally; a CI guard (#76) backstops it server-side.
+live-shows-private/
+*_private.tsv
+fast_track_caps.tsv
+
 # Google Drive stub files (macOS backup excludes these)
 *.gdoc
 *.gsheet
