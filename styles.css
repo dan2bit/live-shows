@@ -184,14 +184,15 @@
   .pass-details[open] summary{border-radius:3px 3px 0 0;}
   .pass-details .group-table-wrap{margin-top:0;}
   .potential-group{margin-bottom:4px;}
-  .cell-decision-ro{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:2px;white-space:nowrap;font-weight:500;}
+  .cell-decision-ro{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:3px;white-space:nowrap;font-weight:500;}
   .cell-decision-ro.buy{background:var(--green-bg);color:var(--green);border:1px solid var(--green-dim);}
   .cell-decision-ro.choose{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-dim);}
   .cell-decision-ro.sell{background:var(--sell-bg);color:var(--sell);border:1px solid var(--sell-dim);}
   .cell-decision-ro.pass{color:var(--gray);}
   .decision-select{font-family:var(--mono);font-size:11px;background:var(--surface-bright);color:var(--text);border:1px solid var(--border-bright);border-radius:3px;padding:3px 6px;cursor:pointer;outline:none;}
   .decision-select:focus{border-color:var(--amber-dim);}
-  .revoke-btn{font-family:var(--mono);font-size:10px;background:var(--red-bg);border:1px solid var(--red-dim);color:var(--red);border-radius:2px;padding:2px 6px;cursor:pointer;margin-left:6px;white-space:nowrap;}
+  .revoke-btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--border-bright);background:var(--surface-bright);color:var(--text-muted);cursor:pointer;margin-left:6px;white-space:nowrap;}
+  .revoke-btn:hover{border-color:var(--amber-dim);color:var(--amber);}
   .save-indicator{font-family:var(--mono);font-size:10px;margin-left:6px;}
   .save-ok{color:var(--green);}
   .save-err{color:var(--red);}
