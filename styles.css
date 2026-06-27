@@ -304,7 +304,16 @@
 
   @media(max-width:768px){
     .panel{padding:12px;}
-    .col-support,.col-seat,.col-cost{display:none;}
+    /* Tabs: 2x2 grid; hide OTD strip (too cramped) */
+    .tab-row{flex-wrap:wrap;padding:0;}
+    .tabs{flex:1 1 100%;display:flex;flex-wrap:wrap;padding:0 8px;}
+    .tab{flex:1 1 50%;text-align:center;padding:8px 4px;font-size:13px;}
+    .on-this-day{display:none;}
+    /* Banners: stack message and CTA button vertically, each full-width */
+    .bystander-banner{flex-direction:column;align-items:flex-start;gap:8px;}
+    .bystander-banner .forsale-cta,.bystander-banner .recommend-cta-header{margin-left:0;width:100%;text-align:center;}
+    /* Hide venue column (shown in Artist cell via cell-venue-mobile instead) */
+    .col-support,.col-seat,.col-cost,.cell-venue{display:none;}
     .cell-notes{max-width:220px;}
     .col-watching,.col-tier,.col-price,.col-context{display:none;}
     .cell-pot-notes{max-width:160px;}
