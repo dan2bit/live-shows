@@ -89,6 +89,20 @@ LATEST RELEASE  — added 2026-06-23
     in the same year correctly outranks it); the original release_date + precision
     are what get stored.
 
+    MISATTRIBUTION GUARD (#100)  — added 2026-06-27
+        /artists/{id}/albums has been observed returning an album that belongs to
+        a different artist for the given id (a Bach recording surfaced under
+        Angelique Francis). Since the bad album was the newest, it won the pick
+        and was cached as her latest_release, then rode into a "new releases"
+        list. latest_release now filters the page through _album_credits_artist
+        (our id among the album's credited artists, or an alias-aware name match
+        as a backstop) BEFORE selecting the newest, so a mis-link can neither be
+        stored nor displace the real release — the correct one is recovered from
+        elsewhere in the same page. Drops are logged rejected-only (bounded by
+        anomaly count, not traffic). The guard runs in both the build and the
+        refresh paths, so a full --refresh-releases re-validates the whole cache
+        as a side effect at no extra quota.
+
     Display/badging on this date (a "NEW" badge in the show lists) and recency
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
     here — this only captures and caches the data. See #85 / follow-on tickets.
@@ -492,7 +506,30 @@ def _release_sort_key(rd: str) -> str:
     return f"{y.zfill(4)}-{m.zfill(2)}-{d.zfill(2)}"
 
 
-def latest_release(aid: str, creds) -> dict | None:
+def _album_credits_artist(album: dict, aid: str, artist_name: str | None) -> bool:
+    """True if the album is actually credited to this artist (#100 guard).
+
+    /artists/{id}/albums has been observed returning an album that belongs to a
+    different artist for the given id (a Bach recording under Angelique Francis).
+    Accept on an exact Spotify-ID match against the album's credited artists; fall
+    back to an alias-aware name match (same `similarity`/threshold the resolver
+    uses) so a legitimate album whose id representation differs isn't false-
+    rejected. An album matching on neither — our id absent and only an unrelated
+    name credited, which is the #100 case — returns False and is dropped by the
+    caller. Residual: a *bidirectional* mis-link that also injects our id into the
+    album's own artist list is internally consistent and passes the id check;
+    that one is uncatchable from the payload alone (noted on #100)."""
+    album_artists = album.get("artists") or []
+    if any((a.get("id") or "") == aid for a in album_artists):
+        return True
+    if artist_name:
+        for a in album_artists:
+            if similarity(artist_name, a.get("name", "")) >= SEARCH_MIN_SCORE:
+                return True
+    return False
+
+
+def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | None:
     """Most recent album/single for an artist, or None if they have none.
 
     Uses GET /artists/{id}/albums (app-only reachable). include_groups is
@@ -500,6 +537,14 @@ def latest_release(aid: str, creds) -> dict | None:
     can't masquerade as new activity. One call, limit=ALBUMS_LIMIT (10 — the
     endpoint's max; >10 returns 400 "Invalid limit"). Results are newest-first,
     so the most recent is effectively always within the window.
+
+    #100 guard: items not actually credited to this artist (see
+    _album_credits_artist) are dropped BEFORE the newest is picked, so a Spotify
+    mis-link can neither be stored nor displace the real latest — the correct
+    release is recovered automatically when it sits elsewhere in the page. Each
+    drop is logged rejected-only (one stderr line), bounded by anomaly count
+    rather than traffic. Pass artist_name to enable the name backstop; with it
+    None, the guard is id-only.
     """
     data = api_get(f"/artists/{aid}/albums",
                    {"include_groups": "album,single", "market": MARKET, "limit": ALBUMS_LIMIT},
@@ -507,7 +552,16 @@ def latest_release(aid: str, creds) -> dict | None:
     items = (data or {}).get("items", [])
     if not items:
         return None
-    best = max(items, key=lambda it: _release_sort_key(it.get("release_date", "")))
+    credited, rejected = [], []
+    for it in items:
+        (credited if _album_credits_artist(it, aid, artist_name) else rejected).append(it)
+    for it in rejected:
+        credit = ", ".join(a.get("name", "") for a in (it.get("artists") or [])) or "?"
+        print(f"    ⚠ #100 guard: dropped '{it.get('name', '')}' ({it.get('id', '')}) — "
+              f"credited to [{credit}], not {artist_name or aid}", file=sys.stderr)
+    if not credited:
+        return None
+    best = max(credited, key=lambda it: _release_sort_key(it.get("release_date", "")))
     return {
         "date": best.get("release_date", ""),
         "precision": best.get("release_date_precision", ""),
@@ -523,7 +577,7 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
     # RELEASE). One Spotify call only: the /artists/{id} GET was dropped — after
     # the metadata strip it returned nothing the cache keeps, so spotify_url comes
     # from the resolver or is derived from the id.
-    rel = latest_release(aid, creds)
+    rel = latest_release(aid, creds, name)
     return {
         "spotify_id": aid,
         "spotify_url": url or f"https://open.spotify.com/artist/{aid}",
@@ -573,7 +627,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
             print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
             continue
         try:
-            rel = latest_release(aid, creds)
+            rel = latest_release(aid, creds, name)
         except RateLimited:
             if not args.dry_run:
                 save_cache(cache)
@@ -582,6 +636,12 @@ def refresh_releases(cache: dict, creds, args) -> None:
         time.sleep(DELAY)
         old = (entry.get("latest_release") or {}).get("date")
         new = (rel or {}).get("date")
+        # Secondary (#100 Option 3): a new date older than the stored one is a
+        # regression worth a look (stale-cache overwrite or a pulled release).
+        # Cheap and rejected-only; does NOT catch the #100 case (its bad date was
+        # newer) — that's the membership guard's job, above.
+        if old and new and _release_sort_key(new) < _release_sort_key(old):
+            print(f"    ⚠ release date regressed {old} → {new} for {name}", file=sys.stderr)
 
         if args.dry_run:
             change = "unchanged" if old == new else f"{old or '∅'} → {new or '∅'}"
