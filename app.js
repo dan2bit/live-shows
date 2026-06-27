@@ -1,4 +1,3 @@
-
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
 let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
@@ -579,21 +578,26 @@ async function loadHistoryYear(yr){
 }
 // One-shot loader for every history year — the same files the On-This-Day strip needs.
 // In-flight-deduped so History-open and Search-open both await one fetch, never two.
+// Failed years stay null (retryable) so the next History open can retry them; only sets
+// _allYearsLoaded=true if every year succeeded, preventing permanently-empty year tabs.
 var _historyLoad=null;
 function loadAllHistory(){
   if(_allYearsLoaded)return Promise.resolve();
   if(_historyLoad)return _historyLoad;
   _historyLoad=(async function(){
     var unloaded=HISTORY_YEARS.filter(function(yr){return historyData[yr]===null;});
+    var _anyFailed=false;
     if(unloaded.length){
       var results=await Promise.allSettled(unloaded.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
       results.forEach(function(res,i){
         var yr=unloaded[i];
-        if(res.status==='fulfilled'){try{historyData[yr]=parseTsv(_decodeB64(res.value.content));}catch(e){historyData[yr]=[];console.error('parse data/history/'+yr+'.tsv:',e);}}
-        else{historyData[yr]=[];console.error('load data/history/'+yr+'.tsv:',res.reason);}
+        if(res.status==='fulfilled'){try{historyData[yr]=parseTsv(_decodeB64(res.value.content));}catch(e){historyData[yr]=null;_anyFailed=true;console.error('parse data/history/'+yr+'.tsv:',e);}}
+        else{historyData[yr]=null;_anyFailed=true;console.error('load data/history/'+yr+'.tsv:',res.reason);}
       });
+      // If any year failed, reset the in-flight promise so the next History open retries.
+      if(_anyFailed)_historyLoad=null;
     }
-    _allYearsLoaded=true;
+    if(!_anyFailed)_allYearsLoaded=true;
   })();
   return _historyLoad;
 }
