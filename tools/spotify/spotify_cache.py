@@ -59,6 +59,8 @@ RATE LIMITS  — added 2026-06-23
     _is_non_artist (explicit set + "festival" substring) so they never cost a call.
     Pace the calls with --delay (default 2.0s) — raise it on a big first build to
     stay under the limit, lower it once limits relax or for the lighter passes.
+    A multi-day --refresh-releases back-audit resumes across the daily cap with
+    --stale-days (see LATEST RELEASE / that flag's help).
 
 LATEST RELEASE  — added 2026-06-23
     Each entry carries a `latest_release` object — the artist's most recent
@@ -101,7 +103,18 @@ LATEST RELEASE  — added 2026-06-23
         elsewhere in the same page. Drops are logged rejected-only (bounded by
         anomaly count, not traffic). The guard runs in both the build and the
         refresh paths, so a full --refresh-releases re-validates the whole cache
-        as a side effect at no extra quota.
+        as a side effect at no extra quota. That sweep is ~317 calls ≈ 3-4 days
+        under the cap; --stale-days makes it resumable day to day (see below).
+
+    RESUMABLE RELEASE SWEEP (--stale-days)  — added 2026-06-27
+        refresh_releases walks sorted(cache) top-down and, by default, re-pulls
+        every entry — so a naive daily re-run under the ~100/day cap re-burns the
+        first ~100 names and never advances. --stale-days N skips entries whose
+        latest_release_checked is within the last N days, so each daily run picks
+        up past what an earlier run in the same sweep already refreshed. Opt-in:
+        unset = refresh everything (unchanged behavior), so a deliberate full
+        re-pull still does exactly that. Pick N > sweep length (7 covers the 3-4
+        day, ~317-artist sweep).
 
     Display/badging on this date (a "NEW" badge in the show lists) and recency
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
@@ -137,6 +150,7 @@ USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
     python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
+    python3 spotify_cache.py --refresh-releases --stale-days 7  # resumable multi-day release back-audit (skips entries refreshed in the last 7 days)
     python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
@@ -607,7 +621,12 @@ def save_cache(cache: dict) -> None:
 
 def refresh_releases(cache: dict, creds, args) -> None:
     """Re-pull ONLY latest_release for already-cached artists; leave the rest of
-    each entry untouched. Honors --artist and --dry-run."""
+    each entry untouched. Honors --artist, --stale-days, and --dry-run.
+
+    --stale-days N skips entries whose latest_release_checked is within the last N
+    days, which makes a multi-day back-audit resumable across the ~100/day cap:
+    each daily run advances past what an earlier run already refreshed instead of
+    restarting from the top. Unset (default) refreshes every cached artist."""
     names = sorted(cache)
     if args.artist:
         sub = args.artist.lower()
@@ -617,15 +636,32 @@ def refresh_releases(cache: dict, creds, args) -> None:
               "(run a normal build first, or check --artist).")
         return
     print(f"Refreshing latest_release for {len(names)} cached artist(s)"
+          + (f" [skip checked < {args.stale_days}d]" if args.stale_days is not None else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     updated = 0
+    skipped = 0
     for i, name in enumerate(names, 1):
         entry = cache[name]
         aid = entry.get("spotify_id")
         if not aid:
             print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
             continue
+        # --stale-days: skip entries refreshed within the window so a multi-day
+        # back-audit resumes across the daily cap instead of re-burning the first
+        # ~100 names each run. Entries never checked (null) fall through and
+        # refresh. Opt-in: with --stale-days unset, nothing here is skipped.
+        if args.stale_days is not None:
+            checked = entry.get("latest_release_checked")
+            if checked:
+                try:
+                    if (date.today() - date.fromisoformat(checked)).days < args.stale_days:
+                        skipped += 1
+                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
+                              f"skipped (--stale-days {args.stale_days})")
+                        continue
+                except ValueError:
+                    pass  # unparseable stored date → fall through and refresh
         try:
             rel = latest_release(aid, creds, name)
         except RateLimited:
@@ -661,12 +697,17 @@ def refresh_releases(cache: dict, creds, args) -> None:
             print("    …checkpoint saved")
 
     if args.dry_run:
-        print("\n[DRY RUN] no changes written.")
+        print("\n[DRY RUN] no changes written"
+              + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
+                 if args.stale_days is not None else "")
+              + ".")
         return
     save_cache(cache)
     print("\n" + "=" * 60)
-    print(f"Updated {updated} release date(s) across {len(names)} artist(s). "
-          f"Written: {OUTPUT_JSON}")
+    print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
+          + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
+             if args.stale_days is not None else "")
+          + f". Written: {OUTPUT_JSON}")
 
 
 # ── Last.fm enrichment (separately refreshable; --refresh-lastfm only) ─────────
@@ -821,7 +862,7 @@ def main() -> None:
     ap.add_argument("--refresh-releases", action="store_true",
                     help="Re-pull ONLY each cached artist's latest release "
                          "(album/single); leaves the rest of each entry "
-                         "untouched. Honors --artist and --dry-run.")
+                         "untouched. Honors --artist, --stale-days, and --dry-run.")
     ap.add_argument("--refresh-lastfm", action="store_true",
                     help="Re-pull ONLY the Last.fm enrichment block (listeners, "
                          "playcount, tags, similar) for cached artists. Independent "
@@ -832,6 +873,17 @@ def main() -> None:
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
+    ap.add_argument("--stale-days", type=int, default=None, metavar="N",
+                    help="With --refresh-releases: skip artists whose latest_release "
+                         "was checked within the last N days. Default unset = refresh "
+                         "every cached artist (unchanged behavior — a deliberate full "
+                         "re-pull still re-pulls everyone). Pass a value (e.g. 7) to "
+                         "make the multi-day, rate-limited release back-audit "
+                         "RESUMABLE across the ~100/day Dev-mode cap: each daily run "
+                         "skips what an earlier run in the same sweep already "
+                         "refreshed and continues where it left off. Choose N larger "
+                         "than the sweep length (a ~317-artist sweep is 3-4 days, so "
+                         "7 is safe). No effect on the build or --refresh paths.")
     ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
                     help="Seconds to sleep between Spotify calls (default "
                          "%(default)s). The build packs ~1-2 calls/artist; raise "
