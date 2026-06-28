@@ -895,17 +895,17 @@ function serializeFastTrack(rows,headers){
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
   var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml('+ Suggest an artist')+'</div>';
-  var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:80px">Tier</th><th>Why</th><th style="width:110px">Links</th></tr></thead>';
+  var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:110px">Links</th><th style="width:80px">Tier</th><th>Why</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
-    var tier=r['Tier']||'',tierCls=tier.toLowerCase().includes('strong')&&tier.toLowerCase().includes('medium')?'tier-medium-strong':tier==='Strong'?'tier-strong':'tier-medium';
+    var tier=r['Tier']||'';
     var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
     var spotUrl=r['Spotify URL']||'';
     return'<tr><td><div class="ft-artist">'+esc(r['Artist']||'')+(isHat?' <span class="badge badge-hat">🎩 HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
-      +'<td><span class="cell-tier '+tierCls+'">'+esc(tier)+'</span></td>'
-      +'<td><div class="ft-why" id="cell-ft-why-'+ri+'">'+makeEditBtn('cell-ft-why-'+ri,'fasttrack',ri,'Why Fast Track','Why')+esc(r['Why Fast Track']||'')+'</div></td>'
       +'<td><div class="ft-links">'+(tourUrl?'<a class="ft-link ft-link-tour" href="'+esc(tourUrl)+'" target="_blank">Tour &#8599;</a>':'')+(spotUrl?'<a class="ft-link ft-link-sp" href="'+esc(spotUrl)+'" target="_blank">Spotify</a>':'')+'</div></td>'
+      +'<td>'+tierHtml(tier)+'</td>'
+      +'<td><div class="ft-why" id="cell-ft-why-'+ri+'">'+makeEditBtn('cell-ft-why-'+ri,'fasttrack',ri,'Why Fast Track','Why')+esc(r['Why Fast Track']||'')+'</div></td>'
       +'</tr>';
   }).join('');
   document.getElementById('tourhereBadge').textContent=fastTrackRows.length;
