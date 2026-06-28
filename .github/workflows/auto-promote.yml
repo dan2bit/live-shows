@@ -1,0 +1,79 @@
+name: Auto-promote staging to main
+
+# Plan C for the post-#76 guard. `main` requires the `guard` status check, so a
+# direct push is rejected. Data work is pushed to `staging`; this job re-runs the
+# private-data guard and, only if clean, fast-forwards `main` using a deploy key
+# that is the sole ruleset bypass actor. A failing commit is never promoted and
+# is reset off `staging` so it cannot contaminate the next push.
+
+on:
+  push:
+    branches: [staging]
+
+concurrency:
+  group: auto-promote
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: staging
+          fetch-depth: 0
+
+      - name: Guard (mirror of the required `guard` check)
+        shell: bash
+        run: |
+          set -euo pipefail
+          fail=0
+
+          offending="$(git ls-files | grep -E '^live-shows-private/|_private\.tsv$|_caps\.tsv$' || true)"
+          if [ -n "$offending" ]; then
+            echo "::error::Private sidecar path(s) in the public repo:"
+            printf '%s\n' "$offending" | sed 's/^/  - /'
+            fail=1
+          fi
+
+          sniff="$(git ls-files '*.tsv' | while IFS= read -r f; do
+            if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
+          done)"
+          if [ -n "$sniff" ]; then
+            echo "::error::TSV(s) with a 'Private Notes' header:"
+            printf '%s\n' "$sniff" | sed 's/^/  - /'
+            fail=1
+          fi
+
+          [ "$fail" -eq 0 ] || exit 1
+          echo "OK — staging is clean."
+
+      - name: Promote staging -> main
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+          chmod 600 "$HOME/.ssh/promote_key"
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+          git config user.name  "auto-promote[bot]"
+          git config user.email "auto-promote@users.noreply.github.com"
+          git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+          git fetch origin main
+          git rebase origin/main
+          git push promote HEAD:main
+          git push origin --force HEAD:staging
+
+      - name: Reset staging on failure
+        if: failure()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git push origin --force "origin/main:refs/heads/staging"
