@@ -13,13 +13,15 @@ Start every session by:
 4. Reviewing the open issue list for anything that became actionable since the last session.
 
 Commit rules:
-- TSVs and non-executable data files → main directly via MCP
-- app.js -> get confirmation on whether Dan should commit or directly via MCP
+- TSVs and non-executable data files → **staging** branch (not main); auto-promote.yml fast-forwards main after the guard passes
+- Private sidecar TSVs (dan2bit/live-shows-private → current_private.tsv etc.) → commit to that repo's main directly; the private repo does not use the staging pipeline
+- app.js → get confirmation on whether Dan should commit or directly via MCP (to staging)
 - other JS, Python, shell scripts → PR branch; Dan merges
-- index.html → main directly via MCP (Unicode handled correctly by official binary)
+- index.html → staging directly via MCP (Unicode handled correctly by official binary)
 - Always fetch fresh SHA immediately before every create_or_update_file call
 - Never pass GitHub-fetched content back as commit content — read local patched file for content, use GitHub SHA only for the sha parameter
 - Large architectural changes to app.js or index.html → PR branch regardless
+- push_files does NOT trigger auto-promote on staging — follow up with a single-file create_or_update_file nudge commit, or use sequential create_or_update_file calls instead of push_files for data writes
 
 Active constraints to keep in mind:
 - Potential rows matched by Artist+Date in handleDecisionChange, handleRevoke, and saveEdit — never by array index (stale-index fix, commit 5cf7506)
