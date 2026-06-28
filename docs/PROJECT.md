@@ -6,7 +6,7 @@ Reference for the data-file layouts and the repository/commit conventions used w
 
 ## Data file schemas
 
-### live_shows_current.tsv — 26 columns
+### live_shows_current.tsv — 19 columns (public schema)
 
 Rows are `attended` or `upcoming`, ordered chronologically by Show Date.
 
@@ -19,36 +19,32 @@ Rows are `attended` or `upcoming`, ordered chronologically by Show Date.
 7. Venue Name
 8. Venue Address
 9. Venue Event URL
-10. Seat Info / GA
-11. Ticket Access
-12. Ticket Quantity
-13. Face Value (per ticket)
-14. Fees
-15. Total Cost
-16. Purchase Date
-17. Setlist.fm URL
-18. Status
-19. Food & Bev
-20. Parking
-21. Merch
-22. Artist Interaction
-23. Playlist URL
-24. Notes / Memories
-25. Private Notes
-26. Photo URL
+10. Seat Type (`GA` | `Seated`)
+11. VIP (`Y` or blank)
+12. Group (`Y` or blank)
+13. Ticket Access
+14. Setlist.fm URL
+15. Status
+16. Artist Interaction
+17. Playlist URL
+18. Notes / Memories
+19. Photo URL
 
-**Multi-act shows:** when a date has multiple performers, column 17 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists/<year>.json` (split by year, named for the show’s year) — support acts first, headliner last.
+Financial and seat detail (Seat Info, Ticket Quantity, Face Value, Fees, Total Cost, Purchase Date, Food & Bev, Parking, Merch, Private Notes) lives in `dan2bit/live-shows-private → current_private.tsv`, keyed by `Show Date` + `Artist`.
+
+**Multi-act shows:** when a date has multiple performers, column 14 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists/<year>.json` — support acts first, headliner last.
 
 **Known issue — trailing-tab strip:** the GitHub MCP `create_or_update_file` tool strips trailing tabs from each line, so rows that end in empty columns can arrive short. The `parseTsv()` function in `index.html` compensates at parse time by padding/realigning rows back to the full column count.
 
-### live_shows_potential.tsv — 17 columns
+### live_shows_potential.tsv — 18 columns (public schema)
 
-`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes`
+`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes | BIT URL`
 
 - **Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Sell`, `Pass`. Never leave Decision blank — use `Choose` for undecided.
 - **Sort:** Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every change.
 - **Prev/Next Show brackets:** reference only purchased upcoming shows (status `upcoming` in `live_shows_current.tsv`) — never potentials, never attended shows. Re-check on every purchase or move to attended.
 - **`Sell`** is read-only — set when a confirmed ticket is listed for resale; not editable via the index.html dropdown.
+- **No Private Notes column** — private notes go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by `Artist` + `Date`.
 
 ### artists.tsv
 
@@ -62,14 +58,26 @@ One row per venue: parking, transit, seating, box office hours, notes. Canonical
 
 ## Repository & commit conventions
 
-- **Non-executable files** (`.tsv`, `.json`, `.md`, `index.html`, config) → commit directly to `main` via MCP `create_or_update_file`. The official MCP binary handles Unicode correctly.
+### staging → main pipeline
+
+`main` requires the `guard` CI status check. **Do not push directly to `main` via MCP — it will be rejected.** All MCP data commits go to `staging`; `auto-promote.yml` fast-forwards `main` after the guard passes.
+
+**`push_files` quirk:** `push_files` (multi-file Git Data API) does **not** fire the `push` trigger on `staging` and therefore does **not** auto-promote. After a `push_files` call, follow up with a single-file `create_or_update_file` nudge commit to `staging` to trigger promotion — or use sequential `create_or_update_file` calls instead.
+
+### File-type rules
+
+- **Public non-executable files** (`.tsv`, `.json`, `.md`, `index.html`, config) → commit to `staging` in `dan2bit/live-shows` via MCP.
+- **Private sidecar TSVs** → commit to **`main`** in `dan2bit/live-shows-private` via MCP. (The private repo does not use the staging pipeline.)
 - **Executable scripts** (`.py`, `.sh`, `.js`) → PR branch; Dan merges.
-- **index.html** → simple/non-logic edits may commit directly to `main`; significant logic changes go via a PR branch.
+- **index.html** → simple/non-logic edits commit to `staging`; significant logic changes go via a PR branch.
 - Always **fetch a fresh SHA** immediately before each `create_or_update_file` call — a SHA from earlier in the session is stale after any intervening commit to that file.
 - Always **push full file content** — never targeted/patch commits (they have clobbered files).
 - **Large files (50KB+)** commit fine via `create_or_update_file` — attempt it first; fall back to manual check-in only if it fails.
-- Use `delete_file` to remove a file. Avoid `push_files` with empty content (it silently commits empty blobs).
 - **No commits without explicit confirmation from Dan.**
+
+### Private file notation
+
+Throughout this project, private files are written as **`dan2bit/live-shows-private → <file>`** — meaning the file `<file>` at the root of the separate private repo. Never a path inside `dan2bit/live-shows`. See the project instructions CRITICAL section for the full boundary rules.
 
 ---
 
