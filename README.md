@@ -41,3 +41,8 @@ Also tools for taste profile curation and new artist web and spotify exploration
 ### Agentic Playbooks
 
 In `tools/playbooks` - a few bespoke, *ymmv* automation workflow playbooks for inbox monitoring, calendar management and artist discovery
+
+### CI Tools and gating
+
+IN `scripts` - a handful of python scripts for automation of github actions. 
+- _agentic repo management is done in a staging branch through the official github MCP server__
