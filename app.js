@@ -487,7 +487,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
   var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
-  var cal=featureOn('calendar_integration')?'<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar">📅</a>':'';
+  var cal=featureOn('calendar_integration')?'<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar"> 📅</a>':'';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
