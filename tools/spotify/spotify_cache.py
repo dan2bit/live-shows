@@ -333,6 +333,8 @@ _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
 _UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
     "Eli Kollman",
     "SatchVai Band",
+    "TJ Turqman",          # local session bassist (seen_with only) — no Spotify catalogue
+    "The Side Cars Band",  # tribute band — no independent Spotify entity
 )}
 
 
