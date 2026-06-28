@@ -914,6 +914,7 @@ function renderTourHere(){
 async function loadTourHere(){
   if(!featureOn('fast_track'))return;
   if(fastTrackRows.length){renderTourHere();return;}
+  document.getElementById('tourhereContent').innerHTML=hatLoadingHtml();
   try{
     var fd=await ghFetch(FAST_TRACK_PATH);
     var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
