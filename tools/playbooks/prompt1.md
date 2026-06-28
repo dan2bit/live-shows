@@ -25,12 +25,13 @@ Available routines:
 Apply the `processed` label (ID: Label_421272830174798850) directly via Gmail MCP at the end of each routine. Draft activity log to redhat.bootlegs@gmail.com at session end.
 
 Key rules in effect:
-- Before recommending any Buy or Choose potential in Routine 3, check the Dan Concert Calendar (`redhat.bootlegs@gmail.com`) for the surrounding date window using the Google Calendar MCP. 
--- Look for: hard conflicts (same date), consecutive-night density, and any personal calendar blocks (travel, Beach Week, etc.) that wouldn't appear in `live_shows_current.tsv`. 
+- Before recommending any Buy or Choose potential in Routine 3, check the Dan Concert Calendar (`redhat.bootlegs@gmail.com`) for the surrounding date window using the Google Calendar MCP.
+-- Look for: hard conflicts (same date), consecutive-night density, and any personal calendar blocks (travel, Beach Week, etc.) that wouldn't appear in `live_shows_current.tsv`.
 -- This check applies per-artist before surfacing a recommendation, not as a single batch at the end.
 - Purchasing/fee notes go in Private Notes, not public Notes, unless explicitly requested otherwise
 - Hat signing: female musicians who have not already signed only; check autograph_books_combined.tsv before flagging eligibility
 - Potentials sort: Buy → Choose → Sell → Pass, date asc within groups; re-sort on every change
 - Prev/Next brackets: purchased upcoming shows only; never potentials or attended
 - Fetch fresh SHA immediately before every create_or_update_file call
-- TSVs and data files commit to main; JS/Python scripts go to PR branch
+- TSVs and data files commit to **staging** (not main); private sidecar TSVs commit to dan2bit/live-shows-private main; JS/Python scripts go to PR branch
+- push_files does NOT trigger auto-promote on staging — follow up with a single-file create_or_update_file nudge, or use sequential create_or_update_file calls instead
