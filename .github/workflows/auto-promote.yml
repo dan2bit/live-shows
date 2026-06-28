@@ -1,10 +1,11 @@
 name: Auto-promote staging to main
 
 # Plan C for the post-#76 guard. `main` requires the `guard` status check, so a
-# direct push is rejected. Data work is pushed to `staging`; this job re-runs the
-# private-data guard and, only if clean, fast-forwards `main` using a deploy key
-# that is the sole ruleset bypass actor. A failing commit is never promoted and
-# is reset off `staging` so it cannot contaminate the next push.
+# direct push is rejected. Data work and bot output are pushed to `staging`; this
+# job re-runs the private-data guard and, only if clean, fast-forwards `main`
+# using a deploy key that is the sole ruleset bypass actor. `main` only ever
+# advances by fast-forward from `staging`, so no staging sync is needed on
+# success. A failing commit is never promoted and is reset off `staging`.
 
 on:
   push:
@@ -64,11 +65,7 @@ jobs:
           git config user.name  "auto-promote[bot]"
           git config user.email "auto-promote@users.noreply.github.com"
           git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
-
-          git fetch origin main
-          git rebase origin/main
           git push promote HEAD:main
-          git push origin --force HEAD:staging
 
       - name: Reset staging on failure
         if: failure()

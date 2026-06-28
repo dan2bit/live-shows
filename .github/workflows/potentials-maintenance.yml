@@ -1,5 +1,11 @@
 name: Potentials maintenance
 
+# Post-#76: main requires the `guard` status check. The prune commit goes to
+# `staging` via the promote deploy key (which also makes the staging push
+# trigger auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
+# auto-promote to run. A pruned potential.tsv promoted back to main retriggers
+# this workflow, but the second run finds nothing to prune (idempotent).
+
 on:
   push:
     branches: [main]
@@ -7,6 +13,10 @@ on:
       - data/live_shows_potential.tsv
       - data/live_shows_current.tsv
   workflow_dispatch:
+
+concurrency:
+  group: potentials-maintenance
+  cancel-in-progress: false
 
 jobs:
   prune-and-check:
@@ -18,7 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,16 +39,27 @@ jobs:
         id: prune
         run: python scripts/prune_potentials.py
 
-      - name: Commit pruned potentials (if changed)
+      - name: Commit pruned potentials to staging (if changed)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git diff --quiet || (
+          if git diff --quiet; then
+            echo "No prune changes — nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
             git add data/live_shows_potential.tsv tools/research/follows/new_artist_research.tsv
-            git commit -m "auto: prune past-dated potentials [skip ci]"
-            git pull --rebase
-            git push
-          )
+            git commit -m "auto: prune past-dated potentials"
+            git checkout -- .
+            git fetch promote staging
+            git rebase promote/staging
+            git push promote HEAD:staging
+          fi
 
       - name: Check Prev/Next brackets
         id: brackets
