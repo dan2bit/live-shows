@@ -37,7 +37,7 @@ live-shows/ (public)
     history/                  ← year TSVs (2021–2025)
     setlists/                 ← multi-setlist JSON (by year)
 
-live-shows-private/ (private)
+live-shows-private/ (private repo — dan2bit/live-shows-private)
   current_private.tsv         ← cost/seat/qty per show
   potential_private.tsv       ← private notes per potential
   fast_track_caps.tsv         ← per-artist cap overrides
@@ -75,32 +75,32 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 ### Routine 1 — Ticket receipt
 
 **Trigger:** Dan forwards ticket confirmation to rhbl inbox
-**Data written:** `data/live_shows_current.tsv` (public), `current_private.tsv` (private), Google Calendar
+**Data written:** `data/live_shows_current.tsv` (public → `staging`), `dan2bit/live-shows-private → current_private.tsv` (private → private repo `main`), Google Calendar
 **Key rules:** Venue defaults, autograph book check, Prev/Next bracket update in potentials
 
 ### Routine 2 — Post-show notes
 
 **Trigger:** Dan sends post-show email to rhbl
-**Data written:** `live-shows-private/spending.tsv`, `data/live_shows_current.tsv`, `artists.tsv`, optionally `autograph_books_combined.tsv`
+**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `autograph_books_combined.tsv`
 **Key rules:** spending.tsv write is mandatory even if all zeros
 
 ### Routine 3 — Ticket alert newsletter
 
 **Trigger:** Venue/artist newsletter tagged `ticket-alert`
-**Data written:** `data/live_shows_potential.tsv` (after explicit confirmation), Google Calendar (on-sale events)
-**Key rules:** Calendar conflict check before any recommendation; purchasing/fee notes go to `potential_private.tsv`
+**Data written:** `data/live_shows_potential.tsv` (→ `staging`, after explicit confirmation), Google Calendar (on-sale events)
+**Key rules:** Calendar conflict check before any recommendation; purchasing/fee notes go to `dan2bit/live-shows-private → potential_private.tsv`
 
 ### Routine 4 — Artist newsletter
 
 **Trigger:** Email tagged `artist-mail`
-**Data written:** `data/live_shows_potential.tsv` (after confirmation), Google Calendar
+**Data written:** `data/live_shows_potential.tsv` (→ `staging`, after confirmation), Google Calendar
 **Key rules:** Same calendar conflict rule as Routine 3
 
 ### Routine 5 — Artist follow / signup
 
 **Trigger:** BIT/Songkick alert or artist mailing list signup response, tagged `artist-follow`
-**Data written:** `tools/research/follows/follows_master.tsv`, `data/live_shows_potential.tsv` (after confirmation)
-**Key rules:** Reminder suppression if show already in current or potentials; BIT “Just Announced” requires full HTML parse
+**Data written:** `tools/research/follows/follows_master.tsv` (→ `staging`), `data/live_shows_potential.tsv` (→ `staging`, after confirmation)
+**Key rules:** Reminder suppression if show already in current or potentials; BIT "Just Announced" requires full HTML parse
 
 ---
 
@@ -138,12 +138,18 @@ Strategy sessions use web search and Claude in Chrome for artist discovery (Gnoo
 
 ---
 
-## GitHub Actions (CI)
+## GitHub Actions (CI) — staging → main pipeline
 
-Five workflows run on push to main:
+`main` requires the `guard` status check, so **nothing is pushed to `main` directly** — all commits land on `staging`. `auto-promote.yml` runs on every push to `staging`: it re-runs the private-data guard and, only if clean, fast-forwards `main` using the `PROMOTE_DEPLOY_KEY` deploy key. A failing commit is reset off `staging` and never reaches `main`.
+
+**`push_files` quirk:** The multi-file Git Data API (`push_files`) does **not** fire the `push` trigger on `staging` and therefore does **not** auto-promote. After a `push_files` call, follow up with a single-file `create_or_update_file` nudge commit to trigger promotion.
+
+Workflows that run on push (firing after `auto-promote` carries `staging` → `main`):
 
 | Workflow | Trigger | Action |
 |---|---|---|
+| `private-data-guard` | any push / PR | Reject `*_private.tsv`, `*_caps.tsv`, `live-shows-private/` paths + private-schema content sniff |
+| `auto-promote` | push to `staging` | Guard check → fast-forward `main` via deploy key |
 | `validate-current` | `data/live_shows_current.tsv` | Schema + sentinel check |
 | `potentials-maintenance` | `data/live_shows_potential.tsv` or `data/live_shows_current.tsv` | Prune past-dated rows, check brackets |
 | `recommend-index` | Source TSVs or `scripts/build_recommend_index.py` | Regenerate `data/recommend_index.json` |
