@@ -1057,8 +1057,8 @@ async function commitConfig(){
 }
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
-  document.getElementById('showsContent').innerHTML='<div class="loading">Loading</div>';
-  document.getElementById('potContent').innerHTML='<div class="loading">Loading</div>';
+  document.getElementById('showsContent').innerHTML=hatLoadingHtml();
+  document.getElementById('potContent').innerHTML=hatLoadingHtml();
   try{
     var results=await Promise.all([ghFetch(CURRENT_PATH),ghFetch(POTENTIAL_PATH)]);
     currentRows=parseTsv(_decodeB64(results[0].content));
