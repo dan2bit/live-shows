@@ -32,6 +32,12 @@ Follow tier model:
 - Medium: regional cap — pass on Hub City, wait for Rams Head/Hamilton/Birchmere/9:30
 - Low: watch only; no active purchase intent
 
+Commit rules (for any file writes in this session):
+- TSVs and data files → **staging** branch in dan2bit/live-shows; auto-promote.yml fast-forwards main after guard passes
+- Private sidecar TSVs → dan2bit/live-shows-private main directly
+- push_files does NOT trigger auto-promote on staging — follow up with a single-file create_or_update_file nudge, or use sequential create_or_update_file calls
+- Scripts and code → PR branch; Dan merges
+
 Active strategic threads:
 - Issue #19 and related issues: fork-ready template (config.yaml, CSS/JS separation, fast_track exemplar, features flags)
 - Gnoosic artist discovery (Claude in Chrome, work interrupted — resume from https://www.gnoosic.com/artist/larkin+poe)
