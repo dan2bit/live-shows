@@ -154,6 +154,7 @@ USAGE
     python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
+    python3 spotify_cache.py --add-artist "Eric Ambel" --to research  # resolve + append a cache-ready row (--to: research | fast_track | seen_with)
     python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
 
@@ -881,6 +882,161 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
           f"Written: {OUTPUT_JSON}")
 
 
+# ── --add-artist: append a cache-ready row to a low-commitment list (#94) ─────
+# Resolve an artist on Spotify and append a schema-valid row to research /
+# fast_track / seen_with. artists.tsv is REFUSED — a row there asserts Times Seen
+# / First Seen, derived from a real show row, which this tool won't fabricate (the
+# dual-bill ledger question is #103). Append is header-driven (uses each file's
+# own column order) and append-mode, so the rest of the file is left untouched; it
+# never writes a '#' comment block (the in-page editor derives the header from
+# line 1 and a comment block wipes the file — #80).
+
+NAR_TSV        = os.path.join(FOLLOWS,  "new_artist_research.tsv")
+FAST_TRACK_TSV = os.path.join(DATA_DIR, "fast_track.tsv")
+SEEN_WITH_TSV  = os.path.join(DATA_DIR, "seen_with.tsv")
+
+_ADD_DESTINATIONS = {
+    "research": NAR_TSV, "new_artist_research": NAR_TSV, "new_artist_research.tsv": NAR_TSV,
+    "fast_track": FAST_TRACK_TSV, "fast_track.tsv": FAST_TRACK_TSV,
+    "seen_with": SEEN_WITH_TSV, "seen_with.tsv": SEEN_WITH_TSV,
+}
+
+_ARTISTS_TSV_GUIDANCE = (
+    "artists.tsv is the seen-artist ledger — a row there asserts Times Seen / First "
+    "Seen, which derive from a real show row. This tool won't fabricate ledger "
+    "facts. Record the sighting via the post-show flow, or use new_artist_research "
+    "/ fast_track / seen_with.")
+
+
+def _tsv_header(path: str) -> list[str]:
+    with open(path, encoding="utf-8", newline="") as f:
+        return f.readline().rstrip("\r\n").split("\t")
+
+
+def _append_tsv_row(path: str, row: dict) -> None:
+    """Append one row aligned to the file's existing header order, in append mode
+    so the rest of the file stays byte-for-byte intact. csv handles any quoting;
+    no '#' comment block is ever introduced (#80)."""
+    header = _tsv_header(path)
+    with open(path, "rb") as f:
+        ends_nl = f.read()[-1:] == b"\n"
+    with open(path, "a", encoding="utf-8", newline="") as f:
+        if not ends_nl:
+            f.write("\n")
+        csv.writer(f, delimiter="\t", lineterminator="\n").writerow(
+            [row.get(col, "") for col in header])
+
+
+def _search_candidates(name: str, creds, limit: int = 8) -> list[tuple[float, dict]]:
+    data = api_get("/search", {"q": name, "type": "artist", "limit": limit}, creds)
+    items = (data or {}).get("artists", {}).get("items", [])
+    scored = [(similarity(name, it.get("name", "")), it) for it in items if it.get("id")]
+    scored.sort(key=lambda t: t[0], reverse=True)
+    return scored
+
+
+def _choose_artist(name: str, creds, dry_run: bool):
+    """Resolve `name` to (id, url, resolved_name). Auto-accepts a confident,
+    unambiguous top hit; else prints candidates and prompts (writes nothing on
+    dry-run or cancel). Returns None if declined / no hit."""
+    cands = _search_candidates(name, creds)
+    if not cands:
+        print(f"  No Spotify results for '{name}'.")
+        return None
+
+    def _info(it):
+        return it["id"], (it.get("external_urls") or {}).get("spotify", ""), it.get("name", "")
+
+    top_score, top = cands[0]
+    runner = cands[1][0] if len(cands) > 1 else 0.0
+    if top_score >= SEARCH_MIN_SCORE and (top_score - runner) >= 0.15:
+        aid, url, rn = _info(top)
+        print(f"  Resolved '{name}' → {rn}  ({url})  [score {top_score:.2f}]")
+        return aid, url, rn
+
+    print(f"  '{name}' is low-confidence or ambiguous — candidates:")
+    for i, (s, it) in enumerate(cands[:8], 1):
+        print(f"    {i}. {it.get('name','')}  "
+              f"({(it.get('external_urls') or {}).get('spotify','')})  [score {s:.2f}]")
+    if dry_run:
+        print("  [DRY RUN] would prompt for a pick; nothing written.")
+        return None
+    raw = input("  Pick number (Enter/'q' to cancel): ").strip().lower()
+    if not raw or raw == "q":
+        print("  Cancelled — nothing written.")
+        return None
+    try:
+        return _info(cands[int(raw) - 1][1])
+    except (ValueError, IndexError):
+        print("  Invalid pick — nothing written.")
+        return None
+
+
+def add_artist(args, creds) -> None:
+    name = args.add_artist.strip()
+    dest = (args.to or "").strip().lower()
+    if dest in ("artists", "artists.tsv"):
+        sys.exit("Refused: " + _ARTISTS_TSV_GUIDANCE)
+    path = _ADD_DESTINATIONS.get(dest)
+    if not path:
+        sys.exit(f"Unknown --to '{args.to}'. Allowed: research, fast_track, seen_with. "
+                 f"(artists.tsv is refused: {_ARTISTS_TSV_GUIDANCE})")
+
+    is_sw = path == SEEN_WITH_TSV
+    if is_sw and not (args.date and args.headliner):
+        sys.exit('--to seen_with requires --date YYYY-MM-DD and --headliner "<show-row Artist>".')
+
+    # Dedup: Artist for research/fast_track; Seen With + Date + Headliner for seen_with.
+    rows = read_tsv_rows(path)
+    if is_sw:
+        key = (_norm(name), args.date.strip(), _norm(args.headliner))
+        dup = any((_norm(r.get("Seen With", "")), r.get("Show Date", "").strip(),
+                   _norm(r.get("Headliner", ""))) == key for r in rows)
+    else:
+        dup = any(_norm(r.get("Artist", "")) == _norm(name) for r in rows)
+    if dup:
+        print(f"'{name}' already in {os.path.basename(path)} (dedup key matched) — skipped.")
+        return
+
+    chosen = _choose_artist(name, creds, args.dry_run)
+    if not chosen:
+        return
+    aid, url, _resolved = chosen
+
+    if is_sw:
+        row = {"Show Date": args.date.strip(), "Headliner": args.headliner.strip(),
+               "Seen With": name, "Role": (args.role or "").strip(),
+               "Spotify URL": url, "Notes": (args.notes or "").strip()}
+    elif path == FAST_TRACK_TSV:
+        row = {"Artist": name, "Spotify URL": url}            # descriptive cols left blank
+    else:  # NAR — no Spotify URL column; the cache re-resolves it on the next build
+        row = {"Artist": name, "Status": "pending-review", "Source": "added via --add-artist"}
+
+    if args.dry_run:
+        print(f"  [DRY RUN] would append to {os.path.basename(path)}: {row}")
+        return
+    _append_tsv_row(path, row)
+    print(f"  ✓ appended '{name}' to {os.path.basename(path)}")
+
+    # Cache it in the same run (one /albums call) unless --no-cache.
+    if not args.no_cache:
+        canon = canonical(name, load_aliases())
+        cache = load_cache()
+        try:
+            entry = build_entry(canon, {_source_tag(path)}, aid, url, creds)
+        except RateLimited:
+            save_cache(cache)
+            raise
+        prev = cache.get(canon)
+        if prev and "lastfm" in prev:
+            entry["lastfm"] = prev["lastfm"]
+            entry["lastfm_checked"] = prev.get("lastfm_checked")
+        cache[canon] = entry
+        save_cache(cache)
+        print(f"  ✓ cached {canon} → {aid}  "
+              f"latest {(entry.get('latest_release') or {}).get('date') or '—'}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -904,6 +1060,24 @@ def main() -> None:
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
+    ap.add_argument("--add-artist", metavar="NAME",
+                    help="Resolve NAME on Spotify and append a cache-ready row to the "
+                         "list chosen with --to. Caches it the same run unless --no-cache.")
+    ap.add_argument("--to", metavar="DEST",
+                    help="Destination for --add-artist: research | fast_track | seen_with "
+                         "(bare filenames accepted). seen_with also needs --date/--headliner.")
+    ap.add_argument("--date", metavar="YYYY-MM-DD",
+                    help="With --add-artist --to seen_with: the show date.")
+    ap.add_argument("--headliner", metavar="ARTIST",
+                    help="With --add-artist --to seen_with: the verbatim show-row "
+                         "Artist the member was seen with (the join key).")
+    ap.add_argument("--role", metavar="ROLE",
+                    help="With --add-artist --to seen_with: optional role (e.g. guitar).")
+    ap.add_argument("--notes", metavar="TEXT",
+                    help="With --add-artist --to seen_with: optional notes.")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="With --add-artist: append the row but skip the same-run cache "
+                         "build (avoids the /albums call when rate-limited).")
     ap.add_argument("--stale-days", type=int, default=None, metavar="N",
                     help="With --refresh-releases: skip artists whose latest_release "
                          "was checked within the last N days. Default unset = refresh "
@@ -944,6 +1118,14 @@ def main() -> None:
         sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
                  "(tools/spotify/.env or environment).")
     creds = (client_id, client_secret)
+
+    # --add-artist: resolve + append one artist to a low-commitment list (#94).
+    # Needs Spotify creds (for resolution), so it sits after the credential check.
+    if args.add_artist:
+        if not args.to:
+            sys.exit("--add-artist requires --to (research | fast_track | seen_with).")
+        add_artist(args, creds)
+        return
 
     # Releases-only path operates on the existing cache, not the collected repo set.
     if args.refresh_releases:
