@@ -116,6 +116,18 @@ LATEST RELEASE  — added 2026-06-23
         re-pull still does exactly that. Pick N > sweep length (7 covers the 3-4
         day, ~317-artist sweep).
 
+    NULL-PRESERVE GUARD (#109)  — added 2026-06-29
+        A null pull (no album/single credited to the id, app-only / market=US)
+        must NOT overwrite a non-null cached latest_release. App-only Dev-mode
+        returns ∅ for artists who demonstrably have releases (confirmed via the
+        user-OAuth path); the old code stored that ∅ AND stamped the entry fresh,
+        so a real release was both lost and then skipped by the next --stale-days
+        sweep. Both write paths (refresh_releases and the main build loop) now
+        keep the cached release when a pull comes back null, and refresh_releases
+        leaves latest_release_checked untouched so the entry is retried rather
+        than locked as a false null. Genuinely new artists (no prior entry) still
+        store null correctly — the guard only fires when there's data to protect.
+
     Display/badging on this date (a "NEW" badge in the show lists) and recency
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
     here — this only captures and caches the data. See #85 / follow-on tickets.
@@ -591,6 +603,11 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
     drop is logged rejected-only (one stderr line), bounded by anomaly count
     rather than traffic. Pass artist_name to enable the name backstop; with it
     None, the guard is id-only.
+
+    Returns None when the artist genuinely has no qualifying release OR when the
+    app-only page comes back empty/all-rejected. Callers MUST NOT let a None here
+    overwrite a non-null cached latest_release — see the #109 null-preserve guard
+    in refresh_releases() and the main build loop.
     """
     data = api_get(f"/artists/{aid}/albums",
                    {"include_groups": "album,single", "market": MARKET, "limit": ALBUMS_LIMIT},
@@ -658,7 +675,11 @@ def refresh_releases(cache: dict, creds, args) -> None:
     --stale-days N skips entries whose latest_release_checked is within the last N
     days, which makes a multi-day back-audit resumable across the ~100/day cap:
     each daily run advances past what an earlier run already refreshed instead of
-    restarting from the top. Unset (default) refreshes every cached artist."""
+    restarting from the top. Unset (default) refreshes every cached artist.
+
+    #109 null-preserve: a null pull never overwrites a non-null cached release,
+    and on such a keep the entry's latest_release_checked is left untouched so the
+    sweep retries it rather than locking in a false null (and skipping it)."""
     names = sorted(cache)
     if args.artist:
         sub = args.artist.lower()
@@ -673,6 +694,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
 
     updated = 0
     skipped = 0
+    kept = 0
     for i, name in enumerate(names, 1):
         entry = cache[name]
         aid = entry.get("spotify_id")
@@ -702,8 +724,21 @@ def refresh_releases(cache: dict, creds, args) -> None:
                 print(f"    …flushed {len(cache)} cached entries before bailing")
             raise
         time.sleep(DELAY)
-        old = (entry.get("latest_release") or {}).get("date")
+        old_rel = entry.get("latest_release")
+        old = (old_rel or {}).get("date")
         new = (rel or {}).get("date")
+        # Null-preserve guard (#109): a null pull must not wipe a known release.
+        # App-only Dev-mode + market=US filtering can transiently return no albums
+        # for an artist who has them; overwriting good data with null AND stamping
+        # it fresh would both lose the release and hide it from the next
+        # --stale-days sweep. Keep the cached release and leave
+        # latest_release_checked untouched, so the entry stays eligible for a real
+        # refresh instead of locking in a false null.
+        if rel is None and old_rel is not None:
+            kept += 1
+            print(f"[{i}/{len(names)}] {name}  → null pull; kept {old} (not re-checked)")
+            print(f"    ⚠ app-only null for {name}; preserved cached {old}", file=sys.stderr)
+            continue
         # Secondary (#100 Option 3): a new date older than the stored one is a
         # regression worth a look (stale-cache overwrite or a pulled release).
         # Cheap and rejected-only; does NOT catch the #100 case (its bad date was
@@ -730,6 +765,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
 
     if args.dry_run:
         print("\n[DRY RUN] no changes written"
+              + (f"; {kept} kept on null pulls" if kept else "")
               + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
                  if args.stale_days is not None else "")
               + ".")
@@ -737,6 +773,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
     save_cache(cache)
     print("\n" + "=" * 60)
     print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
+          + (f"; kept {kept} on null pulls" if kept else "")
           + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
              if args.stale_days is not None else "")
           + f". Written: {OUTPUT_JSON}")
@@ -1197,6 +1234,15 @@ def main() -> None:
         if prev and "lastfm" in prev:
             entry["lastfm"] = prev["lastfm"]
             entry["lastfm_checked"] = prev.get("lastfm_checked")
+        # Null-preserve guard (#109): don't let a null pull wipe a known release
+        # (app-only /market-filter flakiness). Keep the cached release AND its
+        # check-date so the entry stays eligible for a real refresh instead of
+        # locking in a false null. New artists (no prev) still store null.
+        prev_rel = (prev or {}).get("latest_release")
+        if entry.get("latest_release") is None and prev_rel is not None:
+            entry["latest_release"] = prev_rel
+            entry["latest_release_checked"] = prev.get("latest_release_checked")
+            print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
         cache[name] = entry
         rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
