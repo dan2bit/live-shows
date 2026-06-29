@@ -901,7 +901,7 @@ function renderTourHere(){
     var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
-    var spotUrl=r['Spotify URL']||'';
+    var spotUrl=featureOn('spotify_integration')?(r['Spotify URL']||''):'';  
     return'<tr><td><div class="ft-artist">'+esc(r['Artist']||'')+(isHat?' <span class="badge badge-hat">🎩 HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
       +'<td><div class="ft-links">'+(tourUrl?'<a class="ft-link ft-link-tour" href="'+esc(tourUrl)+'" target="_blank">Tour &#8599;</a>':'')+(spotUrl?'<a class="ft-link ft-link-sp" href="'+esc(spotUrl)+'" target="_blank">Spotify</a>':'')+'</div></td>'
       +'<td>'+tierHtml(tier)+'</td>'

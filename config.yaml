@@ -56,6 +56,7 @@ features:
   calendar_integration: true   # Google Calendar link on upcoming shows
   private_data: true           # fetch the private sidecar repo when authenticated
   fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
+  spotify_integration: true    # Spotify links in Waiting tab; set false to hide if no Spotify subsystem
 
 # Display preferences (#82).
 display:
