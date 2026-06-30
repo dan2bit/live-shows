@@ -81,7 +81,7 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 ### Routine 2 — Post-show notes
 
 **Trigger:** Dan sends post-show email to rhbl
-**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `autograph_books_combined.tsv`
+**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `autograph_books_combined.tsv` (book) / `hat_signatures.tsv` (hat)
 **Key rules:** spending.tsv write is mandatory even if all zeros
 
 ### Routine 3 — Ticket alert newsletter
