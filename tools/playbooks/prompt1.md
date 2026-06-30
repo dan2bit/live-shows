@@ -16,7 +16,7 @@ Start every session by:
 
 Available routines:
 - Routine 1: ticket receipts (label:ticket-receipt)
-- Routine 2: post-show notes (label:show-notes) — always updates spending.tsv, artists.tsv, and potentially autograph_books_combined.tsv
+- Routine 2: post-show notes (label:show-notes) — always updates spending.tsv, artists.tsv, and potentially autograph_books_combined.tsv (book) / hat_signatures.tsv (hat)
 - Routine 3: ticket-alert newsletters (label:ticket-alert -label:processed) — requires a clear date on the calendar and explicit confirmation before any potentials write
 - Routine 4: artist mail (label:artist-mail -label:processed)
 - Routine 5: reminders/skips
@@ -29,7 +29,7 @@ Key rules in effect:
 -- Look for: hard conflicts (same date), consecutive-night density, and any personal calendar blocks (travel, Beach Week, etc.) that wouldn't appear in `live_shows_current.tsv`.
 -- This check applies per-artist before surfacing a recommendation, not as a single batch at the end.
 - Purchasing/fee notes go in Private Notes, not public Notes, unless explicitly requested otherwise
-- Hat signing: female musicians who have not already signed only; check autograph_books_combined.tsv before flagging eligibility
+- Hat signing: female musicians who have not already signed only; check hat_signatures.tsv before flagging eligibility
 - Potentials sort: Buy → Choose → Sell → Pass, date asc within groups; re-sort on every change
 - Prev/Next brackets: purchased upcoming shows only; never potentials or attended
 - Fetch fresh SHA immediately before every create_or_update_file call
