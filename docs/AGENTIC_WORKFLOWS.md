@@ -204,9 +204,11 @@ Two lanes, decided by change depth:
 manually by Dan. When a PR branch is needed, state that clearly and wait for Dan to
 create it before proceeding.
 
-The long-running `dev` branch question (relevant to the `?dataref` / `site.data_branch`
-override design) is tracked on issue #89. If #89 introduces a `dev` branch, this
-section will need updating.
+A long-running `dev` branch was considered (relevant to the `?dataref` /
+`site.data_branch` override design on issue #89) and **rejected as not useful at this
+stage of the project** (2026-06-30). The two-branch model above (`staging` → `main`)
+stands. #89's override design proceeds against the transient/PR-branch model described
+in `PR strategy` above, not a long-running integration branch.
 
 ---
 
