@@ -144,14 +144,14 @@ to the calendar event title.
 
 **Step 3 — Check autograph books**
 
-Look up headliner and known supporting acts in `autograph_books_combined.tsv`.
+Look up headliner and known supporting acts in `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat).
 
 - In RHBS and not yet signed → prepend `BRING RHBS — [Artist] p.[N]` to calendar description
 - In APS and not yet signed → prepend `BRING APS — [Artist] p.[N]`
 - Already signed → no reminder
 
 **Hat signing eligibility:** Female or female-presenting artists only, not already signed.
-Verify gender via web search if uncertain. Check `autograph_books_combined.tsv` before
+Verify gender via web search if uncertain. Check `hat_signatures.tsv` before
 flagging.
 
 Venue likelihood for artist interaction (Yes / Maybe / No) per `venues.tsv`; flag for
@@ -212,7 +212,7 @@ If book autograph: update `autograph_books_combined.tsv` — set RHBS/APS Signed
 
 If hat autograph:
 1. Update `artists.tsv` — set `Hat Autograph` to `Y`
-2. Update `autograph_books_combined.tsv` — add signer to Hat Notes
+2. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank)
 3. Remind Dan to manually append to the hat autograph Google Doc
    (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
    Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
@@ -224,7 +224,8 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   Artist Interaction filled; also update `dan2bit/live-shows-private → current_private.tsv`
   for actual Food & Bev / Parking / Merch
 - `data/artists.tsv` — always included
-- `data/autograph_books_combined.tsv` — if applicable
+- `tools/show_goals/autograph_books_combined.tsv` — if a book was signed
+- `tools/show_goals/hat_signatures.tsv` — if the hat was signed
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
