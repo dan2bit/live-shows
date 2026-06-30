@@ -66,9 +66,9 @@ The system prompt (Claude Instructions, pinned to the Project) carries the stand
 
 ---
 
-## Inbox + Data Sessions (Routines 1–5)
+## Inbox + Data Sessions (Routines 1–6)
 
-Triggered by: forwarded ticket receipts, post-show note emails, newsletter emails
+Triggered by: forwarded ticket receipts, post-show note emails, newsletter emails, resale sale notifications
 
 Each routine follows a strict pre-flight + execute + label + log pattern defined in `tools/playbooks/EMAIL_WORKFLOWS.md`.
 
@@ -101,6 +101,12 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 **Trigger:** BIT/Songkick alert or artist mailing list signup response, tagged `artist-follow`
 **Data written:** `tools/research/follows/follows_master.tsv` (→ `staging`), `data/live_shows_potential.tsv` (→ `staging`, after confirmation)
 **Key rules:** Reminder suppression if show already in current or potentials; BIT "Just Announced" requires full HTML parse
+
+### Routine 6 — Ticket sold (resale)
+
+**Trigger:** Email tagged `ticket-sold` (forwards from dan2bit@gmail.com with `sold` in subject)
+**Data written:** `data/live_shows_current.tsv` (→ `staging`, remove/update row), `dan2bit/live-shows-private → current_private.tsv` (remove/update), `dan2bit/live-shows-private → spending.tsv` (negative cost row), Google Calendar (delete event)
+**Key rules:** Rarest routine; records net proceeds as a negative Ticket Cost in spending.tsv to offset the original purchase
 
 ---
 
@@ -138,13 +144,29 @@ Strategy sessions use web search and Claude in Chrome for artist discovery (Gnoo
 
 ---
 
-## GitHub Actions (CI) — staging → main pipeline
+## Repo Management
 
-`main` requires the `guard` status check, so **nothing is pushed to `main` directly** — all commits land on `staging`. `auto-promote.yml` runs on every push to `staging`: it re-runs the private-data guard and, only if clean, fast-forwards `main` using the `PROMOTE_DEPLOY_KEY` deploy key. A failing commit is reset off `staging` and never reaches `main`.
+### Branch pipeline
 
-**`push_files` quirk:** The multi-file Git Data API (`push_files`) does **not** fire the `push` trigger on `staging` and therefore does **not** auto-promote. After a `push_files` call, follow up with a single-file `create_or_update_file` nudge commit to trigger promotion.
+`main` has a required `guard` CI status check — **direct pushes to `main` are
+rejected by branch protection**. The correct flow for all commits:
 
-Workflows that run on push (firing after `auto-promote` carries `staging` → `main`):
+1. Commit to **`staging`** branch
+2. `auto-promote.yml` fires on push to `staging`, re-runs `private-data-guard`, and
+   fast-forwards `main` via the `PROMOTE_DEPLOY_KEY` deploy key if clean
+3. A commit that fails the guard is reset off `staging` and never reaches `main`
+
+**`push_files` quirk:** The multi-file Git Data API (`push_files`) does **not** fire
+the `push` trigger on `staging` and therefore does **not** auto-promote. After any
+`push_files` call, follow up with a single-file `create_or_update_file` nudge commit
+to trigger promotion — or use sequential `create_or_update_file` calls instead.
+
+Private sidecar TSVs (`dan2bit/live-shows-private`) are committed directly to that
+repo's `main`. The private repo does not use the staging pipeline.
+
+Full commit-target table: see `tools/playbooks/DATA_WRITE_PROTOCOLS.md`.
+
+### CI workflows
 
 | Workflow | Trigger | Action |
 |---|---|---|
@@ -152,11 +174,39 @@ Workflows that run on push (firing after `auto-promote` carries `staging` → `m
 | `auto-promote` | push to `staging` | Guard check → fast-forward `main` via deploy key |
 | `validate-current` | `data/live_shows_current.tsv` | Schema + sentinel check |
 | `potentials-maintenance` | `data/live_shows_potential.tsv` or `data/live_shows_current.tsv` | Prune past-dated rows, check brackets |
-| `recommend-index` | Source TSVs or `scripts/build_recommend_index.py` | Regenerate `data/recommend_index.json` |
-| `cache-bust` | `app.js`, `recommend.js`, `styles.css` | Update `?v=` fingerprints in `index.html` |
-| `close-playlist-issue` | Issue comment containing YouTube playlist URL | Write URL to `data/live_shows_current.tsv` |
+| `recommend-index` | source TSVs or `scripts/build_recommend_index.py` | Regenerate `data/recommend_index.json` |
+| `cache-bust` | `app.js`, `recommend.js`, or `styles.css` | Update `?v=` fingerprints in `index.html` |
+| `close-playlist-issue` | issue comment containing YouTube playlist URL | Write URL to `data/live_shows_current.tsv` |
 
-All bot commits use `[skip ci]` sentinel. All bot workflows use `git pull --rebase` before push to prevent bot-vs-bot race conditions.
+All bot commits use `[skip ci]`. All bot workflows use `git pull --rebase` before push
+to prevent bot-vs-bot races.
+
+**`cache-bust` note:** fires on any of the three JS/CSS files — not just `app.js`.
+After any cache-bust run, re-fetch `index.html`'s blob SHA before any subsequent
+`index.html` commit.
+
+### PR strategy
+
+Two lanes, decided by change depth:
+
+**Staging auto-promote lane** — use for:
+- TSV and data file writes (all routines)
+- `index.html` changes
+- `app.js` / `styles.css` / `recommend.js` typo fixes, config additions, and
+  single-function changes where the full diff is reviewed in conversation before commit
+
+**PR branch lane** — use for:
+- `app.js` logic changes spanning multiple functions or introducing new behavior
+- All `.py` and `.sh` scripts (Dan merges)
+- Any change where a staging rollback would be disruptive
+
+**`github:create_branch` fails reliably via MCP** — branch creation must be done
+manually by Dan. When a PR branch is needed, state that clearly and wait for Dan to
+create it before proceeding.
+
+The long-running `dev` branch question (relevant to the `?dataref` / `site.data_branch`
+override design) is tracked on issue #89. If #89 introduces a `dev` branch, this
+section will need updating.
 
 ---
 
