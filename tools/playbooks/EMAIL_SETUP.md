@@ -160,6 +160,7 @@ Google Drive ID: `1ENPcmHxrbdMfJNuDlqy-RRBHkGm8Onyy`
 https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit
 
 Format for hat entries: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
+Hat signatures TSV: `tools/show_goals/hat_signatures.tsv` (per-signature; `seq` matches the gdoc order).
 
 No write connector exists for Google Docs — all hat autograph gdoc updates are manual.
 The gdoc is the completeness authority for hat signers; TSV files are the authority
