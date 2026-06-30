@@ -119,6 +119,45 @@ get entries.
 
 Commits to `staging` in `dan2bit/live-shows`.
 
+### Component artist / bill provenance (issue #103)
+
+A combined bill (co-headliner pairing or supergroup name) creates a sighting for
+**each component artist**, not just the bill name — but only when a component artist
+would plausibly headline their own show. The test: **would this name plausibly headline
+independently?** Taj Mahal, Keb' Mo', Joe Satriani, and Steve Vai all clearly would (and
+several already have). A touring bassist or keyboardist would not.
+
+**Artists that pass the test** get their own `artists.tsv` row, with:
+- `Times Seen` / `First Seen` / `Most Recent Seen` computed from the bill's show row,
+  same as any other sighting
+- `Via` column set to the bill name (e.g. `SatchVai Band`, `TajMo: The Taj Mahal & Keb' Mo' Band`)
+
+The bill name itself **keeps its own row too**. Both rows carry the count for the same
+night — this mirrors how a headliner and a supporting act both get credited for one
+show already; it is not a bug to reconcile.
+
+**Artists that fail the test** (band members, sit-ins, sidemen — e.g. Laura Chavez,
+Scot Sutherland, DeShawn Alexander) stay in `data/seen_with.tsv` only. No `artists.tsv`
+row, no `Via` entry.
+
+**`Via` is informational, not load-bearing.** It records provenance for a component row
+so it's clear the sighting came via a bill rather than the artist's own headline show.
+It does not gate or discount the count.
+
+### Promotion from `seen_with.tsv` (conversational only)
+
+If a `seen_with`-only artist later headlines or co-headlines independently — e.g. Laura
+Chavez eventually plays a solo show — that is the trigger for a **one-time backfill**:
+their prior `seen_with` appearances fold into the new `artists.tsv` row, with `Times Seen`
+/ `First Seen` computed from those prior appearances plus the new one, and each prior
+appearance still traceable via `Via`.
+
+**This trigger is conversational, never scheduled.** There is no periodic scan of
+`seen_with.tsv` for promotion candidates. The backfill happens naturally when processing
+a ticket purchase (Routine 1) or post-show notes (Routine 2) for an artist who already
+has `seen_with` history — check `seen_with.tsv` for the artist name at that point, and
+if found, fold the prior appearances in as part of creating the new row.
+
 ---
 
 ## `fast_track.tsv` protocol
