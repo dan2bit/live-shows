@@ -22,7 +22,7 @@ There are exactly three event types on the Dan Concert Calendar:
 - **Never edit past events.** Calendar edits apply only to upcoming or same-day events. Past
   events are read-only.
 - **Autograph book check is a hard pre-condition for show events.** Before creating any show
-  event, look up the headliner and known supporting acts in `autograph_books_combined.tsv`.
+  event, look up the headliner and known supporting acts in `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat).
   No show event without the check. (See per-type detail below.)
 - **Prev/Next Show belongs in `live_shows_potential.tsv` only** — never in calendar event
   descriptions.
@@ -100,7 +100,7 @@ High ticket cost -- cool it on merch tonight   <- face value >= $100, NOT VIP, N
 
 **Hat signing eligibility:** female or female-presenting artists only, or bands with female
 members. Verify gender via web search if unknown; do not infer. Confirm she has not already
-signed the hat in `autograph_books_combined.tsv` before flagging.
+signed the hat in `hat_signatures.tsv` before flagging.
 
 **Merch caution line:** add only when face value per ticket ≥ $100, AND not VIP, AND not Wolf
 Trap Filene Center. Evaluated per ticket — never on the order total for multi-ticket orders.
@@ -183,5 +183,5 @@ ticketing-platform event URL and present it to Dan for confirmation before commi
 
 - `EMAIL_WORKFLOWS.md` — when each event is created/updated within the five inbox routines.
 - `venues.tsv` — Parking column (4) drives the Location rule for show events.
-- `autograph_books_combined.tsv` — the hard pre-condition check for show events.
+- `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat) — the hard pre-condition check for show events.
 - `AGENTIC_WORKFLOWS.md` — architectural overview of calendar integration.
