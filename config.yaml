@@ -6,6 +6,7 @@ site:
   repo: live-shows
   private_owner: dan2bit
   private_repo: live-shows-private
+  data_branch: staging         # branch for in-page TSV/config writes; omit or set 'main' if no staging pipeline
   # Brand/identity (#69 phase 3). Asset paths below are RELATIVE to repo root and are
   # expanded in app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply
   # time, because relative asset URLs 404 on this project-pages (github.io) setup. A
