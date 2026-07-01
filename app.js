@@ -104,6 +104,7 @@ function applyConfig(cfg){
 // Feature flags (#82). A flag is ON unless config explicitly sets it to false, so a
 // fork that omits the features block — or any single key — keeps full behavior.
 function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
+function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
 // Normal Ticket Number (#82 / #87): the owner's usual party size. The authed (X) count
@@ -424,7 +425,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var rows=parseTsv(raw);
       rows[rowIdx][field]=newVal;currentRows[rowIdx][field]=newVal;
       var msgArtist=rows[rowIdx]['Artist']||'show';
-      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'current: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'current: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
     } else if(fileKey==='potential'&&field==='Private Notes'){
       await _savePrivateSidecar(POTENTIAL_PRIVATE_PATH,['Artist','Date'],{'Artist':potentialRows[rowIdx]['Artist'],'Date':potentialRows[rowIdx]['Date']},field,newVal);
@@ -438,7 +439,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       if(_pfi<0)throw new Error('Potential row not found: '+(_pt['Artist']||''));
       rows[_pfi][field]=newVal;potentialRows[rowIdx][field]=newVal;
       var msgArtist=rows[_pfi]['Artist']||'show';
-      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
     } else if(fileKey==='fasttrack'){
       var fd=await ghFetch(FAST_TRACK_PATH);
@@ -447,7 +448,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var rows=parseFastTrack(raw);
       rows[rowIdx][field]=newVal;fastTrackRows[rowIdx][field]=newVal;
       var msgArtist=rows[rowIdx]['Artist']||'artist';
-      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+FAST_TRACK_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'fast_track: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeFastTrack(rows,headers)))),sha:fd.sha})});
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+FAST_TRACK_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'fast_track: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeFastTrack(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
     } else if(fileKey.startsWith('history:')){
       var yr=parseInt(fileKey.split(':')[1]);
@@ -458,7 +459,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var rows=parseTsv(raw);
       rows[rowIdx][field]=newVal;historyData[yr][rowIdx][field]=newVal;
       var msgArtist=rows[rowIdx]['Artist']||'show';
-      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+histPath,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'history: update '+msgArtist+' '+yr+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
     }
     if(ind){ind.textContent='✓';ind.className='notes-save-ind save-ok';}
@@ -843,7 +844,7 @@ async function handleRevoke(idx){
     if(_fi<0)throw new Error('Row not found in file: '+(_target['Artist']||''));
     var artist=rows[_fi]['Artist']||'show';rows.splice(_fi,1);potentialRows.splice(idx,1);
     var pat=localStorage.getItem(PAT_KEY);
-    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: remove '+artist+' Sell row (revoked)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: remove '+artist+' Sell row (revoked)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
     if(!res.ok)throw new Error(await res.text());
     potentialRows=rows;setTimeout(function(){renderPotential();renderShows();},400);
   }catch(e){console.error(e);alert('Error removing row: '+e.message);}
@@ -860,7 +861,7 @@ async function handleDecisionChange(select){
     rows[_fi]['Decision']=newVal;potentialRows[idx]['Decision']=newVal;
     rows.sort(function(a,b){var rank=function(r){var d=(r['Decision']||'').toLowerCase();return d.startsWith('buy')?0:d==='choose'?1:d==='sell'?2:3;};return rank(a)-rank(b)||(a['Date']||'').localeCompare(b['Date']||'');});
     var pat=localStorage.getItem(PAT_KEY);
-    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+(potentialRows[idx]['Artist']||'')+' decision',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
     if(!res.ok)throw new Error(await res.text());
     potentialRows=rows;ind.textContent='✓';ind.className='save-indicator save-ok';
     setTimeout(function(){renderPotential();renderShows();},600);
@@ -1050,7 +1051,7 @@ async function commitConfig(){
   st.textContent='committing...';
   try{
     var fd=await ghFetch('config.yaml');
-    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha})});
+    var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha,branch:dataBranch()})});
     if(!res.ok)throw new Error(await res.text());
     st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
   }catch(e){st.textContent='commit failed: '+e.message;}
