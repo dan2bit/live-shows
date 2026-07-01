@@ -53,6 +53,22 @@ to trigger promotion — or use sequential `create_or_update_file` calls instead
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
 
+### In-page UI writes (authenticated browser)
+
+The in-page editor (`handleDecisionChange`, `handleRevoke`, `saveEdit`, `commitConfig`)
+also writes to the public repo via the GitHub Contents API. These writes previously
+targeted `main` directly, which broke when branch protection was enabled (issue #111).
+
+The fix: `app.js` reads `site.data_branch` from `config.yaml` via the `dataBranch()`
+helper and passes it as `branch:dataBranch()` in every public-repo PUT body. This
+fork sets `site.data_branch: staging`; forks without a staging pipeline omit the key
+and get the `'main'` default.
+
+**Implication:** in-page edits (decision changes, notes, revokes, config) land on
+`staging` and auto-promote to `main` via CI — the same pipeline as MCP data commits.
+Private sidecar writes (`_savePrivateSidecar`) are unaffected: they target the private
+repo's `main` directly, which has no branch protection.
+
 ---
 
 ## `live_shows_current.tsv` write protocol
