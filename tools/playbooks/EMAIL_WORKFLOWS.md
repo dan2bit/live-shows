@@ -229,12 +229,27 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
-**Step 6 — Open a GitHub issue for YouTube playlist creation**
+**Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
-Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`
-Label: `playlist`
+**Single-setlist shows:** Open one issue. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. Skip if no footage.
 
-Skip if no footage. Body includes show details, notes, and the playlist creation workflow.
+**MULTI shows (two or more setlist.fm links provided):**
+
+1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
+2. Open **one combined playlist issue** — title as above; include all setlist.fm links in the body (support acts first, headliner last).
+3. Update `data/setlists/<year>.json` by appending an entry keyed on `YYYY-MM-DD`:
+
+```json
+"YYYY-MM-DD": {
+  "event": "[Headliner] w/ [Support]",
+  "setlists": [
+    { "artist": "[Support Act]", "url": "https://www.setlist.fm/setlist/..." },
+    { "artist": "[Headliner]", "url": "https://www.setlist.fm/setlist/..." }
+  ]
+}
+```
+
+   Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
 
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
