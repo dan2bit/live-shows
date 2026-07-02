@@ -585,6 +585,9 @@ async function loadHistoryYear(yr){
 // In-flight-deduped so History-open and Search-open both await one fetch, never two.
 // Failed years stay null (retryable) so the next History open can retry them; only sets
 // _allYearsLoaded=true if every year succeeded, preventing permanently-empty year tabs.
+// Also primes _setlistsCache for all years discovered in data/setlists/ in parallel,
+// independently of HISTORY_YEARS — so 2026.json is warmed even before rollover adds 2026
+// to the history TSV set.
 var _historyLoad=null;
 function loadAllHistory(){
   if(_allYearsLoaded)return Promise.resolve();
@@ -592,6 +595,16 @@ function loadAllHistory(){
   _historyLoad=(async function(){
     var unloaded=HISTORY_YEARS.filter(function(yr){return historyData[yr]===null;});
     var _anyFailed=false;
+    // Prime setlists cache in parallel: discover years by listing data/setlists/, then
+    // fetch each JSON. Runs independently of HISTORY_YEARS so 2026.json is always primed
+    // even before rollover.py adds 2026 to the history TSV set.
+    var setlistPrime=(async function(){
+      try{
+        var dir=await ghFetch('data/setlists');
+        var years=dir.filter(function(f){return/^\d{4}\.json$/.test(f.name);}).map(function(f){return parseInt(f.name);});
+        await Promise.allSettled(years.map(function(yr){return _loadSetlistsForYear(yr);}));
+      }catch(e){console.warn('setlists prime failed:',e.message);}
+    })();
     if(unloaded.length){
       var results=await Promise.allSettled(unloaded.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
       results.forEach(function(res,i){
@@ -602,6 +615,7 @@ function loadAllHistory(){
       // If any year failed, reset the in-flight promise so the next History open retries.
       if(_anyFailed)_historyLoad=null;
     }
+    await setlistPrime;
     if(!_anyFailed)_allYearsLoaded=true;
   })();
   return _historyLoad;
