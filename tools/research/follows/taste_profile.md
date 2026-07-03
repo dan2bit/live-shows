@@ -1,8 +1,9 @@
 # Taste Profile — Dan Rinzel
 
 *Generated from show history, potential list decisions, Gnoosic discovery sessions,
-newsletter filtering, and inbox processing across the songs-for-my-funeral project.
-Last updated: 2026-04-11.*
+newsletter filtering, inbox processing, quarterly festival/awards research, and
+lastfm similar-graph mining across the songs-for-my-funeral project.
+Last updated: 2026-07-03.*
 
 ---
 
@@ -39,7 +40,7 @@ Artists seen multiple times or held in the highest personal regard. These are th
 seeds most likely to yield useful recommendations.
 
 **Electric blues / blues-rock:**
-- Christone "Kingfish" Ingram (seen 6×, buying a 7th — the clearest strong-tier anchor)
+- Christone "Kingfish" Ingram (seen 7× — the clearest strong-tier anchor)
 - Ana Popović (seen multiple times; opened the 2026 season)
 - Joanne Shaw Taylor
 - Gary Clark Jr.
@@ -123,6 +124,10 @@ follow-up. Strongest signals (appeared in multiple excursions from different see
 
 ### Strong buy signals:
 - **Seen before** at any level (headliner or support) → near-automatic for local shows
+- **The Carly Harvey rule** — seen as a support act plus one independent curated signal
+  (festival/cruise booking, award recognition) → direct follows_master candidate, skipping
+  the research queue. Applied to Dylan Triplett (2026-07: 2× support in 2025 + Bender +
+  Tampa Bay bookings).
 - **Small intimate room** + right artist → often the decisive factor
 - **Acoustic blues / roots storytelling** format (Lyle Lovett, Dave Alvin/Gilmore duo,
   Jake Xerxes Fussell) at the right venue
@@ -155,6 +160,13 @@ from other genres who use horns as part of their sound:
 - **They Might Be Giants** — horns as melodic and rhythmic texture
 - **James Hunter Six** — two-saxophone lineup is central to the sound
 - **Vanessa Collier** — sax as both lead and rhythm instrument (she plays it herself)
+- **Josh Hoyer & Soul Colossal** — 2025 IBC Band winner; trumpet + sax as structure
+  (2026-07 quarterly confirmation of the pattern)
+- **St. Paul & The Broken Bones** — strongest horns-pattern match in the 2026-07
+  lastfm similar-graph run
+
+The 2026-07 fast_track adds also fit: Kat Riggins tours with a 3-horn section in an
+8-piece band; Sugaray Rayford fronts a 7-piece with horns.
 
 The pattern holds across genres — the signal is the *presence and integration* of
 live brass or sax in the arrangement, not the genre of the surrounding music. For a
@@ -243,6 +255,19 @@ on these rosters is treated as a credibility signal, not an attendance trigger.
 - Blues Music Awards (Blues Foundation) — nominees signal who is being recognized
   within the professional blues community; winners even more so
 - Americana Music Association Awards — similar function for the Americana side
+- **International Blues Challenge (Memphis, Jan)** — winners/placers are a proven
+  top-tier feeder: the 2026-07 quarterly sourced Derrick Dove & The Peacekeepers
+  (2026 Band winner), Josh Hoyer & Soul Colossal (2025 Band winner), and Weary
+  Ramblers (2026 Solo/Duo winner) from the last two cycles, and IBC results
+  independently validated Piper & The Hard Times a third time
+- Blues Blast Music Awards — nominees announced mid-summer, winners ~Sep; secondary
+  to the BMAs but useful corroboration
+
+**Curation hit-rate weighting (measured 2026-07):** not all curated rosters carry
+equal weight. Cross-referenced against the tier files, KTBA Alaska hit 73% of its
+lineup, Tampa Bay 2027 ~60%, LRBC ~47%, Big Blues Bender ~44%, Telluride Blues &
+Brews 40%. The Bonamassa-curated events (KTBA) are the single strongest external
+curation signal; weight lineup research time accordingly.
 
 In practice: an artist appearing on a BMA nominee list or a Keeping the Blues Alive
 cruise roster who also shows up in the DC area is a much stronger recommendation
@@ -264,7 +289,9 @@ candidate than one sourced only from a venue newsletter.
 
 ### Evaluates case-by-case:
 - Jazz-adjacent (if the guitarist is the draw — Mancuso, Posen)
-- Folk (if the songwriting is strong — Hansard, Fussell)
+- Folk (if the songwriting is strong — Hansard, Fussell). The Americana folk-protest /
+  Appalachian wing (S.G. Goodman, Jesse Welles, Ken Pomeroy, Mon Rovîa) surfaced in the
+  2026-07 quarterly and was deliberately parked — do not re-surface without an explicit call
 - Rock (if the blues influence is primary — ZZ Ward)
 - Jam band (Greensky, Wood Brothers — yes; generic jam — no)
 - Artists outside the core genre profile but with strong horn arrangements (see
@@ -371,7 +398,18 @@ If seeding a discovery algorithm, these pairings have historically surfaced usef
 - **BIT DC Recommends** and **HereForTheBands DC region** are the primary automated
   discovery pipelines; refreshed monthly.
 - **Festival lineups and awards nominees** are quarterly research sources — see
-  External Curated Sources section above.
+  External Curated Sources section above. Blues Blast nominees drop mid-summer;
+  IBC results land in January.
+- **lastfm similar-graph mining** is a proven quarterly method (first full run
+  2026-07): mine the `lastfm:similar` lists in `data/artist_spotify.json`, rank
+  unrepresented names by mention count, verify the shortlist. The run caught a real
+  tracking miss (Tinsley Ellis, 8× referenced, played two DMV rooms unseen in Feb
+  2026) and pre-identified a BMA winner (Doug MacLeod, 2× referenced).
+- **Cross-reference rule:** any candidate matcher must check `artists.tsv` AND
+  `data/history/*.tsv` billing columns AND `live_shows_current.tsv` AND
+  `live_shows_potential.tsv`. Three misses in the 2026-07 run (Dylan Triplett via
+  history, Carolyn Wonderland and The California Honeydrops via current) each came
+  from checking a partial set.
 - **Streaming service integration** (Songkick/Bandsintown connected to Amazon Music
   or Spotify) is intentionally not used — streaming listening is more eclectic and
   nostalgic than live attendance, and the overlap is too small to make it a reliable
