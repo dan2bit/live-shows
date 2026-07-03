@@ -235,3 +235,127 @@ present the full row data in conversation before closing the routine, flag it in
 activity log draft, and correct it before closing.
 
 Commits to **`main`** in `dan2bit/live-shows-private`.
+
+---
+
+## `artist_modal_index.json` — frozen schema (issue #107)
+
+Build-time precomputed payload for the artist modal / `#artist/{slug}` route. **Public**,
+name-keyed, lazy-loaded on first open. Path: `data/artist_modal_index.json`. Rebuilt by CI
+(`artist-modal-index.yml`, mirrors `recommend-index.yml`) on any change to a payload/score
+source; commits to `staging`. The affinity score is a pure function of **public** data, so
+the whole index is public-safe; the only personal signal (⭐ favorite, #116) is never baked
+here — it merges client-side from the private repo when authed.
+
+### Top level
+Name-keyed dict (key = normalized name, post-`recommend_aliases.tsv`):
+
+```jsonc
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-02T20:00:00Z",
+  "artists": { "vanessa collier": { /* per-artist object */ } }
+}
+```
+
+### Per-artist object (source · null-rule per field)
+
+```jsonc
+{
+  "name": "Vanessa Collier",            // display name
+  "slug": "vanessa-collier",            // route + cross-link key
+  "spotify_id": "5WLpN9bFV4liSYhf4J3aVs",
+  "mbid": "…",                          // artist_spotify.json lastfm.mbid; null if absent
+
+  // Identity
+  "image_url": "https://i.scdn.co/…",   // BUILD-TIME resolved: Spotify Web API images[] -> embed og:image -> null
+  "banner_url": null,                   // P2 (TheAudioDB/fanart.tv by mbid); null in P1
+  "genres": ["blues","soul"],           // lastfm.tags (top N); [] if none
+  "listener": {"tranche":"popular","raw":471203},  // lastfm.listeners + config; null if no listener data
+
+  // Taste tier (dots + affinity input)
+  "tier": {"label":"Strong","rank":4},  // follows_master Tier; rank 1-4 (Lower->Strong).
+                                        //   Legacy / not-in-follows -> rank:null (no dots, excluded from affinity)
+
+  // History — CANONICAL from ledger, NOT artists.tsv "Times Seen" (drifts after history repairs, cf #103)
+  "seen": {
+    "count": 7,                         // deduped rows across history/*.tsv + seen_with.tsv
+    "first": "2023-10-14",
+    "recent": "2026-05-03",
+    "show_log": [                       // BAKED (bounded ~1-7 rows/artist; self-contained modal)
+      {"date":"2026-05-03","venue":"The Hamilton","via":null,"photo_url":"https://…"},
+      {"date":"2024-…","venue":"…","via":"SatchVai Band","photo_url":null}  // via = headliner for seen_with
+    ]
+  },
+  "fast_track": false,                  // fast_track.tsv membership (affinity floor + "1st" framing)
+
+  // Affinity gauge — build-time derived (see formula below)
+  "affinity": {"score":0.976,"band":"high"},  // null when render-gate fails (no hat). Never 1.0 (⭐ pins client-side).
+
+  // Badges
+  "badges": {
+    "hat": "completed",                 // completed|not_yet|absent — hat_eligible(#115)+Hat Autograph; not_yet suppressed while hat_eligible null
+    "book": "completed",                // autograph_books_combined.tsv (In APS/RHBS + *Signed)
+    "book_detail": {"aps":{"in":true,"signed":true,"page":"42"},"rhbs":{"in":false,"signed":false}},
+    "vip": 2,                           // artists.tsv VIP Count (non-numeric -> 0)
+    "photo": 3                          // count of non-null show_log[].photo_url; badge when >0. (-> Google Photos link deferred: #117)
+  },
+
+  // Music
+  "latest_release": {                   // null if none
+    "name":"Do It My Own Way","type":"album","date":"2025-…",
+    "url":"https://open.spotify.com/album/…",
+    "image_url":"https://i.scdn.co/…"   // BUILD-TIME resolved (same chain as identity)
+  },
+
+  // Similar (resolved)
+  "similar": [                          // lastfm.similar
+    {"name":"Southern Avenue","in_tracker":true,"slug":"southern-avenue"},  // -> cross-link modal
+    {"name":"Nikki Hill","in_tracker":false,"slug":null}                     // -> client builds Last.fm link
+  ],
+
+  // Links footer (constructed/resolved at build; null when unavailable)
+  "links": {
+    "spotify":"…","youtube":"…","lastfm":"…",
+    "musicbrainz":"https://musicbrainz.org/artist/{mbid}",
+    "bandsintown":"…","seated":null,
+    "setlistfm":"https://www.setlist.fm/search?query=…"   // search link (decision 4)
+  }
+}
+```
+
+### NOT in the index (row-local — joined client-side from loaded arrays)
+Upcoming **countdown**, the **"Considering {date} · {venue} · {decision}"** line, and the
+**venue drive-time chip** come from the already-loaded `live_shows_current` /
+`live_shows_potential` arrays at render time — never baked (so they never go stale).
+
+### Client-side overlays (not baked)
+- **⭐ favorite (#116, P2):** merges only when authed; overrides `affinity.score -> 1.0`
+  and adds the star marker. Private repo; never in this public index.
+- **`features.spotify: false`:** hides the music/lastfm sections; the fields still ship.
+
+### Affinity formula (config: `config.yaml -> badges.affinity_weights`)
+```
+T    = Strong 1.0 · Medium-Strong 0.7 · Medium 0.45 · Lower 0.2 · (Legacy|not-in-follows) -> null->0
+S    = 1 - exp(-seen/2.5)                    # seen from history + seen_with; asymptotic (S(1)=0.33, S(7)=0.94)
+Seff = max(S, fast_track ? 0.33 : 0)         # fast-track floors at "seen once"
+G    = 0.6·hat_signed + 0.4·book_signed
+score = clamp(0.35·T + 0.40·Seff + 0.25·G, 0, 1)   # asymptotic; NEVER 1.0 without the ⭐
+render the hat iff (T!=null OR seen>0 OR any signing OR fast_track)
+band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
+```
+
+### Badge state rules
+- **hat:** absent if not `hat_eligible` (#115) · completed if `artists.tsv Hat Autograph`=Y ·
+  else not_yet. While `hat_eligible` is null (unpopulated), render completed-vs-absent only.
+- **book:** absent if `In APS`!=Yes AND `In RHBS`!=Yes · completed if `APS Signed`=Yes OR
+  `RHBS Signed`=Yes · else not_yet. Source: `tools/show_goals/autograph_books_combined.tsv`.
+- **photo:** count of non-null `show_log[].photo_url`; badge when >0 (-> link: #117).
+
+### Builder inputs (all public -> index is public-safe)
+`history/*.tsv` + `seen_with.tsv` (seen) · `follows_master.tsv` (tier) · `fast_track.tsv`
+(floor) · `artists.tsv` (Hat Autograph, `hat_eligible`, photo/Spotify, VIP) ·
+`autograph_books_combined.tsv` (book) · `artist_spotify.json` (image_url, latest_release,
+lastfm, similar) · `config.yaml` (weights, tranches) · `recommend_aliases.tsv` (normalize).
+
+Related: #107 (parent) · #115 (`hat_eligible`) · #116 (⭐ favorite) · #117 (photo link).
