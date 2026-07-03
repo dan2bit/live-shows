@@ -334,12 +334,12 @@ Upcoming **countdown**, the **"Considering {date} · {venue} · {decision}"** li
   and adds the star marker. Private repo; never in this public index.
 - **`features.spotify: false`:** hides the music/lastfm sections; the fields still ship.
 
-### Affinity formula (config: `config.yaml -> badges.affinity_weights`)
+### Affinity formula (config: `config.yaml -> badges.affinity`)
 ```
 T    = Strong 1.0 · Medium-Strong 0.7 · Medium 0.45 · Lower 0.2 · (Legacy|not-in-follows) -> null->0
 S    = 1 - exp(-seen/2.5)                    # seen from history + seen_with; asymptotic (S(1)=0.33, S(7)=0.94)
 Seff = max(S, fast_track ? 0.33 : 0)         # fast-track floors at "seen once"
-G    = 0.6·hat_signed + 0.4·book_signed
+G    = goals = 0.6·hat_signed + 0.4·book_signed   # goals composite (config: goals_split); extensible per #85
 score = clamp(0.35·T + 0.40·Seff + 0.25·G, 0, 1)   # asymptotic; NEVER 1.0 without the ⭐
 render the hat iff (T!=null OR seen>0 OR any signing OR fast_track)
 band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
