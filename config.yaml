@@ -93,6 +93,21 @@ merch:
 # 1 = usually solo.
 badges:
   normal_ticket_number: 1
+  affinity:
+    weights:                     # 3 main dials — must total 1.0
+      tier: 0.35
+      seen: 0.40
+      goals: 0.25
+    tier_points:                 # follows_master Tier -> score (unlisted tiers, incl. Legacy, = 0)
+      Strong: 1.0
+      Medium-Strong: 0.7
+      Medium: 0.45
+      Lower: 0.2
+    fast_track_equiv_shows: 1    # never-seen fast-track artist counts as this many shows
+    # rarely touched:
+    seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
+    goals_split: {hat: 0.6, book: 0.4}   # weighting within the goals composite (extensible per #85)
+    bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
 
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
