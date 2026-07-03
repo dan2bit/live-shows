@@ -157,9 +157,18 @@ flagging.
 Venue likelihood for artist interaction (Yes / Maybe / No) per `venues.tsv`; flag for
 confirmation if venue not listed.
 
-**Step 4 — Create calendar event**
+**Step 4 — Create calendar event — MANDATORY, NOT OPTIONAL**
 
-Per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**.
+Per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**. A purchased show is not
+fully processed until it has a corresponding calendar event — the TSV row and the
+calendar entry are treated as a single unit of work, not two independently-optional
+outputs. This applies regardless of ticket access method (paper, mobile barcode,
+Ticketmaster SafeTix, etc.) — no ticket type is exempt. If calendar event creation fails
+or is skipped for any reason (tool error, ambiguous venue timing, Dan not yet available
+to confirm details), the routine is **not complete** — do not proceed past this step
+silently. Surface the failure/blocker to Dan explicitly and hold the routine open (do
+not apply `processed`, do not write the log draft as if calendar creation succeeded)
+until it is resolved or Dan explicitly defers it.
 
 **Step 5 — Commit to both repos**
 
@@ -182,7 +191,37 @@ Fetch fresh SHA, remove row, re-sort, commit to `staging`.
 Remove from `data/fast_track.tsv` (`staging`) and
 `dan2bit/live-shows-private → fast_track_caps.tsv` (`main`). Keep both in sync.
 
-**Step 8 — Activity log draft** (subject: `[LOG] Routine 1 — [Artist] ticket — YYYY-MM-DD`)
+**Step 8 — Pre-log calendar validation (MANDATORY, blocking)**
+
+Before writing the activity log draft or applying `processed`, re-query the calendar
+(`Google Calendar:list_events`, `redhat.bootlegs@gmail.com`, date-bounded around the
+show date) and confirm a timed event exists for this show, with a title matching the
+artist and a start time matching the parsed doors/show time. This is a positive
+verification step, not a re-statement of Step 4 — it exists specifically to catch cases
+where Step 4 appeared to succeed but the event was never actually created or committed
+(tool call silently no-op'd, wrong calendar targeted, wrong date, event created then
+lost), and to catch cases where a show's data made it into `live_shows_current.tsv`
+through any other path (manual edit, bulk import, other routine) without ever going
+through Step 4. This check does not depend on ticket type — paper-ticket and e-ticket
+purchases alike have gone missing from the calendar in practice, so both are verified
+identically.
+
+- **Event found, details match:** proceed to Step 9.
+- **Event found, details mismatched** (wrong time/date/title): fix it now — this is
+  still Routine 1's job, not a deferred cleanup item. Note the correction in the log.
+- **No event found:** treat as a Step 4 failure. Do not proceed to the log draft or
+  `processed` label. Create the missing event now, per `CALENDAR_WORKFLOWS.md` → Event
+  Type 1, then re-verify.
+
+**This step cannot be skipped even if Step 4 "looked" successful in conversation.**
+Tool calls can return a success payload for an event that doesn't end up on the visible
+calendar (wrong calendar ID, silent auth issue, etc.) — the only reliable confirmation
+is a fresh read-back.
+
+**Step 9 — Activity log draft** (subject: `[LOG] Routine 1 — [Artist] ticket — YYYY-MM-DD`)
+
+Include explicit confirmation in the log body that the calendar event was verified
+present (Step 8), not just "created."
 
 **Final:** Apply `processed` label.
 
