@@ -32,6 +32,28 @@ all shows at the same venue share the same Venue URL
 3. Save the file in `/tools/research/web-src`
 4. Have Claude Desktop diff the file against the previous month
 
+*Venue calendars scrape MONTHLY*
+
+1. ask Claude Desktop for the calendar URLs of venues in data/venues.tsv whose Calendar Coverage includes "Scrape"
+
+_Prompt 1_
+open each of these URLs in a new tab in this window
+
+_Prompt 2_
+
+for each venue with an open tab
+create venue-calendar-<venue>-2026-MM.tsv for download
+use the current two-digit month in place of MM
+Capture: upcoming events only. ignore past events
+Click All Events, Load More, or equivalent expansion or pagination controls
+Schema: Date | Day | Time | Artist/Event | Price | Ticket URL
+Dates must always include the year
+Flag any entry that is not a live-music event (trivia, private events, venue rentals) instead of including it silently
+offer the completed file before moving on to the next venue
+
+3. save the files in `tools/research/web-src`
+4. Have Claude Desktop diff each file against the previous month
+
 *Bandsintown scrape follows list ON CHANGE*
 
 1. log in as rhbl to bandsintown
