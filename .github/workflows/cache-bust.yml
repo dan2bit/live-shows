@@ -1,6 +1,6 @@
 name: Cache-bust static assets
 
-# Rewrites the ?v= query strings on app.js, recommend.js, and styles.css
+# Rewrites the ?v= query strings on app.js, recommend.js, artist-modal.js, and styles.css
 # in index.html to the current commit SHA whenever any of those files change,
 # forcing browsers/CDN to fetch the new versions immediately.
 #
@@ -16,6 +16,7 @@ on:
     paths:
       - app.js
       - recommend.js
+      - artist-modal.js
       - styles.css
   workflow_dispatch:
 
@@ -45,10 +46,11 @@ jobs:
             -e "s|href=\"styles\.css\(?\([^\"]*\)\)\?\"|href=\"styles.css?v=${SHORT}\"|g" \
             -e "s|src=\"app\.js\(?\([^\"]*\)\)\?\"|src=\"app.js?v=${SHORT}\"|g" \
             -e "s|src=\"recommend\.js\(?\([^\"]*\)\)\?\"|src=\"recommend.js?v=${SHORT}\"|g" \
+            -e "s|src=\"artist-modal\.js\(?\([^\"]*\)\)\?\"|src=\"artist-modal.js?v=${SHORT}\"|g" \
             index.html
 
           echo "Updated asset references to ?v=${SHORT}"
-          grep -E '(app\.js|recommend\.js|styles\.css)' index.html
+          grep -E '(app\.js|recommend\.js|artist-modal\.js|styles\.css)' index.html
 
       - name: Commit to staging if changed
         run: |

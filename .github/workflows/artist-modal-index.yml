@@ -1,0 +1,67 @@
+name: Build artist_modal_index.json
+
+# Post-#76: main requires the `guard` status check, so this commits to `staging`
+# via the promote deploy key (which also makes the staging push trigger
+# auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
+# auto-promote to run. artist_modal_index.json is not a watched path, so promotion
+# back to main does not retrigger this workflow.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - config.yaml
+      - data/artists.tsv
+      - data/fast_track.tsv
+      - data/live_shows_current.tsv
+      - data/live_shows_potential.tsv
+      - data/seen_with.tsv
+      - data/history/**
+      - data/show_goals/autograph_books_combined.tsv
+      - data/artist_spotify.json
+      - data/recommend_aliases.tsv
+      - tools/research/follows/follows_master.tsv
+      - scripts/build_artist_index.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artist-modal-index
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install pyyaml
+      - name: Generate index
+        run: python3 scripts/build_artist_index.py
+      - name: Commit to staging if changed
+        run: |
+          git add data/artist_modal_index.json
+          if git diff --cached --quiet; then
+            echo "data/artist_modal_index.json unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "ci: regenerate artist_modal_index.json"
+            git fetch promote staging
+            git rebase promote/staging
+            git push promote HEAD:staging
+          fi
