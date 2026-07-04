@@ -1,6 +1,6 @@
 import json
 # todo: make this print any tranche. possibly combine with tranchemaker.py
-c = json.load(open('../../data/artist_spotify.json'))
+c = json.load(open('../data/artist_spotify.json'))
 top = []
 for n, e in c.items():
     L = ((e or {}).get('lastfm') or {}).get('listeners')

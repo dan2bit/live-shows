@@ -24,7 +24,7 @@ cache):
   * stale count must stay under MAX_STALE — a huge stale list means the
     collection changed, not the cache; eyeball it first
 
-Run it from tools/spotify/ (it imports spotify_cache, which resolves all repo
+Run it from scripts/ (it imports spotify_cache, which resolves all repo
 paths from its own location, so cwd otherwise doesn't matter).
 
 USAGE
@@ -36,13 +36,13 @@ import argparse
 import os
 import sys
 
-# Allow running from anywhere: ensure this script's dir (tools/spotify) is importable.
+# Allow running from anywhere: ensure this script's dir (scripts) is importable.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     import spotify_cache as sc
 except ImportError:
-    sys.exit("Could not import spotify_cache — run this from tools/spotify/ "
+    sys.exit("Could not import spotify_cache — run this from scripts/ "
              "(or keep prune_cache.py beside spotify_cache.py).")
 
 MIN_REPO_ARTISTS = 250   # repo collection at/below this => a source TSV didn't load

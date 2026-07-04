@@ -1,7 +1,7 @@
 import json
 from collections import Counter, defaultdict
 
-cache = json.load(open('../../data/artist_spotify.json'))
+cache = json.load(open('../data/artist_spotify.json'))
 vals = []
 for name, e in cache.items():
     L = ((e or {}).get('lastfm') or {}).get('listeners')
