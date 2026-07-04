@@ -219,7 +219,7 @@ def build(root):
             pots.setdefault(canon(r["Artist"]), r)
     fast = {canon(r["Artist"]) for r in read_tsv(os.path.join(root, "data/fast_track.tsv")) if r.get("Artist")}
     books = {canon(r["Artist"]): r
-             for r in read_tsv(os.path.join(root, "tools/show_goals/autograph_books_combined.tsv"))
+             for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_combined.tsv"))
              if r.get("Artist")}
 
     with open(os.path.join(root, "data/artist_spotify.json"), encoding="utf-8") as fh:
