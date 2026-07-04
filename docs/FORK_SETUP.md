@@ -62,4 +62,17 @@ At load time `app.js` expands each of these into an absolute `https://<owner>.gi
 
 ---
 
+## The `tools/` tree — operator-specific, safe to delete
+
+Everything under `tools/` is the repo owner's personal research and workflow kit — artist
+research pipelines, browser-scraping playbooks, personal reference data, and archived
+point-in-time snapshots. **None of it is consumed by the site or by CI.** The only trees
+the deployed site and the workflows read are `data/`, `scripts/`, the root site files
+(`index.html`, `app.js`, `recommend.js`, `styles.css`, `config.yaml`), and `static/`.
+
+For your fork, either delete `tools/` outright or add it to your fork's `.gitignore` and
+build your own workflow kit in its place. Nothing on the site will change either way.
+
+---
+
 *Remaining setup sections — Pages, `config.yaml`, data files, private sidecar — to be written as the fork process is exercised.*
