@@ -349,7 +349,7 @@ band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
 - **hat:** absent if not `hat_eligible` (#115) · completed if `artists.tsv Hat Autograph`=Y ·
   else not_yet. While `hat_eligible` is null (unpopulated), render completed-vs-absent only.
 - **book:** absent if `In APS`!=Yes AND `In RHBS`!=Yes · completed if `APS Signed`=Yes OR
-  `RHBS Signed`=Yes · else not_yet. Source: `tools/show_goals/autograph_books_combined.tsv`.
+  `RHBS Signed`=Yes · else not_yet. Source: `data/show_goals/autograph_books_combined.tsv`.
 - **photo:** count of non-null `show_log[].photo_url`; badge when >0 (-> link: #117).
 
 ### Builder inputs (all public -> index is public-safe)
