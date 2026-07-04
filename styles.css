@@ -319,3 +319,59 @@
     .cell-pot-notes{max-width:160px;}
     .cell-venue-mobile{display:block;}
   }
+
+  /* ── Artist modal / #artist view (#107) ─────────────────────────── */
+  .artist-modal{width:560px;max-width:94vw;max-height:88vh;overflow-y:auto;padding:20px;}
+  .am-loading{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;color:var(--text-muted);padding:20px 4px;}
+  .am-msg{font-size:13px;color:var(--text);margin-bottom:12px;}
+  .am-err{color:var(--red);}
+  .am-dim{color:var(--text-dim);}
+  .am-head{display:flex;align-items:flex-start;gap:14px;position:relative;}
+  .am-avatar{width:72px;height:72px;flex-shrink:0;border-radius:6px;background:var(--surface-bright);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .am-photo{width:100%;height:100%;object-fit:cover;}
+  .am-hat{width:40px;height:40px;object-fit:contain;opacity:.35;filter:grayscale(1);}
+  .am-hat-signed{opacity:1;filter:none;}
+  .am-id{flex:1;min-width:0;}
+  .am-name{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text);letter-spacing:.02em;line-height:1.2;}
+  .am-sub{font-size:12px;margin-top:4px;}
+  .am-close{position:absolute;top:-4px;right:-4px;background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;line-height:1;padding:4px;}
+  .am-close:hover{color:var(--amber);}
+  .am-chiprow,.am-genres,.am-simrow,.am-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .am-chip{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:2px 7px;border-radius:2px;border:1px solid var(--border-bright);color:var(--text-muted);background:var(--surface-bright);white-space:nowrap;}
+  .am-tranche{text-transform:uppercase;}
+  .am-fast{color:var(--yellow);border-color:var(--yellow-dim);background:var(--yellow-bg);}
+  .am-genre{text-transform:lowercase;color:var(--text-dim);}
+  .am-tier{display:inline-flex;align-items:center;gap:4px;}
+  .am-tier-lbl{text-transform:uppercase;}
+  .am-dot{width:6px;height:6px;border-radius:50%;background:var(--gray-dim);display:inline-block;}
+  .am-dot.on{background:var(--amber);}
+  .am-affinity{display:flex;align-items:center;gap:10px;margin-top:12px;}
+  .am-affinity-track{flex:1;height:5px;border-radius:3px;background:var(--surface-bright);overflow:hidden;}
+  .am-affinity-fill{height:100%;background:var(--gray);}
+  .am-band-high .am-affinity-fill{background:var(--green);}
+  .am-band-medium .am-affinity-fill{background:var(--yellow);}
+  .am-band-low .am-affinity-fill{background:var(--gray);}
+  .am-affinity-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+  .am-section{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+  .am-sec-h{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin-bottom:8px;}
+  .am-seen{font-size:13px;color:var(--text);}
+  .am-badge{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:2px;border:1px solid var(--hat-dim);background:var(--hat-bg);color:var(--hat);white-space:nowrap;}
+  .am-badge-dim{border-color:var(--border-bright);background:var(--surface-bright);color:var(--text-dim);}
+  .am-log{margin-top:10px;}
+  .am-log summary{font-family:var(--mono);font-size:11px;color:var(--text-muted);cursor:pointer;}
+  .am-log ul{list-style:none;margin:8px 0 0;padding:0;}
+  .am-log li{font-size:12px;color:var(--text-muted);padding:2px 0;}
+  .am-log-date{font-family:var(--mono);color:var(--text-dim);}
+  .am-upcoming,.am-considering{font-size:13px;color:var(--text);margin-top:4px;}
+  .am-cd{font-family:var(--mono);font-size:11px;color:var(--green);margin-left:4px;}
+  .am-release{font-size:13px;color:var(--text-muted);}
+  .am-release a,.am-release strong{color:var(--text);}
+  .am-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .am-cta{border-color:var(--green-dim);}
+  .am-sim{text-decoration:none;cursor:pointer;}
+  .am-sim-link{border-color:var(--amber);color:var(--text-muted);}
+  .am-sim-link:hover{color:var(--amber);}
+  .am-links{display:flex;flex-wrap:wrap;gap:8px;}
+  @media(max-width:768px){
+    .artist-modal{width:100vw;max-width:100vw;height:100vh;max-height:100vh;border-radius:0;border:none;}
+  }
