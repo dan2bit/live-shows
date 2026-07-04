@@ -101,6 +101,8 @@ offer the completed file before moving on to the next artist
 
 *Youtube Playlist Inventory ON DEMAND*
 
+Reference: provide `dom-reference-youtube-setlist.md` (this folder) to the Claude for Chrome session before starting — it has the tested selectors, extraction scripts, and verification gates.
+
 1. login to Youtube Studio and navigate to Content -> Playlists
 2. set Rows Per Page to 50
 
@@ -109,10 +111,13 @@ create `youtube_playlists_YYYYMMDD.tsv` for download, using the current date in 
 Schema: Title | Description | Shareable Link | Video Count
 Capture: do not use the clipboard tool `Get shareable link` - build the link programmatically
 use the pagination controls to collect all playlists
+follow the attached dom-reference-youtube-setlist.md for selectors and extraction
 
 3. save the file in `tools/archive` and optionally delete the prior file
 
 *Setlist Attendances Inventory ON DEMAND*
+
+Reference: provide `dom-reference-youtube-setlist.md` (this folder) to the Claude for Chrome session before starting — it has the tested selectors, extraction scripts, and verification gates.
 
 1. login to setlist.fm and navigate to https://www.setlist.fm/attended/dan2bit
 2. change Setlists shown per page to 500 and scroll to the bottom
@@ -121,6 +126,7 @@ _Prompt_
 create `setlist_attendances_YYYYMMDD.tsv` for download, using the current date in the filename
 Schema: Date | Band Name | Description | URL
 Capture: use the pagination controls to collect all setlists if necessary
+follow the attached dom-reference-youtube-setlist.md for selectors and extraction
 
 3. save the file in `tools/archive` and optionally delete the prior file
 
