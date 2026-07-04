@@ -40,6 +40,7 @@ all shows at the same venue share the same Venue URL
 _Prompt_
 create rhbl-bandsintown.tsv for download. one column: Artist
 Capture: the artist names only from the tracked-artists page
+Flag any entry that is not an artist name (page titles, tour-schedule pages, stray UI text) instead of including it silently
 
 3. Save the file in `/tools/research/follows`, overwriting the existing file
 
@@ -52,6 +53,7 @@ _Prompt_
 create rhbl-seated.tsv for download. one column: Artist
 Capture: only the artists names in the Following section of this page. 
 skip over the "Recommended for You" list
+Flag any entry that is not an artist name (page titles, stray UI text) instead of including it silently
 
 3. Save the file in `/tools/research/follows`, overwriting the existing file
 
