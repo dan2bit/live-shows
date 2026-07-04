@@ -3,7 +3,7 @@
 // route. Reads the prebuilt data/artist_modal_index.json (build_artist_index.py).
 // Render implements the approved "v3 unified" design: identity header → Artist
 // group (listener meter, latest release + play, similar, links) → bezelled
-// "You & this artist" footer (taste-tier meter, history/considering, brand-hat
+// "@owner & this artist" footer (taste-tier meter, history/considering, brand-hat
 // favorite gauge). This phase uses a square oEmbed avatar beside the name in
 // place of the full-bleed banner (per Dan, 2026-07-04).
 //
@@ -206,7 +206,7 @@ function amLinks(L,spotify){
 }
 function amYouTubeUrl(y){return/^https?:/.test(y)?y:('https://www.youtube.com/'+(y.charAt(0)==='@'?y:('@'+y)));}
 
-// ── "You & this artist" bezelled footer ──
+// ── "@owner & this artist" bezelled footer ──
 function amYou(rec,key){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0;
   var hatEligible=b.hat!=='absent';
@@ -216,7 +216,7 @@ function amYou(rec,key){
     return'<div class="am-minimal">Not hat-eligible and never seen \u2014 no personal panel yet.</div>';
   }
   var head='<div class="am-you-head"><span class="am-you-dot"></span>'
-    +'<span class="am-you-lbl">You &amp; this artist</span><span class="am-rule"></span>'
+    +'<span class="am-you-lbl">'+esc('@'+OWNER)+' &amp; this artist</span><span class="am-rule"></span>'
     +amTierMeter(rec.tier)+'</div>';
   var main='<div class="am-you-main">'+amYouBadges(rec,rows,hatEligible)+amYouHistory(rec,rows)+'</div>';
   var gauge=(hatEligible&&rec.affinity)?amGauge(rec.affinity,rec):'';
