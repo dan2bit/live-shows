@@ -1,3 +1,4 @@
+**Conventions:** monthly files carry a `-YYYY-MM` suffix. After a successful month-over-month diff, move the superseded prior-month file to `tools/archive/`.
 
 *BIT recommended shows list MONTHLY**
 
@@ -10,6 +11,7 @@ create rhbl-bandsintown-dc-recommends-2026-MM.tsv for download
 use the current two-digit month in place of MM
 Schema: Artist | Venue/Event | Date | Time | Tracking
 Capture: artist name, venue/event name, date, time, attending count (Tracking)
+Dates must always include the year (e.g. "Jul 04, 2026")
 
 4. Save the file in `/tools/research/web-src`
 5. Have Claude Desktop diff the file against the previous month
@@ -24,6 +26,7 @@ create rhbl-hereforthebands-dc-2026-MM.tsv for download
 use the current two-digit month in place of MM
 Schema: Artist | Venue | Date | Venue URL
 Capture: artist name, venue, date, venue URL
+Dates must always include the year
 all shows at the same venue share the same Venue URL
 
 3. Save the file in `/tools/research/web-src`
@@ -54,7 +57,7 @@ skip over the "Recommended for You" list
 
 *Fast track tour pages scrape MONTHLY*
 
-1. ask Claude Desktop to produce just the list of tour page URLs from data/fast_track.csv
+1. ask Claude Desktop to produce just the list of tour page URLs from data/fast_track.tsv
 
 _Prompt 1_
 open each of these URLs in a new tab in this window
@@ -93,7 +96,7 @@ use the pagination controls to collect all playlists
 _Prompt_
 create `setlist_attendances_YYYYMMDD.tsv` for download, using the current date in the filename
 Schema: Date | Band Name | Description | URL
-Capture: use the pagination controls to collect all playlists if necessary
+Capture: use the pagination controls to collect all setlists if necessary
 
 3. save the file in `tools/archive` and optionally delete the prior file
 
