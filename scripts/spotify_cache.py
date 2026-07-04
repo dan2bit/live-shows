@@ -174,7 +174,7 @@ OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
         full refresh produces small, localized diffs. Committed to the repo on
         purpose: a fresh agentic session and the site both read it from there.
 
-ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in tools/spotify/.env (gitignored)
+ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in scripts/.env (gitignored)
         or inherited from the environment. LASTFM_API_KEY (same .env) is required
         only for --refresh-lastfm; the Spotify build does not need it.
 
@@ -213,8 +213,8 @@ except ImportError:
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))           # tools/spotify
-REPO_ROOT  = os.path.dirname(os.path.dirname(SCRIPT_DIR))         # repo root
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))           # scripts
+REPO_ROOT  = os.path.dirname(SCRIPT_DIR)         # repo root
 DATA_DIR   = os.path.join(REPO_ROOT, "data")
 FOLLOWS    = os.path.join(REPO_ROOT, "tools", "research", "follows")
 
@@ -1143,7 +1143,7 @@ def main() -> None:
     if args.refresh_lastfm:
         lastfm_key = os.environ.get("LASTFM_API_KEY", "")
         if not lastfm_key:
-            sys.exit("LASTFM_API_KEY must be set (tools/spotify/.env or environment).")
+            sys.exit("LASTFM_API_KEY must be set (scripts/.env or environment).")
         cache = load_cache()
         print(f"Already cached: {len(cache)}")
         refresh_lastfm(cache, lastfm_key, args)
@@ -1153,7 +1153,7 @@ def main() -> None:
     client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
     if not client_id or not client_secret:
         sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
-                 "(tools/spotify/.env or environment).")
+                 "(scripts/.env or environment).")
     creds = (client_id, client_secret)
 
     # --add-artist: resolve + append one artist to a low-commitment list (#94).
