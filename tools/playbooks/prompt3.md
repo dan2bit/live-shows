@@ -17,14 +17,21 @@ Before substantive work, check:
 - Open issues relevant to the session's focus area
 - Current state of issue #19 including all comments, if doing template design work
 - follows/follows_master.tsv and follows/new_artist_research.tsv if doing artist research
+- **dan2bit/live-shows-private → taste_profile.md** if doing artist research or follow-tier work
+  (private repo, file at repo root — fetch via MCP get_file_contents; raw.githubusercontent does
+  NOT work for the private repo)
 
 Taste profile for artist evaluation:
-Blues, blues-rock, Americana, roots. 
-Primary venues: small/mid-size (Rams Head, Hamilton Live, Birchmere, 9:30 Club, Jammin' Java, Hub City Vinyl, Hylton, 
-Collective Encore). 
-Arena shows are generally out of scope regardless of artist.
+The authoritative profile is **dan2bit/live-shows-private → taste_profile.md** (root of the
+private repo — moved from the public repo 2026-07-04). It carries the full genre map, anchor
+artists, venue preferences, buy/pass signals, curated-source hit-rate weighting, and discovery
+methods, and is reassessed at the close of each quarterly research run. Read it before tiering
+or researching artists; the summary below is orientation only.
+Quick orientation: blues, blues-rock, Americana, roots. Primary venues: small/mid-size
+(Rams Head, Hamilton Live, Birchmere, 9:30 Club, Jammin' Java, Hub City Vinyl, Hylton,
+Collective Encore). Arena shows are generally out of scope regardless of artist.
 Cruises and multi-day festivals are generally out of scope for attending, but if they are
-curated to Dan's taste profile, the lineups will be good sources for artist discovery
+curated to Dan's taste profile, the lineups are good sources for artist discovery.
 
 Follow tier model:
 - Strong: automatic buy for any DMV date at any in-scope venue, willing to travel to Hub City
