@@ -224,8 +224,8 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   Artist Interaction filled; also update `dan2bit/live-shows-private → current_private.tsv`
   for actual Food & Bev / Parking / Merch
 - `data/artists.tsv` — always included
-- `tools/show_goals/autograph_books_combined.tsv` — if a book was signed
-- `tools/show_goals/hat_signatures.tsv` — if the hat was signed
+- `data/show_goals/autograph_books_combined.tsv` — if a book was signed
+- `data/show_goals/hat_signatures.tsv` — if the hat was signed
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
