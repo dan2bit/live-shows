@@ -63,7 +63,6 @@ function amOpenRec(rec,displayName,key){
   var slug=(rec&&rec.slug)||amSlugify(key);
   amBody(amRender(rec,displayName,key));
   amSetHash(slug);
-  if(rec)amHydrateImage(rec);
 }
 
 function amSetHash(slug){
@@ -118,7 +117,9 @@ function amRender(rec,displayName,key){
   h+='<button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>';
   // Identity header (square-avatar fallback for the banner)
   h+='<div class="am-head">';
-  h+='<div class="am-avatar" id="amArt">'+amHatImg('am-hat-fallback')+'</div>';
+  h+=rec.image_url
+    ?'<div class="am-avatar am-avatar-photo"><img class="am-photo" src="'+esc(rec.image_url)+'" alt="'+esc(rec.name||'')+'" referrerpolicy="no-referrer"></div>'
+    :'<div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>';
   h+='<div class="am-id"><div class="am-name">'+esc(rec.name||displayName||'')+'</div>';
   if(rec.genres&&rec.genres.length)
     h+='<div class="am-genres">'+rec.genres.slice(0,4).map(function(g){return'<span class="am-genre">'+esc(g)+'</span>';}).join('')+'</div>';
@@ -172,7 +173,7 @@ function amTierMeter(t){
 function amRelease(lr){
   if(!lr||!lr.name)return'';
   var art=lr.image_url
-    ?'<img class="am-rel-art" src="'+esc(lr.image_url)+'" alt="">'
+    ?'<img class="am-rel-art" src="'+esc(lr.image_url)+'" alt="" referrerpolicy="no-referrer">'
     :'<div class="am-rel-art am-rel-art-ph"><span>album<br>art</span></div>';
   var play=lr.url?'<a class="am-play" href="'+esc(lr.url)+'" target="_blank" title="Play on Spotify" aria-label="Play on Spotify">\u25b6</a>':'';
   var meta=amCap(lr.type||'release')+(amYear(lr.date)?' \u00b7 '+amYear(lr.date):'');
@@ -285,19 +286,6 @@ function amGauge(a,rec){
     +'<div class="am-gauge-glow"></div>'
     +'<img class="am-gauge-base" src="'+hat+'" alt="">'
     +'<img class="am-gauge-fill" src="'+hat+'" alt=""></div>';
-}
-
-// Identity image via Spotify oEmbed -> fills the square avatar. Brand-hat stays on failure.
-function amHydrateImage(rec){
-  if(!featureOn('spotify'))return;
-  var sp=rec.links&&rec.links.spotify;if(!sp)return;
-  fetch('https://open.spotify.com/oembed?url='+encodeURIComponent(sp)).then(function(r){return r.ok?r.json():null;}).then(function(j){
-    if(!j||!j.thumbnail_url)return;
-    var box=document.getElementById('amArt');if(!box)return;
-    var img=new Image();
-    img.onload=function(){box.classList.add('am-avatar-photo');box.innerHTML='<img class="am-photo" src="'+esc(j.thumbnail_url)+'" alt="'+esc(rec.name||'')+'">';};
-    img.src=j.thumbnail_url;
-  }).catch(function(){});
 }
 
 // ── init ──
