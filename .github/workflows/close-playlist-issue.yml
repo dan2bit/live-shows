@@ -44,9 +44,9 @@ jobs:
           title = os.environ["ISSUE_TITLE"]
           comment = os.environ["COMMENT_BODY"]
 
-          # Extract show date from title: "Playlist: Artist — YYYY-MM-DD (Venue)"
-          title_re = re.compile(r'Playlist:\s+.+?\s+[—–-]+\s+(\d{4}-\d{2}-\d{2})')
-          tm = title_re.search(title)
+          # Extract the show date: the sole ISO date anywhere in the title. Titles vary
+          # ("... - YYYY-MM-DD (Venue)" vs "... - Venue YYYY-MM-DD"), so don't anchor on the dash.
+          tm = re.search(r'(\d{4}-\d{2}-\d{2})', title)
           if not tm:
               print(f"ERROR: could not extract date from title: {title!r}", file=sys.stderr)
               sys.exit(1)
