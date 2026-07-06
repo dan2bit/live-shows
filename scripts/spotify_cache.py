@@ -829,7 +829,7 @@ def refresh_images(cache: dict, creds, args) -> None:
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     updated = 0
-    kept = 0
+    empty = 0
     skipped = 0
     for i, name in enumerate(names, 1):
         entry = cache[name]
@@ -857,22 +857,24 @@ def refresh_images(cache: dict, creds, args) -> None:
             raise
         time.sleep(DELAY)
         old = entry.get("image_url")
-        # Null-preserve (#109 pattern): an empty pull must not wipe a cached
-        # portrait or stamp it fresh — keep it eligible for the next sweep.
-        if not img and old:
-            kept += 1
-            print(f"[{i}/{len(names)}] {name}  → empty pull; kept cached portrait (not re-checked)")
-            print(f"    ⚠ app-only empty image for {name}; preserved cached", file=sys.stderr)
+        # Empty pull: never stamp images_checked, so it self-heals on the next
+        # sweep (a transient empty, or an artist who gets a portrait later). A
+        # cached portrait is also preserved — an empty pull never wipes it.
+        if not img:
+            empty += 1
+            print(f"[{i}/{len(names)}] {name}  → empty pull; "
+                  + ("kept cached portrait" if old else "no image yet — left unstamped to retry"))
+            if old:
+                print(f"    ⚠ app-only empty image for {name}; preserved cached", file=sys.stderr)
             continue
         if args.dry_run:
-            change = "unchanged" if (old or "") == (img or "") else ("set" if img else "∅")
-            print(f"[{i}/{len(names)}] {name}  → {change}")
+            print(f"[{i}/{len(names)}] {name}  → {'unchanged' if (old or '') == img else 'set'}")
             continue
-        entry["image_url"] = img or None
+        entry["image_url"] = img
         entry["images_checked"] = date.today().isoformat()
-        if (old or "") != (img or ""):
+        if (old or "") != img:
             updated += 1
-            print(f"[{i}/{len(names)}] {name}  → {'portrait set' if img else '∅ (no image)'}")
+            print(f"[{i}/{len(names)}] {name}  → portrait set")
         else:
             print(f"[{i}/{len(names)}] {name}  → unchanged")
         if (i % SAVE_EVERY) == 0:
@@ -881,7 +883,7 @@ def refresh_images(cache: dict, creds, args) -> None:
 
     if args.dry_run:
         print("\n[DRY RUN] no changes written"
-              + (f"; {kept} kept on empty pulls" if kept else "")
+              + (f"; {empty} empty (left unstamped)" if empty else "")
               + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
                  if args.stale_days is not None else "")
               + ".")
@@ -889,7 +891,7 @@ def refresh_images(cache: dict, creds, args) -> None:
     save_cache(cache)
     print("\n" + "=" * 60)
     print(f"Updated {updated} portrait(s) across {len(names)} artist(s)"
-          + (f"; kept {kept} on empty pulls" if kept else "")
+          + (f"; {empty} empty (left unstamped to retry)" if empty else "")
           + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
              if args.stale_days is not None else "")
           + f". Written: {OUTPUT_JSON}")
