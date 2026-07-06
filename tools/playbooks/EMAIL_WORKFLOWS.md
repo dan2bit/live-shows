@@ -268,6 +268,35 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
+**Step 5b — Times Seen reconciliation (MANDATORY, blocking)**
+
+Before writing the activity log draft or applying `processed`, reconcile the ledger
+against `artists.tsv`'s manual count columns for **every artist on this show's bill** —
+headliner + support + any combined-bill components. Run
+`python3 scripts/build_artist_index.py` (the builder is the source of truth for the
+count: it recomputes from `history/*.tsv` + `live_shows_current.tsv` attended +
+`seen_with.tsv`, deduped by date, with combined-bill components attributed via the
+`Via` column). For each bill artist, compare the builder's `seen.count` / `first` /
+`recent` against `Times Seen` / `First Seen` / `Most Recent Seen` in `artists.tsv`.
+This is a positive verification step, not a re-statement of Step 5 — it exists
+specifically to catch the drift class in #119, where Step 5 committed `artists.tsv`
+but a recent attended show or a support-slot appearance never got tallied into
+`Times Seen` (the same "the count and its reconciliation are a single unit of work"
+treatment Step 8 gives the calendar event in Routine 1).
+
+- **All bill artists match:** proceed to Step 6.
+- **Mismatch found (undercount):** correct `Times Seen` / `First Seen` /
+  `Most Recent Seen` in `artists.tsv` now and re-commit to `staging` — this is still
+  Routine 2's job, not a deferred cleanup item. Note the correction in the log.
+- **Overcount from a notes-only sighting** (a show that exists only in a prose Notes
+  field, not a structured Artist/Support row): the builder correctly can't count it —
+  do **not** edit the count down. Flag it in the activity log instead.
+
+**This step cannot be skipped even if Step 5 "looked" successful in conversation.**
+When the `--check` audit primitive from #119 (`feat/times-seen-audit`) lands, this step
+switches to running that — a fast, exit-non-zero mismatch report — instead of a full
+build + manual compare.
+
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
 **Single-setlist shows:** Open one issue. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. Skip if no footage.
