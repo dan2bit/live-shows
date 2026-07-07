@@ -150,9 +150,10 @@ Look up headliner and known supporting acts in `autograph_books_combined.tsv` (b
 - In APS and not yet signed → prepend `BRING APS — [Artist] p.[N]`
 - Already signed → no reminder
 
-**Hat signing eligibility:** Female or female-presenting artists only, not already signed.
-Verify gender via web search if uncertain. Check `hat_signatures.tsv` before
-flagging.
+**Hat signing eligibility:** per `data/show_goals/hat_eligibility.tsv` (#115) — `Yes` =
+target for signing. Already-signed comes from `data/show_goals/hat_signatures.tsv`
+(canonical for actual signers). Web search only for artists absent from the eligibility
+file — and add the resulting row while you're there.
 
 Venue likelihood for artist interaction (Yes / Maybe / No) per `venues.tsv`; flag for
 confirmation if venue not listed.
@@ -250,9 +251,14 @@ Commit to `main` in `dan2bit/live-shows-private`.
 If book autograph: update `autograph_books_combined.tsv` — set RHBS/APS Signed to Yes.
 
 If hat autograph:
-1. Update `artists.tsv` — set `Hat Autograph` to `Y`
+1. Update `artists.tsv` — set `Hat Autograph` to `Y` (column pending the #115
+   backfill-vs-deprecate decision; keep setting it until resolved)
 2. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank)
-3. Remind Dan to manually append to the hat autograph Google Doc
+3. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
+   backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
+   (materialized-exception rule, #115). Basis records membership facts only — never
+   signature assertions; completion lives in `hat_signatures.tsv` alone.
+4. Remind Dan to manually append to the hat autograph Google Doc
    (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
    Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
 
@@ -265,6 +271,7 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 - `data/artists.tsv` — always included
 - `data/show_goals/autograph_books_combined.tsv` — if a book was signed
 - `data/show_goals/hat_signatures.tsv` — if the hat was signed
+- `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
@@ -377,6 +384,10 @@ all three, add to `new_artist_research.tsv`.
 `artists.tsv` or `follows_master.tsv`. For festival/multi-artist events, triage the
 actual setlist.fm bill (not the marketing slug) and add only untracked artists as
 individual rows.
+
+**Hat eligibility upkeep:** any step that adds a new artist row to `artists.tsv`,
+`fast_track.tsv`, or `follows_master.tsv` also adds a `data/show_goals/hat_eligibility.tsv`
+row (`Yes`/`No` per the #115 semantics; ask Dan when uncertain).
 
 **Step 3 — Autograph book check**
 
@@ -519,9 +530,9 @@ remaining tickets).
 **Inbox monitoring is not automatic.** Trigger routines by saying "there's a ticket
 email", "process the inbox", "run Routine 3", etc.
 
-**Hat autograph gdoc is the completeness authority.** If there is a discrepancy between
-the gdoc and the TSV files, the gdoc wins for the list of signers; the TSV files win
-for show dates.
+**`data/show_goals/hat_signatures.tsv` is the authority for hat signers.** The gdoc is
+the public-facing version (linked from the about modal in `index.html`); on any
+discrepancy, reconcile the gdoc to the TSV.
 
 **Google Calendar MCP fails on Android.** Switch to macOS desktop before retrying
 calendar operations.
