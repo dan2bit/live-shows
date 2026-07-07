@@ -1,0 +1,35 @@
+name: Audit Times Seen
+
+# Blocking check for #119: data/artists.tsv "Times Seen" must equal the canonical ledger
+# count from build_artist_index.py (except the notes-only allowlist inside the script).
+# Read-only — no commit; a non-zero exit fails the run visibly, like validate-current.yml.
+# Triggers on main after auto-promote, so it sees the post-promotion state.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/artists.tsv
+      - data/history/**
+      - data/live_shows_current.tsv
+      - data/seen_with.tsv
+      - data/recommend_aliases.tsv
+      - scripts/build_artist_index.py
+      - scripts/audit_times_seen.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install pyyaml
+      - name: Audit Times Seen against the ledger
+        run: python3 scripts/audit_times_seen.py
