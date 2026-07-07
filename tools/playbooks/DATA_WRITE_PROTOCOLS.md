@@ -362,8 +362,9 @@ band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
 ### Badge state rules
 - **hat:** absent if not `hat_eligible` (#115) · completed if any canonical signer in
   `data/show_goals/hat_signatures.tsv` maps to the artist (attribution: self, or
-  "of <band>") — NOT from `artists.tsv Hat Autograph`, which is vestigial pending the
-  #115 backfill-vs-deprecate decision · else not_yet. Completed always wins regardless
+  "of <band>") — NOT from `artists.tsv Hat Autograph`, which is **deprecated** (#115,
+  2026-07-07): no longer maintained; physical column removal rides the #118 builder
+  work after a dependency grep · else not_yet. Completed always wins regardless
   of eligibility. `hat_eligible` is null only for artists outside
   `data/show_goals/hat_eligibility.tsv` (231-artist first pass, 2026-07-07); while null,
   render completed-vs-absent only.
