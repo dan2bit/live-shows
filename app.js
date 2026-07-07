@@ -83,7 +83,7 @@ function applyConfig(cfg){
         var a=document.createElement('a');
         a.className='about-link';a.href=lnk.url;a.target='_blank';
         a.textContent=lnk.label||lnk.url;
-        box.appendChild(a);
+        var li=document.createElement('li');li.appendChild(a);box.appendChild(li);
       });
     }
   }
@@ -1080,7 +1080,7 @@ async function loadData(){
     potentialRows=parseTsv(_decodeB64(results[1].content));
     await mergePrivateData();
     renderShows();renderPotential();
-    document.getElementById('fetchedAt').textContent='fetched '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
 }
 if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn').classList.add('authed');}

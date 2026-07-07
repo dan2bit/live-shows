@@ -47,61 +47,105 @@
     <button class="hat-btn" onclick="openAboutModal()" title="About @dan2bit">
       <img src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt="red hat" style="width:28px;height:28px;object-fit:contain;">
     </button>
-    <div class="site-title">live-shows</div>
+    <h1 class="site-title">live-shows</h1>
   </div>
   <div class="header-actions">
-    <span class="fetched-at" id="fetchedAt">&#8212;</span>
+    <span class="fetched-at" id="fetchedAt">data fetched as of &#8212;</span>
     <button class="btn" id="refreshBtn" onclick="loadData()">&#8634; refresh</button>
     <button class="btn btn-auth" id="authBtn" onclick="openAuthModal()">&#128273; auth</button>
     <button class="btn" id="configGearBtn" onclick="openConfigEditor()" title="Edit site config" style="display:none">&#9881;</button>
   </div>
 </header>
+<main class="app-main">
 <div class="tab-row">
-  <nav class="tabs">
-    <div class="tab" data-tab="shows" onclick="switchTab('shows')">Shows <span class="tab-badge" id="showsBadge">&#8212;</span></div>
-    <div class="tab" data-tab="history" onclick="switchTab('history')">History <span class="tab-badge" id="historyBadge">&#8212;</span></div>
-    <div class="tab" data-tab="potential" onclick="switchTab('potential')">Potential <span class="tab-badge" id="potBadge">&#8212;</span></div>
-    <div class="tab" data-tab="tourhere" onclick="switchTab('tourhere')">Waiting <span class="tab-badge" id="tourhereBadge">&#8212;</span></div>
+  <nav class="tabs" aria-label="Site sections">
+    <ul class="tab-list">
+      <li><a class="tab" data-tab="shows" href="#panel-shows" aria-controls="panel-shows" onclick="switchTab('shows');return false;">Shows <span class="tab-badge" id="showsBadge">&#8212;</span></a></li>
+      <li><a class="tab" data-tab="history" href="#panel-history" aria-controls="panel-history" onclick="switchTab('history');return false;">History <span class="tab-badge" id="historyBadge">&#8212;</span></a></li>
+      <li><a class="tab" data-tab="potential" href="#panel-potential" aria-controls="panel-potential" onclick="switchTab('potential');return false;">Potential <span class="tab-badge" id="potBadge">&#8212;</span></a></li>
+      <li><a class="tab" data-tab="tourhere" href="#panel-tourhere" aria-controls="panel-tourhere" onclick="switchTab('tourhere');return false;">Waiting <span class="tab-badge" id="tourhereBadge">&#8212;</span></a></li>
+    </ul>
   </nav>
   <div class="on-this-day" style="display:none">
     <span class="otd-label">On this day</span>
     <div class="otd-items" id="otdItems"><span class="otd-none">&#8212;</span></div>
   </div>
 </div>
-<div class="panel" id="panel-shows"><div id="showsContent"><div class="loading">Loading</div></div></div>
-<div class="panel" id="panel-history"><div id="historyContent"><div class="loading">Loading</div></div></div>
-<div class="panel" id="panel-potential"><div id="potContent"><div class="loading">Loading</div></div></div>
-<div class="panel" id="panel-tourhere"><div id="tourhereContent"><div class="loading">Loading</div></div></div>
+<div class="panel" id="panel-shows"><div id="showsContent"><div class="loading" role="status">Loading shows</div></div></div>
+<div class="panel" id="panel-history"><div id="historyContent"><div class="loading" role="status">Loading history</div></div></div>
+<div class="panel" id="panel-potential"><div id="potContent"><div class="loading" role="status">Loading potential shows</div></div></div>
+<div class="panel" id="panel-tourhere"><div id="tourhereContent"><div class="loading" role="status">Loading watchlist</div></div></div>
+</main>
 
 <!-- About modal -->
 <div class="modal-backdrop" id="aboutModal">
-  <div class="modal about-modal">
+  <div class="modal about-modal" role="dialog" aria-labelledby="aboutHeading">
     <div class="about-hero">
-      <img src="https://dan2bit.github.io/live-shows/static/hero.jpg" alt="Galactic at 9:30 Club Jan 2025" class="about-hero-img">
       <div class="about-hero-overlay"></div>
       <div class="about-hero-text">
-        <div class="about-hero-handle">@dan2bit</div>
-        <div class="about-hero-tagline">GenX DC native with a live music fixation</div>
+        <h2 class="about-hero-handle" id="aboutHeading">@dan2bit</h2>
+        <h3 class="about-hero-tagline">GenX DC native with a live music fixation</h3>
       </div>
-      <button class="about-close-btn" onclick="closeAboutModal()">&#10005;</button>
+      <img src="https://dan2bit.github.io/live-shows/static/hero.jpg" alt="Galactic at 9:30 Club Jan 2025" class="about-hero-img">
     </div>
     <div class="about-body">
       <p>I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
-      <div class="about-links">
-        <a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube &#8212; bootlegs</a>
-        <a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links &#8212; Linktree</a>
-        <a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a>
-        <a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses &#8212; photo album</a>
-      </div>
-      <div style="margin-top:14px"><span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text)">Life is short. Buy the tickets.</span></div>
+      <ul class="about-links">
+        <li><a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube &#8212; bootlegs</a></li>
+        <li><a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links &#8212; Linktree</a></li>
+        <li><a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a></li>
+        <li><a class="about-link" href="https://photos.app.goo.gl/TMHL8xwJbAtcp33v9" target="_blank">&#128247; Guitar Gods &amp; Goddesses &#8212; photo album</a></li>
+      </ul>
+      <h3 class="about-footer" style="margin:14px 0 0;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text)">Life is short. Buy the tickets.</h3>
+    </div>
+    <button class="about-close-btn" onclick="closeAboutModal()" aria-label="Close">&#10005;</button>
+  </div>
+</div>
+
+<!-- For Sale modal -->
+<div class="modal-backdrop" id="forsaleModal">
+  <div class="modal forsale-modal" role="dialog" aria-labelledby="forsaleHeading">
+    <h3 id="forsaleHeading">&#127991; For Sale</h3>
+    <p class="modal-intro">Tickets I've listed for resale. When nothing is listed, this stays empty.</p>
+    <div id="forsaleModalBody"><p class="empty-state">Nothing listed for sale right now.</p></div>
+    <div class="modal-actions" style="margin-top:12px">
+      <button class="btn" onclick="closeForSaleModal()">Close</button>
     </div>
   </div>
 </div>
 
-<!-- Auth modal -->
+<!-- Multi-setlist modal -->
+<div class="modal-backdrop" id="multisetModal">
+  <div class="modal multiset-modal" role="dialog" aria-labelledby="multisetHeading">
+    <h3 id="multisetHeading">&#9835; Setlists</h3>
+    <p class="modal-intro">Full setlists for each act on a multi-artist bill.</p>
+    <div id="multisetModalBody"><div class="multiset-loading" role="status">Loading&#8230;</div></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn" onclick="closeMultisetModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recommend modal -->
+<div class="modal-backdrop" id="recommendModal">
+  <div class="modal recommend-modal" role="dialog" aria-labelledby="recommendHeading">
+    <h3 id="recommendHeading">&#128172; Suggest</h3>
+    <p class="modal-intro">Suggest a show or artist to add to the tracker.</p>
+    <div id="recommendModalBody"></div>
+  </div>
+</div>
+
+<!-- Artist modal / #artist/{slug} view (#107) -->
+<div class="modal-backdrop" id="artistModal">
+  <div class="modal artist-modal" role="dialog" aria-label="Artist details">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
+
+<!-- Auth modal + its config-editor subsection are utility surfaces: placed at the end of the DOM (#124) -->
 <div class="modal-backdrop" id="authModal">
-  <div class="modal">
-    <h3>GitHub Authentication</h3>
+  <div class="modal" role="dialog" aria-labelledby="authHeading">
+    <h3 id="authHeading">GitHub Authentication</h3>
     <p>Paste a fine-grained Personal Access Token scoped to <code>the repo</code> with Contents and Issues read/write permission.</p>
     <input type="password" id="patInput" placeholder="github_pat_&#8230;" autocomplete="off">
     <div class="modal-actions">
@@ -112,43 +156,14 @@
   </div>
 </div>
 
-<!-- For Sale modal -->
-<div class="modal-backdrop" id="forsaleModal">
-  <div class="modal forsale-modal">
-    <h3>&#127991; For Sale</h3>
-    <div id="forsaleModalBody"></div>
-    <div class="modal-actions" style="margin-top:12px">
-      <button class="btn" onclick="closeForSaleModal()">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Multi-setlist modal -->
-<div class="modal-backdrop" id="multisetModal">
-  <div class="modal multiset-modal">
-    <h3>&#9835; Setlists</h3>
-    <div id="multisetModalBody"><div class="multiset-loading">Loading&#8230;</div></div>
-    <div class="modal-actions" style="margin-top:14px">
-      <button class="btn" onclick="closeMultisetModal()">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Recommend modal -->
-<div class="modal-backdrop" id="recommendModal">
-  <div class="modal recommend-modal">
-    <h3>&#128172; Suggest</h3>
-    <div id="recommendModalBody"></div>
-  </div>
-</div>
-
-<!-- Config editor modal (#77) -->
+<!-- Config editor (#77) — auth-gated subsection of GitHub Authentication (h4 under the auth h3) -->
 <div class="modal-backdrop" id="configModal" onclick="if(event.target===this)closeConfigEditor()">
-  <div class="modal config-modal" style="max-width:760px;width:92%">
+  <div class="modal config-modal" role="dialog" aria-labelledby="configHeading" style="max-width:760px;width:92%">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <h3 style="margin:0">&#9881; config.yaml</h3>
-      <span id="configEditorStatus" style="font-family:var(--mono);font-size:11px;color:var(--text-dim)"></span>
+      <h4 id="configHeading" style="margin:0">&#9881; config.yaml</h4>
+      <span id="configEditorStatus" role="status" style="font-family:var(--mono);font-size:11px;color:var(--text-dim)"></span>
     </div>
+    <p class="modal-intro">Edit and commit this fork's <code>config.yaml</code>. Auth-gated — available once a token is saved above.</p>
     <textarea id="configEditorText" spellcheck="false" autocomplete="off" class="config-textarea" style="margin-top:10px"></textarea>
     <div class="modal-actions" style="margin-top:12px">
       <button class="btn" onclick="reloadConfigPreview()" title="Apply the edited YAML to this page now (no commit)">&#8635; Preview</button>
@@ -156,14 +171,6 @@
       <button class="btn" onclick="closeConfigEditor()" title="Hide the editor and keep your edits">Close</button>
       <button class="btn btn-save" onclick="commitConfig()" title="Commit the edited config.yaml to the repo">&#8593; Commit</button>
     </div>
-  </div>
-</div>
-
-
-<!-- Artist modal / #artist/{slug} view (#107) -->
-<div class="modal-backdrop" id="artistModal">
-  <div class="modal artist-modal">
-    <div id="artistModalBody"></div>
   </div>
 </div>
 
