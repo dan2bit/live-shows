@@ -29,7 +29,7 @@ Key rules in effect:
 -- Look for: hard conflicts (same date), consecutive-night density, and any personal calendar blocks (travel, Beach Week, etc.) that wouldn't appear in `live_shows_current.tsv`.
 -- This check applies per-artist before surfacing a recommendation, not as a single batch at the end.
 - Purchasing/fee notes go in Private Notes, not public Notes, unless explicitly requested otherwise
-- Hat signing: female musicians who have not already signed only; check hat_signatures.tsv before flagging eligibility
+- Hat signing: eligibility per data/show_goals/hat_eligibility.tsv (#115) — Yes = target for signing. Actual signers per data/show_goals/hat_signatures.tsv (canonical). A signature never removes eligibility (completed wins in rendering). The artists.tsv Hat Autograph column is deprecated — do not set it.
 - Potentials sort: Buy → Choose → Sell → Pass, date asc within groups; re-sort on every change
 - Prev/Next brackets: purchased upcoming shows only; never potentials or attended
 - Fetch fresh SHA immediately before every create_or_update_file call
