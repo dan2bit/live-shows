@@ -363,8 +363,10 @@ band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
 - **hat:** absent if not `hat_eligible` (#115) · completed if any canonical signer in
   `data/show_goals/hat_signatures.tsv` maps to the artist (attribution: self, or
   "of <band>") — NOT from `artists.tsv Hat Autograph`, which is **deprecated** (#115,
-  2026-07-07): no longer maintained; physical column removal rides the #118 builder
-  work after a dependency grep · else not_yet. Completed always wins regardless
+  2026-07-07): no longer maintained. #118 is merged; the remaining #115 follow-up is a
+  PR against `scripts/build_artist_index.py` (currently reads the column at ~line 298)
+  to source hat state from the two show_goals files, plus the column's physical removal
+  in the same PR · else not_yet. Completed always wins regardless
   of eligibility. `hat_eligible` is null only for artists outside
   `data/show_goals/hat_eligibility.tsv` (231-artist first pass, 2026-07-07); while null,
   render completed-vs-absent only.
