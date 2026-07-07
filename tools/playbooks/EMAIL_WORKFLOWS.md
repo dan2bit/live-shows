@@ -268,10 +268,6 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
-**Step 5b — Times Seen reconciliation (MANDATORY, blocking)**
-
-After committing `artists.tsv`, confirm `Times Seen` matches the canonical ledger count for every artist on this show's bill (headliner + support + any combined-bill components). Run `python3 scripts/audit_times_seen.py` — it recomputes the ledger via `build_artist_index.py` (history + current attended + seen_with, deduped, Via-attributed) and diffs it against `artists.tsv`, exiting non-zero on any mismatch. Any mismatch is corrected in `artists.tsv` and **re-committed to `staging`** before the activity log is drafted or `processed` is applied — the count and its reconciliation are one unit of work, the same way Routine 1's Step 8 treats the calendar event. The one allowed exception is a notes-only sighting (a show that exists only in a prose Notes field, not a structured Artist/Support row): that belongs in the audit's `NOTES_ONLY_OK` allowlist, never edited into `Times Seen` by hand. `audit-times-seen.yml` runs the same check in CI as an after-the-fact backstop (#119).
-
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
 **Single-setlist shows:** Open one issue. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. Skip if no footage.
