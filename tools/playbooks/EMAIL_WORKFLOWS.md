@@ -251,14 +251,12 @@ Commit to `main` in `dan2bit/live-shows-private`.
 If book autograph: update `autograph_books_combined.tsv` — set RHBS/APS Signed to Yes.
 
 If hat autograph:
-1. Update `artists.tsv` — set `Hat Autograph` to `Y` (column pending the #115
-   backfill-vs-deprecate decision; keep setting it until resolved)
-2. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank)
-3. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
+1. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank). This is the canonical record. The `artists.tsv Hat Autograph` column is **deprecated** (#115, 2026-07-07) — do not set it.
+2. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
    backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
    (materialized-exception rule, #115). Basis records membership facts only — never
    signature assertions; completion lives in `hat_signatures.tsv` alone.
-4. Remind Dan to manually append to the hat autograph Google Doc
+3. Remind Dan to manually append to the hat autograph Google Doc
    (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
    Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
 
