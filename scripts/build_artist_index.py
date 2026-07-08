@@ -221,6 +221,19 @@ def build(root):
     books = {canon(r["Artist"]): r
              for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_combined.tsv"))
              if r.get("Artist")}
+    hat_elig = {canon(r["Artist"]): ((r.get("Hat Eligible") or "").strip().lower() == "yes")
+                for r in read_tsv(os.path.join(root, "data/show_goals/hat_eligibility.tsv"))
+                if r.get("Artist")}
+    # Hat completion from canonical signatures (#115): a signature credits the signer,
+    # unless attributed "of <band>" (band member) -> the band gets the completed state.
+    hat_completed = set()
+    for r in read_tsv(os.path.join(root, "data/show_goals/hat_signatures.tsv")):
+        signer = (r.get("signer") or "").strip()
+        if not signer:
+            continue
+        attr = (r.get("attribution") or "").strip()
+        target = attr[3:].strip() if attr.lower().startswith("of ") else signer
+        hat_completed.add(canon(target))
 
     with open(os.path.join(root, "data/artist_spotify.json"), encoding="utf-8") as fh:
         spotify_raw = json.load(fh)
@@ -295,7 +308,8 @@ def build(root):
             recent = None
 
         # goals (signings)
-        hat_signed = (a.get("Hat Autograph") or "").strip().upper() == "Y"
+        hat_signed = k in hat_completed          # #115: sourced from hat_signatures.tsv
+        hat_eligible = hat_elig.get(k)           # True / False / None (absent -> not-yet suppressed)
         in_aps = (bk.get("In APS") or "").strip().lower() == "yes"
         in_rhbs = (bk.get("In RHBS") or "").strip().lower() == "yes"
         aps_signed = (bk.get("APS Signed") or "").strip().lower() == "yes"
@@ -326,10 +340,12 @@ def build(root):
             affinity = None
 
         # badges
-        if not hat_signed:
-            hat_badge = "absent"  # no hat_eligible field yet (#115) -> completed-vs-absent only
+        if hat_signed:
+            hat_badge = "completed"          # completion wins (hat_signatures.tsv)
+        elif hat_eligible:
+            hat_badge = "not_yet"            # eligible (hat_eligibility.tsv), unsigned
         else:
-            hat_badge = "completed"
+            hat_badge = "absent"             # ineligible or eligibility unknown
         if not in_book:
             book_badge = "absent"
         else:
