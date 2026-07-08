@@ -359,6 +359,14 @@ Do not suppress — just note it.
 **IMP newsletter:** Flag any Atlantis show featuring a local DC artist as a gift card
 opportunity.
 
+**New venue first-contact note:** A venue's first-ever email typically arrives
+unlabeled (and may land outside Primary) — Dan only adds the Gmail filter that applies
+`ticket-alert` automatically after confirming receipt of that first email. So if a
+known/expected venue is suspected of having emailed but nothing surfaces under
+`label:ticket-alert -label:processed`, check unlabeled inbox mail from that sender
+before concluding there's nothing new — the absence of the label doesn't mean the
+absence of the email.
+
 **Step 2 — Cross-reference current shows and potentials**
 
 Using Step 0b data, for every artist/show surfaced:
