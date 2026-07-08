@@ -324,6 +324,10 @@ build + manual compare.
 
    Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
 
+**Step 6b — Open a GitHub issue for the artist-photo row (when a photo was taken)**
+
+When the notes indicate Dan got a photo with an artist (`Artist Interaction` is `Photo` or `Both`, or the note describes one), open one issue per photographed artist. Title: `Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `photo`. Body includes the artist, show date, venue, and any caption detail. This mirrors the `playlist` reminder in Step 6 — the Google Photos share link is added to the issue body later, and closing the issue with `Photo: <share link>` in the body will trigger `close-photo-issue.yml` (#131 item 4), which appends the row to `data/show_goals/artist-photos.tsv` (`Date | Share Link | Caption`, header BOM preserved). Until that writer lands, append the row by hand. Do **not** touch `artists.tsv` — the `Photo` column is removed (#131); `artist-photos.tsv` is the sole photo record.
+
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
 **Final:** Apply `processed` label.
