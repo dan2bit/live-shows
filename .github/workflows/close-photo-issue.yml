@@ -1,0 +1,80 @@
+name: Close photo issue
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  close-photo:
+    # Only run when:
+    # 1. The comment is on an issue (not a PR)
+    # 2. The issue title starts with "Photo:"
+    # 3. The comment contains a Google Photos share link
+    # 4. The issue is open (we close it after appending the row)
+    if: |
+      github.event.issue.pull_request == null &&
+      startsWith(github.event.issue.title, 'Photo:') &&
+      contains(github.event.comment.body, 'photos.google.com/share')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract share link from comment
+        id: extract
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          python3 - << 'PYEOF'
+          import re, os, sys
+
+          comment = os.environ["COMMENT_BODY"]
+
+          # First Google Photos share link in the comment; trim trailing punctuation.
+          m = re.search(r'https?://photos\.google\.com/share/\S+', comment)
+          if not m:
+              print("ERROR: no Google Photos share link found in comment", file=sys.stderr)
+              sys.exit(1)
+          link = m.group(0).rstrip('.,)>]')
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"share_link={link}\n")
+          print(f"share_link={link}")
+          PYEOF
+
+      - name: Append row to artist-photos.tsv
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          SHARE_LINK: ${{ steps.extract.outputs.share_link }}
+        run: |
+          python scripts/close_photo_issue.py "$ISSUE_TITLE" "$SHARE_LINK"
+
+      - name: Commit updated TSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (
+            git add data/show_goals/artist-photos.tsv
+            git commit -m "photo: row added from issue #${{ github.event.issue.number }} [skip ci]"
+            git push
+          )
+
+      - name: Close the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --comment "Photo row written to artist-photos.tsv automatically."
