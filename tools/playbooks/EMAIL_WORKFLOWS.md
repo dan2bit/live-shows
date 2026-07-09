@@ -396,8 +396,10 @@ actual setlist.fm bill (not the marketing slug) and add only untracked artists a
 individual rows.
 
 **Hat eligibility upkeep:** any step that adds a new artist row to `artists.tsv`,
-`fast_track.tsv`, or `follows_master.tsv` also adds a `data/show_goals/hat_eligibility.tsv`
-row (`Yes`/`No` per the #115 semantics; ask Dan when uncertain).
+`fast_track.tsv`, or `follows_master.tsv`, or a new show row (headliner or named
+support) to `live_shows_current.tsv`, also adds a `data/show_goals/hat_eligibility.tsv`
+row for any artist not already present (`Yes`/`No` per the #115 semantics; ask Dan when
+uncertain).
 
 **Step 3 — Autograph book check**
 
