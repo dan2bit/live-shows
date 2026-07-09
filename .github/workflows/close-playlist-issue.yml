@@ -1,8 +1,18 @@
 name: Close playlist issue
 
+# Post-#76: main requires the `guard` status check, so the live_shows_current.tsv
+# write goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to
+# staging would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
+# fast-forward main. Triggered by a comment carrying the playlist URL on a
+# "Playlist:" issue.
+
 on:
   issue_comment:
     types: [created]
+
+concurrency:
+  group: close-playlist-issue
+  cancel-in-progress: false
 
 jobs:
   close-playlist:
@@ -10,7 +20,6 @@ jobs:
     # 1. The comment is on an issue (not a PR)
     # 2. The issue title starts with "Playlist:"
     # 3. The comment contains a YouTube playlist URL
-    # 4. The issue is open (we will close it after updating the TSV)
     if: |
       github.event.issue.pull_request == null &&
       startsWith(github.event.issue.title, 'Playlist:') &&
@@ -25,7 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -78,15 +87,26 @@ jobs:
             "${{ steps.extract.outputs.show_date }}" \
             "${{ steps.extract.outputs.playlist_url }}"
 
-      - name: Commit updated TSV
+      - name: Commit updated TSV to staging
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git diff --quiet || (
-            git add data/live_shows_current.tsv
-            git commit -m "playlist: ${{ steps.extract.outputs.show_date }} — added URL from issue #${{ github.event.issue.number }} [skip ci]"
-            git push
-          )
+          git add data/live_shows_current.tsv
+          if git diff --cached --quiet; then
+            echo "data/live_shows_current.tsv unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "playlist: ${{ steps.extract.outputs.show_date }} — added URL from issue #${{ github.event.issue.number }}"
+            git fetch promote staging
+            git rebase promote/staging
+            git push promote HEAD:staging
+          fi
 
       - name: Close the issue
         env:
