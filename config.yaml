@@ -66,6 +66,11 @@ display:
   #   m_d      -> "6/12"                 d_m      -> "12/6"
   date_format: mon_day
 
+  # #87 — Group/Solo badge (bystander) + ticket-count (authed) visibility on upcoming shows.
+  #   Group = a multi-ticket show (public Group=Y flag); Solo = a single-ticket show.
+  badge: { solo: No, group: Yes }   # which badges bystanders see
+  count: { solo: No, group: Yes }   # which ticket counts authenticated users see
+
 # Decision-stage display (#82). The stage KEYS (buy/choose/pass) are fixed in code —
 # sort order, the decision dropdown, and per-stage CSS all key off them; only the display
 # strings are editable here. Stage COLORS live in the theme block (color_buy/choose/pass).
@@ -87,12 +92,7 @@ stages:
 merch:
   event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
 
-# Normal Ticket Number (#82 / #87): your usual party size. A show whose ticket quantity
-# differs shows the (X) count to you and a Group/Solo badge to bystanders. The bystander
-# badge is derived when the public flag is set (quantity is private) — see #87. Default
-# 1 = usually solo.
 badges:
-  normal_ticket_number: 1
   affinity:
     weights:                     # 3 main dials — must total 1.0
       tier: 0.35
