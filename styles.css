@@ -111,6 +111,7 @@
   .badge{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 5px;border-radius:2px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
   .badge-vip{background:#1a2a10;color:#6aaa3a;border:1px solid #2a4a18;}
   .badge-group{background:#0e1420;color:#6080c0;border:1px solid #1a2a50;}
+  .badge-solo{background:#141414;color:#8a8a8a;border:1px solid #2a2a2a;}
   .badge-otd{background:var(--otd-bg);color:#4aaa6a;border:1px solid var(--otd-border);}
   .badge-first{background:#0e1420;color:#6080c0;border:1px solid #2a3a70;}
   .badges{display:inline-flex;gap:3px;flex-wrap:wrap;margin-top:3px;}

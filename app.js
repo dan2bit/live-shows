@@ -107,10 +107,10 @@ function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
-// Normal Ticket Number (#82 / #87): the owner's usual party size. The authed (X) count
-// shows when a show's qty differs from this; the bystander Group/Solo badge is derived
-// from a public flag at data-entry time (quantity is private). Default 1 = usually solo.
-function normalTicketNumber(){var b=SITE_CONFIG.badges;return b&&b.normal_ticket_number!=null?b.normal_ticket_number:1;}
+// #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
+// Group = the public `Group=Y` flag; Solo = its absence. `which` is 'badge' or 'count',
+// `kind` is 'solo' or 'group'. Missing config defaults to group shown, solo hidden.
+function displayOn(which,kind){var d=SITE_CONFIG.display,v=d&&d[which]&&d[which][kind];if(v==null)return kind==='group';return v===true||(''+v).trim().toLowerCase()==='yes';}
 // Decision-stage display (#82). Stage KEYS are fixed in code (sort order, dropdown, CSS);
 // only the display copy is configurable, and stage colors live in the theme block. Falls
 // back to the built-in copy so a config without a stages block renders identically.
@@ -302,7 +302,7 @@ function buildBadges(row){
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
-function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');if((row['Group']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-group">👥 Group</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
+function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');var isGroup=(row['Group']||'').trim().toUpperCase()==='Y';if(isGroup){if(displayOn('badge','group'))b.push('<span class="badge badge-group">👥 Group</span>');}else if(displayOn('badge','solo'))b.push('<span class="badge badge-solo">🧍 Solo</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
 
 // ── setlistIconHtml helper ──────────────────────
 function setlistIconHtml(s){
@@ -487,14 +487,15 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var pn=row['Notes / Memories']||'',pvt=row['Private Notes']||'';
   var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
-  var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
+  var seat=esc(row['Seat Info / GA']||'');
+  var isGroup=(row['Group']||'').trim().toUpperCase()==='Y',showCount=displayOn('count',isGroup?'group':'solo');
   var cal=featureOn('calendar_integration')?'<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar"> 📅</a>':'';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty!=normalTicketNumber()?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
+    +'<td><div class="cell-artist">'+esc(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
