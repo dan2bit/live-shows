@@ -518,9 +518,10 @@ function renderAttendedRowBystander(row,idx){
 function renderAttendedRowSearch(row,idx){
   var n=normalizeRow(row);
   var ne=esc(n.notes);
+  var sw=_seenWithFor(n);
   var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+esc(sw.join(', '))+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -589,6 +590,18 @@ async function loadHistoryYear(yr){
 // independently of HISTORY_YEARS — so 2026.json is warmed even before rollover adds 2026
 // to the history TSV set.
 var _historyLoad=null;
+// #102 — seen_with lookup: "Show Date|Headliner" -> [session/sit-in/supergroup names].
+// Loaded once with the history years so those names are searchable and annotated in results.
+var _seenWith={};
+function _buildSeenWithLookup(rows){
+  _seenWith={};
+  rows.forEach(function(r){
+    var d=(r['Show Date']||'').trim(),h=(r['Headliner']||'').trim(),nm=(r['Seen With']||'').trim();
+    if(!d||!h||!nm)return;
+    var k=d+'|'+h;(_seenWith[k]||(_seenWith[k]=[])).push(nm);
+  });
+}
+function _seenWithFor(n){return _seenWith[(n.showDate||'')+'|'+(n.artist||'')]||[];}
 function loadAllHistory(){
   if(_allYearsLoaded)return Promise.resolve();
   if(_historyLoad)return _historyLoad;
@@ -605,6 +618,11 @@ function loadAllHistory(){
         await Promise.allSettled(years.map(function(yr){return _loadSetlistsForYear(yr);}));
       }catch(e){console.warn('setlists prime failed:',e.message);}
     })();
+    // #102 — load seen_with.tsv once (supplementary; a failure just leaves the lookup empty).
+    var seenWithPrime=(async function(){
+      try{var res=await ghFetch('data/seen_with.tsv');_buildSeenWithLookup(parseTsv(_decodeB64(res.content)));}
+      catch(e){console.warn('seen_with load failed:',e.message);}
+    })();
     if(unloaded.length){
       var results=await Promise.allSettled(unloaded.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
       results.forEach(function(res,i){
@@ -615,7 +633,7 @@ function loadAllHistory(){
       // If any year failed, reset the in-flight promise so the next History open retries.
       if(_anyFailed)_historyLoad=null;
     }
-    await setlistPrime;
+    await Promise.all([setlistPrime,seenWithPrime]);
     if(!_anyFailed)_allYearsLoaded=true;
   })();
   return _historyLoad;
@@ -649,6 +667,7 @@ function populateSearchDatalists(){
     if(n.venueName)venues.add(shortVenueName(n.venueName));
   });
   function artSort(s){return s.replace(/^(The|A|An)\s+/i,'').toLowerCase();}
+  Object.keys(_seenWith).forEach(function(k){_seenWith[k].forEach(function(nm){if(nm)artists.add(nm);});});
   var al=document.getElementById('srchArtistList'),vl=document.getElementById('srchVenueList');
   if(al)al.innerHTML=Array.from(artists).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(a){return'<option value="'+esc(a)+'">';}).join('');
   if(vl)vl.innerHTML=Array.from(venues).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(v){return'<option value="'+esc(v)+'">';}).join('');
@@ -662,7 +681,7 @@ function runSearch(){
   var la=qa.toLowerCase(),lv=qv.toLowerCase();
   var rows=allAttendedRows().filter(function(r){
     var n=normalizeRow(r);
-    var artistOk=!la||(n.artist.toLowerCase().includes(la)||n.support.toLowerCase().includes(la));
+    var artistOk=!la||(n.artist.toLowerCase().includes(la)||n.support.toLowerCase().includes(la)||_seenWithFor(n).some(function(nm){return nm.toLowerCase().includes(la);}));
     var venueOk=!lv||(n.venueName.toLowerCase().includes(lv)||shortVenueName(n.venueName).toLowerCase().includes(lv));
     return artistOk&&venueOk;
   });
