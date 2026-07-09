@@ -223,8 +223,9 @@ Single source of truth for hat-signing eligibility (#115). Schema: `Artist | Hat
   never signature assertions; completion is sourced exclusively from `hat_signatures.tsv`.
 - **Writes:** `staging`, full-file pushes, fresh blob SHA before every write. Not
   in-page-editable; keep it comment-free anyway.
-- **Upkeep:** every new artist row in `artists.tsv` / `fast_track.tsv` / `follows_master.tsv`
-  gets an eligibility row in the same session.
+- **Upkeep:** every new artist row in `artists.tsv` / `fast_track.tsv` / `follows_master.tsv`,
+  and every new show row (headliner or named support) in `live_shows_current.tsv`, gets
+  an eligibility row for any artist not already present in the same session.
 - Forkers: the file is goal-specific and safe to delete — the builder emits
   `hat_eligible: null` when it is absent (graceful degradation per #115).
 
