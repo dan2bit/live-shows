@@ -226,17 +226,34 @@ Strict S2 → S3 → S4:
 
 - Rename `autograph_books_combined.tsv` → `autograph_books_eligibility.tsv`; header second column becomes `Eligible`; extract `Signed`/`Notes` columns out.
 - New `book_signatures.tsv` mirroring the hat pattern, with the extra `book` column between `attribution` and `show_date`.
-- Backfill dates (research complete per #138: 18 events / 21 rows including attribution expansions).
-- Builder gets a **temporary compat-read** that unions the two new book files into the shape S3 expects — so S2 can land without S3 being ready. Compat-read is removed as part of S3.
+- Backfill dates (research complete per #138: 18 events / 22 rows including attribution expansions).
 - Playbook ride-alongs: `EMAIL_WORKFLOWS.md` book steps, `DATA_WRITE_PROTOCOLS.md` book protocol section and `hat_eligibility` header uniformity note.
+
+**Implementation note:** in PR #141, S2 landed together with S3 as a single unit
+(the delete of the combined file and the builder rewire that stops reading it are
+adjacent commits on the same branch, squash-merged as one atomic change to main).
+The originally-planned S2 compat-read (a temporary union of the two new files
+back into the shape S3 expects) was never implemented — combining S2 and S3
+made it unnecessary.
 
 ### S3 — Builder (#139)
 
-- Consume `show_goals` config; iterate goals generically per source binding.
-- Retire the deprecated `artists.tsv Hat Autograph` column read (currently at ~line 298 of `scripts/build_artist_index.py`) and remove the column from `artists.tsv` in the same PR.
-- Bake per-show goal accomplishments into each artist's `show_log` entries so S4's row badges can join client-side without extra fetches.
-- Implement the [weight sum validator](#affinity-contribution) targeted at `config.yaml → show_goals`.
-- Remove the S2 compat-read.
+- Consume `show_goals` config for per-goal weights, with fallback to the legacy `badges.affinity.goals_split` dict when `show_goals` is absent or has no weight entries.
+- Implement the [weight sum validator](#affinity-contribution) targeted at `config.yaml → show_goals` weights.
+- Rewire book completion sourcing to `autograph_books_eligibility.tsv` (In APS / APS Page / In RHBS + Eligible flag) plus `book_signatures.tsv` (event log with attribution).
+- Uniform attribution parser (`credit_targets`) applied to both hat and book event logs, per the [Source binding syntax](#source-binding-syntax) vocabulary. This also fixes a pre-existing hat bug where `of <band>` credited only the band, dropping the signer.
+- Bake per-show goal accomplishments into each artist's `show_log` entries so S4's row badges can join client-side without extra fetches. Only `event_log` sources contribute; column/interaction goals stay per-row.
+
+**Fully-generic goal iteration deferred.** S3 iterates config-declared weights and
+validates their sum, but the completion tracking still hard-codes the two-goal
+(hat, book) case — `hat_completed` set and `book_completed` per-book dict are
+separate structures. Generalizing to a single `completed_by_goal[goal_key]` map
+is a small refactor deferred until photo/video goals ship (which currently require
+S4's row-badge rendering to have visible effect).
+
+**Retired pre-PR:** The `artists.tsv Hat Autograph` column was already removed
+from `artists.tsv` and from the builder read path on `main` before PR #141
+started; nothing left to retire in this PR.
 
 ### S4 — app.js row badges (#140)
 
