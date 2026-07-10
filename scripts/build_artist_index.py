@@ -83,6 +83,51 @@ def clean(v):
     return None if v in ("", "-") else v
 
 
+def credit_targets(signer, attribution):
+    """Return the list of artist-name inputs credited by an event_log signature row,
+    per the vocabulary in docs/GOALS_SPEC.md § Source binding syntax.
+
+    The signer is always credited; the attribution controls whether a second artist
+    is also credited:
+      empty / "self"      -> signer only
+      "of <band>"         -> signer AND <band>       (signer is a band member)
+      "<name> entry"      -> signer AND <name>       (book prints signer under an alias)
+      "w/ <band>"         -> signer only              (signer signed at band's show)
+      "co-bill w/ <band>" -> signer only              (signer signed at co-billed event)
+      any other freeform  -> signer only              (default)
+    """
+    a = (attribution or "").strip()
+    targets = [signer] if signer else []
+    al = a.lower()
+    if al.startswith("of "):
+        band = a[3:].strip()
+        if band:
+            targets.append(band)
+    elif al.endswith(" entry"):
+        alias = a[:-len(" entry")].strip()
+        if alias:
+            targets.append(alias)
+    return targets
+
+
+def validate_goals_config(cfg):
+    """Ensure show_goals weights sum to 1.0 ± epsilon per docs/GOALS_SPEC.md §
+    Affinity contribution. Narrowly targeted at config.yaml -> show_goals; fails
+    the build on drift with a clear error identifying the offending entries."""
+    show_goals = cfg.get("show_goals") or []
+    weighted = [g for g in show_goals if isinstance(g, dict) and "weight" in g]
+    if not weighted:
+        return  # no weighted goals -> nothing to validate
+    total = sum(float(g["weight"]) for g in weighted)
+    epsilon = 0.001
+    if abs(total - 1.0) > epsilon:
+        entries = ", ".join(f"{g.get('key', '?')}={g['weight']}" for g in weighted)
+        raise ValueError(
+            f"config.yaml: show_goals weights must sum to 1.0, got {total:.4f} "
+            f"({entries}). See docs/GOALS_SPEC.md § Affinity contribution."
+        )
+
+
 # ------------------------------------------------------------------------------- loaders
 def load_config(root):
     with open(os.path.join(root, "config.yaml"), encoding="utf-8") as fh:
@@ -90,12 +135,26 @@ def load_config(root):
     badges = (cfg.get("badges") or {})
     aff = badges.get("affinity") or {}
     weights = aff.get("weights") or {"tier": 0.35, "seen": 0.40, "goals": 0.25}
+
+    # show_goals is the new source of truth for per-goal weights (docs/GOALS_SPEC.md §
+    # Affinity contribution). If present with weight entries, use those. Otherwise fall
+    # back to the legacy goals_split dict, and finally to the built-in default. During
+    # the S2+S3 transition (this PR), commit 5 adds show_goals and deletes goals_split;
+    # the fallback exists so intermediate branch states remain buildable.
+    show_goals = cfg.get("show_goals") or []
+    goals_weights = {g["key"]: float(g["weight"])
+                     for g in show_goals
+                     if isinstance(g, dict) and "key" in g and "weight" in g}
+    if not goals_weights:
+        goals_weights = aff.get("goals_split") or {"hat": 0.6, "book": 0.4}
+
     return {
         "weights": weights,
         "tier_points": aff.get("tier_points") or {},
         "fast_track_equiv_shows": aff.get("fast_track_equiv_shows", 1),
         "seen_scale": aff.get("seen_scale", 2.5),
-        "goals_split": aff.get("goals_split") or {"hat": 0.6, "book": 0.4},
+        "goals_split": goals_weights,
+        "show_goals": show_goals,
         "bands": aff.get("bands") or {"high": 0.60, "medium": 0.30},
         "tranches": badges.get("listener_tranches") or DEFAULT_TRANCHES,
     }
@@ -198,6 +257,7 @@ def dedup_log(rows):
 # ------------------------------------------------------------------------------- main build
 def build(root):
     cfg = load_config(root)
+    validate_goals_config(cfg)
     aliases = load_aliases(root)
 
     def canon(name):
@@ -218,22 +278,63 @@ def build(root):
         if r.get("Artist"):
             pots.setdefault(canon(r["Artist"]), r)
     fast = {canon(r["Artist"]) for r in read_tsv(os.path.join(root, "data/fast_track.tsv")) if r.get("Artist")}
+    # Book eligibility (#85 S2): what artists are printed in either book + per-book
+    # In/Page. Signed columns moved out to book_signatures.tsv (event log).
     books = {canon(r["Artist"]): r
-             for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_combined.tsv"))
+             for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_eligibility.tsv"))
              if r.get("Artist")}
-    hat_elig = {canon(r["Artist"]): ((r.get("Hat Eligible") or "").strip().lower() == "yes")
-                for r in read_tsv(os.path.join(root, "data/show_goals/hat_eligibility.tsv"))
-                if r.get("Artist")}
-    # Hat completion from canonical signatures (#115): a signature credits the signer,
-    # unless attributed "of <band>" (band member) -> the band gets the completed state.
+
+    # Hat eligibility (#115). Header column is "Eligible" post-#85 (uniform across goals).
+    # Compat: also accept legacy "Hat Eligible" column name during any transition window.
+    hat_elig = {}
+    for r in read_tsv(os.path.join(root, "data/show_goals/hat_eligibility.tsv")):
+        if not r.get("Artist"):
+            continue
+        raw = (r.get("Eligible") or r.get("Hat Eligible") or "").strip().lower()
+        hat_elig[canon(r["Artist"])] = (raw == "yes")
+
+    # Hat + book completion from canonical event logs (#115, #85). Attribution vocabulary
+    # per docs/GOALS_SPEC.md § Source binding syntax; parsed uniformly via credit_targets.
     hat_completed = set()
     for r in read_tsv(os.path.join(root, "data/show_goals/hat_signatures.tsv")):
         signer = (r.get("signer") or "").strip()
         if not signer:
             continue
-        attr = (r.get("attribution") or "").strip()
-        target = attr[3:].strip() if attr.lower().startswith("of ") else signer
-        hat_completed.add(canon(target))
+        for tgt in credit_targets(signer, r.get("attribution")):
+            k = canon(tgt)
+            if k:
+                hat_completed.add(k)
+
+    # Book completion, tracked per-book (APS/RHBS) so book_detail can carry accurate
+    # signed states downstream. book_signed (aggregate) is derived per-artist below.
+    book_completed = {}  # {canon_key: {"APS": bool, "RHBS": bool}}
+    for r in read_tsv(os.path.join(root, "data/show_goals/book_signatures.tsv")):
+        signer = (r.get("signer") or "").strip()
+        which = (r.get("book") or "").strip().upper()
+        if not signer or which not in ("APS", "RHBS"):
+            continue
+        for tgt in credit_targets(signer, r.get("attribution")):
+            k = canon(tgt)
+            if not k:
+                continue
+            entry = book_completed.setdefault(k, {"APS": False, "RHBS": False})
+            entry[which] = True
+
+    # Per-artist per-date completed-goal keys, for baking into show_log entries so
+    # S4 (app.js row badges) can join client-side without extra fetches. Only event_log
+    # sources contribute here; column/interaction goals are per-row and handled at render.
+    signature_events = {}  # {canon_key: {date: set(goal_key)}}
+    for goal_key, ev_file in (("hat", "hat_signatures.tsv"),
+                              ("book", "book_signatures.tsv")):
+        for r in read_tsv(os.path.join(root, "data/show_goals", ev_file)):
+            signer = (r.get("signer") or "").strip()
+            date = (r.get("show_date") or "").strip()
+            if not signer or not date:
+                continue
+            for tgt in credit_targets(signer, r.get("attribution")):
+                k = canon(tgt)
+                if k:
+                    signature_events.setdefault(k, {}).setdefault(date, set()).add(goal_key)
 
     with open(os.path.join(root, "data/artist_spotify.json"), encoding="utf-8") as fh:
         spotify_raw = json.load(fh)
@@ -312,8 +413,9 @@ def build(root):
         hat_eligible = hat_elig.get(k)           # True / False / None (absent -> not-yet suppressed)
         in_aps = (bk.get("In APS") or "").strip().lower() == "yes"
         in_rhbs = (bk.get("In RHBS") or "").strip().lower() == "yes"
-        aps_signed = (bk.get("APS Signed") or "").strip().lower() == "yes"
-        rhbs_signed = (bk.get("RHBS Signed") or "").strip().lower() == "yes"
+        _book_state = book_completed.get(k, {})  # #85 S3: sourced from book_signatures.tsv
+        aps_signed = _book_state.get("APS", False)
+        rhbs_signed = _book_state.get("RHBS", False)
         book_signed = aps_signed or rhbs_signed
         in_book = in_aps or in_rhbs
 
@@ -397,7 +499,14 @@ def build(root):
                 "first": first,
                 "recent": recent,
                 "show_log": [
-                    {"date": r["date"], "venue": r["venue"], "via": r["via"], "photo_url": r["photo_url"]}
+                    {
+                        "date": r["date"], "venue": r["venue"], "via": r["via"],
+                        "photo_url": r["photo_url"],
+                        # #85 S3: event_log goal completions at this show for this artist,
+                        # baked so app.js row badges can join without extra fetches.
+                        # Column/interaction goals stay per-row (not baked here).
+                        "goals": sorted(signature_events.get(k, {}).get(r["date"], set())),
+                    }
                     for r in log
                 ],
             },
