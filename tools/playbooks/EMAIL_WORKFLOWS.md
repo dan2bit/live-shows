@@ -144,7 +144,7 @@ to the calendar event title.
 
 **Step 3 — Check autograph books**
 
-Look up headliner and known supporting acts in `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat).
+Look up headliner and known supporting acts in `autograph_books_eligibility.tsv` (which artists are in the books + page numbers) crossed with `book_signatures.tsv` (which artists have signed) and `hat_signatures.tsv` (hat completion).
 
 - In RHBS and not yet signed → prepend `BRING RHBS — [Artist] p.[N]` to calendar description
 - In APS and not yet signed → prepend `BRING APS — [Artist] p.[N]`
@@ -248,10 +248,23 @@ Commit to `main` in `dan2bit/live-shows-private`.
 
 **Step 4 — Update autograph records (if applicable)**
 
-If book autograph: update `autograph_books_combined.tsv` — set RHBS/APS Signed to Yes.
+If book autograph: append a row to `book_signatures.tsv` — next `seq`, signer, `book`
+(`APS` or `RHBS`), attribution, show_date, venue (leave region/photo_ref/legible/confidence
+blank). This is the canonical record; per-artist `book_detail` and completion badges are
+derived from it by the builder. Attribution vocabulary per `docs/GOALS_SPEC.md` §
+Source binding syntax:
+- self-signing → `self` or blank
+- band member signing → `of <band>` (credits both signer AND band)
+- opener / guest / co-bill → `w/ <band>` or `co-bill w/ <band>` (credits signer only)
+- alias case (book printed under a different name) → `<name> entry` (credits both)
+
+If the signer is not yet in `autograph_books_eligibility.tsv`, that means the physical
+book has an entry for them that's not tracked yet — add a row with `In APS`/`APS Page`/
+`In RHBS` populated for the book(s) they appear in. This is a data-integrity backfill,
+not a routine step; usually the signer is already in the eligibility file.
 
 If hat autograph:
-1. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank). This is the canonical record. The `artists.tsv Hat Autograph` column is **deprecated** (#115, 2026-07-07) — do not set it.
+1. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank). This is the canonical record.
 2. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
    backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
    (materialized-exception rule, #115). Basis records membership facts only — never
@@ -267,7 +280,9 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   Artist Interaction filled; also update `dan2bit/live-shows-private → current_private.tsv`
   for actual Food & Bev / Parking / Merch
 - `data/artists.tsv` — always included
-- `data/show_goals/autograph_books_combined.tsv` — if a book was signed
+- `data/show_goals/book_signatures.tsv` — if a book was signed (canonical event log)
+- `data/show_goals/autograph_books_eligibility.tsv` — only if backfilling a signer who
+  was in the physical book but not yet tracked (rare)
 - `data/show_goals/hat_signatures.tsv` — if the hat was signed
 - `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
 
