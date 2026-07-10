@@ -90,16 +90,34 @@ seq | signer | attribution | show_date | venue | region | photo_ref | legible | 
 (indicating which book was signed, e.g. `APS` or `RHBS`).
 
 **Attribution vocabulary** — the string in the `attribution` column determines how a
-signature maps to artists:
+signature maps to artists. The signer is always credited; the attribution controls
+whether a *second* artist is also credited:
 
-| Attribution | Maps to |
-|---|---|
-| empty or `self` | the `signer` value only |
-| `of <band>` or `w/ <band>` | both `<band>` AND the `signer` (treated identically) |
-| any other freeform text | the `signer` only |
+| Attribution | Maps to | Meaning |
+|---|---|---|
+| empty or `self` | signer only | signer signed on their own behalf |
+| `of <band>` | signer AND `<band>` | signer is a member of the band |
+| `<name> entry` | signer AND `<name>` | book prints the artist under a different name (alias case) |
+| `w/ <band>` | signer only | signer signed at the band's show (guest / opener / touring) |
+| `co-bill w/ <band>` | signer only | signer signed at a co-billed event |
+| any other freeform text | signer only | (default) |
+
+Rationale for the `of` vs `w/` split: `of <band>` means the signer *is* the band
+(a member); crediting the band reflects that "the band was signed" via one of its
+people. `w/ <band>` means the signer merely signed *at* the band's show — the band
+did not sign anything, so it does not receive completion credit.
 
 Example: signer=`Kanene Pipkin`, attribution=`of The Lone Bellow` maps to both
 `Kanene Pipkin` and `The Lone Bellow` — either would render the badge as completed.
+By contrast, signer=`Rebecca Porter`, attribution=`w/ John Hiatt` maps only to
+`Rebecca Porter` — John Hiatt did not sign, his opener did.
+
+**Amendment note (2026-07-10, during S3 implementation):** the original ratified
+version of this table (2026-07-09, #137) treated `of` and `w/` identically, both
+crediting signer AND band. That specification also disagreed with the pre-existing
+hat implementation, which credited only the band for `of <band>` (dropping the
+signer). Both were bugs — the vocabulary above is the corrected form, and the
+builder rewire (S3) implements it uniformly for both hat and book event logs.
 
 ### `column:<name>`
 
