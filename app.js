@@ -115,9 +115,9 @@ function displayOn(which,kind){var d=SITE_CONFIG.display,v=d&&d[which]&&d[which]
 // only the display copy is configurable, and stage colors live in the theme block. Falls
 // back to the built-in copy so a config without a stages block renders identically.
 function stageHeader(key){
-  var def={buy:{icon:'\uD83D\uDFE9',label:'Buy',tagline:'not purchased but probably going',sep:' \u2014 '},
-           choose:{icon:'\uD83D\uDFE1',label:'Choose',tagline:'shows I am considering',sep:' \u2014 '},
-           pass:{icon:'\u25EF',label:'Pass',tagline:'considered, but not going',sep:' - '}}[key]||{sep:' \u2014 '};
+  var def={buy:{icon:'🟩',label:'Buy',tagline:'not purchased but probably going',sep:' — '},
+           choose:{icon:'🟡',label:'Choose',tagline:'shows I am considering',sep:' — '},
+           pass:{icon:'◯',label:'Pass',tagline:'considered, but not going',sep:' - '}}[key]||{sep:' — '};
   var d=(SITE_CONFIG.stages||{})[key]||{};
   var icon=d.icon!=null?d.icon:def.icon,label=d.label!=null?d.label:def.label,tagline=d.tagline!=null?d.tagline:def.tagline;
   return esc(icon)+' '+esc(label)+def.sep+esc(tagline);
@@ -221,13 +221,13 @@ async function mergePrivateData(){
   if(!authed||!featureOn('private_data'))return;
   try{
     var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={};
-    parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[(r['Artist']||'')+'\u241F'+(r['Show Date']||'')]=r;});
-    currentRows.forEach(function(r){var p=cmap[(r['Artist']||'')+'\u241F'+(r['Show Date']||'')];if(p)CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});});
+    parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[(r['Artist']||'')+'␟'+(r['Show Date']||'')]=r;});
+    currentRows.forEach(function(r){var p=cmap[(r['Artist']||'')+'␟'+(r['Show Date']||'')];if(p)CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});});
   }catch(e){console.warn('private current merge skipped:',e.message);}
   try{
     var pp=await ghFetch(POTENTIAL_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),pmap={};
-    parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[(r['Artist']||'')+'\u241F'+(r['Date']||'')]=r;});
-    potentialRows.forEach(function(r){var p=pmap[(r['Artist']||'')+'\u241F'+(r['Date']||'')];if(p&&p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];});
+    parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[(r['Artist']||'')+'␟'+(r['Date']||'')]=r;});
+    potentialRows.forEach(function(r){var p=pmap[(r['Artist']||'')+'␟'+(r['Date']||'')];if(p&&p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];});
   }catch(e){console.warn('private potential merge skipped:',e.message);}
 }
 async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
@@ -305,14 +305,79 @@ function buildBadges(row){
   var badges=[],tl=ticketLabel(row['Ticket Access']||''),label=tl[0],isPaper=tl[1];
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
-  if((row['Notes / Memories']||'').includes('HAT:'))badges.push('<span class="badge badge-hat">🎩 HAT</span>');
-  if((row['Notes / Memories']||'').includes('BRING RHBS')||(row['Notes / Memories']||'').includes('BRING APS'))badges.push('<span class="badge badge-book">📚 BOOK</span>');
   if(!isVip&&!isWT&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
   if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
 function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');var isGroup=(row['Group']||'').trim().toUpperCase()==='Y';if(isGroup){if(displayOn('badge','group'))b.push('<span class="badge badge-group">👥 Group</span>');}else if(displayOn('badge','solo'))b.push('<span class="badge badge-solo">🧍 Solo</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
+
+// ── Show-goal badges (#140 / #85 S4) ─────────────────────
+// Config-driven goal badges. Iterates SITE_CONFIG.show_goals; event_log goals join
+// client-side against the small data/show_goals/*.tsv signature + eligibility files
+// loaded by loadGoalData(). Replicates build_artist_index.py credit_targets()+norm()
+// so client and builder agree. Degrades to nothing when show_goals is empty or the
+// goal folder is absent (#85 exit criterion). No styles.css needed — colors come from
+// the --<key>/-dim/-bg CSS vars emitted by applyTheme().
+var GOAL_DATA=null;
+function _goalNorm(s){
+  if(!s)return'';
+  s=String(s).trim();
+  var m=s.match(/^(.*),\s+(the|a|an)$/i);if(m)s=m[2]+' '+m[1];
+  s=s.normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  s=s.replace(/^\s*(the|a|an)\s+/,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+  return s;
+}
+function _goalCreditTargets(signer,attribution){
+  var a=(attribution||'').trim(),al=a.toLowerCase(),targets=signer?[signer]:[];
+  if(al.indexOf('of ')===0){var band=a.slice(3).trim();if(band)targets.push(band);}
+  else if(al.slice(-6)===' entry'){var alias=a.slice(0,a.length-6).trim();if(alias)targets.push(alias);}
+  return targets;
+}
+function _goalEventList(){var g=SITE_CONFIG.show_goals;return(g&&g.length?g:[]).filter(function(x){return x&&x.key&&/^event_log:/.test(x.source||'');});}
+async function loadGoalData(){
+  GOAL_DATA={};
+  var goals=_goalEventList();if(!goals.length)return;
+  await Promise.all(goals.map(async function(g){
+    var d={completed:{},eligible:{}},file=(g.source||'').replace(/^event_log:/,'').trim();
+    try{
+      var res=await ghFetch('data/show_goals/'+file+'.tsv');
+      parseTsv(_decodeB64(res.content)).forEach(function(r){
+        var signer=(r['signer']||'').trim(),date=(r['show_date']||'').trim();
+        if(!signer||!date)return;
+        _goalCreditTargets(signer,r['attribution']).forEach(function(t){var k=_goalNorm(t);if(k)d.completed[k+'␟'+date]=1;});
+      });
+    }catch(e){/* missing signatures -> no completions */}
+    if(g.eligibility){
+      try{
+        var er=await ghFetch('data/show_goals/'+g.eligibility+'.tsv');
+        parseTsv(_decodeB64(er.content)).forEach(function(r){
+          var k=_goalNorm(r['Artist']);if(!k)return;
+          var v=(r['Eligible']||r['Hat Eligible']||'').trim().toLowerCase();if(v==='yes')d.eligible[k]=1;
+        });
+      }catch(e){/* missing eligibility -> no planned */}
+    }
+    GOAL_DATA[g.key]=d;
+  }));
+}
+function _goalBadgeSpans(artist,showDate,isUpcoming){
+  if(!GOAL_DATA)return'';
+  var goals=_goalEventList();if(!goals.length)return'';
+  var k=_goalNorm(artist),out='';
+  goals.forEach(function(g){
+    var d=GOAL_DATA[g.key];if(!d)return;
+    var completed=!!d.completed[k+'␟'+(showDate||'')];
+    var state=completed?'completed':(isUpcoming&&d.eligible[k]?'planned':'');
+    if(!state)return;
+    var key=g.key,label=esc(g.label||g.key),icon=g.icon||'';
+    var style=state==='completed'
+      ?'background:var(--'+key+'-bg);color:var(--'+key+');border:1px solid var(--'+key+'-dim)'
+      :'background:transparent;color:var(--'+key+'-dim);border:1px dashed var(--'+key+'-dim);opacity:.85';
+    out+='<span class="badge goal-'+key+' goal-'+state+'" style="'+style+'" title="'+label+(state==='planned'?' — planned':'')+'">'+icon+' '+label+'</span>';
+  });
+  return out;
+}
+function rowGoalBadges(artist,showDate,isUpcoming){var s=_goalBadgeSpans(artist,showDate,isUpcoming);return s?'<div class="badges">'+s+'</div>':'';}
 
 // ── setlistIconHtml helper ──────────────────────
 function setlistIconHtml(s){
@@ -382,7 +447,7 @@ function switchEditField(cellId,fileKey,rowIdx,field){
   var lbl=document.getElementById('fieldlbl-'+cellId);
   if(saveBtn)saveBtn.setAttribute('onclick','saveEdit(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
   if(switchBtn)switchBtn.setAttribute('onclick','switchEditField(\''+cellId+'\',\''+fileKey+'\','+rowIdx+',\''+alt+'\')');
-  if(switchBtn)switchBtn.textContent='\u2192 '+_fieldLabel(field);
+  if(switchBtn)switchBtn.textContent='→ '+_fieldLabel(field);
   if(lbl)lbl.textContent=_fieldLabel(alt);
 }
 function startEdit(cellId,fileKey,rowIdx,field){
@@ -488,7 +553,7 @@ function renderUpcomingRowBystander(row,idx){
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+'</td>'
+    +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
@@ -506,7 +571,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+esc(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
-    +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
+    +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
@@ -518,7 +583,7 @@ function renderAttendedRowBystander(row,idx){
   var ne=esc(n.notes);
   var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -532,7 +597,7 @@ function renderAttendedRowSearch(row,idx){
   var sw=_seenWithFor(n);
   var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+esc(sw.join(', '))+'</div>':'')
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+esc(sw.join(', '))+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -549,7 +614,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -573,7 +638,7 @@ function renderHistoryYear(yr){
     var editBtn=authed?makeEditBtn(cellId,'history:'+yr,oi,'Notes / Memories','notes'):'';
     var nh=ne?'<div class="notes-text collapsible" id="n-hist-'+yr+'-'+i+'" onclick="toggleNote(this,\'nt-hist-'+yr+'-'+i+'\')">'+ne+'</div><span class="notes-toggle" id="nt-hist-'+yr+'-'+i+'" onclick="toggleNote(document.getElementById(\'n-hist-'+yr+'-'+i+'\'),this)">more</span>':'';
     return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-      +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+      +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
       +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
       +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
       +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -621,7 +686,7 @@ function loadAllHistory(){
     var _anyFailed=false;
     // Prime setlists cache in parallel: discover years by listing data/setlists/, then
     // fetch each JSON. Runs independently of HISTORY_YEARS so 2026.json is always primed
-    // even before rollover.py adds 2026 to the history TSV set.
+    // even before rollover.
     var setlistPrime=(async function(){
       try{
         var dir=await ghFetch('data/setlists');
@@ -792,7 +857,7 @@ function renderPotentialRowBystander(r,gi){
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -816,7 +881,7 @@ function renderPotentialRowAuthed(r,gi){
   var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+((r['Notes']||'').includes('HAT:')?'<span class="badge badge-hat" style="margin-left:6px">🎩 HAT</span>':'')+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -1109,6 +1174,7 @@ async function loadData(){
     currentRows=parseTsv(_decodeB64(results[0].content));
     potentialRows=parseTsv(_decodeB64(results[1].content));
     await mergePrivateData();
+    await loadGoalData();
     renderShows();renderPotential();
     document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
