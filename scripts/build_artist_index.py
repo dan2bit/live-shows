@@ -467,7 +467,7 @@ def build(root):
                 "type": lr.get("type"),
                 "date": lr.get("date"),
                 "url": lr.get("url"),
-                "image_url": None,  # album art resolved at build time later (P2 with spotify_cache image_url)
+                "image_url": lr.get("image_url"),  # album cover from spotify_cache (#125)
             }
 
         # links
@@ -489,7 +489,7 @@ def build(root):
             "slug": slugify(disp),
             "spotify_id": clean(sp.get("spotify_id")),
             "mbid": mbid,
-            "image_url": None,     # build-time resolved later (spotify_cache image_url); null in P1
+            "image_url": clean(sp.get("image_url")),  # artist portrait from spotify_cache (#125)
             "banner_url": None,    # P2
             "genres": [t.lower() for t in (lf.get("tags") or [])[:3]],
             "listener": listener_for(sp),

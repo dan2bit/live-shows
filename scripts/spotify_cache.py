@@ -632,14 +632,38 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
         "type": best.get("album_type", best.get("type", "")),
         "spotify_id": best.get("id", ""),
         "url": (best.get("external_urls") or {}).get("spotify", ""),
+        "image_url": _pick_image(best.get("images"), 300),  # album cover — 0 extra calls (#125)
     }
+
+
+def _pick_image(images, target):
+    """URL of the image nearest `target` px wide (Spotify sorts images largest-first)."""
+    if not images:
+        return ""
+    best = min(images, key=lambda im: abs((im.get("width") or 0) - target))
+    return best.get("url", "")
+
+
+def artist_image(aid: str, creds) -> str:
+    """Artist portrait URL from GET /artists/{id}.
+
+    Dev-mode Client Credentials strips popularity/followers/genres from this
+    endpoint but KEEPS images[] (verified 2026-07-04, #125). One call; batch
+    /artists?ids= is 403 under the Dev app, so this is per-artist. Returns "" when
+    the artist has no portrait or the pull is empty — callers MUST NOT let that
+    overwrite a cached image_url (null-preserve).
+    """
+    data = api_get(f"/artists/{aid}", {}, creds)
+    return _pick_image((data or {}).get("images"), 300)
 
 
 def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
     # Resolution anchor (id/url) + the artist's latest album/single (see LATEST
-    # RELEASE). One Spotify call only: the /artists/{id} GET was dropped — after
-    # the metadata strip it returned nothing the cache keeps, so spotify_url comes
-    # from the resolver or is derived from the id.
+    # RELEASE). Still one Spotify call here: spotify_url comes from the resolver
+    # or is derived from the id. The portrait (image_url) is fetched separately by
+    # --refresh-images (GET /artists/{id} keeps images[] despite the Dev-mode
+    # metadata strip, #125), so a build never spends that call — image_url and
+    # images_checked start null and are filled by that pass.
     rel = latest_release(aid, creds, name)
     return {
         "spotify_id": aid,
@@ -648,6 +672,8 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
         "last_refreshed": date.today().isoformat(),
         "latest_release": rel,
         "latest_release_checked": date.today().isoformat(),
+        "image_url": None,          # artist portrait — populated by --refresh-images (#125)
+        "images_checked": None,     # cadence anchor for --refresh-images
     }
 
 
@@ -774,6 +800,98 @@ def refresh_releases(cache: dict, creds, args) -> None:
     print("\n" + "=" * 60)
     print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
           + (f"; kept {kept} on null pulls" if kept else "")
+          + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
+             if args.stale_days is not None else "")
+          + f". Written: {OUTPUT_JSON}")
+
+
+def refresh_images(cache: dict, creds, args) -> None:
+    """Re-pull ONLY the artist portrait (image_url) for already-cached artists;
+    leave the rest of each entry untouched. Mirrors refresh_releases().
+
+    GET /artists/{id} per artist (+1 call each — batch /artists?ids= is 403 under
+    the Dev-mode app, #125). Honors --artist, --stale-days (gating on
+    images_checked), and --dry-run, so a multi-day portrait back-audit resumes
+    across the ~100/day cap. Null-preserve: an empty pull never wipes a cached
+    image_url, and leaves images_checked untouched so the sweep retries it rather
+    than locking in a false null.
+    """
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to refresh images for "
+              "(run a normal build first, or check --artist).")
+        return
+    print(f"Refreshing artist portrait for {len(names)} cached artist(s)"
+          + (f" [skip checked < {args.stale_days}d]" if args.stale_days is not None else "")
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    updated = 0
+    empty = 0
+    skipped = 0
+    for i, name in enumerate(names, 1):
+        entry = cache[name]
+        aid = entry.get("spotify_id")
+        if not aid:
+            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
+            continue
+        if args.stale_days is not None:
+            checked = entry.get("images_checked")
+            if checked:
+                try:
+                    if (date.today() - date.fromisoformat(checked)).days < args.stale_days:
+                        skipped += 1
+                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
+                              f"skipped (--stale-days {args.stale_days})")
+                        continue
+                except ValueError:
+                    pass  # unparseable stored date -> fall through and refresh
+        try:
+            img = artist_image(aid, creds)
+        except RateLimited:
+            if not args.dry_run:
+                save_cache(cache)
+                print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
+        time.sleep(DELAY)
+        old = entry.get("image_url")
+        # Empty pull: never stamp images_checked, so it self-heals on the next
+        # sweep (a transient empty, or an artist who gets a portrait later). A
+        # cached portrait is also preserved — an empty pull never wipes it.
+        if not img:
+            empty += 1
+            print(f"[{i}/{len(names)}] {name}  → empty pull; "
+                  + ("kept cached portrait" if old else "no image yet — left unstamped to retry"))
+            if old:
+                print(f"    ⚠ app-only empty image for {name}; preserved cached", file=sys.stderr)
+            continue
+        if args.dry_run:
+            print(f"[{i}/{len(names)}] {name}  → {'unchanged' if (old or '') == img else 'set'}")
+            continue
+        entry["image_url"] = img
+        entry["images_checked"] = date.today().isoformat()
+        if (old or "") != img:
+            updated += 1
+            print(f"[{i}/{len(names)}] {name}  → portrait set")
+        else:
+            print(f"[{i}/{len(names)}] {name}  → unchanged")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written"
+              + (f"; {empty} empty (left unstamped)" if empty else "")
+              + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
+                 if args.stale_days is not None else "")
+              + ".")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Updated {updated} portrait(s) across {len(names)} artist(s)"
+          + (f"; {empty} empty (left unstamped to retry)" if empty else "")
           + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
              if args.stale_days is not None else "")
           + f". Written: {OUTPUT_JSON}")
@@ -1087,6 +1205,12 @@ def main() -> None:
                     help="Re-pull ONLY each cached artist's latest release "
                          "(album/single); leaves the rest of each entry "
                          "untouched. Honors --artist, --stale-days, and --dry-run.")
+    ap.add_argument("--refresh-images", action="store_true",
+                    help="Re-pull ONLY each cached artist's portrait (image_url) "
+                         "via GET /artists/{id}; leaves the rest of each entry "
+                         "untouched. Honors --artist, --stale-days (on "
+                         "images_checked), and --dry-run — a resumable multi-day "
+                         "portrait back-audit across the ~100/day cap.")
     ap.add_argument("--refresh-lastfm", action="store_true",
                     help="Re-pull ONLY the Last.fm enrichment block (listeners, "
                          "playcount, tags, similar) for cached artists. Independent "
@@ -1116,7 +1240,7 @@ def main() -> None:
                     help="With --add-artist: append the row but skip the same-run cache "
                          "build (avoids the /albums call when rate-limited).")
     ap.add_argument("--stale-days", type=int, default=None, metavar="N",
-                    help="With --refresh-releases: skip artists whose latest_release "
+                    help="With --refresh-releases / --refresh-images: skip artists whose latest_release (or portrait) "
                          "was checked within the last N days. Default unset = refresh "
                          "every cached artist (unchanged behavior — a deliberate full "
                          "re-pull still re-pulls everyone). Pass a value (e.g. 7) to "
@@ -1169,6 +1293,12 @@ def main() -> None:
         cache = load_cache()
         print(f"Already cached: {len(cache)}")
         refresh_releases(cache, creds, args)
+        return
+
+    if args.refresh_images:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_images(cache, creds, args)
         return
 
     amap = load_aliases()
@@ -1234,6 +1364,11 @@ def main() -> None:
         if prev and "lastfm" in prev:
             entry["lastfm"] = prev["lastfm"]
             entry["lastfm_checked"] = prev.get("lastfm_checked")
+        # Preserve any portrait from a prior --refresh-images: the build owns the
+        # Spotify anchor + release only and must not reset image_url/images_checked.
+        if prev and prev.get("images_checked"):
+            entry["image_url"] = prev.get("image_url")
+            entry["images_checked"] = prev.get("images_checked")
         # Null-preserve guard (#109): don't let a null pull wipe a known release
         # (app-only /market-filter flakiness). Keep the cached release AND its
         # check-date so the entry stays eligible for a real refresh instead of
