@@ -1,0 +1,159 @@
+// live-shows / app.js — client-side rendering + data joins for the tracker UI.
+// Loads TSVs and JSON produced by scripts/*, merges private sidecar data when authed,
+// renders shows/history/potential/waiting tabs, drives the artist modal, handles
+// in-page edits with GitHub Contents API writes, and applies the config-driven theme.
+// The full authoritative contract for what this file emits/consumes is in
+// tools/playbooks/DATA_WRITE_PROTOCOLS.md ("artist_modal_index.json — frozen schema"
+// and adjacent sections).
+'use strict';
+
+const PAT_KEY='live-shows-pat',BRANCH_KEY='live-shows-branch',AUTHED_KEY='live-shows-authed';
+const CONFIG_PATH='config.yaml';
+// SITE_CONFIG holds the merged runtime config: DEFAULT_CONFIG deep-merged with the
+// parsed config.yaml. On load failure or missing keys, individual code paths fall
+// back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
+const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
+var SITE_CONFIG=DEFAULT_CONFIG;
+function _cfgMerge(a,b){
+  if(a===null||typeof a!=='object'||Array.isArray(a))return b===undefined?a:b;
+  var out={};for(var k in a)out[k]=a[k];
+  if(b&&typeof b==='object'&&!Array.isArray(b))for(var k in b)out[k]=_cfgMerge(a[k],b[k]);
+  return out;
+}
+async function loadConfig(){
+  try{
+    var r=await fetch(CONFIG_PATH+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var txt=await r.text();
+    var parsed=jsyaml.load(txt);
+    SITE_CONFIG=_cfgMerge(DEFAULT_CONFIG,parsed||{});
+  }catch(e){console.warn('config load failed, using defaults:',e);SITE_CONFIG=DEFAULT_CONFIG;}
+  window.SITE_CONFIG=SITE_CONFIG;
+  return SITE_CONFIG;
+}
+function _assetUrl(rel,site){
+  if(!rel)return rel;
+  if(/^https?:\/\//i.test(rel))return rel;
+  site=site||(SITE_CONFIG&&SITE_CONFIG.site)||{};
+  var base=site.pages_base||('https://'+(site.owner||'dan2bit')+'.github.io/'+(site.repo||'live-shows')+'/');
+  return base.replace(/\/$/,'')+'/'+rel.replace(/^\//,'');
+}
+function applyConfig(cfg){
+  cfg=cfg||SITE_CONFIG;
+  var s=cfg.site||{};
+  if(s.title){document.title=s.title;var lt=document.querySelector('#linkTree text');if(lt)lt.textContent=s.title;}
+  if(s.favicon){var f=document.querySelector('link[rel="icon"]');if(f)f.href=_assetUrl(s.favicon,s);}
+  if(s.brand_icon){document.querySelectorAll('img.brand-hat,img[data-brand-icon]').forEach(function(el){el.src=_assetUrl(s.brand_icon,s);});}
+  // stages block: dropdown labels
+  var st=cfg.stages||{};
+  document.querySelectorAll('#decisionSelect option').forEach(function(o){var d=st[o.value];if(d&&d.label)o.textContent=d.icon?d.icon+' '+d.label:d.label;});
+  // tabs: display labels only
+  var tabs=cfg.tabs||{};
+  document.querySelectorAll('nav.tabs button[data-tab]').forEach(function(b){var t=tabs[b.dataset.tab];if(t)b.textContent=t;});
+  // about links
+  var abLinks=cfg.about_links||null;
+  if(abLinks&&Array.isArray(abLinks)){
+    var ul=document.querySelector('#aboutModal .am-links');
+    if(ul){ul.innerHTML='';abLinks.forEach(function(link){
+      if(!link||!link.url||!link.label)return;
+      var li=document.createElement('li'),a=document.createElement('a');
+      a.href=link.url;a.textContent=link.label;a.target='_blank';a.rel='noopener';
+      li.appendChild(a);ul.appendChild(li);
+    });}
+  }
+  // about text bits
+  if(s.about_handle){var el=document.getElementById('aboutHandle');if(el)el.textContent=s.about_handle;}
+  if(s.about_tagline){var el=document.getElementById('aboutTagline');if(el)el.textContent=s.about_tagline;}
+  if(s.about_text){var el=document.getElementById('aboutText');if(el)el.textContent=s.about_text;}
+  if(s.about_hero_image){var el=document.getElementById('aboutHero');if(el)el.src=_assetUrl(s.about_hero_image,s);}
+  if(s.about_hero_alt){var el=document.getElementById('aboutHero');if(el)el.alt=s.about_hero_alt;}
+  if(s.about_footer){var el=document.getElementById('aboutFooter');if(el)el.textContent=s.about_footer;}
+  // feature toggles: hide entire tabs / CTAs
+  if(!featureOn('fast_track')){var b=document.querySelector('button[data-tab="tourhere"]');if(b)b.style.display='none';}
+  if(!featureOn('recommendations')){var b=document.getElementById('suggestBtn');if(b)b.style.display='none';}
+}
+function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
+function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
+function stageBadgeHtml(key){var s=stageBits(key);if(!s)return'';return'<span class="stage-badge stage-'+key+'">'+(s.icon||'')+' '+(s.label||key)+'</span>';}
+function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
+// #87 — Group/Solo badge (bystander) + ticket-count (authed) visibility on upcoming
+// shows. Defaults: group Yes, solo No (parked in DEFAULT_CONFIG for clarity).
+function displayOn(which,kind){var d=SITE_CONFIG.display,v=d&&d[which]&&d[which][kind];if(v==null)return kind==='group';return v===true||(''+v).trim().toLowerCase()==='yes';}
+function badgeOn(kind){return displayOn('badge',kind);}
+function countOn(kind){return displayOn('count',kind);}
+function stageBits(key){
+  // Merge SITE_CONFIG.stages[key] with the hardcoded defaults so a partial override
+  // (e.g. only editing the label) doesn't blow away the icon/tagline.
+  var d=(SITE_CONFIG.stages||{})[key]||{};
+  var defaults={buy:{icon:'🟩',label:'Buy',tagline:'not purchased but probably going'},
+                choose:{icon:'🟡',label:'Choose',tagline:'shows I am considering'},
+                pass:{icon:'◯',label:'Pass',tagline:'considered, but not going'}}[key]||{};
+  return{icon:d.icon||defaults.icon||'',label:d.label||defaults.label||key,tagline:d.tagline||defaults.tagline||''};
+}
+// _deriveTriad — from a base hex, compute a darker "dim" (for borders/text) and a
+// near-black "bg" using HSL darkening. Applied to accent + decision + goal colors.
+function _hexToHsl(hex){
+  var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  var mx=Math.max(r,g,b),mn=Math.min(r,g,b),h,s,l=(mx+mn)/2;
+  if(mx===mn)h=s=0;
+  else{
+    var d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+    if(mx===r)h=(g-b)/d+(g<b?6:0);else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;
+    h/=6;
+  }
+  return[h,s,l*100];
+}
+function _hslToHex(h,s,l){
+  l=Math.max(0,Math.min(100,l))/100;
+  var r,g,b;
+  if(s===0)r=g=b=l;
+  else{
+    function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+    var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+    r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);
+  }
+  return'#'+[r,g,b].map(function(x){return Math.round(x*255).toString(16).padStart(2,'0');}).join('');
+}
+function _deriveTriad(hex){
+  var hsl=_hexToHsl(hex),h=hsl[0],s=hsl[1],l=hsl[2];
+  var dim=_hslToHex(h,s,Math.max(l*0.48,8));
+  var bg=_hslToHex(h,s*0.85,Math.max(l*0.16,5));
+  return{base:hex,dim:dim,bg:bg};
+}
+function applyTheme(cfg){
+  cfg=cfg||SITE_CONFIG;
+  var t=cfg.theme;if(!t||typeof t!=='object'||!Object.keys(t).length)return;
+  var root=document.documentElement.style;
+  function set(v,k){if(v)root.setProperty(k,v);}
+  // Chrome neutrals — explicit values only, no derivation
+  set(t.color_bg,'--bg');set(t.color_surface,'--surface');set(t.color_surface_bright,'--surface-bright');
+  set(t.color_border,'--border');set(t.color_border_bright,'--border-bright');
+  set(t.color_text,'--text');set(t.color_text_muted,'--text-muted');set(t.color_text_dim,'--text-dim');
+  // Semantic color triads — derive dim/bg if not explicitly overridden
+  var pairs=[['color_accent','--amber'],['color_buy','--green'],['color_choose','--yellow'],
+             ['color_sell','--sell'],['color_pass','--gray']];
+  pairs.forEach(function(p){
+    var base=t[p[0]];if(!base)return;
+    var triad=_deriveTriad(base);
+    set(base,p[1]);
+    set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
+    set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
+  });
+  // Show goal badge colors — iterate cfg.show_goals (#85 S3) and emit --<key> /
+  // --<key>-dim / --<key>-bg CSS var triads. Auto-derived from goal.color via HSL
+  // darkening (same _deriveTriad used for semantic colors above); a fork may also
+  // provide explicit goal.color_dim / goal.color_bg overrides if the auto-derived
+  // shades need tuning. A fork may add, remove, or edit any goal without CSS work.
+  var goals=(cfg.show_goals&&cfg.show_goals.length)?cfg.show_goals:[];
+  goals.forEach(function(g){
+    if(!g||!g.key||!g.color)return;
+    var triad=_deriveTriad(g.color);
+    set(g.color,'--'+g.key);
+    set(g.color_dim||triad.dim,'--'+g.key+'-dim');
+    set(g.color_bg||triad.bg,'--'+g.key+'-bg');
+  });
+  // Status rows
+  set(t.color_today_bg,'--today-bg');set(t.color_soon_bg,'--soon-bg');
+  set(t.color_otd_bg,'--otd-bg');set(t.color_otd_border,'--otd-border');
+  // Fonts — inject a <link> if config specifies a different font stack
+  if(t.font_mono||t.font_sans){
