@@ -97,6 +97,11 @@
   .cell-date .day-of-week{color:var(--text-dim);font-size:11px;display:block;}
   .cell-artist{font-weight:500;}
   .attended-table .cell-artist{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* #107 P2 — artist name as modal trigger: looks like text, behaves like a button */
+  .artist-link{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left;display:inline;}
+  .artist-link:hover{text-decoration:underline;text-underline-offset:2px;}
+  .artist-link:focus-visible{outline:1px solid var(--amber);outline-offset:2px;border-radius:2px;}
+  .cell-support-more{color:var(--text-dim);}
   .attended-table .cell-support{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .attended-table td:nth-child(2){max-width:160px;}
   .cell-support{color:var(--text-muted);font-size:12px;}
