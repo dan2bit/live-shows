@@ -379,6 +379,18 @@ function _goalBadgeSpans(artist,showDate,isUpcoming){
 }
 function rowGoalBadges(artist,showDate,isUpcoming){var s=_goalBadgeSpans(artist,showDate,isUpcoming);return s?'<div class="badges">'+s+'</div>':'';}
 
+// ── Artist-name modal triggers (#107 P2) ─────────────────
+// Any artist name in a list becomes a keyboard-accessible button that opens the
+// artist modal (openArtistModal, artist-modal.js) via the delegated handler below.
+// Names not in the index render a graceful minimal card. Multi-artist support /
+// seen-with strings (" / "-separated, optional " + more") wrap each name.
+function artistLink(name){name=(name||'').trim();if(!name)return'';return'<button type="button" class="artist-link" data-artist="'+esc(name)+'">'+esc(name)+'</button>';}
+function artistNames(str){
+  str=(str||'').trim();if(!str)return'';
+  var more='';var m=str.match(/\s*\+\s*more\s*$/i);if(m){more='<span class="cell-support-more"> + more</span>';str=str.slice(0,m.index);}
+  return str.split(' / ').map(function(p){return artistLink(p);}).filter(Boolean).join(' / ')+more;
+}
+
 // ── setlistIconHtml helper ──────────────────────
 function setlistIconHtml(s){
   if(!s||s==='-')return'';
@@ -553,7 +565,7 @@ function renderUpcomingRowBystander(row,idx){
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+artistNames(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
@@ -570,8 +582,8 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
-    +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
+    +(row['Supporting Artist']?'<div class="cell-support">w/ '+artistNames(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
@@ -583,7 +595,7 @@ function renderAttendedRowBystander(row,idx){
   var ne=esc(n.notes);
   var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -597,7 +609,7 @@ function renderAttendedRowSearch(row,idx){
   var sw=_seenWithFor(n);
   var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+esc(sw.join(', '))+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+sw.map(function(x){return artistLink(x);}).join(', ')+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -614,7 +626,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -638,7 +650,7 @@ function renderHistoryYear(yr){
     var editBtn=authed?makeEditBtn(cellId,'history:'+yr,oi,'Notes / Memories','notes'):'';
     var nh=ne?'<div class="notes-text collapsible" id="n-hist-'+yr+'-'+i+'" onclick="toggleNote(this,\'nt-hist-'+yr+'-'+i+'\')">'+ne+'</div><span class="notes-toggle" id="nt-hist-'+yr+'-'+i+'" onclick="toggleNote(document.getElementById(\'n-hist-'+yr+'-'+i+'\'),this)">more</span>':'';
     return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-      +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+      +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
       +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
       +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
       +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -854,10 +866,10 @@ function renderPotentialRowBystander(r,gi){
   var isSell=dec.toLowerCase()==='sell',ph=esc(r['Face Price']||'');
   if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a>';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
-  var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
+  var an=artistLink(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+artistNames(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -878,10 +890,10 @@ function renderPotentialRowAuthed(r,gi){
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
   if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
-  var an=r['BIT URL']&&r['BIT URL']!=='-'?'<a href="'+esc(r['BIT URL'])+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(r['Artist'])+'</a>':esc(r['Artist']);
+  var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+esc(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+artistNames(r['Support'])+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -1012,7 +1024,7 @@ function renderTourHere(){
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
     var spotUrl=featureOn('spotify_integration')?(r['Spotify URL']||''):'';  
-    return'<tr><td><div class="ft-artist">'+esc(r['Artist']||'')+(isHat?' <span class="badge badge-hat">🎩 HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
+    return'<tr><td><div class="ft-artist">'+artistLink(r['Artist']||'')+(isHat?' <span class="badge badge-hat">🎩 HAT</span>':'')+(isFirst?' <span class="badge badge-first">1st</span>':'')+'</div></td>'
       +'<td><div class="ft-links">'+(tourUrl?'<a class="ft-link ft-link-tour" href="'+esc(tourUrl)+'" target="_blank">Tour &#8599;</a>':'')+(spotUrl?'<a class="ft-link ft-link-sp" href="'+esc(spotUrl)+'" target="_blank">Spotify</a>':'')+'</div></td>'
       +'<td>'+tierHtml(tier)+'</td>'
       +'<td><div class="ft-why" id="cell-ft-why-'+ri+'">'+makeEditBtn('cell-ft-why-'+ri,'fasttrack',ri,'Why Fast Track','Why')+esc(r['Why Fast Track']||'')+'</div></td>'
@@ -1183,6 +1195,8 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
+// #107 P2 — delegated artist-name click -> artist modal (survives re-renders)
+document.addEventListener('click',function(e){var t=e.target;var b=t&&t.closest?t.closest('.artist-link'):null;if(b&&b.dataset.artist&&typeof openArtistModal==='function')openArtistModal(b.dataset.artist);});
 (async function boot(){
   await loadConfig();
   applyConfig(SITE_CONFIG);
