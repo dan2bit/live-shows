@@ -118,6 +118,8 @@ badges:
 #   label       - short display string for the badge
 #   icon        - emoji string
 #   color       - base color; --<key>-dim and --<key>-bg are auto-derived via HSL darkening
+#   color_dim   - (optional) explicit override for --<key>-dim (skip HSL derivation)
+#   color_bg    - (optional) explicit override for --<key>-bg  (skip HSL derivation)
 #   source      - binding rule: event_log:<file> | column:<name> | interaction:<value>[|<value>]
 #   eligibility - (optional) eligibility file name (without extension) under data/show_goals/
 #   weight      - (optional) affinity contribution; if any entries have weights, they must sum to 1.0
@@ -164,15 +166,6 @@ theme:
   color_text: "#e8e4dc"           # bone white
   color_text_muted: "#9a928a"     # taupe gray
   color_text_dim: "#8e8a7a"       # khaki gray
-
-  # Badge colors — derived like the semantic colors above: set the base and _dim/_bg are
-  # auto-computed. The explicit _dim/_bg below are optional overrides (kept for fine control).
-  color_hat: "#d08040"            # tan orange
-  color_hat_dim: "#3a2010"        # dark brown
-  color_hat_bg: "#1a0e08"         # near-black brown
-  color_book: "#a080c0"           # lavender
-  color_book_dim: "#3a2a50"       # dark indigo
-  color_book_bg: "#1a1420"        # near-black plum
 
   # Status row tints
   color_today_bg: "#1e0e0e"       # very dark maroon
