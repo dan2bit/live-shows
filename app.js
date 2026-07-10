@@ -160,8 +160,7 @@ function applyTheme(cfg){
   set(t.color_text,'--text');set(t.color_text_muted,'--text-muted');set(t.color_text_dim,'--text-dim');
   // Semantic color triads — derive dim/bg if not explicitly overridden
   var pairs=[['color_accent','--amber'],['color_buy','--green'],['color_choose','--yellow'],
-             ['color_sell','--sell'],['color_pass','--gray'],
-             ['color_hat','--hat'],['color_book','--book']];
+             ['color_sell','--sell'],['color_pass','--gray']];
   pairs.forEach(function(p){
     var base=t[p[0]];if(!base)return;
     var triad=_deriveTriad(base);
@@ -169,8 +168,19 @@ function applyTheme(cfg){
     set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
     set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
   });
-  // Hat and book badge colors are handled by the pairs loop above (their explicit
-  // _dim/_bg in config override the computed triad).
+  // Show goal badge colors — iterate cfg.show_goals (#85 S3) and emit --<key> /
+  // --<key>-dim / --<key>-bg CSS var triads. Auto-derived from goal.color via HSL
+  // darkening (same _deriveTriad used for semantic colors above); a fork may also
+  // provide explicit goal.color_dim / goal.color_bg overrides if the auto-derived
+  // shades need tuning. A fork may add, remove, or edit any goal without CSS work.
+  var goals=(cfg.show_goals&&cfg.show_goals.length)?cfg.show_goals:[];
+  goals.forEach(function(g){
+    if(!g||!g.key||!g.color)return;
+    var triad=_deriveTriad(g.color);
+    set(g.color,'--'+g.key);
+    set(g.color_dim||triad.dim,'--'+g.key+'-dim');
+    set(g.color_bg||triad.bg,'--'+g.key+'-bg');
+  });
   // Status rows
   set(t.color_today_bg,'--today-bg');set(t.color_soon_bg,'--soon-bg');
   set(t.color_otd_bg,'--otd-bg');set(t.color_otd_border,'--otd-border');
