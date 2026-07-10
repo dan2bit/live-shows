@@ -62,7 +62,9 @@ Fields per entry:
 | `key` | yes | Stable identifier used in badges and index (`hat`, `book`, `photo`, …) |
 | `label` | yes | Short display string for the badge |
 | `icon` | yes | Emoji string (no icon-path system) |
-| `color` | yes | Badge color as CSS hex |
+| `color` | yes | Badge base color as CSS hex |
+| `color_dim` | no | Explicit override for the CSS `--<key>-dim` variable. If omitted, derived from `color` via HSL darkening. |
+| `color_bg` | no | Explicit override for the CSS `--<key>-bg` variable. If omitted, derived from `color` via HSL darkening. |
 | `source` | yes | Binding rule; see [Source binding syntax](#source-binding-syntax) |
 | `eligibility` | no | Eligibility file name (without extension) under `data/show_goals/` |
 | `weight` | no | Affinity contribution weight; see [Affinity contribution](#affinity-contribution) |
