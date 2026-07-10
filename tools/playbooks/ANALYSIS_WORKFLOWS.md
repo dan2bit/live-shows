@@ -6,29 +6,39 @@ Five standing workflows for periodic show discovery, artist research, and data m
 
 ## Workflow 1 — Monthly Web-Src Diff + BIT/Seated Roster Refresh
 
-**Frequency:** Monthly (first weekend of the month)
-**Tracked by:** GitHub Issue #42
+**Frequency:** Monthly, first weekend of the month. Run passes A and B below together in one session, and fold in the quarterly research run (Workflow 2) when the schedules coincide.
 
 ### Purpose
 
-Compare the current BIT/Seated follow roster against `tools/research/follows/follows_master.tsv` to catch:
+Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tasks.md` for how to produce each export):
+
+**A — Web-src discovery diff.** Cross-reference the fresh BIT DC Recommends and HereForTheBands (HFTB) exports against the tracking files to catch newly-surfaced artists worth tiering.
+
+**B — BIT/Seated roster refresh.** Compare the current BIT/Seated follow roster against `tools/research/follows/follows_master.tsv` to catch:
 - Artists added to BIT/Seated who are not yet in `follows_master.tsv`
 - Artists in `follows_master.tsv` marked as BIT/Seated follows who are missing from the actual roster
-- Any new web-src exports that differ from the cached copies
 
 ### Steps
 
-1. **Export BIT and Seated rosters** from the respective apps/sites and save to `web-src/` with the current date in the filename.
-2. **Diff the new exports** against the most recent previous exports:
+**A — Web-src discovery diff**
+
+1. Diff the fresh `rhbl-bandsintown-dc-recommends-YYYY-MM.tsv` and `rhbl-hereforthebands-dc-YYYY-MM.tsv` against the prior month's exports.
+2. For every artist name newly surfaced in the diff, check against **all five** tracking files: `data/live_shows_current.tsv`, `data/live_shows_potential.tsv`, `data/fast_track.tsv`, `tools/research/follows/follows_master.tsv`, and `tools/research/follows/new_artist_research.tsv`.
+3. Any artist not in any of the five → surface in conversation for a tier-placement decision (the tier is Dan's call).
+
+**B — BIT/Seated roster refresh**
+
+4. **Export BIT and Seated rosters** from the respective apps/sites and save to `web-src/` with the current date in the filename.
+5. **Diff the new exports** against the most recent previous exports:
    ```bash
    diff web-src/rhbl-bandsintown-PREV.tsv web-src/rhbl-bandsintown-NEW.tsv
    diff web-src/rhbl-seated-PREV.tsv web-src/rhbl-seated-NEW.tsv
    ```
-3. **Reconcile against `tools/research/follows/follows_master.tsv`:**
+6. **Reconcile against `tools/research/follows/follows_master.tsv`:**
    - For each new artist in the export not in follows_master: add a row with appropriate tier
    - For each artist missing from the export but marked Y in follows_master: investigate (unfollowed? account issue?)
-4. **Update `tools/research/follows/follows_master.tsv`** as needed and commit.
-5. **Close issue #42** with a comment summarizing changes, then reopen for next month.
+   - **Seated exception:** artists flagged `NOT ON SEATED` in follows_master notes are expected gaps — do not surface them as actionable.
+7. **Update `tools/research/follows/follows_master.tsv`** as needed and commit.
 
 ---
 

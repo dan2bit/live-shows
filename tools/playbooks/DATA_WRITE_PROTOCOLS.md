@@ -214,6 +214,21 @@ During Routine 3 (Step 2) and Routine 5 (Step 4):
 
 ---
 
+## `data/show_goals/hat_eligibility.tsv` protocol
+
+Single source of truth for hat-signing eligibility (#115). Schema: `Artist | Hat Eligible | Basis`.
+- **Semantics:** `Yes` = female artist or female front/co-lead. Band-member / backing-singer
+  cases are `No` until a signature is actually obtained, then flipped with a membership
+  `Basis` (materialized exception). `Basis` records membership/fronting facts only —
+  never signature assertions; completion is sourced exclusively from `hat_signatures.tsv`.
+- **Writes:** `staging`, full-file pushes, fresh blob SHA before every write. Not
+  in-page-editable; keep it comment-free anyway.
+- **Upkeep:** every new artist row in `artists.tsv` / `fast_track.tsv` / `follows_master.tsv`,
+  and every new show row (headliner or named support) in `live_shows_current.tsv`, gets
+  an eligibility row for any artist not already present in the same session.
+- Forkers: the file is goal-specific and safe to delete — the builder emits
+  `hat_eligible: null` when it is absent (graceful degradation per #115).
+
 ## `spending.tsv` write protocol
 
 `dan2bit/live-shows-private → spending.tsv` is the **sole long-term authority** for
@@ -294,8 +309,8 @@ Name-keyed dict (key = normalized name, post-`recommend_aliases.tsv`):
 
   // Badges
   "badges": {
-    "hat": "completed",                 // completed|not_yet|absent — hat_eligible(#115)+Hat Autograph; not_yet suppressed while hat_eligible null
-    "book": "completed",                // autograph_books_combined.tsv (In APS/RHBS + *Signed)
+    "hat": "completed",                 // completed|not_yet|absent — hat_eligibility.tsv(#115)+hat_signatures.tsv (canonical); not_yet suppressed while hat_eligible null
+    "book": "completed",                // autograph_books_eligibility.tsv (In APS/RHBS + page) + book_signatures.tsv (completion via attribution)
     "book_detail": {"aps":{"in":true,"signed":true,"page":"42"},"rhbs":{"in":false,"signed":false}},
     "vip": 2,                           // artists.tsv VIP Count (non-numeric -> 0)
     "photo": 3                          // count of non-null show_log[].photo_url; badge when >0. (-> Google Photos link deferred: #117)
@@ -346,16 +361,27 @@ band  = high >=0.60 · medium >=0.30 · low <0.30      # frozen; also in config
 ```
 
 ### Badge state rules
-- **hat:** absent if not `hat_eligible` (#115) · completed if `artists.tsv Hat Autograph`=Y ·
-  else not_yet. While `hat_eligible` is null (unpopulated), render completed-vs-absent only.
-- **book:** absent if `In APS`!=Yes AND `In RHBS`!=Yes · completed if `APS Signed`=Yes OR
-  `RHBS Signed`=Yes · else not_yet. Source: `data/show_goals/autograph_books_combined.tsv`.
+- **hat:** absent if not `hat_eligible` (#115) · completed if any canonical signer in
+  `data/show_goals/hat_signatures.tsv` maps to the artist per the attribution vocabulary
+  in `docs/GOALS_SPEC.md` § Source binding syntax (`self`, `of <band>`, `<name> entry`
+  credit; `w/ <band>` and `co-bill w/ <band>` don't) · else not_yet. Completed always
+  wins regardless of eligibility. `hat_eligible` is null only for artists outside
+  `data/show_goals/hat_eligibility.tsv`; while null, render completed-vs-absent only.
+- **book:** absent if `In APS`!=Yes AND `In RHBS`!=Yes (per
+  `data/show_goals/autograph_books_eligibility.tsv`) · completed if any row in
+  `data/show_goals/book_signatures.tsv` maps to the artist per the attribution
+  vocabulary (same rules as hat) · else not_yet. `book_detail` (`{aps: {in, signed, page},
+  rhbs: {in, signed}}`) is derived from the same two files: `in`/`page` from
+  eligibility, `signed` per-book from the event log.
 - **photo:** count of non-null `show_log[].photo_url`; badge when >0 (-> link: #117).
 
 ### Builder inputs (all public -> index is public-safe)
 `history/*.tsv` + `seen_with.tsv` (seen) · `follows_master.tsv` (tier) · `fast_track.tsv`
-(floor) · `artists.tsv` (Hat Autograph, `hat_eligible`, photo/Spotify, VIP) ·
-`autograph_books_combined.tsv` (book) · `artist_spotify.json` (image_url, latest_release,
+(floor) · `artists.tsv` (photo/Spotify, VIP) · `data/show_goals/hat_eligibility.tsv`
+(hat eligibility, #115) · `data/show_goals/hat_signatures.tsv` (hat completion, canonical) ·
+`data/show_goals/autograph_books_eligibility.tsv` (book eligibility + page) ·
+`data/show_goals/book_signatures.tsv` (book completion, canonical) ·
+`artist_spotify.json` (image_url, latest_release,
 lastfm, similar) · `config.yaml` (weights, tranches) · `recommend_aliases.tsv` (normalize).
 
 Related: #107 (parent) · #115 (`hat_eligible`) · #116 (⭐ favorite) · #117 (photo link).

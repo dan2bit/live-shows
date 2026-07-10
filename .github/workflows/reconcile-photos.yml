@@ -1,0 +1,33 @@
+name: Reconcile photos
+
+# Read-only check (#131 item 4): every Photo URL on a show (live_shows_current.tsv
+# and data/history/*.tsv) must have a matching Share Link row in
+# data/show_goals/artist-photos.tsv, keyed on the Google Photos /photo/<ID>.
+#   CORRUPT (a near-miss id — transcription typo) fails the run.
+#   MISSING (photo not yet added) is reported but does NOT fail.
+# Read-only, no commit. Triggers on main after auto-promote so it sees the
+# post-promotion state, like audit-times-seen.yml.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/live_shows_current.tsv
+      - data/history/**
+      - data/show_goals/artist-photos.tsv
+      - scripts/reconcile_photos.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Reconcile show Photo URLs against artist-photos.tsv
+        run: python3 scripts/reconcile_photos.py

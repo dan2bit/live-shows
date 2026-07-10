@@ -83,7 +83,7 @@ function applyConfig(cfg){
         var a=document.createElement('a');
         a.className='about-link';a.href=lnk.url;a.target='_blank';
         a.textContent=lnk.label||lnk.url;
-        box.appendChild(a);
+        var li=document.createElement('li');li.appendChild(a);box.appendChild(li);
       });
     }
   }
@@ -107,10 +107,10 @@ function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
-// Normal Ticket Number (#82 / #87): the owner's usual party size. The authed (X) count
-// shows when a show's qty differs from this; the bystander Group/Solo badge is derived
-// from a public flag at data-entry time (quantity is private). Default 1 = usually solo.
-function normalTicketNumber(){var b=SITE_CONFIG.badges;return b&&b.normal_ticket_number!=null?b.normal_ticket_number:1;}
+// #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
+// Group = the public `Group=Y` flag; Solo = its absence. `which` is 'badge' or 'count',
+// `kind` is 'solo' or 'group'. Missing config defaults to group shown, solo hidden.
+function displayOn(which,kind){var d=SITE_CONFIG.display,v=d&&d[which]&&d[which][kind];if(v==null)return kind==='group';return v===true||(''+v).trim().toLowerCase()==='yes';}
 // Decision-stage display (#82). Stage KEYS are fixed in code (sort order, dropdown, CSS);
 // only the display copy is configurable, and stage colors live in the theme block. Falls
 // back to the built-in copy so a config without a stages block renders identically.
@@ -160,8 +160,7 @@ function applyTheme(cfg){
   set(t.color_text,'--text');set(t.color_text_muted,'--text-muted');set(t.color_text_dim,'--text-dim');
   // Semantic color triads — derive dim/bg if not explicitly overridden
   var pairs=[['color_accent','--amber'],['color_buy','--green'],['color_choose','--yellow'],
-             ['color_sell','--sell'],['color_pass','--gray'],
-             ['color_hat','--hat'],['color_book','--book']];
+             ['color_sell','--sell'],['color_pass','--gray']];
   pairs.forEach(function(p){
     var base=t[p[0]];if(!base)return;
     var triad=_deriveTriad(base);
@@ -169,8 +168,19 @@ function applyTheme(cfg){
     set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
     set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
   });
-  // Hat and book badge colors are handled by the pairs loop above (their explicit
-  // _dim/_bg in config override the computed triad).
+  // Show goal badge colors — iterate cfg.show_goals (#85 S3) and emit --<key> /
+  // --<key>-dim / --<key>-bg CSS var triads. Auto-derived from goal.color via HSL
+  // darkening (same _deriveTriad used for semantic colors above); a fork may also
+  // provide explicit goal.color_dim / goal.color_bg overrides if the auto-derived
+  // shades need tuning. A fork may add, remove, or edit any goal without CSS work.
+  var goals=(cfg.show_goals&&cfg.show_goals.length)?cfg.show_goals:[];
+  goals.forEach(function(g){
+    if(!g||!g.key||!g.color)return;
+    var triad=_deriveTriad(g.color);
+    set(g.color,'--'+g.key);
+    set(g.color_dim||triad.dim,'--'+g.key+'-dim');
+    set(g.color_bg||triad.bg,'--'+g.key+'-bg');
+  });
   // Status rows
   set(t.color_today_bg,'--today-bg');set(t.color_soon_bg,'--soon-bg');
   set(t.color_otd_bg,'--otd-bg');set(t.color_otd_border,'--otd-border');
@@ -302,7 +312,7 @@ function buildBadges(row){
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
-function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');if((row['Group']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-group">👥 Group</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
+function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');var isGroup=(row['Group']||'').trim().toUpperCase()==='Y';if(isGroup){if(displayOn('badge','group'))b.push('<span class="badge badge-group">👥 Group</span>');}else if(displayOn('badge','solo'))b.push('<span class="badge badge-solo">🧍 Solo</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
 
 // ── setlistIconHtml helper ──────────────────────
 function setlistIconHtml(s){
@@ -487,14 +497,15 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var pn=row['Notes / Memories']||'',pvt=row['Private Notes']||'';
   var fn=pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
   var vh=row['Venue Event URL']?'<a href="'+esc(row['Venue Event URL'])+'" target="_blank">'+esc(row['Venue Name'])+'</a>':esc(row['Venue Name']);
-  var seat=esc(row['Seat Info / GA']||''),qty=parseInt(row['Ticket Quantity']||'1',10);
+  var seat=esc(row['Seat Info / GA']||'');
+  var isGroup=(row['Group']||'').trim().toUpperCase()==='Y',showCount=displayOn('count',isGroup?'group':'solo');
   var cal=featureOn('calendar_integration')?'<a class="icon-link" href="'+gcalUrl(row['Artist'])+'" target="_blank" title="Google Calendar"> 📅</a>':'';
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(seat?' · '+seat:'')+'</div>':'';
   var cellId='cell-up-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-up-'+idx+'" onclick="toggleNote(this,\'nt-up-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-up-'+idx+'" onclick="toggleNote(document.getElementById(\'n-up-'+idx+'\'),this)">more</span>':'';
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+esc(row['Artist'])+(qty!=normalTicketNumber()?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
+    +'<td><div class="cell-artist">'+esc(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
     +(row['Supporting Artist']?'<div class="cell-support">w/ '+esc(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
@@ -518,9 +529,10 @@ function renderAttendedRowBystander(row,idx){
 function renderAttendedRowSearch(row,idx){
   var n=normalizeRow(row);
   var ne=esc(n.notes);
+  var sw=_seenWithFor(n);
   var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
-    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+esc(n.artist)+'</div>'+(n.support?'<div class="cell-support">w/ '+esc(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+esc(sw.join(', '))+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -589,6 +601,18 @@ async function loadHistoryYear(yr){
 // independently of HISTORY_YEARS — so 2026.json is warmed even before rollover adds 2026
 // to the history TSV set.
 var _historyLoad=null;
+// #102 — seen_with lookup: "Show Date|Headliner" -> [session/sit-in/supergroup names].
+// Loaded once with the history years so those names are searchable and annotated in results.
+var _seenWith={};
+function _buildSeenWithLookup(rows){
+  _seenWith={};
+  rows.forEach(function(r){
+    var d=(r['Show Date']||'').trim(),h=(r['Headliner']||'').trim(),nm=(r['Seen With']||'').trim();
+    if(!d||!h||!nm)return;
+    var k=d+'|'+h;(_seenWith[k]||(_seenWith[k]=[])).push(nm);
+  });
+}
+function _seenWithFor(n){return _seenWith[(n.showDate||'')+'|'+(n.artist||'')]||[];}
 function loadAllHistory(){
   if(_allYearsLoaded)return Promise.resolve();
   if(_historyLoad)return _historyLoad;
@@ -605,6 +629,11 @@ function loadAllHistory(){
         await Promise.allSettled(years.map(function(yr){return _loadSetlistsForYear(yr);}));
       }catch(e){console.warn('setlists prime failed:',e.message);}
     })();
+    // #102 — load seen_with.tsv once (supplementary; a failure just leaves the lookup empty).
+    var seenWithPrime=(async function(){
+      try{var res=await ghFetch('data/seen_with.tsv');_buildSeenWithLookup(parseTsv(_decodeB64(res.content)));}
+      catch(e){console.warn('seen_with load failed:',e.message);}
+    })();
     if(unloaded.length){
       var results=await Promise.allSettled(unloaded.map(function(yr){return ghFetch('data/history/'+yr+'.tsv');}));
       results.forEach(function(res,i){
@@ -615,7 +644,7 @@ function loadAllHistory(){
       // If any year failed, reset the in-flight promise so the next History open retries.
       if(_anyFailed)_historyLoad=null;
     }
-    await setlistPrime;
+    await Promise.all([setlistPrime,seenWithPrime]);
     if(!_anyFailed)_allYearsLoaded=true;
   })();
   return _historyLoad;
@@ -649,6 +678,7 @@ function populateSearchDatalists(){
     if(n.venueName)venues.add(shortVenueName(n.venueName));
   });
   function artSort(s){return s.replace(/^(The|A|An)\s+/i,'').toLowerCase();}
+  Object.keys(_seenWith).forEach(function(k){_seenWith[k].forEach(function(nm){if(nm)artists.add(nm);});});
   var al=document.getElementById('srchArtistList'),vl=document.getElementById('srchVenueList');
   if(al)al.innerHTML=Array.from(artists).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(a){return'<option value="'+esc(a)+'">';}).join('');
   if(vl)vl.innerHTML=Array.from(venues).sort(function(a,b){return artSort(a).localeCompare(artSort(b));}).map(function(v){return'<option value="'+esc(v)+'">';}).join('');
@@ -662,7 +692,7 @@ function runSearch(){
   var la=qa.toLowerCase(),lv=qv.toLowerCase();
   var rows=allAttendedRows().filter(function(r){
     var n=normalizeRow(r);
-    var artistOk=!la||(n.artist.toLowerCase().includes(la)||n.support.toLowerCase().includes(la));
+    var artistOk=!la||(n.artist.toLowerCase().includes(la)||n.support.toLowerCase().includes(la)||_seenWithFor(n).some(function(nm){return nm.toLowerCase().includes(la);}));
     var venueOk=!lv||(n.venueName.toLowerCase().includes(lv)||shortVenueName(n.venueName).toLowerCase().includes(lv));
     return artistOk&&venueOk;
   });
@@ -1080,7 +1110,7 @@ async function loadData(){
     potentialRows=parseTsv(_decodeB64(results[1].content));
     await mergePrivateData();
     renderShows();renderPotential();
-    document.getElementById('fetchedAt').textContent='fetched '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
 }
 if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn').classList.add('authed');}

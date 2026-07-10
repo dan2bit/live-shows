@@ -1,0 +1,100 @@
+name: Close photo issue
+
+# Post-#76: main requires the `guard` status check, so the artist-photos.tsv write
+# goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to staging
+# would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
+# fast-forward main. Triggered by a comment carrying the Google Photos share link
+# on a "Photo:" issue.
+
+on:
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: close-photo-issue
+  cancel-in-progress: false
+
+jobs:
+  close-photo:
+    # Only run when:
+    # 1. The comment is on an issue (not a PR)
+    # 2. The issue title starts with "Photo:"
+    # 3. The comment contains a Google Photos share link
+    if: |
+      github.event.issue.pull_request == null &&
+      startsWith(github.event.issue.title, 'Photo:') &&
+      contains(github.event.comment.body, 'photos.google.com/share')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract share link from comment
+        id: extract
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          python3 - << 'PYEOF'
+          import re, os, sys
+
+          comment = os.environ["COMMENT_BODY"]
+
+          # First Google Photos share link in the comment; trim trailing punctuation.
+          m = re.search(r'https?://photos\.google\.com/share/\S+', comment)
+          if not m:
+              print("ERROR: no Google Photos share link found in comment", file=sys.stderr)
+              sys.exit(1)
+          link = m.group(0).rstrip('.,)>]')
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"share_link={link}\n")
+          print(f"share_link={link}")
+          PYEOF
+
+      - name: Append row to artist-photos.tsv
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          SHARE_LINK: ${{ steps.extract.outputs.share_link }}
+        run: |
+          python scripts/close_photo_issue.py "$ISSUE_TITLE" "$SHARE_LINK"
+
+      - name: Commit updated TSV to staging
+        run: |
+          git add data/show_goals/artist-photos.tsv
+          if git diff --cached --quiet; then
+            echo "data/show_goals/artist-photos.tsv unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "photo: row added from issue #${{ github.event.issue.number }}"
+            git fetch promote staging
+            git rebase promote/staging
+            git push promote HEAD:staging
+          fi
+
+      - name: Close the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --comment "Photo row written to artist-photos.tsv automatically."

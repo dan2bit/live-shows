@@ -144,15 +144,16 @@ to the calendar event title.
 
 **Step 3 — Check autograph books**
 
-Look up headliner and known supporting acts in `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat).
+Look up headliner and known supporting acts in `autograph_books_eligibility.tsv` (which artists are in the books + page numbers) crossed with `book_signatures.tsv` (which artists have signed) and `hat_signatures.tsv` (hat completion).
 
 - In RHBS and not yet signed → prepend `BRING RHBS — [Artist] p.[N]` to calendar description
 - In APS and not yet signed → prepend `BRING APS — [Artist] p.[N]`
 - Already signed → no reminder
 
-**Hat signing eligibility:** Female or female-presenting artists only, not already signed.
-Verify gender via web search if uncertain. Check `hat_signatures.tsv` before
-flagging.
+**Hat signing eligibility:** per `data/show_goals/hat_eligibility.tsv` (#115) — `Yes` =
+target for signing. Already-signed comes from `data/show_goals/hat_signatures.tsv`
+(canonical for actual signers). Web search only for artists absent from the eligibility
+file — and add the resulting row while you're there.
 
 Venue likelihood for artist interaction (Yes / Maybe / No) per `venues.tsv`; flag for
 confirmation if venue not listed.
@@ -247,11 +248,27 @@ Commit to `main` in `dan2bit/live-shows-private`.
 
 **Step 4 — Update autograph records (if applicable)**
 
-If book autograph: update `autograph_books_combined.tsv` — set RHBS/APS Signed to Yes.
+If book autograph: append a row to `book_signatures.tsv` — next `seq`, signer, `book`
+(`APS` or `RHBS`), attribution, show_date, venue (leave region/photo_ref/legible/confidence
+blank). This is the canonical record; per-artist `book_detail` and completion badges are
+derived from it by the builder. Attribution vocabulary per `docs/GOALS_SPEC.md` §
+Source binding syntax:
+- self-signing → `self` or blank
+- band member signing → `of <band>` (credits both signer AND band)
+- opener / guest / co-bill → `w/ <band>` or `co-bill w/ <band>` (credits signer only)
+- alias case (book printed under a different name) → `<name> entry` (credits both)
+
+If the signer is not yet in `autograph_books_eligibility.tsv`, that means the physical
+book has an entry for them that's not tracked yet — add a row with `In APS`/`APS Page`/
+`In RHBS` populated for the book(s) they appear in. This is a data-integrity backfill,
+not a routine step; usually the signer is already in the eligibility file.
 
 If hat autograph:
-1. Update `artists.tsv` — set `Hat Autograph` to `Y`
-2. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank)
+1. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank). This is the canonical record.
+2. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
+   backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
+   (materialized-exception rule, #115). Basis records membership facts only — never
+   signature assertions; completion lives in `hat_signatures.tsv` alone.
 3. Remind Dan to manually append to the hat autograph Google Doc
    (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
    Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
@@ -263,10 +280,42 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   Artist Interaction filled; also update `dan2bit/live-shows-private → current_private.tsv`
   for actual Food & Bev / Parking / Merch
 - `data/artists.tsv` — always included
-- `data/show_goals/autograph_books_combined.tsv` — if a book was signed
+- `data/show_goals/book_signatures.tsv` — if a book was signed (canonical event log)
+- `data/show_goals/autograph_books_eligibility.tsv` — only if backfilling a signer who
+  was in the physical book but not yet tracked (rare)
 - `data/show_goals/hat_signatures.tsv` — if the hat was signed
+- `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
+
+**Step 5b — Times Seen reconciliation (MANDATORY, blocking)**
+
+Before writing the activity log draft or applying `processed`, reconcile the ledger
+against `artists.tsv`'s manual count columns for **every artist on this show's bill** —
+headliner + support + any combined-bill components. Run
+`python3 scripts/build_artist_index.py` (the builder is the source of truth for the
+count: it recomputes from `history/*.tsv` + `live_shows_current.tsv` attended +
+`seen_with.tsv`, deduped by date, with combined-bill components attributed via the
+`Via` column). For each bill artist, compare the builder's `seen.count` / `first` /
+`recent` against `Times Seen` / `First Seen` / `Most Recent Seen` in `artists.tsv`.
+This is a positive verification step, not a re-statement of Step 5 — it exists
+specifically to catch the drift class in #119, where Step 5 committed `artists.tsv`
+but a recent attended show or a support-slot appearance never got tallied into
+`Times Seen` (the same "the count and its reconciliation are a single unit of work"
+treatment Step 8 gives the calendar event in Routine 1).
+
+- **All bill artists match:** proceed to Step 6.
+- **Mismatch found (undercount):** correct `Times Seen` / `First Seen` /
+  `Most Recent Seen` in `artists.tsv` now and re-commit to `staging` — this is still
+  Routine 2's job, not a deferred cleanup item. Note the correction in the log.
+- **Overcount from a notes-only sighting** (a show that exists only in a prose Notes
+  field, not a structured Artist/Support row): the builder correctly can't count it —
+  do **not** edit the count down. Flag it in the activity log instead.
+
+**This step cannot be skipped even if Step 5 "looked" successful in conversation.**
+When the `--check` audit primitive from #119 (`feat/times-seen-audit`) lands, this step
+switches to running that — a fast, exit-non-zero mismatch report — instead of a full
+build + manual compare.
 
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
@@ -289,6 +338,10 @@ Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 ```
 
    Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
+
+**Step 6b — Open a GitHub issue for the artist-photo row (when a photo was taken)**
+
+When the notes indicate Dan got a photo with an artist (`Artist Interaction` is `Photo` or `Both`, or the note describes one), open one issue per photographed artist. Title: `Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `photo`. Body includes the artist, show date, venue, and any caption detail. This mirrors the `playlist` reminder in Step 6 — the Google Photos share link is later posted as a comment on the issue, which triggers `close-photo-issue.yml` (#131 item 4) to append the row to `data/show_goals/artist-photos.tsv` (`Date | Share Link | Caption`, header BOM preserved) and close the issue automatically. If the workflow is ever unavailable, append the row by hand. Do **not** touch `artists.tsv` — the `Photo` column is removed (#131); `artist-photos.tsv` is the sole photo record.
 
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
@@ -325,6 +378,14 @@ Do not suppress — just note it.
 **IMP newsletter:** Flag any Atlantis show featuring a local DC artist as a gift card
 opportunity.
 
+**New venue first-contact note:** A venue's first-ever email typically arrives
+unlabeled (and may land outside Primary) — Dan only adds the Gmail filter that applies
+`ticket-alert` automatically after confirming receipt of that first email. So if a
+known/expected venue is suspected of having emailed but nothing surfaces under
+`label:ticket-alert -label:processed`, check unlabeled inbox mail from that sender
+before concluding there's nothing new — the absence of the label doesn't mean the
+absence of the email.
+
 **Step 2 — Cross-reference current shows and potentials**
 
 Using Step 0b data, for every artist/show surfaced:
@@ -348,6 +409,12 @@ all three, add to `new_artist_research.tsv`.
 `artists.tsv` or `follows_master.tsv`. For festival/multi-artist events, triage the
 actual setlist.fm bill (not the marketing slug) and add only untracked artists as
 individual rows.
+
+**Hat eligibility upkeep:** any step that adds a new artist row to `artists.tsv`,
+`fast_track.tsv`, or `follows_master.tsv`, or a new show row (headliner or named
+support) to `live_shows_current.tsv`, also adds a `data/show_goals/hat_eligibility.tsv`
+row for any artist not already present (`Yes`/`No` per the #115 semantics; ask Dan when
+uncertain).
 
 **Step 3 — Autograph book check**
 
@@ -490,9 +557,9 @@ remaining tickets).
 **Inbox monitoring is not automatic.** Trigger routines by saying "there's a ticket
 email", "process the inbox", "run Routine 3", etc.
 
-**Hat autograph gdoc is the completeness authority.** If there is a discrepancy between
-the gdoc and the TSV files, the gdoc wins for the list of signers; the TSV files win
-for show dates.
+**`data/show_goals/hat_signatures.tsv` is the authority for hat signers.** The gdoc is
+the public-facing version (linked from the about modal in `index.html`); on any
+discrepancy, reconcile the gdoc to the TSV.
 
 **Google Calendar MCP fails on Android.** Switch to macOS desktop before retrying
 calendar operations.
