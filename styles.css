@@ -365,7 +365,6 @@
   /* sections (latest release / similar / links) */
   .am-sec{padding:12px 20px 6px;}
   .am-sec-h{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6f6b60;margin-bottom:9px;}
-  .am-sec-note{color:#57534a;text-transform:none;letter-spacing:0;}
   .am-release{display:flex;gap:12px;align-items:center;}
   .am-rel-art{flex:0 0 52px;width:52px;height:52px;border-radius:4px;border:1px solid var(--border);object-fit:cover;}
   .am-rel-art-ph{background:repeating-linear-gradient(45deg,#242424 0 6px,#1d1d1d 6px 12px);display:flex;align-items:center;justify-content:center;text-align:center;}

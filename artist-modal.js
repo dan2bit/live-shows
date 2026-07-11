@@ -186,10 +186,10 @@ function amRelease(lr){
 function amSimilar(sim){
   sim=sim||[];if(!sim.length)return'';
   var chips=sim.slice(0,8).map(function(s){
-    if(s.in_tracker&&s.slug)return'<button class="am-sim am-sim-in" title="in your tracker \u2014 open artist" onclick="openArtistBySlug(\''+esc(s.slug)+'\')"><span class="am-sim-dot"></span>'+esc(s.name)+'</button>';
-    return'<a class="am-sim" title="Last.fm" href="https://www.last.fm/search?q='+encodeURIComponent(s.name||'')+'" target="_blank">'+esc(s.name)+'</a>';
+    if(s.in_tracker&&s.slug)return'<button class="am-sim am-sim-in" title="tracked artist \u2014 open artist" onclick="openArtistBySlug(\''+esc(s.slug)+'\')"><span class="am-sim-dot"></span>'+esc(s.name)+'</button>';
+    return'<a class="am-sim" title="Last.fm" href="https://www.last.fm/search?q='+encodeURIComponent(s.name||'')+'" target="_blank">&#x1F517; '+esc(s.name)+'</a>';
   }).join('');
-  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf in your tracker</span></div><div class="am-simrow">'+chips+'</div></div>';
+  return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
 }
 
 function amLinks(L,spotify){
@@ -212,15 +212,15 @@ function amYou(rec,key){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0;
   var hatEligible=b.hat!=='absent';
   var rows=amRowContext(key),considering=rows.considering;
-  if(!(n>0||considering||hatEligible)){
+  if(!(n>0||considering||hatEligible||rec.affinity)){
     // 1e edge case: hat-ineligible, never seen, not considering -> no personal panel
-    return'<div class="am-minimal">Not hat-eligible and never seen \u2014 no personal panel yet.</div>';
+    return'<div class="am-minimal">Never seen \u2014 no personal panel yet.</div>';
   }
   var head='<div class="am-you-head"><span class="am-you-dot"></span>'
     +'<span class="am-you-lbl">'+esc('@'+OWNER)+' &amp; this artist</span><span class="am-rule"></span>'
     +amTierMeter(rec.tier)+'</div>';
   var main='<div class="am-you-main">'+amYouBadges(rec,rows,hatEligible)+amYouHistory(rec,rows)+'</div>';
-  var gauge=(hatEligible&&rec.affinity)?amGauge(rec.affinity,rec):'';
+  var gauge=rec.affinity?amGauge(rec.affinity,rec):'';
   return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div></div>';
 }
 
