@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-11T00:30:19Z",
+"generated_at":"2026-07-11T00:50:16Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -238,8 +238,8 @@
 },
 {
 "name":"Fantastic Negrito",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"fantastic-negrito"
 }
 ]
 },
@@ -1671,14 +1671,21 @@
 "similar":[]
 },
 "altered five blues band":{
-"name":"altered five blues band",
+"name":"Altered Five Blues Band",
 "slug":"altered-five-blues-band",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"7idP7O5Y5lvJw4XFeAJxzg",
+"mbid":"dd9e2d14-60e2-44e3-b60c-fb069f38a8c1",
+"image_url":"https://i.scdn.co/image/ab67616100005174ff4cb8c780fd0c0b1524deb3",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"guitar",
+"blues rock"
+],
+"listener":{
+"tranche":"emerging",
+"raw":8068
+},
 "tier":{
 "label":"Medium",
 "rank":2
@@ -1711,17 +1718,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=altered+five+blues+band",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=altered+five+blues+band"
+"latest_release":{
+"name":"Hammer & Chisel",
+"type":"album",
+"date":"2026-02-27",
+"url":"https://open.spotify.com/album/6g8ujDUf9iXslvByOXW6S7",
+"image_url":"https://i.scdn.co/image/ab67616d00001e024abc464fea888aea9ec5d823"
 },
-"similar":[]
+"links":{
+"spotify":"https://open.spotify.com/artist/7idP7O5Y5lvJw4XFeAJxzg",
+"youtube":null,
+"lastfm":"https://www.last.fm/music/Altered+Five+Blues+Band",
+"musicbrainz":"https://musicbrainz.org/artist/dd9e2d14-60e2-44e3-b60c-fb069f38a8c1",
+"bandsintown":"https://www.bandsintown.com/search?query=Altered+Five+Blues+Band",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Altered+Five+Blues+Band"
+},
+"similar":[
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
+},
+{
+"name":"Albert Castiglia",
+"in_tracker":true,
+"slug":"albert-castiglia"
+},
+{
+"name":"Mike Zito",
+"in_tracker":true,
+"slug":"mike-zito"
+},
+{
+"name":"Joanne Shaw Taylor",
+"in_tracker":true,
+"slug":"joanne-shaw-taylor"
+},
+{
+"name":"Ana Popovic",
+"in_tracker":true,
+"slug":"ana-popovic"
+}
+]
 },
 "alvin youngblood hart":{
 "name":"Alvin Youngblood Hart",
@@ -2269,7 +2308,7 @@
 ]
 },
 "anders osborne":{
-"name":"anders osborne",
+"name":"Anders Osborne",
 "slug":"anders-osborne",
 "spotify_id":null,
 "mbid":null,
@@ -2309,9 +2348,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=anders+osborne",
+"bandsintown":"https://www.bandsintown.com/search?query=Anders+Osborne",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=anders+osborne"
+"setlistfm":"https://www.setlist.fm/search?query=Anders+Osborne"
 },
 "similar":[]
 },
@@ -5567,8 +5606,8 @@
 },
 {
 "name":"St. Paul & The Broken Bones",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"st-paul-the-broken-bones"
 }
 ]
 },
@@ -6394,8 +6433,8 @@
 "similar":[
 {
 "name":"Caitlin Krisko & The Broadcast",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"caitlin-krisko-the-broadcast"
 },
 {
 "name":"Joanne Shaw Taylor",
@@ -6510,6 +6549,53 @@
 "slug":null
 }
 ]
+},
+"caitlin krisko the broadcast":{
+"name":"Caitlin Krisko & The Broadcast",
+"slug":"caitlin-krisko-the-broadcast",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Caitlin+Krisko+&+The+Broadcast",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Caitlin+Krisko+&+The+Broadcast"
+},
+"similar":[]
 },
 "caleb crosby":{
 "name":"caleb crosby",
@@ -6639,8 +6725,8 @@
 },
 {
 "name":"St. Paul & The Broken Bones",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"st-paul-the-broken-bones"
 }
 ]
 },
@@ -6688,6 +6774,53 @@
 "bandsintown":"https://www.bandsintown.com/search?query=calvin+turner",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=calvin+turner"
+},
+"similar":[]
+},
+"candice ivory":{
+"name":"Candice Ivory",
+"slug":"candice-ivory",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Candice+Ivory",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Candice+Ivory"
 },
 "similar":[]
 },
@@ -7008,8 +7141,8 @@
 },
 {
 "name":"Fantastic Negrito",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"fantastic-negrito"
 },
 {
 "name":"GA-20",
@@ -8074,8 +8207,8 @@
 },
 {
 "name":"John Primer",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"john-primer"
 },
 {
 "name":"Big Walter Horton's Blues Harp Band",
@@ -10281,6 +10414,53 @@
 },
 "similar":[]
 },
+"derrick dove the peacekeepers":{
+"name":"Derrick Dove & The Peacekeepers",
+"slug":"derrick-dove-the-peacekeepers",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Derrick+Dove+&+The+Peacekeepers",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Derrick+Dove+&+The+Peacekeepers"
+},
+"similar":[]
+},
 "deshawn d vibes alexander":{
 "name":"DeShawn 'D-Vibes' Alexander",
 "slug":"deshawn-d-vibes-alexander",
@@ -10787,8 +10967,8 @@
 },
 {
 "name":"St. Paul & The Broken Bones",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"st-paul-the-broken-bones"
 },
 {
 "name":"The Meltdown",
@@ -11131,7 +11311,7 @@
 "similar":[]
 },
 "doug macleod":{
-"name":"doug macleod",
+"name":"Doug MacLeod",
 "slug":"doug-macleod",
 "spotify_id":null,
 "mbid":null,
@@ -11171,9 +11351,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=doug+macleod",
+"bandsintown":"https://www.bandsintown.com/search?query=Doug+MacLeod",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=doug+macleod"
+"setlistfm":"https://www.setlist.fm/search?query=Doug+MacLeod"
 },
 "similar":[]
 },
@@ -11435,7 +11615,7 @@
 ]
 },
 "dylan triplett":{
-"name":"dylan triplett",
+"name":"Dylan Triplett",
 "slug":"dylan-triplett",
 "spotify_id":null,
 "mbid":null,
@@ -11496,9 +11676,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=dylan+triplett",
+"bandsintown":"https://www.bandsintown.com/search?query=Dylan+Triplett",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=dylan+triplett"
+"setlistfm":"https://www.setlist.fm/search?query=Dylan+Triplett"
 },
 "similar":[]
 },
@@ -13041,6 +13221,53 @@
 }
 ]
 },
+"fantastic negrito":{
+"name":"Fantastic Negrito",
+"slug":"fantastic-negrito",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Fantastic+Negrito",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Fantastic+Negrito"
+},
+"similar":[]
+},
 "fats kaplin":{
 "name":"fats kaplin",
 "slug":"fats-kaplin",
@@ -13830,8 +14057,8 @@
 "similar":[
 {
 "name":"Fantastic Negrito",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"fantastic-negrito"
 },
 {
 "name":"Marcus King",
@@ -14519,7 +14746,7 @@
 ]
 },
 "grace bowers":{
-"name":"grace bowers",
+"name":"Grace Bowers",
 "slug":"grace-bowers",
 "spotify_id":null,
 "mbid":null,
@@ -14562,9 +14789,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=grace+bowers",
+"bandsintown":"https://www.bandsintown.com/search?query=Grace+Bowers",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=grace+bowers"
+"setlistfm":"https://www.setlist.fm/search?query=Grace+Bowers"
 },
 "similar":[]
 },
@@ -16472,6 +16699,53 @@
 }
 ]
 },
+"j t lauritsen the buckshot hunters":{
+"name":"J.T. Lauritsen & The Buckshot Hunters",
+"slug":"j-t-lauritsen-the-buckshot-hunters",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=J.T.+Lauritsen+&+The+Buckshot+Hunters",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=J.T.+Lauritsen+&+The+Buckshot+Hunters"
+},
+"similar":[]
+},
 "jack broadbent":{
 "name":"jack broadbent",
 "slug":"jack-broadbent",
@@ -16822,7 +17096,7 @@
 "similar":[]
 },
 "jade macrae":{
-"name":"jade macrae",
+"name":"Jade MacRae",
 "slug":"jade-macrae",
 "spotify_id":null,
 "mbid":null,
@@ -16862,9 +17136,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=jade+macrae",
+"bandsintown":"https://www.bandsintown.com/search?query=Jade+MacRae",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=jade+macrae"
+"setlistfm":"https://www.setlist.fm/search?query=Jade+MacRae"
 },
 "similar":[]
 },
@@ -19943,6 +20217,53 @@
 },
 "similar":[]
 },
+"john primer":{
+"name":"John Primer",
+"slug":"john-primer",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=John+Primer",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=John+Primer"
+},
+"similar":[]
+},
 "john primer the real deal blues band":{
 "name":"John Primer & The Real Deal Blues Band",
 "slug":"john-primer-the-real-deal-blues-band",
@@ -20606,6 +20927,53 @@
 "bandsintown":"https://www.bandsintown.com/search?query=jorma+kaukonen",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=jorma+kaukonen"
+},
+"similar":[]
+},
+"josh hoyer soul colossal":{
+"name":"Josh Hoyer & Soul Colossal",
+"slug":"josh-hoyer-soul-colossal",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Josh+Hoyer+&+Soul+Colossal",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Josh+Hoyer+&+Soul+Colossal"
 },
 "similar":[]
 },
@@ -21310,8 +21678,55 @@
 }
 ]
 },
+"kashus culpepper":{
+"name":"Kashus Culpepper",
+"slug":"kashus-culpepper",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Kashus+Culpepper",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Kashus+Culpepper"
+},
+"similar":[]
+},
 "kat riggins":{
-"name":"kat riggins",
+"name":"Kat Riggins",
 "slug":"kat-riggins",
 "spotify_id":null,
 "mbid":null,
@@ -21354,9 +21769,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=kat+riggins",
+"bandsintown":"https://www.bandsintown.com/search?query=Kat+Riggins",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=kat+riggins"
+"setlistfm":"https://www.setlist.fm/search?query=Kat+Riggins"
 },
 "similar":[]
 },
@@ -23015,8 +23430,8 @@
 },
 {
 "name":"St. Paul & The Broken Bones",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"st-paul-the-broken-bones"
 },
 {
 "name":"The California Honeydrops",
@@ -28678,6 +29093,53 @@
 },
 "similar":[]
 },
+"mr sipp":{
+"name":"Mr. Sipp",
+"slug":"mr-sipp",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Mr.+Sipp",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Mr.+Sipp"
+},
+"similar":[]
+},
 "muireann bradley":{
 "name":"Muireann Bradley",
 "slug":"muireann-bradley",
@@ -28765,8 +29227,8 @@
 },
 {
 "name":"Sunny War",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"sunny-war"
 },
 {
 "name":"Antone's 50th Allstars",
@@ -31699,7 +32161,7 @@
 ]
 },
 "rachael vilray":{
-"name":"rachael vilray",
+"name":"Rachael & Vilray",
 "slug":"rachael-vilray",
 "spotify_id":null,
 "mbid":null,
@@ -31745,9 +32207,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=rachael+vilray",
+"bandsintown":"https://www.bandsintown.com/search?query=Rachael+&+Vilray",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=rachael+vilray"
+"setlistfm":"https://www.setlist.fm/search?query=Rachael+&+Vilray"
 },
 "similar":[]
 },
@@ -32171,7 +32633,7 @@
 "similar":[]
 },
 "regi oliver":{
-"name":"regi oliver",
+"name":"Regi Oliver",
 "slug":"regi-oliver",
 "spotify_id":null,
 "mbid":null,
@@ -32245,9 +32707,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=regi+oliver",
+"bandsintown":"https://www.bandsintown.com/search?query=Regi+Oliver",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=regi+oliver"
+"setlistfm":"https://www.setlist.fm/search?query=Regi+Oliver"
 },
 "similar":[]
 },
@@ -32374,8 +32836,8 @@
 },
 {
 "name":"Sunny War",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"sunny-war"
 },
 {
 "name":"Seasick Steve",
@@ -37722,6 +38184,53 @@
 }
 ]
 },
+"st paul the broken bones":{
+"name":"St. Paul & The Broken Bones",
+"slug":"st-paul-the-broken-bones",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=St.+Paul+&+The+Broken+Bones",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=St.+Paul+&+The+Broken+Bones"
+},
+"similar":[]
+},
 "steel wheels":{
 "name":"steel wheels",
 "slug":"steel-wheels",
@@ -38747,8 +39256,55 @@
 }
 ]
 },
+"sugar harp":{
+"name":"Sugar Harp",
+"slug":"sugar-harp",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Sugar+Harp",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Sugar+Harp"
+},
+"similar":[]
+},
 "sugaray rayford":{
-"name":"sugaray rayford",
+"name":"Sugaray Rayford",
 "slug":"sugaray-rayford",
 "spotify_id":null,
 "mbid":null,
@@ -38791,9 +39347,56 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=sugaray+rayford",
+"bandsintown":"https://www.bandsintown.com/search?query=Sugaray+Rayford",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=sugaray+rayford"
+"setlistfm":"https://www.setlist.fm/search?query=Sugaray+Rayford"
+},
+"similar":[]
+},
+"sunny war":{
+"name":"Sunny War",
+"slug":"sunny-war",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Sunny+War",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Sunny+War"
 },
 "similar":[]
 },
@@ -40334,7 +40937,7 @@
 "similar":[]
 },
 "tinsley ellis":{
-"name":"tinsley ellis",
+"name":"Tinsley Ellis",
 "slug":"tinsley-ellis",
 "spotify_id":null,
 "mbid":null,
@@ -40380,9 +40983,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=tinsley+ellis",
+"bandsintown":"https://www.bandsintown.com/search?query=Tinsley+Ellis",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=tinsley+ellis"
+"setlistfm":"https://www.setlist.fm/search?query=Tinsley+Ellis"
 },
 "similar":[]
 },
@@ -41774,8 +42377,8 @@
 },
 {
 "name":"Sunny War",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"sunny-war"
 }
 ]
 },
@@ -42025,7 +42628,7 @@
 ]
 },
 "victor wooten the wooten brothers":{
-"name":"victor wooten the wooten brothers",
+"name":"Victor Wooten & The Wooten Brothers",
 "slug":"victor-wooten-the-wooten-brothers",
 "spotify_id":null,
 "mbid":null,
@@ -42071,9 +42674,9 @@
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=victor+wooten+the+wooten+brothers",
+"bandsintown":"https://www.bandsintown.com/search?query=Victor+Wooten+&+The+Wooten+Brothers",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=victor+wooten+the+wooten+brothers"
+"setlistfm":"https://www.setlist.fm/search?query=Victor+Wooten+&+The+Wooten+Brothers"
 },
 "similar":[]
 },
@@ -42839,6 +43442,53 @@
 "slug":"lucinda-williams"
 }
 ]
+},
+"weary ramblers":{
+"name":"Weary Ramblers",
+"slug":"weary-ramblers",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=Weary+Ramblers",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Weary+Ramblers"
+},
+"similar":[]
 },
 "webb wilder":{
 "name":"webb wilder",
