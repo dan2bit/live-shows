@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-11T00:50:16Z",
+"generated_at":"2026-07-11T02:48:13Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -8604,6 +8604,59 @@
 }
 ]
 },
+"cris jacobs":{
+"name":"cris jacobs",
+"slug":"cris-jacobs",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Medium-Strong",
+"rank":3
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.245,
+"band":"low"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=cris+jacobs",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=cris+jacobs"
+},
+"similar":[]
+},
 "d k harrell":{
 "name":"D.K. Harrell",
 "slug":"d-k-harrell",
@@ -16856,10 +16909,7 @@
 "tranche":"major",
 "raw":1256324
 },
-"tier":{
-"label":"Strong",
-"rank":4
-},
+"tier":null,
 "seen":{
 "count":0,
 "first":null,
@@ -16867,10 +16917,7 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":{
-"score":0.35,
-"band":"medium"
-},
+"affinity":null,
 "badges":{
 "hat":"absent",
 "book":"absent",
@@ -33094,6 +33141,59 @@
 },
 "similar":[]
 },
+"richard thompson":{
+"name":"richard thompson",
+"slug":"richard-thompson",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=richard+thompson",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=richard+thompson"
+},
+"similar":[]
+},
 "richie furay":{
 "name":"richie furay",
 "slug":"richie-furay",
@@ -43671,8 +43771,8 @@
 },
 {
 "name":"Cris Jacobs",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"cris-jacobs"
 }
 ]
 },
