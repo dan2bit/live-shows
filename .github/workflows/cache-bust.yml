@@ -68,7 +68,19 @@ jobs:
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
             git commit -m "ci: cache-bust static assets"
-            git fetch promote staging
-            git rebase promote/staging
-            git push promote HEAD:staging
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
           fi
