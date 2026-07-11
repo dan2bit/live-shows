@@ -273,19 +273,37 @@ function shortVenueName(full){var name=(full||'').split(',')[0].trim();return VE
 // ── On This Day ──────────────────────────────
 // Renders the On-This-Day strip from already-loaded historyData (no fetch); reveals the
 // strip, which starts hidden (index.html) until History is first opened. Called by loadAllHistory.
+// #148 — "On This Day" carousel: show one match at a time (newest first), with a trailing
+// ‹ dots › control when >1 show shares today's month/day. The total goes in the label; the
+// visible row's ♫/▶ links render exactly as before. State + helpers below.
+var _otdMatches=[],_otdIndex=0;
+function _otdItemHtml(r){
+  var year=(r['Show Date']||'').slice(0,4),artist=esc(r['Artist']||''),venue=esc((r['Venue']||'').split(',')[0].trim());
+  var setlist=r['Setlist.fm URL']||'',playlist=r['Playlist URL']||'';
+  var links=(setlist?'<a class="icon-link" href="'+esc(setlist)+'" target="_blank" title="Setlist.fm">♫</a>':'')+(playlist?'<a class="icon-link" href="'+esc(playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'');
+  return'<span class="otd-item"><span class="otd-year">'+year+'</span><span class="otd-artist">'+artist+'</span><span class="otd-sep">&middot;</span><span class="otd-venue">'+venue+'</span>'+(links?'<span class="otd-links">'+links+'</span>':'')+'</span>';
+}
+function _renderOtdItem(){
+  var el=document.getElementById('otdItems');if(!el||!_otdMatches.length)return;
+  var n=_otdMatches.length;if(_otdIndex<0||_otdIndex>=n)_otdIndex=0;
+  var nav='';
+  if(n>1){
+    var dots='';for(var i=0;i<n;i++)dots+='<span class="otd-dot'+(i===_otdIndex?' active':'')+'"></span>';
+    nav='<span class="otd-nav"><button type="button" class="otd-nav-btn" onclick="otdStep(-1)" aria-label="Previous show" title="Previous">&#8249;</button><span class="otd-dots">'+dots+'</span><button type="button" class="otd-nav-btn" onclick="otdStep(1)" aria-label="Next show" title="Next">&#8250;</button></span>';
+  }
+  el.innerHTML=_otdItemHtml(_otdMatches[_otdIndex])+nav;
+}
+function otdStep(delta){var n=_otdMatches.length;if(!n)return;_otdIndex=(_otdIndex+delta+n)%n;_renderOtdItem();}
 function renderOnThisDay(){
   var el=document.getElementById('otdItems');if(!el)return;
   var matches=[];
   HISTORY_YEARS.forEach(function(yr){(historyData[yr]||[]).forEach(function(r){if((r['Show Date']||'').trim().endsWith(_todayMmDd))matches.push(r);});});
-  matches.sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
+  matches.sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var strip=document.querySelector('.on-this-day');if(strip)strip.style.display='';
+  var cnt=document.getElementById('otdCount');if(cnt)cnt.textContent=matches.length>1?' ('+matches.length+')':'';
+  _otdMatches=matches;_otdIndex=0;
   if(!matches.length){el.innerHTML='<span class="otd-none">no shows on this day</span>';return;}
-  el.innerHTML=matches.map(function(r){
-    var year=(r['Show Date']||'').slice(0,4),artist=esc(r['Artist']||''),venue=esc((r['Venue']||'').split(',')[0].trim());
-    var setlist=r['Setlist.fm URL']||'',playlist=r['Playlist URL']||'';
-    var links=(setlist?'<a class="icon-link" href="'+esc(setlist)+'" target="_blank" title="Setlist.fm">♫</a>':'')+(playlist?'<a class="icon-link" href="'+esc(playlist)+'" target="_blank" title="YouTube playlist">▶</a>':'');
-    return'<span class="otd-item"><span class="otd-year">'+year+'</span><span class="otd-artist">'+artist+'</span><span class="otd-sep">&middot;</span><span class="otd-venue">'+venue+'</span>'+(links?'<span class="otd-links">'+links+'</span>':'')+'</span>';
-  }).join('<span class="otd-sep" style="margin:0 4px">|</span>');
+  _renderOtdItem();
 }
 
 // ── Badges ──────────────────────────────────────────────

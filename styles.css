@@ -70,6 +70,13 @@
   .otd-venue{font-size:11px;color:var(--text-dim);}
   .otd-links{display:inline-flex;gap:4px;}
   .otd-none{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+  .otd-count{font-weight:400;color:var(--text-dim);}
+  .otd-nav{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;}
+  .otd-nav-btn{background:none;border:none;color:var(--text-dim);font-size:16px;line-height:1;cursor:pointer;padding:0 3px;font-family:var(--mono);transition:color .15s;}
+  .otd-nav-btn:hover,.otd-nav-btn:focus-visible{color:var(--amber);outline:none;}
+  .otd-dots{display:inline-flex;align-items:center;gap:4px;}
+  .otd-dot{width:5px;height:5px;border-radius:50%;background:var(--border-bright);}
+  .otd-dot.active{background:var(--amber);}
 
   .panel{display:none;padding:20px;max-width:1400px;margin:0 auto;}
   .panel.active{display:block;}
