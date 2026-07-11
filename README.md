@@ -21,6 +21,11 @@ Uses a separate private sidecar repo to record spending on and at shows. require
 ### Recommendation Intake
 Allows visitors to submit 1 or 2 recommendations in a day, which get reviewed in the github issue queue
 
+### CI Tools and gating
+
+Im `scripts` - a handful of python scripts for automation of github actions. 
+- _agentic repo management is done in a staging branch through the official github MCP server__
+
 ---
 
 _Work is in Progress to enable simple forking of the Main Functionality above_
@@ -42,7 +47,3 @@ Also tools for taste profile curation and new artist web and spotify exploration
 
 In `tools/playbooks` - a few bespoke, *ymmv* automation workflow playbooks for inbox monitoring, calendar management and artist discovery
 
-### CI Tools and gating
-
-IN `scripts` - a handful of python scripts for automation of github actions. 
-- _agentic repo management is done in a staging branch through the official github MCP server__

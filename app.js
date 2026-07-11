@@ -734,6 +734,11 @@ function _historyLoadedDom(){
   var hb=document.getElementById('historyBadge');if(hb)hb.textContent=total||'—';
   populateSearchDatalists();
   renderOnThisDay();
+  // #146 — history lazy-loads after the search panel already baked its empty state, so refresh
+  // #srchResults here (the single load-complete chokepoint) to swap the "Type to search"
+  // fallback for the stat boxes. Idle inputs only, so an active search isn't clobbered.
+  var _sr=document.getElementById('srchResults'),_sa=document.getElementById('srchArtist'),_sv=document.getElementById('srchVenue');
+  if(_sr&&(!_sa||!_sa.value)&&(!_sv||!_sv.value))_sr.innerHTML=buildSearchEmptyState();
 }
 function allAttendedRows(){
   var rows=[];
@@ -810,6 +815,7 @@ function buildSearchEmptyState(){
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none;border-radius:0 3px 3px 0"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+days.toLocaleString()+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Days</div></div>'
     +'</div>'
     +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
+    +'<img src="'+_assetUrl((SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png')+'" alt="" style="width:120px;height:120px;object-fit:contain;display:block;margin:44px auto 0;opacity:.9">'
     +'</div>';
 }
 function renderHistoryPanel(){
