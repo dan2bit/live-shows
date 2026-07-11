@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-10T02:45:58Z",
+"generated_at":"2026-07-11T00:30:19Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -1667,6 +1667,59 @@
 "bandsintown":"https://www.bandsintown.com/search?query=Ally+Venable+Band",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Ally+Venable+Band"
+},
+"similar":[]
+},
+"altered five blues band":{
+"name":"altered five blues band",
+"slug":"altered-five-blues-band",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Medium",
+"rank":2
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.158,
+"band":"low"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/search?query=altered+five+blues+band",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=altered+five+blues+band"
 },
 "similar":[]
 },
@@ -13298,8 +13351,8 @@
 },
 {
 "name":"Altered Five Blues Band",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"altered-five-blues-band"
 },
 {
 "name":"Ash Grunwald",
