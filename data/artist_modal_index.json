@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-12T03:21:49Z",
+"generated_at":"2026-07-12T15:42:00Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -19293,7 +19293,10 @@
 "banner_url":null,
 "genres":[],
 "listener":null,
-"tier":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
 "seen":{
 "count":0,
 "first":null,
@@ -19301,7 +19304,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
