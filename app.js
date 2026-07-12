@@ -352,6 +352,25 @@ function _goalCreditTargets(signer,attribution){
   else if(al.slice(-6)===' entry'){var alias=a.slice(0,a.length-6).trim();if(alias)targets.push(alias);}
   return targets;
 }
+// #150 — bill-name decomposition for the goal join. A row is often billed under a compound
+// or variant name ("Victor Wooten & The Wooten Brothers", "Maggie Rose Band") while the
+// eligibility/signature files are keyed on the tracked entity ("The Wooten Brothers",
+// "Maggie Rose"). Returns the exact key first, then component fallbacks — exact always wins.
+// Separators are explicit; no fuzzy matching (#150 non-goal). The trailing-" Band" drop
+// mirrors surface_forms() in scripts/build_recommend_index.py, the house rule for that same
+// variant. Python twin: bill_keys() in scripts/audit_goal_badges.py — keep the two in step.
+var _GOAL_BILL_SEP=/\s+(?:&|and his|and her|and|w\/|feat\.?|featuring|with)\s+|\s*,\s*/i;
+function _goalBillKeys(name){
+  var base=_goalNorm(name),keys=base?[base]:[];
+  if(!name)return keys;
+  String(name).split(_GOAL_BILL_SEP).forEach(function(p){
+    p=(p||'').trim();if(!p)return;
+    [p,p.replace(/\s+band$/i,'').trim()].forEach(function(v){
+      var k=_goalNorm(v);if(k&&keys.indexOf(k)<0)keys.push(k);
+    });
+  });
+  return keys;
+}
 function _goalEventList(){var g=SITE_CONFIG.show_goals;return(g&&g.length?g:[]).filter(function(x){return x&&x.key&&/^event_log:/.test(x.source||'');});}
 async function loadGoalData(){
   GOAL_DATA={};
@@ -381,11 +400,11 @@ async function loadGoalData(){
 function _goalBadgeSpans(artist,showDate,isUpcoming){
   if(!GOAL_DATA)return'';
   var goals=_goalEventList();if(!goals.length)return'';
-  var k=_goalNorm(artist),out='';
+  var keys=_goalBillKeys(artist),sd=showDate||'',out='';
   goals.forEach(function(g){
     var d=GOAL_DATA[g.key];if(!d)return;
-    var completed=!!d.completed[k+'␟'+(showDate||'')];
-    var state=completed?'completed':(isUpcoming&&d.eligible[k]?'planned':'');
+    var completed=keys.some(function(k){return !!d.completed[k+'␟'+sd];});
+    var state=completed?'completed':(isUpcoming&&keys.some(function(k){return !!d.eligible[k];})?'planned':'');
     if(!state)return;
     var key=g.key,label=esc(g.label||g.key),icon=g.icon||'';
     var style=state==='completed'
@@ -407,6 +426,19 @@ function artistNames(str){
   str=(str||'').trim();if(!str)return'';
   var more='';var m=str.match(/\s*\+\s*more\s*$/i);if(m){more='<span class="cell-support-more"> + more</span>';str=str.slice(0,m.index);}
   return str.split(' / ').map(function(p){return artistLink(p);}).filter(Boolean).join(' / ')+more;
+}
+
+// #150 — support acts carry their own goal badges, rendered inline beside each name rather
+// than merged into the headliner's badge cluster, so it stays clear whose badge it is.
+// Same " / " split and "+ more" handling as artistNames.
+function supportGoalNames(str,showDate,isUpcoming){
+  str=(str||'').trim();if(!str)return'';
+  var more='';var m=str.match(/\s*\+\s*more\s*$/i);if(m){more='<span class="cell-support-more"> + more</span>';str=str.slice(0,m.index);}
+  return str.split(' / ').map(function(p){
+    p=(p||'').trim();if(!p)return'';
+    var b=_goalBadgeSpans(p,showDate,isUpcoming);
+    return artistLink(p)+(b?' '+b:'');
+  }).filter(Boolean).join(' / ')+more;
 }
 
 // ── setlistIconHtml helper ──────────────────────
@@ -583,7 +615,7 @@ function renderUpcomingRowBystander(row,idx){
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+artistNames(row['Supporting Artist'])+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+supportGoalNames(row['Supporting Artist'],row['Show Date'],true)+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
@@ -601,7 +633,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+artistLink(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
-    +(row['Supporting Artist']?'<div class="cell-support">w/ '+artistNames(row['Supporting Artist'])+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +(row['Supporting Artist']?'<div class="cell-support">w/ '+supportGoalNames(row['Supporting Artist'],row['Show Date'],true)+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
@@ -613,7 +645,7 @@ function renderAttendedRowBystander(row,idx){
   var ne=esc(n.notes);
   var nh=ne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+ne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -627,7 +659,7 @@ function renderAttendedRowSearch(row,idx){
   var sw=_seenWithFor(n);
   var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
-    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+sw.map(function(x){return artistLink(x);}).join(', ')+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+sw.map(function(x){return artistLink(x);}).join(', ')+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -644,7 +676,7 @@ function renderAttendedRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
+    +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
     +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
     +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -668,7 +700,7 @@ function renderHistoryYear(yr){
     var editBtn=authed?makeEditBtn(cellId,'history:'+yr,oi,'Notes / Memories','notes'):'';
     var nh=ne?'<div class="notes-text collapsible" id="n-hist-'+yr+'-'+i+'" onclick="toggleNote(this,\'nt-hist-'+yr+'-'+i+'\')">'+ne+'</div><span class="notes-toggle" id="nt-hist-'+yr+'-'+i+'" onclick="toggleNote(document.getElementById(\'n-hist-'+yr+'-'+i+'\'),this)">more</span>':'';
     return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
-      +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+artistNames(n.support)+'</div>':'')
+      +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')
       +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
       +'<td class="cell-venue">'+esc(shortVenueName(n.venueName))+'</td>'
       +'<td style="white-space:nowrap">'+(n.setlist?setlistIconHtml(n.setlist):'')
@@ -893,7 +925,7 @@ function renderPotentialRowBystander(r,gi){
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+artistNames(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+supportGoalNames(r['Support'],r['Date'],true)+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -917,7 +949,7 @@ function renderPotentialRowAuthed(r,gi){
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+artistNames(r['Support'])+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+supportGoalNames(r['Support'],r['Date'],true)+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
