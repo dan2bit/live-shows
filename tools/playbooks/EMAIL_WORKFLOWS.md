@@ -319,12 +319,12 @@ build + manual compare.
 
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
-**Single-setlist shows:** Open one issue. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. Skip if no footage.
+**Single-setlist shows:** Open one issue by default. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. This step is opt-out, not opt-in — create the issue unless the show notes email explicitly states no footage was taken (e.g. "didn't record," "no video this time," "phone died," "left early, no recording"). The mere absence of a video/YouTube mention in the notes is NOT grounds to skip it — that absence is the default case, and the default is to open the issue. If genuinely uncertain whether footage exists, open the issue anyway and note the uncertainty in the body; a closed-out issue costs nothing, a missing one loses the reminder entirely.
 
 **MULTI shows (two or more setlist.fm links provided):**
 
 1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
-2. Open **one combined playlist issue** — title as above; include all setlist.fm links in the body (support acts first, headliner last).
+2. Open **one combined playlist issue** — title as above; include all setlist.fm links in the body (support acts first, headliner last). Same opt-out default as above applies.
 3. Update `data/setlists/<year>.json` by appending an entry keyed on `YYYY-MM-DD`:
 
 ```json
