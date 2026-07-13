@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-13T14:21:22Z",
+"generated_at":"2026-07-13T14:22:13Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -2310,12 +2310,19 @@
 "anders osborne":{
 "name":"Anders Osborne",
 "slug":"anders-osborne",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"3WUUtA45g7X0jbeywZz888",
+"mbid":"96fa47fc-6175-45c9-9686-7a3362671137",
+"image_url":"https://i.scdn.co/image/ab676161000051748729f0fdba19261b091f17f8",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"blues rock",
+"singer-songwriter"
+],
+"listener":{
+"tranche":"mid",
+"raw":65619
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -2353,17 +2360,49 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"Picasso's Villa",
+"type":"album",
+"date":"2024-04-26",
+"url":"https://open.spotify.com/album/15iMxfnuKmfEpZublvsHrq",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02f549dd57a6fc62293b74fa83"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3WUUtA45g7X0jbeywZz888",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Anders+Osborne",
+"musicbrainz":"https://musicbrainz.org/artist/96fa47fc-6175-45c9-9686-7a3362671137",
 "bandsintown":"https://www.bandsintown.com/search?query=Anders+Osborne",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Anders+Osborne"
 },
-"similar":[]
+"similar":[
+{
+"name":"JJ Grey & Mofro",
+"in_tracker":true,
+"slug":"jj-grey-mofro"
+},
+{
+"name":"North Mississippi Allstars",
+"in_tracker":true,
+"slug":"north-mississippi-allstars"
+},
+{
+"name":"Gov't Mule",
+"in_tracker":true,
+"slug":"gov-t-mule"
+},
+{
+"name":"Sonny Landreth",
+"in_tracker":true,
+"slug":"sonny-landreth"
+},
+{
+"name":"Jonny Lang",
+"in_tracker":true,
+"slug":"jonny-lang"
+}
+]
 },
 "andrew espantman":{
 "name":"andrew espantman",
@@ -3968,12 +4007,19 @@
 "bernard allison":{
 "name":"Bernard Allison",
 "slug":"bernard-allison",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"0oLmGtqMpKAAVNJyJ71AcI",
+"mbid":"15bbb97f-918f-4aac-bd78-cd9f007e1558",
+"image_url":"https://i.scdn.co/image/ab67616100005174e07ed07648e0005633112ac6",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"blues rock",
+"funky blues"
+],
+"listener":{
+"tranche":"mid",
+"raw":51423
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -4011,17 +4057,49 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"Luther's Blues",
+"type":"album",
+"date":"2024-01-19",
+"url":"https://open.spotify.com/album/2jzrn8ms2JXUUesHK4IrpJ",
+"image_url":"https://i.scdn.co/image/ab67616d00001e025009524c7e98d023cabfedf7"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/0oLmGtqMpKAAVNJyJ71AcI",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Bernard+Allison",
+"musicbrainz":"https://musicbrainz.org/artist/15bbb97f-918f-4aac-bd78-cd9f007e1558",
 "bandsintown":"https://www.bandsintown.com/search?query=Bernard+Allison",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Bernard+Allison"
 },
-"similar":[]
+"similar":[
+{
+"name":"Mike Zito",
+"in_tracker":true,
+"slug":"mike-zito"
+},
+{
+"name":"Albert Cummings",
+"in_tracker":true,
+"slug":"albert-cummings"
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
+},
+{
+"name":"Popa Chubby",
+"in_tracker":true,
+"slug":"popa-chubby"
+},
+{
+"name":"Danny Bryant",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "bernie marsden":{
 "name":"bernie marsden",
@@ -5259,12 +5337,15 @@
 "brandon miller":{
 "name":"Brandon Miller",
 "slug":"brandon-miller",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"3ACil0ih4W5CbS2sq3l8L1",
+"mbid":"21555922-5584-47b9-b7f2-77623e058bc9",
+"image_url":"https://i.scdn.co/image/ab67616d00001e027c5f4286068c6e95c87b9601",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":196
+},
 "tier":null,
 "seen":{
 "count":3,
@@ -5316,17 +5397,49 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"Bad Situation (Live in Kansas City)",
+"type":"album",
+"date":"2023-09-08",
+"url":"https://open.spotify.com/album/4IongGXf7KlCSGASJGeTqI",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02646af51bed703e732b129b41"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3ACil0ih4W5CbS2sq3l8L1",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Brandon+Miller",
+"musicbrainz":"https://musicbrainz.org/artist/21555922-5584-47b9-b7f2-77623e058bc9",
 "bandsintown":"https://www.bandsintown.com/search?query=Brandon+Miller",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Brandon+Miller"
 },
-"similar":[]
+"similar":[
+{
+"name":"Billy Walton Band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Alastair Greene",
+"in_tracker":true,
+"slug":"alastair-greene"
+},
+{
+"name":"Albany Down",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Eliza Neals",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chase Walker Band",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "brandon taz niederauer":{
 "name":"brandon taz niederauer",
@@ -6564,12 +6677,18 @@
 "caitlin krisko the broadcast":{
 "name":"Caitlin Krisko & The Broadcast",
 "slug":"caitlin-krisko-the-broadcast",
-"spotify_id":null,
+"spotify_id":"7EUd5VylN6IFwj3hb8VxkY",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab67616100005174d2adb5252fa367ffe5e0b290",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues rock",
+"blues"
+],
+"listener":{
+"tranche":"niche",
+"raw":2485
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -6596,17 +6715,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Hole in My Heart",
+"type":"single",
+"date":"2026-07-10",
+"url":"https://open.spotify.com/album/2zD7cxkPbt8KoPIpOP4RQ3",
+"image_url":"https://i.scdn.co/image/ab67616d00001e029984fc37ea4db8f40ebf0e30"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/7EUd5VylN6IFwj3hb8VxkY",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Caitlin+Krisko+&+The+Broadcast",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Caitlin+Krisko+&+The+Broadcast",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Caitlin+Krisko+&+The+Broadcast"
 },
-"similar":[]
+"similar":[
+{
+"name":"Hollow souls",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Bywater Call",
+"in_tracker":true,
+"slug":"bywater-call"
+},
+{
+"name":"Brave Rival",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Sari Schorr",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"These Wicked Rivers",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "caleb crosby":{
 "name":"caleb crosby",
@@ -6791,12 +6942,19 @@
 "candice ivory":{
 "name":"Candice Ivory",
 "slug":"candice-ivory",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"3LvvxwFohFRBZ3iS3ocKmp",
+"mbid":"7bbeee9b-0bad-4232-85ad-eaf3da790eb8",
+"image_url":"https://i.scdn.co/image/ab676161000051747a91d203cb5da991162276c3",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"female vocalists",
+"memphis",
+"under 2000 listeners"
+],
+"listener":{
+"tranche":"niche",
+"raw":1369
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -6823,17 +6981,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"New Southern Vintage",
+"type":"album",
+"date":"2025-08-29",
+"url":"https://open.spotify.com/album/0fysXEv5GH1wNTdAOsOkLG",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02104ac6d112f1218602ca37cc"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3LvvxwFohFRBZ3iS3ocKmp",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Candice+Ivory",
+"musicbrainz":"https://musicbrainz.org/artist/7bbeee9b-0bad-4232-85ad-eaf3da790eb8",
 "bandsintown":"https://www.bandsintown.com/search?query=Candice+Ivory",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Candice+Ivory"
 },
-"similar":[]
+"similar":[
+{
+"name":"Bob Corritore",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Garry Burnside",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Connor Selby",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chris O'Leary",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Ghalia Volt",
+"in_tracker":true,
+"slug":"ghalia-volt"
+}
+]
 },
 "carly harvey":{
 "name":"Carly Harvey",
@@ -10481,12 +10671,17 @@
 "derrick dove the peacekeepers":{
 "name":"Derrick Dove & The Peacekeepers",
 "slug":"derrick-dove-the-peacekeepers",
-"spotify_id":null,
+"spotify_id":"4HOpaqQ6HG4mtoyZ0jRBKb",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab6761610000517404299d62d3542ed3b022b7d2",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues"
+],
+"listener":{
+"tranche":"niche",
+"raw":895
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -10513,17 +10708,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Georgia Peach",
+"type":"single",
+"date":"2026-02-03",
+"url":"https://open.spotify.com/album/1FjSFfLrRdbCs1SEQ7aLJC",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0269865c31105b9f8a1909271f"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/4HOpaqQ6HG4mtoyZ0jRBKb",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Derrick+Dove+&+the+Peacekeepers",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Derrick+Dove+&+The+Peacekeepers",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Derrick+Dove+&+The+Peacekeepers"
 },
-"similar":[]
+"similar":[
+{
+"name":"Mick Clarke",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Alastair Greene",
+"in_tracker":true,
+"slug":"alastair-greene"
+},
+{
+"name":"The Reverend Shawn Amos",
+"in_tracker":true,
+"slug":"reverend-shawn-amos"
+},
+{
+"name":"Sari Schorr",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Lloyd Spiegel",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "deshawn d vibes alexander":{
 "name":"DeShawn 'D-Vibes' Alexander",
@@ -11377,12 +11604,19 @@
 "doug macleod":{
 "name":"Doug MacLeod",
 "slug":"doug-macleod",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"74TtiqgtscsnZGa84SHolz",
+"mbid":"8a53e168-c1f1-4b55-ac96-da3a69d9e240",
+"image_url":"https://i.scdn.co/image/ab67616100005174dc49c1a1ead60b513f987cba",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"acoustic blues",
+"steel guitar"
+],
+"listener":{
+"tranche":"emerging",
+"raw":14700
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -11409,17 +11643,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Between Somewhere and Goodbye",
+"type":"album",
+"date":"2025-06-27",
+"url":"https://open.spotify.com/album/4mwFJQzDXH0tpDD1qhJGYL",
+"image_url":"https://i.scdn.co/image/ab67616d00001e025df71c50d9683f431d56d71f"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/74TtiqgtscsnZGa84SHolz",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Doug+MacLeod",
+"musicbrainz":"https://musicbrainz.org/artist/8a53e168-c1f1-4b55-ac96-da3a69d9e240",
 "bandsintown":"https://www.bandsintown.com/search?query=Doug+MacLeod",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Doug+MacLeod"
 },
-"similar":[]
+"similar":[
+{
+"name":"Blues Company",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Hans Theessink",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"John Campbell",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mighty Sam McClain",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Eric Bibb",
+"in_tracker":true,
+"slug":"eric-bibb"
+}
+]
 },
 "duane betts":{
 "name":"Duane Betts",
@@ -11681,12 +11947,15 @@
 "dylan triplett":{
 "name":"Dylan Triplett",
 "slug":"dylan-triplett",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"3hCmpGNTSpLH1Dj74VLNJN",
+"mbid":"81968a96-09ea-4a1c-86d9-9b87fe12d83c",
+"image_url":"https://i.scdn.co/image/ab676161000051744900b425b3b20cc61311b703",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":1033
+},
 "tier":{
 "label":"Medium-Strong",
 "rank":3
@@ -11734,17 +12003,49 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"Can't Run From It",
+"type":"single",
+"date":"2025-11-18",
+"url":"https://open.spotify.com/album/4eUfxVj5d32cmmHMuwieFj",
+"image_url":"https://i.scdn.co/image/ab67616d00001e024e81dc152ca5d7589c06770c"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3hCmpGNTSpLH1Dj74VLNJN",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Dylan+Triplett",
+"musicbrainz":"https://musicbrainz.org/artist/81968a96-09ea-4a1c-86d9-9b87fe12d83c",
 "bandsintown":"https://www.bandsintown.com/search?query=Dylan+Triplett",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Dylan+Triplett"
 },
-"similar":[]
+"similar":[
+{
+"name":"L.A. Big Daddy's",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Big Miller",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Connor Selby",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Ethan Wilson",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"John Németh",
+"in_tracker":true,
+"slug":"john-nemeth"
+}
+]
 },
 "eddie 9v":{
 "name":"Eddie 9V",
@@ -13080,12 +13381,19 @@
 "family crest":{
 "name":"The Family Crest",
 "slug":"family-crest",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"44CB1c0W2h1XR2vB7AKpa7",
+"mbid":"3b2e545f-4f04-4a18-8e06-bb70a71d9009",
+"image_url":"https://i.scdn.co/image/ab6761610000517491ea9dcbad332061febd0f63",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"alternative",
+"folk",
+"san francisco"
+],
+"listener":{
+"tranche":"mid",
+"raw":116607
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -13112,17 +13420,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"The War: Act II",
+"type":"album",
+"date":"2022-05-20",
+"url":"https://open.spotify.com/album/2Zl556Llm0YNeITWchAQCq",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0252540c4e0891e6e7aa33ac18"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/44CB1c0W2h1XR2vB7AKpa7",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/The+Family+Crest",
+"musicbrainz":"https://musicbrainz.org/artist/3b2e545f-4f04-4a18-8e06-bb70a71d9009",
 "bandsintown":"https://www.bandsintown.com/search?query=The+Family+Crest",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=The+Family+Crest"
 },
-"similar":[]
+"similar":[
+{
+"name":"Fish in a Birdcage",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Aliceband",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Amazing Devil",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Arcadian Wild",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rabbitology",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "fancy hagood":{
 "name":"Fancy Hagood",
@@ -13224,12 +13564,19 @@
 "fantastic negrito":{
 "name":"Fantastic Negrito",
 "slug":"fantastic-negrito",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"5QXLMdpKeByOo5ypH9gT13",
+"mbid":"b7be8029-5ebe-4e4b-bc0c-a4d4756463c7",
+"image_url":"https://i.scdn.co/image/ab67616100005174ea8881cbd85a6f4fb22db65b",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"soul",
+"funk"
+],
+"listener":{
+"tranche":"mid",
+"raw":216936
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -13256,17 +13603,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Beat Salad (Live from Rubigen, Switzerland)",
+"type":"single",
+"date":"2026-07-07",
+"url":"https://open.spotify.com/album/3psjcMK2MrjZm2lgxN9C1u",
+"image_url":"https://i.scdn.co/image/ab67616d00001e020d3fe4e6f8bb68452181e9ad"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/5QXLMdpKeByOo5ypH9gT13",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Fantastic+Negrito",
+"musicbrainz":"https://musicbrainz.org/artist/b7be8029-5ebe-4e4b-bc0c-a4d4756463c7",
 "bandsintown":"https://www.bandsintown.com/search?query=Fantastic+Negrito",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Fantastic+Negrito"
 },
-"similar":[]
+"similar":[
+{
+"name":"Gary Clark Jr.",
+"in_tracker":true,
+"slug":"gary-clark-jr"
+},
+{
+"name":"Samantha Fish",
+"in_tracker":true,
+"slug":"samantha-fish"
+},
+{
+"name":"Marcus King",
+"in_tracker":true,
+"slug":"marcus-king"
+},
+{
+"name":"Larkin Poe",
+"in_tracker":true,
+"slug":"larkin-poe"
+},
+{
+"name":"Beth Hart",
+"in_tracker":true,
+"slug":"beth-hart"
+}
+]
 },
 "fats kaplin":{
 "name":"fats kaplin",
@@ -14748,12 +15127,15 @@
 "grace bowers":{
 "name":"Grace Bowers",
 "slug":"grace-bowers",
-"spotify_id":null,
+"spotify_id":"3JX7toZYBPbth2CCq78kBx",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab67616100005174fea2c0a540dc155697c82b90",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":68
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -14783,11 +15165,17 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Dust (feat. Cody Jinks and Grace Bowers)",
+"type":"single",
+"date":"2025-04-11",
+"url":"https://open.spotify.com/album/4YaLM1ToB9fnxvQ2dQLvf6",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02b0343e0b76546f6d7cb8e65c"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3JX7toZYBPbth2CCq78kBx (band entity 'The Hodge Podge'; separate 'Grace Bowers' page holds features)",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Grace+Bowers",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Grace+Bowers",
 "seated":null,
@@ -16702,12 +17090,15 @@
 "j t lauritsen the buckshot hunters":{
 "name":"J.T. Lauritsen & The Buckshot Hunters",
 "slug":"j-t-lauritsen-the-buckshot-hunters",
-"spotify_id":null,
+"spotify_id":"2Krddkkhkhg2FSbqQbKmp6",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab67616d00001e02ff8f44f80100e7e490def829",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":435
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -16734,17 +17125,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Still Be Friends",
+"type":"album",
+"date":"2025-09-20",
+"url":"https://open.spotify.com/album/4PwIQMpeu88RO0I1O3f5Gd",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02ff8f44f80100e7e490def829"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/2Krddkkhkhg2FSbqQbKmp6",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/j.t.+lauritsen+&+the+buckshot+hunters",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=J.T.+Lauritsen+&+The+Buckshot+Hunters",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=J.T.+Lauritsen+&+The+Buckshot+Hunters"
 },
-"similar":[]
+"similar":[
+{
+"name":"Reidar Larsen",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rita Engedalen",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mississippi Heat",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"B.B. & The Blues Shacks",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kjell Gustavsson",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "jack broadbent":{
 "name":"jack broadbent",
@@ -17092,12 +17515,19 @@
 "jade macrae":{
 "name":"Jade MacRae",
 "slug":"jade-macrae",
-"spotify_id":null,
+"spotify_id":"3m6tQTaPCGclNhgcC0wgOd",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab6761610000517436d606694ef99fed9e0154ff",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"rnb",
+"pop",
+"r&b"
+],
+"listener":{
+"tranche":"emerging",
+"raw":5466
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -17124,17 +17554,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Ain’t Nobody Home",
+"type":"single",
+"date":"2025-12-11",
+"url":"https://open.spotify.com/album/0mLSzmMLWAD3AFrwKMHsau",
+"image_url":"https://i.scdn.co/image/ab67616d00001e020bea87d6928a17a1cfa15010"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3m6tQTaPCGclNhgcC0wgOd",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Jade+Macrae",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Jade+MacRae",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Jade+MacRae"
 },
-"similar":[]
+"similar":[
+{
+"name":"Paulini",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kate DeAraugo",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Young Divas",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Natalie Gauci",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Shakaya",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "jaime wyatt":{
 "name":"Jaime Wyatt",
@@ -20220,12 +20682,19 @@
 "john primer":{
 "name":"John Primer",
 "slug":"john-primer",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"1CePnHlc38UfIQovWgyzKP",
+"mbid":"c07731e6-4193-4bdb-b0a7-823c8925bc59",
+"image_url":"https://i.scdn.co/image/ab67616100005174076b7bf31ea26aed3e42d716",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"bluesrock",
+"blues",
+"harmonica blues"
+],
+"listener":{
+"tranche":"niche",
+"raw":26
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -20252,17 +20721,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"John Primer and Friends Tribute to Theresa's Lounge",
+"type":"album",
+"date":"2026-06-05",
+"url":"https://open.spotify.com/album/6BwYeCU4jvpJnAZ4UQTt7K",
+"image_url":"https://i.scdn.co/image/ab67616d00001e022df8d1ca831ca0747d7ba27a"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/1CePnHlc38UfIQovWgyzKP",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/John+Primer+&+The+Real+Deal+Blues+Band",
+"musicbrainz":"https://musicbrainz.org/artist/c07731e6-4193-4bdb-b0a7-823c8925bc59",
 "bandsintown":"https://www.bandsintown.com/search?query=John+Primer",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=John+Primer"
 },
-"similar":[]
+"similar":[
+{
+"name":"Weeping Harp Senoh",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Mojo Roots",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Stoney B & Grandpa Elliott",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Johnny 'Yard Dog' Jones",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Family Style",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "john prine celebration":{
 "name":"John Prine Celebration",
@@ -20886,12 +21387,18 @@
 "josh hoyer soul colossal":{
 "name":"Josh Hoyer & Soul Colossal",
 "slug":"josh-hoyer-soul-colossal",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"6tR8NNWYjpm3ZqYFOgeLbY",
+"mbid":"7c5636ae-3539-4e20-8083-08fc207c0723",
+"image_url":"https://i.scdn.co/image/ab676161000051744f1adb7554c8e920b1713b8e",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"gramusels bluesrock",
+"gramusels soul"
+],
+"listener":{
+"tranche":"niche",
+"raw":149
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -20918,17 +21425,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Green Light",
+"type":"album",
+"date":"2022-10-21",
+"url":"https://open.spotify.com/album/2PafdNbMG1nyPiAhViQ5N1",
+"image_url":"https://i.scdn.co/image/ab67616d00001e023b3344e25e4fe6f8c7f47de4"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/6tR8NNWYjpm3ZqYFOgeLbY",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Josh+Hoyer+&+Soul+Colossal",
+"musicbrainz":"https://musicbrainz.org/artist/7c5636ae-3539-4e20-8083-08fc207c0723",
 "bandsintown":"https://www.bandsintown.com/search?query=Josh+Hoyer+&+Soul+Colossal",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Josh+Hoyer+&+Soul+Colossal"
 },
-"similar":[]
+"similar":[
+{
+"name":"Josh Hoyer and Soul Colossal",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Robert Randolph & The Family Band & Liyah Bey",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Garnetta Cromwell",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Jimmy Regal and the Royals",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Clarence Bluesman Davis",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "josh okeefe":{
 "name":"Josh Okeefe",
@@ -21634,12 +22173,19 @@
 "kashus culpepper":{
 "name":"Kashus Culpepper",
 "slug":"kashus-culpepper",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"2MPe4h9blynt1CfCkMku6j",
+"mbid":"f61b6c08-6e76-4b9a-b8c6-8235ca79a799",
+"image_url":"https://i.scdn.co/image/ab676161000051748d20594388766b355527009e",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"folk",
+"country",
+"americana"
+],
+"listener":{
+"tranche":"emerging",
+"raw":41559
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -21666,27 +22212,66 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Act I: Summer Nights",
+"type":"single",
+"date":"2026-06-19",
+"url":"https://open.spotify.com/album/3RPDh3A283D7F4DuJO95kD",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0276a1e790e43e055436ae2e6d"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/2MPe4h9blynt1CfCkMku6j",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Kashus+Culpepper",
+"musicbrainz":"https://musicbrainz.org/artist/f61b6c08-6e76-4b9a-b8c6-8235ca79a799",
 "bandsintown":"https://www.bandsintown.com/search?query=Kashus+Culpepper",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Kashus+Culpepper"
 },
-"similar":[]
+"similar":[
+{
+"name":"Wyatt Flores",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"49 Winchester",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Colby Acuff",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Muscadine Bloodline",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Jackson Dean",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "kat riggins":{
 "name":"Kat Riggins",
 "slug":"kat-riggins",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"0gE5H6j7N6LseB5laJ8m1E",
+"mbid":"49047c09-5b4a-409b-b378-ea2c45a6619a",
+"image_url":"https://i.scdn.co/image/ab6761610000517487a7bcf2ebe26b41cf5063ba",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"female blues vocalists",
+"heyhoef backstage"
+],
+"listener":{
+"tranche":"niche",
+"raw":1405
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -21716,17 +22301,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Nothing but a Woman",
+"type":"single",
+"date":"2025-03-07",
+"url":"https://open.spotify.com/album/5JpZgrzK2fZRFE3zHFFsny",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02c3e03e3e977f7ec69db99b08"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/0gE5H6j7N6LseB5laJ8m1E",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Kat+Riggins",
+"musicbrainz":"https://musicbrainz.org/artist/49047c09-5b4a-409b-b378-ea2c45a6619a",
 "bandsintown":"https://www.bandsintown.com/search?query=Kat+Riggins",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Kat+Riggins"
 },
-"similar":[]
+"similar":[
+{
+"name":"John Németh",
+"in_tracker":true,
+"slug":"john-nemeth"
+},
+{
+"name":"Vanja Sky",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Sugaray Rayford",
+"in_tracker":true,
+"slug":"sugaray-rayford"
+},
+{
+"name":"Layla Zoe",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Toronzo Cannon",
+"in_tracker":true,
+"slug":"toronzo-cannon"
+}
+]
 },
 "kate davis":{
 "name":"Kate Davis",
@@ -28569,12 +29186,19 @@
 "mitch ryder":{
 "name":"Mitch Ryder",
 "slug":"mitch-ryder",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"7tdO7d7r0vhwov7RIZWH6V",
+"mbid":"b1d8fd63-45b2-4f13-a369-78b0a91eb7d3",
+"image_url":"https://i.scdn.co/image/ab6761610000517459a64e89bc185a3be4820322",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"classic rock",
+"blues",
+"60s"
+],
+"listener":{
+"tranche":"mid",
+"raw":56462
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -28612,17 +29236,49 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"Songs from the Road",
+"type":"album",
+"date":"2026-02-20",
+"url":"https://open.spotify.com/album/58G6DNaqCeZsYeZHhvjCjd",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02a7e836428b2d9287d20a7b13"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/7tdO7d7r0vhwov7RIZWH6V",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Mitch+Ryder",
+"musicbrainz":"https://musicbrainz.org/artist/b1d8fd63-45b2-4f13-a369-78b0a91eb7d3",
 "bandsintown":"https://www.bandsintown.com/search?query=Mitch+Ryder",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Mitch+Ryder"
 },
-"similar":[]
+"similar":[
+{
+"name":"Ian Hunter",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"North Mississippi Allstars",
+"in_tracker":true,
+"slug":"north-mississippi-allstars"
+},
+{
+"name":"The J. Geils Band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Ten Years After",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Tony Joe White",
+"in_tracker":true,
+"slug":"tony-joe-white"
+}
+]
 },
 "mitski":{
 "name":"Mitski",
@@ -29009,12 +29665,18 @@
 "mr sipp":{
 "name":"Mr. Sipp",
 "slug":"mr-sipp",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"1duNfccIPXlVz522cvFKNi",
+"mbid":"fbe66233-386e-4ddf-bf95-31fb758af7bb",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0242d04ec82363005ed7221415",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"lame",
+"blues"
+],
+"listener":{
+"tranche":"niche",
+"raw":1449
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -29041,17 +29703,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Stories Of The Soul",
+"type":"album",
+"date":"2026-06-19",
+"url":"https://open.spotify.com/album/4YHHOJJ0e0rbfMyBTLGb4I",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02cb79e0605d1e8883cd1cc6c8"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/1duNfccIPXlVz522cvFKNi",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Mr.+Sipp",
+"musicbrainz":"https://musicbrainz.org/artist/fbe66233-386e-4ddf-bf95-31fb758af7bb",
 "bandsintown":"https://www.bandsintown.com/search?query=Mr.+Sipp",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Mr.+Sipp"
 },
-"similar":[]
+"similar":[
+{
+"name":"John Primer",
+"in_tracker":true,
+"slug":"john-primer"
+},
+{
+"name":"Tim Gartland",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Will Wilde",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mississippi MacDonald",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mike Farris",
+"in_tracker":true,
+"slug":"mike-farris"
+}
+]
 },
 "muireann bradley":{
 "name":"Muireann Bradley",
@@ -32076,12 +32770,19 @@
 "rachael vilray":{
 "name":"Rachael & Vilray",
 "slug":"rachael-vilray",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"3UHyuBA5qay3xcxFr3Z1Y9",
+"mbid":"17883a96-8ae6-49c0-8e38-442ffd69cd67",
+"image_url":"https://i.scdn.co/image/ab67616100005174a142f7f1c09000eec00e081a",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"jazz",
+"vocal jazz"
+],
+"listener":{
+"tranche":"mid",
+"raw":80729
+},
 "tier":{
 "label":"Medium",
 "rank":2
@@ -32114,17 +32815,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"West of Broadway (Deluxe Edition)",
+"type":"album",
+"date":"2026-01-23",
+"url":"https://open.spotify.com/album/3Pu7oGvOi4CoTnSUQqLlrZ",
+"image_url":"https://i.scdn.co/image/ab67616d00001e029bdd7c04359ffe5014674aee"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3UHyuBA5qay3xcxFr3Z1Y9",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Rachael+&+Vilray",
+"musicbrainz":"https://musicbrainz.org/artist/17883a96-8ae6-49c0-8e38-442ffd69cd67",
 "bandsintown":"https://www.bandsintown.com/search?query=Rachael+&+Vilray",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Rachael+&+Vilray"
 },
-"similar":[]
+"similar":[
+{
+"name":"Ella Fitzgerald",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Samara Joy",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Caity Gyorgy",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Emilie-Claire Barlow",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Nicole Zuraitis",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "radney foster":{
 "name":"radney foster",
@@ -32548,7 +33281,7 @@
 "regi oliver":{
 "name":"Regi Oliver",
 "slug":"regi-oliver",
-"spotify_id":null,
+"spotify_id":"5WQDVQPzhSMyZShUbex2XQ",
 "mbid":null,
 "image_url":null,
 "banner_url":null,
@@ -32616,7 +33349,7 @@
 },
 "latest_release":null,
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/5WQDVQPzhSMyZShUbex2XQ",
 "youtube":null,
 "lastfm":null,
 "musicbrainz":null,
@@ -38162,12 +38895,19 @@
 "st paul the broken bones":{
 "name":"St. Paul & The Broken Bones",
 "slug":"st-paul-the-broken-bones",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"4fXkvh05wFhuH77MfD4m9o",
+"mbid":"4486702e-7b26-43fd-babc-c0df7be0e1d9",
+"image_url":"https://i.scdn.co/image/ab67616100005174e25488bca4236e5ae6d5feb8",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"soul",
+"blues",
+"american"
+],
+"listener":{
+"tranche":"popular",
+"raw":325734
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -38194,17 +38934,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"St. Paul & The Broken Bones - Live At Southern Grooves",
+"type":"album",
+"date":"2026-02-20",
+"url":"https://open.spotify.com/album/31msdyrTAIvyHUQpNGcK8m",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0235328f2536e8a5bc4d2e12b4"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/4fXkvh05wFhuH77MfD4m9o",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/St.+Paul+&+The+Broken+Bones",
+"musicbrainz":"https://musicbrainz.org/artist/4486702e-7b26-43fd-babc-c0df7be0e1d9",
 "bandsintown":"https://www.bandsintown.com/search?query=St.+Paul+&+The+Broken+Bones",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=St.+Paul+&+The+Broken+Bones"
 },
-"similar":[]
+"similar":[
+{
+"name":"The Dip",
+"in_tracker":true,
+"slug":"dip"
+},
+{
+"name":"Nathaniel Rateliff & the Night Sweats",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Teskey Brothers",
+"in_tracker":true,
+"slug":"teskey-brothers"
+},
+{
+"name":"Son Little",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Meltdown",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "steel wheels":{
 "name":"steel wheels",
@@ -39234,12 +40006,15 @@
 "sugar harp":{
 "name":"Sugar Harp",
 "slug":"sugar-harp",
-"spotify_id":null,
+"spotify_id":"3DYUy6wOb2iYS7o8pUjdye",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab67616d00001e028320e8807458075b47264f3d",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":23
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -39266,11 +40041,17 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Sugar Is My Name",
+"type":"album",
+"date":"2022-07-01",
+"url":"https://open.spotify.com/album/6PZe2MG7Vxm107DrCZFRB6",
+"image_url":"https://i.scdn.co/image/ab67616d00001e028320e8807458075b47264f3d"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/3DYUy6wOb2iYS7o8pUjdye",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Sugar+Harp",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Sugar+Harp",
 "seated":null,
@@ -39281,12 +40062,19 @@
 "sugaray rayford":{
 "name":"Sugaray Rayford",
 "slug":"sugaray-rayford",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"4dctcbWDGbSj1Nn29CV4g3",
+"mbid":"586b9aa3-ea8c-4894-97f2-dc8d073fe746",
+"image_url":"https://i.scdn.co/image/ab676161000051749fc28e7df18c242d157e0b43",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"bluesrock",
+"usa"
+],
+"listener":{
+"tranche":"emerging",
+"raw":18646
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -39316,27 +40104,66 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Margin Call",
+"type":"single",
+"date":"2026-04-10",
+"url":"https://open.spotify.com/album/2wN4FPAWmQoLy1MJvJAD1z",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0238f73a2e1685a1cc0070aed1"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/4dctcbWDGbSj1Nn29CV4g3",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Sugaray+Rayford",
+"musicbrainz":"https://musicbrainz.org/artist/586b9aa3-ea8c-4894-97f2-dc8d073fe746",
 "bandsintown":"https://www.bandsintown.com/search?query=Sugaray+Rayford",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Sugaray+Rayford"
 },
-"similar":[]
+"similar":[
+{
+"name":"Nick Moss Band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Reverend Shawn Amos",
+"in_tracker":true,
+"slug":"reverend-shawn-amos"
+},
+{
+"name":"J.D. Simo",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Cash Box Kings",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Toronzo Cannon",
+"in_tracker":true,
+"slug":"toronzo-cannon"
+}
+]
 },
 "sunny war":{
 "name":"Sunny War",
 "slug":"sunny-war",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"01GKiTphQwz4guZQntMha8",
+"mbid":"db8451ab-9f03-4668-87c7-1dbb66aa1e6b",
+"image_url":"https://i.scdn.co/image/ab6761610000517415d39a15a5e3ca8c4c2494a0",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"folk",
+"singer-songwriter",
+"outlaw country"
+],
+"listener":{
+"tranche":"mid",
+"raw":51307
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -39363,17 +40190,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Armageddon In A Summer Dress",
+"type":"album",
+"date":"2025-02-21",
+"url":"https://open.spotify.com/album/4QHHLKn8d51lY9i6OiOohV",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02f5bbcb6bca268b12bb968ca1"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/01GKiTphQwz4guZQntMha8",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Sunny+War",
+"musicbrainz":"https://musicbrainz.org/artist/db8451ab-9f03-4668-87c7-1dbb66aa1e6b",
 "bandsintown":"https://www.bandsintown.com/search?query=Sunny+War",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Sunny+War"
 },
-"similar":[]
+"similar":[
+{
+"name":"Valerie June",
+"in_tracker":true,
+"slug":"valerie-june"
+},
+{
+"name":"Hurray For The Riff Raff",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Joan Shelley",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"S.G. Goodman",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Amythyst Kiah",
+"in_tracker":true,
+"slug":"amythyst-kiah"
+}
+]
 },
 "susan tedeschi":{
 "name":"susan tedeschi",
@@ -40928,12 +41787,19 @@
 "tinsley ellis":{
 "name":"Tinsley Ellis",
 "slug":"tinsley-ellis",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"spotify_id":"56LMX8mqaIhJCaxjZBM1on",
+"mbid":"16d25d6d-d763-436c-8bc4-3ea43e25a177",
+"image_url":"https://i.scdn.co/image/ab6761610000517425f0d7975d860c6701def987",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"blues rock",
+"guitar"
+],
+"listener":{
+"tranche":"mid",
+"raw":92153
+},
 "tier":{
 "label":"Medium-Strong",
 "rank":3
@@ -40966,17 +41832,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Labor Of Love",
+"type":"album",
+"date":"2026-01-30",
+"url":"https://open.spotify.com/album/3tM2BhfXRTk19q2aD2fLhf",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02de8ed1ed2f595edf533de4da"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/56LMX8mqaIhJCaxjZBM1on",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Tinsley+Ellis",
+"musicbrainz":"https://musicbrainz.org/artist/16d25d6d-d763-436c-8bc4-3ea43e25a177",
 "bandsintown":"https://www.bandsintown.com/search?query=Tinsley+Ellis",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Tinsley+Ellis"
 },
-"similar":[]
+"similar":[
+{
+"name":"Coco Montoya",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Albert Cummings",
+"in_tracker":true,
+"slug":"albert-cummings"
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
+},
+{
+"name":"Henrik Freischlader",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Michael Burks",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "tj turqman":{
 "name":"TJ Turqman",
@@ -42522,9 +43420,9 @@
 "victor wooten":{
 "name":"Victor Wooten",
 "slug":"victor-wooten",
-"spotify_id":null,
+"spotify_id":"2STVYmc2T02GlvvWZl7umj",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab6772690000bac39ad7cf201b69991bd5f10af0",
 "banner_url":null,
 "genres":[],
 "listener":null,
@@ -42568,7 +43466,13 @@
 "vip":0,
 "photo":1
 },
-"latest_release":null,
+"latest_release":{
+"name":"S'Low Down",
+"type":"album",
+"date":"2022-08-26",
+"url":"https://open.spotify.com/album/2iKMpULkvAeLMbhqtfaehb",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02f0d130646c6dac03e787dc05"
+},
 "links":{
 "spotify":"https://open.spotify.com/artist/2STVYmc2T02GlvvWZl7umj",
 "youtube":"@victorwooten",
@@ -43346,12 +44250,15 @@
 "weary ramblers":{
 "name":"Weary Ramblers",
 "slug":"weary-ramblers",
-"spotify_id":null,
+"spotify_id":"0IdBS2pDWcnNYVIaj1m76g",
 "mbid":null,
-"image_url":null,
+"image_url":"https://i.scdn.co/image/ab676161000051748f61e12195956a2d0e46d1ab",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":1112
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -43378,17 +44285,49 @@
 "vip":0,
 "photo":0
 },
-"latest_release":null,
+"latest_release":{
+"name":"Driftwood",
+"type":"album",
+"date":"2025-10-31",
+"url":"https://open.spotify.com/album/4OCZCheUnDqa17f4OTrdbc",
+"image_url":"https://i.scdn.co/image/ab67616d00001e02852496a2a90992da1137b32c"
+},
 "links":{
-"spotify":null,
+"spotify":"https://open.spotify.com/artist/0IdBS2pDWcnNYVIaj1m76g",
 "youtube":null,
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Weary+Ramblers",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Weary+Ramblers",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Weary+Ramblers"
 },
-"similar":[]
+"similar":[
+{
+"name":"Valley Flower",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"AJ Lee & Blue Summit",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chatham Rabbits",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Tray Wellington",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Foreign Landers",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "webb wilder":{
 "name":"webb wilder",
