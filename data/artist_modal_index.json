@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-13T12:54:38Z",
+"generated_at":"2026-07-13T14:21:22Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -2318,13 +2318,24 @@
 "listener":null,
 "tier":null,
 "seen":{
-"count":0,
-"first":null,
+"count":1,
+"first":"2024-07-18",
 "recent":null,
-"show_log":[]
+"show_log":[
+{
+"date":"2024-07-18",
+"venue":"The Birchmere, Alexandria, VA, USA",
+"via":"Tab Benoit & Anders Osborne",
+"photo_url":"https://photos.google.com/share/AF1QipNwu1KEAQX-fJ_ma6C1TQ3T-MPdYb7eTx1wV00haRe585P7y25_vSDFruIsMhFpHA/photo/AF1QipOz1C0Q7rlxRWUMe0zY1Mbca7LtuIMR-iG-B5fg?key=cWhvRnlpQXdoaG52aTFwTjQ5LUNGMFBTeGk3Z2Zn",
+"goals":[]
+}
+]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.132,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -2340,7 +2351,7 @@
 }
 },
 "vip":0,
-"photo":0
+"photo":1
 },
 "latest_release":null,
 "links":{
@@ -12927,70 +12938,6 @@
 }
 ]
 },
-"experience hendrix kenny wayne shepherd":{
-"name":"Experience Hendrix (Kenny Wayne Shepherd)",
-"slug":"experience-hendrix-kenny-wayne-shepherd",
-"spotify_id":"1riHqX633Kup3mJAw8WR8p",
-"mbid":null,
-"image_url":"https://i.scdn.co/image/ab676161000051743eee6b4773c7ce505bdb0fab",
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":1,
-"first":"2025-04-05",
-"recent":null,
-"show_log":[
-{
-"date":"2025-04-05",
-"venue":"Warner Theatre, Washington, DC, USA",
-"via":null,
-"photo_url":null,
-"goals":[]
-}
-]
-},
-"fast_track":false,
-"affinity":{
-"score":0.132,
-"band":"low"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0
-},
-"latest_release":{
-"name":"Ledbetter Heights (30th Anniversary Sessions)",
-"type":"album",
-"date":"2026-05-08",
-"url":"https://open.spotify.com/album/3jpKbAyxoihBxovEcLDNiK",
-"image_url":"https://i.scdn.co/image/ab67616d00001e026e9af214ae346cd66814063b"
-},
-"links":{
-"spotify":"https://open.spotify.com/artist/1riHqX633Kup3mJAw8WR8p",
-"youtube":"N/A",
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=Experience+Hendrix+(Kenny+Wayne+Shepherd)",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=Experience+Hendrix+(Kenny+Wayne+Shepherd)"
-},
-"similar":[]
-},
 "fabulous superlatives":{
 "name":"fabulous superlatives",
 "slug":"fabulous-superlatives",
@@ -20317,53 +20264,6 @@
 },
 "similar":[]
 },
-"john primer the real deal blues band":{
-"name":"John Primer & The Real Deal Blues Band",
-"slug":"john-primer-the-real-deal-blues-band",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=John+Primer+&+The+Real+Deal+Blues+Band",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=John+Primer+&+The+Real+Deal+Blues+Band"
-},
-"similar":[]
-},
 "john prine celebration":{
 "name":"John Prine Celebration",
 "slug":"john-prine-celebration",
@@ -22361,10 +22261,17 @@
 "rank":4
 },
 "seen":{
-"count":1,
+"count":2,
 "first":"2023-10-06",
-"recent":null,
+"recent":"2025-04-05",
 "show_log":[
+{
+"date":"2025-04-05",
+"venue":"Warner Theatre, Washington, DC, USA",
+"via":null,
+"photo_url":null,
+"goals":[]
+},
 {
 "date":"2023-10-06",
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
@@ -22376,7 +22283,7 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.482,
+"score":0.57,
 "band":"medium"
 },
 "badges":{
@@ -31442,24 +31349,13 @@
 },
 "tier":null,
 "seen":{
-"count":1,
-"first":"2026-07-12",
+"count":0,
+"first":null,
 "recent":null,
-"show_log":[
-{
-"date":"2026-07-12",
-"venue":"The Birchmere",
-"via":"Taj Mahal",
-"photo_url":null,
-"goals":[]
-}
-]
+"show_log":[]
 },
 "fast_track":false,
-"affinity":{
-"score":0.132,
-"band":"low"
-},
+"affinity":null,
 "badges":{
 "hat":"absent",
 "book":"absent",
@@ -39757,7 +39653,7 @@
 "rank":4
 },
 "seen":{
-"count":4,
+"count":5,
 "first":"2022-11-17",
 "recent":"2024-12-17",
 "show_log":[
@@ -39766,6 +39662,13 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"goals":[]
+},
+{
+"date":"2024-07-18",
+"venue":"The Birchmere, Alexandria, VA, USA",
+"via":"Tab Benoit & Anders Osborne",
+"photo_url":"https://photos.google.com/share/AF1QipNwu1KEAQX-fJ_ma6C1TQ3T-MPdYb7eTx1wV00haRe585P7y25_vSDFruIsMhFpHA/photo/AF1QipOz1C0Q7rlxRWUMe0zY1Mbca7LtuIMR-iG-B5fg?key=cWhvRnlpQXdoaG52aTFwTjQ5LUNGMFBTeGk3Z2Zn",
 "goals":[]
 },
 {
@@ -39793,7 +39696,7 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.669,
+"score":0.696,
 "band":"high"
 },
 "badges":{
@@ -39811,7 +39714,7 @@
 }
 },
 "vip":0,
-"photo":0
+"photo":1
 },
 "latest_release":{
 "name":"Live at the 2025 New Orleans Jazz & Heritage Festival",
@@ -42619,20 +42522,16 @@
 "victor wooten":{
 "name":"Victor Wooten",
 "slug":"victor-wooten",
-"spotify_id":"2STVYmc2T02GlvvWZl7umj",
-"mbid":"1d0ae4e0-384f-4854-a1b4-ebb4cc81414b",
-"image_url":"https://i.scdn.co/image/ab6772690000bac39ad7cf201b69991bd5f10af0",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
 "banner_url":null,
-"genres":[
-"jazz",
-"bass",
-"funk"
-],
-"listener":{
-"tranche":"mid",
-"raw":178910
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Medium",
+"rank":2
 },
-"tier":null,
 "seen":{
 "count":1,
 "first":"2023-10-05",
@@ -42649,7 +42548,7 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.132,
+"score":0.289,
 "band":"low"
 },
 "badges":{
@@ -42669,100 +42568,15 @@
 "vip":0,
 "photo":1
 },
-"latest_release":{
-"name":"S'Low Down",
-"type":"album",
-"date":"2022-08-26",
-"url":"https://open.spotify.com/album/2iKMpULkvAeLMbhqtfaehb",
-"image_url":"https://i.scdn.co/image/ab67616d00001e02f0d130646c6dac03e787dc05"
-},
+"latest_release":null,
 "links":{
 "spotify":"https://open.spotify.com/artist/2STVYmc2T02GlvvWZl7umj",
 "youtube":"@victorwooten",
-"lastfm":"https://www.last.fm/music/Victor+Wooten",
-"musicbrainz":"https://musicbrainz.org/artist/1d0ae4e0-384f-4854-a1b4-ebb4cc81414b",
+"lastfm":null,
+"musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=Victor+Wooten",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Victor+Wooten"
-},
-"similar":[
-{
-"name":"Marcus Miller",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Stanley Clarke",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Béla Fleck and the Flecktones",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Alain Caron",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Jaco Pastorius",
-"in_tracker":false,
-"slug":null
-}
-]
-},
-"victor wooten the wooten brothers":{
-"name":"Victor Wooten & The Wooten Brothers",
-"slug":"victor-wooten-the-wooten-brothers",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":{
-"label":"Medium",
-"rank":2
-},
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":{
-"score":0.158,
-"band":"low"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=Victor+Wooten+&+The+Wooten+Brothers",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=Victor+Wooten+&+The+Wooten+Brothers"
 },
 "similar":[]
 },
