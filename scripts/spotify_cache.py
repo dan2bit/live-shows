@@ -463,6 +463,83 @@ def collect_artists(amap: dict[str, str]) -> tuple[dict[str, set], dict[str, str
     return artists, url_hints
 
 
+def collect_raw_names(amap: dict[str, str]) -> set[str]:
+    """Every artist name appearing anywhere in the repo TSVs, alias-canonicalised but
+    NOT passed through _is_non_artist() and NOT Band-folded.
+
+    This — not collect_artists() — is the correct universe for --prune (#159).
+    collect_artists() deliberately drops _SKIP_ARTISTS / _UNRESOLVABLE_ARTISTS so they
+    never cost a /search call, and folds "X Band" into "X". Both are right for
+    resolution and wrong for staleness: those artists are still real rows in the TSVs,
+    so a cache entry for one of them is NOT an orphan. Pruning against collect_artists()
+    deletes them *permanently* — nothing re-seeds them, because refresh_lastfm()'s
+    skeleton seeder iterates the same filtered universe. (SatchVai Band carries a
+    Last.fm block and would have been lost.)
+
+    Aliases ARE applied, so a bill name that now canonicalises to a tracked artist
+    ("Victor Wooten & The Wooten Brothers" -> "Victor Wooten") correctly reads as stale
+    and gets pruned.
+    """
+    names: set[str] = set()
+    for path, name_cols, _url_cols in _tsv_sources():
+        for row in read_tsv_rows(path):
+            if name_cols:
+                raw = (row.get(name_cols[0], "") or "").strip()
+                if raw:
+                    names.add(canonical(raw, amap))
+            for col in name_cols[1:]:
+                for act in _split_support(row.get(col, "")):
+                    act = (act or "").strip()
+                    if act:
+                        names.add(canonical(act, amap))
+    return names
+
+
+def _prune_keep_set(amap: dict[str, str], artists: dict[str, set]) -> set[str]:
+    """Cache keys that must survive a prune: the resolved universe plus every raw TSV
+    name (see collect_raw_names)."""
+    return set(artists) | collect_raw_names(amap)
+
+
+def prune_cache(cache: dict, args) -> None:
+    """--prune: drop cache entries whose artist no longer appears in any repo TSV.
+
+    Runs standalone: no Spotify credentials, no API calls. The staleness test is pure
+    TSV reading — the only reason this ever needed --refresh (and its ~800-1000 calls
+    across the whole cache) was that it lived inside main()'s resolve loop (#159).
+    """
+    amap = load_aliases()
+    artists, _ = collect_artists(amap)
+    keep = _prune_keep_set(amap, artists)
+
+    stale = sorted(k for k in cache if k not in keep)
+    if not stale:
+        print("No orphaned cache entries — nothing to prune.")
+        return
+
+    print(f"{len(stale)} orphaned cache entr{'y' if len(stale) == 1 else 'ies'} "
+          f"(no longer in any repo TSV)" + (" [DRY RUN]" if args.dry_run else "") + ":\n")
+    for k in stale:
+        e = cache[k] or {}
+        marks = "".join(("S" if e.get("spotify_id") else "-",
+                         "P" if e.get("image_url") else "-",
+                         "L" if e.get("lastfm") else "-",
+                         "R" if e.get("latest_release") else "-"))
+        print(f"  {k}  [{marks}]  sources: {', '.join(e.get('sources') or []) or '—'}")
+    print("\n  S=spotify_id  P=portrait  L=lastfm  R=latest_release — a populated entry "
+          "costs 2-3 Spotify calls to rebuild, so review before removing.")
+
+    if args.dry_run:
+        print("\n[DRY RUN] nothing removed.")
+        return
+
+    for k in stale:
+        del cache[k]
+    save_cache(cache)
+    print(f"\nRemoved {len(stale)}. Cache now holds {len(cache)} artists. "
+          f"Written: {OUTPUT_JSON}")
+
+
 # ── Spotify Web API ───────────────────────────────────────────────────────────
 
 _token_cache: dict = {}
@@ -1362,6 +1439,15 @@ def add_artist(args, creds) -> None:
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def _reject_mode_clashes(active: str, pairs, extra: str = "") -> None:
+    """Exit if a mode flag is combined with modes it cannot share a run with.
+    `pairs` is (flag_name, is_set). Shared by --new-artist (#145) and --prune (#159)."""
+    clashes = [flag for flag, on in pairs if on]
+    if clashes:
+        msg = f"{active} cannot be combined with {', '.join(clashes)}."
+        sys.exit(f"{msg} {extra}".strip())
+
+
 def main() -> None:
     global DELAY
     ap = argparse.ArgumentParser(description=__doc__,
@@ -1390,7 +1476,10 @@ def main() -> None:
                          "cache. Cannot be combined with the --refresh-* / --artist / "
                          "--add-artist / --prune modes.")
     ap.add_argument("--prune", action="store_true",
-                    help="With --refresh: drop cached artists no longer present in the repo.")
+                    help="Drop cached artists no longer present in any repo TSV. Runs "
+                         "standalone (no Spotify credentials, no API calls); pair with "
+                         "--dry-run to list them first, or with --refresh to prune after "
+                         "a rebuild.")
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
@@ -1438,17 +1527,24 @@ def main() -> None:
     # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
     # Reject the mode combinations rather than silently letting one win (#145).
     if args.new_artist is not None:
-        clashes = [flag for flag, on in (
+        _reject_mode_clashes("--new-artist", (
             ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
             ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
             ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
-        ) if on]
-        if clashes:
-            sys.exit(f"--new-artist cannot be combined with {', '.join(clashes)}. "
-                     f"Name the artist as --new-artist \"NAME\", or pass it bare to fill "
-                     f"every unfilled skeleton.")
+        ), extra='Name the artist as --new-artist "NAME", or pass it bare to fill every '
+                 'unfilled skeleton.')
         # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
         # so there is nothing for it to skip. Ignored rather than rejected.
+
+    # --prune pairs only with --refresh (prune-after-rebuild). Every other mode owns the
+    # run and would silently skip the prune. Standalone --prune is dispatched below.
+    if args.prune:
+        _reject_mode_clashes("--prune", (
+            ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images),
+            ("--refresh-lastfm", args.refresh_lastfm),
+            ("--add-artist", args.add_artist),
+        ), extra="Run --prune on its own (no API calls), or as --refresh --prune.")
 
     # Last.fm enrichment is fully independent of Spotify — handle it before the
     # Spotify credential check so it runs with only LASTFM_API_KEY set.
@@ -1459,6 +1555,15 @@ def main() -> None:
         cache = load_cache()
         print(f"Already cached: {len(cache)}")
         refresh_lastfm(cache, lastfm_key, args)
+        return
+
+    # --prune standalone: no Spotify credentials, no API calls (#159). Sits above the
+    # credential check for that reason. `--refresh --prune` still prunes after the
+    # rebuild, further down.
+    if args.prune and not args.refresh:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        prune_cache(cache, args)
         return
 
     client_id     = os.environ.get("SPOTIFY_CLIENT_ID", "")
@@ -1586,7 +1691,11 @@ def main() -> None:
             print(f"    …checkpoint saved ({resolved} written)")
 
     if args.refresh and args.prune and not args.dry_run:
-        stale = [k for k in cache if k not in artists]
+        # Staleness is measured against the RAW TSV names, not the resolved universe:
+        # collect_artists() drops _SKIP_ARTISTS/_UNRESOLVABLE_ARTISTS and folds "X Band"
+        # into "X", and treating those as orphans deletes real, present artists — with no
+        # path back, since nothing re-seeds them (#159).
+        stale = [k for k in cache if k not in _prune_keep_set(amap, artists)]
         for k in stale:
             del cache[k]
         if stale:
