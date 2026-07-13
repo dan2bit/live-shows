@@ -376,13 +376,15 @@ async function loadGoalData(){
   GOAL_DATA={};
   var goals=_goalEventList();if(!goals.length)return;
   await Promise.all(goals.map(async function(g){
-    var d={completed:{},eligible:{}},file=(g.source||'').replace(/^event_log:/,'').trim();
+    // #154 — `signed` is per-artist (any date); `completed` stays per-artist+date. Forward-looking
+    // rows use `signed` to suppress a goal that's already been obtained.
+    var d={completed:{},eligible:{},signed:{}},file=(g.source||'').replace(/^event_log:/,'').trim();
     try{
       var res=await ghFetch('data/show_goals/'+file+'.tsv');
       parseTsv(_decodeB64(res.content)).forEach(function(r){
         var signer=(r['signer']||'').trim(),date=(r['show_date']||'').trim();
         if(!signer||!date)return;
-        _goalCreditTargets(signer,r['attribution']).forEach(function(t){var k=_goalNorm(t);if(k)d.completed[k+'␟'+date]=1;});
+        _goalCreditTargets(signer,r['attribution']).forEach(function(t){var k=_goalNorm(t);if(!k)return;d.completed[k+'␟'+date]=1;d.signed[k]=1;});
       });
     }catch(e){/* missing signatures -> no completions */}
     if(g.eligibility){
@@ -404,7 +406,12 @@ function _goalBadgeSpans(artist,showDate,isUpcoming){
   goals.forEach(function(g){
     var d=GOAL_DATA[g.key];if(!d)return;
     var completed=keys.some(function(k){return !!d.completed[k+'␟'+sd];});
-    var state=completed?'completed':(isUpcoming&&keys.some(function(k){return !!d.eligible[k];})?'planned':'');
+    // #154 — eligibility answers "meets the criteria", not "still needed". Once the autograph
+    // exists for this goal (from any past show), don't advertise it as planned on a future row;
+    // that badge belongs only on the row where it was obtained. Per-goal, so a signed hat never
+    // hides an unsigned book.
+    var signed=keys.some(function(k){return !!d.signed[k];});
+    var state=completed?'completed':(isUpcoming&&!signed&&keys.some(function(k){return !!d.eligible[k];})?'planned':'');
     if(!state)return;
     var key=g.key,label=esc(g.label||g.key),icon=g.icon||'';
     var style=state==='completed'
