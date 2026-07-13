@@ -20,8 +20,9 @@ that has already been obtained. The eligibility files answer "does this artist m
 criteria?", not "do I still need this autograph?", so eligible-and-already-signed is the
 regression to watch — those rows must render no `planned` badge.
 
-bill_keys() below is the Python twin of `_goalBillKeys` in app.js — keep the two in step.
-The trailing-" Band" drop mirrors surface_forms() in build_recommend_index.py.
+The name vocabulary itself lives in name_forms.py (#160) — goal_norm() and
+bill_components() are the single canonical definition, shared with build_recommend_index
+and spotify_cache. app.js's _goalNorm/_goalBillKeys are the JS twins; keep them in step.
 
 Exit status:
   default   0 always (report mode; every finding is a row the fallback legitimately rescues)
@@ -34,7 +35,8 @@ import glob
 import os
 import re
 import sys
-import unicodedata
+
+from name_forms import bill_components, goal_norm as norm
 
 ROOT = "."
 GOAL_FILES = [
@@ -43,42 +45,23 @@ GOAL_FILES = [
     ("HAT", "data/show_goals/hat_eligibility.tsv", ("Eligible", "Hat Eligible")),
 ]
 
-# Explicit separators only — no fuzzy matching (#150 non-goal). Mirrors _GOAL_BILL_SEP in app.js.
-BILL_SEP = re.compile(r"\s+(?:&|and his|and her|and|w/|feat\.?|featuring|with)\s+|\s*,\s*", re.I)
-TRAILING_BAND = re.compile(r"\s+band$", re.I)
 PLUS_MORE = re.compile(r"\s*\+\s*\d*\s*more\s*$", re.I)
 
 
-def norm(s):
-    """Twin of _goalNorm() in app.js: de-invert "X, The", de-accent, drop a leading article,
-    strip punctuation, collapse whitespace."""
-    if not s:
-        return ""
-    s = str(s).strip()
-    m = re.match(r"^(.*),\s+(the|a|an)$", s, re.I)
-    if m:
-        s = m.group(2) + " " + m.group(1)
-    s = unicodedata.normalize("NFKD", s)
-    s = "".join(c for c in s if not unicodedata.combining(c)).lower()
-    s = re.sub(r"^\s*(the|a|an)\s+", "", s)
-    s = re.sub(r"[^a-z0-9 ]+", " ", s)
-    return re.sub(r"\s+", " ", s).strip()
-
-
 def bill_keys(name):
-    """Twin of _goalBillKeys() in app.js. Exact key first, then component fallbacks."""
+    """Exact key first, then bill-component fallbacks. JS twin: _goalBillKeys() in app.js.
+
+    The vocabulary itself now lives in name_forms.py (#160) — norm() and bill_components()
+    are the single canonical definition, shared with build_recommend_index and
+    spotify_cache. This stays a thin ordering wrapper: the exact key must be tried before
+    any component, so an eligibility row keyed on the full bill still wins.
+    """
     base = norm(name)
     keys = [base] if base else []
-    if not name:
-        return keys
-    for part in BILL_SEP.split(str(name)):
-        part = (part or "").strip()
-        if not part:
-            continue
-        for variant in (part, TRAILING_BAND.sub("", part).strip()):
-            k = norm(variant)
-            if k and k not in keys:
-                keys.append(k)
+    for form in bill_components(name):
+        k = norm(form)
+        if k and k not in keys:
+            keys.append(k)
     return keys
 
 

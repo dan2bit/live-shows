@@ -24,7 +24,7 @@ import csv
 import json
 import re
 import sys
-import unicodedata
+from name_forms import norm, variant_keys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -49,46 +49,11 @@ SKIP_POTENTIAL_AGGREGATE = re.compile(r"festival|blues summit", re.I)
 
 
 # ── normalization ───────────────────────────────────────────────────────────
-def strip_accents(s):
-    return "".join(c for c in unicodedata.normalize("NFKD", s)
-                   if not unicodedata.combining(c))
-
-
-def norm(s):
-    """Lowercase, de-accent, drop one leading article, strip punctuation."""
-    s = strip_accents(s or "").lower()
-    s = re.sub(r"^\s*(the|a|an)\s+", "", s)
-    s = re.sub(r"[^a-z0-9 ]+", " ", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
-
-
-def surface_forms(raw):
-    """All legitimate spellings of a name, pre-normalization."""
-    raw = (raw or "").strip()
-    if not raw:
-        return set()
-    forms = {raw}
-    # de-invert "X, The" / "X, A" / "X, An" -> "The X" and bare "X"
-    m = re.match(r"^(.*),\s*(the|a|an)$", raw, re.I)
-    if m:
-        forms.add("%s %s" % (m.group(2), m.group(1)))
-        forms.add(m.group(1))
-    # drop a trailing " Band" (Ally Venable Band -> Ally Venable)
-    for f in list(forms):
-        m2 = re.match(r"^(.*\S)\s+band$", f, re.I)
-        if m2:
-            forms.add(m2.group(1))
-    return forms
-
-
-def variant_keys(raw):
-    keys = set()
-    for f in surface_forms(raw):
-        k = norm(f)
-        if k:
-            keys.add(k)
-    return keys
+# strip_accents / norm / surface_forms / variant_keys now live in name_forms.py, the one
+# canonical definition (#160). surface_forms is IDENTITY only — it must never split a bill
+# into its members, because variant_keys feeds the union-find below and would fuse separate
+# artists into one cluster ("Tab Benoit & Anders Osborne" -> Tab Benoit + Anders Osborne).
+# Bill membership is name_forms.bill_components(), and is deliberately not used here.
 
 
 def display_name(raw):

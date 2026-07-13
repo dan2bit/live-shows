@@ -242,6 +242,8 @@ LASTFM_UA      = "live-shows-artist-cache/1.0 (+https://github.com/dan2bit/live-
 LASTFM_TAGS    = 5    # max tags stored per artist
 LASTFM_SIMILAR = 5    # max similar artists stored per artist
 
+from name_forms import lookup_forms
+
 _ARTIST_ID_RE = re.compile(r"artist[:/]([A-Za-z0-9]+)")
 
 
@@ -1039,6 +1041,41 @@ def lastfm_artist_info(name: str, api_key: str) -> dict | None:
     }
 
 
+def lastfm_lookup(name: str, api_key: str) -> tuple[dict | None, str]:
+    """Last.fm artist info, trying the exact name then its surface forms / bill components.
+
+    Last.fm matches names EXACTLY — no fuzzy fallback — so a cache key that is a bill name
+    ("Lilly Hiatt Band", "TajMo: The Taj Mahal & Keb' Mo' Band") simply misses, and the
+    entry ends up with a null lastfm block that looks resolved (#160). Retries are free
+    (Last.fm is uncapped), so walk the fallbacks: exact first, then most specific.
+
+    Returns (info, matched_name). matched_name != name means a fallback won — the caller
+    logs it, so a wrong fold is visible rather than silent.
+    """
+    forms = lookup_forms(name)
+    for i, form in enumerate(forms):
+        info = lastfm_artist_info(form, api_key)
+        if info:
+            return info, form
+        if i < len(forms) - 1:
+            time.sleep(DELAY)
+    return None, name
+
+
+def _write_lastfm(entry: dict, info: dict | None) -> None:
+    """Store a Last.fm pull, mirroring the empty-pull rule the portrait pass uses (#125).
+
+    An empty pull never wipes a cached block and never stamps lastfm_checked, so the next
+    pass retries instead of locking in a false null. The old code stamped unconditionally,
+    which is how bill-named entries ended up permanently null-but-checked (#160).
+    """
+    if info:
+        entry["lastfm"] = info
+        entry["lastfm_checked"] = date.today().isoformat()
+        return
+    entry.setdefault("lastfm", None)   # keep any cached block; leave *_checked unstamped
+
+
 def _spotify_placeholder(sources: set) -> dict:
     """Cache skeleton for an artist Last.fm has seeded but Spotify hasn't resolved
     yet: spotify_id is null so the next Spotify build (default add-missing mode)
@@ -1081,26 +1118,26 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
 
     enriched = 0
     for i, name in enumerate(names, 1):
-        info = lastfm_artist_info(name, api_key)
+        info, matched = lastfm_lookup(name, api_key)
         time.sleep(DELAY)
         listeners = (info or {}).get("listeners")
+        via = f"  [via {matched!r}]" if info and matched != name else ""
 
         if args.dry_run:
             shown = f"{listeners:,} listeners" if listeners is not None else "not found"
-            print(f"[{i}/{len(names)}] {name}  → {shown}")
+            print(f"[{i}/{len(names)}] {name}  → {shown}{via}")
             continue
 
-        cache[name]["lastfm"] = info
-        cache[name]["lastfm_checked"] = date.today().isoformat()
+        _write_lastfm(cache[name], info)
         if info:
             enriched += 1
             if listeners is not None:
                 tags = ", ".join(info["tags"][:3]) or "—"
-                print(f"[{i}/{len(names)}] {name}  → {listeners:,} listeners, tags: {tags}")
+                print(f"[{i}/{len(names)}] {name}  → {listeners:,} listeners, tags: {tags}{via}")
             else:
-                print(f"[{i}/{len(names)}] {name}  → enriched (listeners unknown)")
+                print(f"[{i}/{len(names)}] {name}  → enriched (listeners unknown){via}")
         else:
-            print(f"[{i}/{len(names)}] {name}  → not found on Last.fm")
+            print(f"[{i}/{len(names)}] {name}  → not found on Last.fm (left unstamped to retry)")
         if (i % SAVE_EVERY) == 0:
             save_cache(cache)
             print("    …checkpoint saved")
@@ -1195,14 +1232,15 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
     else:
         portrait = "portrait — (empty pull; left unstamped to retry)"
 
-    # Pass 3 — Last.fm. Independent of Spotify (no cap, no creds); mirrors refresh_lastfm.
-    info = lastfm_artist_info(name, lastfm_key)
+    # Pass 3 — Last.fm. Independent of Spotify (no cap, no creds); mirrors refresh_lastfm,
+    # including the surface-form fallback and the empty-pull rule (#160).
+    info, matched = lastfm_lookup(name, lastfm_key)
     time.sleep(DELAY)
-    entry["lastfm"] = info
-    entry["lastfm_checked"] = date.today().isoformat()
+    _write_lastfm(entry, info)
     listeners = (info or {}).get("listeners")
-    lastfm_note = (f"lastfm ✓ ({listeners:,} listeners)" if listeners is not None
-                   else ("lastfm ✓" if info else "lastfm — (not found)"))
+    via = f" via {matched!r}" if info and matched != name else ""
+    lastfm_note = (f"lastfm ✓ ({listeners:,} listeners){via}" if listeners is not None
+                   else (f"lastfm ✓{via}" if info else "lastfm — (not found; left unstamped)"))
 
     rel = (entry.get("latest_release") or {}).get("date") or "—"
     return f"→ {aid}  latest {rel}  {portrait}  {lastfm_note}", entry
