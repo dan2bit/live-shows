@@ -1037,6 +1037,174 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
           f"Written: {OUTPUT_JSON}")
 
 
+# ── --new-artist: resolve + portrait + Last.fm in one pass, per artist (#145) ──
+# Bringing a newly-added artist to a fully-populated cache entry otherwise takes three
+# separate invocations in a fixed order, which is easy to get wrong. This chains them.
+#
+# ATOMIC PER ARTIST: the entry is committed to the cache only after all three passes
+# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was
+# (absent, or still a skeleton), so the next run retries it. Committing after the resolve
+# pass would populate spotify_id, which would disqualify the artist from the skeleton
+# check below and strand it with no portrait and no Last.fm block — invisible until
+# someone noticed a missing image in the modal.
+
+_SKELETON_FIELDS = (
+    "spotify_id", "spotify_url", "last_refreshed",
+    "latest_release", "latest_release_checked",
+    "image_url", "images_checked",
+    "lastfm", "lastfm_checked",
+)
+
+
+def _is_unfilled_skeleton(entry: dict) -> bool:
+    """A pure Last.fm-seed skeleton (see _spotify_placeholder): sources populated,
+    nothing else. A missing key counts as unfilled just as an explicit None does — a
+    fresh placeholder omits image_url/images_checked/lastfm/lastfm_checked entirely.
+    Any truthy value in any field disqualifies the entry: the intent is "brand-new,
+    nothing done yet", not "partially populated, might be recoverable" (those are what
+    the targeted --refresh-* flags are for)."""
+    if not entry.get("sources"):
+        return False   # not even a skeleton
+    return all(entry.get(k) is None for k in _SKELETON_FIELDS)
+
+
+def _populate_new_artist(name: str, sources: set, url_hint: str | None,
+                         cache: dict, creds, lastfm_key: str, args) -> tuple[str, dict | None]:
+    """Run all three passes for one artist. Returns (status_line, entry|None).
+
+    The entry is NOT written into `cache` here — the caller commits it only on full
+    success (see the atomicity note above). Raises RateLimited straight through so the
+    caller can flush the artists already completed.
+    """
+    cached = cache.get(name) or {}
+
+    # Pass 1 — resolve + latest_release.
+    aid, url = resolve_artist_id(name, url_hint, creds,
+                                 cached.get("spotify_id"), cached.get("spotify_url", ""))
+    time.sleep(DELAY)
+    if not aid:
+        return "unresolved", None
+
+    if args.dry_run:
+        return f"→ {aid}  [would resolve + portrait + lastfm]", None
+
+    entry = build_entry(name, sources, aid, url, creds)
+    time.sleep(DELAY)
+
+    # Preserve guards, mirroring the add-missing loop in main(): a re-run over an
+    # already-populated artist must not wipe what the other passes wrote, and a null
+    # release pull must not overwrite a known one (#109).
+    prev = cache.get(name)
+    prev_rel = (prev or {}).get("latest_release")
+    if entry.get("latest_release") is None and prev_rel is not None:
+        entry["latest_release"] = prev_rel
+        entry["latest_release_checked"] = prev.get("latest_release_checked")
+        print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
+
+    # Pass 2 — portrait. Mirrors refresh_images' empty-pull rule (#125): an empty pull
+    # never wipes a cached portrait and never stamps images_checked, so the next sweep
+    # retries it rather than locking in a false null.
+    img = artist_image(aid, creds)
+    time.sleep(DELAY)
+    old_img = (prev or {}).get("image_url")
+    if img:
+        entry["image_url"] = img
+        entry["images_checked"] = date.today().isoformat()
+        portrait = "portrait ✓"
+    elif old_img:
+        entry["image_url"] = old_img
+        entry["images_checked"] = (prev or {}).get("images_checked")
+        portrait = "portrait — (empty pull; kept cached)"
+    else:
+        portrait = "portrait — (empty pull; left unstamped to retry)"
+
+    # Pass 3 — Last.fm. Independent of Spotify (no cap, no creds); mirrors refresh_lastfm.
+    info = lastfm_artist_info(name, lastfm_key)
+    time.sleep(DELAY)
+    entry["lastfm"] = info
+    entry["lastfm_checked"] = date.today().isoformat()
+    listeners = (info or {}).get("listeners")
+    lastfm_note = (f"lastfm ✓ ({listeners:,} listeners)" if listeners is not None
+                   else ("lastfm ✓" if info else "lastfm — (not found)"))
+
+    rel = (entry.get("latest_release") or {}).get("date") or "—"
+    return f"→ {aid}  latest {rel}  {portrait}  {lastfm_note}", entry
+
+
+def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
+    """--new-artist: one named artist, or every unfilled skeleton in the cache.
+
+    Processes one artist at a time through all three passes, rather than running each
+    pass across the whole batch. If the run bails on the Spotify cap, per-artist ordering
+    leaves every completed artist fully populated instead of leaving the whole batch
+    half-done.
+    """
+    amap = load_aliases()
+    artists, url_hints = collect_artists(amap)
+
+    if args.new_artist:                       # a name was given → target that artist
+        sub = args.new_artist.lower()
+        pool = sorted(set(artists) | set(cache))
+        names = [n for n in pool if sub in n.lower()]
+        if not names:
+            sys.exit(f"No artist matching '{args.new_artist}' in the repo TSVs or the cache. "
+                     f"Add the row first (--add-artist), then re-run.")
+    else:                                     # bare flag → every unfilled skeleton
+        names = sorted(n for n, e in cache.items() if _is_unfilled_skeleton(e))
+        if not names:
+            print("No unfilled skeleton entries — nothing to do.")
+            return
+        print(f"Found {len(names)} unfilled skeleton entr{'y' if len(names) == 1 else 'ies'}.")
+
+    print(f"Processing {len(names)} artist(s) through resolve + portrait + Last.fm"
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    done = 0
+    unresolved: list[str] = []
+
+    def _flush_on_bail():
+        # Persist the artists completed so far; the one that bailed was never committed,
+        # so it stays a skeleton and gets retried on the next run.
+        if not args.dry_run:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+
+    for i, name in enumerate(names, 1):
+        srcs = artists.get(name) or set((cache.get(name) or {}).get("sources") or [])
+        try:
+            status, entry = _populate_new_artist(name, srcs, url_hints.get(name),
+                                                 cache, creds, lastfm_key, args)
+        except RateLimited:
+            _flush_on_bail()
+            raise
+
+        print(f"[{i}/{len(names)}] {name}  {status}")
+        if entry is None:
+            if status == "unresolved":
+                unresolved.append(name)
+            continue
+
+        cache[name] = entry      # commit only now — all three passes succeeded
+        done += 1
+        if done % SAVE_EVERY == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Populated {done}/{len(names)} artist(s). Cache now holds {len(cache)} artists. "
+          f"Written: {OUTPUT_JSON}")
+    if unresolved:
+        print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
+              "or an alias entry):")
+        for n in unresolved:
+            print(f"  {n}")
+
+
 # ── --add-artist: append a cache-ready row to a low-commitment list (#94) ─────
 # Resolve an artist on Spotify and append a schema-valid row to research /
 # fast_track / seen_with. artists.tsv is REFUSED — a row there asserts Times Seen
@@ -1216,6 +1384,11 @@ def main() -> None:
                          "playcount, tags, similar) for cached artists. Independent "
                          "of Spotify; needs LASTFM_API_KEY, not Spotify creds. "
                          "Honors --artist and --dry-run.")
+    ap.add_argument("--new-artist", nargs="?", const="", default=None, metavar="NAME",
+                    help="chain all three passes (resolve + portrait + Last.fm) for one "
+                         "artist; with no NAME, for every unfilled skeleton entry in the "
+                         "cache. Cannot be combined with the --refresh-* / --artist / "
+                         "--add-artist / --prune modes.")
     ap.add_argument("--prune", action="store_true",
                     help="With --refresh: drop cached artists no longer present in the repo.")
     ap.add_argument("--artist", metavar="NAME",
@@ -1262,6 +1435,21 @@ def main() -> None:
 
     DELAY = args.delay
 
+    # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
+    # Reject the mode combinations rather than silently letting one win (#145).
+    if args.new_artist is not None:
+        clashes = [flag for flag, on in (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
+        ) if on]
+        if clashes:
+            sys.exit(f"--new-artist cannot be combined with {', '.join(clashes)}. "
+                     f"Name the artist as --new-artist \"NAME\", or pass it bare to fill "
+                     f"every unfilled skeleton.")
+        # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
+        # so there is nothing for it to skip. Ignored rather than rejected.
+
     # Last.fm enrichment is fully independent of Spotify — handle it before the
     # Spotify credential check so it runs with only LASTFM_API_KEY set.
     if args.refresh_lastfm:
@@ -1279,6 +1467,17 @@ def main() -> None:
         sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
                  "(scripts/.env or environment).")
     creds = (client_id, client_secret)
+
+    # --new-artist: needs both credential sets — Spotify for passes 1-2, Last.fm for pass 3.
+    if args.new_artist is not None:
+        lastfm_key = os.environ.get("LASTFM_API_KEY", "")
+        if not lastfm_key:
+            sys.exit("LASTFM_API_KEY must be set for --new-artist (it chains the Last.fm "
+                     "pass). Set it in scripts/.env or the environment.")
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        new_artist_run(cache, creds, lastfm_key, args)
+        return
 
     # --add-artist: resolve + append one artist to a low-commitment list (#94).
     # Needs Spotify creds (for resolution), so it sits after the credential check.
