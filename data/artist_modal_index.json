@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-13T16:29:13Z",
+"generated_at":"2026-07-13T17:26:53Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -157,7 +157,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":87268
+"raw":87483
 },
 "tier":{
 "label":"Strong",
@@ -217,19 +217,14 @@
 },
 "similar":[
 {
-"name":"Amythyst Kiah",
-"in_tracker":true,
-"slug":"amythyst-kiah"
-},
-{
 "name":"Valerie June",
 "in_tracker":true,
 "slug":"valerie-june"
 },
 {
-"name":"Cedric Burnside",
+"name":"Amythyst Kiah",
 "in_tracker":true,
-"slug":"cedric-burnside"
+"slug":"amythyst-kiah"
 },
 {
 "name":"Larkin Poe",
@@ -237,9 +232,14 @@
 "slug":"larkin-poe"
 },
 {
-"name":"Fantastic Negrito",
+"name":"The SteelDrivers",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Sunny War",
 "in_tracker":true,
-"slug":"fantastic-negrito"
+"slug":"sunny-war"
 }
 ]
 },
@@ -351,7 +351,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1254864
+"raw":1260705
 },
 "tier":{
 "label":"Strong",
@@ -451,7 +451,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1073904
+"raw":1077139
 },
 "tier":{
 "label":"Strong",
@@ -526,12 +526,12 @@
 "slug":"gary-clark-jr"
 },
 {
-"name":"The Black Keys",
+"name":"Dan Auerbach",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Dan Auerbach",
+"name":"The Black Keys",
 "in_tracker":false,
 "slug":null
 }
@@ -645,7 +645,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":14646
+"raw":14752
 },
 "tier":{
 "label":"Strong",
@@ -712,6 +712,11 @@
 },
 "similar":[
 {
+"name":"Mike Zito",
+"in_tracker":true,
+"slug":"mike-zito"
+},
+{
 "name":"Supersonic Blues Machine",
 "in_tracker":false,
 "slug":null
@@ -722,19 +727,14 @@
 "slug":null
 },
 {
-"name":"Mike Zito",
-"in_tracker":true,
-"slug":"mike-zito"
-},
-{
 "name":"Albert Cummings",
 "in_tracker":true,
 "slug":"albert-cummings"
 },
 {
-"name":"Tinsley Ellis",
+"name":"Altered Five Blues Band",
 "in_tracker":true,
-"slug":"tinsley-ellis"
+"slug":"altered-five-blues-band"
 }
 ]
 },
@@ -752,7 +752,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":78700
+"raw":78857
 },
 "tier":{
 "label":"Strong",
@@ -824,9 +824,9 @@
 "slug":null
 },
 {
-"name":"Tinsley Ellis",
+"name":"Walter Trout",
 "in_tracker":true,
-"slug":"tinsley-ellis"
+"slug":"walter-trout"
 },
 {
 "name":"Albert Castiglia",
@@ -834,9 +834,9 @@
 "slug":"albert-castiglia"
 },
 {
-"name":"Walter Trout",
+"name":"Tinsley Ellis",
 "in_tracker":true,
-"slug":"walter-trout"
+"slug":"tinsley-ellis"
 },
 {
 "name":"Coco Montoya",
@@ -859,7 +859,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":122860
+"raw":122983
 },
 "tier":{
 "label":"Medium-Strong",
@@ -916,17 +916,17 @@
 "slug":null
 },
 {
-"name":"The Bottle Rockets",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"James McMurtry",
 "in_tracker":true,
 "slug":"james-mcmurtry"
 },
 {
-"name":"The Gourds",
+"name":"The Bottle Rockets",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Robbie Fulks",
 "in_tracker":false,
 "slug":null
 },
@@ -951,7 +951,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":4276044
+"raw":4293651
 },
 "tier":{
 "label":"Strong",
@@ -1018,12 +1018,12 @@
 "slug":null
 },
 {
-"name":"Kelly Rowland",
+"name":"Whitney Houston",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Whitney Houston",
+"name":"Joss Stone",
 "in_tracker":false,
 "slug":null
 }
@@ -1043,7 +1043,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":577145
+"raw":578012
 },
 "tier":{
 "label":"Lower",
@@ -1105,17 +1105,17 @@
 "slug":null
 },
 {
-"name":"Nanci Griffith",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Robert Plant & Alison Krauss",
+"name":"Mary Chapin Carpenter",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Rosanne Cash",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Robert Plant & Alison Krauss",
 "in_tracker":false,
 "slug":null
 }
@@ -1235,7 +1235,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":85196
+"raw":87148
 },
 "tier":{
 "label":"Strong",
@@ -1325,9 +1325,9 @@
 "slug":"amythyst-kiah"
 },
 {
-"name":"Valerie June",
+"name":"Rhiannon Giddens",
 "in_tracker":true,
-"slug":"valerie-june"
+"slug":"rhiannon-giddens"
 },
 {
 "name":"Brandi Carlile",
@@ -1335,9 +1335,9 @@
 "slug":"brandi-carlile"
 },
 {
-"name":"Rhiannon Giddens",
+"name":"Valerie June",
 "in_tracker":true,
-"slug":"rhiannon-giddens"
+"slug":"valerie-june"
 },
 {
 "name":"Sarah Jarosz",
@@ -1360,7 +1360,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":13099
+"raw":13151
 },
 "tier":null,
 "seen":{
@@ -1504,7 +1504,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":9531
+"raw":9620
 },
 "tier":{
 "label":"Strong",
@@ -1561,14 +1561,14 @@
 "slug":"joanne-shaw-taylor"
 },
 {
-"name":"Walter Trout",
-"in_tracker":true,
-"slug":"walter-trout"
-},
-{
 "name":"Samantha Fish",
 "in_tracker":true,
 "slug":"samantha-fish"
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
 },
 {
 "name":"Warren Haynes",
@@ -1576,9 +1576,9 @@
 "slug":"warren-haynes"
 },
 {
-"name":"Ana Popovic",
+"name":"Carolyn Wonderland",
 "in_tracker":true,
-"slug":"ana-popovic"
+"slug":"carolyn-wonderland"
 }
 ]
 },
@@ -1684,7 +1684,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":8068
+"raw":8079
 },
 "tier":{
 "label":"Medium",
@@ -1736,14 +1736,19 @@
 },
 "similar":[
 {
+"name":"Albert Castiglia",
+"in_tracker":true,
+"slug":"albert-castiglia"
+},
+{
 "name":"Walter Trout",
 "in_tracker":true,
 "slug":"walter-trout"
 },
 {
-"name":"Albert Castiglia",
-"in_tracker":true,
-"slug":"albert-castiglia"
+"name":"Savoy Brown",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Mike Zito",
@@ -1754,11 +1759,6 @@
 "name":"Joanne Shaw Taylor",
 "in_tracker":true,
 "slug":"joanne-shaw-taylor"
-},
-{
-"name":"Ana Popovic",
-"in_tracker":true,
-"slug":"ana-popovic"
 }
 ]
 },
@@ -1776,7 +1776,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":53706
+"raw":53738
 },
 "tier":null,
 "seen":{
@@ -1822,19 +1822,9 @@
 },
 "similar":[
 {
-"name":"Eric Bibb",
-"in_tracker":true,
-"slug":"eric-bibb"
-},
-{
 "name":"Rory Block",
 "in_tracker":false,
 "slug":null
-},
-{
-"name":"Taj Mahal",
-"in_tracker":true,
-"slug":"taj-mahal"
 },
 {
 "name":"Doug MacLeod",
@@ -1842,7 +1832,17 @@
 "slug":"doug-macleod"
 },
 {
+"name":"Eric Bibb",
+"in_tracker":true,
+"slug":"eric-bibb"
+},
+{
 "name":"Corey Harris",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kelly Joe Phelps",
 "in_tracker":false,
 "slug":null
 }
@@ -1954,7 +1954,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2162
+"raw":2164
 },
 "tier":null,
 "seen":{
@@ -2087,7 +2087,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":53665
+"raw":53830
 },
 "tier":{
 "label":"Strong",
@@ -2158,11 +2158,6 @@
 },
 "similar":[
 {
-"name":"Adia Victoria",
-"in_tracker":true,
-"slug":"adia-victoria"
-},
-{
 "name":"Allison Russell",
 "in_tracker":true,
 "slug":"allison-russell"
@@ -2173,14 +2168,19 @@
 "slug":null
 },
 {
-"name":"Valerie June",
+"name":"Adia Victoria",
 "in_tracker":true,
-"slug":"valerie-june"
+"slug":"adia-victoria"
 },
 {
 "name":"Yasmin Williams",
 "in_tracker":true,
 "slug":"yasmin-williams"
+},
+{
+"name":"Valerie June",
+"in_tracker":true,
+"slug":"valerie-june"
 }
 ]
 },
@@ -2198,7 +2198,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":1349
+"raw":1354
 },
 "tier":{
 "label":"Strong",
@@ -2291,17 +2291,17 @@
 "slug":"walter-trout"
 },
 {
+"name":"Aynsley Lister",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Joe Bonamassa",
 "in_tracker":true,
 "slug":"joe-bonamassa"
 },
 {
 "name":"Kenny Wayne Shepherd Band",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Taj Mahal & Keb’ Mo’",
 "in_tracker":false,
 "slug":null
 }
@@ -2321,7 +2321,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":65619
+"raw":65631
 },
 "tier":null,
 "seen":{
@@ -2465,7 +2465,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2012
+"raw":2038
 },
 "tier":{
 "label":"Strong",
@@ -2517,14 +2517,14 @@
 },
 "similar":[
 {
-"name":"Sugaray Rayford",
-"in_tracker":true,
-"slug":"sugaray-rayford"
-},
-{
 "name":"D.K. Harrell",
 "in_tracker":true,
 "slug":"d-k-harrell"
+},
+{
+"name":"Sugaray Rayford",
+"in_tracker":true,
+"slug":"sugaray-rayford"
 },
 {
 "name":"Dom Flemons",
@@ -2532,14 +2532,14 @@
 "slug":"dom-flemons"
 },
 {
-"name":"Kat Riggins",
-"in_tracker":true,
-"slug":"kat-riggins"
-},
-{
 "name":"Funkwrench Blues",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Kat Riggins",
+"in_tracker":true,
+"slug":"kat-riggins"
 }
 ]
 },
@@ -2557,7 +2557,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":144662
+"raw":144739
 },
 "tier":{
 "label":"Lower",
@@ -2619,7 +2619,7 @@
 "slug":null
 },
 {
-"name":"Salif Keita",
+"name":"Amadou & Mariam",
 "in_tracker":false,
 "slug":null
 },
@@ -2629,7 +2629,7 @@
 "slug":null
 },
 {
-"name":"Rokia Traoré",
+"name":"Salif Keita",
 "in_tracker":false,
 "slug":null
 }
@@ -2649,7 +2649,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":396311
+"raw":397394
 },
 "tier":null,
 "seen":{
@@ -2706,11 +2706,6 @@
 },
 "similar":[
 {
-"name":"Mestís",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Scale the Summit",
 "in_tracker":false,
 "slug":null
@@ -2721,12 +2716,17 @@
 "slug":null
 },
 {
+"name":"Meshuggah",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Intervals",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Meshuggah",
+"name":"Mestís",
 "in_tracker":false,
 "slug":null
 }
@@ -2746,7 +2746,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":8878
+"raw":8946
 },
 "tier":null,
 "seen":{
@@ -2792,12 +2792,12 @@
 },
 "similar":[
 {
-"name":"Rainbow Girls",
+"name":"Danika",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Danika",
+"name":"Rainbow Girls",
 "in_tracker":false,
 "slug":null
 },
@@ -2828,11 +2828,11 @@
 "genres":[
 "alt-country",
 "americana",
-"indie"
+"folk"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":40498
+"raw":40519
 },
 "tier":{
 "label":"Medium",
@@ -2930,7 +2930,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":320
+"raw":324
 },
 "tier":{
 "label":"Medium",
@@ -3030,7 +3030,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":176698
+"raw":176889
 },
 "tier":{
 "label":"Strong",
@@ -3097,14 +3097,14 @@
 "slug":null
 },
 {
+"name":"The Wailin' Jennys",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Sara Watkins",
 "in_tracker":true,
 "slug":"sara-watkins"
-},
-{
-"name":"Foy Vance",
-"in_tracker":false,
-"slug":null
 }
 ]
 },
@@ -3118,11 +3118,11 @@
 "genres":[
 "blues",
 "guitar",
-"indie"
+"rock"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":34065
+"raw":34293
 },
 "tier":{
 "label":"Medium",
@@ -3179,17 +3179,17 @@
 "slug":null
 },
 {
-"name":"Tedeschi Trucks Band",
-"in_tracker":true,
-"slug":"tedeschi-trucks-band"
-},
-{
 "name":"Robben Ford",
 "in_tracker":true,
 "slug":"robben-ford"
 },
 {
-"name":"Andy Timmons",
+"name":"Tedeschi Trucks Band",
+"in_tracker":true,
+"slug":"tedeschi-trucks-band"
+},
+{
+"name":"John Mayer Trio",
 "in_tracker":false,
 "slug":null
 },
@@ -3204,11 +3204,18 @@
 "name":"Arthur Neilson",
 "slug":"arthur-neilson",
 "spotify_id":"5RHFQs0bFxE4ym3HLdWJZP",
-"mbid":null,
+"mbid":"0f0980f7-6d1a-413e-827c-907220a3b3e6",
 "image_url":null,
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"blues rock",
+"guitar"
+],
+"listener":{
+"tranche":"niche",
+"raw":431
+},
 "tier":null,
 "seen":{
 "count":2,
@@ -3257,13 +3264,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/5RHFQs0bFxE4ym3HLdWJZP",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Arthur+Neilson",
+"musicbrainz":"https://musicbrainz.org/artist/0f0980f7-6d1a-413e-827c-907220a3b3e6",
 "bandsintown":"https://www.bandsintown.com/search?query=Arthur+Neilson",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Arthur+Neilson"
 },
-"similar":[]
+"similar":[
+{
+"name":"Big Ed Sullivan",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mike Morgan & Jim Suhler",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Walter Trout band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chris Duarte Group",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Billy D & The Hoodoos",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "artur menezes":{
 "name":"Artur Menezes",
@@ -3279,7 +3312,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5789
+"raw":5803
 },
 "tier":{
 "label":"Medium",
@@ -3475,7 +3508,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":887337
+"raw":888365
 },
 "tier":{
 "label":"Strong",
@@ -3549,14 +3582,14 @@
 },
 "similar":[
 {
-"name":"Dawes",
-"in_tracker":true,
-"slug":"dawes"
-},
-{
 "name":"Trampled by Turtles",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Dawes",
+"in_tracker":true,
+"slug":"dawes"
 },
 {
 "name":"The Head and the Heart",
@@ -3569,7 +3602,7 @@
 "slug":"josh-ritter"
 },
 {
-"name":"Watchhouse",
+"name":"Old Crow Medicine Show",
 "in_tracker":false,
 "slug":null
 }
@@ -3683,7 +3716,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1460003
+"raw":1463911
 },
 "tier":null,
 "seen":{
@@ -3750,17 +3783,17 @@
 "slug":null
 },
 {
-"name":"Great Big Sea",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Hootie & The Blowfish",
+"name":"Guster",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Crash Test Dummies",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Great Big Sea",
 "in_tracker":false,
 "slug":null
 }
@@ -3827,7 +3860,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":4209918
+"raw":4220293
 },
 "tier":null,
 "seen":{
@@ -3889,22 +3922,22 @@
 "slug":null
 },
 {
-"name":"Cake",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Eels",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Spoon",
+"name":"Cake",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"R.E.M.",
+"name":"The White Stripes",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Spoon",
 "in_tracker":false,
 "slug":null
 }
@@ -4018,7 +4051,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":51423
+"raw":51431
 },
 "tier":null,
 "seen":{
@@ -4209,7 +4242,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":223243
+"raw":224115
 },
 "tier":{
 "label":"Strong",
@@ -4281,9 +4314,9 @@
 "slug":"walter-trout"
 },
 {
-"name":"Ana Popovic",
-"in_tracker":true,
-"slug":"ana-popovic"
+"name":"Kenny Wayne Shepherd Band",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -4338,11 +4371,18 @@
 "name":"Bill Murray and His Blood Brothers",
 "slug":"bill-murray-and-his-blood-brothers",
 "spotify_id":"3wkZ8WTrs7WcfE13voUCK1",
-"mbid":null,
+"mbid":"1f18a92f-83bd-438c-8976-644d8eb45053",
 "image_url":"https://i.scdn.co/image/ab676161000051749884ab59d28a582d24117805",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"soundtrack",
+"comedy",
+"spoken word"
+],
+"listener":{
+"tranche":"mid",
+"raw":62341
+},
 "tier":{
 "label":"Strong",
 "rank":4
@@ -4385,13 +4425,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/3wkZ8WTrs7WcfE13voUCK1",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Bill+Murray",
+"musicbrainz":"https://musicbrainz.org/artist/1f18a92f-83bd-438c-8976-644d8eb45053",
 "bandsintown":"https://www.bandsintown.com/search?query=Bill+Murray+and+His+Blood+Brothers",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Bill+Murray+and+His+Blood+Brothers"
 },
-"similar":[]
+"similar":[
+{
+"name":"Brian Reitzell & Roger J. Manning Jr",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Christopher Walken",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Billy Crystal",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rosie O'Donnell",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Jonathan Freeman",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "billy bragg":{
 "name":"billy bragg",
@@ -4454,7 +4520,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":7868
+"raw":7875
 },
 "tier":{
 "label":"Strong",
@@ -4529,12 +4595,12 @@
 "slug":"joe-bonamassa"
 },
 {
-"name":"Samantha Fish",
+"name":"Joanne Shaw Taylor",
 "in_tracker":true,
-"slug":"samantha-fish"
+"slug":"joanne-shaw-taylor"
 },
 {
-"name":"Alvin Lee",
+"name":"Anthony Gomes",
 "in_tracker":false,
 "slug":null
 }
@@ -4554,7 +4620,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":198319
+"raw":200984
 },
 "tier":{
 "label":"Strong",
@@ -4626,7 +4692,7 @@
 "slug":"daniel-donato"
 },
 {
-"name":"Yonder Mountain String Band",
+"name":"Doc Watson",
 "in_tracker":false,
 "slug":null
 }
@@ -4931,7 +4997,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":86664
+"raw":86980
 },
 "tier":{
 "label":"Legacy",
@@ -4983,17 +5049,12 @@
 },
 "similar":[
 {
-"name":"Joe Louis Walker",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Cedric Burnside",
 "in_tracker":true,
 "slug":"cedric-burnside"
 },
 {
-"name":"Coco Montoya",
+"name":"Joe Louis Walker",
 "in_tracker":false,
 "slug":null
 },
@@ -5003,7 +5064,12 @@
 "slug":null
 },
 {
-"name":"Kenny Wayne Shepherd Band",
+"name":"Bernard Allison",
+"in_tracker":true,
+"slug":"bernard-allison"
+},
+{
+"name":"Coco Montoya",
 "in_tracker":false,
 "slug":null
 }
@@ -5070,7 +5136,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":834996
+"raw":837886
 },
 "tier":{
 "label":"Strong",
@@ -5130,14 +5196,14 @@
 },
 "similar":[
 {
-"name":"John Hiatt",
-"in_tracker":true,
-"slug":"john-hiatt"
-},
-{
 "name":"Susan Tedeschi",
 "in_tracker":true,
 "slug":"susan-tedeschi"
+},
+{
+"name":"John Hiatt",
+"in_tracker":true,
+"slug":"john-hiatt"
 },
 {
 "name":"Shawn Colvin",
@@ -5145,14 +5211,14 @@
 "slug":"shawn-colvin"
 },
 {
-"name":"Taj Mahal",
-"in_tracker":true,
-"slug":"taj-mahal"
-},
-{
 "name":"Little Feat",
 "in_tracker":true,
 "slug":"little-feat"
+},
+{
+"name":"Linda Ronstadt",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -5170,7 +5236,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1187210
+"raw":1195232
 },
 "tier":{
 "label":"Strong",
@@ -5222,14 +5288,14 @@
 },
 "similar":[
 {
-"name":"Lucy Dacus",
-"in_tracker":true,
-"slug":"lucy-dacus"
-},
-{
 "name":"Phoebe Bridgers",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Lucy Dacus",
+"in_tracker":true,
+"slug":"lucy-dacus"
 },
 {
 "name":"Julien Baker",
@@ -5262,7 +5328,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":898850
+"raw":900426
 },
 "tier":null,
 "seen":{
@@ -5318,14 +5384,14 @@
 "slug":"amanda-shires"
 },
 {
-"name":"Dar Williams",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"The Secret Sisters",
 "in_tracker":true,
 "slug":"secret-sisters"
+},
+{
+"name":"Dar Williams",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Patty Griffin",
@@ -5549,7 +5615,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2057
+"raw":2069
 },
 "tier":{
 "label":"Medium",
@@ -5645,11 +5711,11 @@
 "genres":[
 "soul",
 "blues",
-"singer-songwriter"
+"blues rock"
 ],
 "listener":{
 "tranche":"popular",
-"raw":361260
+"raw":362281
 },
 "tier":{
 "label":"Strong",
@@ -5719,12 +5785,12 @@
 "slug":null
 },
 {
-"name":"Michael Kiwanuka",
+"name":"Benjamin Booker",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Benjamin Booker",
+"name":"Michael Kiwanuka",
 "in_tracker":false,
 "slug":null
 },
@@ -5743,13 +5809,13 @@
 "image_url":"https://i.scdn.co/image/ab6761610000517435d2380da0a92830754705c8",
 "banner_url":null,
 "genres":[
-"country",
 "folk",
+"country",
 "americana"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":16003
+"raw":16083
 },
 "tier":null,
 "seen":{
@@ -5946,7 +6012,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":29376
+"raw":29467
 },
 "tier":{
 "label":"Medium",
@@ -6003,22 +6069,22 @@
 "slug":"gov-t-mule"
 },
 {
-"name":"The Black Crowes",
-"in_tracker":true,
-"slug":"black-crowes"
-},
-{
 "name":"Little Feat",
 "in_tracker":true,
 "slug":"little-feat"
 },
 {
-"name":"Blackberry Smoke",
-"in_tracker":false,
-"slug":null
+"name":"Warren Haynes",
+"in_tracker":true,
+"slug":"warren-haynes"
 },
 {
-"name":"The Red Clay Strays",
+"name":"The Black Crowes",
+"in_tracker":true,
+"slug":"black-crowes"
+},
+{
+"name":"Blackberry Smoke",
 "in_tracker":false,
 "slug":null
 }
@@ -6179,7 +6245,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":752832
+"raw":753872
 },
 "tier":{
 "label":"Legacy",
@@ -6251,17 +6317,17 @@
 "slug":null
 },
 {
-"name":"B.B. King",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Buddy Guy & Junior Wells",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Charlie Musselwhite",
+"name":"Junior Wells",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"B.B. King",
 "in_tracker":false,
 "slug":null
 },
@@ -6329,11 +6395,11 @@
 "genres":[
 "the flourishing zoo",
 "blues",
-"singer-songwriter"
+"blues rock"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":19982
+"raw":20322
 },
 "tier":{
 "label":"Strong",
@@ -6412,14 +6478,14 @@
 "slug":"adia-victoria"
 },
 {
-"name":"Susan Tedeschi",
-"in_tracker":true,
-"slug":"susan-tedeschi"
-},
-{
 "name":"Samantha Fish",
 "in_tracker":true,
 "slug":"samantha-fish"
+},
+{
+"name":"Susan Tedeschi",
+"in_tracker":true,
+"slug":"susan-tedeschi"
 },
 {
 "name":"Seasick Steve",
@@ -6427,9 +6493,9 @@
 "slug":null
 },
 {
-"name":"Carolyn Wonderland",
+"name":"Marcus King",
 "in_tracker":true,
-"slug":"carolyn-wonderland"
+"slug":"marcus-king"
 }
 ]
 },
@@ -6494,7 +6560,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5790
+"raw":5926
 },
 "tier":{
 "label":"Strong",
@@ -6566,19 +6632,19 @@
 "slug":"joanne-shaw-taylor"
 },
 {
-"name":"Laurence Jones",
-"in_tracker":true,
-"slug":"laurence-jones"
-},
-{
 "name":"Sari Schorr",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Quinn Sullivan",
+"name":"Alastair Greene",
 "in_tracker":true,
-"slug":"quinn-sullivan"
+"slug":"alastair-greene"
+},
+{
+"name":"Eric Johanson",
+"in_tracker":true,
+"slug":"eric-johanson"
 }
 ]
 },
@@ -6596,7 +6662,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3441733
+"raw":3455709
 },
 "tier":{
 "label":"Medium",
@@ -6663,7 +6729,7 @@
 "slug":null
 },
 {
-"name":"The Backseat Lovers",
+"name":"Arctic Monkeys",
 "in_tracker":false,
 "slug":null
 },
@@ -6687,7 +6753,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2485
+"raw":2489
 },
 "tier":null,
 "seen":{
@@ -6820,7 +6886,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":139697
+"raw":140867
 },
 "tier":null,
 "seen":{
@@ -6881,9 +6947,9 @@
 "slug":"lake-street-dive"
 },
 {
-"name":"The Teskey Brothers",
-"in_tracker":true,
-"slug":"teskey-brothers"
+"name":"Greyhounds",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"St. Paul & The Broken Bones",
@@ -7035,7 +7101,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":124
+"raw":125
 },
 "tier":{
 "label":"Medium",
@@ -7116,12 +7182,7 @@
 "slug":null
 },
 {
-"name":"Frank Bey",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Dean Zucchero",
+"name":"Martin Dom",
 "in_tracker":false,
 "slug":null
 },
@@ -7131,9 +7192,14 @@
 "slug":"north-mississippi-allstars"
 },
 {
-"name":"Martin Dom",
-"in_tracker":false,
-"slug":null
+"name":"Selwyn Birchwood",
+"in_tracker":true,
+"slug":"selwyn-birchwood"
+},
+{
+"name":"Southern Avenue",
+"in_tracker":true,
+"slug":"southern-avenue"
 }
 ]
 },
@@ -7151,7 +7217,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":25494
+"raw":25531
 },
 "tier":null,
 "seen":{
@@ -7197,14 +7263,14 @@
 },
 "similar":[
 {
-"name":"Southern Avenue",
-"in_tracker":true,
-"slug":"southern-avenue"
-},
-{
 "name":"Shemekia Copeland",
 "in_tracker":true,
 "slug":"shemekia-copeland"
+},
+{
+"name":"Southern Avenue",
+"in_tracker":true,
+"slug":"southern-avenue"
 },
 {
 "name":"Sue Foley",
@@ -7217,9 +7283,9 @@
 "slug":"north-mississippi-allstars"
 },
 {
-"name":"Samantha Fish",
-"in_tracker":true,
-"slug":"samantha-fish"
+"name":"Joe Louis Walker",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -7284,7 +7350,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":71394
+"raw":71723
 },
 "tier":{
 "label":"Medium",
@@ -7341,24 +7407,24 @@
 "slug":"bobby-rush"
 },
 {
-"name":"Fantastic Negrito",
-"in_tracker":true,
-"slug":"fantastic-negrito"
-},
-{
 "name":"GA-20",
 "in_tracker":true,
 "slug":"ga-20"
 },
 {
-"name":"Adia Victoria",
-"in_tracker":true,
-"slug":"adia-victoria"
+"name":"Otis Taylor",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"R.L. Burnside",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Tinsley Ellis",
+"in_tracker":true,
+"slug":"tinsley-ellis"
 }
 ]
 },
@@ -7376,7 +7442,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3896
+"raw":3898
 },
 "tier":null,
 "seen":{
@@ -7839,7 +7905,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":11754
+"raw":11790
 },
 "tier":{
 "label":"Medium-Strong",
@@ -7901,14 +7967,14 @@
 "slug":"toronzo-cannon"
 },
 {
-"name":"Ronnie Baker Brooks",
-"in_tracker":true,
-"slug":"ronnie-baker-brooks"
-},
-{
 "name":"Curtis Salgado",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Ronnie Baker Brooks",
+"in_tracker":true,
+"slug":"ronnie-baker-brooks"
 },
 {
 "name":"Matt Schofield",
@@ -8025,7 +8091,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":89663
+"raw":89790
 },
 "tier":{
 "label":"Medium-Strong",
@@ -8082,6 +8148,16 @@
 "slug":null
 },
 {
+"name":"Kelly Joe Phelps",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rory Block",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Jeffrey Foucault",
 "in_tracker":false,
 "slug":null
@@ -8090,16 +8166,6 @@
 "name":"Dave Alvin",
 "in_tracker":true,
 "slug":"dave-alvin"
-},
-{
-"name":"Kelly Joe Phelps",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Jimmy LaFave",
-"in_tracker":false,
-"slug":null
 }
 ]
 },
@@ -8207,7 +8273,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":252
+"raw":253
 },
 "tier":{
 "label":"Strong",
@@ -8316,19 +8382,14 @@
 },
 "similar":[
 {
-"name":"Christone “Kingfish” Ingram",
-"in_tracker":true,
-"slug":"christone-kingfish-ingram"
-},
-{
 "name":"Taj Mahal with Keb' Mo'",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Bobby 'Blackhat' Walters",
-"in_tracker":false,
-"slug":null
+"name":"Christone “Kingfish” Ingram",
+"in_tracker":true,
+"slug":"christone-kingfish-ingram"
 },
 {
 "name":"Omar Coleman",
@@ -8336,9 +8397,14 @@
 "slug":null
 },
 {
-"name":"J.T. 'Funny Papa' Smith",
+"name":"Bob Corritore",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Devon Allman",
+"in_tracker":true,
+"slug":"devon-allman"
 }
 ]
 },
@@ -8356,7 +8422,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2483
+"raw":2496
 },
 "tier":null,
 "seen":{
@@ -8422,7 +8488,7 @@
 "slug":null
 },
 {
-"name":"Andrew Brown",
+"name":"Doyle Bramhall",
 "in_tracker":false,
 "slug":null
 }
@@ -8442,7 +8508,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":82516
+"raw":82956
 },
 "tier":{
 "label":"Medium",
@@ -8494,6 +8560,11 @@
 },
 "similar":[
 {
+"name":"Goodbye June",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Tyler Bryant & The Shakedown",
 "in_tracker":true,
 "slug":"tyler-bryant-the-shakedown"
@@ -8504,19 +8575,14 @@
 "slug":null
 },
 {
-"name":"Goodbye June",
-"in_tracker":false,
-"slug":null
+"name":"Jared James Nichols",
+"in_tracker":true,
+"slug":"jared-james-nichols"
 },
 {
 "name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
-},
-{
-"name":"The Record Company",
-"in_tracker":true,
-"slug":"record-company"
 }
 ]
 },
@@ -8722,7 +8788,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":512299
+"raw":513776
 },
 "tier":null,
 "seen":{
@@ -8794,26 +8860,33 @@
 "slug":"patty-griffin"
 },
 {
+"name":"The Be Good Tanyas",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Shawn Colvin",
 "in_tracker":true,
 "slug":"shawn-colvin"
-},
-{
-"name":"Mary Gauthier",
-"in_tracker":false,
-"slug":null
 }
 ]
 },
 "cris jacobs":{
-"name":"cris jacobs",
+"name":"Cris Jacobs",
 "slug":"cris-jacobs",
 "spotify_id":null,
-"mbid":null,
+"mbid":"f2f4f21b-b79b-4ad9-be87-04b92a53c4da",
 "image_url":null,
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"americana",
+"bluegrass",
+"usa"
+],
+"listener":{
+"tranche":"emerging",
+"raw":10305
+},
 "tier":{
 "label":"Medium-Strong",
 "rank":3
@@ -8850,13 +8923,39 @@
 "links":{
 "spotify":null,
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=cris+jacobs",
+"lastfm":"https://www.last.fm/music/Cris+Jacobs",
+"musicbrainz":"https://musicbrainz.org/artist/f2f4f21b-b79b-4ad9-be87-04b92a53c4da",
+"bandsintown":"https://www.bandsintown.com/search?query=Cris+Jacobs",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=cris+jacobs"
+"setlistfm":"https://www.setlist.fm/search?query=Cris+Jacobs"
 },
-"similar":[]
+"similar":[
+{
+"name":"The Travelin' McCourys",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mountain Grass Unit",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mark Lavengood",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Shadowgrass",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Lindsay Lou",
+"in_tracker":true,
+"slug":"lindsay-lou"
+}
+]
 },
 "d k harrell":{
 "name":"D.K. Harrell",
@@ -8866,13 +8965,13 @@
 "image_url":"https://i.scdn.co/image/ab676161000051748cd549d2526d7de70f3650a1",
 "banner_url":null,
 "genres":[
-"blues",
 "usa",
+"blues",
 "united states"
 ],
 "listener":{
 "tranche":"niche",
-"raw":3200
+"raw":3342
 },
 "tier":{
 "label":"Strong",
@@ -8952,7 +9051,7 @@
 "slug":null
 },
 {
-"name":"Funkwrench Blues",
+"name":"Nick Moss Band",
 "in_tracker":false,
 "slug":null
 }
@@ -8972,7 +9071,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":7036
+"raw":7058
 },
 "tier":null,
 "seen":{
@@ -9152,7 +9251,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":19529
+"raw":19781
 },
 "tier":{
 "label":"Strong",
@@ -9259,6 +9358,11 @@
 "slug":"billy-strings"
 },
 {
+"name":"Daniel Donato's Cosmic Country",
+"in_tracker":true,
+"slug":"daniel-donato-s-cosmic-country"
+},
+{
 "name":"Johnny Blue Skies",
 "in_tracker":false,
 "slug":null
@@ -9269,12 +9373,7 @@
 "slug":null
 },
 {
-"name":"New Riders Of The Purple Sage",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Old & In the Way",
+"name":"Logan Ledger",
 "in_tracker":false,
 "slug":null
 }
@@ -9337,11 +9436,11 @@
 "genres":[
 "blues",
 "usa",
-"gramusels favourites"
+"gramusels bluesrock"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":26334
+"raw":26505
 },
 "tier":{
 "label":"Strong",
@@ -9429,6 +9528,11 @@
 "slug":null
 },
 {
+"name":"Joanne Shaw Taylor",
+"in_tracker":true,
+"slug":"joanne-shaw-taylor"
+},
+{
 "name":"Ana Popovic",
 "in_tracker":true,
 "slug":"ana-popovic"
@@ -9437,11 +9541,6 @@
 "name":"Sue Foley",
 "in_tracker":true,
 "slug":"sue-foley"
-},
-{
-"name":"Joanne Shaw Taylor",
-"in_tracker":true,
-"slug":"joanne-shaw-taylor"
 }
 ]
 },
@@ -9506,7 +9605,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":66803
+"raw":67542
 },
 "tier":{
 "label":"Medium-Strong",
@@ -9571,12 +9670,12 @@
 "slug":null
 },
 {
-"name":"Jacob Banks",
+"name":"Black Pumas",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Black Pumas",
+"name":"Jacob Banks",
 "in_tracker":false,
 "slug":null
 },
@@ -9600,13 +9699,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174a8e1f8e86ff6e945b8945009",
 "banner_url":null,
 "genres":[
-"country",
 "folk",
+"country",
 "ireland"
 ],
 "listener":{
 "tranche":"niche",
-"raw":2310
+"raw":2312
 },
 "tier":{
 "label":"Strong",
@@ -9686,7 +9785,7 @@
 "slug":"dom-flemons"
 },
 {
-"name":"Honeywagon",
+"name":"Twisted Pine",
 "in_tracker":false,
 "slug":null
 }
@@ -9841,13 +9940,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174b5b660114601cf82841bd205",
 "banner_url":null,
 "genres":[
-"hard rock",
 "rock",
+"hard rock",
 "podcast"
 ],
 "listener":{
 "tranche":"niche",
-"raw":2296
+"raw":2313
 },
 "tier":null,
 "seen":{
@@ -9893,12 +9992,12 @@
 },
 "similar":[
 {
-"name":"MaximumFun.Org",
+"name":"earwolf",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"earwolf",
+"name":"MaximumFun.Org",
 "in_tracker":false,
 "slug":null
 },
@@ -9913,7 +10012,7 @@
 "slug":null
 },
 {
-"name":"Mr. Paul F. Tompkins",
+"name":"Jeff Richman",
 "in_tracker":false,
 "slug":null
 }
@@ -10023,11 +10122,11 @@
 "genres":[
 "singer-songwriter",
 "ambient",
-"experimental"
+"usa"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":25933
+"raw":26314
 },
 "tier":null,
 "seen":{
@@ -10084,17 +10183,12 @@
 },
 "similar":[
 {
+"name":"M. Sage",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Isabel Pine",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Steve Gunn",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Maria BC",
 "in_tracker":false,
 "slug":null
 },
@@ -10104,7 +10198,12 @@
 "slug":null
 },
 {
-"name":"Cowboy Sadness",
+"name":"Steve Gunn",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Barry Walker Jr.",
 "in_tracker":false,
 "slug":null
 }
@@ -10171,7 +10270,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":12215
+"raw":12318
 },
 "tier":null,
 "seen":{
@@ -10217,16 +10316,6 @@
 },
 "similar":[
 {
-"name":"Omar & The Howlers",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Bernard Allison",
-"in_tracker":true,
-"slug":"bernard-allison"
-},
-{
 "name":"Peter Green",
 "in_tracker":false,
 "slug":null
@@ -10237,9 +10326,19 @@
 "slug":null
 },
 {
-"name":"Ana Popovic",
+"name":"Omar & The Howlers",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Walter Trout",
 "in_tracker":true,
-"slug":"ana-popovic"
+"slug":"walter-trout"
+},
+{
+"name":"Bernard Allison",
+"in_tracker":true,
+"slug":"bernard-allison"
 }
 ]
 },
@@ -10304,7 +10403,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":4937
+"raw":4940
 },
 "tier":null,
 "seen":{
@@ -10408,7 +10507,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":30964
+"raw":31007
 },
 "tier":null,
 "seen":{
@@ -10859,7 +10958,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":271504
+"raw":272536
 },
 "tier":{
 "label":"Strong",
@@ -10924,12 +11023,12 @@
 "slug":null
 },
 {
-"name":"The Dead South",
+"name":"The Haunted Windchimes",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Haunted Windchimes",
+"name":"The Dead South",
 "in_tracker":false,
 "slug":null
 },
@@ -10959,7 +11058,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":13030
+"raw":13110
 },
 "tier":null,
 "seen":{
@@ -11023,29 +11122,29 @@
 },
 "similar":[
 {
-"name":"Albert Castiglia",
-"in_tracker":true,
-"slug":"albert-castiglia"
-},
-{
-"name":"Albert Cummings",
-"in_tracker":true,
-"slug":"albert-cummings"
-},
-{
 "name":"Larry McCray",
 "in_tracker":true,
 "slug":"larry-mccray"
 },
 {
-"name":"Walter Trout",
+"name":"Albert Castiglia",
 "in_tracker":true,
-"slug":"walter-trout"
+"slug":"albert-castiglia"
 },
 {
 "name":"Warren Haynes",
 "in_tracker":true,
 "slug":"warren-haynes"
+},
+{
+"name":"Joanne Shaw Taylor",
+"in_tracker":true,
+"slug":"joanne-shaw-taylor"
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
 }
 ]
 },
@@ -11106,11 +11205,11 @@
 "genres":[
 "psychedelic rock",
 "rock",
-"hard rock"
+"dutch"
 ],
 "listener":{
 "tranche":"mid",
-"raw":88103
+"raw":88262
 },
 "tier":null,
 "seen":{
@@ -11166,17 +11265,17 @@
 "slug":null
 },
 {
+"name":"The Temperance Movement",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Colour Haze",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Radio Moscow",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"The Temperance Movement",
 "in_tracker":false,
 "slug":null
 }
@@ -11195,8 +11294,8 @@
 "rnb"
 ],
 "listener":{
-"tranche":"mid",
-"raw":249253
+"tranche":"popular",
+"raw":250274
 },
 "tier":null,
 "seen":{
@@ -11252,9 +11351,9 @@
 "slug":null
 },
 {
-"name":"Sammy Rae & The Friends",
-"in_tracker":false,
-"slug":null
+"name":"The California Honeydrops",
+"in_tracker":true,
+"slug":"california-honeydrops"
 },
 {
 "name":"St. Paul & The Broken Bones",
@@ -11262,7 +11361,7 @@
 "slug":"st-paul-the-broken-bones"
 },
 {
-"name":"The Meltdown",
+"name":"Sammy Rae & The Friends",
 "in_tracker":false,
 "slug":null
 }
@@ -11282,7 +11381,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":80244
+"raw":80302
 },
 "tier":{
 "label":"Medium",
@@ -11347,12 +11446,12 @@
 "slug":"rebirth-brass-band"
 },
 {
-"name":"Kermit Ruffins",
+"name":"Youngblood Brass Band",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Youngblood Brass Band",
+"name":"Kermit Ruffins",
 "in_tracker":false,
 "slug":null
 },
@@ -11476,7 +11575,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":52218
+"raw":52599
 },
 "tier":{
 "label":"Medium-Strong",
@@ -11615,7 +11714,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":14700
+"raw":14701
 },
 "tier":null,
 "seen":{
@@ -11691,11 +11790,18 @@
 "name":"Duane Betts",
 "slug":"duane-betts",
 "spotify_id":"0Hd5wMyas6F2k5kBNeBmnB",
-"mbid":null,
+"mbid":"cc6559c1-3459-412c-aa52-397f65b7d402",
 "image_url":"https://i.scdn.co/image/ab676161000051743a39045f18919d46c12c6a9e",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"rock",
+"southern rock"
+],
+"listener":{
+"tranche":"niche",
+"raw":4436
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -11743,13 +11849,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/0Hd5wMyas6F2k5kBNeBmnB",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Duane+Betts",
+"musicbrainz":"https://musicbrainz.org/artist/cc6559c1-3459-412c-aa52-397f65b7d402",
 "bandsintown":"https://www.bandsintown.com/search?query=Duane+Betts",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Duane+Betts"
 },
-"similar":[]
+"similar":[
+{
+"name":"The Allman Betts Band",
+"in_tracker":true,
+"slug":"allman-betts-band"
+},
+{
+"name":"Dickey Betts",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"J.D. Simo",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Nether Hour",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Funkwrench Blues",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "dumpstaphunk":{
 "name":"Dumpstaphunk",
@@ -11765,7 +11897,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":47274
+"raw":47350
 },
 "tier":{
 "label":"Lower",
@@ -11861,7 +11993,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1325
+"raw":1326
 },
 "tier":null,
 "seen":{
@@ -11928,12 +12060,12 @@
 "slug":null
 },
 {
-"name":"Miss Mojo",
+"name":"Jason Dering",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Jason Dering",
+"name":"Miss Mojo",
 "in_tracker":false,
 "slug":null
 },
@@ -11954,7 +12086,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1033
+"raw":1034
 },
 "tier":{
 "label":"Medium-Strong",
@@ -12061,7 +12193,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":53822
+"raw":54523
 },
 "tier":{
 "label":"Medium",
@@ -12113,19 +12245,14 @@
 },
 "similar":[
 {
-"name":"The Meltdown",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Mike Zito",
 "in_tracker":true,
 "slug":"mike-zito"
 },
 {
-"name":"Eric Bibb",
-"in_tracker":true,
-"slug":"eric-bibb"
+"name":"The Meltdown",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Nathaniel Rateliff & the Night Sweats",
@@ -12136,6 +12263,11 @@
 "name":"Marcus King",
 "in_tracker":true,
 "slug":"marcus-king"
+},
+{
+"name":"Eric Bibb",
+"in_tracker":true,
+"slug":"eric-bibb"
 }
 ]
 },
@@ -12258,7 +12390,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":57815
+"raw":57874
 },
 "tier":null,
 "seen":{
@@ -12330,12 +12462,12 @@
 "slug":"nick-lowe"
 },
 {
-"name":"Elvis Costello with Burt Bacharach",
+"name":"Graham Parker & The Rumour",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Graham Parker & The Rumour",
+"name":"Elvis Costello with Burt Bacharach",
 "in_tracker":false,
 "slug":null
 }
@@ -12355,7 +12487,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":630198
+"raw":631512
 },
 "tier":null,
 "seen":{
@@ -12427,14 +12559,14 @@
 "slug":null
 },
 {
-"name":"Willie Nelson",
-"in_tracker":true,
-"slug":"willie-nelson"
-},
-{
 "name":"Nanci Griffith",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Willie Nelson",
+"in_tracker":true,
+"slug":"willie-nelson"
 }
 ]
 },
@@ -12452,7 +12584,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":63443
+"raw":63514
 },
 "tier":null,
 "seen":{
@@ -12552,7 +12684,7 @@
 "slug":null
 },
 {
-"name":"The Stanfields",
+"name":"Celtic Woman",
 "in_tracker":false,
 "slug":null
 }
@@ -12572,7 +12704,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":125653
+"raw":125824
 },
 "tier":{
 "label":"Medium",
@@ -12624,19 +12756,14 @@
 },
 "similar":[
 {
-"name":"Taj Mahal",
-"in_tracker":true,
-"slug":"taj-mahal"
-},
-{
 "name":"Doug MacLeod",
 "in_tracker":true,
 "slug":"doug-macleod"
 },
 {
-"name":"Keb' Mo'",
+"name":"Taj Mahal",
 "in_tracker":true,
-"slug":"keb-mo"
+"slug":"taj-mahal"
 },
 {
 "name":"Hans Theessink",
@@ -12644,7 +12771,12 @@
 "slug":null
 },
 {
-"name":"Otis Taylor",
+"name":"Keb' Mo'",
+"in_tracker":true,
+"slug":"keb-mo"
+},
+{
+"name":"Rory Block",
 "in_tracker":false,
 "slug":null
 }
@@ -12664,7 +12796,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3446563
+"raw":3454697
 },
 "tier":{
 "label":"Legacy",
@@ -12716,12 +12848,12 @@
 },
 "similar":[
 {
-"name":"Derek and the Dominos",
+"name":"B.B. King & Eric Clapton",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"B.B. King & Eric Clapton",
+"name":"Derek and the Dominos",
 "in_tracker":false,
 "slug":null
 },
@@ -12756,7 +12888,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":56603
+"raw":56763
 },
 "tier":{
 "label":"Strong",
@@ -12857,9 +12989,9 @@
 "slug":null
 },
 {
-"name":"Albert Castiglia",
+"name":"Joe Bonamassa",
 "in_tracker":true,
-"slug":"albert-castiglia"
+"slug":"joe-bonamassa"
 }
 ]
 },
@@ -12877,7 +13009,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":6667
+"raw":6731
 },
 "tier":{
 "label":"Strong",
@@ -12949,11 +13081,6 @@
 "slug":"alastair-greene"
 },
 {
-"name":"Laurence Jones",
-"in_tracker":true,
-"slug":"laurence-jones"
-},
-{
 "name":"Chase Walker Band",
 "in_tracker":false,
 "slug":null
@@ -12967,6 +13094,11 @@
 "name":"The Reverend Shawn Amos",
 "in_tracker":true,
 "slug":"reverend-shawn-amos"
+},
+{
+"name":"These Wicked Rivers",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -12984,7 +13116,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1322055
+"raw":1334302
 },
 "tier":null,
 "seen":{
@@ -13068,7 +13200,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":912
+"raw":936
 },
 "tier":{
 "label":"Medium-Strong",
@@ -13135,12 +13267,12 @@
 "slug":"angelique-francis"
 },
 {
-"name":"Ali Handal",
+"name":"Laura Evans",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Lloyd Spiegel",
+"name":"Ali Handal",
 "in_tracker":false,
 "slug":null
 }
@@ -13156,7 +13288,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":4509
+"raw":4521
 },
 "tier":null,
 "seen":{
@@ -13223,17 +13355,17 @@
 "slug":null
 },
 {
-"name":"I Want To Know What Love Is",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Holding Back The Years",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Billie Jean",
+"name":"I Want To Know What Love Is",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"♫ Pink Floyd",
 "in_tracker":false,
 "slug":null
 }
@@ -13300,7 +13432,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":154742
+"raw":155213
 },
 "tier":{
 "label":"Medium-Strong",
@@ -13357,9 +13489,9 @@
 "slug":"jimmie-vaughan"
 },
 {
-"name":"Delbert McClinton",
-"in_tracker":true,
-"slug":"delbert-mcclinton"
+"name":"Freddie King",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Albert Collins",
@@ -13367,14 +13499,14 @@
 "slug":null
 },
 {
-"name":"Freddie King",
+"name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Kenny Wayne Shepherd Band",
-"in_tracker":false,
-"slug":null
+"name":"Robin Trower",
+"in_tracker":true,
+"slug":"robin-trower"
 }
 ]
 },
@@ -13392,7 +13524,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":116607
+"raw":116647
 },
 "tier":null,
 "seen":{
@@ -13478,7 +13610,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":27021
+"raw":27100
 },
 "tier":null,
 "seen":{
@@ -13575,7 +13707,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":216936
+"raw":216979
 },
 "tier":null,
 "seen":{
@@ -13796,13 +13928,13 @@
 "image_url":"https://i.scdn.co/image/ab676161000051746e0ffd9d2d7057cf37610fc0",
 "banner_url":null,
 "genres":[
-"all",
 "folk",
+"all",
 "bluegrass"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":43988
+"raw":44243
 },
 "tier":{
 "label":"Medium",
@@ -13859,14 +13991,14 @@
 "slug":null
 },
 {
-"name":"John Craigie",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Greensky Bluegrass",
 "in_tracker":true,
 "slug":"greensky-bluegrass"
+},
+{
+"name":"John Craigie",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"The Infamous Stringdusters",
@@ -13894,7 +14026,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":19688
+"raw":19854
 },
 "tier":{
 "label":"Medium",
@@ -13951,24 +14083,24 @@
 "slug":"cedric-burnside"
 },
 {
-"name":"Peter Green",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Altered Five Blues Band",
-"in_tracker":true,
-"slug":"altered-five-blues-band"
-},
-{
 "name":"Ash Grunwald",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Otis Taylor",
+"name":"Dr. Feelgood",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
+},
+{
+"name":"Eddie 9V",
+"in_tracker":true,
+"slug":"eddie-9v"
 }
 ]
 },
@@ -13985,7 +14117,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":370
+"raw":400
 },
 "tier":null,
 "seen":{
@@ -14042,7 +14174,12 @@
 },
 "similar":[
 {
-"name":"Lindsay Beaver",
+"name":"Mike Guldin",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Handsome Jack",
 "in_tracker":false,
 "slug":null
 },
@@ -14052,17 +14189,12 @@
 "slug":"reverend-shawn-amos"
 },
 {
-"name":"Handsome Jack",
+"name":"Lindsay Beaver",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Colin Linden",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Mike Guldin",
+"name":"Amani Burnham",
 "in_tracker":false,
 "slug":null
 }
@@ -14082,7 +14214,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":193946
+"raw":194328
 },
 "tier":null,
 "seen":{
@@ -14179,7 +14311,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":227906
+"raw":228224
 },
 "tier":{
 "label":"Strong",
@@ -14273,13 +14405,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174dc1810bcd157556b47d49948",
 "banner_url":null,
 "genres":[
-"blues",
 "rock",
+"blues",
 "canada"
 ],
 "listener":{
 "tranche":"niche",
-"raw":861
+"raw":881
 },
 "tier":null,
 "seen":{
@@ -14343,14 +14475,14 @@
 "slug":null
 },
 {
-"name":"Chase Walker Band",
+"name":"Krissy Matthews",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Tinsley Ellis",
-"in_tracker":true,
-"slug":"tinsley-ellis"
+"name":"Chase Walker Band",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -14368,7 +14500,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":527288
+"raw":528364
 },
 "tier":{
 "label":"Strong",
@@ -14445,6 +14577,11 @@
 "slug":"marcus-king"
 },
 {
+"name":"The Marcus King Band",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
@@ -14453,11 +14590,6 @@
 "name":"The Record Company",
 "in_tracker":true,
 "slug":"record-company"
-},
-{
-"name":"The Marcus King Band",
-"in_tracker":false,
-"slug":null
 }
 ]
 },
@@ -14475,7 +14607,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":66403
+"raw":66512
 },
 "tier":{
 "label":"Medium",
@@ -14537,9 +14669,9 @@
 "slug":null
 },
 {
-"name":"Joe Bonamassa",
-"in_tracker":true,
-"slug":"joe-bonamassa"
+"name":"Vinnie Moore",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Popa Chubby",
@@ -14547,7 +14679,7 @@
 "slug":"popa-chubby"
 },
 {
-"name":"Paul Gilbert",
+"name":"Andy Timmons",
 "in_tracker":false,
 "slug":null
 }
@@ -14748,12 +14880,12 @@
 "image_url":"https://i.scdn.co/image/ab6761610000517481f645c4c1df4768d68d062e",
 "banner_url":null,
 "genres":[
-"blues",
-"rock"
+"rock",
+"blues"
 ],
 "listener":{
 "tranche":"niche",
-"raw":1281
+"raw":1305
 },
 "tier":{
 "label":"Medium",
@@ -14820,17 +14952,12 @@
 "slug":null
 },
 {
-"name":"Layla Zoe",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Alastair Greene",
 "in_tracker":true,
 "slug":"alastair-greene"
 },
 {
-"name":"Anni Piper",
+"name":"Layla Zoe",
 "in_tracker":false,
 "slug":null
 },
@@ -14838,6 +14965,11 @@
 "name":"The Reverend Shawn Amos",
 "in_tracker":true,
 "slug":"reverend-shawn-amos"
+},
+{
+"name":"Vanja Sky",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -14855,7 +14987,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":700998
+"raw":701933
 },
 "tier":null,
 "seen":{
@@ -15046,7 +15178,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":300206
+"raw":300430
 },
 "tier":{
 "label":"Strong",
@@ -15118,9 +15250,9 @@
 "slug":null
 },
 {
-"name":"Kenny Wayne Shepherd Band",
-"in_tracker":false,
-"slug":null
+"name":"Tedeschi Trucks Band",
+"in_tracker":true,
+"slug":"tedeschi-trucks-band"
 }
 ]
 },
@@ -15244,7 +15376,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":97892
+"raw":98224
 },
 "tier":{
 "label":"Strong",
@@ -15311,22 +15443,22 @@
 },
 "similar":[
 {
-"name":"Yonder Mountain String Band",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Leftover Salmon",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Billy Strings",
 "in_tracker":true,
 "slug":"billy-strings"
 },
 {
+"name":"Yonder Mountain String Band",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Kitchen Dwellers",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Leftover Salmon",
 "in_tracker":false,
 "slug":null
 },
@@ -15496,12 +15628,12 @@
 },
 "similar":[
 {
-"name":"Potcheen",
+"name":"Sarah Charness",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sarah Charness",
+"name":"Potcheen",
 "in_tracker":false,
 "slug":null
 },
@@ -15536,7 +15668,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":226876
+"raw":229805
 },
 "tier":null,
 "seen":{
@@ -15582,11 +15714,6 @@
 },
 "similar":[
 {
-"name":"Billie Marten",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Hand Habits",
 "in_tracker":false,
 "slug":null
@@ -15597,7 +15724,12 @@
 "slug":null
 },
 {
-"name":"Dead Gowns",
+"name":"Billie Marten",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Will Stratton",
 "in_tracker":false,
 "slug":null
 },
@@ -15689,7 +15821,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":147221
+"raw":147486
 },
 "tier":null,
 "seen":{
@@ -15751,12 +15883,12 @@
 "slug":"james-mcmurtry"
 },
 {
-"name":"Robert Earl Keen",
+"name":"Ray Wylie Hubbard",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Ray Wylie Hubbard",
+"name":"Robert Earl Keen",
 "in_tracker":false,
 "slug":null
 },
@@ -15766,9 +15898,9 @@
 "slug":null
 },
 {
-"name":"Ryan Bingham",
-"in_tracker":false,
-"slug":null
+"name":"Corb Lund",
+"in_tracker":true,
+"slug":"corb-lund"
 }
 ]
 },
@@ -15833,7 +15965,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":851543
+"raw":861934
 },
 "tier":null,
 "seen":{
@@ -15899,9 +16031,9 @@
 "slug":null
 },
 {
-"name":"Lucy Dacus",
-"in_tracker":true,
-"slug":"lucy-dacus"
+"name":"Wolf Alice",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -15919,7 +16051,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":69254
+"raw":69782
 },
 "tier":{
 "label":"Strong",
@@ -15986,12 +16118,12 @@
 "slug":null
 },
 {
-"name":"Sunflower Bean",
+"name":"White Denim",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"White Denim",
+"name":"Sunflower Bean",
 "in_tracker":false,
 "slug":null
 },
@@ -16001,7 +16133,7 @@
 "slug":null
 },
 {
-"name":"Allah-Las",
+"name":"Ghostwoman",
 "in_tracker":false,
 "slug":null
 }
@@ -16188,7 +16320,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":2018
+"raw":2029
 },
 "tier":{
 "label":"Medium",
@@ -16245,22 +16377,22 @@
 "slug":null
 },
 {
-"name":"Seo Linn",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Runa",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Elders",
+"name":"Seo Linn",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"SYR",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Elders",
 "in_tracker":false,
 "slug":null
 }
@@ -16280,7 +16412,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3404856
+"raw":3421013
 },
 "tier":{
 "label":"Strong",
@@ -16380,7 +16512,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":113729
+"raw":113968
 },
 "tier":{
 "label":"Medium",
@@ -16455,12 +16587,12 @@
 "slug":null
 },
 {
-"name":"Caitlin Canty",
-"in_tracker":false,
-"slug":null
+"name":"Molly Tuttle",
+"in_tracker":true,
+"slug":"molly-tuttle"
 },
 {
-"name":"Caroline Spence",
+"name":"Punch Brothers",
 "in_tracker":false,
 "slug":null
 }
@@ -16480,7 +16612,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":31997
+"raw":32036
 },
 "tier":{
 "label":"Medium",
@@ -16540,27 +16672,27 @@
 },
 "similar":[
 {
-"name":"The Shadows of Knight",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"The Strangeloves",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"The Castaways",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Glockenwise",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Sonics",
+"name":"The Shadows of Knight",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Knickerbockers",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"? and the Mysterians",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Bob Seger & The Last Heard",
 "in_tracker":false,
 "slug":null
 }
@@ -16623,7 +16755,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":478
+"raw":486
 },
 "tier":null,
 "seen":{
@@ -16669,27 +16801,27 @@
 },
 "similar":[
 {
-"name":"Indiara Sfair & Tiago Juk",
+"name":"Greg Zlap",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Amanda Ventura",
+"name":"Blues Etílicos",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Joe Flip",
+"name":"Floyd Lee",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Gui Tosin",
+"name":"The Bluesbones",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Milk'n Blues",
+"name":"Mississippi Heat",
 "in_tracker":false,
 "slug":null
 }
@@ -16765,7 +16897,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":520949
+"raw":521878
 },
 "tier":{
 "label":"Strong",
@@ -16845,7 +16977,7 @@
 "slug":"patty-griffin"
 },
 {
-"name":"The Wailin' Jennys",
+"name":"Ani DiFranco",
 "in_tracker":false,
 "slug":null
 }
@@ -16865,7 +16997,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":11086
+"raw":11101
 },
 "tier":{
 "label":"Lower",
@@ -17000,7 +17132,7 @@
 "genres":[
 "blues",
 "blues rock",
-"blues with mixed vocals"
+"brass"
 ],
 "listener":{
 "tranche":"niche",
@@ -17061,11 +17193,6 @@
 },
 "similar":[
 {
-"name":"Jerry Forney",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Adrian Niles Band",
 "in_tracker":false,
 "slug":null
@@ -17076,12 +17203,17 @@
 "slug":null
 },
 {
+"name":"Jerry Forney",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Hurricane Ruth",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Deb Ryder",
+"name":"Mike Snowden",
 "in_tracker":false,
 "slug":null
 }
@@ -17277,7 +17409,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1256324
+"raw":1259922
 },
 "tier":null,
 "seen":{
@@ -17363,7 +17495,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":25868
+"raw":26044
 },
 "tier":{
 "label":"Strong",
@@ -17439,9 +17571,9 @@
 },
 "similar":[
 {
-"name":"Christone \"Kingfish\" Ingram",
+"name":"Danielle Nicole",
 "in_tracker":true,
-"slug":"christone-kingfish-ingram"
+"slug":"danielle-nicole"
 },
 {
 "name":"Ana Popovic",
@@ -17449,19 +17581,19 @@
 "slug":"ana-popovic"
 },
 {
+"name":"Christone \"Kingfish\" Ingram",
+"in_tracker":true,
+"slug":"christone-kingfish-ingram"
+},
+{
 "name":"Samantha Fish",
 "in_tracker":true,
 "slug":"samantha-fish"
 },
 {
-"name":"Joanne Shaw Taylor",
+"name":"Janiva Magness",
 "in_tracker":true,
-"slug":"joanne-shaw-taylor"
-},
-{
-"name":"Seasick Steve",
-"in_tracker":false,
-"slug":null
+"slug":"janiva-magness"
 }
 ]
 },
@@ -17612,7 +17744,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":35476
+"raw":35568
 },
 "tier":{
 "label":"Medium",
@@ -17759,7 +17891,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":21613
+"raw":21668
 },
 "tier":{
 "label":"Strong",
@@ -17839,9 +17971,9 @@
 "slug":null
 },
 {
-"name":"Ordinary Elephant",
-"in_tracker":false,
-"slug":null
+"name":"Kyshona",
+"in_tracker":true,
+"slug":"kyshona"
 }
 ]
 },
@@ -17859,7 +17991,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":91437
+"raw":92508
 },
 "tier":{
 "label":"Strong",
@@ -17931,7 +18063,7 @@
 "slug":null
 },
 {
-"name":"William Tyler",
+"name":"Steve Gunn",
 "in_tracker":false,
 "slug":null
 },
@@ -17941,7 +18073,7 @@
 "slug":"yasmin-williams"
 },
 {
-"name":"Steve Gunn",
+"name":"William Tyler",
 "in_tracker":false,
 "slug":null
 },
@@ -18013,7 +18145,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":139379
+"raw":140322
 },
 "tier":{
 "label":"Medium",
@@ -18093,9 +18225,9 @@
 "slug":null
 },
 {
-"name":"Saun & Starr",
-"in_tracker":false,
-"slug":null
+"name":"St. Paul & The Broken Bones",
+"in_tracker":true,
+"slug":"st-paul-the-broken-bones"
 }
 ]
 },
@@ -18207,7 +18339,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":47900
+"raw":47972
 },
 "tier":null,
 "seen":{
@@ -18268,14 +18400,14 @@
 "slug":null
 },
 {
-"name":"Shemekia Copeland",
-"in_tracker":true,
-"slug":"shemekia-copeland"
-},
-{
 "name":"Joanne Shaw Taylor",
 "in_tracker":true,
 "slug":"joanne-shaw-taylor"
+},
+{
+"name":"Shemekia Copeland",
+"in_tracker":true,
+"slug":"shemekia-copeland"
 }
 ]
 },
@@ -18293,7 +18425,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":29894
+"raw":29999
 },
 "tier":{
 "label":"Medium",
@@ -18360,12 +18492,12 @@
 "slug":null
 },
 {
-"name":"Laura Cox",
+"name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Kenny Wayne Shepherd Band",
+"name":"Anthony Gomes",
 "in_tracker":false,
 "slug":null
 }
@@ -18520,13 +18652,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174d5fbca482cdee9991d4453cb",
 "banner_url":null,
 "genres":[
-"female vocalists",
 "rock",
+"female vocalists",
 "singer-songwriter"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5552
+"raw":5605
 },
 "tier":{
 "label":"Strong",
@@ -18670,29 +18802,29 @@
 },
 "similar":[
 {
-"name":"Eric Gales, Samantha Fish & Christone \"Kingfish\" Ingram",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"James Woods & Shooter Jennings",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Chris O'Leary",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"JD Simo",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Samantha Fish & Jesse Dayton",
-"in_tracker":true,
-"slug":"samantha-fish-jesse-dayton"
+"name":"Kenny Wayne Shepherd & Bobby Rush",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rachel Baiman & Nicholas Jamerson",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Brent Cobb & The Fixin's",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Johnny Cosmic & Brendan Clemente",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -18710,7 +18842,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3660
+"raw":3689
 },
 "tier":null,
 "seen":{
@@ -18756,6 +18888,11 @@
 },
 "similar":[
 {
+"name":"Jontavious Willis",
+"in_tracker":true,
+"slug":"jontavious-willis"
+},
+{
 "name":"Frank Fairfield",
 "in_tracker":false,
 "slug":null
@@ -18772,11 +18909,6 @@
 },
 {
 "name":"Clifton Hicks",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Chance McCoy and the Appalachian String Band",
 "in_tracker":false,
 "slug":null
 }
@@ -18796,7 +18928,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":17526
+"raw":17544
 },
 "tier":{
 "label":"Medium",
@@ -18871,12 +19003,12 @@
 "slug":null
 },
 {
-"name":"Stevie Tombstone",
+"name":"Bastard Sons of Johnny Cash",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Bastard Sons of Johnny Cash",
+"name":"Eleven Hundred Springs",
 "in_tracker":false,
 "slug":null
 }
@@ -18892,7 +19024,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":319
+"raw":325
 },
 "tier":null,
 "seen":{
@@ -18985,7 +19117,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":401
+"raw":403
 },
 "tier":null,
 "seen":{
@@ -19176,7 +19308,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":151601
+"raw":151881
 },
 "tier":{
 "label":"Strong",
@@ -19256,7 +19388,7 @@
 "slug":null
 },
 {
-"name":"Johnny Winter",
+"name":"T-Bone Walker",
 "in_tracker":false,
 "slug":null
 }
@@ -19276,7 +19408,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5628
+"raw":5633
 },
 "tier":null,
 "seen":{
@@ -19342,7 +19474,7 @@
 "slug":null
 },
 {
-"name":"The Beat Daddys",
+"name":"Ken Saydak",
 "in_tracker":false,
 "slug":null
 }
@@ -19456,7 +19588,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":131314
+"raw":131804
 },
 "tier":{
 "label":"Strong",
@@ -19528,6 +19660,11 @@
 "slug":"north-mississippi-allstars"
 },
 {
+"name":"Anders Osborne",
+"in_tracker":true,
+"slug":"anders-osborne"
+},
+{
 "name":"The Marcus King Band",
 "in_tracker":false,
 "slug":null
@@ -19536,11 +19673,6 @@
 "name":"Gov't Mule",
 "in_tracker":true,
 "slug":"gov-t-mule"
-},
-{
-"name":"Anders Osborne",
-"in_tracker":true,
-"slug":"anders-osborne"
 },
 {
 "name":"The Derek Trucks Band",
@@ -19563,7 +19695,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":283650
+"raw":283809
 },
 "tier":null,
 "seen":{
@@ -19630,12 +19762,12 @@
 "slug":null
 },
 {
-"name":"Pat Benatar",
+"name":"Lita Ford",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Lita Ford",
+"name":"Pat Benatar",
 "in_tracker":false,
 "slug":null
 },
@@ -19694,14 +19826,21 @@
 "similar":[]
 },
 "joanna connor":{
-"name":"joanna connor",
+"name":"Joanna Connor",
 "slug":"joanna-connor",
 "spotify_id":null,
-"mbid":null,
+"mbid":"c02ca344-39b4-44a9-b6bd-d1dbe0821804",
 "image_url":null,
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues",
+"blues rock",
+"female vocalists"
+],
+"listener":{
+"tranche":"emerging",
+"raw":24183
+},
 "tier":{
 "label":"Strong",
 "rank":4
@@ -19738,13 +19877,39 @@
 "links":{
 "spotify":null,
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=joanna+connor",
+"lastfm":"https://www.last.fm/music/Joanna+Connor",
+"musicbrainz":"https://musicbrainz.org/artist/c02ca344-39b4-44a9-b6bd-d1dbe0821804",
+"bandsintown":"https://www.bandsintown.com/search?query=Joanna+Connor",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=joanna+connor"
+"setlistfm":"https://www.setlist.fm/search?query=Joanna+Connor"
 },
-"similar":[]
+"similar":[
+{
+"name":"Sue Foley",
+"in_tracker":true,
+"slug":"sue-foley"
+},
+{
+"name":"Ana Popovic",
+"in_tracker":true,
+"slug":"ana-popovic"
+},
+{
+"name":"Danielle Nicole",
+"in_tracker":true,
+"slug":"danielle-nicole"
+},
+{
+"name":"Albert Cummings",
+"in_tracker":true,
+"slug":"albert-cummings"
+},
+{
+"name":"Joanne Shaw Taylor",
+"in_tracker":true,
+"slug":"joanne-shaw-taylor"
+}
+]
 },
 "joanne shaw taylor":{
 "name":"Joanne Shaw Taylor",
@@ -19760,7 +19925,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":78141
+"raw":78369
 },
 "tier":{
 "label":"Strong",
@@ -19844,9 +20009,9 @@
 "slug":"samantha-fish"
 },
 {
-"name":"Ally Venable",
+"name":"Beth Hart",
 "in_tracker":true,
-"slug":"ally-venable"
+"slug":"beth-hart"
 },
 {
 "name":"Kenny Wayne Shepherd Band",
@@ -19865,11 +20030,11 @@
 "genres":[
 "colorado",
 "country",
-"indie"
+"folk"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":12442
+"raw":12704
 },
 "tier":null,
 "seen":{
@@ -19926,12 +20091,12 @@
 },
 "similar":[
 {
-"name":"August Ponthier",
-"in_tracker":false,
-"slug":null
+"name":"Leah Blevins",
+"in_tracker":true,
+"slug":"leah-blevins"
 },
 {
-"name":"Bella White",
+"name":"August Ponthier",
 "in_tracker":false,
 "slug":null
 },
@@ -19941,12 +20106,12 @@
 "slug":null
 },
 {
-"name":"Justin Townes Earle",
-"in_tracker":true,
-"slug":"justin-townes-earle"
+"name":"Willow Avalon",
+"in_tracker":false,
+"slug":null
 },
 {
-"name":"Willow Avalon",
+"name":"Bella White",
 "in_tracker":false,
 "slug":null
 }
@@ -19966,7 +20131,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":489558
+"raw":490333
 },
 "tier":{
 "label":"Strong",
@@ -20036,14 +20201,14 @@
 "slug":"joanne-shaw-taylor"
 },
 {
-"name":"Walter Trout",
-"in_tracker":true,
-"slug":"walter-trout"
-},
-{
 "name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
 },
 {
 "name":"Beth Hart",
@@ -20103,11 +20268,18 @@
 "name":"Joe Satriani",
 "slug":"joe-satriani",
 "spotify_id":"2yzxX2DI9LFK8VFTyW2zZ8",
-"mbid":null,
+"mbid":"29762c82-bb92-4acd-b1fb-09cc4da250d2",
 "image_url":"https://i.scdn.co/image/ab676161000051745a808151921cc9b8819589fd",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"guitar virtuoso",
+"instrumental rock",
+"instrumental"
+],
+"listener":{
+"tranche":"popular",
+"raw":730512
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -20155,13 +20327,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/2yzxX2DI9LFK8VFTyW2zZ8",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Joe+Satriani",
+"musicbrainz":"https://musicbrainz.org/artist/29762c82-bb92-4acd-b1fb-09cc4da250d2",
 "bandsintown":"https://www.bandsintown.com/search?query=Joe+Satriani",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Joe+Satriani"
 },
-"similar":[]
+"similar":[
+{
+"name":"Steve Vai",
+"in_tracker":true,
+"slug":"steve-vai"
+},
+{
+"name":"Andy Timmons",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Vinnie Moore",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Eric Johnson",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"John Petrucci",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "joey landreth":{
 "name":"Joey Landreth",
@@ -20177,7 +20375,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":11266
+"raw":11286
 },
 "tier":{
 "label":"Medium",
@@ -20234,11 +20432,6 @@
 "slug":null
 },
 {
-"name":"Seth Walker",
-"in_tracker":true,
-"slug":"seth-walker"
-},
-{
 "name":"TFDI",
 "in_tracker":false,
 "slug":null
@@ -20250,6 +20443,11 @@
 },
 {
 "name":"Michigan Rattlers",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Reese Wynans and Friends",
 "in_tracker":false,
 "slug":null
 }
@@ -20316,7 +20514,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":398327
+"raw":398794
 },
 "tier":null,
 "seen":{
@@ -20507,7 +20705,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3022
+"raw":3023
 },
 "tier":{
 "label":"Medium",
@@ -20693,7 +20891,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":9742
+"raw":9743
 },
 "tier":null,
 "seen":{
@@ -20978,7 +21176,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":498182
+"raw":500883
 },
 "tier":{
 "label":"Strong",
@@ -21055,12 +21253,12 @@
 "slug":null
 },
 {
-"name":"Cory Wong",
+"name":"Leon Bridges",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"José James",
+"name":"Cory Wong",
 "in_tracker":false,
 "slug":null
 },
@@ -21081,11 +21279,11 @@
 "genres":[
 "fingerpicking",
 "folk",
-"indie folk"
+"uk"
 ],
 "listener":{
 "tranche":"niche",
-"raw":767
+"raw":768
 },
 "tier":null,
 "seen":{
@@ -21136,12 +21334,12 @@
 "slug":null
 },
 {
-"name":"Unthank : Smith",
+"name":"Jennifer Reid",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Bella Hardy",
+"name":"Unthank : Smith",
 "in_tracker":false,
 "slug":null
 },
@@ -21265,7 +21463,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":10841
+"raw":10905
 },
 "tier":null,
 "seen":{
@@ -21311,29 +21509,29 @@
 },
 "similar":[
 {
-"name":"Omar & The Howlers",
+"name":"Steve Howell",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Cedric Burnside",
+"name":"Jerron Paxton",
 "in_tracker":true,
-"slug":"cedric-burnside"
+"slug":"jerron-paxton"
 },
 {
-"name":"Ana Popovic",
-"in_tracker":true,
-"slug":"ana-popovic"
+"name":"Jo Harman",
+"in_tracker":false,
+"slug":null
 },
 {
-"name":"Tinsley Ellis",
-"in_tracker":true,
-"slug":"tinsley-ellis"
+"name":"The Alabama Lovesnakes",
+"in_tracker":false,
+"slug":null
 },
 {
-"name":"Delbert McClinton",
-"in_tracker":true,
-"slug":"delbert-mcclinton"
+"name":"Cary Morin",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -21481,7 +21679,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":13403
+"raw":13553
 },
 "tier":null,
 "seen":{
@@ -21527,12 +21725,12 @@
 },
 "similar":[
 {
-"name":"Clifton Hicks",
+"name":"Two Runner",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Two Runner",
+"name":"Clifton Hicks",
 "in_tracker":false,
 "slug":null
 },
@@ -21567,7 +21765,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":634018
+"raw":634353
 },
 "tier":{
 "label":"Medium",
@@ -21634,9 +21832,9 @@
 "slug":"jason-isbell"
 },
 {
-"name":"The Milk Carton Kids",
-"in_tracker":false,
-"slug":null
+"name":"Justin Townes Earle",
+"in_tracker":true,
+"slug":"justin-townes-earle"
 },
 {
 "name":"The Avett Brothers",
@@ -21749,7 +21947,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1462
+"raw":1516
 },
 "tier":null,
 "seen":{
@@ -21795,17 +21993,7 @@
 },
 "similar":[
 {
-"name":"Reckoners",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Heavydrunk",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Marcus Trummer",
 "in_tracker":false,
 "slug":null
 },
@@ -21818,6 +22006,16 @@
 "name":"Toronzo Cannon",
 "in_tracker":true,
 "slug":"toronzo-cannon"
+},
+{
+"name":"Chase Walker Band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Reverend Shawn Amos",
+"in_tracker":true,
+"slug":"reverend-shawn-amos"
 }
 ]
 },
@@ -21882,7 +22080,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":34077
+"raw":34207
 },
 "tier":{
 "label":"Strong",
@@ -21958,12 +22156,12 @@
 },
 "similar":[
 {
-"name":"Prince",
+"name":"Prince, The New Power Generation",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Prince, The New Power Generation",
+"name":"Prince",
 "in_tracker":false,
 "slug":null
 },
@@ -21973,7 +22171,7 @@
 "slug":null
 },
 {
-"name":"Me'Shell Ndegéocello",
+"name":"Ledisi",
 "in_tracker":false,
 "slug":null
 },
@@ -22092,7 +22290,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":39791
+"raw":39897
 },
 "tier":{
 "label":"Medium",
@@ -22144,14 +22342,14 @@
 },
 "similar":[
 {
-"name":"Crooked Still",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Rhiannon Giddens",
 "in_tracker":true,
 "slug":"rhiannon-giddens"
+},
+{
+"name":"Crooked Still",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Brown Bird",
@@ -22184,7 +22382,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":41559
+"raw":41614
 },
 "tier":null,
 "seen":{
@@ -22355,11 +22553,11 @@
 "genres":[
 "indie rock",
 "jazz",
-"indie pop"
+"pop"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":38890
+"raw":38930
 },
 "tier":{
 "label":"Strong",
@@ -22438,22 +22636,22 @@
 "slug":null
 },
 {
+"name":"gladie",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Lande Hekt",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Remember Sports",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Palehound",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Half Waif",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"gladie",
+"name":"TORRES",
 "in_tracker":false,
 "slug":null
 }
@@ -22614,7 +22812,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":297162
+"raw":297598
 },
 "tier":{
 "label":"Strong",
@@ -22695,6 +22893,11 @@
 "slug":"taj-mahal"
 },
 {
+"name":"Ruthie Foster",
+"in_tracker":true,
+"slug":"ruthie-foster"
+},
+{
 "name":"Robert Cray",
 "in_tracker":false,
 "slug":null
@@ -22705,14 +22908,9 @@
 "slug":"eric-bibb"
 },
 {
-"name":"Buddy Guy",
-"in_tracker":true,
-"slug":"buddy-guy"
-},
-{
-"name":"Walter Trout",
-"in_tracker":true,
-"slug":"walter-trout"
+"name":"Hans Theessink",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -22871,7 +23069,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":128741
+"raw":128767
 },
 "tier":{
 "label":"Strong",
@@ -22943,24 +23141,24 @@
 "slug":"jonny-lang"
 },
 {
-"name":"Walter Trout",
-"in_tracker":true,
-"slug":"walter-trout"
-},
-{
 "name":"Joe Bonamassa",
 "in_tracker":true,
 "slug":"joe-bonamassa"
 },
 {
-"name":"Joanne Shaw Taylor",
+"name":"Walter Trout",
 "in_tracker":true,
-"slug":"joanne-shaw-taylor"
+"slug":"walter-trout"
 },
 {
 "name":"The Jeff Healey Band",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Joanne Shaw Taylor",
+"in_tracker":true,
+"slug":"joanne-shaw-taylor"
 }
 ]
 },
@@ -22977,7 +23175,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":478
+"raw":486
 },
 "tier":null,
 "seen":{
@@ -23160,7 +23358,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":20521
+"raw":20531
 },
 "tier":{
 "label":"Medium-Strong",
@@ -23345,7 +23543,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3764
+"raw":3770
 },
 "tier":{
 "label":"Medium",
@@ -23405,14 +23603,14 @@
 },
 "similar":[
 {
-"name":"Toronzo Cannon",
-"in_tracker":true,
-"slug":"toronzo-cannon"
-},
-{
 "name":"Gnola Blues Band",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Toronzo Cannon",
+"in_tracker":true,
+"slug":"toronzo-cannon"
 },
 {
 "name":"J.D. Simo",
@@ -23620,7 +23818,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":20839
+"raw":20915
 },
 "tier":{
 "label":"Medium",
@@ -23677,24 +23875,24 @@
 "slug":"robben-ford"
 },
 {
-"name":"Eric Gales",
-"in_tracker":true,
-"slug":"eric-gales"
-},
-{
 "name":"Mighty Sam McClain",
 "in_tracker":false,
 "slug":null
 },
 {
+"name":"Eric Gales",
+"in_tracker":true,
+"slug":"eric-gales"
+},
+{
+"name":"Gary Clark Jr.",
+"in_tracker":true,
+"slug":"gary-clark-jr"
+},
+{
 "name":"Tinsley Ellis",
 "in_tracker":true,
 "slug":"tinsley-ellis"
-},
-{
-"name":"Albert Castiglia",
-"in_tracker":true,
-"slug":"albert-castiglia"
 }
 ]
 },
@@ -23759,7 +23957,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5875
+"raw":5889
 },
 "tier":null,
 "seen":{
@@ -23820,12 +24018,12 @@
 "slug":"jake-blount"
 },
 {
-"name":"Marlene Oak",
+"name":"Puneet Gabriel McCorrison",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Puneet Gabriel McCorrison",
+"name":"Tré Burt",
 "in_tracker":false,
 "slug":null
 }
@@ -23939,7 +24137,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":470232
+"raw":472326
 },
 "tier":{
 "label":"Medium",
@@ -24031,7 +24229,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":175291
+"raw":175530
 },
 "tier":{
 "label":"Medium",
@@ -24103,7 +24301,7 @@
 "slug":null
 },
 {
-"name":"Kem",
+"name":"Dwele",
 "in_tracker":false,
 "slug":null
 }
@@ -24123,7 +24321,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":14163
+"raw":14187
 },
 "tier":null,
 "seen":{
@@ -24184,12 +24382,12 @@
 "slug":null
 },
 {
-"name":"Craig Erickson",
+"name":"Buddaheads",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Buddaheads",
+"name":"Craig Erickson",
 "in_tracker":false,
 "slug":null
 }
@@ -24209,7 +24407,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":439141
+"raw":439616
 },
 "tier":{
 "label":"Strong",
@@ -24281,14 +24479,14 @@
 "slug":null
 },
 {
-"name":"Hiss Golden Messenger",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"The Avett Brothers",
 "in_tracker":true,
 "slug":"avett-brothers"
+},
+{
+"name":"Hiss Golden Messenger",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Joe Pug",
@@ -24311,7 +24509,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":115816
+"raw":116123
 },
 "tier":{
 "label":"Strong",
@@ -24496,7 +24694,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":12452
+"raw":12484
 },
 "tier":{
 "label":"Medium-Strong",
@@ -24553,6 +24751,11 @@
 "slug":null
 },
 {
+"name":"Garry Burnside",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Eric Gales",
 "in_tracker":true,
 "slug":"eric-gales"
@@ -24566,11 +24769,6 @@
 "name":"Devon Allman",
 "in_tracker":true,
 "slug":"devon-allman"
-},
-{
-"name":"Charlie Musselwhite",
-"in_tracker":false,
-"slug":null
 }
 ]
 },
@@ -24578,11 +24776,16 @@
 "name":"Laura Chavez",
 "slug":"laura-chavez",
 "spotify_id":"39qB5Kj80W3eIDrI1PHXf2",
-"mbid":null,
+"mbid":"e4acf667-fbec-443d-9aa2-e6cf236d7bc6",
 "image_url":"https://i.scdn.co/image/ab67616d00001e02107beafdb8a156b8d2285c17",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"blues"
+],
+"listener":{
+"tranche":"niche",
+"raw":256
+},
 "tier":null,
 "seen":{
 "count":3,
@@ -24648,13 +24851,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/39qB5Kj80W3eIDrI1PHXf2",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Laura+Chavez",
+"musicbrainz":"https://musicbrainz.org/artist/e4acf667-fbec-443d-9aa2-e6cf236d7bc6",
 "bandsintown":"https://www.bandsintown.com/search?query=Laura+Chavez",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Laura+Chavez"
 },
-"similar":[]
+"similar":[
+{
+"name":"Vanessa Collier",
+"in_tracker":true,
+"slug":"vanessa-collier"
+},
+{
+"name":"Charles Tiner",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Marc Broussard / Joe Bonamassa",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Debra Power",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Gabe Stillman",
+"in_tracker":true,
+"slug":"gabe-stillman"
+}
+]
 },
 "laurence jones":{
 "name":"Laurence Jones",
@@ -24670,7 +24899,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":13211
+"raw":13267
 },
 "tier":null,
 "seen":{
@@ -24716,29 +24945,29 @@
 },
 "similar":[
 {
-"name":"Eric Steckel",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Alastair Greene",
+"name":"The Cold Stares",
 "in_tracker":true,
-"slug":"alastair-greene"
+"slug":"cold-stares"
 },
 {
-"name":"Stevie Nimmo",
+"name":"Danny Bryant",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"These Wicked Rivers",
+"name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sari Schorr",
-"in_tracker":false,
-"slug":null
+"name":"Mike Zito",
+"in_tracker":true,
+"slug":"mike-zito"
+},
+{
+"name":"Albert Castiglia",
+"in_tracker":true,
+"slug":"albert-castiglia"
 }
 ]
 },
@@ -25038,7 +25267,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":43827
+"raw":43955
 },
 "tier":{
 "label":"Medium",
@@ -25267,11 +25496,18 @@
 "name":"Lilly Hiatt Band",
 "slug":"lilly-hiatt-band",
 "spotify_id":"0bDtDHLE3cBlqZxyLUDf90",
-"mbid":null,
+"mbid":"0f199786-c008-4afd-b9d7-f68def829872",
 "image_url":"https://i.scdn.co/image/ab67616100005174f6a858f79ecf094fcf06f5a9",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"folk",
+"country",
+"singer-songwriter"
+],
+"listener":{
+"tranche":"emerging",
+"raw":36449
+},
 "tier":{
 "label":"Strong",
 "rank":4
@@ -25314,13 +25550,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/0bDtDHLE3cBlqZxyLUDf90",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Lilly+Hiatt",
+"musicbrainz":"https://musicbrainz.org/artist/0f199786-c008-4afd-b9d7-f68def829872",
 "bandsintown":"https://www.bandsintown.com/search?query=Lilly+Hiatt+Band",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Lilly+Hiatt+Band"
 },
-"similar":[]
+"similar":[
+{
+"name":"Caroline Spence",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Margo Price",
+"in_tracker":true,
+"slug":"margo-price"
+},
+{
+"name":"Amanda Shires",
+"in_tracker":true,
+"slug":"amanda-shires"
+},
+{
+"name":"Patterson Hood",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"horsebath",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "lily hiatt":{
 "name":"lily hiatt",
@@ -25377,13 +25639,13 @@
 "image_url":"https://i.scdn.co/image/ab676161000051741897f3eda0e09a2f4af9c39a",
 "banner_url":null,
 "genres":[
-"female vocalists",
 "rock",
+"female vocalists",
 "singer-songwriter"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":40149
+"raw":40545
 },
 "tier":null,
 "seen":{
@@ -25434,24 +25696,24 @@
 "slug":null
 },
 {
-"name":"Natalie Merchant",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Beth Hart",
 "in_tracker":true,
 "slug":"beth-hart"
 },
 {
-"name":"Heather Nova",
+"name":"Joan Osborne",
+"in_tracker":true,
+"slug":"joan-osborne"
+},
+{
+"name":"Anna Calvi",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Joan Osborne",
-"in_tracker":true,
-"slug":"joan-osborne"
+"name":"Beth Orton",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -25516,7 +25778,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":26599
+"raw":26698
 },
 "tier":null,
 "seen":{
@@ -25597,12 +25859,12 @@
 "slug":null
 },
 {
-"name":"Two Runner",
+"name":"Sam Grisman Project",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sam Grisman Project",
+"name":"Two Runner",
 "in_tracker":false,
 "slug":null
 }
@@ -25665,7 +25927,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":3674
+"raw":3677
 },
 "tier":null,
 "seen":{
@@ -25742,7 +26004,7 @@
 "slug":null
 },
 {
-"name":"Seven Mary Three",
+"name":"Matchbox Twenty",
 "in_tracker":false,
 "slug":null
 }
@@ -25762,7 +26024,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":844404
+"raw":846820
 },
 "tier":null,
 "seen":{
@@ -25824,22 +26086,22 @@
 "slug":null
 },
 {
-"name":"PJ Harvey",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"The Juliana Hatfield Three",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Luscious Jackson",
+"name":"PJ Harvey",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Veruca Salt",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Luscious Jackson",
 "in_tracker":false,
 "slug":null
 }
@@ -25859,7 +26121,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1227303
+"raw":1230995
 },
 "tier":null,
 "seen":{
@@ -25916,12 +26178,17 @@
 },
 "similar":[
 {
+"name":"EPMD",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Big Daddy Kane",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"EPMD",
+"name":"Naughty By Nature",
 "in_tracker":false,
 "slug":null
 },
@@ -25932,11 +26199,6 @@
 },
 {
 "name":"Heavy D & The Boyz",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Naughty By Nature",
 "in_tracker":false,
 "slug":null
 }
@@ -25956,7 +26218,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":152082
+"raw":152290
 },
 "tier":{
 "label":"Strong",
@@ -26068,9 +26330,9 @@
 "slug":null
 },
 {
-"name":"Courtney Marie Andrews",
+"name":"Dawes",
 "in_tracker":true,
-"slug":"courtney-marie-andrews"
+"slug":"dawes"
 }
 ]
 },
@@ -26088,7 +26350,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":722284
+"raw":725654
 },
 "tier":null,
 "seen":{
@@ -26185,7 +26447,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":606008
+"raw":607634
 },
 "tier":{
 "label":"Strong",
@@ -26237,14 +26499,14 @@
 },
 "similar":[
 {
-"name":"Gillian Welch",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Steve Earle",
 "in_tracker":true,
 "slug":"steve-earle"
+},
+{
+"name":"Gillian Welch",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Emmylou Harris",
@@ -26252,12 +26514,12 @@
 "slug":"emmylou-harris"
 },
 {
-"name":"Rosanne Cash",
+"name":"Tift Merritt",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Mary Gauthier",
+"name":"Rosanne Cash",
 "in_tracker":false,
 "slug":null
 }
@@ -26324,7 +26586,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":418734
+"raw":419374
 },
 "tier":{
 "label":"Strong",
@@ -26399,12 +26661,12 @@
 "slug":null
 },
 {
-"name":"The Staves",
+"name":"Madison Cunningham",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Madison Cunningham",
+"name":"The Staves",
 "in_tracker":false,
 "slug":null
 }
@@ -26424,7 +26686,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":44985
+"raw":45153
 },
 "tier":null,
 "seen":{
@@ -26496,14 +26758,14 @@
 "slug":"trombone-shorty"
 },
 {
-"name":"Hackney Colliery Band",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Rebirth Brass Band",
 "in_tracker":true,
 "slug":"rebirth-brass-band"
+},
+{
+"name":"Hypnotic Brass Ensemble",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -26521,7 +26783,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1030840
+"raw":1035486
 },
 "tier":{
 "label":"Medium",
@@ -26588,12 +26850,12 @@
 "slug":null
 },
 {
-"name":"Better Oblivion Community Center",
+"name":"Leith Ross",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Leith Ross",
+"name":"Better Oblivion Community Center",
 "in_tracker":false,
 "slug":null
 }
@@ -26613,7 +26875,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":256760
+"raw":257110
 },
 "tier":{
 "label":"Strong",
@@ -26685,14 +26947,14 @@
 "slug":"john-hiatt"
 },
 {
-"name":"Rosanne Cash",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Steve Earle",
 "in_tracker":true,
 "slug":"steve-earle"
+},
+{
+"name":"Rosanne Cash",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Guy Clark",
@@ -26700,9 +26962,9 @@
 "slug":null
 },
 {
-"name":"Rodney Crowell",
+"name":"Patty Griffin",
 "in_tracker":true,
-"slug":"rodney-crowell"
+"slug":"patty-griffin"
 }
 ]
 },
@@ -26714,13 +26976,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174d7bc8ff00c2b8ca5d1f7b559",
 "banner_url":null,
 "genres":[
-"canadian",
 "folk",
+"canadian",
 "canada"
 ],
 "listener":{
 "tranche":"niche",
-"raw":1641
+"raw":1647
 },
 "tier":null,
 "seen":{
@@ -26806,7 +27068,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":46012
+"raw":46131
 },
 "tier":{
 "label":"Strong",
@@ -26866,6 +27128,11 @@
 },
 "similar":[
 {
+"name":"Pistol Annies",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Ashley Monroe",
 "in_tracker":false,
 "slug":null
@@ -26876,19 +27143,14 @@
 "slug":null
 },
 {
-"name":"Pistol Annies",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Miranda Lambert",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Margo Price",
-"in_tracker":true,
-"slug":"margo-price"
+"name":"Kellie Pickler",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -26955,7 +27217,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1696
+"raw":1764
 },
 "tier":null,
 "seen":{
@@ -27052,7 +27314,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":288886
+"raw":289138
 },
 "tier":{
 "label":"Medium",
@@ -27109,24 +27371,24 @@
 "slug":null
 },
 {
-"name":"The Teskey Brothers",
-"in_tracker":true,
-"slug":"teskey-brothers"
-},
-{
 "name":"Mike Zito",
 "in_tracker":true,
 "slug":"mike-zito"
 },
 {
-"name":"The War and Treaty",
+"name":"Joe Bonamassa",
 "in_tracker":true,
-"slug":"war-and-treaty"
+"slug":"joe-bonamassa"
 },
 {
-"name":"Amos Lee",
-"in_tracker":false,
-"slug":null
+"name":"Tony Joe White",
+"in_tracker":true,
+"slug":"tony-joe-white"
+},
+{
+"name":"The Teskey Brothers",
+"in_tracker":true,
+"slug":"teskey-brothers"
 }
 ]
 },
@@ -27238,7 +27500,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":283918
+"raw":285532
 },
 "tier":{
 "label":"Strong",
@@ -27308,19 +27570,19 @@
 "slug":"gary-clark-jr"
 },
 {
-"name":"The Teskey Brothers",
+"name":"Christone \"Kingfish\" Ingram",
 "in_tracker":true,
-"slug":"teskey-brothers"
-},
-{
-"name":"JJ Grey & Mofro",
-"in_tracker":true,
-"slug":"jj-grey-mofro"
+"slug":"christone-kingfish-ingram"
 },
 {
 "name":"Tedeschi Trucks Band",
 "in_tracker":true,
 "slug":"tedeschi-trucks-band"
+},
+{
+"name":"The Teskey Brothers",
+"in_tracker":true,
+"slug":"teskey-brothers"
 }
 ]
 },
@@ -27332,13 +27594,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174dfbcd0ddef3848e69ed19e02",
 "banner_url":null,
 "genres":[
-"indie",
 "singer-songwriter",
+"indie",
 "indie rock"
 ],
 "listener":{
 "tranche":"mid",
-"raw":129557
+"raw":129784
 },
 "tier":null,
 "seen":{
@@ -27397,11 +27659,6 @@
 },
 "similar":[
 {
-"name":"Alex Lahey",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Caroline Rose",
 "in_tracker":false,
 "slug":null
@@ -27412,12 +27669,17 @@
 "slug":"waxahatchee"
 },
 {
-"name":"Heartless Bastards",
+"name":"Bahamas",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Courtney Barnett",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"TORRES",
 "in_tracker":false,
 "slug":null
 }
@@ -27437,7 +27699,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":120311
+"raw":121783
 },
 "tier":{
 "label":"Strong",
@@ -27507,17 +27769,17 @@
 "slug":"molly-tuttle"
 },
 {
-"name":"Brandy Clark",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Kelsey Waldon",
 "in_tracker":true,
 "slug":"kelsey-waldon"
 },
 {
-"name":"Sunny Sweeney",
+"name":"Brandy Clark",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kathleen Edwards",
 "in_tracker":false,
 "slug":null
 }
@@ -27537,7 +27799,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":839495
+"raw":840677
 },
 "tier":{
 "label":"Strong",
@@ -27604,12 +27866,12 @@
 "slug":null
 },
 {
-"name":"Eric Clapton",
-"in_tracker":true,
-"slug":"eric-clapton"
+"name":"John Illsley",
+"in_tracker":false,
+"slug":null
 },
 {
-"name":"John Illsley",
+"name":"Chet Atkins & Mark Knopfler",
 "in_tracker":false,
 "slug":null
 }
@@ -27629,7 +27891,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":91795
+"raw":91973
 },
 "tier":{
 "label":"Medium",
@@ -27686,22 +27948,22 @@
 "slug":null
 },
 {
-"name":"The Rubinoos",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Nick Lowe",
 "in_tracker":true,
 "slug":"nick-lowe"
 },
 {
-"name":"The dB's",
+"name":"Matthew Sweet",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Rockpile",
+"name":"The Rubinoos",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Plimsouls",
 "in_tracker":false,
 "slug":null
 }
@@ -27815,7 +28077,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":10836
+"raw":10881
 },
 "tier":{
 "label":"Medium",
@@ -27950,7 +28212,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":491
+"raw":496
 },
 "tier":{
 "label":"Medium",
@@ -28015,12 +28277,12 @@
 "slug":"d-k-harrell"
 },
 {
-"name":"Nic Clark",
+"name":"The Dig 3",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Dig 3",
+"name":"Robert \"Lefty Preacher\" Sampson",
 "in_tracker":false,
 "slug":null
 },
@@ -28030,7 +28292,7 @@
 "slug":null
 },
 {
-"name":"Robert \"Lefty Preacher\" Sampson",
+"name":"Nic Clark",
 "in_tracker":false,
 "slug":null
 }
@@ -28050,7 +28312,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":20075
+"raw":20109
 },
 "tier":{
 "label":"Strong",
@@ -28136,13 +28398,13 @@
 "image_url":"https://i.scdn.co/image/ab6761610000517463736b83f5a1f582bb72f211",
 "banner_url":null,
 "genres":[
-"fusion",
 "jazz",
+"fusion",
 "jazz fusion"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":20672
+"raw":20929
 },
 "tier":{
 "label":"Strong",
@@ -28202,12 +28464,12 @@
 },
 "similar":[
 {
-"name":"Guthrie Govan",
+"name":"Jack Gardiner",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Jack Gardiner",
+"name":"Guthrie Govan",
 "in_tracker":false,
 "slug":null
 },
@@ -28289,7 +28551,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":269235
+"raw":269840
 },
 "tier":{
 "label":"Strong",
@@ -28359,7 +28621,7 @@
 "slug":null
 },
 {
-"name":"Natalie Bergman",
+"name":"Robert Finley",
 "in_tracker":false,
 "slug":null
 },
@@ -28369,9 +28631,9 @@
 "slug":null
 },
 {
-"name":"Robert Finley",
-"in_tracker":false,
-"slug":null
+"name":"Valerie June",
+"in_tracker":true,
+"slug":"valerie-june"
 }
 ]
 },
@@ -28528,7 +28790,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":583
+"raw":585
 },
 "tier":null,
 "seen":{
@@ -28708,7 +28970,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":42619
+"raw":42820
 },
 "tier":{
 "label":"Strong",
@@ -28770,17 +29032,17 @@
 },
 "similar":[
 {
+"name":"Thomas Dollbaum",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Kevin Morby",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Aldous Harding",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Thomas Dollbaum",
 "in_tracker":false,
 "slug":null
 },
@@ -28951,7 +29213,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":56154
+"raw":56245
 },
 "tier":{
 "label":"Strong",
@@ -29023,14 +29285,14 @@
 "slug":"albert-castiglia"
 },
 {
-"name":"Walter Trout",
-"in_tracker":true,
-"slug":"walter-trout"
-},
-{
 "name":"Supersonic Blues Machine",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
 },
 {
 "name":"Bernard Allison",
@@ -29054,11 +29316,11 @@
 "genres":[
 "country",
 "black country musicians",
-"alt-country"
+"american"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":14101
+"raw":14136
 },
 "tier":{
 "label":"Strong",
@@ -29130,9 +29392,9 @@
 "slug":null
 },
 {
-"name":"Leah Blevins",
-"in_tracker":true,
-"slug":"leah-blevins"
+"name":"Thomas Csorba",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -29197,7 +29459,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":56462
+"raw":56470
 },
 "tier":null,
 "seen":{
@@ -29294,7 +29556,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3341848
+"raw":3361491
 },
 "tier":null,
 "seen":{
@@ -29360,7 +29622,7 @@
 "slug":null
 },
 {
-"name":"Sir Chloe",
+"name":"Phoebe Bridgers",
 "in_tracker":false,
 "slug":null
 }
@@ -29376,11 +29638,11 @@
 "genres":[
 "jazz",
 "jazz fusion",
-"india"
+"bass"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":9108
+"raw":9194
 },
 "tier":{
 "label":"Strong",
@@ -29457,12 +29719,12 @@
 "slug":null
 },
 {
-"name":"The Aristocrats",
+"name":"Kinga Glyk",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Kinga Glyk",
+"name":"Scott Henderson",
 "in_tracker":false,
 "slug":null
 }
@@ -29529,7 +29791,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":140519
+"raw":141031
 },
 "tier":{
 "label":"Lower",
@@ -29609,9 +29871,9 @@
 "slug":"amanda-shires"
 },
 {
-"name":"Sara Watkins",
-"in_tracker":true,
-"slug":"sara-watkins"
+"name":"Sarah Jarosz",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -29675,7 +29937,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":1449
+"raw":1450
 },
 "tier":null,
 "seen":{
@@ -29761,7 +30023,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":11832
+"raw":11998
 },
 "tier":{
 "label":"Strong",
@@ -29838,12 +30100,12 @@
 "slug":"sunny-war"
 },
 {
-"name":"Antone's 50th Allstars",
+"name":"The Mary Wallopers",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Mary Wallopers",
+"name":"Blind Blake",
 "in_tracker":false,
 "slug":null
 }
@@ -29863,7 +30125,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":780983
+"raw":784350
 },
 "tier":null,
 "seen":{
@@ -29996,7 +30258,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3413153
+"raw":3421596
 },
 "tier":null,
 "seen":{
@@ -30053,12 +30315,12 @@
 },
 "similar":[
 {
-"name":"JAY-Z",
+"name":"Mobb Deep",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Mobb Deep",
+"name":"JAY-Z",
 "in_tracker":false,
 "slug":null
 },
@@ -30093,7 +30355,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":10959
+"raw":11078
 },
 "tier":{
 "label":"Medium",
@@ -30155,19 +30417,19 @@
 "slug":"taj-mahal"
 },
 {
-"name":"Early James",
-"in_tracker":false,
-"slug":null
+"name":"Keb' Mo'",
+"in_tracker":true,
+"slug":"keb-mo"
+},
+{
+"name":"Buddy Guy",
+"in_tracker":true,
+"slug":"buddy-guy"
 },
 {
 "name":"Robert Finley",
 "in_tracker":false,
 "slug":null
-},
-{
-"name":"Keb' Mo'",
-"in_tracker":true,
-"slug":"keb-mo"
 }
 ]
 },
@@ -30179,13 +30441,13 @@
 "image_url":"https://i.scdn.co/image/ab67616d00001e02eabe4cf2bff93151cabb7c59",
 "banner_url":null,
 "genres":[
-"musical",
 "contemporary classical",
+"musical",
 "orchestral"
 ],
 "listener":{
 "tranche":"niche",
-"raw":4675
+"raw":4701
 },
 "tier":null,
 "seen":{
@@ -30456,7 +30718,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1038
+"raw":1039
 },
 "tier":{
 "label":"Medium-Strong",
@@ -30521,12 +30783,12 @@
 "slug":"nick-lowe"
 },
 {
-"name":"Los Straitjackets",
+"name":"Dave Alvin & Jimmie Dale Gilmore",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Dave Alvin & Jimmie Dale Gilmore",
+"name":"Los Straitjackets",
 "in_tracker":false,
 "slug":null
 },
@@ -30599,11 +30861,11 @@
 "genres":[
 "female vocalists",
 "indie",
-"singer-songwriter"
+"folk"
 ],
 "listener":{
 "tranche":"mid",
-"raw":176346
+"raw":176560
 },
 "tier":{
 "label":"Medium",
@@ -30668,12 +30930,12 @@
 "slug":null
 },
 {
-"name":"Rachael Yamagata",
+"name":"Jenny Lewis",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Jenny Lewis",
+"name":"Rachael Yamagata",
 "in_tracker":false,
 "slug":null
 },
@@ -30683,7 +30945,7 @@
 "slug":null
 },
 {
-"name":"Jesca Hoop",
+"name":"A Fine Frenzy",
 "in_tracker":false,
 "slug":null
 }
@@ -30703,7 +30965,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":6151
+"raw":6198
 },
 "tier":{
 "label":"Strong",
@@ -30936,7 +31198,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":192120
+"raw":192283
 },
 "tier":{
 "label":"Strong",
@@ -31015,11 +31277,6 @@
 "slug":"southern-avenue"
 },
 {
-"name":"The Derek Trucks Band",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"JJ Grey & Mofro",
 "in_tracker":true,
 "slug":"jj-grey-mofro"
@@ -31028,6 +31285,11 @@
 "name":"The Marcus King Band",
 "in_tracker":false,
 "slug":null
+},
+{
+"name":"Warren Haynes",
+"in_tracker":true,
+"slug":"warren-haynes"
 }
 ]
 },
@@ -31092,7 +31354,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":39585
+"raw":39828
 },
 "tier":{
 "label":"Strong",
@@ -31206,7 +31468,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":5712
+"raw":5719
 },
 "tier":{
 "label":"Strong",
@@ -31322,7 +31584,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":217546
+"raw":218301
 },
 "tier":{
 "label":"Strong",
@@ -31394,12 +31656,12 @@
 "slug":null
 },
 {
-"name":"DIAMANTE",
+"name":"Sophie Lloyd",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sophie Lloyd",
+"name":"DIAMANTE",
 "in_tracker":false,
 "slug":null
 },
@@ -31424,7 +31686,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":3832038
+"raw":3847896
 },
 "tier":{
 "label":"Medium",
@@ -31481,12 +31743,12 @@
 "slug":null
 },
 {
-"name":"Avril Lavigne",
+"name":"Christina Aguilera",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Christina Aguilera",
+"name":"Avril Lavigne",
 "in_tracker":false,
 "slug":null
 },
@@ -31563,7 +31825,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":373191
+"raw":373534
 },
 "tier":null,
 "seen":{
@@ -31635,14 +31897,14 @@
 "slug":null
 },
 {
-"name":"Kathleen Edwards",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Shawn Colvin",
 "in_tracker":true,
 "slug":"shawn-colvin"
+},
+{
+"name":"Kathleen Edwards",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -31650,11 +31912,14 @@
 "name":"Paul Reed Smith",
 "slug":"paul-reed-smith",
 "spotify_id":"7bnjwWMoiS83CUWRjsmv1b",
-"mbid":null,
+"mbid":"77c46f51-2cec-4f4d-960d-5a59530d59bb",
 "image_url":"https://i.scdn.co/image/ab67616100005174270dc9e4c7ed6a195415e365",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":69
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -31702,13 +31967,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/7bnjwWMoiS83CUWRjsmv1b",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Paul+Reed+Smith",
+"musicbrainz":"https://musicbrainz.org/artist/77c46f51-2cec-4f4d-960d-5a59530d59bb",
 "bandsintown":"https://www.bandsintown.com/search?query=Paul+Reed+Smith",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Paul+Reed+Smith"
 },
-"similar":[]
+"similar":[
+{
+"name":"David Grissom",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Pete Thorn",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Josh Smith",
+"in_tracker":true,
+"slug":"josh-smith"
+},
+{
+"name":"Michael Landau",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chad Smith's Bombastic Meatbats",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "paul thorn":{
 "name":"paul thorn",
@@ -31865,7 +32156,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1825628
+"raw":1829451
 },
 "tier":{
 "label":"Strong",
@@ -31953,11 +32244,11 @@
 "genres":[
 "indie",
 "singer songwriter",
-"acoustic"
+"folk"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":9157
+"raw":9164
 },
 "tier":null,
 "seen":{
@@ -32137,7 +32428,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":100549
+"raw":100760
 },
 "tier":{
 "label":"Strong",
@@ -32212,12 +32503,12 @@
 "slug":null
 },
 {
-"name":"The Aggrolites",
+"name":"Hepcat",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Hepcat",
+"name":"Mustard Plug",
 "in_tracker":false,
 "slug":null
 }
@@ -32295,9 +32586,9 @@
 "slug":null
 },
 {
-"name":"Devon Allman",
+"name":"Ana Popović",
 "in_tracker":true,
-"slug":"devon-allman"
+"slug":"ana-popovic"
 },
 {
 "name":"Mike Zito & Albert Castiglia",
@@ -32305,9 +32596,9 @@
 "slug":null
 },
 {
-"name":"Ana Popović",
+"name":"Devon Allman",
 "in_tracker":true,
-"slug":"ana-popovic"
+"slug":"devon-allman"
 }
 ]
 },
@@ -32325,7 +32616,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":4331175
+"raw":4345875
 },
 "tier":null,
 "seen":{
@@ -32397,12 +32688,12 @@
 "slug":null
 },
 {
-"name":"Frank Black and the Catholics",
+"name":"Dinosaur Jr.",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Dinosaur Jr.",
+"name":"Frank Black and the Catholics",
 "in_tracker":false,
 "slug":null
 }
@@ -32516,7 +32807,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":782293
+"raw":782591
 },
 "tier":null,
 "seen":{
@@ -32588,12 +32879,12 @@
 "slug":null
 },
 {
-"name":"Joe Jackson",
+"name":"Elvis Costello & The Attractions",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Go-Go's",
+"name":"Joe Jackson",
 "in_tracker":false,
 "slug":null
 }
@@ -32613,7 +32904,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":10877
+"raw":10943
 },
 "tier":null,
 "seen":{
@@ -32664,11 +32955,6 @@
 "slug":null
 },
 {
-"name":"Laurence Jones",
-"in_tracker":true,
-"slug":"laurence-jones"
-},
-{
 "name":"Alastair Greene",
 "in_tracker":true,
 "slug":"alastair-greene"
@@ -32682,6 +32968,11 @@
 "name":"Ronnie Baker Brooks",
 "in_tracker":true,
 "slug":"ronnie-baker-brooks"
+},
+{
+"name":"Bywater Call",
+"in_tracker":true,
+"slug":"bywater-call"
 }
 ]
 },
@@ -32699,7 +32990,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":80729
+"raw":80744
 },
 "tier":{
 "label":"Medium",
@@ -32838,7 +33129,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1113634
+"raw":1120877
 },
 "tier":null,
 "seen":{
@@ -32904,7 +33195,7 @@
 "slug":null
 },
 {
-"name":"The Backseat Lovers",
+"name":"Joe P",
 "in_tracker":false,
 "slug":null
 }
@@ -32967,11 +33258,11 @@
 "genres":[
 "new orleans",
 "jazz",
-"brass band"
+"brass"
 ],
 "listener":{
 "tranche":"mid",
-"raw":82298
+"raw":82456
 },
 "tier":{
 "label":"Lower",
@@ -33071,7 +33362,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":121866
+"raw":122290
 },
 "tier":{
 "label":"Medium",
@@ -33128,22 +33419,22 @@
 "slug":null
 },
 {
-"name":"Quaker City Night Hawks",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"The Blue Stones",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Stone Foxes",
+"name":"Quaker City Night Hawks",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Dan Auerbach",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Stone Foxes",
 "in_tracker":false,
 "slug":null
 }
@@ -33338,7 +33629,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":42490
+"raw":42591
 },
 "tier":null,
 "seen":{
@@ -33389,6 +33680,11 @@
 "slug":"muireann-bradley"
 },
 {
+"name":"Sunny War",
+"in_tracker":true,
+"slug":"sunny-war"
+},
+{
 "name":"William Elliott Whitmore",
 "in_tracker":false,
 "slug":null
@@ -33397,11 +33693,6 @@
 "name":"Early James",
 "in_tracker":false,
 "slug":null
-},
-{
-"name":"Sunny War",
-"in_tracker":true,
-"slug":"sunny-war"
 },
 {
 "name":"Seasick Steve",
@@ -33518,7 +33809,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":240440
+"raw":241810
 },
 "tier":{
 "label":"Strong",
@@ -33585,19 +33876,9 @@
 },
 "similar":[
 {
-"name":"Daniel Lanois",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Leyla McCalla",
 "in_tracker":true,
 "slug":"leyla-mccalla"
-},
-{
-"name":"Carolina Chocolate Drops",
-"in_tracker":false,
-"slug":null
 },
 {
 "name":"Allison Russell",
@@ -33605,9 +33886,19 @@
 "slug":"allison-russell"
 },
 {
+"name":"Carolina Chocolate Drops",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Valerie June",
 "in_tracker":true,
 "slug":"valerie-june"
+},
+{
+"name":"David Ferguson",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -33659,14 +33950,21 @@
 "similar":[]
 },
 "richard thompson":{
-"name":"richard thompson",
+"name":"Richard Thompson",
 "slug":"richard-thompson",
 "spotify_id":null,
-"mbid":null,
+"mbid":"ecfeacaf-0399-470f-8207-d1c646569fd0",
 "image_url":null,
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"folk",
+"singer-songwriter",
+"folk rock"
+],
+"listener":{
+"tranche":"popular",
+"raw":296246
+},
 "tier":{
 "label":"Strong",
 "rank":4
@@ -33703,13 +34001,39 @@
 "links":{
 "spotify":null,
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=richard+thompson",
+"lastfm":"https://www.last.fm/music/Richard+Thompson",
+"musicbrainz":"https://musicbrainz.org/artist/ecfeacaf-0399-470f-8207-d1c646569fd0",
+"bandsintown":"https://www.bandsintown.com/search?query=Richard+Thompson",
 "seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=richard+thompson"
+"setlistfm":"https://www.setlist.fm/search?query=Richard+Thompson"
 },
-"similar":[]
+"similar":[
+{
+"name":"Richard & Linda Thompson",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Fairport Convention",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Linda Thompson",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Sandy Denny",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Steeleye Span",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "richie furay":{
 "name":"richie furay",
@@ -33913,7 +34237,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":360402
+"raw":361137
 },
 "tier":null,
 "seen":{
@@ -33975,22 +34299,22 @@
 "slug":null
 },
 {
-"name":"Goodbye June",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Dirty Honey",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Radio Moscow",
+"name":"Goodbye June",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Black Pistol Fire",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Radio Moscow",
 "in_tracker":false,
 "slug":null
 }
@@ -34104,7 +34428,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":143942
+"raw":144131
 },
 "tier":{
 "label":"Medium-Strong",
@@ -34161,12 +34485,12 @@
 "slug":null
 },
 {
-"name":"Robert Cray",
+"name":"Larry Carlton",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Larry Carlton",
+"name":"Robert Cray",
 "in_tracker":false,
 "slug":null
 },
@@ -34176,9 +34500,9 @@
 "slug":"sonny-landreth"
 },
 {
-"name":"Ronnie Earl",
-"in_tracker":false,
-"slug":null
+"name":"Walter Trout",
+"in_tracker":true,
+"slug":"walter-trout"
 }
 ]
 },
@@ -34196,7 +34520,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":35445
+"raw":35451
 },
 "tier":{
 "label":"Strong",
@@ -34266,9 +34590,9 @@
 "slug":null
 },
 {
-"name":"Jimmie Vaughan",
-"in_tracker":true,
-"slug":"jimmie-vaughan"
+"name":"Big Head Todd and the Monsters",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"The Jeff Healey Band",
@@ -34276,9 +34600,9 @@
 "slug":null
 },
 {
-"name":"Big Head Todd and the Monsters",
-"in_tracker":false,
-"slug":null
+"name":"Jimmie Vaughan",
+"in_tracker":true,
+"slug":"jimmie-vaughan"
 }
 ]
 },
@@ -34337,13 +34661,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174c5d81c60dff2797f5782c971",
 "banner_url":null,
 "genres":[
-"southern rock",
 "blues rock",
+"southern rock",
 "southern blues rock"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":13154
+"raw":13205
 },
 "tier":{
 "label":"Strong",
@@ -34400,17 +34724,17 @@
 "slug":null
 },
 {
-"name":"Gov't Mule",
-"in_tracker":true,
-"slug":"gov-t-mule"
-},
-{
 "name":"Joanne Shaw Taylor",
 "in_tracker":true,
 "slug":"joanne-shaw-taylor"
 },
 {
-"name":"Them Dirty Roses",
+"name":"Gov't Mule",
+"in_tracker":true,
+"slug":"gov-t-mule"
+},
+{
+"name":"Blackberry Smoke",
 "in_tracker":false,
 "slug":null
 },
@@ -34435,7 +34759,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":196145
+"raw":196354
 },
 "tier":{
 "label":"Strong",
@@ -34596,7 +34920,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":258828
+"raw":260066
 },
 "tier":{
 "label":"Medium",
@@ -34653,22 +34977,22 @@
 "slug":null
 },
 {
-"name":"Johnny Winter",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Free",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Rory Gallagher",
+"name":"Joe Walsh",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Joe Walsh",
+"name":"Johnny Winter",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Humble Pie",
 "in_tracker":false,
 "slug":null
 }
@@ -34829,7 +35153,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":633950
+"raw":635187
 },
 "tier":null,
 "seen":{
@@ -34973,7 +35297,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":17265
+"raw":17322
 },
 "tier":null,
 "seen":{
@@ -35029,12 +35353,12 @@
 "slug":null
 },
 {
-"name":"Craig Erickson",
+"name":"Wes Jeans",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Wes Jeans",
+"name":"Craig Erickson",
 "in_tracker":false,
 "slug":null
 },
@@ -35059,7 +35383,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1552280
+"raw":1555883
 },
 "tier":{
 "label":"Medium",
@@ -35245,7 +35569,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":43818
+"raw":44026
 },
 "tier":{
 "label":"Strong",
@@ -35308,14 +35632,14 @@
 },
 "similar":[
 {
-"name":"Shemekia Copeland",
-"in_tracker":true,
-"slug":"shemekia-copeland"
-},
-{
 "name":"Janiva Magness",
 "in_tracker":true,
 "slug":"janiva-magness"
+},
+{
+"name":"Shemekia Copeland",
+"in_tracker":true,
+"slug":"shemekia-copeland"
 },
 {
 "name":"Keb' Mo'",
@@ -35323,14 +35647,14 @@
 "slug":"keb-mo"
 },
 {
+"name":"Seth Walker",
+"in_tracker":true,
+"slug":"seth-walker"
+},
+{
 "name":"Carolyn Wonderland",
 "in_tracker":true,
 "slug":"carolyn-wonderland"
-},
-{
-"name":"Beth Hart",
-"in_tracker":true,
-"slug":"beth-hart"
 }
 ]
 },
@@ -35342,13 +35666,13 @@
 "image_url":"https://i.scdn.co/image/ab676161000051746dbb1468335b15fba5ca9b8a",
 "banner_url":null,
 "genres":[
-"singer-songwriter",
 "folk",
+"singer-songwriter",
 "new orleans"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":48785
+"raw":49546
 },
 "tier":{
 "label":"Medium",
@@ -35405,12 +35729,12 @@
 "slug":"courtney-marie-andrews"
 },
 {
-"name":"Nora Brown",
-"in_tracker":false,
-"slug":null
+"name":"Langhorne Slim",
+"in_tracker":true,
+"slug":"langhorne-slim"
 },
 {
-"name":"Way Dynamic",
+"name":"Nora Brown",
 "in_tracker":false,
 "slug":null
 },
@@ -35420,7 +35744,7 @@
 "slug":null
 },
 {
-"name":"Michael Hurley",
+"name":"Anna Ash",
 "in_tracker":false,
 "slug":null
 }
@@ -35436,11 +35760,11 @@
 "genres":[
 "rare sad girl",
 "singer-songwriter",
-"indie rock"
+"usa"
 ],
 "listener":{
 "tranche":"mid",
-"raw":90841
+"raw":92350
 },
 "tier":null,
 "seen":{
@@ -35504,17 +35828,12 @@
 },
 "similar":[
 {
-"name":"Lomelda",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Allegra Krieger",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Pinegrove",
+"name":"Lomelda",
 "in_tracker":false,
 "slug":null
 },
@@ -35525,6 +35844,11 @@
 },
 {
 "name":"Odie Leigh",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Pinegrove",
 "in_tracker":false,
 "slug":null
 }
@@ -35544,7 +35868,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":214319
+"raw":214624
 },
 "tier":null,
 "seen":{
@@ -35735,7 +36059,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":68671
+"raw":68947
 },
 "tier":{
 "label":"Strong",
@@ -35812,19 +36136,19 @@
 "slug":"sue-foley"
 },
 {
-"name":"Ana Popovic",
-"in_tracker":true,
-"slug":"ana-popovic"
-},
-{
 "name":"Larkin Poe",
 "in_tracker":true,
 "slug":"larkin-poe"
 },
 {
-"name":"Ally Venable",
+"name":"Ana Popovic",
 "in_tracker":true,
-"slug":"ally-venable"
+"slug":"ana-popovic"
+},
+{
+"name":"Susan Tedeschi",
+"in_tracker":true,
+"slug":"susan-tedeschi"
 }
 ]
 },
@@ -35842,7 +36166,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":601
+"raw":609
 },
 "tier":null,
 "seen":{
@@ -35906,14 +36230,14 @@
 },
 "similar":[
 {
-"name":"Samantha Fish / Cassie Taylor / Dani Wilde",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Samantha Fish",
 "in_tracker":true,
 "slug":"samantha-fish"
+},
+{
+"name":"Samantha Fish / Cassie Taylor / Dani Wilde",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Ana Popović",
@@ -36092,7 +36416,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1776199
+"raw":1779730
 },
 "tier":null,
 "seen":{
@@ -36154,11 +36478,6 @@
 "slug":"jewel"
 },
 {
-"name":"Paula Cole",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Natalie Merchant",
 "in_tracker":false,
 "slug":null
@@ -36169,9 +36488,14 @@
 "slug":"sheryl-crow"
 },
 {
-"name":"Shawn Colvin",
+"name":"Paula Cole",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Tori Amos",
 "in_tracker":true,
-"slug":"shawn-colvin"
+"slug":"tori-amos"
 }
 ]
 },
@@ -36240,11 +36564,14 @@
 "name":"Scot Sutherland",
 "slug":"scot-sutherland",
 "spotify_id":"15yYaCPpcHRdUO5MX1xXhB",
-"mbid":null,
+"mbid":"c9f6d383-35ef-4304-bed2-9ff1651265a7",
 "image_url":null,
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":1
+},
 "tier":null,
 "seen":{
 "count":2,
@@ -36293,8 +36620,8 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/15yYaCPpcHRdUO5MX1xXhB",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Scot+Sutherland",
+"musicbrainz":"https://musicbrainz.org/artist/c9f6d383-35ef-4304-bed2-9ff1651265a7",
 "bandsintown":"https://www.bandsintown.com/search?query=Scot+Sutherland",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Scot+Sutherland"
@@ -36362,7 +36689,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":446
+"raw":447
 },
 "tier":null,
 "seen":{
@@ -36506,7 +36833,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":272107
+"raw":272968
 },
 "tier":null,
 "seen":{
@@ -36568,22 +36895,22 @@
 "slug":null
 },
 {
-"name":"Brandi Carlile",
-"in_tracker":true,
-"slug":"brandi-carlile"
-},
-{
 "name":"The Highwomen",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Lori McKenna",
+"name":"Brandi Carlile",
+"in_tracker":true,
+"slug":"brandi-carlile"
+},
+{
+"name":"The Wailin' Jennys",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Gillian Welch",
+"name":"Lori McKenna",
 "in_tracker":false,
 "slug":null
 }
@@ -36603,7 +36930,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":15663
+"raw":15738
 },
 "tier":{
 "label":"Strong",
@@ -36691,14 +37018,14 @@
 "slug":"gov-t-mule"
 },
 {
-"name":"Tinsley Ellis",
-"in_tracker":true,
-"slug":"tinsley-ellis"
-},
-{
 "name":"Mike Zito",
 "in_tracker":true,
 "slug":"mike-zito"
+},
+{
+"name":"Tinsley Ellis",
+"in_tracker":true,
+"slug":"tinsley-ellis"
 },
 {
 "name":"North Mississippi Allstars",
@@ -36769,7 +37096,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1461
+"raw":1465
 },
 "tier":null,
 "seen":{
@@ -36855,7 +37182,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":497627
+"raw":499205
 },
 "tier":{
 "label":"Strong",
@@ -37072,17 +37399,17 @@
 "slug":"gov-t-mule"
 },
 {
-"name":"Philip Sayce",
-"in_tracker":true,
-"slug":"philip-sayce"
-},
-{
 "name":"Dirty Honey",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Super Vintage",
+"name":"Philip Sayce",
+"in_tracker":true,
+"slug":"philip-sayce"
+},
+{
+"name":"Bad Touch",
 "in_tracker":false,
 "slug":null
 }
@@ -37143,13 +37470,13 @@
 "image_url":"https://i.scdn.co/image/ab676161000051747068121a2b6b8b86bbcb95f0",
 "banner_url":null,
 "genres":[
-"soul",
 "folk",
+"soul",
 "blues"
 ],
 "listener":{
 "tranche":"mid",
-"raw":176019
+"raw":176966
 },
 "tier":{
 "label":"Strong",
@@ -37214,12 +37541,12 @@
 "slug":null
 },
 {
-"name":"Brown Bird",
+"name":"The White Buffalo",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The White Buffalo",
+"name":"Brown Bird",
 "in_tracker":false,
 "slug":null
 },
@@ -37296,7 +37623,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3942
+"raw":3951
 },
 "tier":{
 "label":"Medium-Strong",
@@ -37358,12 +37685,12 @@
 "slug":null
 },
 {
-"name":"Dave Fields",
+"name":"Sonny Moorman",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sonny Moorman",
+"name":"Dave Fields",
 "in_tracker":false,
 "slug":null
 },
@@ -37388,7 +37715,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":71652
+"raw":71830
 },
 "tier":{
 "label":"Strong",
@@ -37455,14 +37782,9 @@
 "slug":"ruthie-foster"
 },
 {
-"name":"Joanne Shaw Taylor",
+"name":"Carolyn Wonderland",
 "in_tracker":true,
-"slug":"joanne-shaw-taylor"
-},
-{
-"name":"Marcia Ball",
-"in_tracker":false,
-"slug":null
+"slug":"carolyn-wonderland"
 },
 {
 "name":"Sue Foley",
@@ -37470,9 +37792,14 @@
 "slug":"sue-foley"
 },
 {
-"name":"Walter Trout",
+"name":"Joanne Shaw Taylor",
 "in_tracker":true,
-"slug":"walter-trout"
+"slug":"joanne-shaw-taylor"
+},
+{
+"name":"Joe Louis Walker",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -37584,7 +37911,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":185988
+"raw":186268
 },
 "tier":{
 "label":"Strong",
@@ -37670,17 +37997,17 @@
 "slug":"justin-townes-earle"
 },
 {
-"name":"Middle Brother",
+"name":"The Avett Brothers",
+"in_tracker":true,
+"slug":"avett-brothers"
+},
+{
+"name":"Nathaniel Rateliff",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Deer Tick",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Jason Isbell and the 400 Unit",
 "in_tracker":false,
 "slug":null
 }
@@ -37805,7 +38132,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":57909
+"raw":58098
 },
 "tier":{
 "label":"Medium",
@@ -37867,17 +38194,17 @@
 "slug":null
 },
 {
-"name":"The Del McCoury Band",
+"name":"Greensky Bluegrass",
+"in_tracker":true,
+"slug":"greensky-bluegrass"
+},
+{
+"name":"Nickel Creek",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sam Bush",
-"in_tracker":true,
-"slug":"sam-bush"
-},
-{
-"name":"Sarah Jarosz",
+"name":"Chris Thile",
 "in_tracker":false,
 "slug":null
 }
@@ -37893,7 +38220,7 @@
 "genres":[
 "soul",
 "funk",
-"new york"
+"brooklyn"
 ],
 "listener":{
 "tranche":"niche",
@@ -37983,7 +38310,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":680873
+"raw":682313
 },
 "tier":null,
 "seen":{
@@ -38221,7 +38548,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":46993
+"raw":47300
 },
 "tier":null,
 "seen":{
@@ -38278,12 +38605,12 @@
 },
 "similar":[
 {
-"name":"Rokia Traoré",
+"name":"Fatoumata Diawara",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Fatoumata Diawara",
+"name":"Rokia Traoré",
 "in_tracker":false,
 "slug":null
 },
@@ -38293,7 +38620,7 @@
 "slug":null
 },
 {
-"name":"Habib Koité",
+"name":"N'Gou Bagayoko",
 "in_tracker":false,
 "slug":null
 },
@@ -38318,7 +38645,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":121428
+"raw":121513
 },
 "tier":{
 "label":"Strong",
@@ -38400,9 +38727,9 @@
 "slug":null
 },
 {
-"name":"Jonny Lang",
+"name":"Albert Cummings",
 "in_tracker":true,
-"slug":"jonny-lang"
+"slug":"albert-cummings"
 },
 {
 "name":"Kenny Wayne Shepherd Band",
@@ -38425,7 +38752,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":471053
+"raw":471779
 },
 "tier":null,
 "seen":{
@@ -38502,7 +38829,7 @@
 "slug":null
 },
 {
-"name":"Harvey Danger",
+"name":"Tripping Daisy",
 "in_tracker":false,
 "slug":null
 }
@@ -38522,7 +38849,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":25582
+"raw":25660
 },
 "tier":{
 "label":"Medium",
@@ -38597,12 +38924,12 @@
 "slug":null
 },
 {
-"name":"Lil' Rascals Brass Band",
+"name":"Stooges Brass Band",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Stooges Brass Band",
+"name":"Lil' Rascals Brass Band",
 "in_tracker":false,
 "slug":null
 }
@@ -38618,11 +38945,11 @@
 "genres":[
 "blues",
 "soul",
-"blues rock"
+"rock"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":30397
+"raw":30512
 },
 "tier":{
 "label":"Strong",
@@ -38694,19 +39021,19 @@
 "slug":"carolyn-wonderland"
 },
 {
+"name":"Elles Bailey",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Samantha Fish",
 "in_tracker":true,
 "slug":"samantha-fish"
 },
 {
-"name":"Susan Tedeschi",
+"name":"Janiva Magness",
 "in_tracker":true,
-"slug":"susan-tedeschi"
-},
-{
-"name":"Charlie Musselwhite",
-"in_tracker":false,
-"slug":null
+"slug":"janiva-magness"
 }
 ]
 },
@@ -38724,7 +39051,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":86286
+"raw":87814
 },
 "tier":{
 "label":"Strong",
@@ -38824,7 +39151,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":325734
+"raw":325770
 },
 "tier":null,
 "seen":{
@@ -38957,7 +39284,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":42194
+"raw":42240
 },
 "tier":null,
 "seen":{
@@ -39013,17 +39340,17 @@
 "slug":null
 },
 {
+"name":"The Parlor Mob",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"The Delta Saints",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Quaker City Night Hawks",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Patrick Sweany",
 "in_tracker":false,
 "slug":null
 }
@@ -39137,7 +39464,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":650772
+"raw":652933
 },
 "tier":null,
 "seen":{
@@ -39214,9 +39541,9 @@
 "slug":null
 },
 {
-"name":"John Hiatt",
+"name":"Lucinda Williams",
 "in_tracker":true,
-"slug":"john-hiatt"
+"slug":"lucinda-williams"
 }
 ]
 },
@@ -39375,7 +39702,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1820729
+"raw":1829107
 },
 "tier":null,
 "seen":{
@@ -39452,7 +39779,7 @@
 "slug":null
 },
 {
-"name":"Eagles",
+"name":"The J. Geils Band",
 "in_tracker":false,
 "slug":null
 }
@@ -39519,7 +39846,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":538917
+"raw":539875
 },
 "tier":{
 "label":"Strong",
@@ -39589,12 +39916,12 @@
 "slug":null
 },
 {
-"name":"Paul Gilbert",
+"name":"John Petrucci",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"John Petrucci",
+"name":"Vinnie Moore",
 "in_tracker":false,
 "slug":null
 },
@@ -39666,7 +39993,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1590890
+"raw":1603434
 },
 "tier":null,
 "seen":{
@@ -39810,7 +40137,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":37941
+"raw":38042
 },
 "tier":{
 "label":"Strong",
@@ -39915,9 +40242,9 @@
 "slug":"carolyn-wonderland"
 },
 {
-"name":"Ana Popovic",
+"name":"Joanna Connor",
 "in_tracker":true,
-"slug":"ana-popovic"
+"slug":"joanna-connor"
 }
 ]
 },
@@ -39991,7 +40318,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":18646
+"raw":18648
 },
 "tier":null,
 "seen":{
@@ -40080,7 +40407,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":51307
+"raw":51317
 },
 "tier":null,
 "seen":{
@@ -40260,7 +40587,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1297625
+"raw":1301102
 },
 "tier":{
 "label":"Strong",
@@ -40341,22 +40668,22 @@
 "slug":null
 },
 {
-"name":"Shawn Colvin",
-"in_tracker":true,
-"slug":"shawn-colvin"
-},
-{
 "name":"Tori Amos",
 "in_tracker":true,
 "slug":"tori-amos"
 },
 {
-"name":"Heather Nova",
+"name":"Shawn Colvin",
+"in_tracker":true,
+"slug":"shawn-colvin"
+},
+{
+"name":"Tanita Tikaram",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Tanita Tikaram",
+"name":"Heather Nova",
 "in_tracker":false,
 "slug":null
 }
@@ -40423,7 +40750,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":98147
+"raw":98379
 },
 "tier":{
 "label":"Strong",
@@ -40521,9 +40848,9 @@
 "slug":"jonny-lang"
 },
 {
-"name":"Tinsley Ellis",
+"name":"Albert Cummings",
 "in_tracker":true,
-"slug":"tinsley-ellis"
+"slug":"albert-cummings"
 },
 {
 "name":"Aynsley Lister",
@@ -40531,9 +40858,9 @@
 "slug":null
 },
 {
-"name":"JJ Grey & Mofro",
+"name":"Tinsley Ellis",
 "in_tracker":true,
-"slug":"jj-grey-mofro"
+"slug":"tinsley-ellis"
 }
 ]
 },
@@ -40616,7 +40943,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":3289
+"raw":3311
 },
 "tier":{
 "label":"Strong",
@@ -40678,29 +41005,29 @@
 },
 "similar":[
 {
-"name":"Lloyd Spiegel",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Smoke Stack Rhino",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Sugaray Rayford",
-"in_tracker":true,
-"slug":"sugaray-rayford"
-},
-{
-"name":"Toronzo Cannon",
-"in_tracker":true,
-"slug":"toronzo-cannon"
-},
-{
 "name":"Lachy Doley",
 "in_tracker":true,
 "slug":"lachy-doley"
+},
+{
+"name":"19-Twenty",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Mitch King",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"8 Ball Aitken",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -40718,7 +41045,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":508018
+"raw":508849
 },
 "tier":{
 "label":"Strong",
@@ -40785,14 +41112,14 @@
 },
 "similar":[
 {
-"name":"Keb' Mo'",
-"in_tracker":true,
-"slug":"keb-mo"
-},
-{
 "name":"Buddy Guy",
 "in_tracker":true,
 "slug":"buddy-guy"
+},
+{
+"name":"Keb' Mo'",
+"in_tracker":true,
+"slug":"keb-mo"
 },
 {
 "name":"Eric Bibb",
@@ -40805,7 +41132,7 @@
 "slug":null
 },
 {
-"name":"T-Bone Walker",
+"name":"B.B. King",
 "in_tracker":false,
 "slug":null
 }
@@ -40819,7 +41146,10 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174a82aabb7544cb90acc200370",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":61
+},
 "tier":null,
 "seen":{
 "count":1,
@@ -40867,13 +41197,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/1aTDTChWWyiJH3SEnYrdVp",
 "youtube":"@tajmahalmusic",
-"lastfm":null,
+"lastfm":"https://www.last.fm/music/Tajmo",
 "musicbrainz":null,
 "bandsintown":"https://www.bandsintown.com/search?query=TajMo:+The+Taj+Mahal+&+Keb'+Mo'+Band",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=TajMo:+The+Taj+Mahal+&+Keb'+Mo'+Band"
 },
-"similar":[]
+"similar":[
+{
+"name":"Taj Mahal & Keb’ Mo’",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Colin Hancock’s Jazz Hounds / Catherine Russell",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Taj Mahal/Keb' Mo'",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Patti Austin featuring Gordon Goodwin’s Big Phat Band",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kurt Rosenwinkel / Jean-Paul Brodbeck",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "tal wilkenfeld":{
 "name":"Tal Wilkenfeld",
@@ -40889,7 +41245,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":40963
+"raw":41040
 },
 "tier":{
 "label":"Lower",
@@ -40959,7 +41315,7 @@
 "slug":null
 },
 {
-"name":"Anika Nilles",
+"name":"Frank Gambale",
 "in_tracker":false,
 "slug":null
 },
@@ -40969,7 +41325,7 @@
 "slug":null
 },
 {
-"name":"Dave Weckl Band",
+"name":"Jaco Pastorius",
 "in_tracker":false,
 "slug":null
 }
@@ -41048,11 +41404,14 @@
 "name":"Tash Neal",
 "slug":"tash-neal",
 "spotify_id":"63oJNt0P1lu1EDXUGonpGM",
-"mbid":null,
+"mbid":"d9dae8ed-7df3-4874-8a51-6359ded1e8f1",
 "image_url":"https://i.scdn.co/image/ab67616100005174bce016e0f4af731aaa0dcf57",
 "banner_url":null,
 "genres":[],
-"listener":null,
+"listener":{
+"tranche":"niche",
+"raw":248
+},
 "tier":null,
 "seen":{
 "count":2,
@@ -41107,13 +41466,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/63oJNt0P1lu1EDXUGonpGM",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Tash+Neal",
+"musicbrainz":"https://musicbrainz.org/artist/d9dae8ed-7df3-4874-8a51-6359ded1e8f1",
 "bandsintown":"https://www.bandsintown.com/search?query=Tash+Neal",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Tash+Neal"
 },
-"similar":[]
+"similar":[
+{
+"name":"The London Souls",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"The Magpie Salute",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Chris St. Hilaire",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rich Robinson",
+"in_tracker":true,
+"slug":"rich-robinson"
+},
+{
+"name":"Cris Jacobs",
+"in_tracker":true,
+"slug":"cris-jacobs"
+}
+]
 },
 "taylor ashton":{
 "name":"Taylor Ashton",
@@ -41125,11 +41510,11 @@
 "genres":[
 "singer-songwriter",
 "canadian",
-"indie"
+"folk"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":11174
+"raw":11194
 },
 "tier":{
 "label":"Medium",
@@ -41276,7 +41661,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":200285
+"raw":201456
 },
 "tier":{
 "label":"Strong",
@@ -41383,7 +41768,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":314160
+"raw":315601
 },
 "tier":{
 "label":"Medium",
@@ -41440,12 +41825,12 @@
 "slug":null
 },
 {
-"name":"Dojo Cuts",
+"name":"Son Little",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Son Little",
+"name":"Dojo Cuts",
 "in_tracker":false,
 "slug":null
 },
@@ -41522,7 +41907,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1332259
+"raw":1336643
 },
 "tier":{
 "label":"-",
@@ -41716,7 +42101,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":92153
+"raw":92172
 },
 "tier":{
 "label":"Medium-Strong",
@@ -41974,7 +42359,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":7300
+"raw":7303
 },
 "tier":null,
 "seen":{
@@ -42071,7 +42456,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":205718
+"raw":206135
 },
 "tier":{
 "label":"Strong",
@@ -42131,27 +42516,27 @@
 },
 "similar":[
 {
-"name":"Andy McKee",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Chet Atkins",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Mike Dawes",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Michael Hedges",
+"name":"Luca Stricagnoli",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Calum Graham",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Robben Ford",
+"in_tracker":true,
+"slug":"robben-ford"
+},
+{
+"name":"Andy McKee",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Michael Hedges",
 "in_tracker":false,
 "slug":null
 }
@@ -42171,7 +42556,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":10180
+"raw":10250
 },
 "tier":null,
 "seen":{
@@ -42243,12 +42628,12 @@
 "slug":null
 },
 {
-"name":"Levi Turner",
+"name":"Logan Halstead",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Logan Halstead",
+"name":"Nicholas Jamerson",
 "in_tracker":false,
 "slug":null
 }
@@ -42315,7 +42700,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1730785
+"raw":1734092
 },
 "tier":null,
 "seen":{
@@ -42382,17 +42767,17 @@
 "slug":"sarah-mclachlan"
 },
 {
+"name":"Ani DiFranco",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Aimee Mann",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Kate Bush",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Ani DiFranco",
+"name":"Regina Spektor",
 "in_tracker":false,
 "slug":null
 }
@@ -42412,7 +42797,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":7249
+"raw":7288
 },
 "tier":null,
 "seen":{
@@ -42545,7 +42930,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":2159327
+"raw":2166846
 },
 "tier":{
 "label":"Medium",
@@ -42597,12 +42982,12 @@
 },
 "similar":[
 {
-"name":"Natalie Merchant",
+"name":"Eva Cassidy",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Eva Cassidy",
+"name":"Natalie Merchant",
 "in_tracker":false,
 "slug":null
 },
@@ -42612,14 +42997,14 @@
 "slug":"sarah-mclachlan"
 },
 {
-"name":"Joan Armatrading",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Indigo Girls",
 "in_tracker":true,
 "slug":"indigo-girls"
+},
+{
+"name":"Joan Armatrading",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -42824,7 +43209,7 @@
 "slug":null
 },
 {
-"name":"Karl Denson's Tiny Universe",
+"name":"Mike Dillon's Go-Go Jungle",
 "in_tracker":false,
 "slug":null
 },
@@ -42839,7 +43224,7 @@
 "slug":null
 },
 {
-"name":"The Bo-Keys",
+"name":"Karl Denson's Tiny Universe",
 "in_tracker":false,
 "slug":null
 }
@@ -42859,7 +43244,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":16186
+"raw":16415
 },
 "tier":{
 "label":"Medium",
@@ -42916,6 +43301,11 @@
 "slug":null
 },
 {
+"name":"Louis Armstrong",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"The Hot Sardines",
 "in_tracker":false,
 "slug":null
@@ -42926,14 +43316,9 @@
 "slug":null
 },
 {
-"name":"Louis Armstrong",
+"name":"Meschiya Lake and the Little Big Horns",
 "in_tracker":false,
 "slug":null
-},
-{
-"name":"The Dirty Dozen Brass Band",
-"in_tracker":true,
-"slug":"dirty-dozen-brass-band"
 }
 ]
 },
@@ -43092,7 +43477,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":234553
+"raw":234947
 },
 "tier":{
 "label":"Strong",
@@ -43197,11 +43582,11 @@
 "genres":[
 "jazz",
 "blues",
-"saxophone"
+"blues rock"
 ],
 "listener":{
 "tranche":"niche",
-"raw":2073
+"raw":2082
 },
 "tier":{
 "label":"Strong",
@@ -43319,17 +43704,17 @@
 "slug":null
 },
 {
+"name":"Deb Ryder",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Sari Schorr",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Layla Zoe",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Deb Ryder",
 "in_tracker":false,
 "slug":null
 }
@@ -43349,7 +43734,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":178910
+"raw":179272
 },
 "tier":{
 "label":"Medium",
@@ -43414,17 +43799,17 @@
 "slug":null
 },
 {
-"name":"Stanley Clarke",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Béla Fleck and the Flecktones",
 "in_tracker":false,
 "slug":null
 },
 {
 "name":"Alain Caron",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Stanley Clarke",
 "in_tracker":false,
 "slug":null
 },
@@ -43449,7 +43834,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":315220
+"raw":315502
 },
 "tier":{
 "label":"Medium",
@@ -43506,6 +43891,11 @@
 "slug":null
 },
 {
+"name":"A Fine Frenzy",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Charlotte Martin",
 "in_tracker":false,
 "slug":null
@@ -43514,11 +43904,6 @@
 "name":"Sarah McLachlan",
 "in_tracker":true,
 "slug":"sarah-mclachlan"
-},
-{
-"name":"A Fine Frenzy",
-"in_tracker":false,
-"slug":null
 },
 {
 "name":"KT Tunstall",
@@ -43635,7 +44020,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1604942
+"raw":1610157
 },
 "tier":null,
 "seen":{
@@ -43692,14 +44077,14 @@
 },
 "similar":[
 {
-"name":"The Presidents of the United States of America",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Pixies",
 "in_tracker":true,
 "slug":"pixies"
+},
+{
+"name":"The Presidents of the United States of America",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Cake",
@@ -43732,7 +44117,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":126342
+"raw":126512
 },
 "tier":{
 "label":"Strong",
@@ -43797,11 +44182,6 @@
 "slug":"joanne-shaw-taylor"
 },
 {
-"name":"Joe Bonamassa",
-"in_tracker":true,
-"slug":"joe-bonamassa"
-},
-{
 "name":"Kenny Wayne Shepherd Band",
 "in_tracker":false,
 "slug":null
@@ -43812,9 +44192,14 @@
 "slug":"popa-chubby"
 },
 {
-"name":"Tinsley Ellis",
+"name":"Joe Bonamassa",
 "in_tracker":true,
-"slug":"tinsley-ellis"
+"slug":"joe-bonamassa"
+},
+{
+"name":"Aynsley Lister",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -43879,7 +44264,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":79930
+"raw":80473
 },
 "tier":{
 "label":"Strong",
@@ -43941,11 +44326,6 @@
 },
 "similar":[
 {
-"name":"Valerie June",
-"in_tracker":true,
-"slug":"valerie-june"
-},
-{
 "name":"Anderson East",
 "in_tracker":false,
 "slug":null
@@ -43954,6 +44334,11 @@
 "name":"Marc Broussard",
 "in_tracker":true,
 "slug":"marc-broussard"
+},
+{
+"name":"Valerie June",
+"in_tracker":true,
+"slug":"valerie-june"
 },
 {
 "name":"The Teskey Brothers",
@@ -43981,7 +44366,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":120542
+"raw":120688
 },
 "tier":{
 "label":"Medium",
@@ -44038,24 +44423,24 @@
 "slug":"gov-t-mule"
 },
 {
+"name":"Chicken Shack",
+"in_tracker":false,
+"slug":null
+},
+{
 "name":"Walter Trout",
 "in_tracker":true,
 "slug":"walter-trout"
 },
 {
-"name":"Ally Venable",
-"in_tracker":true,
-"slug":"ally-venable"
-},
-{
-"name":"The Allman Brothers Band",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"North Mississippi Allstars",
 "in_tracker":true,
 "slug":"north-mississippi-allstars"
+},
+{
+"name":"The Derek Trucks Band",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -44120,7 +44505,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":480102
+"raw":481741
 },
 "tier":{
 "label":"Medium",
@@ -44192,9 +44577,9 @@
 "slug":null
 },
 {
-"name":"Lucinda Williams",
-"in_tracker":true,
-"slug":"lucinda-williams"
+"name":"Julia Jacklin",
+"in_tracker":false,
+"slug":null
 }
 ]
 },
@@ -44208,7 +44593,7 @@
 "genres":[],
 "listener":{
 "tranche":"niche",
-"raw":1112
+"raw":1113
 },
 "tier":null,
 "seen":{
@@ -44388,7 +44773,7 @@
 ],
 "listener":{
 "tranche":"niche",
-"raw":347
+"raw":349
 },
 "tier":{
 "label":"Medium",
@@ -44568,13 +44953,13 @@
 "image_url":"https://i.scdn.co/image/ab67616100005174a2e54f239192b28f77cb70a4",
 "banner_url":null,
 "genres":[
-"virginia",
 "american",
+"virginia",
 "folk"
 ],
 "listener":{
 "tranche":"emerging",
-"raw":8218
+"raw":8234
 },
 "tier":{
 "label":"Medium",
@@ -44770,7 +45155,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":1618025
+"raw":1622695
 },
 "tier":null,
 "seen":{
@@ -44867,7 +45252,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":199700
+"raw":200062
 },
 "tier":{
 "label":"Strong",
@@ -44946,9 +45331,9 @@
 "slug":null
 },
 {
-"name":"Shakey Graves",
-"in_tracker":true,
-"slug":"shakey-graves"
+"name":"Mandolin Orange",
+"in_tracker":false,
+"slug":null
 },
 {
 "name":"Trampled by Turtles",
@@ -44956,9 +45341,9 @@
 "slug":null
 },
 {
-"name":"Mandolin Orange",
-"in_tracker":false,
-"slug":null
+"name":"Shakey Graves",
+"in_tracker":true,
+"slug":"shakey-graves"
 },
 {
 "name":"Caamp",
@@ -45028,7 +45413,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":2453011
+"raw":2460060
 },
 "tier":null,
 "seen":{
@@ -45125,7 +45510,7 @@
 ],
 "listener":{
 "tranche":"emerging",
-"raw":42778
+"raw":42953
 },
 "tier":{
 "label":"Strong",
@@ -45207,7 +45592,7 @@
 "slug":null
 },
 {
-"name":"Blue Lake",
+"name":"Bonny Light Horseman",
 "in_tracker":false,
 "slug":null
 }
@@ -45217,11 +45602,18 @@
 "name":"Yola (DJ)",
 "slug":"yola-dj",
 "spotify_id":"0kjPPMEvZZDO4UUdBqmngb",
-"mbid":null,
+"mbid":"a690d479-091c-4c4c-aa5c-7d1d512316c6",
 "image_url":null,
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"country soul",
+"country",
+"soul"
+],
+"listener":{
+"tranche":"mid",
+"raw":151811
+},
 "tier":null,
 "seen":{
 "count":0,
@@ -45252,13 +45644,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/0kjPPMEvZZDO4UUdBqmngb",
 "youtube":null,
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Yola",
+"musicbrainz":"https://musicbrainz.org/artist/a690d479-091c-4c4c-aa5c-7d1d512316c6",
 "bandsintown":"https://www.bandsintown.com/search?query=Yola+(DJ)",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Yola+(DJ)"
 },
-"similar":[]
+"similar":[
+{
+"name":"The War and Treaty",
+"in_tracker":true,
+"slug":"war-and-treaty"
+},
+{
+"name":"The Highwomen",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Orville Peck",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Valerie June",
+"in_tracker":true,
+"slug":"valerie-june"
+},
+{
+"name":"Amanda Shires",
+"in_tracker":true,
+"slug":"amanda-shires"
+}
+]
 },
 "young dubliners":{
 "name":"Young Dubliners",
@@ -45274,7 +45692,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":93895
+"raw":93908
 },
 "tier":{
 "label":"Strong",
@@ -45374,7 +45792,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":2450885
+"raw":2480599
 },
 "tier":null,
 "seen":{
@@ -45435,12 +45853,91 @@
 "slug":null
 },
 {
-"name":"Ava Max",
+"name":"RAYE",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"RAYE",
+"name":"Ava Max",
+"in_tracker":false,
+"slug":null
+}
+]
+},
+"zara phillips":{
+"name":"Zara Phillips",
+"slug":"zara-phillips",
+"spotify_id":null,
+"mbid":"add868de-5cf3-4f02-8f36-28e5c5863b41",
+"image_url":null,
+"banner_url":null,
+"genres":[
+"alternative",
+"female voices"
+],
+"listener":{
+"tranche":"niche",
+"raw":46
+},
+"tier":null,
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":null,
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":"https://www.last.fm/music/Zara+Phillips",
+"musicbrainz":"https://musicbrainz.org/artist/add868de-5cf3-4f02-8f36-28e5c5863b41",
+"bandsintown":"https://www.bandsintown.com/search?query=Zara+Phillips",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Zara+Phillips"
+},
+"similar":[
+{
+"name":"Aynee Osborn",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Girl In Dreamland",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Kit Lange",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Vanilla Quartz",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Katie's Revenge",
 "in_tracker":false,
 "slug":null
 }
@@ -45460,7 +45957,7 @@
 ],
 "listener":{
 "tranche":"popular",
-"raw":740269
+"raw":741356
 },
 "tier":null,
 "seen":{
@@ -45517,11 +46014,6 @@
 },
 "similar":[
 {
-"name":"Patrice",
-"in_tracker":false,
-"slug":null
-},
-{
 "name":"Ziggy Marley & The Melody Makers",
 "in_tracker":false,
 "slug":null
@@ -45532,12 +46024,17 @@
 "slug":null
 },
 {
-"name":"Julian Marley",
+"name":"Alpha Blondy",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Bob Marley",
+"name":"Damian Marley",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Steel Pulse",
 "in_tracker":false,
 "slug":null
 }
@@ -45557,7 +46054,7 @@
 ],
 "listener":{
 "tranche":"major",
-"raw":2263568
+"raw":2270694
 },
 "tier":null,
 "seen":{
@@ -45624,17 +46121,17 @@
 "slug":null
 },
 {
-"name":"The Allman Brothers Band",
+"name":"Foghat",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"George Thorogood & The Destroyers",
-"in_tracker":true,
-"slug":"george-thorogood-the-destroyers"
+"name":"Ted Nugent",
+"in_tracker":false,
+"slug":null
 },
 {
-"name":"Foghat",
+"name":"The Allman Brothers Band",
 "in_tracker":false,
 "slug":null
 }
@@ -45654,7 +46151,7 @@
 ],
 "listener":{
 "tranche":"mid",
-"raw":159412
+"raw":159817
 },
 "tier":{
 "label":"Strong",
@@ -45752,12 +46249,12 @@
 "slug":"larkin-poe"
 },
 {
-"name":"Ivy Levan",
+"name":"Elles Bailey",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Elles Bailey",
+"name":"Ivy Levan",
 "in_tracker":false,
 "slug":null
 }
