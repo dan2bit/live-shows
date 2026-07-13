@@ -15,6 +15,11 @@ now falls back to bill components (`_goalBillKeys`) and badges support acts
 carrying, so a new compound booking can be eyeballed for a wrong credit instead of being
 found by accident.
 
+Third check (#154): a forward-looking row (potential / upcoming) must not advertise a goal
+that has already been obtained. The eligibility files answer "does this artist meet the
+criteria?", not "do I still need this autograph?", so eligible-and-already-signed is the
+regression to watch — those rows must render no `planned` badge.
+
 bill_keys() below is the Python twin of `_goalBillKeys` in app.js — keep the two in step.
 The trailing-" Band" drop mirrors surface_forms() in build_recommend_index.py.
 
@@ -110,13 +115,38 @@ def load_eligibility():
     return out
 
 
+def load_signed():
+    """{goal_label: {norm_key: [dates]}} — every artist with a signature, any date.
+    Mirrors _goalCreditTargets in app.js: the signer, plus the band named in an "of X"
+    attribution."""
+    out = {}
+    for label, _, _ in GOAL_FILES:
+        table = {}
+        fname = "hat_signatures.tsv" if label == "HAT" else "book_signatures.tsv"
+        for r in read_tsv(os.path.join(ROOT, "data/show_goals", fname)):
+            signer = (r.get("signer") or "").strip()
+            attr = (r.get("attribution") or "").strip()
+            date = (r.get("show_date") or "").strip()
+            targets = [signer] if signer else []
+            m = re.match(r"^of\s+(.*)$", attr, re.I)
+            if m:
+                targets.append(m.group(1).strip())
+            for t in targets:
+                k = norm(t)
+                if k:
+                    table.setdefault(k, []).append(date)
+        out[label] = table
+    return out
+
+
 def load_rows():
     """(source, artist, support, date) across potentials + current + history."""
     rows = []
     for r in read_tsv(os.path.join(ROOT, "data/live_shows_potential.tsv")):
         rows.append(("potential", r.get("Artist", ""), r.get("Support", ""), r.get("Date", "")))
     for r in read_tsv(os.path.join(ROOT, "data/live_shows_current.tsv")):
-        rows.append(("current", r.get("Artist", ""), r.get("Supporting Artist", ""), r.get("Show Date", "")))
+        src = "upcoming" if (r.get("Status") or "").strip().lower() == "upcoming" else "current"
+        rows.append((src, r.get("Artist", ""), r.get("Supporting Artist", ""), r.get("Show Date", "")))
     for path in sorted(glob.glob(os.path.join(ROOT, "data/history/*.tsv"))):
         for r in read_tsv(path):
             rows.append((os.path.basename(path), r.get("Artist", ""), r.get("Support", ""), r.get("Show Date", "")))
@@ -129,10 +159,13 @@ def main():
     args = ap.parse_args()
 
     elig = load_eligibility()
+    signed = load_signed()
     rows = load_rows()
 
     bill_findings = []
     support_findings = []
+    signed_findings = []
+    FORWARD = ("potential", "upcoming")
 
     for src, artist, support, date in rows:
         if artist:
@@ -152,6 +185,20 @@ def main():
             if hits:
                 support_findings.append((src, artist, date, name, "+".join(sorted(hits))))
 
+        # #154 — a forward-looking row must not advertise a goal already obtained. Eligibility
+        # means "meets the criteria", not "still needed", so eligible-and-already-signed is the
+        # regression to watch: these must render no `planned` badge.
+        if src in FORWARD:
+            for name in ([artist] if artist else []) + support_names(support):
+                keys = bill_keys(name)
+                for label, table in elig.items():
+                    if not any(table.get(k) for k in keys):
+                        continue
+                    hit = next((k for k in keys if signed[label].get(k)), None)
+                    if hit:
+                        dates = sorted(set(d for d in signed[label][hit] if d))
+                        signed_findings.append((src, artist, date, name, label, dates))
+
     print(f"Goal-badge join audit — {len(rows)} rows scanned\n")
 
     print(f"Bill-name rows rescued by component fallback: {len(bill_findings)}")
@@ -162,6 +209,11 @@ def main():
     print(f"\nSupport acts carrying goal badges: {len(support_findings)}")
     for src, artist, date, name, labels in support_findings:
         print(f"  [{src}] {artist} ({date}) -> {name}: {labels}")
+
+    print(f"\nForward-looking rows eligible for an ALREADY-OBTAINED goal "
+          f"(must render no 'planned' badge — #154): {len(signed_findings)}")
+    for src, artist, date, name, label, dates in signed_findings:
+        print(f"  [{src}] {artist} ({date}) -> {name}: {label} already signed {', '.join(dates)}")
 
     total = len(bill_findings) + len(support_findings)
     print(f"\n{total} finding(s). Review each: a component match should always be an artist who "
