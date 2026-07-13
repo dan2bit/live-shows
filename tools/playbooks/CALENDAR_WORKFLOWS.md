@@ -21,9 +21,12 @@ There are exactly three event types on the Dan Concert Calendar:
 - **Search fallback.** If a calendar `q` search returns nothing, fall back to a date-bounded listing.
 - **Never edit past events.** Calendar edits apply only to upcoming or same-day events. Past
   events are read-only.
-- **Autograph book check is a hard pre-condition for show events.** Before creating any show
-  event, look up the headliner and known supporting acts in `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat).
-  No show event without the check. (See per-type detail below.)
+- **Show-goals check is a hard pre-condition for show events — see the dedicated section below.**
+  No show event without it, with one standing exception: **Wolf Trap Filene Center shows are
+  categorically excluded from the check.** Wolf Trap's box/pavilion structure and no-backstage-
+  access norm mean artist interaction (autograph or hat) essentially never happens there — do
+  not run the eligibility/signature check, do not add a goals line, and do not write "no extra
+  show goals" either. Just omit the section entirely for Filene Center events.
 - **Prev/Next Show belongs in `live_shows_potential.tsv` only** — never in calendar event
   descriptions.
 - **Confirm before creating a calendar event for an unpurchased show.**
@@ -45,6 +48,65 @@ density warnings for Dan to weigh.
 The email routines layer their own recommendation logic on top of this definition (e.g. adding
 a Pass row when a Strong-tier show collides with a NO SHOWS block). That routine-specific
 handling lives in `EMAIL_WORKFLOWS.md`; this file defines only what makes a date unavailable.
+
+---
+
+## Show-Goals Check — REINFORCED (hard pre-condition, non-Wolf-Trap shows)
+
+This check exists to answer one question: **is there an unsigned hat or book target for this
+bill, right now, according to the actual signature ledgers** — not according to what an
+eligibility file alone implies. Eligibility says an artist *could* be a target; only the
+signature files say whether that target has already been closed out.
+
+**Skip entirely for Wolf Trap Filene Center** (see Common Rules above). For every other venue,
+run all three steps below before writing the show event's description, every time — including
+when updating an existing event.
+
+### Step A — Eligibility
+
+Check the headliner and every named supporting act against:
+- `data/show_goals/hat_eligibility.tsv` — `Yes`/`No` per artist, with `Basis` explaining why
+  (female artist, female-fronted band, etc.). If an artist is missing from this file entirely,
+  treat as unresolved — web search their gender/lineup rather than assuming `No`, and add the
+  resulting row while you're there.
+- `data/show_goals/autograph_books_eligibility.tsv` — `In APS` / `APS Page` / `In RHBS` columns.
+  An artist can be eligible for hat, book, both, or neither.
+
+### Step B — Signature ledger (the part that's easy to skip — don't)
+
+For every artist that Step A marked eligible, cross-check the **actual signing ledgers**, not
+just the eligibility file:
+- `data/show_goals/hat_signatures.tsv` — canonical record of who has actually signed the hat.
+  Matching happens on the `signer` column; an artist appearing here (in any attribution form —
+  self, `of <band>`, `w/ <band>`) has already fulfilled the hat goal for that person. A "yes,
+  eligible" from Step A plus a matching row here means **no target** — do not write a hat
+  reminder line, regardless of how the eligibility file's `Basis` reads.
+- `data/show_goals/book_signatures.tsv` — canonical record of who has actually signed RHBS or
+  APS. Same matching logic; a signed entry closes out that book's goal for that artist even if
+  `autograph_books_eligibility.tsv` still lists them as eligible (eligibility never expires;
+  signing status does change).
+
+A bill can have mixed results — e.g. three band members eligible, two already signed, one
+still open. Only the open one(s) generate a reminder line.
+
+### Step C — Write the result
+
+- **At least one unsigned hat target found:** `BRING [artist name] is hat-eligible and unsigned
+  — plan ahead` (or fold into the existing hat-reminder line format below).
+- **At least one unsigned book target found:** `BRING RHBS -- [Artist] p.[N]` or
+  `BRING APS -- [Artist] p.[N]` per the existing format.
+- **Both found:** include both lines.
+- **Nothing resolves** — either nobody on the bill is eligible for anything, or everyone
+  eligible has already signed — write the line **`No extra show goals.`** into the event
+  description. This is a deliberate, checked "nothing to do here," not silence. A blank goals
+  section is ambiguous (did Claude check and find nothing, or just not check?); `No extra show
+  goals.` removes that ambiguity for any future session reading the event back.
+
+**This check cannot be satisfied by the eligibility file alone.** An artist can be permanently
+`Yes` in `hat_eligibility.tsv` (eligibility is a fact about the artist, not a to-do item) while
+having zero remaining target value because `hat_signatures.tsv` already shows them signed. Read
+the eligibility file for *who to check*, then read the signature files for *whether that check
+still resolves to an open target*.
 
 ---
 
@@ -74,12 +136,16 @@ not the venue door.
 - **Venues WITH on-site parking** (`venues.tsv` Parking = `On site…`): set Location to the
   venue street Address (column 2). On-site lot and venue door are effectively the same drive.
 
-Always read the venue's Parking field from `venues.tsv` to decide — do not assume.
+Always read the venue's Parking field from `venues.tsv` to decide — do not assume. Every show
+event must have a Location set; a missing Location is a defect on the same footing as a missing
+calendar event entirely (see `EMAIL_WORKFLOWS.md` Routine 1 Step 8) — don't leave it blank
+because the venue's parking situation is ambiguous. Confirm with Dan if genuinely unclear.
 
 ### Description
 
 ```
 BRING RHBS -- [Artist] p.[N]          <- only if in autograph book, not yet signed
+                                          (see Show-Goals Check above for the full procedure)
 
 [Order # / Ref] ([Ticketer])
 Ticket access: [method]
@@ -93,14 +159,12 @@ Doors: [time] / Show: [time]
 High ticket cost -- cool it on merch tonight   <- face value >= $100, NOT VIP, NOT Wolf Trap Filene
 ```
 
-**Autograph reminder lines** (from the `autograph_books_combined.tsv` check):
-- In **RHBS** and not yet signed → prepend `BRING RHBS -- [Artist] p.[N]`
-- In **APS** and not yet signed → prepend `BRING APS -- [Artist] p.[N]`
-- Already signed → no reminder.
-
-**Hat signing eligibility:** female or female-presenting artists only, or bands with female
-members. Verify gender via web search if unknown; do not infer. Confirm she has not already
-signed the hat in `hat_signatures.tsv` before flagging.
+**Show-goals lines** — run the full three-step check above (Eligibility → Signature ledger →
+Write the result) for every non-Wolf-Trap show event, whether newly created or being updated.
+Do not rely on memory of a prior pass over the same artist; the signature ledgers change over
+time (an artist can go from unsigned to signed between when Dan buys a ticket and when Claude
+builds out the event description weeks later), so re-run the check fresh each time the
+description is written.
 
 **Merch caution line:** add only when face value per ticket ≥ $100, AND not VIP, AND not Wolf
 Trap Filene Center. Evaluated per ticket — never on the order total for multi-ticket orders.
@@ -183,5 +247,8 @@ ticketing-platform event URL and present it to Dan for confirmation before commi
 
 - `EMAIL_WORKFLOWS.md` — when each event is created/updated within the five inbox routines.
 - `venues.tsv` — Parking column (4) drives the Location rule for show events.
-- `autograph_books_combined.tsv` (book signatures) and `hat_signatures.tsv` (hat) — the hard pre-condition check for show events.
+- `data/show_goals/hat_eligibility.tsv` + `data/show_goals/hat_signatures.tsv` — hat half of the
+  Show-Goals Check.
+- `data/show_goals/autograph_books_eligibility.tsv` + `data/show_goals/book_signatures.tsv` —
+  book half of the Show-Goals Check.
 - `AGENTIC_WORKFLOWS.md` — architectural overview of calendar integration.
