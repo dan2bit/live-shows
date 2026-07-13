@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-13T14:22:13Z",
+"generated_at":"2026-07-13T14:50:18Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -20683,17 +20683,17 @@
 "name":"John Primer",
 "slug":"john-primer",
 "spotify_id":"1CePnHlc38UfIQovWgyzKP",
-"mbid":"c07731e6-4193-4bdb-b0a7-823c8925bc59",
+"mbid":"3de2fcfc-0b36-4106-b234-e13db03aa775",
 "image_url":"https://i.scdn.co/image/ab67616100005174076b7bf31ea26aed3e42d716",
 "banner_url":null,
 "genres":[
-"bluesrock",
 "blues",
-"harmonica blues"
+"chicago blues",
+"guitar"
 ],
 "listener":{
-"tranche":"niche",
-"raw":26
+"tranche":"emerging",
+"raw":9742
 },
 "tier":null,
 "seen":{
@@ -20731,35 +20731,35 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/1CePnHlc38UfIQovWgyzKP",
 "youtube":null,
-"lastfm":"https://www.last.fm/music/John+Primer+&+The+Real+Deal+Blues+Band",
-"musicbrainz":"https://musicbrainz.org/artist/c07731e6-4193-4bdb-b0a7-823c8925bc59",
+"lastfm":"https://www.last.fm/music/John+Primer",
+"musicbrainz":"https://musicbrainz.org/artist/3de2fcfc-0b36-4106-b234-e13db03aa775",
 "bandsintown":"https://www.bandsintown.com/search?query=John+Primer",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=John+Primer"
 },
 "similar":[
 {
-"name":"Weeping Harp Senoh",
+"name":"Magic Slim and The Teardrops",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"The Mojo Roots",
+"name":"Johnny B. Moore",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Stoney B & Grandpa Elliott",
+"name":"Eddy Clearwater",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Johnny 'Yard Dog' Jones",
+"name":"Billy Branch",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Family Style",
+"name":"Lurrie Bell",
 "in_tracker":false,
 "slug":null
 }
@@ -43421,11 +43421,18 @@
 "name":"Victor Wooten",
 "slug":"victor-wooten",
 "spotify_id":"2STVYmc2T02GlvvWZl7umj",
-"mbid":null,
+"mbid":"1d0ae4e0-384f-4854-a1b4-ebb4cc81414b",
 "image_url":"https://i.scdn.co/image/ab6772690000bac39ad7cf201b69991bd5f10af0",
 "banner_url":null,
-"genres":[],
-"listener":null,
+"genres":[
+"jazz",
+"bass",
+"funk"
+],
+"listener":{
+"tranche":"mid",
+"raw":178910
+},
 "tier":{
 "label":"Medium",
 "rank":2
@@ -43476,13 +43483,39 @@
 "links":{
 "spotify":"https://open.spotify.com/artist/2STVYmc2T02GlvvWZl7umj",
 "youtube":"@victorwooten",
-"lastfm":null,
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/Victor+Wooten",
+"musicbrainz":"https://musicbrainz.org/artist/1d0ae4e0-384f-4854-a1b4-ebb4cc81414b",
 "bandsintown":"https://www.bandsintown.com/search?query=Victor+Wooten",
 "seated":null,
 "setlistfm":"https://www.setlist.fm/search?query=Victor+Wooten"
 },
-"similar":[]
+"similar":[
+{
+"name":"Marcus Miller",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Stanley Clarke",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Béla Fleck and the Flecktones",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Alain Caron",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Jaco Pastorius",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "vienna teng":{
 "name":"Vienna Teng",
