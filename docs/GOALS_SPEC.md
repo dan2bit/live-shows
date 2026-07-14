@@ -35,14 +35,12 @@ show_goals:
     color: "#e8a838"
     source: event_log:hat_signatures
     eligibility: hat_eligibility
-    weight: 0.6
   - key: book
     label: BOOK
     icon: "📚"
     color: "#8b6b4a"
     source: event_log:book_signatures
     eligibility: autograph_books_eligibility
-    weight: 0.4
   - key: photo
     label: PHOTO
     icon: "📷"
@@ -67,7 +65,7 @@ Fields per entry:
 | `color_bg` | no | Explicit override for the CSS `--<key>-bg` variable. If omitted, derived from `color` via HSL darkening. |
 | `source` | yes | Binding rule; see [Source binding syntax](#source-binding-syntax) |
 | `eligibility` | no | Eligibility file name (without extension) under `data/show_goals/` |
-| `weight` | no | Affinity contribution weight; see [Affinity contribution](#affinity-contribution) |
+| `weight` | no | **Obsolete since #165** — ignored (builder warns). Affinity contribution is now uniform per completion event; see [Affinity contribution](#affinity-contribution) |
 
 The four goals above are the initial set (2026-07-09). A fork may add, remove, or
 edit any entry without code changes.
@@ -191,26 +189,39 @@ is not defined — these sources describe what happened at shows, not intent abo
 
 ## Affinity contribution
 
-Goals composite into the G-term of the affinity formula:
+**Amendment (2026-07-14, #165):** the ratified per-goal weighted model
+(`G = Σ weight_i × completed_i`, weights summing to 1.0) is replaced by a **flat
+diminishing series over completion events**. Rationale: photo parity with autographs
+without a class taxonomy, and forkability — a fork adding a goal gets affinity
+contribution with zero renormalization and zero code change. The 28-artist
+book-and-hat double-eligibility overlap made the double-base question non-rare;
+see #165 for the full decision record.
 
 ```
-G = Σ (weight_i × completed_i)   for goals i with `weight` set
+G = 1 − d^n        n = total completion events across all goals
+                   d = config.yaml → badges.affinity.goals_decay (default 0.4)
 ```
 
-Where `completed_i` is 1 if the artist-level state is `completed`, else 0.
+The first completion of *anything* earns `1 − d` (0.6 at the default — the old hat
+weight); the k-th adds `d^(k−1) − d^k`. Order- and type-independent, strictly
+diminishing, asymptotic below 1.0 (the earned-max vs #116-starred distinction is
+preserved).
 
-**Weight sum rule.** Weights across all goals with a `weight` field must sum to 1.0
-(within floating-point tolerance). This matches today's `{hat: 0.6, book: 0.4}` in
-`config.yaml → badges.affinity.goals_split`. Goals without `weight` render badges
-only and contribute nothing to affinity.
+**Completion events are counted per event, not per goal-boolean:**
 
-**Validator.** The builder validates the weight sum against `config.yaml`
-specifically — narrowly targeted, not a general schema linter. On a mismatch, the
-build fails with a clear error message identifying the offending goals and their
-sum. This catches silent scoring drift when a fork edits weights or adds a
-weighted goal without renormalizing.
+| Source type | Event count |
+|---|---|
+| `event_log` | one per log row crediting the artist (attribution vocabulary applies). Book ×2 — APS and RHBS rows — is two events; two band members signing `of <band>` credits the band twice. |
+| `column:Photo URL` | distinct photographed shows in the artist's deduped `show_log` (the #117 badge metric — never `times_seen`) |
+| other `column:` / `interaction:` | **0 for now** — per-artist event counts for these sources aren't derived by the builder; they render badges only. Extend when a goal needs it. |
 
-**Affinity formula overall** (unchanged from today):
+**`weight` field is obsolete.** Ignored by the builder, which prints a warning if
+any `show_goals` entry still carries one. Remove them from forked configs.
+
+**Validator.** `goals_decay` must lie strictly between 0 and 1; the build fails
+otherwise. The old sum-to-1.0 weight validator is retired with the weights.
+
+**Affinity formula overall** (unchanged):
 
 ```
 score = 0.35·T + 0.40·Seff + 0.25·G

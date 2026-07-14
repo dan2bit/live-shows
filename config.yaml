@@ -104,6 +104,9 @@ badges:
       Medium: 0.45
       Lower: 0.2
     fast_track_equiv_shows: 1    # never-seen fast-track artist counts as this many shows
+    goals_decay: 0.4             # G-term decay (#165): flat series over ALL goal completion
+                                 # events (any signature, any photo — equal bases). First
+                                 # completion = 1-d (0.6); the k-th adds d^(k-1)-d^k.
     # rarely touched:
     seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
     bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
@@ -122,11 +125,15 @@ badges:
 #   color_bg    - (optional) explicit override for --<key>-bg  (skip HSL derivation)
 #   source      - binding rule: event_log:<file> | column:<name> | interaction:<value>[|<value>]
 #   eligibility - (optional) eligibility file name (without extension) under data/show_goals/
-#   weight      - (optional) affinity contribution; if any entries have weights, they must sum to 1.0
+#
+# Affinity (#165): goals contribute through ONE flat diminishing series — every
+# completion event (each signature-log row, each photographed show) counts equally,
+# tuned by badges.affinity.goals_decay above. Per-goal weight fields are obsolete
+# and ignored (the builder warns if any remain).
 #
 # Deleting show_goals entirely (or emptying the list) yields a badge-free but functional
 # site — the #85 exit criterion. A video goal remains unadded (held with photo for #140,
-# closed; photo landed as a #117 follow-up — weightless until #165 reworks the G-term).
+# closed; photo landed as a #117 follow-up).
 show_goals:
   - key: hat
     label: HAT
@@ -134,21 +141,17 @@ show_goals:
     color: "#d08040"                       # tan orange (was theme.color_hat)
     source: event_log:hat_signatures
     eligibility: hat_eligibility
-    weight: 0.6
   - key: book
     label: BOOK
     icon: "📚"
     color: "#a080c0"                       # lavender (was theme.color_book)
     source: event_log:book_signatures
     eligibility: autograph_books_eligibility
-    weight: 0.4
   - key: photo
     label: PHOTO
     icon: "📷"
     color: "#40a0a0"                       # teal (sell family); dim/bg HSL-derived
     source: "column:Photo URL"
-    # no weight — affinity contribution lands with #165 (a weighted entry before then
-    # passes the sum-to-1.0 validator while deflating hat/book scores)
 
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
