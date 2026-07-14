@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-14T15:02:03Z",
+"generated_at":"2026-07-14T15:59:38Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -4424,99 +4424,6 @@
 },
 "similar":[]
 },
-"bill murray and his blood brothers":{
-"name":"Bill Murray and His Blood Brothers",
-"slug":"bill-murray-and-his-blood-brothers",
-"spotify_id":"3wkZ8WTrs7WcfE13voUCK1",
-"mbid":"1f18a92f-83bd-438c-8976-644d8eb45053",
-"image_url":"https://i.scdn.co/image/ab676161000051749884ab59d28a582d24117805",
-"banner_url":null,
-"genres":[
-"soundtrack",
-"comedy",
-"spoken word"
-],
-"listener":{
-"tranche":"mid",
-"raw":62341
-},
-"tier":{
-"label":"Strong",
-"rank":4
-},
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":{
-"score":0.35,
-"band":"medium"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":{
-"name":"The Thing About Baseball",
-"type":"single",
-"date":"2018-03-05",
-"url":"https://open.spotify.com/album/35tvwgCPcU4kE4CiaDKMu3",
-"image_url":"https://i.scdn.co/image/ab67616d00001e0227e142f93c699d96c38bbf31"
-},
-"links":{
-"spotify":"https://open.spotify.com/artist/3wkZ8WTrs7WcfE13voUCK1",
-"youtube":null,
-"lastfm":"https://www.last.fm/music/Bill+Murray",
-"musicbrainz":"https://musicbrainz.org/artist/1f18a92f-83bd-438c-8976-644d8eb45053",
-"bandsintown":"https://www.bandsintown.com/search?query=Bill+Murray+and+His+Blood+Brothers",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=Bill+Murray+and+His+Blood+Brothers"
-},
-"similar":[
-{
-"name":"Brian Reitzell & Roger J. Manning Jr",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Christopher Walken",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Billy Crystal",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Rosie O'Donnell",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Jonathan Freeman",
-"in_tracker":false,
-"slug":null
-}
-]
-},
 "billy bragg":{
 "name":"billy bragg",
 "slug":"billy-bragg",
@@ -4955,15 +4862,25 @@
 "similar":[]
 },
 "blood brothers":{
-"name":"blood brothers",
-"slug":"blood-brothers",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
+"name":"Bill Murray and His Blood Brothers",
+"slug":"bill-murray-and-his-blood-brothers",
+"spotify_id":"3wkZ8WTrs7WcfE13voUCK1",
+"mbid":"1f18a92f-83bd-438c-8976-644d8eb45053",
+"image_url":"https://i.scdn.co/image/ab676161000051749884ab59d28a582d24117805",
 "banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
+"genres":[
+"soundtrack",
+"comedy",
+"spoken word"
+],
+"listener":{
+"tranche":"mid",
+"raw":62341
+},
+"tier":{
+"label":"Strong",
+"rank":4
+},
 "seen":{
 "count":0,
 "first":null,
@@ -4971,7 +4888,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -4990,17 +4910,49 @@
 "photo":0,
 "photo_album":null
 },
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/search?query=blood+brothers",
-"seated":null,
-"setlistfm":"https://www.setlist.fm/search?query=blood+brothers"
+"latest_release":{
+"name":"The Thing About Baseball",
+"type":"single",
+"date":"2018-03-05",
+"url":"https://open.spotify.com/album/35tvwgCPcU4kE4CiaDKMu3",
+"image_url":"https://i.scdn.co/image/ab67616d00001e0227e142f93c699d96c38bbf31"
 },
-"similar":[]
+"links":{
+"spotify":"https://open.spotify.com/artist/3wkZ8WTrs7WcfE13voUCK1",
+"youtube":null,
+"lastfm":"https://www.last.fm/music/Bill+Murray",
+"musicbrainz":"https://musicbrainz.org/artist/1f18a92f-83bd-438c-8976-644d8eb45053",
+"bandsintown":"https://www.bandsintown.com/search?query=Bill+Murray+and+His+Blood+Brothers",
+"seated":null,
+"setlistfm":"https://www.setlist.fm/search?query=Bill+Murray+and+His+Blood+Brothers"
+},
+"similar":[
+{
+"name":"Brian Reitzell & Roger J. Manning Jr",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Christopher Walken",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Billy Crystal",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Rosie O'Donnell",
+"in_tracker":false,
+"slug":null
+},
+{
+"name":"Jonathan Freeman",
+"in_tracker":false,
+"slug":null
+}
+]
 },
 "bob fridzema":{
 "name":"bob fridzema",
