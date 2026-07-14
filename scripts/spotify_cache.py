@@ -158,6 +158,64 @@ LAST.FM ENRICHMENT  — added 2026-06-25
     (mood / "seen live" noise mixed with real genres) — filter before trusting
     them as a genre signal.
 
+ID-DRIFT AUDIT (--audit-ids / --repoint)  — added 2026-07-13 (#126)
+    #125's build-time image caching surfaced a class of cache corruption the
+    resolver had no way to self-correct: a stored/cached spotify_id that points
+    at a real, valid Spotify artist profile, but a SECONDARY one Spotify minted
+    for the same act — same discography shape, but no portrait, and sometimes
+    a stale latest_release. resolve_artist_id() prefers a cached id or a stored
+    artists.tsv URL over re-searching (by design — it avoids needless /search
+    calls on every refresh), so once a secondary id is cached it never gets a
+    chance to self-correct; only a fresh --search would find the canonical one,
+    and nothing triggers that automatically. Gov't Mule proved it isn't a
+    namesake-collision problem: only one Gov't Mule exists, yet the cached id
+    (1f9zCQ…) differed from the canonical search-top (5zoKOc…).
+
+    --audit-ids (read-only, no cache writes) walks the cache and, for every
+    entry whose cached id's GET /artists/{id} returns no portrait, re-resolves
+    the artist by name via /search and compares the search-top id against the
+    cached one. Four verdicts, one per artist:
+      - REPOINT SAFE        cached has no image; search-top is a DIFFERENT id,
+                             HAS an image, and its latest_release is
+                             equal-or-newer than the cached one (or the cached
+                             one is null) — --repoint is very likely correct.
+      - CAUTION (older release)  same as above but the search-top's latest
+                             release is OLDER than the cached one — repointing
+                             would still fix the portrait but could regress
+                             the release date; needs a look before repointing.
+      - already-canonical (truly imageless)  cached id IS the search-top (or
+                             no better candidate exists) — the artist genuinely
+                             has no Spotify portrait; not a drift case.
+      - no-help              cached has no image and search found no
+                             confident (>= SEARCH_MIN_SCORE) alternative id at
+                             all — leave as-is, nothing to repoint to.
+    Entries whose cached id already HAS a portrait are skipped entirely (no
+    drift signal without a missing image) and don't cost a /search call.
+
+    --repoint "Name=canonicalID" (repeatable) is the write side: for each
+    pair, updates spotify_id + spotify_url in the cache AND, if artists.tsv
+    (or fast_track.tsv) carries a Spotify URL for that artist, updates it
+    there too — a stored URL wins over both cache and search in
+    resolve_artist_id(), so leaving it stale would silently revert the
+    repoint on the next rebuild. Both latest_release_checked and
+    images_checked are cleared (not just image_url/latest_release) after an
+    id change, mirroring the null-preserve pattern the images/releases passes
+    already use: a stale checked-date would let --stale-days skip the very
+    entry that most needs re-pulling under the corrected id.
+
+    Unlike every --refresh-*/--new-artist/--add-artist pass, where --dry-run
+    is an OPT-IN preview of a batch of otherwise-automatic changes, --repoint
+    names one exact artist and one exact id the person has already decided
+    on — so it WRITES BY DEFAULT. Pass --dry-run to preview a --repoint
+    invocation before it touches the cache or a TSV.
+
+    Ambiguous common-name artists (multiple legitimate profiles, e.g. "New
+    York's Finest") are NOT something either mode tries to resolve
+    automatically — --audit-ids flags them (typically as CAUTION or, if the
+    search-top itself lacks an image, no-help) and --repoint requires the
+    person to name the exact canonical id by hand; there is no auto-repoint
+    path.
+
 USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
@@ -167,6 +225,10 @@ USAGE
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
     python3 spotify_cache.py --add-artist "Eric Ambel" --to research  # resolve + append a cache-ready row (--to: research | fast_track | seen_with)
+    python3 spotify_cache.py --audit-ids     # read-only: flag cached ids that look like secondary/wrong Spotify profiles
+    python3 spotify_cache.py --audit-ids --artist "Gov't Mule"  # audit one artist
+    python3 spotify_cache.py --repoint "Gov't Mule=5zoKOczgOJmBAoTQBXwaKn" --dry-run  # preview a manual fix
+    python3 spotify_cache.py --repoint "Gov't Mule=5zoKOczgOJmBAoTQBXwaKn"  # apply it (writes by default; repeatable flag)
     python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
     python3 spotify_cache.py --dry-run       # report planned changes, write nothing
 
@@ -220,6 +282,7 @@ FOLLOWS    = os.path.join(REPO_ROOT, "tools", "research", "follows")
 
 ALIASES_TSV = os.path.join(DATA_DIR, "recommend_aliases.tsv")
 OUTPUT_JSON = os.path.join(DATA_DIR, "artist_spotify.json")
+ARTISTS_TSV = os.path.join(DATA_DIR, "artists.tsv")
 
 load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 
@@ -288,6 +351,14 @@ def _tsv_sources():
 
 def _source_tag(path: str) -> str:
     return os.path.splitext(os.path.basename(path))[0]
+
+
+# Which repo TSVs carry a per-artist "Spotify URL" column that a --repoint must
+# also correct, keyed by canonical artist name -> Artist column value used for
+# matching. artists.tsv is checked first (most authoritative / most commonly
+# stale), then fast_track.tsv. seen_with.tsv rows are members, not headliners,
+# and are left alone here — #126's drift cases are all headliner-level.
+_URL_BEARING_TSVS = (ARTISTS_TSV, os.path.join(DATA_DIR, "fast_track.tsv"))
 
 
 # ── Name normalisation & similarity (mirrors youtube_fill_handles.py) ─────────
@@ -976,6 +1047,267 @@ def refresh_images(cache: dict, creds, args) -> None:
           + f". Written: {OUTPUT_JSON}")
 
 
+# ── ID-drift audit (--audit-ids / --repoint, #126) ─────────────────────────────
+
+class _Verdict:
+    REPOINT_SAFE = "REPOINT SAFE"
+    CAUTION      = "CAUTION (older release)"
+    CANONICAL    = "already-canonical (truly imageless)"
+    NO_HELP      = "no-help"
+
+
+def _audit_one(name: str, entry: dict, creds) -> tuple[str, dict]:
+    """Run the drift check for one cached artist. Returns (verdict, details).
+
+    details always carries: cached_id, cached_release (date or None). On
+    REPOINT_SAFE / CAUTION it additionally carries candidate_id, candidate_name,
+    candidate_release. Makes exactly one /search call when the cached id's
+    portrait is missing; zero calls otherwise (callers skip entries that already
+    have a portrait before calling this).
+    """
+    cached_id = entry.get("spotify_id")
+    cached_release = (entry.get("latest_release") or {}).get("date")
+    details = {"cached_id": cached_id, "cached_release": cached_release}
+
+    data = api_get("/search", {"q": name, "type": "artist", "limit": 5}, creds)
+    items = (data or {}).get("artists", {}).get("items", [])
+    best, best_score = None, 0.0
+    for it in items:
+        score = similarity(name, it.get("name", ""))
+        if score > best_score and it.get("id"):
+            best, best_score = it, score
+
+    if not best or best_score < SEARCH_MIN_SCORE:
+        return _Verdict.NO_HELP, details
+
+    candidate_id = best["id"]
+    if candidate_id == cached_id:
+        return _Verdict.CANONICAL, details
+
+    candidate_img = _pick_image(best.get("images"), 300)
+    if not candidate_img:
+        # The search-top itself has no portrait either — repointing wouldn't fix
+        # anything, so there's no help to offer even though the ids differ.
+        return _Verdict.NO_HELP, details
+
+    # Confirm the search-top's own /artists/{id}/albums pick for an apples-to-
+    # apples release comparison (search results don't carry release info).
+    candidate_release_obj = latest_release(candidate_id, creds, name)
+    candidate_release = (candidate_release_obj or {}).get("date")
+
+    details.update({
+        "candidate_id": candidate_id,
+        "candidate_name": best.get("name", ""),
+        "candidate_release": candidate_release,
+    })
+
+    if cached_release and candidate_release and \
+            _release_sort_key(candidate_release) < _release_sort_key(cached_release):
+        return _Verdict.CAUTION, details
+    return _Verdict.REPOINT_SAFE, details
+
+
+def audit_ids(cache: dict, creds, args) -> None:
+    """--audit-ids: read-only walk of the cache flagging likely secondary/wrong
+    Spotify profiles (#126). Never writes the cache. Skips any entry whose
+    cached id already has a portrait — a populated image_url is itself proof
+    the id isn't a portrait-less secondary, so there is no drift signal to
+    check and no reason to spend a /search call on it.
+    """
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to audit (run a normal build first, or check --artist).")
+        return
+
+    candidates = [n for n in names if cache[n].get("spotify_id") and not cache[n].get("image_url")]
+    skipped_has_image = len(names) - len(candidates) - sum(
+        1 for n in names if not cache[n].get("spotify_id"))
+    skipped_no_id = sum(1 for n in names if not cache[n].get("spotify_id"))
+
+    print(f"Auditing {len(candidates)} cached artist(s) with a missing portrait "
+          f"(of {len(names)} selected; {skipped_has_image} already have a portrait, "
+          f"{skipped_no_id} have no spotify_id)\n")
+
+    if not candidates:
+        print("Nothing to audit — every selected artist either has a portrait "
+              "already or has no cached id.")
+        return
+
+    counts = {v: 0 for v in (
+        _Verdict.REPOINT_SAFE, _Verdict.CAUTION, _Verdict.CANONICAL, _Verdict.NO_HELP)}
+    safe_lines: list[str] = []
+
+    for i, name in enumerate(candidates, 1):
+        entry = cache[name]
+        try:
+            verdict, details = _audit_one(name, entry, creds)
+        except RateLimited:
+            print(f"\n…bailing after {i - 1}/{len(candidates)} audited (rate-limited). "
+                  f"--audit-ids makes no writes, so nothing to flush — re-run to resume.")
+            raise
+        time.sleep(DELAY)
+        counts[verdict] += 1
+
+        if verdict in (_Verdict.REPOINT_SAFE, _Verdict.CAUTION):
+            print(f"[{i}/{len(candidates)}] {name}")
+            print(f"    cached:     {details['cached_id']}  "
+                  f"(release {details['cached_release'] or '∅'})")
+            print(f"    candidate:  {details['candidate_id']}  "
+                  f"({details['candidate_name']!r}, release {details['candidate_release'] or '∅'})")
+            print(f"    verdict:    {verdict}")
+            if verdict == _Verdict.REPOINT_SAFE:
+                safe_lines.append(f'  --repoint "{name}={details["candidate_id"]}"')
+        else:
+            print(f"[{i}/{len(candidates)}] {name}  → {verdict}")
+
+    print("\n" + "=" * 60)
+    print(f"Audited {len(candidates)}: "
+          f"{counts[_Verdict.REPOINT_SAFE]} repoint-safe, "
+          f"{counts[_Verdict.CAUTION]} caution, "
+          f"{counts[_Verdict.CANONICAL]} already-canonical, "
+          f"{counts[_Verdict.NO_HELP]} no-help.")
+    if safe_lines:
+        print("\nSuggested --repoint arguments for the REPOINT SAFE artists:")
+        print("\n".join(safe_lines))
+        print("\n(--repoint writes immediately by default — add --dry-run to preview first)")
+
+
+def _find_tsv_row_with_url(name: str, path: str):
+    """Return (row_index, row_dict, header) for the row in `path` whose Artist
+    column matches `name` (via canonical() through the file's own alias map —
+    same matching the rest of the script uses), or None if no match / no
+    Spotify URL column present. Row_index is 0-based into the data rows (header
+    excluded), for use by _rewrite_tsv_url."""
+    if not os.path.exists(path):
+        return None
+    header = _tsv_header(path)
+    if "Spotify URL" not in header or "Artist" not in header:
+        return None
+    amap = load_aliases()
+    rows = read_tsv_rows(path)
+    for idx, row in enumerate(rows):
+        raw = (row.get("Artist") or "").strip()
+        if raw and canonical(raw, amap) == name:
+            return idx, row, header
+    return None
+
+
+def _rewrite_tsv_url(path: str, row_index: int, header: list[str], new_url: str) -> None:
+    """Rewrite one row's Spotify URL column in-place, leaving every other row and
+    every other column byte-for-byte as parsed (re-serialized via csv with the
+    file's own header order, so column order is preserved)."""
+    rows = read_tsv_rows(path)
+    rows[row_index]["Spotify URL"] = new_url
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=header, delimiter="\t", lineterminator="\n")
+        w.writeheader()
+        for row in rows:
+            w.writerow({k: row.get(k, "") for k in header})
+
+
+def _parse_repoint_args(specs: list[str]) -> list[tuple[str, str]]:
+    """Parse repeated 'Name=SpotifyID' strings into (name, id) pairs. Exits with a
+    clear message on a malformed spec rather than silently skipping it — a typo
+    here would otherwise repoint nothing and look like success."""
+    pairs = []
+    for spec in specs:
+        if "=" not in spec:
+            sys.exit(f"--repoint expects 'Name=SpotifyID', got: {spec!r}")
+        name, sid = spec.split("=", 1)
+        name, sid = name.strip(), sid.strip()
+        if not name or not sid:
+            sys.exit(f"--repoint expects 'Name=SpotifyID', got: {spec!r}")
+        # Accept a full Spotify URL as well as a bare id, for convenience when
+        # pasting straight from --audit-ids output or a browser tab.
+        maybe_id = extract_artist_id(sid) or sid
+        pairs.append((name, maybe_id))
+    return pairs
+
+
+def repoint_ids(cache: dict, pairs: list[tuple[str, str]], args) -> None:
+    """--repoint: apply one or more manual 'Name=canonicalID' corrections.
+
+    Unlike every other write path in this script, --repoint WRITES BY DEFAULT —
+    it names an exact artist and an exact id the person has already decided on
+    (typically copy-pasted from --audit-ids' REPOINT SAFE suggestions or chosen
+    by hand for a CAUTION / ambiguous case), so there's no batch of unreviewed
+    changes to gate behind an opt-in flag the way a --refresh-* sweep needs one.
+    Pass --dry-run to preview without writing (mirrors every other mode here).
+
+    For each pair:
+      1. Update the cache entry: spotify_id, spotify_url. Clear latest_release /
+         latest_release_checked / image_url / images_checked so the normal
+         --refresh-images / --refresh-releases passes re-fetch fresh data under
+         the corrected id, rather than displaying stale cached values that were
+         pulled under the WRONG id (the checked-dates being fresh would also
+         make --stale-days skip re-fetching them).
+      2. If artists.tsv (checked first) or fast_track.tsv carries a Spotify URL
+         for this artist, rewrite it too — a stored URL wins over both the cache
+         and a fresh /search in resolve_artist_id(), so leaving it stale would
+         silently revert the repoint on the very next build/refresh.
+    An artist not already in the cache is added as a fresh skeleton entry
+    (sources left empty — run a normal build afterward to populate them
+    properly; --repoint's job is the id correction, not full onboarding).
+    """
+    print(f"Repointing {len(pairs)} artist(s)" + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    changed = 0
+    for name, new_id in pairs:
+        new_url = f"https://open.spotify.com/artist/{new_id}"
+        entry = cache.get(name)
+        old_id = (entry or {}).get("spotify_id")
+
+        if old_id == new_id:
+            print(f"  {name}  → already points at {new_id}, nothing to do")
+            continue
+
+        print(f"  {name}")
+        print(f"    cache:  {old_id or '(not cached)'}  →  {new_id}")
+
+        tsv_hits = []
+        for path in _URL_BEARING_TSVS:
+            hit = _find_tsv_row_with_url(name, path)
+            if hit is not None:
+                idx, row, header = hit
+                old_tsv_url = row.get("Spotify URL", "")
+                if extract_artist_id(old_tsv_url) != new_id:
+                    tsv_hits.append((path, idx, header, old_tsv_url))
+                    print(f"    {os.path.basename(path)}:  "
+                          f"{old_tsv_url or '(blank)'}  →  {new_url}")
+
+        if args.dry_run:
+            print("    [DRY RUN] no changes written")
+            continue
+
+        cache[name] = {
+            **(entry or {"sources": []}),
+            "spotify_id": new_id,
+            "spotify_url": new_url,
+            "latest_release": None,
+            "latest_release_checked": None,
+            "image_url": None,
+            "images_checked": None,
+        }
+        for path, idx, header, _old in tsv_hits:
+            _rewrite_tsv_url(path, idx, header, new_url)
+
+        changed += 1
+        print("    ✓ applied — re-run --refresh-images / --refresh-releases "
+              "(or --new-artist) to re-populate under the new id")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Repointed {changed}/{len(pairs)} artist(s). Written: {OUTPUT_JSON}"
+          + (" and any updated TSV Spotify URL columns" if changed else ""))
+
+
 # ── Last.fm enrichment (separately refreshable; --refresh-lastfm only) ─────────
 
 def lastfm_get(params: dict, api_key: str) -> dict | None:
@@ -1479,7 +1811,8 @@ def add_artist(args, creds) -> None:
 
 def _reject_mode_clashes(active: str, pairs, extra: str = "") -> None:
     """Exit if a mode flag is combined with modes it cannot share a run with.
-    `pairs` is (flag_name, is_set). Shared by --new-artist (#145) and --prune (#159)."""
+    `pairs` is (flag_name, is_set). Shared by --new-artist (#145), --prune (#159),
+    and --audit-ids / --repoint (#126)."""
     clashes = [flag for flag, on in pairs if on]
     if clashes:
         msg = f"{active} cannot be combined with {', '.join(clashes)}."
@@ -1518,6 +1851,24 @@ def main() -> None:
                          "standalone (no Spotify credentials, no API calls); pair with "
                          "--dry-run to list them first, or with --refresh to prune after "
                          "a rebuild.")
+    ap.add_argument("--audit-ids", action="store_true",
+                    help="Read-only (#126): walk the cache and flag artists whose "
+                         "cached spotify_id has no portrait but a re-resolve by name "
+                         "finds a different id that DOES have one (a likely secondary/"
+                         "wrong Spotify profile). Prints a verdict per artist and "
+                         "suggested --repoint arguments for the safe cases; never "
+                         "writes the cache. Honors --artist and --delay. Cannot be "
+                         "combined with any other mode.")
+    ap.add_argument("--repoint", action="append", metavar="Name=SpotifyID", default=None,
+                    help="Apply a manual id correction: 'Artist Name=canonicalSpotifyID' "
+                         "(a full open.spotify.com/artist/... URL is also accepted). "
+                         "Repeatable — pass --repoint multiple times to fix several "
+                         "artists in one run. Updates the cache entry (clearing "
+                         "latest_release/image_url so they re-fetch under the "
+                         "corrected id) and, if present, the Spotify URL column in "
+                         "artists.tsv / fast_track.tsv. Unlike the --refresh-* sweeps, "
+                         "this WRITES BY DEFAULT — pass --dry-run to preview first. "
+                         "Cannot be combined with any other mode.")
     ap.add_argument("--artist", metavar="NAME",
                     help="Only process artists whose canonical name contains NAME "
                          "(case-insensitive substring).")
@@ -1557,7 +1908,10 @@ def main() -> None:
                          "lower it (e.g. 0.3) for speed once limits relax or for "
                          "the lighter --refresh-* passes.")
     ap.add_argument("--dry-run", action="store_true",
-                    help="Report what would change; write nothing.")
+                    help="Report what would change; write nothing. For --repoint, "
+                         "this is the OPT-IN safety net (--repoint writes by default "
+                         "otherwise); for every other write mode it's the existing "
+                         "preview behavior.")
     args = ap.parse_args()
 
     DELAY = args.delay
@@ -1569,6 +1923,7 @@ def main() -> None:
             ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
             ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
             ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
+            ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
         ), extra='Name the artist as --new-artist "NAME", or pass it bare to fill every '
                  'unfilled skeleton.')
         # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
@@ -1582,7 +1937,28 @@ def main() -> None:
             ("--refresh-images", args.refresh_images),
             ("--refresh-lastfm", args.refresh_lastfm),
             ("--add-artist", args.add_artist),
+            ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
         ), extra="Run --prune on its own (no API calls), or as --refresh --prune.")
+
+    # --audit-ids and --repoint (#126) are standalone modes like --new-artist — each
+    # owns its whole run and cannot be combined with any other mode, including each
+    # other (a --repoint the person is applying should be a deliberate, reviewed step,
+    # not folded into the same invocation as a read-only audit pass).
+    if args.audit_ids:
+        _reject_mode_clashes("--audit-ids", (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--add-artist", args.add_artist),
+            ("--new-artist", args.new_artist is not None), ("--repoint", args.repoint),
+        ))
+    if args.repoint:
+        _reject_mode_clashes("--repoint", (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--add-artist", args.add_artist),
+            ("--new-artist", args.new_artist is not None), ("--audit-ids", args.audit_ids),
+            ("--artist", args.artist),
+        ), extra="--repoint names its own artists via 'Name=ID' pairs; --artist doesn't apply.")
 
     # Last.fm enrichment is fully independent of Spotify — handle it before the
     # Spotify credential check so it runs with only LASTFM_API_KEY set.
@@ -1604,12 +1980,31 @@ def main() -> None:
         prune_cache(cache, args)
         return
 
+    # --repoint is pure local edits (cache + TSV rewrite) — it trusts the id the
+    # person supplied and never calls the Spotify API to verify it, so it must
+    # not require SPOTIFY_CLIENT_ID/SECRET to be set. Sits ABOVE the credential
+    # check for that reason (unlike --audit-ids, which does call /search and so
+    # sits below it, alongside every other Spotify-backed mode).
+    if args.repoint:
+        cache = load_cache()
+        pairs = _parse_repoint_args(args.repoint)
+        repoint_ids(cache, pairs, args)
+        return
+
     client_id     = os.environ.get("SPOTIFY_CLIENT_ID", "")
     client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
     if not client_id or not client_secret:
         sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
                  "(scripts/.env or environment).")
     creds = (client_id, client_secret)
+
+    # --audit-ids: read-only walk, one /search (+ one /albums on a repoint-safe
+    # candidate) per artist with a missing portrait.
+    if args.audit_ids:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        audit_ids(cache, creds, args)
+        return
 
     # --new-artist: needs both credential sets — Spotify for passes 1-2, Last.fm for pass 3.
     if args.new_artist is not None:
