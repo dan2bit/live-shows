@@ -111,21 +111,21 @@ def credit_targets(signer, attribution):
 
 
 def validate_goals_config(cfg):
-    """Ensure show_goals weights sum to 1.0 ± epsilon per docs/GOALS_SPEC.md §
-    Affinity contribution. Narrowly targeted at config.yaml -> show_goals; fails
-    the build on drift with a clear error identifying the offending entries."""
-    show_goals = cfg.get("show_goals") or []
-    weighted = [g for g in show_goals if isinstance(g, dict) and "weight" in g]
-    if not weighted:
-        return  # no weighted goals -> nothing to validate
-    total = sum(float(g["weight"]) for g in weighted)
-    epsilon = 0.001
-    if abs(total - 1.0) > epsilon:
-        entries = ", ".join(f"{g.get('key', '?')}={g['weight']}" for g in weighted)
+    """#165: the flat G-term has one knob — badges.affinity.goals_decay — instead of
+    per-goal weights. Validate it lies strictly between 0 and 1 (fails the build
+    otherwise), and warn loudly about obsolete show_goals weight fields: they are
+    IGNORED since #165, so leaving them in config.yaml is harmless but misleading."""
+    d = cfg["goals_decay"]
+    if not (0.0 < d < 1.0):
         raise ValueError(
-            f"config.yaml: show_goals weights must sum to 1.0, got {total:.4f} "
-            f"({entries}). See docs/GOALS_SPEC.md § Affinity contribution."
+            f"config.yaml: badges.affinity.goals_decay must be strictly between 0 and 1, "
+            f"got {d}. See docs/GOALS_SPEC.md § Affinity contribution."
         )
+    stale = [g.get("key", "?") for g in (cfg.get("show_goals") or [])
+             if isinstance(g, dict) and "weight" in g]
+    if stale:
+        print(f"WARNING: show_goals 'weight' fields are obsolete since #165 and ignored "
+              f"({', '.join(stale)}) — remove them from config.yaml.")
 
 
 # ------------------------------------------------------------------------------- loaders
@@ -136,25 +136,17 @@ def load_config(root):
     aff = badges.get("affinity") or {}
     weights = aff.get("weights") or {"tier": 0.35, "seen": 0.40, "goals": 0.25}
 
-    # show_goals is the new source of truth for per-goal weights (docs/GOALS_SPEC.md §
-    # Affinity contribution). If present with weight entries, use those. Otherwise fall
-    # back to the legacy goals_split dict, and finally to the built-in default. During
-    # the S2+S3 transition (this PR), commit 5 adds show_goals and deletes goals_split;
-    # the fallback exists so intermediate branch states remain buildable.
-    show_goals = cfg.get("show_goals") or []
-    goals_weights = {g["key"]: float(g["weight"])
-                     for g in show_goals
-                     if isinstance(g, dict) and "key" in g and "weight" in g}
-    if not goals_weights:
-        goals_weights = aff.get("goals_split") or {"hat": 0.6, "book": 0.4}
-
+    # #165: the G-term is a flat diminishing series over completion events (G = 1 − d^n).
+    # Its only knob is goals_decay (first completion = 1−d ≈ the old hat weight at
+    # d=0.4; the k-th adds d^(k−1) − d^k). Per-goal weights — the old goals_split dict
+    # and show_goals[].weight — are obsolete and ignored; see validate_goals_config.
     return {
         "weights": weights,
         "tier_points": aff.get("tier_points") or {},
         "fast_track_equiv_shows": aff.get("fast_track_equiv_shows", 1),
         "seen_scale": aff.get("seen_scale", 2.5),
-        "goals_split": goals_weights,
-        "show_goals": show_goals,
+        "goals_decay": float(aff.get("goals_decay", 0.4)),
+        "show_goals": cfg.get("show_goals") or [],
         "bands": aff.get("bands") or {"high": 0.60, "medium": 0.30},
         "tranches": badges.get("listener_tranches") or DEFAULT_TRANCHES,
     }
@@ -331,6 +323,29 @@ def build(root):
             entry = book_completed.setdefault(k, {"APS": False, "RHBS": False})
             entry[which] = True
 
+    # #165: flat G-term completion-event counts, driven by the config show_goals list
+    # (generic — a fork adding an event_log goal gets affinity contribution with no
+    # code change here). Every event_log row crediting an artist is ONE completion
+    # event: Book ×2 (APS + RHBS rows) is two events, and two band members signing
+    # "of <band>" credits the band twice — each signature is an event. column:Photo URL
+    # resolves later from the artist's deduped show_log (distinct photographed shows);
+    # other column:/interaction: sources contribute 0 to G for now (per-artist event
+    # counts for them aren't derived — noted in GOALS_SPEC § Affinity contribution).
+    goal_event_counts = {}  # {canon_key: int} — event_log events only
+    for g in cfg["show_goals"]:
+        src = (g.get("source") or "") if isinstance(g, dict) else ""
+        if not src.startswith("event_log:"):
+            continue
+        ev_name = src.split(":", 1)[1].strip() + ".tsv"
+        for r in read_tsv(os.path.join(root, "data/show_goals", ev_name)):
+            signer = (r.get("signer") or "").strip()
+            if not signer:
+                continue
+            for tgt in credit_targets(signer, r.get("attribution")):
+                kk = canon(tgt)
+                if kk:
+                    goal_event_counts[kk] = goal_event_counts.get(kk, 0) + 1
+
     # Per-artist per-date completed-goal keys, for baking into show_log entries so
     # S4 (app.js row badges) can join client-side without extra fetches. Only event_log
     # sources contribute here; column/interaction goals are per-row and handled at render.
@@ -435,16 +450,23 @@ def build(root):
         trank = TIER_RANK.get(tlabel) if tlabel else None
         tier_obj = {"label": tlabel, "rank": trank} if tlabel else None
 
-        # affinity
+        # photo completions = distinct photographed shows in the deduped log — the
+        # #117 badge metric, never times_seen. Needed by both affinity and badges.
+        photo_count = sum(1 for r in log if r["photo_url"])
+
+        # affinity — #165 flat G-term: ONE diminishing series over all goal completion
+        # events (signature events + photographed shows), order- and type-independent.
+        # First completion = 1−d, k-th adds d^(k−1) − d^k; asymptotic below 1.0 so the
+        # earned-max vs #116-starred distinction is preserved.
         is_fast = k in fast
         w = cfg["weights"]
-        gs = cfg["goals_split"]
         T = float(cfg["tier_points"].get(tlabel, 0.0)) if tlabel else 0.0
         S = 1 - math.exp(-count / cfg["seen_scale"]) if count > 0 else 0.0
         floor = 1 - math.exp(-cfg["fast_track_equiv_shows"] / cfg["seen_scale"]) if is_fast else 0.0
         Seff = max(S, floor)
-        G = gs["hat"] * (1 if hat_signed else 0) + gs["book"] * (1 if book_signed else 0)
-        gate = (tlabel is not None) or count > 0 or hat_signed or book_signed or is_fast
+        n_goal = goal_event_counts.get(k, 0) + photo_count
+        G = 1 - cfg["goals_decay"] ** n_goal if n_goal > 0 else 0.0
+        gate = (tlabel is not None) or count > 0 or n_goal > 0 or is_fast
         if gate:
             score = max(0.0, min(1.0, w["tier"] * T + w["seen"] * Seff + w["goals"] * G))
             band = "high" if score >= cfg["bands"]["high"] else ("medium" if score >= cfg["bands"]["medium"] else "low")
@@ -467,7 +489,6 @@ def build(root):
             vip = int((a.get("VIP Count") or "0").strip() or 0)
         except ValueError:
             vip = 0
-        photo_count = sum(1 for r in log if r["photo_url"])
 
         # latest release
         lr = sp.get("latest_release")
