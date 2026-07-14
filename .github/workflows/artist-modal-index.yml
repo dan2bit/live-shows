@@ -18,6 +18,7 @@ on:
       - data/seen_with.tsv
       - data/history/**
       - data/show_goals/autograph_books_combined.tsv
+      - data/show_goals/artist-albums.tsv
       - data/artist_spotify.json
       - data/recommend_aliases.tsv
       - tools/research/follows/follows_master.tsv
