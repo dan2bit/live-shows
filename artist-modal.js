@@ -235,6 +235,16 @@ function amYouBadges(rec,rows,hatEligible){
   if(b.book==='completed')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book signed</span>');
   else if(b.book==='not_yet')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book</span>');
   if(b.vip>0)out.push('<span class="am-b-vip">VIP\u00d7'+b.vip+'</span>');
+  // #117: photo badge -> Google Photos link. Album URL (baked from artist-albums.tsv)
+  // wins; a single photographed show falls back to that photo's own share link; 2+
+  // photos with no album yet renders unlinked (reconcile_photos.py flags the gap).
+  if(b.photo>0){
+    var pHref=b.photo_album||null;
+    if(!pHref&&b.photo===1)(s.show_log||[]).some(function(x){if(x.photo_url){pHref=x.photo_url;return true;}return false;});
+    var pTxt='\ud83d\udcf7'+(b.photo>1?'\u00d7'+b.photo:'');
+    if(pHref)out.push('<a class="am-b-book am-b-photo" href="'+esc(pHref)+'" target="_blank" rel="noopener" title="'+(b.photo_album?'Google Photos album':'Show photo')+'">'+pTxt+'</a>');
+    else out.push('<span class="am-b-book am-b-photo" title="'+b.photo+' show photos \u2014 album pending">'+pTxt+'</span>');
+  }
   if(rows.upcoming){var d=amDays(rows.upcoming.date);out.push('<span class="am-b-next">next: '+(d!=null&&d>=0?('in '+d+' day'+(d===1?'':'s')):'upcoming')+'</span>');}
   if(rec.fast_track&&n===0)out.push('<span class="am-b-fast">\u2605 fast-track \u00b7 1st show</span>');
   else if(rec.fast_track&&viaOnly)out.push('<span class="am-b-fast">\u2605 fast-track</span>');
