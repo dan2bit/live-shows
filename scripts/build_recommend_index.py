@@ -262,12 +262,30 @@ def build():
             canon = row.get("Canonical", "")
             if not alias or not canon:
                 continue
-            target = variants.get(norm(canon))
-            if target is None:
-                print("WARN alias: canonical not found: '%s' (alias '%s')"
-                      % (canon, alias), file=sys.stderr)
-                continue
             akey = norm(alias)
+            target = variants.get(norm(canon))
+
+            if target is None:
+                # The canonical name appears in no source TSV — the act has only ever been
+                # billed under the longer name ("Bill Murray and His Blood Brothers" ->
+                # "Blood Brothers"; "John Primer & The Real Deal Blues Band" -> "John
+                # Primer"). The alias is still the truth: that record IS the canonical
+                # entity, just billed with a guest or a backing band attached. So adopt the
+                # canonical as the record's name and index BOTH keys, instead of dropping
+                # the alias on the floor.
+                #
+                # This is what makes a recommendation for the bare name resolve, and it is
+                # what keeps resolving if the act later tours without the guest — the
+                # canonical outlives the billing.
+                holder = variants.get(akey)
+                if holder is None:
+                    print("WARN alias: neither canonical '%s' nor alias '%s' is a known "
+                          "record" % (canon, alias), file=sys.stderr)
+                    continue
+                records[holder]["canonical"] = display_name(canon)
+                variants[norm(canon)] = holder
+                continue
+
             if akey in variants and variants[akey] != target:
                 collisions.append((akey, records[variants[akey]]["canonical"],
                                    records[target]["canonical"]))
