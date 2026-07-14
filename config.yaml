@@ -125,8 +125,8 @@ badges:
 #   weight      - (optional) affinity contribution; if any entries have weights, they must sum to 1.0
 #
 # Deleting show_goals entirely (or emptying the list) yields a badge-free but functional
-# site — the #85 exit criterion. photo and video goals are held for #140 (S4) alongside
-# the app.js row-badge rendering rules that would give them visible effect.
+# site — the #85 exit criterion. A video goal remains unadded (held with photo for #140,
+# closed; photo landed as a #117 follow-up — weightless until #165 reworks the G-term).
 show_goals:
   - key: hat
     label: HAT
@@ -142,6 +142,13 @@ show_goals:
     source: event_log:book_signatures
     eligibility: autograph_books_eligibility
     weight: 0.4
+  - key: photo
+    label: PHOTO
+    icon: "📷"
+    color: "#40a0a0"                       # teal (sell family); dim/bg HSL-derived
+    source: "column:Photo URL"
+    # no weight — affinity contribution lands with #165 (a weighted entry before then
+    # passes the sum-to-1.0 validator while deflating hat/book scores)
 
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
