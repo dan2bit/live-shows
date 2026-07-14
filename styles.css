@@ -412,6 +412,11 @@
   .am-b-vip{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:4px;padding:4px 8px;}
   .am-b-next{font-family:var(--mono);font-size:11px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:3px;padding:4px 9px;}
   .am-b-fast{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:4px;padding:5px 9px;}
+  /* #117 photo badge — rides .am-b-book layout; sell triplet = outbound-link chip (ft-link-tour precedent) */
+  .am-b-photo{color:var(--sell);background:var(--sell-bg);border-color:var(--sell-dim);}
+  a.am-b-photo{text-decoration:none;}
+  a.am-b-photo:hover{border-color:var(--sell);}
+  span.am-b-photo{color:var(--text-dim);background:#131313;border-style:dashed;}
   .am-never{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
   .am-subh{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6f6b60;margin-bottom:9px;}
   .am-tl{position:relative;padding-left:20px;}

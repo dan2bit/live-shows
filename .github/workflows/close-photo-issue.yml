@@ -64,6 +64,7 @@ jobs:
           PYEOF
 
       - name: Append row to artist-photos.tsv
+        id: append
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           SHARE_LINK: ${{ steps.extract.outputs.share_link }}
@@ -94,7 +95,12 @@ jobs:
       - name: Close the issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALBUM_NOTE: ${{ steps.append.outputs.album_note }}
         run: |
+          BODY="Photo row written to artist-photos.tsv automatically."
+          if [ -n "$ALBUM_NOTE" ]; then
+            BODY="$BODY"$'\n\n'"$ALBUM_NOTE"
+          fi
           gh issue close ${{ github.event.issue.number }} \
             --repo ${{ github.repository }} \
-            --comment "Photo row written to artist-photos.tsv automatically."
+            --comment "$BODY"
