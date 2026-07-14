@@ -417,6 +417,8 @@ _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
 # also hide real artists (e.g. Luther Dickinson = North Mississippi Allstars,
 # already seen). Normalised through _norm so "&"/accents match the collected names.
 _UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
+    "Blood Brothers",      # Zito/Castiglia duo — records as "Mike Zito & Albert Castiglia";
+                           # a bare search hits the Seattle post-hardcore band instead
     "Eli Kollman",
     "SatchVai Band",
     "TJ Turqman",          # local session bassist (seen_with only) — no Spotify catalogue
@@ -1406,6 +1408,13 @@ def _write_lastfm(entry: dict, info: dict | None) -> None:
         entry["lastfm_checked"] = date.today().isoformat()
         return
     entry.setdefault("lastfm", None)   # keep any cached block; leave *_checked unstamped
+    if entry.get("lastfm") is None:
+        # Self-heal: clear a stamp left by the old unconditional-stamp code, so the
+        # invariant "lastfm_checked implies a successful pull" actually holds. Without
+        # this, entries stamped before #160 keep a stale timestamp forever — harmless
+        # today (refresh_lastfm re-queries everything) but it would silently skip them
+        # the moment a --stale-days gate is added here, as refresh_images already has.
+        entry.pop("lastfm_checked", None)
 
 
 def _spotify_placeholder(sources: set) -> dict:
