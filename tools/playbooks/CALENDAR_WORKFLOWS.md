@@ -22,11 +22,13 @@ There are exactly three event types on the Dan Concert Calendar:
 - **Never edit past events.** Calendar edits apply only to upcoming or same-day events. Past
   events are read-only.
 - **Show-goals check is a hard pre-condition for show events — see the dedicated section below.**
-  No show event without it, with one standing exception: **Wolf Trap Filene Center shows are
-  categorically excluded from the check.** Wolf Trap's box/pavilion structure and no-backstage-
-  access norm mean artist interaction (autograph or hat) essentially never happens there — do
-  not run the eligibility/signature check, do not add a goals line, and do not write "no extra
-  show goals" either. Just omit the section entirely for Filene Center events.
+  No show event without it, with one standing exception: **venues whose `venues.tsv` `Artist
+  Interaction Likelihood` column reads `No` are categorically excluded from the check.** A `No`
+  rating means the venue's structure (box/pavilion seating, no backstage access, etc.) makes
+  artist interaction essentially impossible there — do not run the eligibility/signature check,
+  do not add a goals line, and do not write "no extra show goals" either. Just omit the section
+  entirely for that venue's events. This is a **data lookup, not a named-venue exception** — see
+  the dedicated section below for the full `Maybe`/`Yes`/`Unknown` handling (#156).
 - **Prev/Next Show belongs in `live_shows_potential.tsv` only** — never in calendar event
   descriptions.
 - **Confirm before creating a calendar event for an unpurchased show.**
@@ -51,16 +53,34 @@ handling lives in `EMAIL_WORKFLOWS.md`; this file defines only what makes a date
 
 ---
 
-## Show-Goals Check — REINFORCED (hard pre-condition, non-Wolf-Trap shows)
+## Show-Goals Check — REINFORCED (hard pre-condition, gated on venues.tsv)
 
 This check exists to answer one question: **is there an unsigned hat or book target for this
 bill, right now, according to the actual signature ledgers** — not according to what an
 eligibility file alone implies. Eligibility says an artist *could* be a target; only the
 signature files say whether that target has already been closed out.
 
-**Skip entirely for Wolf Trap Filene Center** (see Common Rules above). For every other venue,
-run all three steps below before writing the show event's description, every time — including
-when updating an existing event.
+### Step 0 — Venue gate (#156)
+
+Before doing anything else, look up the show's venue in `venues.tsv`'s **`Artist Interaction
+Likelihood`** column:
+
+- **`No`** — skip the entire check. Do not add a goals line, and do not write "no extra show
+  goals" either — omit the section from the event description entirely. (Wolf Trap Filene
+  Center is the canonical `No` example — large pavilion/lawn seating, no backstage access — but
+  the check reads the column, not the venue name. Any venue rated `No` gets the same treatment.)
+- **`Maybe` / `Yes` / `Unknown`** — run the full check (Steps A–C below) as normal. `Unknown`
+  is treated the same as `Maybe`/`Yes` here — an unrated venue doesn't get the free pass; only
+  an explicit `No` does. If a show's venue isn't in `venues.tsv` at all, treat it the same way
+  (run the check) and flag the missing venue row for Dan.
+
+This replaces the old hardcoded "Wolf Trap Filene Center is excluded by name" rule. The
+exclusion is now a property of the venue's data row, so any other venue with the same
+structural constraint gets the same treatment automatically once its `venues.tsv` row says
+`No` — no playbook edit required.
+
+For every venue that doesn't gate out at Step 0, run all three steps below before writing the
+show event's description, every time — including when updating an existing event.
 
 ### Step A — Eligibility
 
@@ -156,18 +176,19 @@ Payment: [card/method] / Face $X.XX / Fees $X.XX / Total $X.XX
 [Seat / GA info]
 Doors: [time] / Show: [time]
 
-High ticket cost -- cool it on merch tonight   <- face value >= $100, NOT VIP, NOT Wolf Trap Filene
+High ticket cost -- cool it on merch tonight   <- face value >= $100, NOT VIP, NOT a venue rated `No`
 ```
 
-**Show-goals lines** — run the full three-step check above (Eligibility → Signature ledger →
-Write the result) for every non-Wolf-Trap show event, whether newly created or being updated.
-Do not rely on memory of a prior pass over the same artist; the signature ledgers change over
-time (an artist can go from unsigned to signed between when Dan buys a ticket and when Claude
-builds out the event description weeks later), so re-run the check fresh each time the
-description is written.
+**Show-goals lines** — run the full check above (Step 0 venue gate, then Eligibility →
+Signature ledger → Write the result for any venue that doesn't gate out) for every show event,
+whether newly created or being updated. Do not rely on memory of a prior pass over the same
+artist; the signature ledgers change over time (an artist can go from unsigned to signed between
+when Dan buys a ticket and when Claude builds out the event description weeks later), so re-run
+the check fresh each time the description is written.
 
-**Merch caution line:** add only when face value per ticket ≥ $100, AND not VIP, AND not Wolf
-Trap Filene Center. Evaluated per ticket — never on the order total for multi-ticket orders.
+**Merch caution line:** add only when face value per ticket ≥ $100, AND not VIP, AND the venue's
+`Artist Interaction Likelihood` is not `No`. Evaluated per ticket — never on the order total for
+multi-ticket orders.
 
 ### Reminders
 
@@ -246,7 +267,8 @@ ticketing-platform event URL and present it to Dan for confirmation before commi
 ## Cross-References
 
 - `EMAIL_WORKFLOWS.md` — when each event is created/updated within the five inbox routines.
-- `venues.tsv` — Parking column (4) drives the Location rule for show events.
+- `venues.tsv` — Parking column (4) drives the Location rule for show events; `Artist
+  Interaction Likelihood` column (13) gates the Show-Goals Check (#156).
 - `data/show_goals/hat_eligibility.tsv` + `data/show_goals/hat_signatures.tsv` — hat half of the
   Show-Goals Check.
 - `data/show_goals/autograph_books_eligibility.tsv` + `data/show_goals/book_signatures.tsv` —
