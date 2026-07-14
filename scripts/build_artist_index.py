@@ -284,6 +284,17 @@ def build(root):
              for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_eligibility.tsv"))
              if r.get("Artist")}
 
+    # Google Photos albums (#117): Artist -> shareable album URL. Keyed via canon() so
+    # the join runs against the built universe (which includes seen_with-only names,
+    # e.g. Brandon Miller) — never against artists.tsv. Album URL is deliberately NOT
+    # unique across rows: a shared band album (Brandon Miller / Danielle Nicole) is
+    # legitimate, so no uniqueness validation here or anywhere.
+    albums = {}
+    for r in read_tsv(os.path.join(root, "data/show_goals/artist-albums.tsv")):
+        art, aurl = clean(r.get("Artist")), clean(r.get("Album URL"))
+        if art and aurl:
+            albums[canon(art)] = aurl
+
     # Hat eligibility (#115). Header column is "Eligible" post-#85 (uniform across goals).
     # Compat: also accept legacy "Hat Eligible" column name during any transition window.
     hat_elig = {}
@@ -521,6 +532,9 @@ def build(root):
                 },
                 "vip": vip,
                 "photo": photo_count,
+                # #117: Google Photos album link for the photo badge. Nullable; present
+                # only when artist-albums.tsv has a row. Additive to the frozen schema.
+                "photo_album": albums.get(k),
             },
             "latest_release": latest_release,
             "_similar_names": (lf.get("similar") or [])[:8],  # resolved in pass 2, then removed
