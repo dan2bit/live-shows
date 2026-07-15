@@ -111,6 +111,15 @@ badges:
     seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
     bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
 
+# Explicit favorite (#116) — the brand-hat gauge in the artist modal becomes a promote /
+# remove control for authed users. The mark is binary and PRIVATE: it lives in
+# dan2bit/live-shows-private -> artist_favorites.tsv (created by the client on the first
+# favorite) and never appears in this repo or for bystanders.
+favorite:
+  enabled: false               # flip to true once the sidecar write path is verified live
+  pin_to_full: true            # a favorite pins the gauge to 1.0 (earned max stays ~0.98)
+  confirm_below_band: high     # one-click promote at/above this band; evidence-quoting confirm below
+
 # Show goals — the tracked accomplishments that produce badges on show rows and in the
 # artist modal, and contribute to the affinity G-term. See docs/GOALS_SPEC.md for the
 # full spec (source-binding vocabulary, state rules, weight validator). A fork may add,
