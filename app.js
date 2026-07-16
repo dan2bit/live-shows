@@ -664,7 +664,7 @@ function renderAttendedRowSearch(row,idx){
   var n=normalizeRow(row);
   var ne=esc(n.notes);
   var sw=_seenWithFor(n);
-  var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\'">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
+  var nh=ne?'<div class="notes-text collapsible" id="n-sr-'+idx+'" onclick="toggleNote(this,\'nt-sr-'+idx+'\')">'+ne+'</div><span class="notes-toggle" id="nt-sr-'+idx+'" onclick="toggleNote(document.getElementById(\'n-sr-'+idx+'\'),this)">more</span>':'';
   return'<tr><td class="cell-date">'+formatShowDateYear(n.showDate)+'</td>'
     +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')+(sw.length?'<div class="cell-support">incl. '+sw.map(function(x){return artistLink(x);}).join(', ')+'</div>':'')
     +'<div class="cell-venue-mobile">'+esc(shortVenueName(n.venueName))+'</div></td>'
@@ -716,7 +716,7 @@ function renderHistoryYear(yr){
       +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
   }).join('');
   return'<div class="history-year-header"><span class="history-year-label">'+yr+'</span><span class="history-year-count">'+sorted.length+' show'+(sorted.length!==1?'s':'')+'</span></div>'
-    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:160px">Artist</th><th>Venue</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
+    +'<div class="attended-table"><table class="shows-table"><thead><tr><th style="width:64px">Date</th><th style="width:260px">Artist</th><th style="width:200px">Venue</th><th style="width:40px">Links</th><th>Notes</th></tr></thead>'
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
 function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
@@ -839,7 +839,7 @@ function runSearch(){
   var tbody=rows.map(function(r,i){return renderAttendedRowSearch(r,i);}).join('');
   resultsEl.innerHTML='<div class="search-count">'+rows.length+' match'+(rows.length!==1?'es':'')+'</div>'
     +'<div class="attended-table"><table class="shows-table"><thead><tr>'
-    +'<th style="width:80px">Date</th><th>Artist</th><th>Venue</th><th style="width:40px">Links</th><th>Notes</th>'
+    +'<th style="width:80px">Date</th><th style="width:260px">Artist</th><th style="width:200px">Venue</th><th style="width:40px">Links</th><th>Notes</th>'
     +'</tr></thead><tbody>'+tbody+'</tbody></table></div>';
   requestAnimationFrame(revealToggles);
 }
