@@ -58,6 +58,7 @@ features:
   private_data: true           # fetch the private sidecar repo when authenticated
   fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
   spotify_integration: true    # Spotify links in Waiting tab; set false to hide if no Spotify subsystem
+  favorite: false              # #116 explicit favorite (public data/artist_favorites.tsv); ships dark — delete or set true to enable
 
 # Display preferences (#82).
 display:
@@ -110,6 +111,15 @@ badges:
     # rarely touched:
     seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
     bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
+
+# Explicit favorite (#116) — the brand-hat gauge in the artist modal becomes a promote /
+# remove control for authed users. The mark is binary and PUBLIC: it lives in
+# data/artist_favorites.tsv in this repo, and the pinned gauge + star are visible to
+# all viewers (privacy reversal per Dan, 2026-07-15 — see #116). Master switch:
+# features.favorite above. Tuning knobs only below.
+favorite:
+  pin_to_full: true            # a favorite pins the gauge to 1.0 (earned max stays ~0.98)
+  confirm_below_band: high     # one-click promote at/above this band; evidence-quoting confirm below
 
 # Show goals — the tracked accomplishments that produce badges on show rows and in the
 # artist modal, and contribute to the affinity G-term. See docs/GOALS_SPEC.md for the
