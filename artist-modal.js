@@ -340,14 +340,21 @@ function amYouHistory(rec,rows){
       +'<div class="am-consider"><div class="am-consider-body"><div class="am-consider-date">'+esc(c.date||'TBD')+'</div>'
       +'<div class="am-consider-venue">'+esc(c.venue||'')+'</div></div>'+btn+'</div>';
   }
-  // Seen timeline (headline shows)
+  // Seen timeline — full chronology, ALL roles (per Dan 2026-07-16). Previously
+  // headline shows first, then support/via, which made "+ N earlier" misleading
+  // for mixed-role artists (e.g. Larkin Poe: headline + festival + support slots
+  // interleave in time). log is already reverse-chron from the builder's
+  // dedup_log, so slicing it directly keeps the label chronologically true.
+  // Support/via sightings carry a "w/ <headliner>" hint on the venue line.
   if(headline.length){
-    var shown=headline.slice(0,3),extra=n-shown.length;
+    var shown=log.slice(0,3),extra=n-shown.length;
     var items=shown.map(function(x,i){
       var recent=(i===0);
+      var venue=esc(amVenueShort(x.venue)||'\u2014');
+      if(x.via)venue+=' \u00b7 w/ '+esc(x.via);
       return'<div class="am-tl-item"><span class="am-tl-dot'+(recent?' on':'')+'"></span>'
         +'<div class="am-tl-date">'+esc(x.date||'')+'</div>'
-        +'<div class="am-tl-venue">'+esc(amVenueShort(x.venue)||'\u2014')+'</div></div>';
+        +'<div class="am-tl-venue">'+venue+'</div></div>';
     }).join('');
     var more=extra>0?'<div class="am-tl-item"><span class="am-tl-dot"></span><div class="am-tl-more">+ '+extra+' earlier show'+(extra===1?'':'s')+'</div></div>':'';
     return'<div class="am-tl">'+items+more+'</div>';
