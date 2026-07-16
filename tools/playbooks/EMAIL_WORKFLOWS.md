@@ -179,6 +179,8 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `live_shows_current.tsv` write protocol**:
 
 Two separate commits to two separate repos.
 
+> **Verbatim-key rule (2026-07-16).** The sidecar row's `Show Date` and `Artist` MUST be copied verbatim from the public `live_shows_current.tsv` row just written — never re-derived from the receipt. Three cost-hiding key mismatches came from re-derivation: a wrong diacritic (Popovič for Popović), a short name where the public row carries the full billing ("Taj Mahal" vs "Taj Mahal and the Phantom Blues Band"), and a purchase date recorded in the Show Date column. The client join now normalizes diacritics/case and console-warns orphaned sidecar rows on authed load, but billing-name and date drift still orphan the row until someone reads the console.
+
 **Step 5b — Update Prev/Next brackets in `live_shows_potential.tsv`**
 
 Per **`DATA_WRITE_PROTOCOLS.md` → Prev/Next bracket rule**. Only Buy and Choose rows.
