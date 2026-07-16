@@ -103,21 +103,21 @@
   .cell-date .date-text{text-decoration:underline;text-decoration-color:var(--amber);text-underline-offset:2px;}
   .cell-date .day-of-week{color:var(--text-dim);font-size:11px;display:block;}
   .cell-artist{font-weight:500;}
-  .attended-table .cell-artist{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .attended-table .cell-artist{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* #107 P2 — artist name as modal trigger: looks like text, behaves like a button */
   .artist-link{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left;display:inline;}
   .artist-link:hover{text-decoration:underline;text-underline-offset:2px;}
   .artist-link:focus-visible{outline:1px solid var(--amber);outline-offset:2px;border-radius:2px;}
   .cell-support-more{color:var(--text-dim);}
-  .attended-table .cell-support{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .attended-table td:nth-child(2){max-width:160px;}
+  .attended-table .cell-support{max-width:260px;}
+  .attended-table td:nth-child(2){max-width:260px;}
   .cell-support{color:var(--text-muted);font-size:12px;}
   .cell-venue{color:var(--text-muted);font-size:12px;}
   .shows-table .cell-venue a{color:var(--text-muted);text-decoration:none;}
   .shows-table .cell-venue a:hover{color:var(--text);}
   .cell-venue-mobile{display:none;}
   .col-support,.col-seat,.col-cost{}
-  .links-cell,.cell-notes{white-space:nowrap;}
+  .links-cell{white-space:nowrap;}
   .icon-link{font-size:14px;color:var(--text-dim);text-decoration:none;margin-right:4px;transition:color .15s;}
   .icon-link:hover{color:var(--text-muted);}
   .badge{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 5px;border-radius:2px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
@@ -136,7 +136,7 @@
   .badge-boxoffice{background:#0e1014;color:#6a808a;border:1px solid #1e2a30;}
   .badge-seat{background:#141010;color:#8a6a6a;border:1px solid #2a1818;}
   .badge-interaction{font-size:11px;background:none;border:none;padding:0;margin-left:4px;}
-  .notes-text{max-width:340px;color:var(--text-muted);font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .notes-text{max-width:560px;color:var(--text-muted);font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .notes-text.expanded{-webkit-line-clamp:unset;overflow:visible;}
   .notes-toggle{font-family:var(--mono);font-size:10px;color:var(--text-dim);cursor:pointer;margin-left:4px;display:none;}
   .notes-toggle:hover{color:var(--text-muted);}
