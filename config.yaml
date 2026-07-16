@@ -58,7 +58,7 @@ features:
   private_data: true           # fetch the private sidecar repo when authenticated
   fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
   spotify_integration: true    # Spotify links in Waiting tab; set false to hide if no Spotify subsystem
-  favorite: false              # #116 explicit favorite (public data/artist_favorites.tsv); ships dark — delete or set true to enable
+  favorite: true              # #116 explicit favorite (public data/artist_favorites.tsv); ships dark — delete or set true to enable
 
 # Display preferences (#82).
 display:
