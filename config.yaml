@@ -59,6 +59,9 @@ features:
   fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
   spotify_integration: true    # Spotify links in Waiting tab; set false to hide if no Spotify subsystem
   favorite: true              # #116 explicit favorite (public data/artist_favorites.tsv); ships dark — delete or set true to enable
+  in_page_purchase: true       # #152 — 🎟 bought action on authed Buy/Choose potentials rows. Moving
+                               # the show to live_shows_current + the reconciler tidy-up do NOT need
+                               # private_data; with it false, the cost-sidecar half simply drops out.
 
 # Display preferences (#82).
 display:
