@@ -219,15 +219,23 @@ function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,'')
 }
 async function mergePrivateData(){
   if(!authed||!featureOn('private_data'))return;
+  // Sidecar joins normalize the Artist half of the key via _goalNorm (house identity
+  // doctrine), so diacritic/case/encoding variants join anyway; any private row that
+  // still matches nothing gets a console.warn — billing-name or date drift (the
+  // Taj Mahal / Sierra Hull class, 2026-07-16) can't be bridged by normalization and
+  // must be fixed in the sidecar. See EMAIL_WORKFLOWS Routine 1 verbatim-key rule.
+  var _pk=function(a,d){return _goalNorm(a||'')+'␟'+(d||'').trim();};
   try{
-    var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={};
-    parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[(r['Artist']||'')+'␟'+(r['Show Date']||'')]=r;});
-    currentRows.forEach(function(r){var p=cmap[(r['Artist']||'')+'␟'+(r['Show Date']||'')];if(p)CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});});
+    var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={},cseen={};
+    parseTsv(_decodeB64(cp.content)).forEach(function(r){cmap[_pk(r['Artist'],r['Show Date'])]=r;});
+    currentRows.forEach(function(r){var k=_pk(r['Artist'],r['Show Date']),p=cmap[k];if(p){cseen[k]=1;CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});}});
+    Object.keys(cmap).forEach(function(k){if(!cseen[k])console.warn('current_private row matched no public show:',cmap[k]['Artist'],cmap[k]['Show Date']);});
   }catch(e){console.warn('private current merge skipped:',e.message);}
   try{
-    var pp=await ghFetch(POTENTIAL_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),pmap={};
-    parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[(r['Artist']||'')+'␟'+(r['Date']||'')]=r;});
-    potentialRows.forEach(function(r){var p=pmap[(r['Artist']||'')+'␟'+(r['Date']||'')];if(p&&p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];});
+    var pp=await ghFetch(POTENTIAL_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),pmap={},pseen={};
+    parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[_pk(r['Artist'],r['Date'])]=r;});
+    potentialRows.forEach(function(r){var k=_pk(r['Artist'],r['Date']),p=pmap[k];if(p){pseen[k]=1;if(p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];}});
+    Object.keys(pmap).forEach(function(k){if(!pseen[k])console.warn('potential_private row matched no potential:',pmap[k]['Artist'],pmap[k]['Date']);});
   }catch(e){console.warn('private potential merge skipped:',e.message);}
 }
 async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
@@ -236,7 +244,7 @@ async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
   var raw=_decodeB64(fd.content);
   var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
   var rows=parseTsv(raw);
-  var fi=rows.findIndex(function(r){return keyFields.every(function(k){return (r[k]||'')===(keyVals[k]||'');});});
+  var fi=rows.findIndex(function(r){return keyFields.every(function(k){var a=(r[k]||''),b=(keyVals[k]||'');return k==='Artist'?_goalNorm(a)===_goalNorm(b):a.trim()===b.trim();});});
   if(fi<0){var nr={};headers.forEach(function(h){nr[h]='';});keyFields.forEach(function(k){nr[k]=keyVals[k]||'';});nr[field]=newVal;rows.push(nr);}else{rows[fi][field]=newVal;}
   var res=await fetch('https://api.github.com/repos/'+OWNER_PRIVATE+'/'+REPO_PRIVATE+'/contents/'+path,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:path+': update '+(keyVals['Artist']||'')+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
   if(!res.ok)throw new Error(await res.text());
