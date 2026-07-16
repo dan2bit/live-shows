@@ -451,7 +451,7 @@ function supportGoalNames(str,showDate,isUpcoming){
 // ── setlistIconHtml helper ──────────────────────
 function setlistIconHtml(s){
   if(!s||s==='-')return'';
-  if(s.startsWith('MULTI:')){var key=s.slice(6);return'<button class="icon-link" style="background:none;border:none;cursor:pointer;padding:0;font-size:13px;" onclick="openMultisetModal(\''+key+'\')" title="Setlists">♫</button>';}
+  if(s.startsWith('MULTI:')){var key=s.slice(6);return'<button class="icon-link" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-size:14px;" onclick="openMultisetModal(\''+key+'\')" title="Setlists">♫</button>';}
   return'<a class="icon-link" href="'+esc(s)+'" target="_blank" title="Setlist.fm">♫</a>';
 }
 
