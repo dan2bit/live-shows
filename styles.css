@@ -243,7 +243,10 @@
   .about-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,rgba(0,0,0,.2) 45%,rgba(0,0,0,0) 100%);pointer-events:none;}
   .about-hero-text{position:absolute;top:0;left:0;right:0;padding:14px 20px;}
   .about-hero-handle{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--amber);letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px 0;text-shadow:0 1px 3px rgba(0,0,0,.9);}
-  .about-hero-tagline{position:absolute;bottom:-24px;right:20px;left:40%;text-align:right;font-family:var(--sans);font-size:18px;font-weight:500;color:var(--text);line-height:1.25;text-shadow:0 1px 4px rgba(0,0,0,.9);margin:0;}
+  /* .modal prefix + letter-spacing/text-transform resets: the tagline became an <h3>
+     (a11y markup pass), and .modal h3 (0,1,1) was out-specifying .about-hero-tagline
+     (0,1,0) — auth-modal heading typography swallowed the 1da699c hero styling. */
+  .modal .about-hero-tagline{position:absolute;bottom:-24px;right:20px;left:40%;text-align:right;font-family:var(--sans);font-size:18px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--text);line-height:1.25;text-shadow:0 1px 4px rgba(0,0,0,.9);margin:0;}
   .about-close-btn{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:3px;color:var(--text-muted);font-family:var(--mono);font-size:11px;padding:2px 8px;cursor:pointer;line-height:1.6;transition:background .15s;}
   .about-close-btn:hover{background:rgba(0,0,0,.75);color:var(--text);}
   .about-body{padding:16px 20px 20px;}
