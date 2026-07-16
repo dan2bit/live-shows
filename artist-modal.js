@@ -12,6 +12,13 @@
 
 var AM_INDEX_PATH='data/artist_modal_index.json';
 var amIndexCache=null,amSlugMap=null,amRouting=false;
+// #116 explicit favorite — PUBLIC data (data/artist_favorites.tsv in this repo;
+// privacy reversal per Dan 2026-07-15, recorded on #116). The pinned gauge + star
+// are visible to ALL viewers, bystanders included; only the promote/remove CONTROL
+// is authed. Reads ride the Pages CDN; writes follow the standard public-TSV
+// pattern (fresh sha, PUT with branch:dataBranch() -> staging -> auto-promote).
+var AM_FAV_PATH='data/artist_favorites.tsv';
+var amFavCache=null;   // {amNorm(Artist): row} - loaded for all viewers when features.favorite is on
 
 // Mirrors build_artist_index.py norm(): de-invert "Lone Bellow, The", de-accent,
 // drop one leading article, punctuation -> space, collapse whitespace.
@@ -49,6 +56,7 @@ async function openArtistModal(name){
   amShow();
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
+  await amLoadFavorites();
   var key=amNorm(name),rec=(data.artists||{})[key]||null;
   amOpenRec(rec,name,key);
 }
@@ -56,6 +64,7 @@ async function openArtistBySlug(slug){
   amShow();
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
+  await amLoadFavorites();
   var key=(amSlugMap||{})[slug]||null,rec=key?data.artists[key]:null;
   amOpenRec(rec,rec?rec.name:slug.replace(/-/g,' '),key||slug);
 }
@@ -107,6 +116,66 @@ function amRowContext(key){
     (potentialRows||[]).forEach(function(r){if(amNorm(r['Artist']||'')===key)con={date:r['Date']||'',venue:r['Venue']||'',decision:r['Decision']||''};});
   }catch(e){}
   return{upcoming:up,considering:con};
+}
+
+// ── #116 explicit favorite (gauge is the CTA; floor = the affinity gate) ──
+// Design per #116 + the 2026-07-14 floor/friction comment: no hard band floor —
+// the control rides the gauge, which only renders when affinity is non-null, so
+// zero-relationship artists never see it. One-click promote at/above
+// favorite.confirm_below_band (default high); an evidence-quoting confirm below.
+function amFavCfg(){
+  var f=SITE_CONFIG.favorite||{};
+  return{enabled:featureOn('favorite'),pin:f.pin_to_full!==false,confirmBelow:f.confirm_below_band||'high'};
+}
+async function amLoadFavorites(){
+  if(amFavCache)return amFavCache;
+  amFavCache={};
+  if(!amFavCfg().enabled)return amFavCache;
+  try{
+    var res=await fetch(AM_FAV_PATH+'?t='+Date.now(),{cache:'no-store'});   // Pages CDN - no API, no auth, all viewers
+    if(res.ok)parseTsv(await res.text()).forEach(function(r){var k=amNorm(r['Artist']||'');if(k)amFavCache[k]=r;});
+  }catch(e){console.warn('favorites load skipped:',e.message);}
+  return amFavCache;
+}
+function amIsFav(key){return !!(amFavCache&&amFavCache[key]);}
+async function amFavClick(key){
+  var cfg=amFavCfg();
+  if(!cfg.enabled||!authed)return;
+  await amLoadFavorites();
+  var data=await amLoadIndex(),rec=(data.artists||{})[key];
+  if(!rec||!rec.affinity)return;   // gauge floor: no scored relationship, no favorite
+  var name=rec.name||key;
+  try{
+    if(amIsFav(key)){
+      if(!confirm('Remove '+name+' from favorites?\nThe gauge returns to its earned value ('+(rec.affinity.score||0)+').'))return;
+      delete amFavCache[key];
+      await amFavSave('favorites: remove '+name);
+    }else{
+      var rank={low:0,medium:1,high:2},a=rec.affinity;
+      var cut=rank[cfg.confirmBelow]!==undefined?rank[cfg.confirmBelow]:2;
+      if((rank[a.band]||0)<cut){
+        var seen=(rec.seen&&rec.seen.count)||0,nfav=Object.keys(amFavCache).length;
+        if(!confirm('Pin '+name+' to full favorite?\n\nSeen '+seen+'\u00d7 \u00b7 affinity '+a.score+' ('+a.band+')\nThis would be favorite #'+(nfav+1)+'.'))return;
+      }
+      amFavCache[key]={'Artist':name,'Since':new Date().toISOString().slice(0,10)};
+      await amFavSave('favorites: add '+name);
+    }
+    amOpenRec(rec,name,key);   // re-render with the new state
+  }catch(e){console.error(e);}
+}
+async function amFavSave(message){
+  // PUBLIC write: the standard in-page TSV pattern — fresh sha via the API, full-file
+  // PUT with branch:dataBranch() so the commit rides staging -> guard -> auto-promote
+  // (same flow as decision changes / notes edits; see DATA_WRITE_PROTOCOLS.md).
+  var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
+  var sha=null;
+  try{var fd=await ghFetch(AM_FAV_PATH,{},OWNER,REPO);sha=fd.sha;}catch(e){}
+  var rows=Object.keys(amFavCache).sort().map(function(k){return amFavCache[k];});
+  var body={message:message,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,['Artist','Since'])))),branch:dataBranch()};
+  if(sha)body.sha=sha;
+  var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+AM_FAV_PATH,
+    {method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!res.ok){var t=await res.text();alert('Favorite save failed: '+t);throw new Error(t);}
 }
 
 // ── render ──
@@ -220,7 +289,7 @@ function amYou(rec,key){
     +'<span class="am-you-lbl">'+esc('@'+OWNER)+' &amp; this artist</span><span class="am-rule"></span>'
     +amTierMeter(rec.tier)+'</div>';
   var main='<div class="am-you-main">'+amYouBadges(rec,rows,hatEligible)+amYouHistory(rec,rows)+'</div>';
-  var gauge=rec.affinity?amGauge(rec.affinity,rec):'';
+  var gauge=rec.affinity?amGauge(rec.affinity,rec,key):'';
   return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div></div>';
 }
 
@@ -287,15 +356,26 @@ function amYouHistory(rec,rows){
 }
 
 // Brand-hat favorite gauge — conic fill by affinity.score.
-function amGauge(a,rec){
+// #116: an explicit favorite pins the fill to 1.0 (favorite.pin_to_full) with a
+// star marker, so earned-max (~0.98) and starred (1.0) stay visually distinct;
+// when authed and favorite.enabled the gauge itself is the promote/remove control.
+function amGauge(a,rec,key){
+  var cfg=amFavCfg(),fav=amIsFav(key);
   var score=Math.max(0,Math.min(1,a.score||0));
-  var glow={high:0.28,medium:0.16,low:0.07}[a.band]||0.10;
-  var tip='Favorite affinity: '+(a.band||'')+' \u2014 composite of tier, times seen, and signings';
+  if(fav&&cfg.pin)score=1;
+  var glow=fav?0.34:({high:0.28,medium:0.16,low:0.07}[a.band]||0.10);
+  var tip=fav
+    ?'Favorite \u2605 \u2014 pinned to full (earned '+(a.score||0)+')'
+    :'Favorite affinity: '+(a.band||'')+' \u2014 composite of tier, times seen, and goal completions';
+  var canClick=cfg.enabled&&authed;
+  if(canClick)tip+=fav?'. Click to remove.':'. Click to favorite.';
   var hat=esc(amHatUrl());
-  return'<div class="am-gauge" style="--aff:'+score.toFixed(3)+';--glow:'+glow+'" title="'+esc(tip)+'">'
+  return'<div class="am-gauge'+(fav?' am-gauge-fav':'')+(canClick?' am-gauge-btn':'')+'" style="--aff:'+score.toFixed(3)+';--glow:'+glow+'" title="'+esc(tip)+'"'
+    +(canClick?' role="button" tabindex="0" onclick="amFavClick(\''+esc(key)+'\')" onkeydown="if(event.key===\'Enter\')amFavClick(\''+esc(key)+'\')"':'')+'>'
     +'<div class="am-gauge-glow"></div>'
     +'<img class="am-gauge-base" src="'+hat+'" alt="">'
-    +'<img class="am-gauge-fill" src="'+hat+'" alt=""></div>';
+    +'<img class="am-gauge-fill" src="'+hat+'" alt="">'
+    +(fav?'<span class="am-gauge-star">\u2605</span>':'')+'</div>';
 }
 
 // ── init ──
