@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>artist-graph · live-shows</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root{
+  /* chrome tokens mirror styles.css; tier colors are set at runtime from
+     config.yaml theme.color_accent (see deriveTierRamp) */
+  --bg:#0f0f0f; --surface:#1a1a1a; --border:#2e2e2e; --border-bright:#3a3a3a;
+  --text:#e8e4dc; --muted:#9a928a; --dim:#8e8a7a;
+  --brand:#c83020; --hat:#d08040; --sell:#40a0a0; --gray:#878380;
+  --t-strong:#c83020; --t-medstrong:#9c261a; --t-medium:#781d14; --t-lower:#601710;
+  --t-legacy:#5c1c15; --t-seen:#3a3530;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font:13px/1.5 'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;overflow:hidden}
+header{display:flex;align-items:baseline;gap:14px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+header h1{font-size:15px;font-weight:700;color:var(--brand);letter-spacing:.02em}
+header .sub{color:var(--dim);font-size:11px}
+#controls{position:absolute;top:58px;left:12px;z-index:5;background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--border);border-radius:6px;padding:10px 12px;max-width:238px;backdrop-filter:blur(4px)}
+#controls .row{margin-bottom:9px}
+#controls label{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);border-radius:4px;padding:2px 7px;margin:0 4px 4px 0;cursor:pointer;user-select:none;font-size:11px;color:var(--text);background:var(--bg)}
+.chip .sw{width:8px;height:8px;border-radius:50%}
+.chip.off{opacity:.32}
+.chip.sel{border-color:var(--hat);color:var(--hat)}
+.chip:focus-visible{outline:2px solid var(--hat);outline-offset:1px}
+input[type=search]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px 7px;font:inherit;font-size:12px}
+input[type=search]:focus{outline:1px solid var(--hat)}
+input[type=range]{width:100%;accent-color:var(--sell)}
+#candval{color:var(--sell)}
+#stats{color:var(--dim);font-size:10px;margin-top:2px}
+#tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--border-bright);border-left:2px solid var(--hat);border-radius:4px;padding:7px 10px;font-size:11.5px;max-width:260px;opacity:0;transition:opacity .12s;z-index:9}
+#tip .n{color:var(--text);font-weight:700}
+#tip .t{color:var(--muted)}
+#tip .cand-n{color:var(--sell);font-weight:700}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;background:var(--bg);z-index:20}
+#loading.err{color:var(--brand)}
+svg{display:block;width:100vw;height:100vh;cursor:grab}
+svg:active{cursor:grabbing}
+.link{stroke:#5a564c;stroke-opacity:.8;stroke-width:1.1}
+.clink{stroke:var(--sell);stroke-opacity:.5;stroke-dasharray:2 3}
+.hatring{fill:none;stroke:var(--hat);stroke-width:1.7}
+.cnode{fill:var(--bg);stroke:var(--sell);stroke-width:1.5;stroke-dasharray:3 2.5}
+.lbl{fill:var(--muted);font-size:9px;pointer-events:none;font-family:inherit}
+.lbl.big{fill:var(--text);font-size:10.5px}
+@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+</style>
+</head>
+<body>
+<header><h1>🎩 artist-graph</h1><span class="sub">Last.fm similarity network · ring = hat signed · hollow teal = untracked candidates</span></header>
+<div id="controls">
+  <div class="row"><label>Node size</label>
+    <span class="chip sizechip sel" data-size="affinity" tabindex="0"><span class="sw" style="background:var(--hat)"></span>affinity</span>
+    <span class="chip sizechip" data-size="seen" tabindex="0"><span class="sw" style="background:var(--gray)"></span>times seen</span>
+  </div>
+  <div class="row"><label>Tiers</label><div id="chips"></div></div>
+  <div class="row"><label>Candidate threshold — similar-to ≥ <span id="candval">3</span> tracked</label>
+    <input type="range" id="candmin" min="2" max="8" value="3"></div>
+  <div class="row"><label>Find artist</label><input type="search" id="q" placeholder="type a name…"></div>
+  <div id="stats"></div>
+</div>
+<div id="tip"></div>
+<div id="loading">loading data…</div>
+<svg id="g" role="img" aria-label="Artist similarity network"></svg>
+<script>
+"use strict";
+/* ============================================================================
+ * artist-graph — standalone research page (issue #171).
+ * Fetches live data from the deployed site (same-origin relative paths):
+ *   ../../../data/artist_modal_index.json   nodes (tier/seen/affinity/badges)
+ *   ../../../data/artist_spotify.json       edges (lastfm.similar)
+ *   ../../../data/recommend_aliases.tsv     normalization aliases
+ *   ../../../config.yaml                    theme.color_accent -> tier ramp
+ *
+ * NORMALIZATION replicates build_recommend_index.py's vocabulary exactly:
+ * de-invert "X, The" -> accent-fold -> lowercase -> strip punctuation ->
+ * strip leading article -> drop trailing " band" -> apply aliases.
+ * Graph-side extras: duplicate tracked surface forms merge (max seen, OR of
+ * goal flags, shorter display name); candidate "X & The Y"/"X and his Y"
+ * folds into tracked X only when Y is NOT itself tracked (co-bill guard —
+ * the TajMo lesson: never fuse a co-bill).
+ *
+ * TIER COLORS derive from theme.color_accent using the same HSL rules as
+ * app.js _deriveTriad (canonical source of the dimming math):
+ *   dim = hsl(h, s, max(l*0.48, 8)); bg-sat rule = s*0.85.
+ * ==========================================================================*/
+const PATHS = {
+  idx:   "../../../data/artist_modal_index.json",
+  cache: "../../../data/artist_spotify.json",
+  alias: "../../../data/recommend_aliases.tsv",
+  cfg:   "../../../config.yaml",
+};
+const TIERS = [["Strong","--t-strong"],["Medium-Strong","--t-medstrong"],["Medium","--t-medium"],["Lower","--t-lower"],["Legacy","--t-legacy"],["Seen","--t-seen"]];
+const TIER_SCORE = {"Strong":4,"Medium-Strong":3,"Medium":2,"Legacy":1.5,"Lower":1};
+
+/* --- HSL helpers, ported from app.js (_hexToHsl/_hslToHex/_deriveTriad) --- */
+function hexToHsl(hex){
+  const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s;const l=(max+min)/2;
+  if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h/=6;}
+  return[h*360,s*100,l*100];
+}
+function hslToHex(h,s,l){
+  h/=360;s/=100;l/=100;let r,g,b;
+  if(s===0){r=g=b=l;}else{
+    const hue=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+    const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+    r=hue(p,q,h+1/3);g=hue(p,q,h);b=hue(p,q,h-1/3);
+  }
+  return"#"+[r,g,b].map(x=>Math.round(x*255).toString(16).padStart(2,"0")).join("");
+}
+function deriveTierRamp(accent){
+  const [h,s,l]=hexToHsl(accent);
+  // factors: Strong=base · MS .78 · Medium .60 · Lower .48 (=dim rule) ·
+  // Legacy .48 with s*.85 (bg saturation rule) · Seen stays neutral (not accent)
+  const set=(k,v)=>document.documentElement.style.setProperty(k,v);
+  set("--brand",accent);
+  set("--t-strong",accent);
+  set("--t-medstrong",hslToHex(h,s,Math.max(l*0.78,8)));
+  set("--t-medium",  hslToHex(h,s,Math.max(l*0.60,8)));
+  set("--t-lower",   hslToHex(h,s,Math.max(l*0.48,8)));
+  set("--t-legacy",  hslToHex(h,s*0.85,Math.max(l*0.48,8)));
+}
+
+/* --- normalization (build_recommend_index.py vocabulary) --- */
+let ALIASES = {};
+function baseNorm(s){
+  let m=/^(.*),\s+(the|a|an)$/i.exec(s.trim());
+  if(m) s=m[2]+" "+m[1];
+  s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  s=s.replace(/[^a-z0-9 ]+/g," ").replace(/^\s*(the|a|an)\s+/,"").replace(/\s+/g," ").trim();
+  return s.replace(/\s+band$/,"");
+}
+const norm = s => { const n=baseNorm(s); return ALIASES[n]||n; };
+
+/* --- data assembly --- */
+async function loadAll(){
+  const [idxR,cacheR,aliasR,cfgR]=await Promise.all(Object.values(PATHS).map(p=>fetch(p)));
+  if(!idxR.ok||!cacheR.ok) throw new Error("data fetch failed ("+idxR.status+"/"+cacheR.status+")");
+  const idx=(await idxR.json()).artists, cache=await cacheR.json();
+  if(aliasR.ok){ (await aliasR.text()).split("\n").forEach(line=>{
+    if(!line.trim()||line.startsWith("#")||line.startsWith("Alias\t"))return;
+    const p=line.split("\t"); if(p.length>=2&&p[0]&&p[1]) ALIASES[baseNorm(p[0])]=baseNorm(p[1]);
+  });}
+  let accent="#c83020";
+  if(cfgR.ok){ const m=/color_accent:\s*"(#[0-9a-fA-F]{6})"/.exec(await cfgR.text()); if(m) accent=m[1]; }
+  deriveTierRamp(accent);
+
+  // nodes: tier!=null OR seen>0; merge duplicate surface forms
+  const nodes={};
+  for(const key in idx){
+    const e=idx[key], tier=e.tier||{}, seen=(e.seen&&e.seen.count)||0;
+    if(tier.rank==null&&seen===0)continue;
+    const b=e.badges||{};
+    const rec={id:norm(e.name),name:e.name,seen,tier:tier.label||(seen?"Seen":null),
+      affinity:e.affinity?e.affinity.score:null,hat:b.hat==="completed",book:b.book==="completed",
+      ft:!!e.fast_track,genres:(e.genres||[]).slice(0,3)};
+    const prev=nodes[rec.id];
+    if(prev){
+      const keep=(TIER_SCORE[prev.tier]||0)+prev.seen>=(TIER_SCORE[rec.tier]||0)+rec.seen?prev:rec;
+      const drop=keep===prev?rec:prev;
+      keep.seen=Math.max(prev.seen,rec.seen);
+      if(drop.name.length<keep.name.length)keep.name=drop.name;
+      ["hat","book","ft"].forEach(f=>keep[f]=prev[f]||rec[f]);
+      if(keep.affinity==null)keep.affinity=drop.affinity;
+      nodes[rec.id]=keep;
+    } else nodes[rec.id]=rec;
+  }
+  // resolve a similar-name to a tracked id; backing-band fold with co-bill guard
+  function resolve(name){
+    const k=norm(name);
+    if(nodes[k])return k;
+    const m=/^(.*?)\s+(?:&|and)\s+(?:the|his|her)\s+(.+)$/i.exec(name);
+    if(m){const head=norm(m[1]),tail=norm(m[2]);
+      if(nodes[head]&&!nodes[tail])return head;}
+    return null;
+  }
+  const edges=new Set(),candIn={},candSrc={};
+  for(const cname in cache){
+    const src=resolve(cname); if(!src)continue;
+    const sims=(cache[cname].lastfm&&cache[cname].lastfm.similar)||[];
+    for(const s of sims){
+      const sname=typeof s==="string"?s:(s&&s.name)||""; if(!sname)continue;
+      const tgt=resolve(sname);
+      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("\u0001")); }
+      else { candIn[sname]=(candIn[sname]||0)+1; (candSrc[sname]=candSrc[sname]||new Set()).add(cname); }
+    }
+  }
+  const candidates=Object.keys(candIn).filter(n=>candIn[n]>=2)
+    .map(n=>({name:n,indeg:candIn[n],via:[...candSrc[n]].sort().slice(0,10)}))
+    .sort((a,b)=>b.indeg-a.indeg);
+  return {nodes:Object.values(nodes),
+    links:[...edges].sort().map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
+    candidates};
+}
+
+/* --- rendering --- */
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const tierColor=t=>css((TIERS.find(x=>x[0]===t)||TIERS[5])[1]);
+const state={off:new Set(),candmin:3,q:"",size:"affinity"};
+let DATA=null,sim,view={};
+const W=innerWidth,H=innerHeight;
+const svg=d3.select("#g").attr("viewBox",[0,0,W,H]);
+const root=svg.append("g");
+svg.call(d3.zoom().scaleExtent([.25,5]).on("zoom",e=>root.attr("transform",e.transform)));
+
+function radius(d){
+  if(d.cand)return 3.5+1.4*Math.sqrt(d.indeg);
+  if(state.size==="affinity")return d.affinity!=null?4+13*d.affinity:3.2;
+  return 4+2.3*Math.sqrt(d.seen||0);
+}
+function build(){
+  root.selectAll("*").remove();
+  const nodes=DATA.nodes.filter(n=>!state.off.has(n.tier||"Seen")).map(d=>({...d,cand:false}));
+  const ids=new Set(nodes.map(n=>n.id));
+  const links=DATA.links.filter(l=>ids.has(l.source.id||l.source)&&ids.has(l.target.id||l.target))
+    .map(l=>({source:l.source.id||l.source,target:l.target.id||l.target}));
+  const cands=DATA.candidates.filter(c=>c.indeg>=state.candmin)
+    .map(c=>({id:"cand:"+c.name,name:c.name,indeg:c.indeg,via:c.via,cand:true}));
+  const byName={}; DATA.nodes.forEach(n=>byName[n.name]=n);
+  const clinks=[];
+  cands.forEach(c=>c.via.forEach(v=>{const t=byName[v];if(t&&ids.has(t.id))clinks.push({source:c.id,target:t.id,cl:true});}));
+  const all=nodes.concat(cands),allLinks=links.concat(clinks);
+
+  sim=d3.forceSimulation(all)
+    .force("link",d3.forceLink(allLinks).id(d=>d.id).distance(l=>l.cl?46:58).strength(l=>l.cl?.25:.5))
+    .force("charge",d3.forceManyBody().strength(-70))
+    .force("center",d3.forceCenter(W/2,H/2))
+    .force("collide",d3.forceCollide(d=>radius(d)+3.5))
+    .force("x",d3.forceX(W/2).strength(.03)).force("y",d3.forceY(H/2).strength(.045));
+
+  const link=root.append("g").selectAll("line").data(allLinks).join("line")
+    .attr("class",d=>d.cl?"clink":"link");
+  const node=root.append("g").selectAll("g").data(all).join("g")
+    .call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(.25).restart();d.fx=d.x;d.fy=d.y;})
+      .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y;}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=d.fy=null;}));
+  node.filter(d=>!d.cand).append("circle").attr("r",radius).attr("fill",d=>tierColor(d.tier)).attr("fill-opacity",.94);
+  node.filter(d=>!d.cand&&d.hat).append("circle").attr("class","hatring").attr("r",d=>radius(d)+2.4);
+  node.filter(d=>d.cand).append("circle").attr("class","cnode").attr("r",radius);
+  node.append("text").attr("class",d=>"lbl"+((d.seen||0)>=4||(d.indeg||0)>=5||(d.affinity||0)>=.75?" big":""))
+    .attr("dy",d=>-radius(d)-4).attr("text-anchor","middle")
+    .text(d=>((d.seen||0)>=2||(d.indeg||0)>=state.candmin+1||d.tier==="Strong")?d.name:"");
+
+  const tip=d3.select("#tip");
+  node.on("mousemove",(e,d)=>{
+    tip.style("opacity",1).style("left",(e.pageX+14)+"px").style("top",(e.pageY-10)+"px")
+      .html(d.cand
+        ?`<div class="cand-n">${d.name}</div><div class="t">not tracked · similar to ${d.indeg}:</div>${d.via.join("<br>")}`
+        :`<div class="n">${d.name}</div><div class="t">${d.tier||"—"} · seen ${d.seen}${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}${d.hat?" · 🎩":""}${d.book?" · 📚":""}${d.ft?" · fast-track":""}</div>${(d.genres||[]).join(" · ")}`);
+  }).on("mouseleave",()=>tip.style("opacity",0));
+
+  sim.on("tick",()=>{
+    link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+    node.attr("transform",d=>`translate(${d.x},${d.y})`);
+  });
+  view.node=node;
+  document.getElementById("stats").textContent=
+    `${nodes.length} tracked · ${links.length} links · ${cands.length} candidates`;
+  applySearch();
+}
+function applySearch(){
+  const q=state.q.toLowerCase();
+  if(!view.node)return;
+  view.node.attr("opacity",d=>!q||d.name.toLowerCase().includes(q)?1:.12);
+}
+const chips=d3.select("#chips");
+TIERS.forEach(([t,v])=>{
+  chips.append("span").attr("class","chip").attr("tabindex",0)
+    .html(`<span class="sw" data-tier="${t}"></span>${t}`)
+    .on("click keydown",function(e){if(e.type==="keydown"&&e.key!==" "&&e.key!=="Enter")return;
+      e.preventDefault();state.off.has(t)?state.off.delete(t):state.off.add(t);
+      d3.select(this).classed("off",state.off.has(t));build();});
+});
+function paintChips(){document.querySelectorAll(".sw[data-tier]").forEach(el=>{
+  el.style.background=tierColor(el.dataset.tier);});}
+d3.selectAll(".sizechip").on("click keydown",function(e){
+  if(e.type==="keydown"&&e.key!==" "&&e.key!=="Enter")return;
+  e.preventDefault();state.size=this.dataset.size;
+  d3.selectAll(".sizechip").classed("sel",false);d3.select(this).classed("sel",true);build();});
+document.getElementById("candmin").addEventListener("input",e=>{
+  state.candmin=+e.target.value;document.getElementById("candval").textContent=e.target.value;build();});
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value;applySearch();});
+
+loadAll().then(d=>{
+  DATA=d;paintChips();document.getElementById("loading").remove();build();
+}).catch(err=>{
+  const el=document.getElementById("loading");el.className="err";
+  el.textContent="failed to load data — open via the deployed site URL (fetch: "+err.message+")";
+});
+</script>
+</body>
+</html>
