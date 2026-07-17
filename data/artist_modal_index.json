@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-07-17T23:20:26Z",
+"generated_at":"2026-07-17T23:24:01Z",
 "artists":{
 "aaron lee tasjan":{
 "name":"aaron lee tasjan",
@@ -16384,13 +16384,24 @@
 "listener":null,
 "tier":null,
 "seen":{
-"count":0,
-"first":null,
+"count":1,
+"first":"2026-07-16",
 "recent":null,
-"show_log":[]
+"show_log":[
+{
+"date":"2026-07-16",
+"venue":null,
+"via":"Robert Jon & The Wreck",
+"photo_url":null,
+"goals":[]
+}
+]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.132,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
