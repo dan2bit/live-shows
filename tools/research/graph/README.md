@@ -26,3 +26,38 @@ the repo root, then `/tools/research/graph/artist-graph.html`) — `file://` can
 fetch the relative data paths.
 
 See issue #171 for the full rendering spec and normalization rules.
+
+# geographic narrative
+
+_generated 7-17-26_
+
+The map is dominated by a single warm supercontinent: contemporary blues and
+blues-rock, where nearly every heavyweight in the system lives within a border
+crossing of the others. Vanessa Collier, Larkin Poe, Samantha Fish, Ana Popović, Sue
+Foley, and Kingfish form its dense interior — the Last.fm similarity roads there are
+so thick that dragging any one of them pulls half the continent along. Its coastlines
+shade off gradually rather than ending: a Gulf-facing shore of swamp and slide (Tab
+Benoit, Sonny Landreth, Eric Johanson) drifts toward the New Orleans funk-and-brass
+delta where Galactic, Trombone Shorty, and the Dirty Dozen Brass Band trade horns,
+while the northern highlands climb through Texas and Chicago tradition — Jimmie
+Vaughan, Robert Cray Band, Buddy Guy — up to a legacy ridge where the elders keep
+touring past ninety. A second, cooler landmass sits across a narrow strait: the
+Americana-and-roots continent of The Lone Bellow, The Wood Brothers, Jake Xerxes
+Fussell, and Shakey Graves, connected to blues country by a handful of bridge artists
+— Valerie June, Amythyst Kiah, Rhiannon Giddens — who hold dual citizenship and keep
+the two worlds in trade.
+
+Beyond the continents, the archipelagos: a Celtic islet where Young Dubliners, Gaelic
+Storm, and the Enter the Haggis successor states cluster with ferry service mostly to
+each other; a guitar-virtuoso atoll (Satriani, Vai, Matteo Mancuso, Mohini Dey) whose
+technical volcanoes rise steeply from deep water; and scattered one-off islands with
+no roads at all — Suzanne Vega, They Might Be Giants, AJR, Sparkbird — visited for
+their own sake, no connecting flights required. The unexplored territory rings all of
+it in teal: hollow, dashed outlines of lands the map knows exist only because tracked
+artists keep pointing toward them. Some sit just offshore of the blues interior with
+multiple roads already sketched in — Alastair Greene, Aynsley Lister, Janiva Magness,
+Toronzo Cannon — practically annexation candidates. Others mark the far folk frontier
+off the Americana coast: Sarah Jarosz, Rosanne Cash, Shawn Colvin, Brandi Carlile,
+territories the system's own geography keeps recommending. The threshold slider is the
+expedition budget: raise it and only the most-charted unknowns remain; lower it and
+the fog of war recedes to show every rumored coastline at once.
