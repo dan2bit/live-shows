@@ -79,7 +79,7 @@ svg:active{cursor:grabbing}
  *   ../../../data/recommend_aliases.tsv     normalization aliases
  *   ../../../config.yaml                    theme.color_accent -> tier ramp
  *   ../../../data/artists.tsv               Via column -> bill kinship edges
- *   related_acts.tsv                        hand-maintained kinship edges (#174)
+ *   ../../../data/related_acts.tsv          hand-maintained kinship edges (#174)
  *
  * NORMALIZATION replicates build_recommend_index.py's vocabulary exactly:
  * de-invert "X, The" -> accent-fold -> lowercase -> strip punctuation ->
@@ -99,7 +99,7 @@ const PATHS = {
   alias:   "../../../data/recommend_aliases.tsv",
   cfg:     "../../../config.yaml",
   artists: "../../../data/artists.tsv",
-  related: "related_acts.tsv",
+  related: "../../../data/related_acts.tsv",
 };
 const TIERS = [["Strong","--t-strong"],["Medium-Strong","--t-medstrong"],["Medium","--t-medium"],["Lower","--t-lower"],["Legacy","--t-legacy"],["Seen","--t-seen"]];
 const TIER_SCORE = {"Strong":4,"Medium-Strong":3,"Medium":2,"Legacy":1.5,"Lower":1};
@@ -202,7 +202,7 @@ async function loadAll(){
     .map(n=>({name:n,indeg:candIn[n],via:[...candSrc[n]].sort().slice(0,10)}))
     .sort((a,b)=>b.indeg-a.indeg);
 
-  // Kinship edges (#174): related_acts.tsv rows + artists.tsv Via pairs.
+  // Kinship edges (#174): data/related_acts.tsv rows + artists.tsv Via pairs.
   // Both endpoints must resolve to tracked nodes; rows that don't resolve are
   // skipped silently (a row may predate an artist's tracking). Pairs whose
   // endpoints normalize to the same node (alias-fused, e.g. Daniel Donato's
