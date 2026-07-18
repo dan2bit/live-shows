@@ -57,8 +57,10 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 #tip .n{color:var(--text);font-weight:700}
 #tip .t{color:var(--muted)}
 #tip .cand-n{color:var(--sell);font-weight:700}
-#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;background:var(--bg);z-index:20}
+#loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted);font-size:13px;background:var(--bg);z-index:20}
 #loading.err{color:var(--brand)}
+.hat-loading-img{width:40px;height:40px;object-fit:contain;animation:hat-pulse 1.6s ease-in-out infinite}
+@keyframes hat-pulse{0%,100%{opacity:.5;transform:scale(.92)}50%{opacity:1;transform:scale(1)}}
 svg{display:block;width:100vw;height:100vh;cursor:grab}
 svg:active{cursor:grabbing}
 .link{stroke:#5a564c;stroke-opacity:.8;stroke-width:1.1}
@@ -68,7 +70,7 @@ svg:active{cursor:grabbing}
 .cnode{fill:var(--bg);stroke:var(--sell);stroke-width:1.5;stroke-dasharray:3 2.5}
 .lbl{fill:var(--muted);font-size:9px;pointer-events:none;font-family:inherit}
 .lbl.big{fill:var(--text);font-size:10.5px}
-@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+@media (prefers-reduced-motion:reduce){#tip{transition:none}.hat-loading-img{animation:none}}
 </style>
 </head>
 <body>
@@ -85,7 +87,10 @@ svg:active{cursor:grabbing}
   <div id="stats"></div>
 </div>
 <div id="tip"></div>
-<div id="loading">loading data…</div>
+<div id="loading">
+  <img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt="">
+  <div>loading data…</div>
+</div>
 <svg id="g" role="img" aria-label="Artist similarity network"></svg>
 <script>
 "use strict";
@@ -219,7 +224,7 @@ async function loadAll(){
     for(const s of sims){
       const sname=typeof s==="string"?s:(s&&s.name)||""; if(!sname)continue;
       const tgt=resolve(sname);
-      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("")); }
+      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("")); }
       else { candIn[sname]=(candIn[sname]||0)+1; (candSrc[sname]=candSrc[sname]||new Set()).add(cname); }
     }
   }
@@ -234,11 +239,11 @@ async function loadAll(){
   // Cosmic Country) are skipped as self-edges. When a kin pair also has a
   // Last.fm taste edge, the gray edge is suppressed — the solid edge dominates
   // visually and one line per pair keeps the DOM lean.
-  const kin={};  // "ab" -> relation label
+  const kin={};  // "ab" -> relation label
   function addKin(a,b,rel){
     const ka=resolve(a),kb=resolve(b);
     if(!ka||!kb||ka===kb)return;
-    kin[[ka,kb].sort().join("")]=rel;
+    kin[[ka,kb].sort().join("")]=rel;
   }
   if(relatedR&&relatedR.ok){ (await relatedR.text()).split("\n").forEach(line=>{
     if(!line.trim()||line.startsWith("#")||line.startsWith("Artist A\t"))return;
@@ -262,7 +267,7 @@ async function loadAll(){
   function addKinSoft(a,b,rel){
     const ka=resolve(a),kb=resolve(b);
     if(!ka||!kb||ka===kb)return;
-    const key=[ka,kb].sort().join("");
+    const key=[ka,kb].sort().join("");
     if(!(key in kin))kin[key]=rel;
   }
   // Bill edges: headliner <-> each '/'-separated support act. Header differs
@@ -300,13 +305,13 @@ async function loadAll(){
     Object.values(byPerson).forEach(P=>{
       const hs=[...P.heads].sort();
       for(let i=0;i<hs.length;i++)for(let j=i+1;j<hs.length;j++){
-        const key=hs[i]+""+hs[j];
+        const key=hs[i]+""+hs[j];
         if(!(key in kin))kin[key]="shared personnel: "+P.name;
       }
     });
   }
   const kinLinks=Object.keys(kin).sort().map(e=>{
-    const[a,b]=e.split("");return{source:a,target:b,kl:true,rel:kin[e]};});
+    const[a,b]=e.split("");return{source:a,target:b,kl:true,rel:kin[e]};});
   const kinByNode={};
   kinLinks.forEach(l=>{
     (kinByNode[l.source]=kinByNode[l.source]||[]).push({other:l.target,rel:l.rel});
@@ -315,7 +320,7 @@ async function loadAll(){
 
   return {nodes:Object.values(nodes),
     links:[...edges].sort().filter(e=>!(e in kin))
-      .map(e=>{const[a,b]=e.split("");return{source:a,target:b};}),
+      .map(e=>{const[a,b]=e.split("");return{source:a,target:b};}),
     kinLinks,kinByNode,candidates};
 }
 
