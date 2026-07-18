@@ -283,7 +283,7 @@
   .notes-field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.05em;}
 
   /* #152 in-page purchase flow — 🎟 bought button + purchase modal */
-  .bought-btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;margin-left:6px;white-space:nowrap;}
+  .bought-btn{display:block;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;margin-top:5px;white-space:nowrap;}
   .bought-btn:hover{border-color:var(--green);}
   .purchase-modal{width:420px;max-width:92vw;}
   .pm-row{display:flex;gap:10px;align-items:center;margin-bottom:9px;}
