@@ -17,12 +17,13 @@ from the main site — it's a research instrument, not a visitor feature.
 
 **Kinship edges (#174):** solid amber edges mark membership/kinship relations
 the co-listening data can't see — fronts, member-of, successor-of, sibling —
-sourced from `related_acts.tsv` in this directory plus bill relations derived
-from the `Via` column of `data/artists.tsv` (TajMo, SatchVai, etc., which stay
-authoritative there). Add a `related_acts.tsv` row whenever a new fronts /
-successor / sibling relation shows up in `follows_master` notes; rows whose
-endpoints aren't tracked yet are skipped silently and activate when the artist
-lands. A node's tooltip lists its kin with relation labels.
+sourced from `data/related_acts.tsv` (domain content, same species as
+`recommend_aliases.tsv`) plus bill relations derived from the `Via` column of
+`data/artists.tsv` (TajMo, SatchVai, etc., which stay authoritative there). Add
+a `data/related_acts.tsv` row whenever a new fronts / successor / sibling
+relation shows up in `follows_master` notes; rows whose endpoints aren't
+tracked yet are skipped silently and activate when the artist lands. A node's
+tooltip lists its kin with relation labels.
 
 **Strategy-session workflow:** open the page, set the candidate threshold to 3+,
 and review hollow nodes not already in `new_artist_research.tsv` or
