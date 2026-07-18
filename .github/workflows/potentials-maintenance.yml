@@ -35,6 +35,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Reconcile purchases into potentials + fast_track (#152)
+        id: reconcile
+        run: python scripts/reconcile_purchases.py
+
       - name: Prune past-dated Pass rows from potentials
         id: prune
         run: python scripts/prune_potentials.py
@@ -42,7 +46,7 @@ jobs:
       - name: Commit pruned potentials to staging (if changed)
         run: |
           if git diff --quiet; then
-            echo "No prune changes — nothing to commit."
+            echo "No reconcile/prune changes — nothing to commit."
           else
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
@@ -53,8 +57,8 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
-            git add data/live_shows_potential.tsv tools/research/follows/new_artist_research.tsv
-            git commit -m "auto: prune past-dated potentials"
+            git add data/live_shows_potential.tsv data/fast_track.tsv tools/research/follows/new_artist_research.tsv
+            git commit -m "auto: reconcile purchases + prune past-dated potentials"
             git checkout -- .
             for attempt in 1 2 3 4 5; do
               git fetch promote staging

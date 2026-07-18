@@ -90,6 +90,46 @@ Memories, and Photo URL. All financial and seat detail lives in the private side
 
 ---
 
+## Purchase sequence (#152) — who writes what
+
+A ticket purchase enters the system two ways — the site's 🎟 bought modal or Routine 1
+(email receipt). Both converge on one invariant: **clients (browser or routine) do
+simple appends and private keyed deletes; the CI reconciler owns ALL derived public
+state.** Neither the browser nor the routine performs the remove/re-sort/recompute
+transaction by hand.
+
+| Action | 🎟 modal | Routine 1 (email) | CI reconciler |
+|---|---|---|---|
+| Append public row → `live_shows_current.tsv` | step 1 (`staging` via `dataBranch()`) | Step 5 (`staging`) | — |
+| Append private cost row → `current_private.tsv` | step 2 (verbatim keys + `in-page purchase YYYY-MM-DD` marker) | Step 5 (verbatim-key rule) | never (public repo only) |
+| Remove potentials row + re-sort | never | verify only | ✓ exact Artist + first ISO date |
+| Recompute Prev/Next brackets (future Buy/Choose) | never | verify only | ✓ |
+| Remove `fast_track.tsv` row | never | verify only | ✓ exact Artist |
+| Delete `potential_private.tsv` row | step 3 (line-preserving) | Step 6 if not in-page | never |
+| Delete `fast_track_caps.tsv` row | step 4 (line-preserving) | Step 7 if not in-page | never |
+| Calendar event | never | Step 4 (mandatory) | — |
+
+**Mechanics and rules:**
+
+- The reconciler is `scripts/reconcile_purchases.py`, run by
+  `potentials-maintenance.yml` (before the prune) on every push to `main` touching
+  `live_shows_current.tsv` or `live_shows_potential.tsv`; it commits to `staging`
+  with the #142 retry loop. Idempotent; silent no-op when there is nothing to do.
+- **Exact keys only.** The reconciler never normalizes — identity guessing is a
+  client/display concern. A billing-name or date-string mismatch is a silent no-op;
+  whoever notices cleans up manually and logs the key mismatch.
+- **The both-lists window is legitimate.** Between the public append and the
+  reconciler's promoted commit, the show exists in `live_shows_current.tsv` AND
+  `live_shows_potential.tsv`; the site renders "🎟 purchased — reconciling…" locally.
+  Do not "fix" this window by hand.
+- The `in-page purchase YYYY-MM-DD` marker in the sidecar's Private Notes is Routine
+  1's dedup switch (`EMAIL_WORKFLOWS.md` → Routine 1 Step 1b): marker present means
+  verify-and-enrich, never re-append.
+- Forks with `features.private_data: false`: the modal runs the public append only —
+  the show move and the reconciler tidy-up are independent of the cost sidecar.
+
+---
+
 ## `live_shows_potential.tsv` write protocol
 
 **Always fetch a fresh SHA immediately before writing.**
@@ -110,8 +150,10 @@ Sell and Pass rows always have empty (`-`) Prev/Next columns. Brackets represent
 surrounding purchased upcoming shows to help evaluate density.
 
 - When a Buy or Choose row is downgraded to Pass or Sell, clear its brackets at the same time.
-- When recalculating brackets after a new purchase (Routine 1 Step 5b), only update Buy and
-  Choose rows — never populate brackets on Pass or Sell rows.
+- Bracket recompute **after a purchase** is owned by the CI reconciler
+  (`scripts/reconcile_purchases.py`, #152) — do not hand-recompute; verify. When
+  brackets are edited by hand for any other reason, only update Buy and Choose rows —
+  never populate brackets on Pass or Sell rows.
 - "2 shows in 2 nights is a no-go for lower tiers" — factor into bracket review.
 
 **Never reintroduce `#` comment blocks** into `live_shows_potential.tsv` (or any
@@ -185,9 +227,11 @@ buys when a local show surfaces — skipping the potential list evaluation cycle
 a strong buy based on show history. Artists with an established DC attendance history
 must NOT be added here.
 
-When a Fast Track artist's ticket is purchased (Routine 1 Step 7), remove the row from
-both `data/fast_track.tsv` and `dan2bit/live-shows-private → fast_track_caps.tsv` so
-the two stay in sync.
+When a Fast Track artist's ticket is purchased, the public `data/fast_track.tsv` row
+is removed by the CI reconciler (#152, exact Artist match) — verify, don't re-remove.
+The private `dan2bit/live-shows-private → fast_track_caps.tsv` twin is deleted by the
+in-page purchase modal (step 4) or, for email-only purchases, by Routine 1 Step 7 —
+line-preserving, keeping the leading `#` comment block intact.
 
 **Never reintroduce `#` comment blocks** into `fast_track.tsv` — same in-page-editor
 hazard as potentials (issue #80).

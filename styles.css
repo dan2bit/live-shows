@@ -282,6 +282,20 @@
   .notes-save-ind{font-family:var(--mono);font-size:10px;}
   .notes-field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.05em;}
 
+  /* #152 in-page purchase flow — 🎟 bought button + purchase modal */
+  .bought-btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;margin-left:6px;white-space:nowrap;}
+  .bought-btn:hover{border-color:var(--green);}
+  .purchase-modal{width:420px;max-width:92vw;}
+  .pm-row{display:flex;gap:10px;align-items:center;margin-bottom:9px;}
+  .pm-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);width:110px;flex:none;}
+  .pm-input{flex:1;font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--border-bright);border-radius:3px;color:var(--text);padding:6px 8px;outline:none;min-width:0;}
+  .pm-input:focus{border-color:var(--amber-dim);}
+  .pm-radio{font-size:12px;color:var(--text-muted);margin-right:10px;display:inline-flex;align-items:center;gap:5px;}
+  .pm-steps{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin:10px 0 0;line-height:1.8;min-height:1px;}
+  .pm-step-ok{color:var(--green);}
+  .pm-step-err{color:var(--red);}
+  .pot-reconciling{font-family:var(--mono);font-size:11px;color:var(--green);white-space:nowrap;}
+
   .fs-artist{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px;}
   .fs-detail{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
   .fs-price{font-family:var(--mono);font-size:14px;color:var(--text);margin:10px 0 8px;}

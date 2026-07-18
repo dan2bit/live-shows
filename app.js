@@ -912,6 +912,158 @@ async function switchHistoryTab(yr){
   }else{requestAnimationFrame(revealToggles);}
 }
 
+// ── In-page purchase flow (#152) ─────────────────────
+// The 🎟 bought button on authed Buy/Choose potentials rows records a purchase
+// with FOUR simple client writes: (1) append the public current row (staging
+// via dataBranch() → guard → auto-promote), (2) append the private cost row
+// (private repo main), folding in any potential_private notes already merged
+// in memory, (3) delete the potential_private row, (4) delete the
+// fast_track_caps row if present. ALL derived public state — potentials
+// removal, re-sort, Prev/Next brackets, fast_track prune — belongs to the CI
+// reconciler (scripts/reconcile_purchases.py via potentials-maintenance.yml),
+// never the client. Between step 1 and the reconciler's commit the show exists
+// in both lists; the row renders "purchased — reconciling…" locally meanwhile.
+// Private deletes are LINE-preserving: fast_track_caps.tsv carries a # comment
+// block that parse-and-rewrite would destroy.
+// With features.private_data false, only step 1 exists — the public move and
+// the reconciler tidy-up are independent of the cost sidecar, so the modal
+// hides the cost fields and never constructs a private-repo request.
+var _purchasePending={};   // {Artist␟Date: 1} — local render state only, until next data refresh
+var _purchaseSteps={};     // {Artist␟Date: {1..4: true}} — lets Confirm resume after a partial failure
+
+function openPurchaseModal(idx){
+  var r=potentialRows[idx];if(!r)return;
+  var priv=featureOn('private_data');   // cost fields only exist when there is a sidecar to hold them
+  var fm=(r['Face Price']||'').match(/\$?(\d+(?:\.\d{1,2})?)/);
+  var fees=/all-?in|no fee/i.test(r['Fees Notes']||'')?'0':'';
+  var seated=/seat/i.test(r['Face Price']||'')&&!/\bGA\b/i.test(r['Face Price']||'');
+  var today=new Date().toISOString().slice(0,10);
+  var html='<div class="fs-artist">'+esc(r['Artist']||'')+'</div>'
+    +'<div class="fs-detail">'+formatShowDate(r['Date'])+' '+dayOfWeek(r['Date'])+' &middot; '+esc(r['Venue']||'')+' &middot; '+esc(r['Venue City']||'')+'</div>'
+    +'<div class="pm-row" style="margin-top:12px"><span class="pm-label">Ticket access</span><input class="pm-input" id="pm-access" value="'+esc(r['Ticket Service']||'')+'" placeholder="AXS Mobile, Eventim, paper…"></div>'
+    +'<div class="pm-row"><span class="pm-label">Seat type</span><label class="pm-radio"><input type="radio" name="pm-seattype" value="GA"'+(seated?'':' checked')+'> GA</label><label class="pm-radio"><input type="radio" name="pm-seattype" value="Seated"'+(seated?' checked':'')+'> Seated</label></div>'
+    +(priv?'<div class="pm-row"><span class="pm-label">Face value ($)</span><input class="pm-input" id="pm-face" type="number" step="0.01" min="0" value="'+(fm?fm[1]:'')+'"></div>'
+      +'<div class="pm-row"><span class="pm-label">Fees total ($)</span><input class="pm-input" id="pm-fees" type="number" step="0.01" min="0" value="'+fees+'"></div>'
+      +'<div class="pm-row"><span class="pm-label">Quantity</span><input class="pm-input" id="pm-qty" type="number" step="1" min="1" value="1"></div>'
+      +'<div class="pm-row"><span class="pm-label">Seat info</span><input class="pm-input" id="pm-seatinfo" placeholder="optional — table/row/seat"></div>'
+      +'<div class="pm-row"><span class="pm-label">Purchase date</span><input class="pm-input" id="pm-pdate" type="date" value="'+today+'"></div>':'')
+    +'<div class="pm-row"><span class="pm-label">Flags</span><label class="pm-radio"><input type="checkbox" id="pm-vip"> VIP</label><label class="pm-radio"><input type="checkbox" id="pm-group"> Group</label></div>'
+    +'<div class="pm-steps" id="pm-steps"></div>'
+    +'<div class="modal-actions"><button class="btn" onclick="closePurchaseModal()">Cancel</button><button class="btn btn-save" id="pm-confirm" onclick="confirmPurchase('+idx+')">Confirm purchase</button></div>';
+  document.getElementById('purchaseModalBody').innerHTML=html;
+  document.getElementById('purchaseModal').classList.add('open');
+}
+function closePurchaseModal(){document.getElementById('purchaseModal').classList.remove('open');}
+function _pmStep(n,msg,cls){var el=document.getElementById('pm-steps');if(!el)return;var d=document.getElementById('pm-s'+n);if(!d){d=document.createElement('div');d.id='pm-s'+n;el.appendChild(d);}d.textContent=msg;d.className=cls||'';}
+
+// Step 1 — append the public current row (19-col schema, '-' sentinels), in
+// chronological position, committed to staging via dataBranch().
+async function _purchaseAppendPublic(r,form,iso){
+  var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
+  var fd=await ghFetch(CURRENT_PATH);
+  var raw=_decodeB64(fd.content),headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+  var rows=parseTsv(raw);
+  var nr={};headers.forEach(function(h){nr[h]='-';});
+  nr['Show ID']=iso;nr['Artist']=r['Artist']||'';nr['Supporting Artist']=r['Support']||'';
+  nr['Show Date']=iso;nr['Venue Name']=r['Venue']||'';nr['Venue Address']=r['Venue City']||'-';
+  nr['Venue Event URL']=r['Event URL']||r['Purchase URL']||'-';
+  nr['Seat Type']=form.seatType;nr['VIP']=form.vip?'Y':'';nr['Group']=form.group?'Y':'';
+  nr['Ticket Access']=form.access||'-';nr['Status']='upcoming';
+  var at=rows.findIndex(function(x){return (x['Show Date']||'')>iso;});
+  if(at<0)rows.push(nr);else rows.splice(at,0,nr);
+  var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'purchase: add '+(r['Artist']||'')+' '+iso+' (in-page)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
+  if(!res.ok)throw new Error(await res.text());
+}
+
+// Step 2 — append the private cost row. Show Date + Artist are copied VERBATIM
+// from the same values the public row was written with (the join keys — see
+// the EMAIL_WORKFLOWS Routine 1 verbatim-key rule). Any potential_private
+// notes already merged in memory are folded in, plus the 'in-page purchase'
+// provenance marker Routine 1 uses to switch to verify-and-enrich mode.
+// PRIVATE write: private repo main only — never a path in the public repo.
+async function _purchaseAppendPrivate(r,form,iso){
+  var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
+  var fd=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE);
+  var raw=_decodeB64(fd.content),headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+  var rows=parseTsv(raw);
+  var pvt=(r['Private Notes']&&r['Private Notes']!=='-')?r['Private Notes']+' · ':'';
+  var total=form.face*form.qty+form.fees;
+  var nr={};headers.forEach(function(h){nr[h]='-';});
+  nr['Show Date']=iso;nr['Artist']=r['Artist']||'';
+  nr['Seat Info / GA']=form.seatInfo||form.seatType;
+  nr['Ticket Quantity']=String(form.qty);
+  nr['Face Value (per ticket)']='$'+form.face.toFixed(2);
+  nr['Fees']='$'+form.fees.toFixed(2);
+  nr['Total Cost']='$'+total.toFixed(2);
+  nr['Purchase Date']=form.pdate;
+  nr['Private Notes']=pvt+'in-page purchase '+new Date().toISOString().slice(0,10);
+  var at=rows.findIndex(function(x){return (x['Show Date']||'')>iso;});
+  if(at<0)rows.push(nr);else rows.splice(at,0,nr);
+  var res=await fetch('https://api.github.com/repos/'+OWNER_PRIVATE+'/'+REPO_PRIVATE+'/contents/'+CURRENT_PRIVATE_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'purchase: add '+(r['Artist']||'')+' '+iso+' (in-page)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
+  if(!res.ok)throw new Error(await res.text());
+}
+
+// Steps 3+4 — keyed deletes in the private repo, LINE-preserving so leading
+// # comment blocks (fast_track_caps.tsv) survive verbatim. A missing row is a
+// no-op (false), never an error. PRIVATE repo main only.
+async function _purchaseDeletePrivateLine(path,match,label){
+  var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
+  var fd=await ghFetch(path,{},OWNER_PRIVATE,REPO_PRIVATE);
+  var raw=_decodeB64(fd.content),lines=raw.split('\n'),out=[],removed=false,headerSeen=false;
+  lines.forEach(function(ln){
+    if(!headerSeen){out.push(ln);if(ln&&ln.charAt(0)!=='#')headerSeen=true;return;}
+    if(!removed&&ln&&match(ln.split('\t'))){removed=true;return;}
+    out.push(ln);
+  });
+  if(!removed)return false;
+  var res=await fetch('https://api.github.com/repos/'+OWNER_PRIVATE+'/'+REPO_PRIVATE+'/contents/'+path,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:path+': remove '+label+' (purchased)',content:btoa(unescape(encodeURIComponent(out.join('\n')))),sha:fd.sha})});
+  if(!res.ok)throw new Error(await res.text());
+  return true;
+}
+
+async function confirmPurchase(idx){
+  var r=potentialRows[idx];if(!r)return;
+  var priv=featureOn('private_data'),sfx='/'+(priv?4:1)+' ';
+  var form={face:0,fees:0,qty:1,
+    seatType:((document.querySelector('input[name="pm-seattype"]:checked')||{}).value)||'GA',
+    seatInfo:((document.getElementById('pm-seatinfo')||{}).value||'').trim(),
+    access:((document.getElementById('pm-access')||{}).value||'').trim(),
+    pdate:((document.getElementById('pm-pdate')||{}).value)||new Date().toISOString().slice(0,10),
+    vip:!!(document.getElementById('pm-vip')||{}).checked,
+    group:!!(document.getElementById('pm-group')||{}).checked};
+  if(priv){
+    form.face=parseFloat((document.getElementById('pm-face')||{}).value);
+    form.fees=parseFloat((document.getElementById('pm-fees')||{}).value||'0');
+    form.qty=parseInt((document.getElementById('pm-qty')||{}).value||'1',10);
+    if(isNaN(form.face)||form.face<0||isNaN(form.qty)||form.qty<1){alert('Enter a face value and quantity.');return;}
+    if(isNaN(form.fees)||form.fees<0)form.fees=0;
+  }
+  var key=(r['Artist']||'')+'␟'+(r['Date']||''),done=_purchaseSteps[key]=_purchaseSteps[key]||{};
+  var iso=(r['Date']||'').slice(0,10);
+  var btn=document.getElementById('pm-confirm');if(btn)btn.disabled=true;
+  try{
+    if(!done[1]){_pmStep(1,'1'+sfx+'public show row…');await _purchaseAppendPublic(r,form,iso);done[1]=true;}
+    _pmStep(1,'1'+sfx+'public show row ✓','pm-step-ok');
+    if(priv){
+      if(!done[2]){_pmStep(2,'2'+sfx+'private cost row…');await _purchaseAppendPrivate(r,form,iso);done[2]=true;}
+      _pmStep(2,'2'+sfx+'private cost row ✓','pm-step-ok');
+      if(!done[3]){_pmStep(3,'3'+sfx+'potentials sidecar…');await _purchaseDeletePrivateLine(POTENTIAL_PRIVATE_PATH,function(c){return c[0]===(r['Artist']||'')&&c[1]===(r['Date']||'');},(r['Artist']||'')+' potential note');done[3]=true;}
+      _pmStep(3,'3'+sfx+'potentials sidecar ✓','pm-step-ok');
+      if(!done[4]){_pmStep(4,'4'+sfx+'fast-track caps…');await _purchaseDeletePrivateLine('fast_track_caps.tsv',function(c){return c[0]===(r['Artist']||'');},(r['Artist']||'')+' caps');done[4]=true;}
+      _pmStep(4,'4'+sfx+'fast-track caps ✓ — reconciler will tidy potentials','pm-step-ok');
+    }else{
+      _pmStep(1,'1'+sfx+'public show row ✓ — reconciler will tidy potentials','pm-step-ok');
+    }
+    _purchasePending[key]=1;
+    setTimeout(function(){closePurchaseModal();renderPotential();},900);
+  }catch(e){
+    console.error(e);
+    var n=!done[1]?1:!done[2]?2:!done[3]?3:4;
+    _pmStep(n,n+sfx+'failed — '+String(e.message||'error').slice(0,140)+' — Confirm retries the remaining steps','pm-step-err');
+    if(btn)btn.disabled=false;
+  }
+}
+
 // ── For Sale modal ───────────────────────────────────
 function openForSaleModal(idx){
   var r=potentialRows[idx];if(!r)return;
@@ -957,8 +1109,9 @@ function renderPotentialRowAuthed(r,gi){
   var potEditBtn=makeEditBtn(potCellId,'potential',gi,'Notes','notes');
   var nh=fne?'<div class="cell-pot-notes" style="cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" onclick="this.style.display=\'block\';this.style.cursor=\'default\'">'+fne+'</div>':'';
   var dh;
-  if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
-  else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';}
+  if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<span class="pot-reconciling">🎟 purchased — reconciling…</span>';}
+  else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
+  else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
   if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
   var an=artistLink(r['Artist']);
@@ -1162,6 +1315,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAboutModal();});
   document.getElementById('authModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAuthModal();});
   document.getElementById('forsaleModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeForSaleModal();});
+  var _pm152=document.getElementById('purchaseModal');if(_pm152)_pm152.addEventListener('click',function(e){if(e.target===e.currentTarget)closePurchaseModal();});
   document.getElementById('multisetModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeMultisetModal();});
   document.getElementById('recommendModal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeRecommendModal();});
 });

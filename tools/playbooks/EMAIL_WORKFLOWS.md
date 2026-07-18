@@ -130,6 +130,24 @@ Key carry-overs:
 Extract: artist, supporting act(s), show date/times, venue, seat info, ticket access
 method, ticket quantity, face value, fees, total cost, purchase date, order numbers.
 
+**Step 1b — Provenance check: was this purchase already recorded in-page? (#152)**
+
+Using Step 0b data, check `live_shows_current.tsv` for an upcoming row matching the
+receipt's artist + show date. If one exists, fetch
+`dan2bit/live-shows-private → current_private.tsv` and check the matching row's
+Private Notes for the **`in-page purchase YYYY-MM-DD`** marker (appended by the site's
+🎟 bought modal).
+
+- **Marker found → verify-and-enrich mode.** The purchase is already recorded; do NOT
+  append new rows to either repo. Steps 2–4 still run (the modal never creates
+  calendar events). Step 5 becomes enrichment: compare the receipt against both
+  existing rows and fill what the modal couldn't know — order numbers, doors/start
+  times, exact seat assignment, supporting act — via full-file update commits
+  (public → `staging`, private → private `main`, verbatim-key rule still applies).
+  Steps 5b/6/7 are verification-only (the modal + reconciler already did the work).
+- **No marker / no row → standard mode.** Proceed as written; the CI reconciler still
+  owns Steps 5b/6/7's public half once your Step 5 commit promotes to `main`.
+
 **Step 2 — Apply venue defaults**
 
 | Venue | Doors | Show | Notes |
@@ -181,18 +199,34 @@ Two separate commits to two separate repos.
 
 > **Verbatim-key rule (2026-07-16).** The sidecar row's `Show Date` and `Artist` MUST be copied verbatim from the public `live_shows_current.tsv` row just written — never re-derived from the receipt. Three cost-hiding key mismatches came from re-derivation: a wrong diacritic (Popovič for Popović), a short name where the public row carries the full billing ("Taj Mahal" vs "Taj Mahal and the Phantom Blues Band"), and a purchase date recorded in the Show Date column. The client join now normalizes diacritics/case and console-warns orphaned sidecar rows on authed load, but billing-name and date drift still orphan the row until someone reads the console.
 
-**Step 5b — Update Prev/Next brackets in `live_shows_potential.tsv`**
+**Step 5b — Verify Prev/Next brackets (reconciler-owned since #152)**
 
-Per **`DATA_WRITE_PROTOCOLS.md` → Prev/Next bracket rule**. Only Buy and Choose rows.
+Bracket recompute after a purchase belongs to the CI reconciler
+(`scripts/reconcile_purchases.py`, run by `potentials-maintenance.yml` on every
+`current.tsv` change that reaches `main`). **Do not hand-recompute.** After the Step 5
+public commit auto-promotes, confirm the workflow ran and the brackets around the new
+show date are correct. If CI is down or the run failed, flag it in the log and to Dan —
+a hand-fix is a last resort, noted explicitly, and will be re-verified by the next run.
 
-**Step 6 — Remove from `live_shows_potential.tsv` if present**
+**Step 6 — Potentials removal: verify public (reconciler), delete private twin (yours)**
 
-Fetch fresh SHA, remove row, re-sort, commit to `staging`.
+- **Public (`live_shows_potential.tsv`):** the reconciler removes any row matching the
+  new upcoming row on **exact Artist + first ISO date** and re-sorts. Verify the row is
+  gone after promotion. Exact keys only, by design — if the potentials row carried a
+  billing variant or a different date string, the reconciler correctly no-ops; remove
+  that row manually (fresh SHA, re-sort, `staging`) and note the key mismatch in the log.
+- **Private twin:** if `dan2bit/live-shows-private → potential_private.tsv` has a row
+  for this artist + date, delete it (private repo `main`). In verify-and-enrich mode
+  the modal already deleted it — verify, don't re-delete.
 
-**Step 7 — Remove from `fast_track.tsv` and `fast_track_caps.tsv` if present**
+**Step 7 — fast_track: verify public (reconciler), delete caps twin (yours)**
 
-Remove from `data/fast_track.tsv` (`staging`) and
-`dan2bit/live-shows-private → fast_track_caps.tsv` (`main`). Keep both in sync.
+- **Public (`data/fast_track.tsv`):** the reconciler removes the row on exact Artist
+  match. Verify after promotion; same manual-fallback rule as Step 6.
+- **Private twin:** delete the artist's row from
+  `dan2bit/live-shows-private → fast_track_caps.tsv` (private `main`), line-preserving —
+  keep the leading `#` comment block intact. In verify-and-enrich mode the modal
+  already deleted it — verify only.
 
 **Step 8 — Pre-log calendar validation (MANDATORY, blocking)**
 
