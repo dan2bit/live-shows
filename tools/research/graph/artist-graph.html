@@ -45,6 +45,7 @@ svg{display:block;width:100vw;height:100vh;cursor:grab}
 svg:active{cursor:grabbing}
 .link{stroke:#5a564c;stroke-opacity:.8;stroke-width:1.1}
 .clink{stroke:var(--sell);stroke-opacity:.5;stroke-dasharray:2 3}
+.klink{stroke:var(--hat);stroke-opacity:1;stroke-width:1.4}
 .hatring{fill:none;stroke:var(--hat);stroke-width:1.7}
 .cnode{fill:var(--bg);stroke:var(--sell);stroke-width:1.5;stroke-dasharray:3 2.5}
 .lbl{fill:var(--muted);font-size:9px;pointer-events:none;font-family:inherit}
@@ -53,7 +54,7 @@ svg:active{cursor:grabbing}
 </style>
 </head>
 <body>
-<header><h1>🎩 artist-graph</h1><span class="sub">Last.fm similarity network · ring = hat signed · hollow teal = untracked candidates</span></header>
+<header><h1>🎩 artist-graph</h1><span class="sub">Last.fm similarity network · ring = hat signed · solid = related acts · hollow teal = untracked candidates</span></header>
 <div id="controls">
   <div class="row"><label>Node size</label>
     <span class="chip sizechip sel" data-size="affinity" tabindex="0"><span class="sw" style="background:var(--hat)"></span>affinity</span>
@@ -77,6 +78,8 @@ svg:active{cursor:grabbing}
  *   ../../../data/artist_spotify.json       edges (lastfm.similar)
  *   ../../../data/recommend_aliases.tsv     normalization aliases
  *   ../../../config.yaml                    theme.color_accent -> tier ramp
+ *   ../../../data/artists.tsv               Via column -> bill kinship edges
+ *   ../../../data/related_acts.tsv          hand-maintained kinship edges (#174)
  *
  * NORMALIZATION replicates build_recommend_index.py's vocabulary exactly:
  * de-invert "X, The" -> accent-fold -> lowercase -> strip punctuation ->
@@ -91,10 +94,12 @@ svg:active{cursor:grabbing}
  *   dim = hsl(h, s, max(l*0.48, 8)); bg-sat rule = s*0.85.
  * ==========================================================================*/
 const PATHS = {
-  idx:   "../../../data/artist_modal_index.json",
-  cache: "../../../data/artist_spotify.json",
-  alias: "../../../data/recommend_aliases.tsv",
-  cfg:   "../../../config.yaml",
+  idx:     "../../../data/artist_modal_index.json",
+  cache:   "../../../data/artist_spotify.json",
+  alias:   "../../../data/recommend_aliases.tsv",
+  cfg:     "../../../config.yaml",
+  artists: "../../../data/artists.tsv",
+  related: "../../../data/related_acts.tsv",
 };
 const TIERS = [["Strong","--t-strong"],["Medium-Strong","--t-medstrong"],["Medium","--t-medium"],["Lower","--t-lower"],["Legacy","--t-legacy"],["Seen","--t-seen"]];
 const TIER_SCORE = {"Strong":4,"Medium-Strong":3,"Medium":2,"Legacy":1.5,"Lower":1};
@@ -142,7 +147,7 @@ const norm = s => { const n=baseNorm(s); return ALIASES[n]||n; };
 
 /* --- data assembly --- */
 async function loadAll(){
-  const [idxR,cacheR,aliasR,cfgR]=await Promise.all(Object.values(PATHS).map(p=>fetch(p)));
+  const [idxR,cacheR,aliasR,cfgR,artistsR,relatedR]=await Promise.all(Object.values(PATHS).map(p=>fetch(p)));
   if(!idxR.ok||!cacheR.ok) throw new Error("data fetch failed ("+idxR.status+"/"+cacheR.status+")");
   const idx=(await idxR.json()).artists, cache=await cacheR.json();
   if(aliasR.ok){ (await aliasR.text()).split("\n").forEach(line=>{
@@ -196,9 +201,43 @@ async function loadAll(){
   const candidates=Object.keys(candIn).filter(n=>candIn[n]>=2)
     .map(n=>({name:n,indeg:candIn[n],via:[...candSrc[n]].sort().slice(0,10)}))
     .sort((a,b)=>b.indeg-a.indeg);
+
+  // Kinship edges (#174): data/related_acts.tsv rows + artists.tsv Via pairs.
+  // Both endpoints must resolve to tracked nodes; rows that don't resolve are
+  // skipped silently (a row may predate an artist's tracking). Pairs whose
+  // endpoints normalize to the same node (alias-fused, e.g. Daniel Donato's
+  // Cosmic Country) are skipped as self-edges. When a kin pair also has a
+  // Last.fm taste edge, the gray edge is suppressed — the solid edge dominates
+  // visually and one line per pair keeps the DOM lean.
+  const kin={};  // "a\u0001b" -> relation label
+  function addKin(a,b,rel){
+    const ka=resolve(a),kb=resolve(b);
+    if(!ka||!kb||ka===kb)return;
+    kin[[ka,kb].sort().join("\u0001")]=rel;
+  }
+  if(relatedR&&relatedR.ok){ (await relatedR.text()).split("\n").forEach(line=>{
+    if(!line.trim()||line.startsWith("#")||line.startsWith("Artist A\t"))return;
+    const p=line.split("\t"); if(p.length>=2&&p[0]&&p[1]) addKin(p[0],p[1],(p[2]||"related").trim());
+  });}
+  if(artistsR&&artistsR.ok){
+    const rows=(await artistsR.text()).split("\n").filter(l=>l.trim());
+    const hdr=rows[0].split("\t"),ai=hdr.indexOf("Artist"),vi=hdr.indexOf("Via");
+    if(ai>=0&&vi>=0)rows.slice(1).forEach(l=>{
+      const p=l.split("\t"); if(p[ai]&&p[vi]&&p[vi].trim()) addKin(p[ai],p[vi],"via bill");
+    });
+  }
+  const kinLinks=Object.keys(kin).sort().map(e=>{
+    const[a,b]=e.split("\u0001");return{source:a,target:b,kl:true,rel:kin[e]};});
+  const kinByNode={};
+  kinLinks.forEach(l=>{
+    (kinByNode[l.source]=kinByNode[l.source]||[]).push({other:l.target,rel:l.rel});
+    (kinByNode[l.target]=kinByNode[l.target]||[]).push({other:l.source,rel:l.rel});
+  });
+
   return {nodes:Object.values(nodes),
-    links:[...edges].sort().map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
-    candidates};
+    links:[...edges].sort().filter(e=>!(e in kin))
+      .map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
+    kinLinks,kinByNode,candidates};
 }
 
 /* --- rendering --- */
@@ -222,22 +261,24 @@ function build(){
   const ids=new Set(nodes.map(n=>n.id));
   const links=DATA.links.filter(l=>ids.has(l.source.id||l.source)&&ids.has(l.target.id||l.target))
     .map(l=>({source:l.source.id||l.source,target:l.target.id||l.target}));
+  const klinks=DATA.kinLinks.filter(l=>ids.has(l.source.id||l.source)&&ids.has(l.target.id||l.target))
+    .map(l=>({source:l.source.id||l.source,target:l.target.id||l.target,kl:true,rel:l.rel}));
   const cands=DATA.candidates.filter(c=>c.indeg>=state.candmin)
     .map(c=>({id:"cand:"+c.name,name:c.name,indeg:c.indeg,via:c.via,cand:true}));
   const byName={}; DATA.nodes.forEach(n=>byName[n.name]=n);
   const clinks=[];
   cands.forEach(c=>c.via.forEach(v=>{const t=byName[v];if(t&&ids.has(t.id))clinks.push({source:c.id,target:t.id,cl:true});}));
-  const all=nodes.concat(cands),allLinks=links.concat(clinks);
+  const all=nodes.concat(cands),allLinks=links.concat(klinks).concat(clinks);
 
   sim=d3.forceSimulation(all)
-    .force("link",d3.forceLink(allLinks).id(d=>d.id).distance(l=>l.cl?46:58).strength(l=>l.cl?.25:.5))
+    .force("link",d3.forceLink(allLinks).id(d=>d.id).distance(l=>l.kl?40:l.cl?46:58).strength(l=>l.kl?.7:l.cl?.25:.5))
     .force("charge",d3.forceManyBody().strength(-70))
     .force("center",d3.forceCenter(W/2,H/2))
     .force("collide",d3.forceCollide(d=>radius(d)+3.5))
     .force("x",d3.forceX(W/2).strength(.03)).force("y",d3.forceY(H/2).strength(.045));
 
   const link=root.append("g").selectAll("line").data(allLinks).join("line")
-    .attr("class",d=>d.cl?"clink":"link");
+    .attr("class",d=>d.kl?"klink":d.cl?"clink":"link");
   const node=root.append("g").selectAll("g").data(all).join("g")
     .call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(.25).restart();d.fx=d.x;d.fy=d.y;})
       .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y;}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=d.fy=null;}));
@@ -248,12 +289,17 @@ function build(){
     .attr("dy",d=>-radius(d)-4).attr("text-anchor","middle")
     .text(d=>((d.seen||0)>=2||(d.indeg||0)>=state.candmin+1||d.tier==="Strong")?d.name:"");
 
+  const byId={}; DATA.nodes.forEach(n=>byId[n.id]=n);
+  function kinTip(d){
+    const k=DATA.kinByNode[d.id]; if(!k||!k.length)return"";
+    return `<div class="t">kin: ${k.map(x=>`${(byId[x.other]||{}).name||x.other} (${x.rel})`).join(", ")}</div>`;
+  }
   const tip=d3.select("#tip");
   node.on("mousemove",(e,d)=>{
     tip.style("opacity",1).style("left",(e.pageX+14)+"px").style("top",(e.pageY-10)+"px")
       .html(d.cand
         ?`<div class="cand-n">${d.name}</div><div class="t">not tracked · similar to ${d.indeg}:</div>${d.via.join("<br>")}`
-        :`<div class="n">${d.name}</div><div class="t">${d.tier||"—"} · seen ${d.seen}${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}${d.hat?" · 🎩":""}${d.book?" · 📚":""}${d.ft?" · fast-track":""}</div>${(d.genres||[]).join(" · ")}`);
+        :`<div class="n">${d.name}</div><div class="t">${d.tier||"—"} · seen ${d.seen}${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}${d.hat?" · 🎩":""}${d.book?" · 📚":""}${d.ft?" · fast-track":""}</div>${(d.genres||[]).join(" · ")}${kinTip(d)}`);
   }).on("mouseleave",()=>tip.style("opacity",0));
 
   sim.on("tick",()=>{
@@ -262,7 +308,7 @@ function build(){
   });
   view.node=node;
   document.getElementById("stats").textContent=
-    `${nodes.length} tracked · ${links.length} links · ${cands.length} candidates`;
+    `${nodes.length} tracked · ${links.length} links · ${klinks.length} kin · ${cands.length} candidates`;
   applySearch();
 }
 function applySearch(){
