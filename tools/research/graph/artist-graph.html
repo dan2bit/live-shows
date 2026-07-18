@@ -4,6 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>artist-graph · live-shows</title>
+<link rel="canonical" href="https://dan2bit.github.io/live-shows/tools/research/graph/artist-graph.html">
+<meta name="description" content="Force-directed Last.fm similarity network for tracked live-shows artists — a research instrument for surfacing new-artist candidates in the DMV blues/roots peer network.">
+<meta name="theme-color" content="#b3242b">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="live-shows">
+<meta property="og:title" content="artist-graph — live-shows">
+<meta property="og:description" content="Force-directed Last.fm similarity network for tracked live-shows artists — a research instrument for surfacing new-artist candidates in the DMV blues/roots peer network.">
+<meta property="og:url" content="https://dan2bit.github.io/live-shows/tools/research/graph/artist-graph.html">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="artist-graph — live-shows">
+<meta name="twitter:description" content="Force-directed Last.fm similarity network for tracked live-shows artists — a research instrument for surfacing new-artist candidates in the DMV blues/roots peer network.">
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://dan2bit.github.io/live-shows/static/favicon.png">
+<link rel="shortcut icon" type="image/png" href="https://dan2bit.github.io/live-shows/static/favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
@@ -139,7 +157,7 @@ let ALIASES = {};
 function baseNorm(s){
   let m=/^(.*),\s+(the|a|an)$/i.exec(s.trim());
   if(m) s=m[2]+" "+m[1];
-  s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  s=s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
   s=s.replace(/[^a-z0-9 ]+/g," ").replace(/^\s*(the|a|an)\s+/,"").replace(/\s+/g," ").trim();
   return s.replace(/\s+band$/,"");
 }
@@ -194,7 +212,7 @@ async function loadAll(){
     for(const s of sims){
       const sname=typeof s==="string"?s:(s&&s.name)||""; if(!sname)continue;
       const tgt=resolve(sname);
-      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("\u0001")); }
+      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("")); }
       else { candIn[sname]=(candIn[sname]||0)+1; (candSrc[sname]=candSrc[sname]||new Set()).add(cname); }
     }
   }
@@ -209,11 +227,11 @@ async function loadAll(){
   // Cosmic Country) are skipped as self-edges. When a kin pair also has a
   // Last.fm taste edge, the gray edge is suppressed — the solid edge dominates
   // visually and one line per pair keeps the DOM lean.
-  const kin={};  // "a\u0001b" -> relation label
+  const kin={};  // "ab" -> relation label
   function addKin(a,b,rel){
     const ka=resolve(a),kb=resolve(b);
     if(!ka||!kb||ka===kb)return;
-    kin[[ka,kb].sort().join("\u0001")]=rel;
+    kin[[ka,kb].sort().join("")]=rel;
   }
   if(relatedR&&relatedR.ok){ (await relatedR.text()).split("\n").forEach(line=>{
     if(!line.trim()||line.startsWith("#")||line.startsWith("Artist A\t"))return;
@@ -227,7 +245,7 @@ async function loadAll(){
     });
   }
   const kinLinks=Object.keys(kin).sort().map(e=>{
-    const[a,b]=e.split("\u0001");return{source:a,target:b,kl:true,rel:kin[e]};});
+    const[a,b]=e.split("");return{source:a,target:b,kl:true,rel:kin[e]};});
   const kinByNode={};
   kinLinks.forEach(l=>{
     (kinByNode[l.source]=kinByNode[l.source]||[]).push({other:l.target,rel:l.rel});
@@ -236,7 +254,7 @@ async function loadAll(){
 
   return {nodes:Object.values(nodes),
     links:[...edges].sort().filter(e=>!(e in kin))
-      .map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
+      .map(e=>{const[a,b]=e.split("");return{source:a,target:b};}),
     kinLinks,kinByNode,candidates};
 }
 
