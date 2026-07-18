@@ -25,6 +25,18 @@ relation shows up in `follows_master` notes; rows whose endpoints aren't
 tracked yet are skipped silently and activate when the artist lands. A node's
 tooltip lists its kin with relation labels.
 
+**Concert-history edges (#177):** the same solid treatment also carries edges
+derived from Dan's own attendance logs. Bill edges connect headliner ↔ support
+act from attended `live_shows_current.tsv` rows (`Supporting Artist`) and
+`data/history/*.tsv` (`Supporting Acts`), with multiple support acts
+`/`-separated. Shared-personnel edges connect two tracked headliners when the
+same `data/seen_with.tsv` sideman appears with both (≥2 different headliners;
+the sideman gets no node of their own). Attended shows only — upcoming rows and
+potential-show `Support` are deliberately excluded. On overlap, label
+precedence is curated #174 relation > `same bill` > `shared personnel: <name>`,
+and the matching taste edge is suppressed exactly as with #174. Endpoints that
+don't resolve to tracked nodes skip silently.
+
 **Strategy-session workflow:** open the page, set the candidate threshold to 3+,
 and review hollow nodes not already in `new_artist_research.tsv` or
 `follows_master.tsv`. A candidate's tooltip lists which tracked artists point at
