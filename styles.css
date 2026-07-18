@@ -294,7 +294,7 @@
   .pm-steps{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin:10px 0 0;line-height:1.8;min-height:1px;}
   .pm-step-ok{color:var(--green);}
   .pm-step-err{color:var(--red);}
-  .pot-reconciling{font-family:var(--mono);font-size:11px;color:var(--green);white-space:nowrap;}
+  .pot-reconciling{font-family:var(--mono);font-size:11px;color:var(--green);white-space:nowrap;cursor:pointer;text-decoration:underline dotted;}
 
   .fs-artist{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px;}
   .fs-detail{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
