@@ -72,7 +72,7 @@ svg:active{cursor:grabbing}
 </style>
 </head>
 <body>
-<header><h1>🎩 artist-graph</h1><span class="sub">Last.fm similarity network · ring = hat signed · solid = related acts · hollow teal = untracked candidates</span></header>
+<header><h1>🎩 artist-graph</h1><span class="sub">Last.fm similarity network · ring = hat signed · solid = related / shared bills · hollow teal = untracked candidates</span></header>
 <div id="controls">
   <div class="row"><label>Node size</label>
     <span class="chip sizechip sel" data-size="affinity" tabindex="0"><span class="sw" style="background:var(--hat)"></span>affinity</span>
@@ -98,6 +98,9 @@ svg:active{cursor:grabbing}
  *   ../../../config.yaml                    theme.color_accent -> tier ramp
  *   ../../../data/artists.tsv               Via column -> bill kinship edges
  *   ../../../data/related_acts.tsv          hand-maintained kinship edges (#174)
+ *   ../../../data/seen_with.tsv             recurring sidemen -> shared-personnel edges (#177)
+ *   ../../../data/live_shows_current.tsv    attended Supporting Artist -> bill edges (#177)
+ *   ../../../data/history/<year>.tsv        Supporting Acts -> bill edges (#177)
  *
  * NORMALIZATION replicates build_recommend_index.py's vocabulary exactly:
  * de-invert "X, The" -> accent-fold -> lowercase -> strip punctuation ->
@@ -118,6 +121,8 @@ const PATHS = {
   cfg:     "../../../config.yaml",
   artists: "../../../data/artists.tsv",
   related: "../../../data/related_acts.tsv",
+  seen:    "../../../data/seen_with.tsv",
+  current: "../../../data/live_shows_current.tsv",
 };
 const TIERS = [["Strong","--t-strong"],["Medium-Strong","--t-medstrong"],["Medium","--t-medium"],["Lower","--t-lower"],["Legacy","--t-legacy"],["Seen","--t-seen"]];
 const TIER_SCORE = {"Strong":4,"Medium-Strong":3,"Medium":2,"Legacy":1.5,"Lower":1};
@@ -165,7 +170,9 @@ const norm = s => { const n=baseNorm(s); return ALIASES[n]||n; };
 
 /* --- data assembly --- */
 async function loadAll(){
-  const [idxR,cacheR,aliasR,cfgR,artistsR,relatedR]=await Promise.all(Object.values(PATHS).map(p=>fetch(p)));
+  const [idxR,cacheR,aliasR,cfgR,artistsR,relatedR,seenR,currentR]=await Promise.all(Object.values(PATHS).map(p=>fetch(p)));
+  const histYears=[];for(let y=2021;y<=new Date().getFullYear();y++)histYears.push(y);
+  const histR=await Promise.all(histYears.map(y=>fetch("../../../data/history/"+y+".tsv")));
   if(!idxR.ok||!cacheR.ok) throw new Error("data fetch failed ("+idxR.status+"/"+cacheR.status+")");
   const idx=(await idxR.json()).artists, cache=await cacheR.json();
   if(aliasR.ok){ (await aliasR.text()).split("\n").forEach(line=>{
@@ -242,6 +249,60 @@ async function loadAll(){
     const hdr=rows[0].split("\t"),ai=hdr.indexOf("Artist"),vi=hdr.indexOf("Via");
     if(ai>=0&&vi>=0)rows.slice(1).forEach(l=>{
       const p=l.split("\t"); if(p[ai]&&p[vi]&&p[vi].trim()) addKin(p[ai],p[vi],"via bill");
+    });
+  }
+  // Concert-history edges (#177): Dan's own attendance logs as edge sources,
+  // merged into the same kin map — same solid render, same taste-edge
+  // suppression, one line per pair. Curated #174 rows win on overlap
+  // (addKinSoft never overwrites), so label precedence is
+  // curated relation > same bill > shared personnel.
+  // Attended shows only: upcoming rows and potential-show Support are
+  // deliberately excluded — "on a bill I'm considering" is not "I watched
+  // this pairing."
+  function addKinSoft(a,b,rel){
+    const ka=resolve(a),kb=resolve(b);
+    if(!ka||!kb||ka===kb)return;
+    const key=[ka,kb].sort().join("");
+    if(!(key in kin))kin[key]=rel;
+  }
+  // Bill edges: headliner <-> each '/'-separated support act. Header differs
+  // by era (Supporting Artist in current, Supporting Acts in history).
+  // Unresolved acts skip silently, per the #174 rule.
+  function billEdges(text,supCol,statusCol){
+    const rows=text.split("\n").filter(l=>l.trim());
+    if(!rows.length)return;
+    const hdr=rows[0].split("\t"),ai=hdr.indexOf("Artist"),si=hdr.indexOf(supCol),
+      st=statusCol?hdr.indexOf(statusCol):-1;
+    if(ai<0||si<0)return;
+    rows.slice(1).forEach(l=>{
+      const p=l.split("\t");
+      if(st>=0&&((p[st]||"").trim().toLowerCase()!=="attended"))return;
+      const sup=(p[si]||"").trim();
+      if(!p[ai]||!sup||sup==="-")return;
+      sup.split("/").forEach(s=>{if(s.trim())addKinSoft(p[ai],s,"same bill");});
+    });
+  }
+  if(currentR&&currentR.ok)billEdges(await currentR.text(),"Supporting Artist","Status");
+  for(const r of histR)if(r&&r.ok)billEdges(await r.text(),"Supporting Acts",null);
+  // Shared-personnel edges: a seen_with.tsv sideman recurring across >=2
+  // different tracked headliners links those headliners pairwise. The person
+  // gets no node — sidemen aren't tracked artists.
+  if(seenR&&seenR.ok){
+    const byPerson={};
+    (await seenR.text()).split("\n").forEach(line=>{
+      if(!line.trim()||line.startsWith("#")||line.startsWith("Show Date\t"))return;
+      const p=line.split("\t");  // Show Date | Headliner | Seen With | Role | ...
+      if(!p[1]||!p[2]||!p[2].trim())return;
+      const h=resolve(p[1]);if(!h)return;
+      const P=byPerson[baseNorm(p[2])]=byPerson[baseNorm(p[2])]||{name:p[2].trim(),heads:new Set()};
+      P.heads.add(h);
+    });
+    Object.values(byPerson).forEach(P=>{
+      const hs=[...P.heads].sort();
+      for(let i=0;i<hs.length;i++)for(let j=i+1;j<hs.length;j++){
+        const key=hs[i]+""+hs[j];
+        if(!(key in kin))kin[key]="shared personnel: "+P.name;
+      }
     });
   }
   const kinLinks=Object.keys(kin).sort().map(e=>{
