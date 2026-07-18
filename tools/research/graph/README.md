@@ -15,6 +15,15 @@ The page fetches `artist_modal_index.json`, `artist_spotify.json`,
 always reflects current `main` with no build step. It is deliberately not linked
 from the main site — it's a research instrument, not a visitor feature.
 
+**Kinship edges (#174):** solid amber edges mark membership/kinship relations
+the co-listening data can't see — fronts, member-of, successor-of, sibling —
+sourced from `related_acts.tsv` in this directory plus bill relations derived
+from the `Via` column of `data/artists.tsv` (TajMo, SatchVai, etc., which stay
+authoritative there). Add a `related_acts.tsv` row whenever a new fronts /
+successor / sibling relation shows up in `follows_master` notes; rows whose
+endpoints aren't tracked yet are skipped silently and activate when the artist
+lands. A node's tooltip lists its kin with relation labels.
+
 **Strategy-session workflow:** open the page, set the candidate threshold to 3+,
 and review hollow nodes not already in `new_artist_research.tsv` or
 `follows_master.tsv`. A candidate's tooltip lists which tracked artists point at
@@ -25,7 +34,8 @@ Opening the file locally requires a static server (`python3 -m http.server` from
 the repo root, then `/tools/research/graph/artist-graph.html`) — `file://` can't
 fetch the relative data paths.
 
-See issue #171 for the full rendering spec and normalization rules.
+See issue #171 for the full rendering spec and normalization rules, and #174 for
+the kinship edge design.
 
 # geographic narrative
 
