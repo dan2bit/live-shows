@@ -1,0 +1,27 @@
+# related_acts.tsv — hand-maintained kinship relations between tracked acts (#174).
+#
+# One row per membership/kinship relation that co-listening similarity data
+# can't see (fronts, member-of, successor-of, sibling…). Domain content, not
+# tool configuration — currently consumed by tools/research/graph/
+# artist-graph.html, and available to any future consumer (artist modal
+# cross-links, builder). Relation is freeform display text. Consumers skip
+# rows where either endpoint doesn't resolve to a tracked artist, so a row may
+# safely predate an artist's tracking. Names resolve through the standard
+# normalization (recommend_aliases.tsv applies) — alias-fused pairs (e.g.
+# Daniel Donato's Cosmic Country) need no row here; they're already one entity.
+#
+# Via-bill kinship (TajMo, SatchVai, etc.) is NOT duplicated here — consumers
+# derive those from artists.tsv's Via column, which stays authoritative per
+# the #103 protocol.
+#
+# Not in-page-editable; comment block is safe (same convention as
+# recommend_aliases.tsv).
+Artist A	Artist B	Relation
+Oliver Wood	The Wood Brothers	fronts
+Kim Wilson	The Fabulous Thunderbirds	fronts
+Warren Haynes	Gov't Mule	fronts
+Ivan Neville	Dumpstaphunk	fronts
+Joey Landreth	The Bros. Landreth	member-of
+Haggis X-1	Enter the Haggis	successor-of
+House of Hamill	Enter the Haggis	successor-of
+Leyla McCalla	Sabine McCalla	sibling
