@@ -50,6 +50,28 @@ the `push` trigger on `staging` and therefore does **not** auto-promote. After a
 `push_files` call, follow up with a single-file `create_or_update_file` nudge commit
 to trigger promotion — or use sequential `create_or_update_file` calls instead.
 
+**Multi-file same-show commits — bundle them, don't sequence them (2026-07-19).**
+When a single show update touches more than one file that the same CI check
+cross-references (the clearest case: Routine 2's `live_shows_current.tsv` +
+`artists.tsv`, both read together by `scripts/build_artist_index.py` /
+`scripts/audit_times_seen.py`), commit the related files **together in one
+`push_files` call**, then follow with a single-file `create_or_update_file` nudge to
+trigger promotion. Do not commit them as separate sequential `create_or_update_file`
+calls for the same show.
+
+Sequential single-file commits create a real window where `main` — and any CI check
+that fires on push to `main` — sees one file updated and its sibling not yet. This
+isn't hypothetical: on 2026-07-19, `artists.tsv`'s Times Seen bump for the Trombone
+Shorty & Orleans Avenue show promoted to `main` (run #34) *before* the sibling
+`live_shows_current.tsv` commit marking that show `attended` promoted (run #35).
+`audit-times-seen.yml` fired on run #34 against a `live_shows_current.tsv` that still
+showed the show as `upcoming`, so the ledger didn't count it yet — Trombone Shorty &
+Orleans Avenue and The War and Treaty both looked like false overcounts for the ~13-16
+seconds between the two promotions, self-resolving once run #35 landed. Bundling the
+two commits would have closed that window entirely: `main` only ever advances by
+fast-forward, and a `push_files` commit followed by a nudge lands both files on `main`
+in one push, so the audit only ever sees the fully-reconciled state.
+
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
 
