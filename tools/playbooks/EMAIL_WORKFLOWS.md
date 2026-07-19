@@ -309,7 +309,7 @@ If hat autograph:
    (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
    Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
 
-**Step 5 — Commit public file changes to `staging`**
+**Step 5 — Commit public file changes to `staging` — bundle same-show files, don't sequence them (2026-07-19)**
 
 Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files committed:
 - `data/live_shows_current.tsv` — status → attended; Setlist, Notes / Memories,
@@ -321,6 +321,19 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   was in the physical book but not yet tracked (rare)
 - `data/show_goals/hat_signatures.tsv` — if the hat was signed
 - `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
+
+**Commit `live_shows_current.tsv` and `artists.tsv` together in one `push_files` call**
+(plus any of the `show_goals` files above touched this run), then follow with a
+single-file `create_or_update_file` nudge commit to trigger promotion — per
+`DATA_WRITE_PROTOCOLS.md` → "Multi-file same-show commits." Do **not** commit
+`live_shows_current.tsv` and `artists.tsv` as two separate sequential
+`create_or_update_file` calls: on 2026-07-19 that sequencing let the `artists.tsv`
+Times Seen bump promote to `main` before the `live_shows_current.tsv` status→attended
+commit did, and `audit-times-seen.yml` fired in between and falsely flagged two
+artists as overcounts against a ledger that hadn't counted the new show yet. The
+private-repo commits (`current_private.tsv`, `spending.tsv`) stay separate — the
+public/private split is still two repos, two commits, never one — but everything
+landing in `dan2bit/live-shows` for this show goes together.
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
