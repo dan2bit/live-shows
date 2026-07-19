@@ -930,6 +930,10 @@ async function switchHistoryTab(yr){
 // hides the cost fields and never constructs a private-repo request.
 var _purchasePending={};   // {Artist␟Date: 1} — local render state only, until next data refresh
 var _purchaseSteps={};     // {Artist␟Date: {1..4: true}} — lets Confirm resume after a partial failure
+function refreshAfterPurchase(){
+  _purchasePending={};
+  loadData();
+}
 
 function openPurchaseModal(idx){
   var r=potentialRows[idx];if(!r)return;
@@ -940,13 +944,15 @@ function openPurchaseModal(idx){
   var today=new Date().toISOString().slice(0,10);
   var html='<div class="fs-artist">'+esc(r['Artist']||'')+'</div>'
     +'<div class="fs-detail">'+formatShowDate(r['Date'])+' '+dayOfWeek(r['Date'])+' &middot; '+esc(r['Venue']||'')+' &middot; '+esc(r['Venue City']||'')+'</div>'
-    +'<div class="pm-row" style="margin-top:12px"><span class="pm-label">Ticket access</span><input class="pm-input" id="pm-access" value="'+esc(r['Ticket Service']||'')+'" placeholder="AXS Mobile, Eventim, paper…"></div>'
+    +'<div class="pm-row" style="margin-top:12px"><span class="pm-label">Ticket access</span><input class="pm-input" id="pm-access" value="'+esc(r['Ticket Service']||'')+'" placeholder="AXS Mobile, Eventim…"></div>'
+    +'<div class="pm-row"><span class="pm-label">Paper ticket</span><label class="pm-radio"><input type="checkbox" id="pm-paper"'+(/paper/i.test(r['Ticket Service']||'')?' checked':'')+'> Paper ticket</label></div>'
     +'<div class="pm-row"><span class="pm-label">Seat type</span><label class="pm-radio"><input type="radio" name="pm-seattype" value="GA"'+(seated?'':' checked')+'> GA</label><label class="pm-radio"><input type="radio" name="pm-seattype" value="Seated"'+(seated?' checked':'')+'> Seated</label></div>'
     +(priv?'<div class="pm-row"><span class="pm-label">Face value ($)</span><input class="pm-input" id="pm-face" type="number" step="0.01" min="0" value="'+(fm?fm[1]:'')+'"></div>'
       +'<div class="pm-row"><span class="pm-label">Fees total ($)</span><input class="pm-input" id="pm-fees" type="number" step="0.01" min="0" value="'+fees+'"></div>'
       +'<div class="pm-row"><span class="pm-label">Quantity</span><input class="pm-input" id="pm-qty" type="number" step="1" min="1" value="1"></div>'
       +'<div class="pm-row"><span class="pm-label">Seat info</span><input class="pm-input" id="pm-seatinfo" placeholder="optional — table/row/seat"></div>'
-      +'<div class="pm-row"><span class="pm-label">Purchase date</span><input class="pm-input" id="pm-pdate" type="date" value="'+today+'"></div>':'')
+      +'<div class="pm-row"><span class="pm-label">Purchase date</span><input class="pm-input" id="pm-pdate" type="date" value="'+today+'"></div>'
+      +'<div class="pm-row"><span class="pm-label">Private notes</span><textarea class="notes-textarea" id="pm-notes" rows="3">'+((r['Private Notes']&&r['Private Notes']!=='-')?esc(r['Private Notes']):'')+'</textarea></div>':'')
     +'<div class="pm-row"><span class="pm-label">Flags</span><label class="pm-radio"><input type="checkbox" id="pm-vip"> VIP</label><label class="pm-radio"><input type="checkbox" id="pm-group"> Group</label></div>'
     +'<div class="pm-steps" id="pm-steps"></div>'
     +'<div class="modal-actions"><button class="btn" onclick="closePurchaseModal()">Cancel</button><button class="btn btn-save" id="pm-confirm" onclick="confirmPurchase('+idx+')">Confirm purchase</button></div>';
@@ -968,7 +974,9 @@ async function _purchaseAppendPublic(r,form,iso){
   nr['Show Date']=iso;nr['Venue Name']=r['Venue']||'';nr['Venue Address']=r['Venue City']||'-';
   nr['Venue Event URL']=r['Event URL']||r['Purchase URL']||'-';
   nr['Seat Type']=form.seatType;nr['VIP']=form.vip?'Y':'';nr['Group']=form.group?'Y':'';
-  nr['Ticket Access']=form.access||'-';nr['Status']='upcoming';
+  var access=form.access||'';
+  if(form.paper){access=/paper/i.test(access)?access:(access?access+' (Paper)':'Paper');}
+  nr['Ticket Access']=access||'-';nr['Status']='upcoming';
   var at=rows.findIndex(function(x){return (x['Show Date']||'')>iso;});
   if(at<0)rows.push(nr);else rows.splice(at,0,nr);
   var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+CURRENT_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'purchase: add '+(r['Artist']||'')+' '+iso+' (in-page)',content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
@@ -986,7 +994,7 @@ async function _purchaseAppendPrivate(r,form,iso){
   var fd=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE);
   var raw=_decodeB64(fd.content),headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
   var rows=parseTsv(raw);
-  var pvt=(r['Private Notes']&&r['Private Notes']!=='-')?r['Private Notes']+' · ':'';
+  var pvt=form.notes?form.notes+' · ':'';
   var total=form.face*form.qty+form.fees;
   var nr={};headers.forEach(function(h){nr[h]='-';});
   nr['Show Date']=iso;nr['Artist']=r['Artist']||'';
@@ -1030,7 +1038,9 @@ async function confirmPurchase(idx){
     access:((document.getElementById('pm-access')||{}).value||'').trim(),
     pdate:((document.getElementById('pm-pdate')||{}).value)||new Date().toISOString().slice(0,10),
     vip:!!(document.getElementById('pm-vip')||{}).checked,
-    group:!!(document.getElementById('pm-group')||{}).checked};
+    group:!!(document.getElementById('pm-group')||{}).checked,
+    paper:!!(document.getElementById('pm-paper')||{}).checked,
+    notes:(function(){var el=document.getElementById('pm-notes');return el?el.value.trim():'';})()};
   if(priv){
     form.face=parseFloat((document.getElementById('pm-face')||{}).value);
     form.fees=parseFloat((document.getElementById('pm-fees')||{}).value||'0');
@@ -1109,7 +1119,7 @@ function renderPotentialRowAuthed(r,gi){
   var potEditBtn=makeEditBtn(potCellId,'potential',gi,'Notes','notes');
   var nh=fne?'<div class="cell-pot-notes" style="cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" onclick="this.style.display=\'block\';this.style.cursor=\'default\'">'+fne+'</div>':'';
   var dh;
-  if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<span class="pot-reconciling">🎟 purchased — reconciling…</span>';}
+  if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<a href="#" class="pot-reconciling" onclick="event.preventDefault();refreshAfterPurchase();">🎟 purchased — reconciling… (tap to refresh)</a>';}
   else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
@@ -1404,6 +1414,7 @@ async function commitConfig(){
 }
 // ── Boot ───────────────────────────────────────────────
 async function loadData(){
+  _purchasePending={};
   document.getElementById('showsContent').innerHTML=hatLoadingHtml();
   document.getElementById('potContent').innerHTML=hatLoadingHtml();
   try{
