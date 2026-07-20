@@ -1360,6 +1360,8 @@ function closeMultisetModal(){document.getElementById('multisetModal').classList
 // -- Config editor (#77) --
 var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
 function _gearVisible(){
+  // #180 — authed-only artist-graph link rides the same auth-visibility hook as the gear
+  var gl=document.getElementById('graphLink');if(gl)gl.style.display=authed?'':'none';
   var gear=document.getElementById('configGearBtn');if(!gear)return;
   var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
   gear.style.display=(authed&&webEdit)?'':'none';

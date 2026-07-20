@@ -49,6 +49,7 @@
   .fetched-at{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
   .btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--border-bright);background:var(--surface-bright);color:var(--text-muted);cursor:pointer;transition:border-color .15s,color .15s;white-space:nowrap;}
   .btn:hover{border-color:var(--amber-dim);color:var(--amber);}
+  a.btn{text-decoration:none;}  /* #180 — .btn on anchors (graph link) */
   .btn-auth{position:relative;}
   .btn-auth.authed::after{content:'●';font-size:8px;color:var(--green);position:absolute;top:2px;right:2px;}
 
