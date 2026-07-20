@@ -325,14 +325,20 @@ async function loadAll(){
     const byPerson={};
     (await seenR.text()).split("\n").forEach(line=>{
       if(!line.trim()||line.startsWith("#")||line.startsWith("Show Date\t"))return;
-      const p=line.split("\t");  // Show Date | Headliner | Seen With | Role | ...
+      const p=line.split("\t");  // Show Date | Headliner | Seen With | Role | Spotify URL | Notes
       if(!p[1]||!p[2]||!p[2].trim())return;
-      const h=resolve(p[1]);if(!h)return;
+      // A "<Act> band (support slot)" note means the sideman played in the named
+      // SUPPORT act's band on this bill, not the headliner's — attribute them
+      // there, for both the direct edge and the pairwise grouping (the TJ
+      // Turqman / Carly Harvey case). Unresolved acts skip silently as usual.
+      const sm=/^(.+?)\s+band \(support slot\)/.exec((p[5]||"").trim());
+      const aff=sm?sm[1]:p[1];
+      const h=resolve(aff);if(!h)return;
       // Sidemen are tracked nodes themselves (seen_with rows count toward seen),
-      // so link the sideman's own node to the headliner — otherwise every
-      // seen_with musician floats. Unresolved names skip silently as usual.
+      // so link the sideman's own node to their act — otherwise every seen_with
+      // musician floats.
       const role=(p[3]||"").trim();
-      addKinSoft(p[2],p[1],"sideman"+(role&&role!=="-"?": "+role:""));
+      addKinSoft(p[2],aff,"sideman"+(role&&role!=="-"?": "+role:""));
       const P=byPerson[baseNorm(p[2])]=byPerson[baseNorm(p[2])]||{name:p[2].trim(),heads:new Set()};
       P.heads.add(h);
     });
