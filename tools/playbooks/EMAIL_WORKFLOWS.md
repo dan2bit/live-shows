@@ -368,12 +368,12 @@ build + manual compare.
 
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
-**Single-setlist shows:** Open one issue by default. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes show details and notes. This step is opt-out, not opt-in — create the issue unless the show notes email explicitly states no footage was taken (e.g. "didn't record," "no video this time," "phone died," "left early, no recording"). The mere absence of a video/YouTube mention in the notes is NOT grounds to skip it — that absence is the default case, and the default is to open the issue. If genuinely uncertain whether footage exists, open the issue anyway and note the uncertainty in the body; a closed-out issue costs nothing, a missing one loses the reminder entirely.
+**Single-setlist shows:** Open one issue by default. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes only the setlist.fm link and the artist's YouTube channel handle (look it up if not already known) — the two pieces of data actually needed to build the playlist. **Do not include cost/spending data** (parking, food & bev, merch, ticket cost, or any other dollar figure) in this issue — this is a public repo issue and that data belongs in `spending.tsv` / `current_private.tsv` only (2026-07-19 correction; earlier issues in this repo predate the rule and were not retroactively edited). Non-cost show notes (artist interaction, banter, etc.) are optional context and may be included, but are not required. This step is opt-out, not opt-in — create the issue unless the show notes email explicitly states no footage was taken (e.g. "didn't record," "no video this time," "phone died," "left early, no recording"). The mere absence of a video/YouTube mention in the notes is NOT grounds to skip it — that absence is the default case, and the default is to open the issue. If genuinely uncertain whether footage exists, open the issue anyway and note the uncertainty in the body; a closed-out issue costs nothing, a missing one loses the reminder entirely.
 
 **MULTI shows (two or more setlist.fm links provided):**
 
 1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
-2. Open **one combined playlist issue** — title as above; include all setlist.fm links in the body (support acts first, headliner last). Same opt-out default as above applies.
+2. Open **one combined playlist issue** — title as above; include all setlist.fm links plus each artist's YouTube channel handle in the body (support acts first, headliner last). Same cost-data exclusion and opt-out default as above apply.
 3. Update `data/setlists/<year>.json` by appending an entry keyed on `YYYY-MM-DD`:
 
 ```json
