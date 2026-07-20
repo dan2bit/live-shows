@@ -327,6 +327,11 @@ async function loadAll(){
       const p=line.split("\t");  // Show Date | Headliner | Seen With | Role | ...
       if(!p[1]||!p[2]||!p[2].trim())return;
       const h=resolve(p[1]);if(!h)return;
+      // Sidemen are tracked nodes themselves (seen_with rows count toward seen),
+      // so link the sideman's own node to the headliner — otherwise every
+      // seen_with musician floats. Unresolved names skip silently as usual.
+      const role=(p[3]||"").trim();
+      addKinSoft(p[2],p[1],"sideman"+(role&&role!=="-"?": "+role:""));
       const P=byPerson[baseNorm(p[2])]=byPerson[baseNorm(p[2])]||{name:p[2].trim(),heads:new Set()};
       P.heads.add(h);
     });
