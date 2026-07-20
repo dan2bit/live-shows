@@ -101,6 +101,7 @@ input[type=range]{width:100%;accent-color:var(--sell)}
   <button class="chip" id="zin" title="Zoom in" aria-label="Zoom in">+</button>
   <button class="chip" id="zout" title="Zoom out" aria-label="Zoom out">&#8722;</button>
   <button class="chip" id="zreset" title="Reset view" aria-label="Reset view">&#8962;</button>
+  <button class="chip" id="zspread" title="Spread out the visible region (any zoom change resets)" aria-label="Spread out the visible region">&#10530;</button>
 </div>
 <div id="loading">
   <img class="hat-loading-img" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt="">
@@ -365,12 +366,45 @@ let DATA=null,sim,view={};
 const W=innerWidth,H=innerHeight;
 const svg=d3.select("#g").attr("viewBox",[0,0,W,H]);
 const root=svg.append("g");
-const zoom=d3.zoom().scaleExtent([.25,5]).on("zoom",e=>root.attr("transform",e.transform));
+let spread=null;  // active region-spread: {pinned:[nodes], k: zoom scale at activation}
+const zoom=d3.zoom().scaleExtent([.25,5]).on("zoom",e=>{
+  root.attr("transform",e.transform);
+  if(spread&&Math.abs(e.transform.k-spread.k)>1e-6)clearSpread();  // any zoom-scale change resets; panning keeps it
+});
 svg.call(zoom);
+// Region spread — temporarily loosen the springs inside the current viewport so a
+// zoomed-in cluster relaxes apart. Nodes outside the view are pinned in place, so
+// the rest of the map doesn't reflow; in-view links get 1/4 strength and 1.8x rest
+// distance, in-view nodes stronger repulsion. Cleared by re-toggle, any zoom-scale
+// change (incl. the +/-/reset buttons), or a rebuild (tier chips / threshold).
+const LSTR=l=>l.kl?.7:l.cl?.25:.5, LDIST=l=>l.kl?40:l.cl?46:58;
+function clearSpread(){
+  if(!spread)return;
+  spread.pinned.forEach(n=>{n.fx=n.fy=null;});
+  if(sim){sim.force("link").strength(LSTR).distance(LDIST);sim.force("charge").strength(-70);sim.alpha(.3).restart();}
+  spread=null;
+  document.getElementById("zspread").classList.remove("sel");
+}
+function toggleSpread(){
+  if(spread){clearSpread();return;}
+  if(!sim)return;
+  const t=d3.zoomTransform(svg.node());
+  const [x0,y0]=t.invert([0,0]),[x1,y1]=t.invert([W,H]);
+  const inSet=new Set(sim.nodes().filter(n=>n.x>=x0&&n.x<=x1&&n.y>=y0&&n.y<=y1).map(n=>n.id));
+  const pinned=sim.nodes().filter(n=>!inSet.has(n.id));
+  pinned.forEach(n=>{n.fx=n.x;n.fy=n.y;});
+  const loose=l=>inSet.has(l.source.id)&&inSet.has(l.target.id);
+  sim.force("link").strength(l=>LSTR(l)*(loose(l)?.25:1)).distance(l=>LDIST(l)*(loose(l)?1.8:1));
+  sim.force("charge").strength(n=>inSet.has(n.id)?-180:-70);
+  spread={pinned,k:t.k};
+  document.getElementById("zspread").classList.add("sel");
+  sim.alpha(.4).restart();
+}
 // #180 — zoom tool buttons; same behavior the wheel/pinch gestures drive
 document.getElementById("zin").addEventListener("click",()=>svg.transition().duration(200).call(zoom.scaleBy,1.5));
 document.getElementById("zout").addEventListener("click",()=>svg.transition().duration(200).call(zoom.scaleBy,1/1.5));
 document.getElementById("zreset").addEventListener("click",()=>svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity));
+document.getElementById("zspread").addEventListener("click",toggleSpread);
 
 function radius(d){
   if(d.cand)return 3.5+1.4*Math.sqrt(d.indeg);
@@ -378,6 +412,7 @@ function radius(d){
   return 4+2.3*Math.sqrt(d.seen||0);
 }
 function build(){
+  spread=null;document.getElementById("zspread").classList.remove("sel");  // rebuild discards the sim; drop any active spread
   root.selectAll("*").remove();
   const nodes=DATA.nodes.filter(n=>!state.off.has(n.tier||"Seen")).map(d=>({...d,cand:false}));
   const ids=new Set(nodes.map(n=>n.id));
