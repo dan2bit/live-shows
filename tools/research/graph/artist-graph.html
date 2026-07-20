@@ -64,8 +64,8 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 #loading.err{color:var(--brand)}
 .hat-loading-img{width:40px;height:40px;object-fit:contain;animation:hat-pulse 1.6s ease-in-out infinite}
 @keyframes hat-pulse{0%,100%{opacity:.5;transform:scale(.92)}50%{opacity:1;transform:scale(1)}}
-svg{display:block;width:100vw;height:100vh;cursor:grab}
-svg:active{cursor:grabbing}
+#g{display:block;width:100vw;height:100vh;cursor:grab}
+#g:active{cursor:grabbing}
 .link{stroke:#5a564c;stroke-opacity:.8;stroke-width:1.1}
 .clink{stroke:var(--sell);stroke-opacity:.5;stroke-dasharray:2 3}
 .klink{stroke:var(--hat);stroke-opacity:1;stroke-width:1.4}
@@ -252,7 +252,7 @@ async function loadAll(){
     for(const s of sims){
       const sname=typeof s==="string"?s:(s&&s.name)||""; if(!sname)continue;
       const tgt=resolve(sname);
-      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("")); }
+      if(tgt){ if(src!==tgt) edges.add([src,tgt].sort().join("\u0001")); }
       else { candIn[sname]=(candIn[sname]||0)+1; (candSrc[sname]=candSrc[sname]||new Set()).add(cname); }
     }
   }
@@ -271,7 +271,7 @@ async function loadAll(){
   function addKin(a,b,rel){
     const ka=resolve(a),kb=resolve(b);
     if(!ka||!kb||ka===kb)return;
-    kin[[ka,kb].sort().join("")]=rel;
+    kin[[ka,kb].sort().join("\u0001")]=rel;
   }
   if(relatedR&&relatedR.ok){ (await relatedR.text()).split("\n").forEach(line=>{
     if(!line.trim()||line.startsWith("#")||line.startsWith("Artist A\t"))return;
@@ -295,7 +295,7 @@ async function loadAll(){
   function addKinSoft(a,b,rel){
     const ka=resolve(a),kb=resolve(b);
     if(!ka||!kb||ka===kb)return;
-    const key=[ka,kb].sort().join("");
+    const key=[ka,kb].sort().join("\u0001");
     if(!(key in kin))kin[key]=rel;
   }
   // Bill edges: headliner <-> each '/'-separated support act. Header differs
@@ -333,13 +333,13 @@ async function loadAll(){
     Object.values(byPerson).forEach(P=>{
       const hs=[...P.heads].sort();
       for(let i=0;i<hs.length;i++)for(let j=i+1;j<hs.length;j++){
-        const key=hs[i]+""+hs[j];
+        const key=hs[i]+"\u0001"+hs[j];
         if(!(key in kin))kin[key]="shared personnel: "+P.name;
       }
     });
   }
   const kinLinks=Object.keys(kin).sort().map(e=>{
-    const[a,b]=e.split("");return{source:a,target:b,kl:true,rel:kin[e]};});
+    const[a,b]=e.split("\u0001");return{source:a,target:b,kl:true,rel:kin[e]};});
   const kinByNode={};
   kinLinks.forEach(l=>{
     (kinByNode[l.source]=kinByNode[l.source]||[]).push({other:l.target,rel:l.rel});
@@ -348,7 +348,7 @@ async function loadAll(){
 
   return {nodes:Object.values(nodes),
     links:[...edges].sort().filter(e=>!(e in kin))
-      .map(e=>{const[a,b]=e.split("");return{source:a,target:b};}),
+      .map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
     kinLinks,kinByNode,candidates};
 }
 
