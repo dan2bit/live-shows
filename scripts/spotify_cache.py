@@ -434,13 +434,18 @@ def _is_non_artist(name: str) -> bool:
 # ── TSV reading (comment-tolerant) ────────────────────────────────────────────
 
 def read_tsv_rows(path: str) -> list[dict]:
+    """Rows as dicts, "" for any value — including a short row's missing trailing
+    columns. csv.DictReader's default restval is None for those, which every caller
+    here then blindly .strip()s; coercing to "" here (once, centrally) matches what
+    parseTsv() already does client-side, instead of every caller needing its own
+    `or ""` guard (#183 — a short row crashed collect_artists() this way)."""
     if not os.path.exists(path):
         return []
     with open(path, encoding="utf-8", newline="") as f:
         lines = [ln for ln in f if not ln.lstrip().startswith("#") and ln.strip()]
     if not lines:
         return []
-    return list(csv.DictReader(lines, delimiter="\t"))
+    return [{k: (v or "") for k, v in row.items()} for row in csv.DictReader(lines, delimiter="\t")]
 
 
 def load_aliases() -> dict[str, str]:
