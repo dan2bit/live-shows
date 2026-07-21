@@ -593,15 +593,6 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var msgArtist=rows[_pfi]['Artist']||'show';
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
-    } else if(fileKey==='fasttrack'){
-      var fd=await ghFetch(FAST_TRACK_PATH);
-      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
-      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
-      var rows=parseFastTrack(raw);
-      rows[rowIdx][field]=newVal;fastTrackRows[rowIdx][field]=newVal;
-      var msgArtist=rows[rowIdx]['Artist']||'artist';
-      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+FAST_TRACK_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'fast_track: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeFastTrack(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
-      if(!res.ok)throw new Error(await res.text());
     } else if(fileKey.startsWith('history:')){
       var yr=parseInt(fileKey.split(':')[1]);
       var histPath='data/history/'+yr+'.tsv';
@@ -1254,7 +1245,7 @@ function renderTourHere(){
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:110px">Links</th><th style="width:80px">Tier</th><th>Why</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'';
-    var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
+    var isHat=!!(GOAL_DATA.hat&&GOAL_DATA.hat.eligible[_goalNorm(r['Artist'])]);
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
     var spotUrl=featureOn('spotify_integration')?(r['Spotify URL']||''):'';  
