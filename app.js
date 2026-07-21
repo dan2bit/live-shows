@@ -275,8 +275,35 @@ function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date(
 function isOtdMatch(s){var m=(s||'').match(/^\d{4}-(\d{2}-\d{2})/);return m?m[1]===_todayMmDd:false;}
 function gcalUrl(artist){var now=new Date(),pad=function(n){return String(n).padStart(2,'0');};return'https://calendar.google.com/calendar/r/search?q='+encodeURIComponent(artist)+'&start='+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'&end='+(now.getFullYear()+1)+pad(now.getMonth()+1)+pad(now.getDate());}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-var VENUE_SHORT={'Wolf Trap Filene Center':'Wolf Trap','Rams Head On Stage':'Rams Head','Barns at Wolf Trap':'Barns','Wolf Trap Farm Park (The Barns)':'Barns','Wolf Trap Farm Park (Filene Center)':'Wolf Trap','The State Theatre':'State Theatre','The Birchmere':'Birchmere','Live at Hub City Vinyl':'Hub City','The Anthem':'Anthem'};
-function shortVenueName(full){var name=(full||'').split(',')[0].trim();return VENUE_SHORT[name]||name;}
+// ── Venue identity (#189) ─────────────────────────────
+// Shared resolution over data/venue_aliases.tsv (true renames only — case /
+// leading-"The" / punctuation variants fold in _venueKey) and data/venues.tsv
+// (canonical names + Short Name display column; blank Short Name = identity).
+// Chain everywhere: first-comma-truncate -> _venueKey -> alias -> canonical.
+// Loaded once per loadData; missing files degrade to plain truncation.
+// Python twins: scripts/check_box_office.py and
+// tools/youtube/youtube_create_playlists.py — keep the three in step.
+var VENUE_ALIASES={},VENUE_SHORT_NAMES={};
+async function loadVenueIdentity(){
+  VENUE_ALIASES={};VENUE_SHORT_NAMES={};
+  try{
+    var ar=await ghFetch('data/venue_aliases.tsv');
+    parseTsv(_decodeB64(ar.content)).forEach(function(r){
+      var a=_venueKey((r['Alias']||'').split(',')[0]),c=(r['Venue Name']||'').trim();
+      if(a&&c)VENUE_ALIASES[a]=c;
+    });
+  }catch(e){/* no alias file -> key-fold only */}
+  try{
+    var vr=await ghFetch('data/venues.tsv');
+    parseTsv(_decodeB64(vr.content)).forEach(function(r){
+      var c=_venueKey(r['Venue Name']),s=(r['Short Name']||'').trim();
+      if(c&&s)VENUE_SHORT_NAMES[c]=s;
+    });
+  }catch(e){/* no venues file -> no short names */}
+}
+function _venueCanonical(v){var t=String(v||'').split(',')[0].trim();return VENUE_ALIASES[_venueKey(t)]||t;}
+function _venueCanonKey(v){return _venueKey(_venueCanonical(v));}
+function shortVenueName(full){var c=_venueCanonical(full);return VENUE_SHORT_NAMES[_venueKey(c)]||c;}
 
 // ── On This Day ──────────────────────────────
 // Renders the On-This-Day strip from already-loaded historyData (no fetch); reveals the
@@ -334,7 +361,7 @@ function _boxOfficeVenueKeys(){
     if((r['Box Office']||'').trim().toUpperCase()!=='Y')return;
     var dec=(r['Decision']||'').toLowerCase();
     if(!(dec.indexOf('buy')===0||dec.indexOf('choose')===0))return;
-    var k=_venueKey(r['Venue']);if(k)s[k]=1;
+    var k=_venueCanonKey(r['Venue']);if(k)s[k]=1;
   });
   return s;
 }
@@ -347,7 +374,7 @@ function buildBadges(row){
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
   if(!isVip&&!isWT&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
-  if(_boxOfficeVenueKeys()[_venueKey(row['Venue Name'])])badges.push('<span class="badge badge-boxoffice" title="A flagged potential at this venue — buy at the box office while you\'re there">🏣 BOX OFFICE</span>');
+  if(_boxOfficeVenueKeys()[_venueCanonKey(row['Venue Name'])])badges.push('<span class="badge badge-boxoffice" title="A flagged potential at this venue — buy at the box office while you\'re there">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
@@ -1441,6 +1468,7 @@ async function loadData(){
     potentialRows=parseTsv(_decodeB64(results[1].content));
     await mergePrivateData();
     await loadGoalData();
+    await loadVenueIdentity();
     renderShows();renderPotential();
     document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
