@@ -1254,7 +1254,7 @@ function renderTourHere(){
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:110px">Links</th><th style="width:80px">Tier</th><th>Why</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'';
-    var isHat=(r['Notes']||'').toLowerCase().includes('female artist');
+    var isHat=!!(GOAL_DATA.hat&&GOAL_DATA.hat.eligible[_goalNorm(r['Artist'])]);
     var isFirst=(r['First Tour']||'').trim().toUpperCase()==='Y';
     var tourUrl=r['Tour URL']||r['BIT URL']||'';
     var spotUrl=featureOn('spotify_integration')?(r['Spotify URL']||''):'';  
