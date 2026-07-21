@@ -86,3 +86,6 @@ jobs:
         if: steps.brackets.outcome == 'failure'
         run: |
           echo "::warning::One or more Prev/Next bracket mismatches found in live_shows_potential.tsv — run scripts/check_brackets.py locally to review."
+
+      - name: Box Office flag guardrail (#186, warn-only)
+        run: python scripts/check_box_office.py
