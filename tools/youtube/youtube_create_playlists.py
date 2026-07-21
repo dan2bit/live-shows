@@ -270,67 +270,60 @@ def format_date_short(date_str):
     d = datetime.strptime(date_str, "%Y-%m-%d")
     return f"{d.month}/{d.day}/{d.strftime('%y')}"
 
-# ── venue short name ─────────────────────────────────────────────────────────────────────────
-VENUE_SHORT = {
-    "Lincoln Theatre, Washington, DC, USA":                         "Lincoln Theatre (DC)",
-    "The Hamilton Live, Washington, DC, USA":                       "Hamilton Live (DC)",
-    "9:30 Club, Washington, DC, USA":                               "9:30 Club (DC)",
-    "The Anthem, Washington, DC, USA":                              "The Anthem (DC)",
-    "The Birchmere, Alexandria, VA, USA":                           "Birchmere (VA)",
-    "Rams Head On Stage, Annapolis, MD, USA":                       "Rams Head (MD)",
-    "Wolf Trap Farm Park (Filene Center), Vienna, VA, USA":         "Wolf Trap (VA)",
-    "Wolf Trap Farm Park (The Barns), Vienna, VA, USA":             "Wolf Trap Barns (VA)",
-    "The Fillmore Silver Spring, Silver Spring, MD, USA":           "Fillmore Silver Spring (MD)",
-    "Warner Theatre, Washington, DC, USA":                          "Warner Theatre (DC)",
-    "The Collective Encore, Columbia, MD, USA":                     "Collective Encore (MD)",
-    "Pearl Street Warehouse, Washington, DC, USA":                  "Pearl Street Warehouse (DC)",
-    "Jammin Java, Vienna, VA, USA":                                 "Jammin' Java (VA)",
-    "Songbyrd Music House, Washington, DC, USA":                    "Songbyrd (DC)",
-    "The Atlantis, Washington, DC, USA":                            "The Atlantis (DC)",
-    "Capital One Hall, Tysons Corner, VA, USA":                     "Capital One Hall (VA)",
-    "The Vault at Capital One Hall, Tysons Corner, VA, USA":        "The Vault (VA)",
-    "The State Theatre, Falls Church, VA, USA":                     "State Theatre (VA)",
-    "The 8x10, Baltimore, MD, USA":                                 "The 8x10 (Baltimore)",
-    "The Music Center at Strathmore, North Bethesda, MD, USA":      "Strathmore (MD)",
-    "AMP by Strathmore, North Bethesda, MD, USA":                   "Strathmore AMP (MD)",
-    "Black Cat (Mainstage), Washington, DC, USA":                   "Black Cat (DC)",
-    "Merriweather Post Pavilion, Columbia, MD, USA":                "Merriweather (MD)",
-    "The Clarice Smith Performing Arts Center, College Park, MD, USA": "Clarice Smith (MD)",
-    "Maryland Hall for the Creative Arts, Annapolis, MD, USA":      "Maryland Hall (MD)",
-    "Maryland Theatre, Hagerstown, MD, USA":                        "Maryland Theatre (MD)",
-    "Publick Playhouse, Landover, MD, USA":                         "Publick Playhouse (MD)",
-    "The Howard Theatre, Washington, DC, USA":                      "Howard Theatre (DC)",
-    "JV's Live Music Room, Falls Church, VA, USA":                  "JV's (VA)",
-    "JV's Restaurant, Falls Church, VA, USA":                       "JV's (VA)",
-    "Richmond Music Hall, Richmond, VA, USA":                       "Richmond Music Hall (VA)",
-    "Union Stage, Washington, DC, USA":                             "Union Stage (DC)",
-    "City Winery, Washington, DC, USA":                             "City Winery (DC)",
-    "The Barns at Wolf Trap":                                       "Wolf Trap Barns (VA)",
-    "DC9, Washington, DC, USA":                                     "DC9 (DC)",
-    "Color Burst Park, Columbia, MD, USA":                          "Color Burst Park (MD)",
-    "Bethesda Theater, Bethesda, MD, USA":                          "Bethesda Theatre (MD)",
-    "Hub City Vinyl, Hagerstown, MD, USA":                          "Hub City Vinyl (MD)",
-    "Columbia Art Center, Columbia, MD, USA":                       "Columbia Art Center (MD)",
-    "Sixth & I Historic Synagogue, Washington, DC, USA":            "Sixth & I (DC)",
-    "Filene Center at Wolf Trap, Vienna, VA, USA":                  "Wolf Trap (VA)",
-    # live_shows_current.tsv uses short venue names directly
-    "Rams Head On Stage":                                           "Rams Head (MD)",
-    "Hamilton Live":                                                "Hamilton Live (DC)",
-    "The Birchmere":                                                "Birchmere (VA)",
-    "Jammin' Java":                                                 "Jammin' Java (VA)",
-    "Collective Encore":                                            "Collective Encore (MD)",
-    "9:30 Club":                                                    "9:30 Club (DC)",
-    "Wolf Trap Filene Center":                                      "Wolf Trap (VA)",
-    "Warner Theatre":                                               "Warner Theatre (DC)",
-}
+# ── venue short name (#189: data/venues.tsv + data/venue_aliases.tsv) ───────────────────────
+# The old hardcoded VENUE_SHORT dict moved to shared data. Resolution chain matches
+# app.js (_venueKey / shortVenueName) and scripts/check_box_office.py:
+#   first-comma-truncate -> key-fold (case, leading "The", punctuation) -> alias -> canonical
+# Short Name column (blank = canonical name) supplies the display name; the (VA)/(DC)/(MD)
+# tag is derived from the venues.tsv Address column's state. Missing files degrade to
+# plain first-comma truncation, same as before.
+VENUES_TSV        = "venues.tsv"
+VENUE_ALIASES_TSV = "venue_aliases.tsv"
+
+
+def _venue_key(v):
+    s = re.sub(r"^the\s+", "", (v or "").lower())
+    s = re.sub(r"[^a-z0-9 ]+", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _load_venue_identity():
+    aliases, short, state = {}, {}, {}
+    try:
+        for r in load_tsv(VENUE_ALIASES_TSV):
+            a = _venue_key((r.get("Alias") or "").split(",")[0])
+            c = (r.get("Venue Name") or "").strip()
+            if a and c:
+                aliases[a] = c
+    except FileNotFoundError:
+        pass
+    try:
+        for r in load_tsv(VENUES_TSV):
+            name = (r.get("Venue Name") or "").strip()
+            k = _venue_key(name)
+            if not k:
+                continue
+            short[k] = (r.get("Short Name") or "").strip() or name
+            m = re.search(r",\s*([A-Z]{2})[\s,]", (r.get("Address") or "") + " ")
+            if m:
+                state[k] = m.group(1)
+    except FileNotFoundError:
+        pass
+    return aliases, short, state
+
+
+_VENUE_ALIASES, _VENUE_SHORT, _VENUE_STATE = _load_venue_identity()
+
 
 def venue_short(venue_str):
-    if venue_str in VENUE_SHORT:
-        return VENUE_SHORT[venue_str]
-    parts = venue_str.split(",")
-    return parts[0].strip()
+    base = (venue_str or "").split(",")[0].strip()
+    canonical = _VENUE_ALIASES.get(_venue_key(base), base)
+    k = _venue_key(canonical)
+    name = _VENUE_SHORT.get(k, canonical)
+    st = _VENUE_STATE.get(k)
+    return f"{name} ({st})" if st else name
 
-# ── playlist title generation ────────────────────────────────────────────────────────────────
+
 def make_playlist_title(headliner, venue_str, date_str):
     name = re.sub(r'\s*"[^"]+"\s*', ' ', headliner).strip()
     return f"{name} LIVE @ {venue_short(venue_str)} {format_date_short(date_str)}"
