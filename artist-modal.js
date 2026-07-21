@@ -106,7 +106,9 @@ function amHatUrl(){
 function amDays(date){var d=Date.parse(date);if(isNaN(d))return null;return Math.ceil((d-Date.now())/86400000);}
 function amYear(d){var m=(d||'').match(/(\d{4})/);return m?m[1]:'';}
 function amCap(s){s=s||'';return s.charAt(0).toUpperCase()+s.slice(1);}
-function amVenueShort(v){return(v||'').split(',')[0].trim();}
+// #189 — delegate to app.js's shared venue resolution (aliases + Short Name);
+// fall back to plain truncation if app.js isn't loaded.
+function amVenueShort(v){return typeof shortVenueName==='function'?shortVenueName(v):String(v||'').split(',')[0].trim();}
 
 // Row-local context from the already-loaded show arrays.
 function amRowContext(key){
