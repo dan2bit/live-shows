@@ -593,6 +593,15 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var msgArtist=rows[_pfi]['Artist']||'show';
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
+    } else if(fileKey==='fasttrack'){
+      var fd=await ghFetch(FAST_TRACK_PATH);
+      var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+      var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
+      var rows=parseFastTrack(raw);
+      rows[rowIdx][field]=newVal;fastTrackRows[rowIdx][field]=newVal;
+      var msgArtist=rows[rowIdx]['Artist']||'artist';
+      var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+FAST_TRACK_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'fast_track: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeFastTrack(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
+      if(!res.ok)throw new Error(await res.text());
     } else if(fileKey.startsWith('history:')){
       var yr=parseInt(fileKey.split(':')[1]);
       var histPath='data/history/'+yr+'.tsv';
