@@ -323,6 +323,21 @@ function ticketLabel(access){
   if(a.includes('paper'))return['PAPER',true];if(a.includes('freshtix'))return['Freshtix',false];
   return access?[access.split(' ')[0],false]:[null,false];
 }
+// #186 — 🏣 badge is driven by the explicit Box Office flag on Buy/Choose potentials
+// plus a venue match against the upcoming row, not by guessing at note phrasing.
+// Venue keys fold case, a leading "The", and punctuation ("Birchmere" == "The
+// Birchmere"); differently-worded venue names won't match — keep names consistent.
+function _venueKey(v){return String(v||'').toLowerCase().replace(/^the\s+/,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
+function _boxOfficeVenueKeys(){
+  var s={};
+  potentialRows.forEach(function(r){
+    if((r['Box Office']||'').trim().toUpperCase()!=='Y')return;
+    var dec=(r['Decision']||'').toLowerCase();
+    if(!(dec.indexOf('buy')===0||dec.indexOf('choose')===0))return;
+    var k=_venueKey(r['Venue']);if(k)s[k]=1;
+  });
+  return s;
+}
 function buildBadges(row){
   if(!row['Ticket Access']&&!row['Face Value (per ticket)'])return'';
   var notes=(row['Notes / Memories']||'').toLowerCase(),pvt=(row['Private Notes']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+pvt+' '+seat+' '+access;
@@ -332,7 +347,7 @@ function buildBadges(row){
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
   if(!isVip&&!isWT&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
-  if(((row['Notes / Memories']||'')+(row['Private Notes']||'')).toLowerCase().includes('box office'))badges.push('<span class="badge badge-boxoffice">🏣 BOX OFFICE</span>');
+  if(_boxOfficeVenueKeys()[_venueKey(row['Venue Name'])])badges.push('<span class="badge badge-boxoffice" title="A flagged potential at this venue — buy at the box office while you\'re there">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
@@ -1124,6 +1139,7 @@ function renderPotentialRowAuthed(r,gi){
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
   if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
+  if((r['Box Office']||'').trim().toUpperCase()==='Y')ph+=' <span title="Buy at the box office — not online (#186)">🏣</span>';
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
