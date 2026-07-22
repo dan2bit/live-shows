@@ -222,7 +222,12 @@ async function ghFetch(path,opts,owner,repo){
   var _ref=_dataRef();   // #89: reads may target a preview branch (public repo only)
   if(_ref&&(owner||OWNER)===OWNER&&(repo||REPO)===REPO)url+='?ref='+encodeURIComponent(_ref);
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
-  if(!res.ok)throw new Error('GitHub API '+res.status+': '+res.statusText);
+  if(!res.ok){
+    var _em='GitHub API '+res.status+': '+res.statusText;
+    try{var _eb=await res.json();if(_eb&&_eb.message&&_eb.message!=='Not Found')_em+=' — '+_eb.message;}catch(e){}
+    if(_ref)_em+=' (dataref='+_ref+')';
+    throw new Error(_em);
+  }
   return res.json();
 }
 function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,''))));
@@ -738,6 +743,8 @@ function renderHistoryYear(yr){
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
 function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+// Error twin of hatLoadingHtml — same centered layout, static hat (no pulse), red message.
+function hatErrorHtml(msg){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img hat-static" src="'+_assetUrl(_bi)+'" alt=""><div class="error-msg" style="padding:0;text-align:center">'+esc(msg)+'</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
@@ -1437,7 +1444,7 @@ async function loadData(){
     await loadGoalData();
     renderShows();renderPotential();
     document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
+  }catch(e){var msg=hatErrorHtml('Error: '+e.message);document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
 }
 if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn').classList.add('authed');}
 var defaultTab='shows';
