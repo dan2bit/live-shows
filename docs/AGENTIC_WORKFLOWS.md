@@ -2,6 +2,9 @@
 
 > **Audience:** This document is Dan-specific and not part of the forkable template. It describes how agentic AI (Claude, via claude.ai Projects with MCP tool access) is used to manage the live-shows dataset. It is written as an annotated architecture reference for technically inclined forkers who want to build similar workflows — the patterns are general even when the specifics are Dan's.
 
+The issue numbers and incident history behind these designs are logged in
+[`ISSUE_LOG.md`](ISSUE_LOG.md).
+
 ---
 
 ## Overview
@@ -34,8 +37,12 @@ live-shows/ (public)
     venues.tsv                ← venue metadata
     recommend_aliases.tsv     ← surface form overrides
     recommend_index.json      ← generated lookup index
+    artist_modal_index.json   ← generated artist-modal payload
+    artist_spotify.json       ← Spotify/last.fm enrichment cache
     history/                  ← year TSVs (2021–2025)
     setlists/                 ← multi-setlist JSON (by year)
+    show_goals/               ← goal eligibility files + signature event logs
+                                (see docs/GOALS_SPEC.md)
 
 live-shows-private/ (private repo — dan2bit/live-shows-private)
   current_private.tsv         ← cost/seat/qty per show
@@ -81,7 +88,7 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 ### Routine 2 — Post-show notes
 
 **Trigger:** Dan sends post-show email to rhbl
-**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `autograph_books_combined.tsv` (book) / `hat_signatures.tsv` (hat)
+**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `data/show_goals/book_signatures.tsv` (book) / `data/show_goals/hat_signatures.tsv` (hat)
 **Key rules:** spending.tsv write is mandatory even if all zeros
 
 ### Routine 3 — Ticket alert newsletter
@@ -127,7 +134,7 @@ The `recommend.js` frontend allows visitors to submit artist or show recommendat
 Triggered by: code changes, PR reviews, issue work
 
 **Data sources read:** `data/live_shows_current.tsv`, `data/live_shows_potential.tsv`, `data/fast_track.tsv`, `data/venues.tsv`
-**Code files:** `index.html`, `app.js`, `recommend.js`, `styles.css`, `scripts/`
+**Code files:** `index.html`, `app.js`, `recommend.js`, `artist-modal.js`, `styles.css`, `scripts/`
 
 Key safety rule: always fetch live file from repo before patching; show diff before committing; verify line count reduction < 10% before pushing any JS/CSS file.
 
@@ -137,7 +144,7 @@ Key safety rule: always fetch live file from repo before patching; show diff bef
 
 Triggered by: artist research, follow tier decisions, discovery workflows, architecture planning
 
-**Data sources read:** `live_shows_history.tsv`, `live_shows_potential.tsv`, `artists.tsv`, `tools/research/follows/` directory
+**Data sources read:** `data/history/*.tsv`, `data/live_shows_potential.tsv`, `data/artists.tsv`, `tools/research/follows/` directory
 **Data written:** Claude's memory system (persistent cross-session summaries), `tools/research/follows/new_artist_research.tsv`
 
 Strategy sessions use web search and Claude in Chrome for artist discovery (Gnoosic, festival lineups, award nominees).
@@ -161,6 +168,13 @@ the `push` trigger on `staging` and therefore does **not** auto-promote. After a
 `push_files` call, follow up with a single-file `create_or_update_file` nudge commit
 to trigger promotion — or use sequential `create_or_update_file` calls instead.
 
+**In-page UI writes also ride `staging`:** the authenticated browser editor
+(decision changes, notes edits, revokes, config saves) reads `site.data_branch`
+from `config.yaml` via `dataBranch()` in `app.js` and targets that branch in
+every public-repo PUT, so in-page writes flow through the same
+staging → guard → auto-promote pipeline. Private sidecar writes are unaffected —
+they target the private repo's `main` directly.
+
 Private sidecar TSVs (`dan2bit/live-shows-private`) are committed directly to that
 repo's `main`. The private repo does not use the staging pipeline.
 
@@ -168,22 +182,23 @@ Full commit-target table: see `tools/playbooks/DATA_WRITE_PROTOCOLS.md`.
 
 ### CI workflows
 
-| Workflow | Trigger | Action |
-|---|---|---|
-| `private-data-guard` | any push / PR | Reject `*_private.tsv`, `*_caps.tsv`, `live-shows-private/` paths + private-schema content sniff |
-| `auto-promote` | push to `staging` | Guard check → fast-forward `main` via deploy key |
-| `validate-current` | `data/live_shows_current.tsv` | Schema + sentinel check |
-| `potentials-maintenance` | `data/live_shows_potential.tsv` or `data/live_shows_current.tsv` | Prune past-dated rows, check brackets |
-| `recommend-index` | source TSVs or `scripts/build_recommend_index.py` | Regenerate `data/recommend_index.json` |
-| `cache-bust` | `app.js`, `recommend.js`, or `styles.css` | Update `?v=` fingerprints in `index.html` |
-| `close-playlist-issue` | issue comment containing YouTube playlist URL | Write URL to `data/live_shows_current.tsv` |
+The full, current catalog — triggers, behavior, and conventions — lives in
+[`.github/workflows/README.md`](../.github/workflows/README.md). Summary:
 
-All bot commits use `[skip ci]`. All bot workflows use `git pull --rebase` before push
-to prevent bot-vs-bot races.
+| Group | Workflows |
+|---|---|
+| Pipeline & gating | `private-data-guard`, `auto-promote` |
+| Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
+| Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
+| Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos` |
 
-**`cache-bust` note:** fires on any of the three JS/CSS files — not just `app.js`.
-After any cache-bust run, re-fetch `index.html`'s blob SHA before any subsequent
-`index.html` commit.
+Bot commits do **not** use `[skip ci]` — auto-promote is wanted; retrigger loops
+are prevented by excluding each bot's output file from its own trigger paths.
+All bot pushes rebase onto `staging` before pushing to prevent bot-vs-bot races.
+
+**`cache-bust` note:** fires on any of the four JS/CSS files (`app.js`,
+`recommend.js`, `artist-modal.js`, `styles.css`). After any cache-bust run,
+re-fetch `index.html`'s blob SHA before any subsequent `index.html` commit.
 
 ### PR strategy
 
@@ -192,11 +207,12 @@ Two lanes, decided by change depth:
 **Staging auto-promote lane** — use for:
 - TSV and data file writes (all routines)
 - `index.html` changes
-- `app.js` / `styles.css` / `recommend.js` typo fixes, config additions, and
-  single-function changes where the full diff is reviewed in conversation before commit
+- `app.js` / `styles.css` / `recommend.js` / `artist-modal.js` typo fixes, config
+  additions, and single-function changes where the full diff is reviewed in
+  conversation before commit
 
 **PR branch lane** — use for:
-- `app.js` logic changes spanning multiple functions or introducing new behavior
+- JS logic changes spanning multiple functions or introducing new behavior
 - All `.py` and `.sh` scripts (Dan merges)
 - Any change where a staging rollback would be disruptive
 
@@ -204,11 +220,11 @@ Two lanes, decided by change depth:
 manually by Dan. When a PR branch is needed, state that clearly and wait for Dan to
 create it before proceeding.
 
-A long-running `dev` branch was considered (relevant to the `?dataref` /
-`site.data_branch` override design on issue #89) and **rejected as not useful at this
-stage of the project** (2026-06-30). The two-branch model above (`staging` → `main`)
-stands. #89's override design proceeds against the transient/PR-branch model described
-in `PR strategy` above, not a long-running integration branch.
+A long-running `dev` branch was considered and **rejected as not useful at this
+stage of the project** (see `ISSUE_LOG.md`). The two-branch model above
+(`staging` → `main`) stands; the `?dataref` / `site.data_branch` override design
+proceeds against the transient/PR-branch model described in `PR strategy` above,
+not a long-running integration branch.
 
 ---
 
