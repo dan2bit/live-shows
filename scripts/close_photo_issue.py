@@ -20,7 +20,15 @@ The file's UTF-8 BOM header is preserved. Columns written:
     Caption  "[Artist] [(again)] @ [Venue] M/D/YY"  — "(again)" when the artist
              already appears somewhere in the file
 
-Idempotent: if the share link's /photo/<ID> is already present, no change is made.
+Additionally mirrors the share link into the matching live_shows_current.tsv
+row's Photo URL column (the badge/affinity photo credit reads the show row,
+not artist-photos.tsv). Row match is show-date + goal_norm(artist) so billing
+drift ("& " vs "and") doesn't orphan the write; an existing different link is
+never clobbered; no-match is a warning, not a failure. History-year shows are
+out of scope (legacy/backfill only).
+
+Idempotent: if the share link's /photo/<ID> is already present, the append is
+skipped but the show-row mirror still runs (heals a half-applied state).
 
 Album-needed check (#117): after appending, the artist's photographed-show count is
 recomputed from the BUILT artist index (data/artist_modal_index.json — whose universe
@@ -47,6 +55,7 @@ from name_forms import goal_norm
 PHOTOS_PATH = Path("data/show_goals/artist-photos.tsv")
 ALBUMS_PATH = Path("data/show_goals/artist-albums.tsv")
 INDEX_PATH = Path("data/artist_modal_index.json")
+CURRENT_PATH = Path("data/live_shows_current.tsv")
 
 # Photo: [Artist] — [YYYY-MM-DD] ([Venue])   (em dash or hyphen as the separator)
 TITLE_RE = re.compile(
@@ -106,6 +115,46 @@ def album_check(artist, iso_date):
     return None
 
 
+def update_current_row(artist, iso, link):
+    """#193: mirror the share link into the matching live_shows_current.tsv row's
+    Photo URL (the last column — short rows from trailing-tab stripping are padded
+    back to full width, which also restores the columns on write). goal_norm
+    matching absorbs billing drift ("&" vs "and"). Never clobbers a different
+    existing link. Returns a status line for the workflow log."""
+    if not CURRENT_PATH.exists():
+        return f"WARN: {CURRENT_PATH} not found - Photo URL not written"
+    raw = CURRENT_PATH.read_text(encoding="utf-8")
+    lines = raw.split("\n")
+    header = lines[0].split("\t")
+    try:
+        di = header.index("Show Date")
+        ai = header.index("Artist")
+        pi = header.index("Photo URL")
+    except ValueError:
+        return "WARN: live_shows_current.tsv header missing expected columns - Photo URL not written"
+    want = goal_norm(artist)
+    for i in range(1, len(lines)):
+        if not lines[i].strip():
+            continue
+        cells = lines[i].split("\t")
+        if len(cells) < len(header):
+            cells += [""] * (len(header) - len(cells))
+        if cells[di].strip() != iso or goal_norm(cells[ai]) != want:
+            continue
+        cur = cells[pi].strip()
+        if cur == link:
+            return "Photo URL already set on the show row; no change."
+        if cur not in ("", "-"):
+            return (f"WARN: show row {iso} / {cells[ai]} already carries a different "
+                    f"Photo URL - left unchanged.")
+        cells[pi] = link
+        lines[i] = "\t".join(cells)
+        CURRENT_PATH.write_text("\n".join(lines), encoding="utf-8")
+        return f"Photo URL written to show row: {iso} / {cells[ai]}"
+    return (f"WARN: no matching live_shows_current row for {iso} / {artist} "
+            f"(history-year show or key drift) - Photo URL not written")
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print(f"Usage: {sys.argv[0]} <issue_title> <share_link>", file=sys.stderr)
@@ -133,6 +182,7 @@ def main() -> int:
     pid = PHOTO_ID_RE.search(link)
     if pid and pid.group(1) in raw:
         print("Photo already present (share-link id found in file); no change.")
+        print(update_current_row(artist, iso, link))
         return 0
 
     y, mo, d = (int(x) for x in iso.split("-"))
@@ -147,6 +197,8 @@ def main() -> int:
         raw += "\n"
     PHOTOS_PATH.write_text(raw + row + "\n", encoding="utf-8")
     print(f"Appended row: {row}")
+
+    print(update_current_row(artist, iso, link))
 
     note = album_check(artist, iso)
     if note:
