@@ -21,6 +21,8 @@ An optional layer on top of the history: hat signatures, autograph books, and ar
 ### Spend and Budget Management
 An optional, separate private sidecar repo records actual spending on and at shows — potential ticket prices are public; actual spend, seats, and quantities are not. Requires PAT authorization.
 
+*Detailed Data Schema documentation for the tsv file storage layer: [`docs/PROJECT.md`](docs/PROJECT.md)**
+
 ### Recommendation Intake
 Allows visitors to submit 1 or 2 recommendations in a day, which get reviewed in the github issue queue.
 
