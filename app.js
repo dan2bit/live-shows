@@ -1337,7 +1337,7 @@ async function loadTourHere(){
     fastTrackRows=parseFastTrack(raw);
     renderTourHere();
   }catch(e){
-    document.getElementById('tourhereContent').innerHTML='<div class="error-msg">Error loading fast_track.tsv: '+esc(e.message)+'</div>';
+    document.getElementById('tourhereContent').innerHTML=hatErrorHtml('Error loading fast_track.tsv: '+e.message);
   }
 }
 
