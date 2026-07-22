@@ -17,7 +17,10 @@ on:
       - data/live_shows_potential.tsv
       - data/seen_with.tsv
       - data/history/**
-      - data/show_goals/autograph_books_combined.tsv
+      - data/show_goals/autograph_books_eligibility.tsv
+      - data/show_goals/hat_eligibility.tsv
+      - data/show_goals/hat_signatures.tsv
+      - data/show_goals/book_signatures.tsv
       - data/show_goals/artist-albums.tsv
       - data/artist_spotify.json
       - data/recommend_aliases.tsv
