@@ -19,6 +19,7 @@ import os
 import re
 import unicodedata
 from datetime import datetime, timezone
+from urllib.parse import quote
 
 import yaml
 
@@ -511,7 +512,11 @@ def build(root):
             "youtube": yt,
             "lastfm": clean(lf.get("url")),
             "musicbrainz": f"https://musicbrainz.org/artist/{mbid}" if mbid else None,
-            "bandsintown": f"https://www.bandsintown.com/search?query={disp.replace(' ', '+')}",
+            # Vanity path resolves to the canonical /a/{id} artist page; unknown
+            # artists fall through to the bandsintown.com homepage (verified
+            # 2026-07-21; /search?query= and /artist/<name> are both broken —
+            # they ignore the query and redirect).
+            "bandsintown": f"https://www.bandsintown.com/{quote(disp)}",
             "seated": None,
             "setlistfm": f"https://www.setlist.fm/search?query={disp.replace(' ', '+')}",
         }
