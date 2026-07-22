@@ -16,7 +16,7 @@ Enables calendar management, driving & parking directions, prevents double or de
 Aggregates setlist.fm links, artist photos, bootleg videos, badges and personal show notes for all shows since the pandemic of 2020-2021. Includes a summary card for each artist, caching and normalizing information from last.fm, spotify, musicbrainz.
 
 ### Show Goals and Badges
-An optional layer on top of the history: hat signatures, autograph books, and artist photo albums tracked as event logs, rendered as badges and gauges on the artist summary cards.
+An optional layer on top of the history: hat signatures, autograph books, and artist photo albums tracked as event logs, rendered as badges and gauges on the artist summary cards. Spec: [`docs/GOALS_SPEC.md`](docs/GOALS_SPEC.md).
 
 ### Spend and Budget Management
 An optional, separate private sidecar repo records actual spending on and at shows — potential ticket prices are public; actual spend, seats, and quantities are not. Requires PAT authorization.
@@ -48,4 +48,4 @@ Includes an optional [d3 forceSimulation graph visualization](https://dan2bit.gi
 
 ### Agentic Playbooks
 
-In `tools/playbooks` - a handful of bespoke, *ymmv* automation workflow playbooks for site data management, inbox monitoring, calendar management and artist discovery.
+In `tools/playbooks` - a handful of bespoke, *ymmv* automation workflow playbooks for site data management, inbox monitoring, calendar management and artist discovery. Architecture reference: [`docs/AGENTIC_WORKFLOWS.md`](docs/AGENTIC_WORKFLOWS.md).
