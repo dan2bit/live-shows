@@ -4,7 +4,8 @@ name: Close photo issue
 # goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to staging
 # would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
 # fast-forward main. Triggered by a comment carrying the Google Photos share link
-# on a "Photo:" issue.
+# on a "Photo:" issue. #193: the script also mirrors the share link into the
+# matching live_shows_current.tsv row's Photo URL, so both files ride one commit.
 
 on:
   issue_comment:
@@ -63,7 +64,7 @@ jobs:
           print(f"share_link={link}")
           PYEOF
 
-      - name: Append row to artist-photos.tsv
+      - name: Append row to artist-photos.tsv + mirror Photo URL to show row
         id: append
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
@@ -71,11 +72,11 @@ jobs:
         run: |
           python scripts/close_photo_issue.py "$ISSUE_TITLE" "$SHARE_LINK"
 
-      - name: Commit updated TSV to staging
+      - name: Commit updated TSVs to staging
         run: |
-          git add data/show_goals/artist-photos.tsv
+          git add data/show_goals/artist-photos.tsv data/live_shows_current.tsv
           if git diff --cached --quiet; then
-            echo "data/show_goals/artist-photos.tsv unchanged - nothing to commit."
+            echo "No TSV changes - nothing to commit."
           else
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
