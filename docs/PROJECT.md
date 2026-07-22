@@ -36,23 +36,32 @@ Financial and seat detail (Seat Info, Ticket Quantity, Face Value, Fees, Total C
 
 **Known issue — trailing-tab strip:** the GitHub MCP `create_or_update_file` tool strips trailing tabs from each line, so rows that end in empty columns can arrive short. The `parseTsv()` function in `index.html` compensates at parse time by padding/realigning rows back to the full column count.
 
-### live_shows_potential.tsv — 18 columns (public schema)
+### live_shows_potential.tsv — 19 columns (public schema)
 
-`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes | BIT URL`
+`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes | BIT URL | Box Office`
 
 - **Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Sell`, `Pass`. Never leave Decision blank — use `Choose` for undecided.
 - **Sort:** Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every change.
 - **Prev/Next Show brackets:** reference only purchased upcoming shows (status `upcoming` in `live_shows_current.tsv`) — never potentials, never attended shows. Re-check on every purchase or move to attended.
 - **`Sell`** is read-only — set when a confirmed ticket is listed for resale; not editable via the index.html dropdown.
+- **Tier** uses the follows_master vocabulary (`Strong`, `Medium-Strong`, `Medium`, `Lower`/`Low`) — cross-reference `tools/research/follows/follows_master.tsv` rather than writing `TBD` for artists already tiered there.
+- **Pricing is public here by design:** what a potential ticket *costs* (Face Price, Fees Notes) is public; what was actually *spent* on purchased shows is private.
 - **No Private Notes column** — private notes go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by `Artist` + `Date`.
 
-### artists.tsv
+### artists.tsv — 9 columns
 
-One row per artist: Times Seen, First Seen, Most Recent Seen, YouTube Channel, Spotify URL, Photo (Y), Book Autograph (Y), Hat Autograph (Y), VIP Count.
+`Artist | Times Seen | First Seen | Most Recent Seen | YouTube Channel | Spotify URL | Book Autograph | VIP Count | Via`
+
+- **Via** attributes combined-bill sightings (e.g. Joe Satriani via `SatchVai Band`, Taj Mahal via `TajMo`) — the builder borrows the bill's sightings for the component artist.
+- Photo and hat completions are **not** columns here — they derive from Photo URLs on show rows and `data/show_goals/hat_signatures.tsv` respectively (see `docs/GOALS_SPEC.md`).
 
 ### venues.tsv
 
 One row per venue: parking, transit, seating, box office hours, notes. Canonical source for venue defaults.
+
+### data/show_goals/
+
+Goal eligibility files (`hat_eligibility.tsv`, `autograph_books_eligibility.tsv`) and signature event logs (`hat_signatures.tsv`, `book_signatures.tsv`), plus photo album mappings (`artist-albums.tsv`, `artist-photos.tsv`). Schemas and the attribution vocabulary are specified in `docs/GOALS_SPEC.md`.
 
 ---
 
@@ -86,7 +95,7 @@ Throughout this project, private files are written as **`dan2bit/live-shows-priv
 - **Hat signing:** female musicians only. Do not infer gender across all `artists.tsv` entries — apply only when context makes it clear (e.g., during show processing or explicit mention).
 - **Autograph book check:** required before creating any new calendar event.
 - **Artist Interaction values:** `Photo`, `Autograph`, `Both`, or blank.
-- **`HAT:` flag:** prefix Notes / Memories in upcoming and potential rows to trigger the 🎩 badge in `index.html`.
+- **Goal badges are config-driven** from `data/show_goals/` event logs and eligibility files (see `docs/GOALS_SPEC.md`) — the site no longer parses note-strings. `HAT:` / `BRING RHBS` / `BRING APS` prefixes in Notes remain as inert human reminders only (and in calendar event descriptions).
 
 ---
 
