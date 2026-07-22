@@ -7,6 +7,7 @@ site:
   private_owner: dan2bit
   private_repo: live-shows-private
   data_branch: staging         # branch for in-page TSV/config writes; omit or set 'main' if no staging pipeline
+  preview_data_branch: ""      # #89 read-side preview: reads public TSVs from this branch; ?dataref=<branch> on the URL wins; empty = default. Writes stay on data_branch.
   # Brand/identity (#69 phase 3). Asset paths below are RELATIVE to repo root and are
   # expanded in app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply
   # time, because relative asset URLs 404 on this project-pages (github.io) setup. A

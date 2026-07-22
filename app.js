@@ -105,6 +105,14 @@ function applyConfig(cfg){
 // fork that omits the features block — or any single key — keeps full behavior.
 function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
+// #89 read-side preview override: ?dataref=<branch> (URL) > site.preview_data_branch
+// (config) > '' = default branch. READS ONLY — write PUT bodies stay on dataBranch()
+// (the staging pipeline); the two must never be conflated. Public repo only — the
+// private sidecar always resolves from its own default branch.
+function _dataRef(){
+  try{var q=new URLSearchParams(location.search).get('dataref');if(q)return q.trim();}catch(e){}
+  return(SITE_CONFIG.site&&SITE_CONFIG.site.preview_data_branch)||'';
+}
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
 // #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
@@ -211,8 +219,15 @@ async function ghFetch(path,opts,owner,repo){
   var headers={'Accept':'application/vnd.github.v3+json'};
   if(pat)headers['Authorization']='token '+pat;
   var url='https://api.github.com/repos/'+(owner||OWNER)+'/'+(repo||REPO)+'/contents/'+path;
+  var _ref=_dataRef();   // #89: reads may target a preview branch (public repo only)
+  if(_ref&&(owner||OWNER)===OWNER&&(repo||REPO)===REPO)url+='?ref='+encodeURIComponent(_ref);
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
-  if(!res.ok)throw new Error('GitHub API '+res.status+': '+res.statusText);
+  if(!res.ok){
+    var _em='GitHub API '+res.status+': '+res.statusText;
+    try{var _eb=await res.json();if(_eb&&_eb.message&&_eb.message!=='Not Found')_em+=' — '+_eb.message;}catch(e){}
+    if(_ref)_em+=' (dataref='+_ref+')';
+    throw new Error(_em);
+  }
   return res.json();
 }
 function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,''))));
@@ -770,6 +785,8 @@ function renderHistoryYear(yr){
     +'<tbody>'+tbody+'</tbody></table></div>';
 }
 function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
+// Error twin of hatLoadingHtml — same centered layout, static hat (no pulse), red message.
+function hatErrorHtml(msg){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img hat-static" src="'+_assetUrl(_bi)+'" alt=""><div class="error-msg" style="padding:0;text-align:center">'+esc(msg)+'</div></div>';}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
@@ -1471,7 +1488,7 @@ async function loadData(){
     await loadVenueIdentity();
     renderShows();renderPotential();
     document.getElementById('fetchedAt').textContent='data fetched as of '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  }catch(e){var msg='<div class="error-msg">Error: '+esc(e.message)+'</div>';document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
+  }catch(e){var msg=hatErrorHtml('Error: '+e.message);document.getElementById('showsContent').innerHTML=msg;document.getElementById('potContent').innerHTML=msg;}
 }
 if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn').classList.add('authed');}
 var defaultTab='shows';
