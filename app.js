@@ -105,6 +105,14 @@ function applyConfig(cfg){
 // fork that omits the features block — or any single key — keeps full behavior.
 function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
+// #89 read-side preview override: ?dataref=<branch> (URL) > site.preview_data_branch
+// (config) > '' = default branch. READS ONLY — write PUT bodies stay on dataBranch()
+// (the staging pipeline); the two must never be conflated. Public repo only — the
+// private sidecar always resolves from its own default branch.
+function _dataRef(){
+  try{var q=new URLSearchParams(location.search).get('dataref');if(q)return q.trim();}catch(e){}
+  return(SITE_CONFIG.site&&SITE_CONFIG.site.preview_data_branch)||'';
+}
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
 // #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
@@ -211,6 +219,8 @@ async function ghFetch(path,opts,owner,repo){
   var headers={'Accept':'application/vnd.github.v3+json'};
   if(pat)headers['Authorization']='token '+pat;
   var url='https://api.github.com/repos/'+(owner||OWNER)+'/'+(repo||REPO)+'/contents/'+path;
+  var _ref=_dataRef();   // #89: reads may target a preview branch (public repo only)
+  if(_ref&&(owner||OWNER)===OWNER&&(repo||REPO)===REPO)url+='?ref='+encodeURIComponent(_ref);
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
   if(!res.ok)throw new Error('GitHub API '+res.status+': '+res.statusText);
   return res.json();
