@@ -1,8 +1,12 @@
 # GOALS_SPEC.md
 
-Frozen design for the show-goals system (issue [#85](https://github.com/dan2bit/live-shows/issues/85)).
-This document is the spec that sub-issues #138 (books split), #139 (builder), and #140
-(app.js row badges) implement against. Ratified 2026-07-09 via [#137](https://github.com/dan2bit/live-shows/issues/137).
+Frozen design for the show-goals system — the contract that the goal data files
+under `data/show_goals/`, the index builder (`scripts/build_artist_index.py`),
+and the site's badge rendering implement against. All rollout stages have
+landed; see [Implementation history](#implementation-history).
+
+The issue numbers, ratification dates, and decision records behind this spec
+are logged in [`ISSUE_LOG.md`](ISSUE_LOG.md) (Show-goals system section).
 
 ---
 
@@ -18,8 +22,8 @@ declares where its accomplishment data lives; missing data (absent file, empty c
 uncurated artist) degrades gracefully to `absent` without new builder semantics.
 
 Deleting `data/show_goals/` entirely, or emptying the `show_goals` config list,
-produces a badge-free but fully functional site. This is the exit criterion for the
-#85 umbrella.
+produces a badge-free but fully functional site. This is the system's
+[exit criterion](#exit-criterion).
 
 ---
 
@@ -65,10 +69,10 @@ Fields per entry:
 | `color_bg` | no | Explicit override for the CSS `--<key>-bg` variable. If omitted, derived from `color` via HSL darkening. |
 | `source` | yes | Binding rule; see [Source binding syntax](#source-binding-syntax) |
 | `eligibility` | no | Eligibility file name (without extension) under `data/show_goals/` |
-| `weight` | no | **Obsolete since #165** — ignored (builder warns). Affinity contribution is now uniform per completion event; see [Affinity contribution](#affinity-contribution) |
+| `weight` | no | **Obsolete** — ignored (builder warns). Affinity contribution is now uniform per completion event; see [Affinity contribution](#affinity-contribution) |
 
-The four goals above are the initial set (2026-07-09). A fork may add, remove, or
-edit any entry without code changes.
+The four goals above are the initial set. A fork may add, remove, or edit any
+entry without code changes.
 
 ---
 
@@ -79,8 +83,7 @@ binding — no merging of multiple sources per goal.
 
 ### `event_log:<name>`
 
-Resolves to `data/show_goals/<name>.tsv`. Base schema (hat pattern established
-by #115):
+Resolves to `data/show_goals/<name>.tsv`. Base schema (the hat pattern):
 
 ```
 seq | signer | attribution | show_date | venue | region | photo_ref | legible | confidence | notes
@@ -112,12 +115,12 @@ Example: signer=`Kanene Pipkin`, attribution=`of The Lone Bellow` maps to both
 By contrast, signer=`Rebecca Porter`, attribution=`w/ John Hiatt` maps only to
 `Rebecca Porter` — John Hiatt did not sign, his opener did.
 
-**Amendment note (2026-07-10, during S3 implementation):** the original ratified
-version of this table (2026-07-09, #137) treated `of` and `w/` identically, both
-crediting signer AND band. That specification also disagreed with the pre-existing
-hat implementation, which credited only the band for `of <band>` (dropping the
+**Amendment note (during builder implementation):** the originally ratified
+version of this table treated `of` and `w/` identically, both crediting signer
+AND band. That specification also disagreed with the pre-existing hat
+implementation, which credited only the band for `of <band>` (dropping the
 signer). Both were bugs — the vocabulary above is the corrected form, and the
-builder rewire (S3) implements it uniformly for both hat and book event logs.
+builder implements it uniformly for both hat and book event logs.
 
 ### `column:<name>`
 
@@ -142,18 +145,17 @@ Artist | Eligible | Basis
 ```
 
 The second column header is **`Eligible`** (uniform across goals) — not `Hat Eligible`.
-This is a rename from the current hat file's schema; the semantic content is unchanged.
 
 **Semantics** vary by goal, but the mechanics are shared:
 
-- **Curated eligibility** (hat): `Yes` = "would I try to get this signed?" — hand-curated intent per #115.
+- **Curated eligibility** (hat): `Yes` = "would I try to get this signed?" — hand-curated intent.
 - **Factual eligibility** (book): `Yes` = "is this artist printed in the book?" — book-entry keyed.
   Book files carry additional columns alongside `Eligible` (per-book `In APS`, `APS Page`, `In RHBS`).
 - **Event-log-only goals** (picks, paper setlists): no eligibility file. Universal-null degradation
   applies — the builder emits `eligible: null`, which renders completed-vs-absent only.
 
 Absent-file and universal-null are the same code path (the builder's existing
-degradation from #115); no new semantics are introduced.
+degradation); no new semantics are introduced.
 
 ---
 
@@ -189,13 +191,13 @@ is not defined — these sources describe what happened at shows, not intent abo
 
 ## Affinity contribution
 
-**Amendment (2026-07-14, #165):** the ratified per-goal weighted model
+**Amendment:** the originally ratified per-goal weighted model
 (`G = Σ weight_i × completed_i`, weights summing to 1.0) is replaced by a **flat
 diminishing series over completion events**. Rationale: photo parity with autographs
 without a class taxonomy, and forkability — a fork adding a goal gets affinity
-contribution with zero renormalization and zero code change. The 28-artist
+contribution with zero renormalization and zero code change. A 28-artist
 book-and-hat double-eligibility overlap made the double-base question non-rare;
-see #165 for the full decision record.
+see `ISSUE_LOG.md` for the full decision record.
 
 ```
 G = 1 − d^n        n = total completion events across all goals
@@ -204,15 +206,15 @@ G = 1 − d^n        n = total completion events across all goals
 
 The first completion of *anything* earns `1 − d` (0.6 at the default — the old hat
 weight); the k-th adds `d^(k−1) − d^k`. Order- and type-independent, strictly
-diminishing, asymptotic below 1.0 (the earned-max vs #116-starred distinction is
-preserved).
+diminishing, asymptotic below 1.0 (the earned-max vs explicit-favorite (starred)
+distinction is preserved).
 
 **Completion events are counted per event, not per goal-boolean:**
 
 | Source type | Event count |
 |---|---|
 | `event_log` | one per log row crediting the artist (attribution vocabulary applies). Book ×2 — APS and RHBS rows — is two events; two band members signing `of <band>` credits the band twice. |
-| `column:Photo URL` | distinct photographed shows in the artist's deduped `show_log` (the #117 badge metric — never `times_seen`) |
+| `column:Photo URL` | distinct photographed shows in the artist's deduped `show_log` (the photo badge metric — never `times_seen`) |
 | other `column:` / `interaction:` | **0 for now** — per-artist event counts for these sources aren't derived by the builder; they render badges only. Extend when a goal needs it. |
 
 **`weight` field is obsolete.** Ignored by the builder, which prints a warning if
@@ -229,50 +231,50 @@ score = 0.35·T + 0.40·Seff + 0.25·G
 
 ---
 
-## Rollout ordering
+## Implementation history
 
-Strict S2 → S3 → S4:
+The system shipped in three strict stages (S2 → S3 → S4), all landed. Notes that
+remain load-bearing:
 
-### S2 — Books split (#138)
+### S2 — Books split
 
-- Rename `autograph_books_combined.tsv` → `autograph_books_eligibility.tsv`; header second column becomes `Eligible`; extract `Signed`/`Notes` columns out.
-- New `book_signatures.tsv` mirroring the hat pattern, with the extra `book` column between `attribution` and `show_date`.
-- Backfill dates (research complete per #138: 18 events / 22 rows including attribution expansions).
-- Playbook ride-alongs: `EMAIL_WORKFLOWS.md` book steps, `DATA_WRITE_PROTOCOLS.md` book protocol section and `hat_eligibility` header uniformity note.
+- `autograph_books_combined.tsv` was renamed to `autograph_books_eligibility.tsv`;
+  the second column header became `Eligible`; `Signed`/`Notes` columns were
+  extracted out into the new `book_signatures.tsv` event log (hat pattern, with
+  the extra `book` column). Signature dates were backfilled from research
+  (18 events / 22 rows including attribution expansions).
+- S2 landed together with S3 as a single atomic change (the delete of the
+  combined file and the builder rewire that stops reading it were adjacent
+  commits, squash-merged). The originally-planned S2 compat-read was never
+  implemented — combining the stages made it unnecessary.
 
-**Implementation note:** in PR #141, S2 landed together with S3 as a single unit
-(the delete of the combined file and the builder rewire that stops reading it are
-adjacent commits on the same branch, squash-merged as one atomic change to main).
-The originally-planned S2 compat-read (a temporary union of the two new files
-back into the shape S3 expects) was never implemented — combining S2 and S3
-made it unnecessary.
+### S3 — Builder
 
-### S3 — Builder (#139)
+- Book completion sourcing rewired to `autograph_books_eligibility.tsv`
+  (In APS / APS Page / In RHBS + Eligible flag) plus `book_signatures.tsv`.
+- Uniform attribution parser (`credit_targets`) applied to both hat and book
+  event logs — this also fixed the pre-existing hat bug where `of <band>`
+  credited only the band, dropping the signer.
+- Per-show goal accomplishments baked into each artist's `show_log` entries so
+  S4's row badges join client-side without extra fetches. Only `event_log`
+  sources contribute; column/interaction goals stay per-row.
+- **Fully-generic goal iteration deferred.** Completion tracking still
+  hard-codes the two-goal (hat, book) case — separate `hat_completed` /
+  `book_completed` structures. Generalizing to a single
+  `completed_by_goal[goal_key]` map is a small refactor deferred until a new
+  event-log goal ships.
+- The `artists.tsv` `Hat Autograph` column was retired from the file and the
+  builder read path before this stage landed.
 
-- Consume `show_goals` config for per-goal weights, with fallback to the legacy `badges.affinity.goals_split` dict when `show_goals` is absent or has no weight entries.
-- Implement the [weight sum validator](#affinity-contribution) targeted at `config.yaml → show_goals` weights.
-- Rewire book completion sourcing to `autograph_books_eligibility.tsv` (In APS / APS Page / In RHBS + Eligible flag) plus `book_signatures.tsv` (event log with attribution).
-- Uniform attribution parser (`credit_targets`) applied to both hat and book event logs, per the [Source binding syntax](#source-binding-syntax) vocabulary. This also fixes a pre-existing hat bug where `of <band>` credited only the band, dropping the signer.
-- Bake per-show goal accomplishments into each artist's `show_log` entries so S4's row badges can join client-side without extra fetches. Only `event_log` sources contribute; column/interaction goals stay per-row.
+### S4 — app.js row badges
 
-**Fully-generic goal iteration deferred.** S3 iterates config-declared weights and
-validates their sum, but the completion tracking still hard-codes the two-goal
-(hat, book) case — `hat_completed` set and `book_completed` per-book dict are
-separate structures. Generalizing to a single `completed_by_goal[goal_key]` map
-is a small refactor deferred until photo/video goals ship (which currently require
-S4's row-badge rendering to have visible effect).
-
-**Retired pre-PR:** The `artists.tsv Hat Autograph` column was already removed
-from `artists.tsv` and from the builder read path on `main` before PR #141
-started; nothing left to retire in this PR.
-
-### S4 — app.js row badges (#140)
-
-- Retire `HAT:` / `BRING RHBS` / `BRING APS` string matching at all three sites (`buildBadges` ~lines 298–299; history renders ~765/789).
-- Render row badges from the S1 config list + S3's baked `show_log` events.
-- The `HAT:` / `BRING` note-strings stay in the data as inert human reminders; Routine 1 continues writing `BRING` reminders to calendar descriptions (human-facing, doesn't drive badges).
-
-**No data cleanup required** at any stage — nothing parses the note-strings after S4 lands.
+- Retired `HAT:` / `BRING RHBS` / `BRING APS` note-string matching in
+  `buildBadges` and both history-render sites.
+- Row badges render from the config list + S3's baked `show_log` events.
+- The `HAT:` / `BRING` note-strings stay in the data as inert human reminders;
+  the ticket-receipt inbox routine continues writing `BRING` reminders to
+  calendar descriptions (human-facing, doesn't drive badges). No data cleanup
+  required — nothing parses the note-strings.
 
 ---
 
@@ -283,21 +285,15 @@ started; nothing left to retire in this PR.
   exposes thresholds and colors only, as today.
 - **No per-book row-level badges.** The book row badge shows the artist's overall signed
   state; per-book detail (`In APS` / `APS Page` / `In RHBS` + signed states) remains
-  modal-only via `badges.book_detail` (per #107).
+  modal-only via `badges.book_detail` (part of the frozen index schema).
 - **Icons stay emoji strings.** No icon-path system, no font-icon integration.
 - **No storage of `planned` state.** It's computed at render time from eligibility +
   upcoming + not-yet-completed. There is no `Goal Planned` column anywhere.
 
 ---
 
-## Exit criterion for #85
+## Exit criterion
 
 Deleting `data/show_goals/` **and** emptying `config.yaml → show_goals` yields a
 badge-free but fully functional site. If either condition alone doesn't degrade
 gracefully, the implementation has a bug.
-
----
-
-Related: #85 (umbrella) · #107 (frozen index schema) · #115 (hat_eligibility) ·
-#118 (artist modal builder) · #131 (photo derivation) · #137 (this spec) ·
-#138 (S2) · #139 (S3) · #140 (S4).
