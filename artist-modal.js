@@ -270,6 +270,7 @@ function amLinks(L,spotify){
   if(spotify)add(L.spotify,'Spotify');
   add(L.bandsintown,'Bandsintown');
   add(L.seated,'Seated');
+  add(L.qobuz,'Qobuz');
   if(spotify){add(L.lastfm,'Last.fm');}
   add(L.setlistfm,'setlist.fm');
   if(L.youtube)items.push('<a class="am-link" href="'+esc(amYouTubeUrl(L.youtube))+'" target="_blank">YouTube</a>');
