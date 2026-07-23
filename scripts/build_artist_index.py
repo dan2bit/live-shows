@@ -580,6 +580,11 @@ def build(root):
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        # Alias lookup for the client (norm-space alias -> canonical index key), so
+        # openArtistModal resolves alias-form names ("Trombone Shorty", "X and Y")
+        # the same way the builder's canon() does. Only aliases that resolve to a
+        # built record are emitted. Additive to the frozen schema.
+        "aliases": {a: c for a, c in aliases.items() if c in index},
         "artists": index,
     }
 
