@@ -58,6 +58,7 @@ async function openArtistModal(name){
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
   var key=amNorm(name),rec=(data.artists||{})[key]||null;
+  if(!rec&&data.aliases&&data.aliases[key]){key=data.aliases[key];rec=(data.artists||{})[key]||null;}
   amOpenRec(rec,name,key);
 }
 async function openArtistBySlug(slug){
