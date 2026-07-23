@@ -518,6 +518,11 @@ def build(root):
             # they ignore the query and redirect).
             "bandsintown": f"https://www.bandsintown.com/{quote(disp)}",
             "seated": None,
+            # Qobuz vanity slug redirects to the canonical /interpreter/<slug>/<id>
+            # page; unknown slugs fall through to the shop homepage (verified
+            # 2026-07-23). No ID cache needed; slugify already matches Qobuz's
+            # kebab-case convention.
+            "qobuz": f"https://www.qobuz.com/us-en/interpreter/{slugify(disp)}/download-streaming-albums",
             "setlistfm": f"https://www.setlist.fm/search?query={disp.replace(' ', '+')}",
         }
 
