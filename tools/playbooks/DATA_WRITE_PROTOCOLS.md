@@ -32,6 +32,33 @@ The MCP token can write to **both** `dan2bit/live-shows` (public) and
 
 ---
 
+## Character set — ASCII punctuation only
+
+**Never write curly/typographic punctuation into any data file.** TSV rows, JSON
+values, and issue bodies that feed the pipeline must use ASCII equivalents:
+
+| Use (ASCII) | Not (curly/typographic) |
+|---|---|
+| `'` apostrophe / single quote | `‘` `’` |
+| `"` double quote | `“` `”` |
+| `-` hyphen | `–` en dash, `—` em dash |
+| `...` | `…` ellipsis |
+| `x` (e.g. `seen 2x`) | `×` multiplication sign |
+
+Why: canonical keys and machine-managed columns use ASCII, so a curly variant
+silently orphans a match or gets rewritten by CI. A hand-typed `Daniel Donato’s`
+in a Prev/Next bracket (2026-07-23) was normalized to `Daniel Donato's` by the
+reconciler on the next run — harmless there, but the same mismatch in an Artist
+key would orphan a private-sidecar row or a goal-badge join. Editors and phone
+keyboards autocorrect `'` and `-` to curly forms — paste as plain text and
+sweep the row before committing.
+
+Applies to: the public and private TSVs, `config.yaml`, the JSON index sources,
+and the `Photo:` / `Playlist:` issue titles the close workflows parse. Prose
+docs (`.md`) are exempt — only pipeline-consumed data must stay ASCII.
+
+---
+
 ## Commit targets
 
 | File / type | Branch | Repo |
