@@ -45,7 +45,7 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 ## Workflow 2 — Quarterly Artist Research
 
 **Frequency:** Quarterly (first run Jul 7, 2026)
-**Sources:** Festival lineups, award nominees, Gnoosic
+**Sources:** Festival lineups, award nominees, Gnoosic, Qobuz editorial
 
 ### Purpose
 
@@ -83,6 +83,25 @@ Gnoosic provides artist similarity discovery at `https://www.gnoosic.com/artist/
 2. For each recommended artist, evaluate against taste profile
 3. Check against `tools/research/follows/follows_master.tsv` and `tools/research/follows/new_artist_research.tsv`
 4. Add new discoveries to NAR
+
+#### Qobuz editorial (Qobuzissime + similar-artists)
+
+Qobuz artist pages are server-rendered with a predictable URL — no API or login:
+```
+https://www.qobuz.com/us-en/interpreter/<kebab-slug>/download-streaming-albums
+```
+(unknown slugs land on the shop homepage). Two uses per quarterly run:
+
+1. **Qobuzissime sweep** — Qobuz's editorial award for emerging artists. Browse
+   `https://www.qobuz.com/us-en/awards/qobuz/qobuzissime/download-streaming-albums`
+   (blues filter: append `?ssf[gi]=3`; folk/Americana: `?ssf[gi]=5`). Treat like an
+   award-nominee source: check the five tracking files, add misses to NAR with
+   Signal = `qobuzissime YYYY`. Hit-rate is UNMEASURED — track it for two quarters
+   before giving it curation weight (see the taste profile's curation-weighting table).
+2. **Similar-artists cross-check** — each artist page carries a TiVo similar-artists
+   list. Use it to corroborate last.fm similar-graph candidates: a name surfacing in
+   BOTH graphs from the same seed is a stronger signal than either alone. Do not
+   scrape/store the editorial bio text (licensed TiVo content) — read in session only.
 
 ### NAR row format
 
