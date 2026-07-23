@@ -22,10 +22,12 @@ The file's UTF-8 BOM header is preserved. Columns written:
 
 Additionally mirrors the share link into the matching live_shows_current.tsv
 row's Photo URL column (the badge/affinity photo credit reads the show row,
-not artist-photos.tsv). Row match is show-date + goal_norm(artist) so billing
-drift ("& " vs "and") doesn't orphan the write; an existing different link is
-never clobbered; no-match is a warning, not a failure. History-year shows are
-out of scope (legacy/backfill only).
+not artist-photos.tsv). Row match is show-date + artist, canonicalized through
+recommend_aliases.tsv (the same alias data the recommend/artist-index builders
+use) so billing drift ("X & Y" title vs "X and Y" row) resolves via a data row,
+never a code change. An existing different link is never clobbered; no-match is
+a warning, not a failure. History-year shows are out of scope (legacy/backfill
+only).
 
 Idempotent: if the share link's /photo/<ID> is already present, the append is
 skipped but the show-row mirror still runs (heals a half-applied state).
@@ -56,6 +58,7 @@ PHOTOS_PATH = Path("data/show_goals/artist-photos.tsv")
 ALBUMS_PATH = Path("data/show_goals/artist-albums.tsv")
 INDEX_PATH = Path("data/artist_modal_index.json")
 CURRENT_PATH = Path("data/live_shows_current.tsv")
+ALIASES_PATH = Path("data/recommend_aliases.tsv")
 
 # Photo: [Artist] — [YYYY-MM-DD] ([Venue])   (em dash or hyphen as the separator)
 TITLE_RE = re.compile(
@@ -64,16 +67,27 @@ TITLE_RE = re.compile(
 PHOTO_ID_RE = re.compile(r"/photo/([A-Za-z0-9_-]+)")
 
 
-def load_albums():
-    """goal_norm(Artist) -> Album URL from artist-albums.tsv. Album URL is deliberately
-    NOT unique across rows (shared band albums are legitimate) — no uniqueness check."""
+def load_aliases():
+    """goal_norm(Alias) -> goal_norm(Canonical) from recommend_aliases.tsv (# comment
+    lines and the header skipped). The same alias data build_recommend_index.py and
+    build_artist_index.py canonicalize with — goal_norm alone does NOT equate '&' with
+    'and', so billing variants like "Trombone Shorty and Orleans Avenue" resolve only
+    through their alias row. A new variant is fixed by adding a row there."""
     out = {}
-    if ALBUMS_PATH.exists():
-        for ln in ALBUMS_PATH.read_text(encoding="utf-8").splitlines()[1:]:
+    if ALIASES_PATH.exists():
+        for ln in ALIASES_PATH.read_text(encoding="utf-8").splitlines():
+            if not ln.strip() or ln.lstrip().startswith("#"):
+                continue
             c = ln.split("\t")
-            if len(c) >= 2 and c[0].strip() and c[1].strip():
-                out[goal_norm(c[0])] = c[1].strip()
+            if len(c) >= 2 and c[0].strip() and c[1].strip() and c[0].strip() != "Alias":
+                out[goal_norm(c[0])] = goal_norm(c[1])
     return out
+
+
+def canon(s, aliases):
+    """Alias-aware canonical key for artist matching."""
+    k = goal_norm(s)
+    return aliases.get(k, k)
 
 
 def find_index_record(arts, artist):
@@ -87,6 +101,18 @@ def find_index_record(arts, artist):
             if goal_norm((v or {}).get("name") or "") == key:
                 return v
     return rec
+
+
+def load_albums():
+    """goal_norm(Artist) -> Album URL from artist-albums.tsv. Album URL is deliberately
+    NOT unique across rows (shared band albums are legitimate) — no uniqueness check."""
+    out = {}
+    if ALBUMS_PATH.exists():
+        for ln in ALBUMS_PATH.read_text(encoding="utf-8").splitlines()[1:]:
+            c = ln.split("\t")
+            if len(c) >= 2 and c[0].strip() and c[1].strip():
+                out[goal_norm(c[0])] = c[1].strip()
+    return out
 
 
 def album_check(artist, iso_date):
@@ -118,9 +144,10 @@ def album_check(artist, iso_date):
 def update_current_row(artist, iso, link):
     """#193: mirror the share link into the matching live_shows_current.tsv row's
     Photo URL (the last column — short rows from trailing-tab stripping are padded
-    back to full width, which also restores the columns on write). goal_norm
-    matching absorbs billing drift ("&" vs "and"). Never clobbers a different
-    existing link. Returns a status line for the workflow log."""
+    back to full width, which also restores the columns on write). Artist matching
+    is alias-aware (see load_aliases) so billing drift resolves via
+    recommend_aliases.tsv. Never clobbers a different existing link. Returns a
+    status line for the workflow log."""
     if not CURRENT_PATH.exists():
         return f"WARN: {CURRENT_PATH} not found - Photo URL not written"
     raw = CURRENT_PATH.read_text(encoding="utf-8")
@@ -132,14 +159,15 @@ def update_current_row(artist, iso, link):
         pi = header.index("Photo URL")
     except ValueError:
         return "WARN: live_shows_current.tsv header missing expected columns - Photo URL not written"
-    want = goal_norm(artist)
+    aliases = load_aliases()
+    want = canon(artist, aliases)
     for i in range(1, len(lines)):
         if not lines[i].strip():
             continue
         cells = lines[i].split("\t")
         if len(cells) < len(header):
             cells += [""] * (len(header) - len(cells))
-        if cells[di].strip() != iso or goal_norm(cells[ai]) != want:
+        if cells[di].strip() != iso or canon(cells[ai], aliases) != want:
             continue
         cur = cells[pi].strip()
         if cur == link:
@@ -152,7 +180,8 @@ def update_current_row(artist, iso, link):
         CURRENT_PATH.write_text("\n".join(lines), encoding="utf-8")
         return f"Photo URL written to show row: {iso} / {cells[ai]}"
     return (f"WARN: no matching live_shows_current row for {iso} / {artist} "
-            f"(history-year show or key drift) - Photo URL not written")
+            f"(history-year show, or a billing variant missing from "
+            f"recommend_aliases.tsv) - Photo URL not written")
 
 
 def main() -> int:
