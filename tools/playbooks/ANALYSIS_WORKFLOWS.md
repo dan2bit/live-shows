@@ -131,9 +131,13 @@ Monitor tour page URLs for Fast Track artists — artists who would be immediate
    a. Check the artist’s official tour page URL
    b. Look for DC/MD/VA dates not yet in `live_shows_potential.tsv` or `live_shows_current.tsv`
    c. If a new DMV date is found, surface it as a fast-track buy
-3. Update the tour dates file:
-   - 4. Overwrite the corresponding `tools/research/follows/fast-track-[artist]-tour-dates.tsv`
-   - Note the scrape date in the file header
+3. Update the consolidated tour dates file:
+   - Overwrite `tools/research/web-src/fast-track-tour-dates.tsv` — one file for all
+     fast-track artists, keyed by an `Artist` column (consolidated 2026-07-23; replaced
+     the former per-artist `fast-track-<artist>-tour-dates.tsv` files). Schema:
+     `Artist | Date | Day | Time | Event/Venue | Venue | City | State`.
+   - The scrape produces the whole file in one pass (per `web-src/scraping_tasks.md` →
+     Fast track tour pages scrape); this step just confirms it landed and diffs it.
 
 ### Fast Track cap override
 
