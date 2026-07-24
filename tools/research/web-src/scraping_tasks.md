@@ -90,14 +90,16 @@ open each of these URLs in a new tab in this window
 
 _Prompt 2_
 
-for each artist with an open tab
-create fast-track-<artist>-tour-dates.tsv for download
+for each artist with an open tab, in turn
+append rows to a single fast-track-tour-dates.tsv for download
 Capture: upcoming dates only. ignore past events
 Click All Shows, Load More, or equivalent expansion or pagination controls
-Schema: Date | Day | Time | Event/Venue | Venue | City | State (or Country if non-USA)
-offer the completed file before moving on to the next artist
+Schema: Artist | Date | Day | Time | Event/Venue | Venue | City | State (or Country if non-USA)
+The Artist column repeats the artist's name (as spelled in data/fast_track.tsv) on every one of that artist's rows
+offer the running file after each artist before moving on to the next
 
-3. save the files in `tools/research/web-src` overwriting the existing files
+3. save the single file as `tools/research/web-src/fast-track-tour-dates.tsv`, overwriting the prior copy
+   (this replaced the former per-artist fast-track-<artist>-tour-dates.tsv files, consolidated 2026-07-23)
 
 *Youtube Playlist Inventory ON DEMAND*
 
