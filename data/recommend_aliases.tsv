@@ -17,6 +17,11 @@
 #   "Keb Mo"           <-> "Keb' Mo'"                 (strip apostrophes)
 #   "Ally Venable"     <-> "Ally Venable Band"        (drop trailing Band)
 #
+# CAUTION: some near-identical names are DIFFERENT artists — never add an alias
+# merging them. Known case: "Eric Johanson" (blues guitarist, seen 2x) is NOT
+# "Eric Johnson" (rock/fusion legend; support on the 2025 Experience Hendrix bill).
+# Their normalized keys differ by one character — keep them separate.
+#
 Alias	Canonical
 Billy F Gibbons	Billy Gibbons
 Trombone Shorty	Trombone Shorty & Orleans Avenue
