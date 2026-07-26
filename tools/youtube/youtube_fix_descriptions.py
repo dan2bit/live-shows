@@ -123,6 +123,7 @@ except ImportError:
 try:
     from googleapiclient.discovery import build
     from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.exceptions import RefreshError
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
 except ImportError:
@@ -154,8 +155,16 @@ def get_authenticated_service():
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+            except RefreshError:
+                # Dead refresh token (invalid_grant: revoked, or 7-day expiry on a
+                # Testing-status OAuth app). Discard and fall through to fresh consent.
+                print(f"Stored token in {TOKEN_FILE} can no longer be refreshed "
+                      "(invalid_grant) — starting a fresh OAuth flow; a browser "
+                      "window will open for consent...")
+                creds = None
+        if not creds or not creds.valid:
             if not os.path.exists(client_secrets_path):
                 sys.exit(
                     f"OAuth credentials file not found: {client_secrets_path}\n"
