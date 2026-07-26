@@ -51,6 +51,7 @@ LEGACY MODE (subscriptions list — limited utility):
 
 REQUIRES OAuth (YouTube modes) — same token.json / client_secrets.json used by
 youtube_create_playlists.py. Run --auth-only once if not yet authenticated.
+USE THE BRAND ACCOUNT THAT OWNS THE CHANNEL
 --write, --spotify, and --subscriptions --dry-run do not need OAuth.
 
 CANDIDATE FILE: youtube_handle_candidates.tsv (gitignored — local working file)
@@ -144,7 +145,7 @@ def get_authenticated_service():
                 # Testing-status OAuth app). Discard and fall through to fresh consent.
                 print(f"Stored token in {TOKEN_FILE} can no longer be refreshed "
                       "(invalid_grant) — starting a fresh OAuth flow; a browser "
-                      "window will open for consent...")
+                      "window will open for consent. USE THE BRAND ACCOUNT...")
                 creds = None
         if not creds or not creds.valid:
             if not os.path.exists(client_secrets_path):

@@ -190,7 +190,7 @@ def get_authenticated_service():
                 # Testing-status OAuth app). Discard and fall through to fresh consent.
                 print(f"Stored token in {TOKEN_FILE} can no longer be refreshed "
                       "(invalid_grant) — starting a fresh OAuth flow; a browser "
-                      "window will open for consent...")
+                      "window will open for consent. USE THE BRAND ACCOUNT...")
                 creds = None
         if not creds or not creds.valid:
             if not os.path.exists(client_secrets_path):
