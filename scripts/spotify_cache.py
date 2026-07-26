@@ -220,7 +220,10 @@ USAGE
     python3 spotify_cache.py                 # add artists not yet in the cache
     python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
     python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
-    python3 spotify_cache.py --refresh-releases --stale-days 7  # resumable multi-day release back-audit (skips entries refreshed in the last 7 days)
+    python3 spotify_cache.py --refresh-releases                  # smart default: auto-infers stale-days from median last-checked date
+    python3 spotify_cache.py --refresh-releases --count-pending  # preview: how many calls would this burn? (zero API calls)
+    python3 spotify_cache.py --refresh-releases --stale-days 7  # explicit override: skip entries checked in last 7 days
+    python3 spotify_cache.py --refresh-releases --stale-days 0  # brute-force: re-check all artists regardless of recency
     python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
     python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
     python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
@@ -258,6 +261,7 @@ import json
 import os
 import re
 import sys
+import statistics
 import time
 import unicodedata
 from datetime import date
@@ -849,6 +853,43 @@ def save_cache(cache: dict) -> None:
         f.write("\n")
 
 
+
+# ── Stale-days auto-inference ─────────────────────────────────────────────────
+
+
+def _days_since(iso_date: str) -> int:
+    """Days elapsed since an ISO-format date string. Returns 0 on parse error."""
+    try:
+        return (date.today() - date.fromisoformat(iso_date)).days
+    except ValueError:
+        return 0
+
+
+def _infer_stale_days(cache: dict) -> int:
+    """Infer --stale-days from the median latest_release_checked date in the cache.
+
+    The median is robust to outliers — a single artist checked today or a handful
+    never checked won't skew it. Falls back to 0 (check everything) when the cache
+    has fewer than 2 checked dates (e.g. first ever run / sparse cache).
+
+    Called automatically by refresh_releases() when --stale-days is not explicitly
+    passed. Pass --stale-days 0 to override and force a full brute-force refresh.
+    """
+    today = date.today()
+    ordinals = []
+    for info in cache.values():
+        c = info.get("latest_release_checked")
+        if c:
+            try:
+                ordinals.append(date.fromisoformat(c).toordinal())
+            except ValueError:
+                pass
+    if len(ordinals) < 2:
+        return 0
+    med = date.fromordinal(int(statistics.median(ordinals)))
+    return max(0, (today - med).days)
+
+
 # ── Latest-release-only refresh ───────────────────────────────────────────────
 
 def refresh_releases(cache: dict, creds, args) -> None:
@@ -871,8 +912,39 @@ def refresh_releases(cache: dict, creds, args) -> None:
         print("No cached artists to refresh releases for "
               "(run a normal build first, or check --artist).")
         return
+    # Auto-infer stale_days when not explicitly set. --stale-days 0 forces brute-force.
+    stale_days = args.stale_days
+    if stale_days is None:
+        stale_days = _infer_stale_days(cache)
+        inferred = True
+    else:
+        inferred = False
+
+    if getattr(args, 'count_pending', False):
+        # Dry-run count: local-only, zero API calls.
+        no_id = sum(1 for n in names if not cache[n].get("spotify_id"))
+        if stale_days:
+            skippable = sum(
+                1 for n in names
+                if cache[n].get("spotify_id") and cache[n].get("latest_release_checked")
+                and _days_since(cache[n]["latest_release_checked"]) < stale_days
+            )
+        else:
+            skippable = 0
+        checkable = len(names) - no_id - skippable
+        quota_cycles = checkable / 100
+        if inferred:
+            print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
+        print(f"--count-pending: {checkable} of {len(names)} artists would be checked "
+              f"({skippable} skipped by --stale-days {stale_days}, {no_id} skipped: no spotify_id)")
+        print(f"Estimated quota burn: ~{checkable} calls (~{quota_cycles:.1f} lockout cycles "
+              f"at 100-call ceiling)")
+        return
+
+    if inferred:
+        print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
     print(f"Refreshing latest_release for {len(names)} cached artist(s)"
-          + (f" [skip checked < {args.stale_days}d]" if args.stale_days is not None else "")
+          + (f" [skip checked < {stale_days}d]" if stale_days else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     updated = 0
@@ -888,14 +960,14 @@ def refresh_releases(cache: dict, creds, args) -> None:
         # back-audit resumes across the daily cap instead of re-burning the first
         # ~100 names each run. Entries never checked (null) fall through and
         # refresh. Opt-in: with --stale-days unset, nothing here is skipped.
-        if args.stale_days is not None:
+        if stale_days:
             checked = entry.get("latest_release_checked")
             if checked:
                 try:
-                    if (date.today() - date.fromisoformat(checked)).days < args.stale_days:
+                    if _days_since(checked) < stale_days:
                         skipped += 1
                         print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
-                              f"skipped (--stale-days {args.stale_days})")
+                              f"skipped (--stale-days {stale_days})")
                         continue
                 except ValueError:
                     pass  # unparseable stored date → fall through and refresh
@@ -949,16 +1021,16 @@ def refresh_releases(cache: dict, creds, args) -> None:
     if args.dry_run:
         print("\n[DRY RUN] no changes written"
               + (f"; {kept} kept on null pulls" if kept else "")
-              + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
-                 if args.stale_days is not None else "")
+              + (f"; {skipped} skipped as still-fresh (--stale-days {stale_days})"
+                 if stale_days else "")
               + ".")
         return
     save_cache(cache)
     print("\n" + "=" * 60)
     print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
           + (f"; kept {kept} on null pulls" if kept else "")
-          + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
-             if args.stale_days is not None else "")
+          + (f"; skipped {skipped} still-fresh (--stale-days {stale_days})"
+             if stale_days else "")
           + f". Written: {OUTPUT_JSON}")
 
 
@@ -1905,16 +1977,23 @@ def main() -> None:
                     help="With --add-artist: append the row but skip the same-run cache "
                          "build (avoids the /albums call when rate-limited).")
     ap.add_argument("--stale-days", type=int, default=None, metavar="N",
-                    help="With --refresh-releases / --refresh-images: skip artists whose latest_release (or portrait) "
-                         "was checked within the last N days. Default unset = refresh "
-                         "every cached artist (unchanged behavior — a deliberate full "
-                         "re-pull still re-pulls everyone). Pass a value (e.g. 7) to "
-                         "make the multi-day, rate-limited release back-audit "
-                         "RESUMABLE across the ~100/day Dev-mode cap: each daily run "
-                         "skips what an earlier run in the same sweep already "
-                         "refreshed and continues where it left off. Choose N larger "
-                         "than the sweep length (a ~317-artist sweep is 3-4 days, so "
-                         "7 is safe). No effect on the build or --refresh paths.")
+                    help="With --refresh-releases: skip artists whose latest_release "
+                         "was checked within the last N days. When omitted, the value "
+                         "is auto-inferred from the median latest_release_checked date "
+                         "in the cache (so a bare --refresh-releases only re-checks "
+                         "artists not reached by the last run). Pass 0 to force a "
+                         "full brute-force refresh of all artists. With "
+                         "--refresh-images: same logic gated on images_checked "
+                         "(--stale-days is still explicit-only for images; auto-infer "
+                         "is --refresh-releases only). No effect on the build or "
+                         "--refresh paths.")
+    ap.add_argument("--count-pending", action="store_true",
+                    help="With --refresh-releases: print how many artists would be "
+                         "checked under the current (auto-inferred or explicit) "
+                         "--stale-days value, then exit. Zero API calls; no mutations. "
+                         "Combine with --stale-days 0 to preview a full brute-force "
+                         "run. Example: python spotify_cache.py --refresh-releases "
+                         "--count-pending")
     ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
                     help="Seconds to sleep between Spotify calls (default "
                          "%(default)s). The build packs ~1-2 calls/artist; raise "
