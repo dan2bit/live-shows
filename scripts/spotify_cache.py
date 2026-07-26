@@ -933,9 +933,8 @@ def refresh_releases(cache: dict, creds, args) -> None:
             skippable = 0
         checkable = len(names) - no_id - skippable
         quota_cycles = checkable / 100
-        stale_src = f"auto-inferred from median last-checked" if inferred else "explicit"
         if inferred:
-            print(f"auto stale-days: median last-checked → using --stale-days {stale_days}  [{stale_src}]")
+            print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
         print(f"--count-pending: {checkable} of {len(names)} artists would be checked "
               f"({skippable} skipped by --stale-days {stale_days}, {no_id} skipped: no spotify_id)")
         print(f"Estimated quota burn: ~{checkable} calls (~{quota_cycles:.1f} lockout cycles "
