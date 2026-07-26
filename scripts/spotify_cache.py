@@ -1,1 +1,2253 @@
-IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiIKc3BvdGlmeV9jYWNoZS5weSDigJQgQnVpbGQgZGF0YS9hcnRpc3Rfc3BvdGlmeS5qc29uIGZyb20gZXZlcnkgYXJ0aXN0IGluIHRoZSByZXBvLgoKUHVsbHMgYSBTcG90aWZ5IHJlc29sdXRpb24gYW5jaG9yIChhcnRpc3QgaWQgKyBVUkwpIGFuZCB0aGUgbW9zdCByZWNlbnQgcmVsZWFzZQpmb3IgdGhlIGZ1bGwgc2V0IG9mIGFydGlzdHMgdGhhdCBhcHBlYXIgYW55d2hlcmUgaW4gdGhlIGxpdmUtc2hvd3MgcmVwbywgYW5kCndyaXRlcyBhIHNpbmdsZSBkZXRlcm1pbmlzdGljIEpTT04gY2FjaGUsIGtleWVkIGJ5IGNhbm9uaWNhbCBhcnRpc3QgbmFtZS4KQ29uc3VtZXJzOgoKICAtIHNhbXBsZXIgTUNQIHdvcmtmbG93ICAgICAgLT4gc3BvdGlmeV9pZCAvIHNwb3RpZnlfdXJsIGFzIGEgcmVzb2x1dGlvbiBhbmNob3IKICAtIGFydGlzdCByZXNlYXJjaCAvIGZvbGxvdyAgLT4gbGF0ZXN0LXJlbGVhc2UgcmVjZW5jeSAocG9wdWxhcml0eS9mb2xsb3dlcnMvCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGdlbnJlcyBhcmUgbm8gbG9uZ2VyIGF2YWlsYWJsZSBhcHAtb25seSDigJQgc2VlCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFNUUklQUEVEIE1FVEFEQVRBIGJlbG93KQogIC0gKG9wdGlvbmFsKSB0aGUgc2l0ZSAgICAgICAtPiBjbGlja2FibGUgYXJ0aXN0IG5hbWUgLT4gU3BvdGlmeSBwYWdlCgpBVVRICiAgICBTcG90aWZ5IENsaWVudCBDcmVkZW50aWFscyAoYXBwLW9ubHkpIOKAlCB0aGUgc2FtZSBTUE9USUZZX0NMSUVOVF9JRCAvCiAgICBTUE9USUZZX0NMSUVOVF9TRUNSRVQgYWxyZWFkeSB1c2VkIGJ5IHRvb2xzL3lvdXR1YmUveW91dHViZV9maWxsX2hhbmRsZXMucHkuCiAgICBObyB1c2VyIE9BdXRoLCBubyBxdW90YSBsaW1pdC4gT25seSBlbmRwb2ludHMgc3RpbGwgcmVhY2hhYmxlIGFwcC1vbmx5IG9uIGEKICAgIERldmVsb3BtZW50LW1vZGUgYXBwIGFyZSB1c2VkOiBHRVQgL3NlYXJjaCAoaWQgcmVzb2x1dGlvbiwgb25seSB3aGVuIHRoZXJlJ3MKICAgIG5vIHN0b3JlZCBvciBjYWNoZWQgaWQpIGFuZCBHRVQgL2FydGlzdHMve2lkfS9hbGJ1bXMgKGxhdGVzdCByZWxlYXNlKS4gVGhlCiAgICBwbGFpbiBHRVQgL2FydGlzdHMve2lkfSBjYWxsIHdhcyBkcm9wcGVkIOKAlCBzZWUgUkFURSBMSU1JVFMuCgpNRVRBREFUQS1PTkxZIChubyB0b3AgdHJhY2tzKSAg4oCUIHVwZGF0ZWQgMjAyNi0wNi0yMgogICAgVGhpcyBjYWNoZSBkZWxpYmVyYXRlbHkgZG9lcyBOT1Qgc3RvcmUgcGVyLWFydGlzdCB0b3AgdHJhY2tzLiBTcG90aWZ5J3MKICAgIEZlYi9NYXItMjAyNiBBUEkgbWlncmF0aW9uIChlZmZlY3RpdmUgMjAyNi0wMi0xMTsgYWxsIERldi1tb2RlIGFwcHMgYnkKICAgIDIwMjYtMDMtMDkpIHJlc3RyaWN0ZWQgR0VUIC9hcnRpc3RzL3tpZH0vdG9wLXRyYWNrcyBmb3IgYXBwLW9ubHkgYXV0aCDigJQgaXQKICAgIG5vdyByZXR1cm5zIDQwMyBGb3JiaWRkZW4gdW5kZXIgQ2xpZW50IENyZWRlbnRpYWxzIG9uIGEgRGV2LW1vZGUgYXBwLiBUaGUKICAgIHVzZXItT0F1dGggcGF0aCAodGhlIG1hcmNlbG1hcmFpcyBNQ1Agc2VydmVyKSBpcyBubyBzdWJzdGl0dXRlOiBpdCBleHBvc2VzCiAgICBvbmx5IHRoZSAqdXNlcidzIG93biogdG9wIHRyYWNrcyAoL21lL3RvcC90cmFja3MpLCBub3QgYW4gYXJiaXRyYXJ5IGFydGlzdCdzLAogICAgYW5kIHRoZXJlIGlzIG5vIHB1YmxpYyBhcnRpc3QtdG9wLXRyYWNrcyBlbmRwb2ludCByZWFjaGFibGUgZnJvbSBpdC4gU28gdHJhY2sKICAgIHNlbGVjdGlvbiBmb3Igc2FtcGxlcnMgaGFwcGVucyBhdCBhc3NlbWJseSB0aW1lIHZpYSB0aGUgTUNQJ3Mgc2VhcmNoU3BvdGlmeQogICAgKHJlc3VsdHMgY29tZSBiYWNrIGluIHJlbGV2YW5jZSBvcmRlciDigJQgU3BvdGlmeSBzZWFyY2ggaGFzIG5vIHNvcnQgcGFyYW0g4oCUCiAgICBzbyBwaWNrcyBtdXN0IGJlIGV5ZWJhbGxlZCwgbm90IHRydXN0ZWQgYXMgYSB0cnVlIHRvcC0xMCkuIFJlbGF0ZWQtYXJ0aXN0cwogICAgYW5kIHJlY29tbWVuZGF0aW9ucyB3ZXJlIHJlbW92ZWQgaW4gdGhlIDIwMjQtMTEtMjcgY3VsbCBhbmQgYXJlIGxpa2V3aXNlCiAgICBhYnNlbnQuIElmIHRoZSBhcHAgaXMgZXZlciBwcm9tb3RlZCBvdXQgb2YgRGV2IG1vZGUgKEV4dGVuZGVkIFF1b3RhKSwgcmV2aXNpdAogICAgcmVzdG9yaW5nIGEgdG9wX3RyYWNrcyBmaWVsZCBoZXJlLgoKU1RSSVBQRUQgTUVUQURBVEEgKG5vIHBvcHVsYXJpdHkgLyBmb2xsb3dlcnMgLyBnZW5yZXMpICDigJQgYWRkZWQgMjAyNi0wNi0yMwogICAgVGhlc2UgdGhyZWUgZmllbGRzIHdlcmUgdGhlIGNhY2hlJ3Mgb3JpZ2luYWwgYW5hbHl0aWNhbCBwYXlsb2FkLiBTcG90aWZ5J3MKICAgIEZlYi9NYXItMjAyNiBEZXYtbW9kZSBtaWdyYXRpb24gcmVtb3ZlZCB0aGVtIGZyb20gdGhlIC9hcnRpc3RzL3tpZH0gcmVzcG9uc2UKICAgIHVuZGVyIGFwcC1vbmx5IChDbGllbnQgQ3JlZGVudGlhbHMpIGF1dGguIEl0J3MgYSBmaWVsZC1sZXZlbCByZW1vdmFsIHRpZWQgdG8KICAgIERldmVsb3BtZW50IG1vZGUsIG5vdCB0byB0aGUgYXV0aCBmbG93LCBzbyB0aGUgdXNlci1PQXV0aCBwYXRoICh0aGUKICAgIG1hcmNlbG1hcmFpcyBNQ1AgdG9rZW4pIGRvZXMgTk9UIHJlY292ZXIgdGhlbSBlaXRoZXIg4oCUIHJlbW92YWwgd2l0aCBEZXYgbW9kZS4KICAgIFNvIGJ1aWxkX2VudHJ5IG5vIGxvbmdlciBzdG9yZXMgdGhlbTsgdGhlIGNhY2hlIGlzIG5vdyBhIHJlc29sdXRpb24gbWFwCiAgICAoaWQvdXJsKSArIGxhdGVzdF9yZWxlYXNlLiBUaGUgbG9zdCBwb3B1bGFyaXR5L2dlbnJlIHNpZ25hbCBpcyBiYWNrZmlsbGVkCiAgICBmcm9tIGEgc2VwYXJhdGUgc291cmNlIChMYXN0LmZtKSBhcyBpdHMgb3duIHJlZnJlc2hhYmxlIGxheWVyLCBpbiBhCiAgICBmb2xsb3ctb24gY2hhbmdlIOKAlCBub3QgaGVyZS4KClJBVEUgTElNSVRTICDigJQgYWRkZWQgMjAyNi0wNi0yMwogICAgU3BvdGlmeSdzIEZlYi9NYXItMjAyNiBEZXYtbW9kZSBsaW1pdHMgYXJlIHRpZ2h0OiBhIDQyOSBjYW4gY2FycnkgYSBtdWx0aS1IT1VSCiAgICBSZXRyeS1BZnRlciAob2JzZXJ2ZWQgfjIyaCkuIFNvIGFwaV9nZXQgY2FwcyBpdHMgc2xlZXAgYXQgTUFYX0JBQ0tPRkYgYW5kCiAgICByYWlzZXMgUmF0ZUxpbWl0ZWQgb24gYW55dGhpbmcgbG9uZ2VyIOKAlCBhbmQgb24gZXhoYXVzdGVkIHJldHJpZXMg4oCUIHNvIHRoZSBydW4KICAgIEJBSUxTLCBrZWVwaW5nIGl0cyBwZXJpb2RpYyBjaGVja3BvaW50cywgaW5zdGVhZCBvZiBzbGVlcGluZyBmb3IgaG91cnMgb3IKICAgIGNodXJuaW5nIGV2ZXJ5IHJlbWFpbmluZyBhcnRpc3QgaW50byBhIGZhbHNlICd1bnJlc29sdmVkJy4gVG8ga2VlcCByZXF1ZXN0CiAgICB2b2x1bWUgZG93biBwZXIgYnVpbGQ6IGJ1aWxkX2VudHJ5IG1ha2VzIE9ORSBjYWxsIChsYXRlc3RfcmVsZWFzZSk7IGEgc3RvcmVkCiAgICBvciBjYWNoZWQgaWQgc2tpcHMgdGhlIC9zZWFyY2g7IGFuZCBub24tYXJ0aXN0IHJvd3MgKGZlc3RpdmFsL2V2ZW50IG5hbWVzIGluCiAgICB0aGUgQXJ0aXN0IGNvbHVtbiBvZiBQYXNzIHBvdGVudGlhbHMpIGFyZSBkcm9wcGVkIGJlZm9yZSByZXNvbHV0aW9uIHZpYQogICAgX2lzX25vbl9hcnRpc3QgKGV4cGxpY2l0IHNldCArICJmZXN0aXZhbCIgc3Vic3RyaW5nKSBzbyB0aGV5IG5ldmVyIGNvc3QgYSBjYWxsLgogICAgUGFjZSB0aGUgY2FsbHMgd2l0aCAtLWRlbGF5IChkZWZhdWx0IDIuMHMpIOKAlCByYWlzZSBpdCBvbiBhIGJpZyBmaXJzdCBidWlsZCB0bwogICAgc3RheSB1bmRlciB0aGUgbGltaXQsIGxvd2VyIGl0IG9uY2UgbGltaXRzIHJlbGF4IG9yIGZvciB0aGUgbGlnaHRlciBwYXNzZXMuCiAgICBBIG11bHRpLWRheSAtLXJlZnJlc2gtcmVsZWFzZXMgYmFjay1hdWRpdCByZXN1bWVzIGFjcm9zcyB0aGUgZGFpbHkgY2FwIHdpdGgKICAgIC0tc3RhbGUtZGF5cyAoc2VlIExBVEVTVCBSRUxFQVNFIC8gdGhhdCBmbGFnJ3MgaGVscCkuCgpMQVRFU1QgUkVMRUFTRSAg4oCUIGFkZGVkIDIwMjYtMDYtMjMKICAgIEVhY2ggZW50cnkgY2FycmllcyBhIGBsYXRlc3RfcmVsZWFzZWAgb2JqZWN0IOKAlCB0aGUgYXJ0aXN0J3MgbW9zdCByZWNlbnQKICAgIGFsYnVtL3NpbmdsZSDigJQgZnJvbSBHRVQgL2FydGlzdHMve2lkfS9hbGJ1bXMgKGEgcGxhaW4gY2F0YWxvZyByZWFkLCByZWFjaGFibGUKICAgIGFwcC1vbmx5OyBub3QgaW4gdGhlIG1pZ3JhdGVkLXJlc3RyaWN0ZWQgc2V0KS4gaW5jbHVkZV9ncm91cHMgaXMgYWxidW0sc2luZ2xlCiAgICBvbmx5ICh0aGUgcmVsZWFzZXMgbW9zdCBsaWtlbHkgdG8gYmUgcGxheWVkIGF0IGFuIHVwY29taW5nIHNob3cpOyBjb21waWxhdGlvbgogICAgYW5kIGFwcGVhcnNfb24gYXJlIGV4Y2x1ZGVkIHNvIGEgYmVzdC1vZiBvciBhIGd1ZXN0IGZlYXR1cmUgY2FuJ3QgbWFrZSBhCiAgICBkb3JtYW50IGFydGlzdCBsb29rIGFjdGl2ZS4gU2hhcGU6CiAgICAgICAgImxhdGVzdF9yZWxlYXNlIjogewogICAgICAgICAgImRhdGUiOiAiMjAyNi0wNi0xOSIsICJwcmVjaXNpb24iOiAiZGF5IiwgICAjIGRheXxtb250aHx5ZWFyCiAgICAgICAgICAibmFtZSI6ICIuLi4iLCAidHlwZSI6ICJzaW5nbGUiLCAgICAgICAgICAgICMgYWxidW18c2luZ2xlCiAgICAgICAgICAic3BvdGlmeV9pZCI6ICIuLi4iLCAidXJsIjogIi4uLiIKICAgICAgICB9CiAgICBwbHVzICJsYXRlc3RfcmVsZWFzZV9jaGVja2VkIjogIllZWVktTU0tREQiLiBgcHJlY2lzaW9uYCBpcyBzdG9yZWQgYmVjYXVzZQogICAgU3BvdGlmeSdzIHJlbGVhc2VfZGF0ZSBjYW4gYmUgeWVhci0gb3IgbW9udGgtb25seSAoYmFjayBjYXRhbG9ndWUpOyBhbnkKICAgICJkYXlzIHNpbmNlIiBtYXRoIGRvd25zdHJlYW0gbXVzdCB0b2xlcmF0ZSB0aGF0LiBgbmFtZWAvYHR5cGVgIG1ha2UgYQogICAgcmUtcmVsZWFzZSAvIGFubml2ZXJzYXJ5IGVkaXRpb24gKGEgZnJlc2ggZGF0ZSBvbiBvbGQgbWF0ZXJpYWwpIGF1ZGl0YWJsZSBieQogICAgZXllLiBgbGF0ZXN0X3JlbGVhc2VgIGlzIG51bGwgd2hlbiB0aGUgYXJ0aXN0IGhhcyBubyBxdWFsaWZ5aW5nIGFsYnVtL3NpbmdsZS4KICAgIE5PVEU6IG9uZSAvYWxidW1zIGNhbGwgd2l0aCBsaW1pdD0xMCDigJQgdGhlIGVuZHBvaW50J3MgTUFYIChpdCA0MDBzICJJbnZhbGlkCiAgICBsaW1pdCIgYWJvdmUgMTAsIHVubGlrZSBtb3N0IFNwb3RpZnkgbGlzdCBlbmRwb2ludHMgd2hpY2ggYWxsb3cgNTApLiBSZXN1bHRzCiAgICBjb21lIGJhY2sgbmV3ZXN0LWZpcnN0LCBzbyB0aGUgbW9zdCByZWNlbnQgaXMgZWZmZWN0aXZlbHkgYWx3YXlzIGluLXdpbmRvdzsKICAgIGEgaHlwZXItcHJvbGlmaWMgYXJ0aXN0J3MgbmV3ZXN0IGNvdWxkIGluIHRoZW9yeSBmYWxsIHBhc3QgaXRlbSAxMCwgd2hpY2ggYQogICAgbGF0ZXIgLS1yZWZyZXNoLXJlbGVhc2VzIHdvdWxkIHNlbGYtY29ycmVjdC4gKFNhbXBsZSBhY3Jvc3MgdGhlIGNhY2hlIG9uY2UgaXQKICAgIGV4aXN0cyB0byBjb25maXJtIDEwIG5ldmVyIG1pc3NlczsgYnVtcCB0byBwYWdpbmF0aW9uIG9ubHkgaWYgaXQgZG9lcy4pCgogICAgVGhlICJtb3N0IHJlY2VudCIgcGljayBwYWRzIHBhcnRpYWwgZGF0ZXMgdG8gdGhlICpzdGFydCogb2YgdGhlaXIgcGVyaW9kIGZvcgogICAgY29tcGFyaXNvbiBvbmx5IChhIHllYXItb25seSAyMDI2IHNvcnRzIGFzIDIwMjYtMDEtMDEsIHNvIGEgZGF0ZWQgMjAyNi0wNi0xOQogICAgaW4gdGhlIHNhbWUgeWVhciBjb3JyZWN0bHkgb3V0cmFua3MgaXQpOyB0aGUgb3JpZ2luYWwgcmVsZWFzZV9kYXRlICsgcHJlY2lzaW9uCiAgICBhcmUgd2hhdCBnZXQgc3RvcmVkLgoKICAgIE1JU0FUVFJJQlVUSU9OIEdVQVJEICgjMTAwKSAg4oCUIGFkZGVkIDIwMjYtMDYtMjcKICAgICAgICAvYXJ0aXN0cy97aWR9L2FsYnVtcyBoYXMgYmVlbiBvYnNlcnZlZCByZXR1cm5pbmcgYW4gYWxidW0gdGhhdCBiZWxvbmdzIHRvCiAgICAgICAgYSBkaWZmZXJlbnQgYXJ0aXN0IGZvciB0aGUgZ2l2ZW4gaWQgKGEgQmFjaCByZWNvcmRpbmcgc3VyZmFjZWQgdW5kZXIKICAgICAgICBBbmdlbGlxdWUgRnJhbmNpcykuIFNpbmNlIHRoZSBiYWQgYWxidW0gd2FzIHRoZSBuZXdlc3QsIGl0IHdvbiB0aGUgcGljawogICAgICAgIGFuZCB3YXMgY2FjaGVkIGFzIGhlciBsYXRlc3RfcmVsZWFzZSwgdGhlbiByb2RlIGludG8gYSAibmV3IHJlbGVhc2VzIgogICAgICAgIGxpc3QuIGxhdGVzdF9yZWxlYXNlIG5vdyBmaWx0ZXJzIHRoZSBwYWdlIHRocm91Z2ggX2FsYnVtX2NyZWRpdHNfYXJ0aXN0CiAgICAgICAgKG91ciBpZCBhbW9uZyB0aGUgYWxidW0ncyBjcmVkaXRlZCBhcnRpc3RzLCBvciBhbiBhbGlhcy1hd2FyZSBuYW1lIG1hdGNoCiAgICAgICAgYXMgYSBiYWNrc3RvcCkgQkVGT1JFIHNlbGVjdGluZyB0aGUgbmV3ZXN0LCBzbyBhIG1pcy1saW5rIGNhbiBuZWl0aGVyIGJlCiAgICAgICAgc3RvcmVkIG5vciBkaXNwbGFjZSB0aGUgcmVhbCByZWxlYXNlIOKAlCB0aGUgY29ycmVjdCBvbmUgaXMgcmVjb3ZlcmVkIGZyb20KICAgICAgICBlbHNld2hlcmUgaW4gdGhlIHNhbWUgcGFnZS4gRHJvcHMgYXJlIGxvZ2dlZCByZWplY3RlZC1vbmx5IChib3VuZGVkIGJ5CiAgICAgICAgYW5vbWFseSBjb3VudCwgbm90IHRyYWZmaWMpLiBUaGUgZ3VhcmQgcnVucyBpbiBib3RoIHRoZSBidWlsZCBhbmQgdGhlCiAgICAgICAgcmVmcmVzaCBwYXRocywgc28gYSBmdWxsIC0tcmVmcmVzaC1yZWxlYXNlcyByZS12YWxpZGF0ZXMgdGhlIHdob2xlIGNhY2hlCiAgICAgICAgYXMgYSBzaWRlIGVmZmVjdCBhdCBubyBleHRyYSBxdW90YS4gVGhhdCBzd2VlcCBpcyB+MzE3IGNhbGxzIOKJiCAzLTQgZGF5cwogICAgICAgIHVuZGVyIHRoZSBjYXA7IC0tc3RhbGUtZGF5cyBtYWtlcyBpdCByZXN1bWFibGUgZGF5IHRvIGRheSAoc2VlIGJlbG93KS4KCiAgICBSRVNVTUFCTEUgUkVMRUFTRSBTV0VFUCAoLS1zdGFsZS1kYXlzKSAg4oCUIGFkZGVkIDIwMjYtMDYtMjcKICAgICAgICByZWZyZXNoX3JlbGVhc2VzIHdhbGtzIHNvcnRlZChjYWNoZSkgdG9wLWRvd24gYW5kLCBieSBkZWZhdWx0LCBhdXRvLWluZmVycwogICAgICAgIC0tc3RhbGUtZGF5cyBmcm9tIHRoZSBtZWRpYW4gbGF0ZXN0X3JlbGVhc2VfY2hlY2tlZCBkYXRlIC0tIHNvIGEgYmFyZQogICAgICAgIC0tcmVmcmVzaC1yZWxlYXNlcyBvbmx5IHJlLWNoZWNrcyBhcnRpc3RzIG5vdCByZWFjaGVkIGJ5IHRoZSBsYXN0IHJ1bi4KICAgICAgICBQYXNzIC0tc3RhbGUtZGF5cyAwIHRvIGZvcmNlIGEgZnVsbCBicnV0ZS1mb3JjZSByZWZyZXNoOyBwYXNzIC0tc3RhbGUtZGF5cwogICAgICAgIE4gdG8gb3ZlcnJpZGUgd2l0aCBhbiBleHBsaWNpdCB3aW5kb3cuCgogICAgTlVMTC1QUkVTRVJWRSBHVUFSRCAoIzEwOSkgIOKAlCBhZGRlZCAyMDI2LTA2LTI5CiAgICAgICAgQSBudWxsIHB1bGwgKG5vIGFsYnVtL3NpbmdsZSBjcmVkaXRlZCB0byB0aGUgaWQsIGFwcC1vbmx5IC8gbWFya2V0PVVTKQogICAgICAgIG11c3QgTk9UIG92ZXJ3cml0ZSBhIG5vbi1udWxsIGNhY2hlZCBsYXRlc3RfcmVsZWFzZS4gQXBwLW9ubHkgRGV2LW1vZGUKICAgICAgICByZXR1cm5zIOKIhSBmb3IgYXJ0aXN0cyB3aG8gZGVtb25zdHJhYmx5IGhhdmUgcmVsZWFzZXMgKGNvbmZpcm1lZCB2aWEgdGhlCiAgICAgICAgdXNlci1PQXV0aCBwYXRoKTsgdGhlIG9sZCBjb2RlIHN0b3JlZCB0aGF0IOKIhSBBTkQgc3RhbXBlZCB0aGUgZW50cnkgZnJlc2gsCiAgICAgICAgc28gYSByZWFsIHJlbGVhc2Ugd2FzIGJvdGggbG9zdCBhbmQgdGhlbiBza2lwcGVkIGJ5IHRoZSBuZXh0IC0tc3RhbGUtZGF5cwogICAgICAgIHN3ZWVwLiBCb3RoIHdyaXRlIHBhdGhzIChyZWZyZXNoX3JlbGVhc2VzIGFuZCB0aGUgbWFpbiBidWlsZCBsb29wKSBub3cKICAgICAgICBrZWVwIHRoZSBjYWNoZWQgcmVsZWFzZSB3aGVuIGEgcHVsbCBjb21lcyBiYWNrIG51bGwsIGFuZCByZWZyZXNoX3JlbGVhc2VzCiAgICAgICAgbGVhdmVzIGxhdGVzdF9yZWxlYXNlX2NoZWNrZWQgdW50b3VjaGVkIHNvIHRoZSBlbnRyeSBpcyByZXRyaWVkIHJhdGhlcgogICAgICAgIHRoYW4gbG9ja2VkIGFzIGEgZmFsc2UgbnVsbC4gR2VudWluZWx5IG5ldyBhcnRpc3RzIChubyBwcmlvciBlbnRyeSkgc3RpbGwKICAgICAgICBzdG9yZSBudWxsIGNvcnJlY3RseSDigJQgdGhlIGd1YXJkIG9ubHkgZmlyZXMgd2hlbiB0aGVyZSdzIGRhdGEgdG8gcHJvdGVjdC4KCiAgICBEaXNwbGF5L2JhZGdpbmcgb24gdGhpcyBkYXRlIChhICJORVciIGJhZGdlIGluIHRoZSBzaG93IGxpc3RzKSBhbmQgcmVjZW5jeQogICAgd2VpZ2h0aW5nIGluIGZvbGxvdy10aWVyIC8gcG90ZW50aWFscyBkZWNpc2lvbnMgYXJlIGRlbGliZXJhdGVseSBPVVQgb2Ygc2NvcGUKICAgIGhlcmUg4oCUIHRoaXMgb25seSBjYXB0dXJlcyBhbmQgY2FjaGVzIHRoZSBkYXRhLiBTZWUgIzg1IC8gZm9sbG93LW9uIHRpY2tldHMuCgpMQVNULkZNIEVOUklDSE1FTlQgIOKAlCBhZGRlZCAyMDI2LTA2LTI1CiAgICBBIHNlcGFyYXRlLCBpbmRlcGVuZGVudGx5LXJlZnJlc2hhYmxlIGBsYXN0Zm1gIGJsb2NrIGJhY2tmaWxscyB0aGUgYW5hbHl0aWNhbAogICAgc2lnbmFsIFNwb3RpZnkncyBEZXYtbW9kZSBtaWdyYXRpb24gc3RyaXBwZWQgKHBvcHVsYXJpdHkvZm9sbG93ZXJzL2dlbnJlcykuCiAgICBQb3B1bGF0ZWQgT05MWSBieSAtLXJlZnJlc2gtbGFzdGZtOyB0aGUgU3BvdGlmeSBidWlsZC9yZWZyZXNoIG5ldmVyIHJlYWRzIGl0LAogICAgYW5kIGEgU3BvdGlmeSAtLXJlZnJlc2ggUFJFU0VSVkVTIGFueSBleGlzdGluZyBibG9jay4gTmVlZHMgbm8gU3BvdGlmeSBjcmVkcyDigJQKICAgIGl0IHVzZXMgdGhlIGZyZWUgTGFzdC5mbSBBUEkgKGFwaV9rZXkgb25seSkuCiAgICAtLXJlZnJlc2gtbGFzdGZtIGFsc28gU0VFRFM6IGl0IGNvbGxlY3RzIHRoZSBmdWxsIHJlcG8gYXJ0aXN0IHNldCBhbmQgY3JlYXRlcyBhCiAgICBTcG90aWZ5LW51bGwgc2tlbGV0b24gKHNwb3RpZnlfaWQgLyBzcG90aWZ5X3VybCAvIGxhdGVzdF9yZWxlYXNlID0gbnVsbCkgZm9yIGFueQogICAgYXJ0aXN0IFNwb3RpZnkgaGFzbid0IHJlc29sdmVkIHlldCwgc28gb25lIExhc3QuZm0gcGFzcyBjb3ZlcnMgdGhlIHdob2xlIHJvc3RlcgogICAgZXZlbiB3aGlsZSB0aGUgU3BvdGlmeSBzaWRlIGRyaXBzIGluIG92ZXIgdGhlIGRhaWx5IERldi1tb2RlIHF1b3RhLiBUaGUgbmV4dAogICAgU3BvdGlmeSBidWlsZCBmaWxscyB0aG9zZSBza2VsZXRvbnMgaW4gKGRlZmF1bHQgYWRkLW1pc3NpbmcgbW9kZSB0cmVhdHMgYSBudWxsCiAgICBzcG90aWZ5X2lkIGFzICJub3QgeWV0IHJlc29sdmVkIikgYW5kIHByZXNlcnZlcyB0aGUgbGFzdGZtIGJsb2NrLiBQZXItYXJ0aXN0CiAgICBzaGFwZToKICAgICAgICAibGFzdGZtIjogewogICAgICAgICAgIm1iaWQiOiAiLi4uIiwgICAgICAgICAgICAgICAgICMgTXVzaWNCcmFpbnogaWQgKGNyb3NzLXNvdXJjZSBqb2luIGtleSkKICAgICAgICAgICJ1cmwiOiAiaHR0cHM6Ly93d3cubGFzdC5mbS9tdXNpYy8uLi4iLAogICAgICAgICAgImxpc3RlbmVycyI6IDEyMzQ1NiwgICAgICAgICAgICMgZ2xvYmFsIHBvcHVsYXJpdHkgcHJveHkgKG51bGwgaWYgdW5rbm93bikKICAgICAgICAgICJwbGF5Y291bnQiOiA5ODc2NTQzLAogICAgICAgICAgInRhZ3MiOiBbImJsdWVzIiwgImFtZXJpY2FuYSIsIC4uLl0sICAgIyA8PSBMQVNURU1fVEFHUywgZm9sa3Nvbm9teQogICAgICAgICAgInNpbWlsYXIiOiBbIi4uLiIsIC4uLl0gICAgICAgICAgICAgICAgICMgPD0gTEFTVEZNX1NJTUlMQVIsIGRpc2NvdmVyeSBmZWVkCiAgICAgICAgfQogICAgcGx1cyAibGFzdGZtX2NoZWNrZWQiOiAiWVlZWS1NTS1ERCI7IGJvdGggYWJzZW50IHVudGlsIC0tcmVmcmVzaC1sYXN0Zm0gcnVucywKICAgIGFuZCAibGFzdGZtIiBpcyBudWxsIGZvciBhbiBhcnRpc3QgTGFzdC5mbSBjYW4ndCBmaW5kLiBUYWdzIGFyZSBjcm93ZC1zb3VyY2VkCiAgICAobW9vZCAvICJzZWVuIGxpdmUiIG5vaXNlIG1peGVkIHdpdGggcmVhbCBnZW5yZXMpIOKAlCBmaWx0ZXIgYmVmb3JlIHRydXN0aW5nCiAgICB0aGVtIGFzIGEgZ2VucmUgc2lnbmFsLgoKSUQtRFJJRlQgQVVESVQgKC0tYXVkaXQtaWRzIC8gLS1yZXBvaW50KSAg4oCUIGFkZGVkIDIwMjYtMDctMTMgKCMxMjYpCiAgICAjMTI1J3MgYnVpbGQtdGltZSBpbWFnZSBjYWNoaW5nIHN1cmZhY2VkIGEgY2xhc3Mgb2YgY2FjaGUgY29ycnVwdGlvbiB0aGUKICAgIHJlc29sdmVyIGhhZCBubyB3YXkgdG8gc2VsZi1jb3JyZWN0OiBhIHN0b3JlZC9jYWNoZWQgc3BvdGlmeV9pZCB0aGF0IHBvaW50cwogICAgYXQgYSByZWFsLCB2YWxpZCBTcG90aWZ5IGFydGlzdCBwcm9maWxlLCBidXQgYSBTRUNPTkRBUlkgb25lIFNwb3RpZnkgbWludGVkCiAgICBmb3IgdGhlIHNhbWUgYWN0IOKAlCBzYW1lIGRpc2NvZ3JhcGh5IHNoYXBlLCBidXQgbm8gcG9ydHJhaXQsIGFuZCBzb21ldGltZXMKICAgIGEgc3RhbGUgbGF0ZXN0X3JlbGVhc2UuIHJlc29sdmVfYXJ0aXN0X2lkKCkgcHJlZmVycyBhIGNhY2hlZCBpZCBvciBhIHN0b3JlZAogICAgYXJ0aXN0cy50c3YgVVJMIG92ZXIgcmUtc2VhcmNoaW5nIChieSBkZXNpZ24g4oCUIGl0IGF2b2lkcyBuZWVkbGVzcyAvc2VhcmNoCiAgICBjYWxscyBvbiBldmVyeSByZWZyZXNoKSwgc28gb25jZSBhIHNlY29uZGFyeSBpZCBpcyBjYWNoZWQgaXQgbmV2ZXIgZ2V0cyBhCiAgICBjaGFuY2UgdG8gc2VsZi1jb3JyZWN0OyBvbmx5IGEgZnJlc2ggLS1zZWFyY2ggd291bGQgZmluZCB0aGUgY2Fub25pY2FsIG9uZSwKICAgIGFuZCBub3RoaW5nIHRyaWdnZXJzIHRoYXQgYXV0b21hdGljYWxseS4gR292J3QgTXVsZSBwcm92ZWQgaXQgaXNuJ3QgYQogICAgbmFtZXNha2UtY29sbGlzaW9uIHByb2JsZW06IG9ubHkgb25lIEdvdid0IE11bGUgZXhpc3RzLCB5ZXQgdGhlIGNhY2hlZCBpZAogICAgKDFmOXpDUeKApikgZGlmZmVyZWQgZnJvbSB0aGUgY2Fub25pY2FsIHNlYXJjaC10b3AgKDV6b0tPY+KApikuCgogICAgLS1hdWRpdC1pZHMgKHJlYWQtb25seSwgbm8gY2FjaGUgd3JpdGVzKSB3YWxrcyB0aGUgY2FjaGUgYW5kLCBmb3IgZXZlcnkKICAgIGVudHJ5IHdob3NlIGNhY2hlZCBpZCdzIEdFVCAvYXJ0aXN0cy97aWR9IHJldHVybnMgbm8gcG9ydHJhaXQsIHJlLXJlc29sdmVzCiAgICB0aGUgYXJ0aXN0IGJ5IG5hbWUgdmlhIC9zZWFyY2ggYW5kIGNvbXBhcmVzIHRoZSBzZWFyY2gtdG9wIGlkIGFnYWluc3QgdGhlCiAgICBjYWNoZWQgb25lLiBGb3VyIHZlcmRpY3RzLCBvbmUgcGVyIGFydGlzdDoKICAgICAgLSBSRVBPSU5UIFNBRkUgICAgICAgIGNhY2hlZCBoYXMgbm8gaW1hZ2U7IHNlYXJjaC10b3AgaXMgYSBESUZGRVJFTlQgaWQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgSEFTIGFuIGltYWdlLCBhbmQgaXRzIGxhdGVzdF9yZWxlYXNlIGlzCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZXF1YWwtb3ItbmV3ZXIgdGhhbiB0aGUgY2FjaGVkIG9uZSAob3IgdGhlIGNhY2hlZAogICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9uZSBpcyBudWxsKSDigJQgLS1yZXBvaW50IGlzIHZlcnkgbGlrZWx5IGNvcnJlY3QuCiAgICAgIC0gQ0FVVElPTiAob2xkZXIgcmVsZWFzZSkgIHNhbWUgYXMgYWJvdmUgYnV0IHRoZSBzZWFyY2gtdG9wJ3MgbGF0ZXN0CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVsZWFzZSBpcyBPTERFUiB0aGFuIHRoZSBjYWNoZWQgb25lIOKAlCByZXBvaW50aW5nCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgd291bGQgc3RpbGwgZml4IHRoZSBwb3J0cmFpdCBidXQgY291bGQgcmVncmVzcwogICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRoZSByZWxlYXNlIGRhdGU7IG5lZWRzIGEgbG9vayBiZWZvcmUgcmVwb2ludGluZy4KICAgICAgLSBhbHJlYWR5LWNhbm9uaWNhbCAodHJ1bHkgaW1hZ2VsZXNzKSAgY2FjaGVkIGlkIElTIHRoZSBzZWFyY2gtdG9wIChvcgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5vIGJldHRlciBjYW5kaWRhdGUgZXhpc3RzKSDigJQgdGhlIGFydGlzdCBnZW51aW5lbHkKICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYXMgbm8gU3BvdGlmeSBwb3J0cmFpdDsgbm90IGEgZHJpZnQgY2FzZS4KICAgICAgLSBuby1oZWxwICAgICAgICAgICAgICBjYWNoZWQgaGFzIG5vIGltYWdlIGFuZCBzZWFyY2ggZm91bmQgbm8KICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25maWRlbnQgKD49IFNFQVJDSF9NSU5fU0NPUkUpIGFsdGVybmF0aXZlIGlkIGF0CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWxsIOKAlCBsZWF2ZSBhcy1pcywgbm90aGluZyB0byByZXBvaW50IHRvLgogICAgRW50cmllcyB3aG9zZSBjYWNoZWQgaWQgYWxyZWFkeSBIQVMgYSBwb3J0cmFpdCBhcmUgc2tpcHBlZCBlbnRpcmVseSAobm8KICAgIGRyaWZ0IHNpZ25hbCB3aXRob3V0IGEgbWlzc2luZyBpbWFnZSkgYW5kIGRvbid0IGNvc3QgYSAvc2VhcmNoIGNhbGwuCgogICAgLS1yZXBvaW50ICJOYW1lPWNhbm9uaWNhbElEIiAocmVwZWF0YWJsZSkgaXMgdGhlIHdyaXRlIHNpZGU6IGZvciBlYWNoCiAgICBwYWlyLCB1cGRhdGVzIHNwb3RpZnlfaWQgKyBzcG90aWZ5X3VybCBpbiB0aGUgY2FjaGUgQU5ELCBpZiBhcnRpc3RzLnRzdgogICAgKG9yIGZhc3RfdHJhY2sudHN2KSBjYXJyaWVzIGEgU3BvdGlmeSBVUkwgZm9yIHRoYXQgYXJ0aXN0LCB1cGRhdGVzIGl0CiAgICB0aGVyZSB0b28g4oCUIGEgc3RvcmVkIFVSTCB3aW5zIG92ZXIgYm90aCBjYWNoZSBhbmQgc2VhcmNoIGluCiAgICByZXNvbHZlX2FydGlzdF9pZCgpLCBzbyBsZWF2aW5nIGl0IHN0YWxlIHdvdWxkIHNpbGVudGx5IHJldmVydCB0aGUKICAgIHJlcG9pbnQgb24gdGhlIG5leHQgcmVidWlsZC4gQm90aCBsYXRlc3RfcmVsZWFzZV9jaGVja2VkIGFuZAogICAgaW1hZ2VzX2NoZWNrZWQgYXJlIGNsZWFyZWQgKG5vdCBqdXN0IGltYWdlX3VybC9sYXRlc3RfcmVsZWFzZSkgYWZ0ZXIgYW4KICAgIGlkIGNoYW5nZSwgbWlycm9yaW5nIHRoZSBudWxsLXByZXNlcnZlIHBhdHRlcm4gdGhlIGltYWdlcy9yZWxlYXNlcyBwYXNzZXMKICAgIGFscmVhZHkgdXNlOiBhIHN0YWxlIGNoZWNrZWQtZGF0ZSB3b3VsZCBsZXQgLS1zdGFsZS1kYXlzIHNraXAgdGhlIHZlcnkKICAgIGVudHJ5IHRoYXQgbW9zdCBuZWVkcyByZS1wdWxsaW5nIHVuZGVyIHRoZSBjb3JyZWN0ZWQgaWQuCgogICAgVW5saWtlIGV2ZXJ5IC0tcmVmcmVzaC0qLy0tbmV3LWFydGlzdC8tLWFkZC1hcnRpc3QgcGFzcywgd2hlcmUgLS1kcnktcnVuCiAgICBpcyBhbiBPUFQtSU4gcHJldmlldyBvZiBhIGJhdGNoIG9mIG90aGVyd2lzZS1hdXRvbWF0aWMgY2hhbmdlcywgLS1yZXBvaW50CiAgICBuYW1lcyBvbmUgZXhhY3QgYXJ0aXN0IGFuZCBvbmUgZXhhY3QgaWQgdGhlIHBlcnNvbiBoYXMgYWxyZWFkeSBkZWNpZGVkCiAgICBvbiDigJQgc28gaXQgV1JJVEVTIEJZIERFRUZMVC4gUGFzcyAtLWRyeS1ydW4gdG8gcHJldmlldyBhIC0tcmVwb2ludAogICAgaW52b2NhdGlvbiBiZWZvcmUgaXQgdG91Y2hlcyB0aGUgY2FjaGUgb3IgYSBUU1YuCgogICAgQW1iaWd1b3VzIGNvbW1vbi1uYW1lIGFydGlzdHMgKG11bHRpcGxlIGxlZ2l0aW1hdGUgcHJvZmlsZXMsIGUuZy4gIk5ldwogICAgWW9yaydzIEZpbmVzdCIpIGFyZSBOT1Qgc29tZXRoaW5nIGVpdGhlciBtb2RlIHRyaWVzIHRvIHJlc29sdmUKICAgIGF1dG9tYXRpY2FsbHkg4oCUIHJlbGV2YW50IGZsYWcgYW5kIC0tcmVwb2ludCByZXF1aXJlcyB0aGUKICAgIHBlcnNvbiB0byBuYW1lIHRoZSBleGFjdCBjYW5vbmljYWwgaWQgYnkgaGFuZDsgdGhlcmUgaXMgbm8gYXV0by1yZXBvaW50CiAgICBwYXRoLgoKVVNBR0UKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAgICAgICAgICAgICAgICAgIyBhZGQgYXJ0aXN0cyBub3QgeWV0IGluIHRoZSBjYWNoZQogICAgcHl0aG9uMyBzcG90aWZ5X2NhY2hlLnB5IC0tcmVmcmVzaCAgICAgICAjIGZ1bGwgcmUtcHVsbCAobWV0YWRhdGEgKyByZWxlYXNlKSBmb3IgQUxMCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1yZWZyZXNoLXJlbGVhc2VzICAgICAgICAgICAgICAgICAgIyBzbWFydCBkZWZhdWx0OiBhdXRvLWluZmVycyBzdGFsZS1kYXlzIGZyb20gbWVkaWFuIGxhc3QtY2hlY2tlZCBkYXRlCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1yZWZyZXNoLXJlbGVhc2VzIC0tY291bnQtcGVuZGluZyAgIyBwcmV2aWV3OiBob3cgbWFueSBjYWxscyB3b3VsZCB0aGlzIGJ1cm4/ICh6ZXJvIEFQSSBjYWxscykKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAtLXJlZnJlc2gtcmVsZWFzZXMgLS1zdGFsZS1kYXlzIDcgICMgZXhwbGljaXQgb3ZlcnJpZGU6IHNraXAgZW50cmllcyBjaGVja2VkIGluIGxhc3QgNyBkYXlzCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1yZWZyZXNoLXJlbGVhc2VzIC0tc3RhbGUtZGF5cyAwICAjIGJydXRlLWZvcmNlOiByZS1jaGVjayBhbGwgYXJ0aXN0cyByZWdhcmRsZXNzIG9mIHJlY2VuY3kKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAtLXJlZnJlc2gtbGFzdGZtICAgICMgc2VlZCBhbGwgcmVwbyBhcnRpc3RzICsgZW5yaWNoIHRoZW0gZnJvbSBMYXN0LmZtCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1yZWZyZXNoIC0tcHJ1bmUgICAjIC4uLmFuZCBkcm9wIGFydGlzdHMgbm8gbG9uZ2VyIGluIHRoZSByZXBvCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1hcnRpc3QgIkxhcmtpbiBQb2UiICAgIyBvbmUgYXJ0aXN0IChzdWJzdHJpbmcsIGNhc2UtaW5zZW5zaXRpdmUpCiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1hZGQtYXJ0aXN0ICJFcmljIEFtYmVsIiAtLXRvIHJlc2VhcmNoICAjIHJlc29sdmUgKyBhcHBlbmQgYSBjYWNoZS1yZWFkeSByb3cgKC0tdG86IHJlc2VhcmNoIHwgZmFzdF90cmFjayB8IHNlZW5fd2l0aCkKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAtLWF1ZGl0LWlkcyAgICAgIyByZWFkLW9ubHk6IGZsYWcgY2FjaGVkIGlkcyB0aGF0IGxvb2sgbGlrZSBzZWNvbmRhcnkvd3JvbmcgU3BvdGlmeSBwcm9maWxlcwogICAgcHl0aG9uMyBzcG90aWZ5X2NhY2hlLnB5IC0tYXVkaXQtaWRzIC0tYXJ0aXN0ICJHb3YndCBNdWxlIiAgIyBhdWRpdCBvbmUgYXJ0aXN0CiAgICBweXRob24zIHNwb3RpZnlfY2FjaGUucHkgLS1yZXBvaW50ICJHb3YndCBNdWxlPTV6b0tPY3pnT0ptQkFvVFFCWHdhS24iIC0tZHJ5LXJ1biAgIyBwcmV2aWV3IGEgbWFudWFsIGZpeAogICAgcHl0aG9uMyBzcG90aWZ5X2NhY2hlLnB5IC0tcmVwb2ludCAiR292J3QgTXVsZT01em9LT2N6Z09KbUJBb1RRQlh3YUtuIiAgIyBhcHBseSBpdCAod3JpdGVzIGJ5IGRlZmF1bHQ7IHJlcGVhdGFibGUgZmxhZykKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAtLWRlbGF5IDEgICAgICAgIyBzcGVlZCB1cCB0aGUgbGlnaHRlciBwYXNzZXMgKGRlZmF1bHQgMi4wcykKICAgIHB5dGhvbjMgc3BvdGlmeV9jYWNoZS5weSAtLWRyeS1ydW4gICAgICAgIyByZXBvcnQgcGxhbm5lZCBjaGFuZ2VzLCB3cml0ZSBub3RoaW5nCgpPVVRQVVQgIGRhdGEvYXJ0aXN0X3Nwb3RpZnkuanNvbiDigJQgZGV0ZXJtaW5pc3RpYyAoc29ydGVkIGtleXMpLCBzbyBhIHBlcmlvZGljCiAgICAgICAgZnVsbCByZWZyZXNoIHByb2R1Y2VzIHNtYWxsLCBsb2NhbGl6ZWQgZGlmZnMuIENvbW1pdHRlZCB0byB0aGUgcmVwbyBvbgogICAgICAgIHB1cnBvc2U6IGEgZnJlc2ggYWdlbnRpYyBzZXNzaW9uIGFuZCB0aGUgc2l0ZSBib3RoIHJlYWQgaXQgZnJvbSB0aGVyZS4KCkVOViAgICAgU1BPVElGWV9DTElFTlRfSUQgLyBTUE9USUZZX0NMSUVOVF9TRUNSRVQgaW4gc2NyaXB0cy8uZW52IChnaXRpZ25vcmVkKQogICAgICAgIG9yIGluaGVyaXRlZCBmcm9tIHRoZSBlbnZpcm9ubWVudC4gTEFTVEZNX0FQSV9LRVkgKHNhbWUgLmVudikgaXMgcmVxdWlyZWQKICAgICAgICBvbmx5IGZvciAtLXJlZnJlc2gtbGFzdGZtOyB0aGUgU3BvdGlmeSBidWlsZCBkb2VzIG5vdCBuZWVkIGl0LgoKTk9URSAgICBDYW5vbmljYWxpemF0aW9uIGhlcmUgYXBwbGllcyB0aGUgZXhwbGljaXQgZGF0YS9yZWNvbW1lbmRfYWxpYXNlcy50c3YgbWFwCiAgICAgICAgcGx1cyBhIGRlLWludmVydCBzdGVwICgiV29vZCBCcm90aGVycywgVGhlIiAtPiAiVGhlIFdvb2QgQnJvdGhlcnMiLCBzbyB0aGUKICAgICAgICBzb3J0YWJsZSBmb3JtIGFydGlzdHMudHN2IHVzZXMgc2hhcmVzIG9uZSBjYWNoZSBrZXkgd2l0aCB0aGUgbmF0dXJhbCBmb3JtKS4KICAgICAgICBjb2xsZWN0X2FydGlzdHMgYWxzbyBzcGxpdHMgJy8nLWpvaW5lZCBzdXBwb3J0IGJpbGxzIGludG8gdGhlaXIgaW5kaXZpZHVhbAogICAgICAgIGFjdHMgYW5kIGZvbGRzICJYIEJhbmQiIGludG8gYSBjb2xsZWN0ZWQgYmFyZSAiWCIgKHNlZSB0aGVyZSkg4oCUIGJvdGgKICAgICAgICBtaXJyb3Jpbmcgc2NyaXB0cy9idWlsZF9yZWNvbW1lbmRfaW5kZXgucHkuIEl0IGRvZXMgTk9UIHJlcGxpY2F0ZSB0aGF0CiAgICAgICAgc2NyaXB0J3MgZGUtYWNjZW50IC8gc3RyaXAtYXBvc3Ryb3BoZSBub3JtYWxpemF0aW9uLCBzbyBhbiBhY2NlbnQtIG9yCiAgICAgICAgYXBvc3Ryb3BoZS1vbmx5IHZhcmlhbnQgY2FuIHN0aWxsIHNwbGl0IGludG8gdHdvIGVudHJpZXM7IGZpeCB0aG9zZSBhdCB0aGUKICAgICAgICBzb3VyY2Ugb3IgZXh0ZW5kIHRoaXMgc3RlcCBpZiB0aGV5IGFjY3VtdWxhdGUuCiIiIgoKaW1wb3J0IGFyZ3BhcnNlCmltcG9ydCBjc3YKaW1wb3J0IGdsb2IKaW1wb3J0IGpzb24KaW1wb3J0IG9zCmltcG9ydCByZQppbXBvcnQgc3lzCmltcG9ydCBzdGF0aXN0aWNzCmltcG9ydCB0aW1lCmltcG9ydCB1bmljb2RlZGF0YQpmcm9tIGRhdGV0aW1lIGltcG9ydCBkYXRlCg==
+#!/usr/bin/env python3
+"""
+spotify_cache.py — Build data/artist_spotify.json from every artist in the repo.
+
+Pulls a Spotify resolution anchor (artist id + URL) and the most recent release
+for the full set of artists that appear anywhere in the live-shows repo, and
+writes a single deterministic JSON cache, keyed by canonical artist name.
+Consumers:
+
+  - sampler MCP workflow      -> spotify_id / spotify_url as a resolution anchor
+  - artist research / follow  -> latest-release recency (popularity/followers/
+                                 genres are no longer available app-only — see
+                                 STRIPPED METADATA below)
+  - (optional) the site       -> clickable artist name -> Spotify page
+
+AUTH
+    Spotify Client Credentials (app-only) — the same SPOTIFY_CLIENT_ID /
+    SPOTIFY_CLIENT_SECRET already used by tools/youtube/youtube_fill_handles.py.
+    No user OAuth, no quota limit. Only endpoints still reachable app-only on a
+    Development-mode app are used: GET /search (id resolution, only when there's
+    no stored or cached id) and GET /artists/{id}/albums (latest release). The
+    plain GET /artists/{id} call was dropped — see RATE LIMITS.
+
+METADATA-ONLY (no top tracks)  — updated 2026-06-22
+    This cache deliberately does NOT store per-artist top tracks. Spotify's
+    Feb/Mar-2026 API migration (effective 2026-02-11; all Dev-mode apps by
+    2026-03-09) restricted GET /artists/{id}/top-tracks for app-only auth — it
+    now returns 403 Forbidden under Client Credentials on a Dev-mode app. The
+    user-OAuth path (the marcelmarais MCP server) is no substitute: it exposes
+    only the *user's own* top tracks (/me/top/tracks), not an arbitrary artist's,
+    and there is no public artist-top-tracks endpoint reachable from it. So track
+    selection for samplers happens at assembly time via the MCP's searchSpotify
+    (results come back in relevance order — Spotify search has no sort param —
+    so picks must be eyeballed, not trusted as a true top-10). Related-artists
+    and recommendations were removed in the 2024-11-27 cull and are likewise
+    absent. If the app is ever promoted out of Dev mode (Extended Quota), revisit
+    restoring a top_tracks field here.
+
+STRIPPED METADATA (no popularity / followers / genres)  — added 2026-06-23
+    These three fields were the cache's original analytical payload. Spotify's
+    Feb/Mar-2026 Dev-mode migration removed them from the /artists/{id} response
+    under app-only (Client Credentials) auth. It's a field-level removal tied to
+    Development mode, not to the auth flow, so the user-OAuth path (the
+    marcelmarais MCP token) does NOT recover them either — only Extended Quota
+    Mode would, which is out of reach for a personal app. So build_entry no longer
+    stores them; the cache is now a resolution map (id/url) + latest_release.
+    The lost popularity/genre signal is backfilled from a separate source
+    (Last.fm) as its own refreshable layer, in a follow-on change — not here.
+
+RATE LIMITS  — added 2026-06-23
+    Spotify's Feb/Mar-2026 Dev-mode limits are tight: a 429 can carry a multi-HOUR
+    Retry-After (observed ~22h). So api_get caps its sleep at MAX_BACKOFF and
+    raises RateLimited on anything longer — and on exhausted retries — so the run
+    BAILS, keeping its periodic checkpoints, instead of sleeping for hours or
+    churning every remaining artist into a false 'unresolved'. To keep request
+    volume down per build: build_entry makes ONE call (latest_release); a stored
+    or cached id skips the /search; and non-artist rows (festival/event names in
+    the Artist column of Pass potentials) are dropped before resolution via
+    _is_non_artist (explicit set + "festival" substring) so they never cost a call.
+    Pace the calls with --delay (default 2.0s) — raise it on a big first build to
+    stay under the limit, lower it once limits relax or for the lighter passes.
+    A multi-day --refresh-releases back-audit resumes across the daily cap with
+    --stale-days (see LATEST RELEASE / that flag's help).
+
+LATEST RELEASE  — added 2026-06-23
+    Each entry carries a `latest_release` object — the artist's most recent
+    album/single — from GET /artists/{id}/albums (a plain catalog read, reachable
+    app-only; not in the migrated-restricted set). include_groups is album,single
+    only (the releases most likely to be played at an upcoming show); compilation
+    and appears_on are excluded so a best-of or a guest feature can't make a
+    dormant artist look active. Shape:
+        "latest_release": {
+          "date": "2026-06-19", "precision": "day",   # day|month|year
+          "name": "...", "type": "single",            # album|single
+          "spotify_id": "...", "url": "..."
+        }
+    plus "latest_release_checked": "YYYY-MM-DD". `precision` is stored because
+    Spotify's release_date can be year- or month-only (back catalogue); any
+    "days since" math downstream must tolerate that. `name`/`type` make a
+    re-release / anniversary edition (a fresh date on old material) auditable by
+    eye. `latest_release` is null when the artist has no qualifying album/single.
+    NOTE: one /albums call with limit=10 — the endpoint's MAX (it 400s "Invalid
+    limit" above 10, unlike most Spotify list endpoints which allow 50). Results
+    come back newest-first, so the most recent is effectively always in-window;
+    a hyper-prolific artist's newest could in theory fall past item 10, which a
+    later --refresh-releases would self-correct. (Sample across the cache once it
+    exists to confirm 10 never misses; bump to pagination only if it does.)
+
+    The "most recent" pick pads partial dates to the *start* of their period for
+    comparison only (a year-only 2026 sorts as 2026-01-01, so a dated 2026-06-19
+    in the same year correctly outranks it); the original release_date + precision
+    are what get stored.
+
+    MISATTRIBUTION GUARD (#100)  — added 2026-06-27
+        /artists/{id}/albums has been observed returning an album that belongs to
+        a different artist for the given id (a Bach recording surfaced under
+        Angelique Francis). Since the bad album was the newest, it won the pick
+        and was cached as her latest_release, then rode into a "new releases"
+        list. latest_release now filters the page through _album_credits_artist
+        (our id among the album's credited artists, or an alias-aware name match
+        as a backstop) BEFORE selecting the newest, so a mis-link can neither be
+        stored nor displace the real release — the correct one is recovered from
+        elsewhere in the same page. Drops are logged rejected-only (bounded by
+        anomaly count, not traffic). The guard runs in both the build and the
+        refresh paths, so a full --refresh-releases re-validates the whole cache
+        as a side effect at no extra quota. That sweep is ~317 calls ≈ 3-4 days
+        under the cap; --stale-days makes it resumable day to day (see below).
+
+    RESUMABLE RELEASE SWEEP (--stale-days)  — added 2026-06-27
+        refresh_releases walks sorted(cache) top-down and, by default, re-pulls
+        every entry — so a naive daily re-run under the ~100/day cap re-burns the
+        first ~100 names and never advances. --stale-days N skips entries whose
+        latest_release_checked is within the last N days, so each daily run picks
+        up past what an earlier run in the same sweep already refreshed. Opt-in:
+        unset = refresh everything (unchanged behavior), so a deliberate full
+        re-pull still does exactly that. Pick N > sweep length (7 covers the 3-4
+        day, ~317-artist sweep).
+
+    NULL-PRESERVE GUARD (#109)  — added 2026-06-29
+        A null pull (no album/single credited to the id, app-only / market=US)
+        must NOT overwrite a non-null cached latest_release. App-only Dev-mode
+        returns ∅ for artists who demonstrably have releases (confirmed via the
+        user-OAuth path); the old code stored that ∅ AND stamped the entry fresh,
+        so a real release was both lost and then skipped by the next --stale-days
+        sweep. Both write paths (refresh_releases and the main build loop) now
+        keep the cached release when a pull comes back null, and refresh_releases
+        leaves latest_release_checked untouched so the entry is retried rather
+        than locked as a false null. Genuinely new artists (no prior entry) still
+        store null correctly — the guard only fires when there's data to protect.
+
+    Display/badging on this date (a "NEW" badge in the show lists) and recency
+    weighting in follow-tier / potentials decisions are deliberately OUT of scope
+    here — this only captures and caches the data. See #85 / follow-on tickets.
+
+LAST.FM ENRICHMENT  — added 2026-06-25
+    A separate, independently-refreshable `lastfm` block backfills the analytical
+    signal Spotify's Dev-mode migration stripped (popularity/followers/genres).
+    Populated ONLY by --refresh-lastfm; the Spotify build/refresh never reads it,
+    and a Spotify --refresh PRESERVES any existing block. Needs no Spotify creds —
+    it uses the free Last.fm API (api_key only).
+    --refresh-lastfm also SEEDS: it collects the full repo artist set and creates a
+    Spotify-null skeleton (spotify_id / spotify_url / latest_release = null) for any
+    artist Spotify hasn't resolved yet, so one Last.fm pass covers the whole roster
+    even while the Spotify side drips in over the daily Dev-mode quota. The next
+    Spotify build fills those skeletons in (default add-missing mode treats a null
+    spotify_id as "not yet resolved") and preserves the lastfm block. Per-artist
+    shape:
+        "lastfm": {
+          "mbid": "...",                 # MusicBrainz id (cross-source join key)
+          "url": "https://www.last.fm/music/...",
+          "listeners": 123456,           # global popularity proxy (null if unknown)
+          "playcount": 9876543,
+          "tags": ["blues", "americana", ...],   # <= LASTFM_TAGS, folksonomy
+          "similar": ["...", ...]                 # <= LASTFM_SIMILAR, discovery feed
+        }
+    plus "lastfm_checked": "YYYY-MM-DD"; both absent until --refresh-lastfm runs,
+    and "lastfm" is null for an artist Last.fm can't find. Tags are crowd-sourced
+    (mood / "seen live" noise mixed with real genres) — filter before trusting
+    them as a genre signal.
+
+ID-DRIFT AUDIT (--audit-ids / --repoint)  — added 2026-07-13 (#126)
+    #125's build-time image caching surfaced a class of cache corruption the
+    resolver had no way to self-correct: a stored/cached spotify_id that points
+    at a real, valid Spotify artist profile, but a SECONDARY one Spotify minted
+    for the same act — same discography shape, but no portrait, and sometimes
+    a stale latest_release. resolve_artist_id() prefers a cached id or a stored
+    artists.tsv URL over re-searching (by design — it avoids needless /search
+    calls on every refresh), so once a secondary id is cached it never gets a
+    chance to self-correct; only a fresh --search would find the canonical one,
+    and nothing triggers that automatically. Gov't Mule proved it isn't a
+    namesake-collision problem: only one Gov't Mule exists, yet the cached id
+    (1f9zCQ…) differed from the canonical search-top (5zoKOc…).
+
+    --audit-ids (read-only, no cache writes) walks the cache and, for every
+    entry whose cached id's GET /artists/{id} returns no portrait, re-resolves
+    the artist by name via /search and compares the search-top id against the
+    cached one. Four verdicts, one per artist:
+      - REPOINT SAFE        cached has no image; search-top is a DIFFERENT id,
+                             HAS an image, and its latest_release is
+                             equal-or-newer than the cached one (or the cached
+                             one is null) — --repoint is very likely correct.
+      - CAUTION (older release)  same as above but the search-top's latest
+                             release is OLDER than the cached one — repointing
+                             would still fix the portrait but could regress
+                             the release date; needs a look before repointing.
+      - already-canonical (truly imageless)  cached id IS the search-top (or
+                             no better candidate exists) — the artist genuinely
+                             has no Spotify portrait; not a drift case.
+      - no-help              cached has no image and search found no
+                             confident (>= SEARCH_MIN_SCORE) alternative id at
+                             all — leave as-is, nothing to repoint to.
+    Entries whose cached id already HAS a portrait are skipped entirely (no
+    drift signal without a missing image) and don't cost a /search call.
+
+    --repoint "Name=canonicalID" (repeatable) is the write side: for each
+    pair, updates spotify_id + spotify_url in the cache AND, if artists.tsv
+    (or fast_track.tsv) carries a Spotify URL for that artist, updates it
+    there too — a stored URL wins over both cache and search in
+    resolve_artist_id(), so leaving it stale would silently revert the
+    repoint on the next rebuild. Both latest_release_checked and
+    images_checked are cleared (not just image_url/latest_release) after an
+    id change, mirroring the null-preserve pattern the images/releases passes
+    already use: a stale checked-date would let --stale-days skip the very
+    entry that most needs re-pulling under the corrected id.
+
+    Unlike every --refresh-*/--new-artist/--add-artist pass, where --dry-run
+    is an OPT-IN preview of a batch of otherwise-automatic changes, --repoint
+    names one exact artist and one exact id the person has already decided
+    on — so it WRITES BY DEFAULT. Pass --dry-run to preview a --repoint
+    invocation before it touches the cache or a TSV.
+
+    Ambiguous common-name artists (multiple legitimate profiles, e.g. "New
+    York's Finest") are NOT something either mode tries to resolve
+    automatically — --audit-ids flags them (typically as CAUTION or, if the
+    search-top itself lacks an image, no-help) and --repoint requires the
+    person to name the exact canonical id by hand; there is no auto-repoint
+    path.
+
+USAGE
+    python3 spotify_cache.py                 # add artists not yet in the cache
+    python3 spotify_cache.py --refresh       # full re-pull (metadata + release) for ALL
+    python3 spotify_cache.py --refresh-releases  # re-pull ONLY latest_release for cached artists
+    python3 spotify_cache.py --refresh-releases                  # smart default: auto-infers stale-days from median last-checked date
+    python3 spotify_cache.py --refresh-releases --count-pending  # preview: how many calls would this burn? (zero API calls)
+    python3 spotify_cache.py --refresh-releases --stale-days 7  # explicit override: skip entries checked in last 7 days
+    python3 spotify_cache.py --refresh-releases --stale-days 0  # brute-force: re-check all artists regardless of recency
+    python3 spotify_cache.py --refresh-lastfm    # seed all repo artists + enrich them from Last.fm
+    python3 spotify_cache.py --refresh --prune   # ...and drop artists no longer in the repo
+    python3 spotify_cache.py --artist "Larkin Poe"   # one artist (substring, case-insensitive)
+    python3 spotify_cache.py --add-artist "Eric Ambel" --to research  # resolve + append a cache-ready row (--to: research | fast_track | seen_with)
+    python3 spotify_cache.py --audit-ids     # read-only: flag cached ids that look like secondary/wrong Spotify profiles
+    python3 spotify_cache.py --audit-ids --artist "Gov't Mule"  # audit one artist
+    python3 spotify_cache.py --repoint "Gov't Mule=5zoKOczgOJmBAoTQBXwaKn" --dry-run  # preview a manual fix
+    python3 spotify_cache.py --repoint "Gov't Mule=5zoKOczgOJmBAoTQBXwaKn"  # apply it (writes by default; repeatable flag)
+    python3 spotify_cache.py --delay 1       # speed up the lighter passes (default 2.0s)
+    python3 spotify_cache.py --dry-run       # report planned changes, write nothing
+
+OUTPUT  data/artist_spotify.json — deterministic (sorted keys), so a periodic
+        full refresh produces small, localized diffs. Committed to the repo on
+        purpose: a fresh agentic session and the site both read it from there.
+
+ENV     SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET in scripts/.env (gitignored)
+        or inherited from the environment. LASTFM_API_KEY (same .env) is required
+        only for --refresh-lastfm; the Spotify build does not need it.
+
+NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv map
+        plus a de-invert step ("Wood Brothers, The" -> "The Wood Brothers", so the
+        sortable form artists.tsv uses shares one cache key with the natural form).
+        collect_artists also splits '/'-joined support bills into their individual
+        acts and folds "X Band" into a collected bare "X" (see there) — both
+        mirroring scripts/build_recommend_index.py. It does NOT replicate that
+        script's de-accent / strip-apostrophe normalization, so an accent- or
+        apostrophe-only variant can still split into two entries; fix those at the
+        source or extend this step if they accumulate.
+"""
+
+import argparse
+import csv
+import glob
+import json
+import os
+import re
+import sys
+import statistics
+import time
+import unicodedata
+from datetime import date
+
+try:
+    import requests
+except ImportError:
+    sys.exit("Missing dependency: requests\nRun: pip install requests")
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    sys.exit("Missing dependency: python-dotenv\nRun: pip install python-dotenv")
+
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))           # scripts
+REPO_ROOT  = os.path.dirname(SCRIPT_DIR)         # repo root
+DATA_DIR   = os.path.join(REPO_ROOT, "data")
+FOLLOWS    = os.path.join(REPO_ROOT, "tools", "research", "follows")
+
+ALIASES_TSV = os.path.join(DATA_DIR, "recommend_aliases.tsv")
+OUTPUT_JSON = os.path.join(DATA_DIR, "artist_spotify.json")
+ARTISTS_TSV = os.path.join(DATA_DIR, "artists.tsv")
+
+load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
+
+
+# ── Spotify config ────────────────────────────────────────────────────────────
+
+SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
+SPOTIFY_API       = "https://api.spotify.com/v1"
+MARKET            = "US"      # /artists/{id}/albums market filter (release availability)
+ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "Invalid limit")
+DELAY             = 2.0       # default inter-call spacing (s); override per-run with --delay
+SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
+SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
+MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
+DEFAULT_RETRY_AFTER = 5       # assumed wait when a 429 carries no Retry-After header
+
+# Last.fm enrichment (separately refreshable; only --refresh-lastfm uses these)
+LASTFM_API     = "https://ws.audioscrobbler.com/2.0/"
+LASTFM_UA      = "live-shows-artist-cache/1.0 (+https://github.com/dan2bit/live-shows)"
+LASTFM_TAGS    = 5    # max tags stored per artist
+LASTFM_SIMILAR = 5    # max similar artists stored per artist
+
+from name_forms import lookup_forms
+
+_ARTIST_ID_RE = re.compile(r"artist[:/]([A-Za-z0-9]+)")
+
+
+class RateLimited(Exception):
+    """Spotify 429 with a Retry-After above MAX_BACKOFF — Dev-mode lockouts can be
+    many hours. Raised so the run bails (preserving checkpoints) instead of
+    sleeping for hours or churning every remaining artist into a false
+    'unresolved'."""
+
+    def __init__(self, retry_after: int):
+        self.retry_after = retry_after
+        super().__init__(f"rate-limited; Retry-After {retry_after}s")
+
+
+# ── Source files: (path, [artist-bearing columns], [url columns]) ─────────────
+# Comment-prefixed (#) and blank lines are stripped before the header is read,
+# so fast_track.tsv and recommend_aliases.tsv parse cleanly. Missing files and
+# missing columns are tolerated.
+
+def _tsv_sources():
+    sources = [
+        (os.path.join(DATA_DIR, "artists.tsv"),               ["Artist"], ["Spotify URL"]),
+        (os.path.join(DATA_DIR, "live_shows_current.tsv"),    ["Artist", "Supporting Artist"], []),
+        (os.path.join(DATA_DIR, "live_shows_potential.tsv"),  ["Artist", "Support"], []),
+        (os.path.join(DATA_DIR, "fast_track.tsv"),            ["Artist"], ["Spotify URL"]),
+        (os.path.join(FOLLOWS,  "follows_master.tsv"),        ["Artist"], []),
+        (os.path.join(FOLLOWS,  "new_artist_research.tsv"),   ["Artist"], []),
+        # seen_with.tsv (#97): session/sit-in/supergroup members. Read the "Seen
+        # With" column (the member); its "Spotify URL" is the member's own URL, a
+        # free resolution hint. Headliner is NOT read here — those names already
+        # come from the show files, so re-reading them adds only redundant source
+        # tags. Placed after artists.tsv so the ledger's URL wins for any member
+        # who is also a tracked headliner (first-wins in collect_artists' add()).
+        (os.path.join(DATA_DIR, "seen_with.tsv"),             ["Seen With"], ["Spotify URL"]),
+    ]
+    sources += [(p, ["Artist", "Supporting Artist"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "history", "*.tsv")))]
+    # Multi-artist setlist files: read an "Artist" column if one exists, else skip.
+    # (Setlist schema isn't fixed; refine here if a dedicated bill format lands.)
+    sources += [(p, ["Artist"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "setlists", "*.tsv")))]
+    return sources
+
+
+def _source_tag(path: str) -> str:
+    return os.path.splitext(os.path.basename(path))[0]
+
+
+# Which repo TSVs carry a per-artist "Spotify URL" column that a --repoint must
+# also correct, keyed by canonical artist name -> Artist column value used for
+# matching. artists.tsv is checked first (most authoritative / most commonly
+# stale), then fast_track.tsv. seen_with.tsv rows are members, not headliners,
+# and are left alone here — #126's drift cases are all headliner-level.
+_URL_BEARING_TSVS = (ARTISTS_TSV, os.path.join(DATA_DIR, "fast_track.tsv"))
+
+
+# ── Name normalisation & similarity (mirrors youtube_fill_handles.py) ─────────
+
+def _norm(s: str) -> str:
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = s.lower()
+    s = re.sub(r"[^\w\s]", "", s)
+    s = re.sub(r"^the\s+", "", s).strip()
+    return s
+
+
+def _tokens(s: str) -> set:
+    noise = {"and", "the", "feat", "with", "live", "official", "music", "band"}
+    return {w for w in _norm(s).split() if len(w) > 2 and w not in noise}
+
+
+def similarity(a: str, b: str) -> float:
+    if _norm(a) == _norm(b):
+        return 1.0
+    wa, wb = _tokens(a), _tokens(b)
+    if not wa or not wb:
+        return 0.0
+    jaccard = len(wa & wb) / len(wa | wb)
+    an, bn = _norm(a), _norm(b)
+    shorter, longer = (an, bn) if len(an) <= len(bn) else (bn, an)
+    if len(shorter) > 5 and shorter in longer:
+        jaccard = max(jaccard, 0.75)
+    return jaccard
+
+
+# Non-artist rows that pollute the collected set — festival/event names sitting
+# in the Artist column of Pass potentials. Skipped before Spotify resolution so
+# they don't waste a resolve call. The "festival" substring catches future rows;
+# add oddly-named events (no "festival" in the name — e.g. a tribute/celebration
+# concert) to _SKIP_ARTISTS by hand.
+_SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
+                 "john prine celebration"}
+
+# Real-looking strings that resolve to NO single Spotify artist and should be
+# dropped before resolution so they stop costing a /search call every run
+# (#97 / #73). Keep this list TIGHT — it is NOT a dumping ground for "didn't
+# resolve". Only two kinds belong here:
+#   1. A genuine artist with zero Spotify presence (e.g. Eli Kollman — a support
+#      act seen once, no catalogue anywhere).
+#   2. A bill name that exists ONLY as an amalgamation of members who each have
+#      their own Spotify entity, with no entry for the combined name (e.g.
+#      "SatchVai Band" — Spotify lists their joint EP under Joe Satriani AND
+#      Steve Vai separately, never under "SatchVai Band"; both members are already
+#      in seen_with.tsv, so skipping the bill suppresses nothing).
+# Do NOT add combined "X & Y" bills whose components are real, separately-resolvable
+# artists you want in the cache/NAR (JD Simo & Luther Dickinson, Sarah Borges &
+# Eric Ambel, Laka Soul). Those are a SPLIT problem, not a skip — splitting
+# "&"-bills into their components is tracked in #94. Suppressing them here would
+# also hide real artists (e.g. Luther Dickinson = North Mississippi Allstars,
+# already seen). Normalised through _norm so "&"/accents match the collected names.
+_UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
+    "Blood Brothers",      # Zito/Castiglia duo — records as "Mike Zito & Albert Castiglia";
+                           # a bare search hits the Seattle post-hardcore band instead
+    "Eli Kollman",
+    "SatchVai Band",
+    "TJ Turqman",          # local session bassist (seen_with only) — no Spotify catalogue
+    "The Side Cars Band",  # tribute band — no independent Spotify entity
+)}
+
+
+def _is_non_artist(name: str) -> bool:
+    n = _norm(name)
+    return n in _SKIP_ARTISTS or n in _UNRESOLVABLE_ARTISTS or "festival" in n
+
+
+# ── TSV reading (comment-tolerant) ────────────────────────────────────────────
+
+def read_tsv_rows(path: str) -> list[dict]:
+    """Rows as dicts, "" for any value — including a short row's missing trailing
+    columns. csv.DictReader's default restval is None for those, which every caller
+    here then blindly .strip()s; coercing to "" here (once, centrally) matches what
+    parseTsv() already does client-side, instead of every caller needing its own
+    `or ""` guard (#183 — a short row crashed collect_artists() this way)."""
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8", newline="") as f:
+        lines = [ln for ln in f if not ln.lstrip().startswith("#") and ln.strip()]
+    if not lines:
+        return []
+    return [{k: (v or "") for k, v in row.items()} for row in csv.DictReader(lines, delimiter="\t")]
+
+
+def load_aliases() -> dict[str, str]:
+    """Map _norm(alias) -> canonical surface form, from data/recommend_aliases.tsv."""
+    amap: dict[str, str] = {}
+    for row in read_tsv_rows(ALIASES_TSV):
+        alias = (row.get("Alias") or "").strip()
+        canon = (row.get("Canonical") or "").strip()
+        if alias and canon:
+            amap[_norm(alias)] = canon
+    return amap
+
+
+_INVERTED_ARTICLE_RE = re.compile(r"^(.*),\s*(the|a|an)$", re.IGNORECASE)
+
+
+def _deinvert(name: str) -> str:
+    """Fold a sortable inverted form into natural order: 'Wood Brothers, The' ->
+    'The Wood Brothers'. Other names pass through unchanged. artists.tsv stores the
+    inverted form for its own A-Z sort, while the history/current rows and the
+    follow lists use natural order, so the same band otherwise lands under two
+    cache keys (the inverted one and the natural one)."""
+    m = _INVERTED_ARTICLE_RE.match(name)
+    return f"{m.group(2).capitalize()} {m.group(1)}" if m else name
+
+
+def canonical(name: str, amap: dict[str, str]) -> str:
+    # Explicit nickname/expansion aliases first (Kingfish -> Christone 'Kingfish'
+    # Ingram), THEN fold the inverted 'X, The' article so the sortable form used in
+    # artists.tsv shares one cache key with the natural form used everywhere else.
+    name = name.strip()
+    return _deinvert(amap.get(_norm(name), name))
+
+
+# ── Collect the repo-wide artist universe ─────────────────────────────────────
+
+_BILL_MORE_RE = re.compile(r"\s*\+\s*\d*\s*more$", re.IGNORECASE)
+
+
+def _split_support(cell: str):
+    """Yield the individual acts on a support bill. A Support / Supporting Artist
+    cell can list several acts on one '/'-separated line ("A / B / C + more");
+    collected whole it becomes a single bogus cache key that resolves to nothing.
+    Splits on '/' and trims a trailing '+ N more', mirroring the support-harvest in
+    scripts/build_recommend_index.py so both consumers read bills the same way."""
+    for tok in (cell or "").split("/"):
+        tok = _BILL_MORE_RE.sub("", tok.strip()).strip()
+        if len(tok) > 2 and tok.lower() != "more":
+            yield tok
+
+
+def collect_artists(amap: dict[str, str]) -> tuple[dict[str, set], dict[str, str]]:
+    """Return ({canonical_name: {source tags}}, {canonical_name: spotify_url_hint})."""
+    artists: dict[str, set] = {}
+    url_hints: dict[str, str] = {}
+
+    def add(raw: str, tag: str, url: str | None = None):
+        raw = (raw or "").strip()
+        if not raw or _is_non_artist(raw):
+            return
+        canon = canonical(raw, amap)
+        artists.setdefault(canon, set()).add(tag)
+        if url:
+            url = url.strip()
+            if url and canon not in url_hints:
+                url_hints[canon] = url
+
+    for path, name_cols, url_cols in _tsv_sources():
+        tag = _source_tag(path)
+        for row in read_tsv_rows(path):
+            url = next((row.get(c, "").strip() for c in url_cols if row.get(c, "").strip()), None)
+            # name_cols[0] is the headliner (one act, carries the url hint);
+            # name_cols[1:] are support column(s), each a possible '/'-joined bill.
+            if name_cols:
+                add(row.get(name_cols[0], ""), tag, url)
+            for col in name_cols[1:]:
+                for act in _split_support(row.get(col, "")):
+                    add(act, tag, None)
+
+    # Fold "X Band" into "X" when the bare "X" is itself a collected artist, so
+    # "Ally Venable Band" and "Ally Venable" share one entry (build_recommend_index
+    # treats them as one via a drop-Band match key). Conditional on the bare form
+    # already existing — a blanket drop-Band would mangle standalone names whose
+    # last word is "Band" (Tedeschi Trucks Band, The Dirty Dozen Brass Band) and
+    # break their Spotify resolution; a lone "Lilly Hiatt Band" with no bare twin
+    # likewise keeps its full name (it still resolves — _tokens drops "band").
+    for key in [k for k in artists if re.search(r"\S\s+[Bb]and$", k)]:
+        bare = re.sub(r"\s+[Bb]and$", "", key)
+        if bare in artists:
+            artists[bare] |= artists.pop(key)
+            if key in url_hints:
+                url_hints.setdefault(bare, url_hints[key])
+                del url_hints[key]
+
+    return artists, url_hints
+
+
+def collect_raw_names(amap: dict[str, str]) -> set[str]:
+    """Every artist name appearing anywhere in the repo TSVs, alias-canonicalised but
+    NOT passed through _is_non_artist() and NOT Band-folded.
+
+    This — not collect_artists() — is the correct universe for --prune (#159).
+    collect_artists() deliberately drops _SKIP_ARTISTS / _UNRESOLVABLE_ARTISTS so they
+    never cost a /search call, and folds "X Band" into "X". Both are right for
+    resolution and wrong for staleness: those artists are still real rows in the TSVs,
+    so a cache entry for one of them is NOT an orphan. Pruning against collect_artists()
+    deletes them *permanently* — nothing re-seeds them, because refresh_lastfm()'s
+    skeleton seeder iterates the same filtered universe. (SatchVai Band carries a
+    Last.fm block and would have been lost.)
+
+    Aliases ARE applied, so a bill name that now canonicalises to a tracked artist
+    ("Victor Wooten & The Wooten Brothers" -> "Victor Wooten") correctly reads as stale
+    and gets pruned.
+    """
+    names: set[str] = set()
+    for path, name_cols, _url_cols in _tsv_sources():
+        for row in read_tsv_rows(path):
+            if name_cols:
+                raw = (row.get(name_cols[0], "") or "").strip()
+                if raw:
+                    names.add(canonical(raw, amap))
+            for col in name_cols[1:]:
+                for act in _split_support(row.get(col, "")):
+                    act = (act or "").strip()
+                    if act:
+                        names.add(canonical(act, amap))
+    return names
+
+
+def _prune_keep_set(amap: dict[str, str], artists: dict[str, set]) -> set[str]:
+    """Cache keys that must survive a prune: the resolved universe plus every raw TSV
+    name (see collect_raw_names)."""
+    return set(artists) | collect_raw_names(amap)
+
+
+def prune_cache(cache: dict, args) -> None:
+    """--prune: drop cache entries whose artist no longer appears in any repo TSV.
+
+    Runs standalone: no Spotify credentials, no API calls. The staleness test is pure
+    TSV reading — the only reason this ever needed --refresh (and its ~800-1000 calls
+    across the whole cache) was that it lived inside main()'s resolve loop (#159).
+    """
+    amap = load_aliases()
+    artists, _ = collect_artists(amap)
+    keep = _prune_keep_set(amap, artists)
+
+    stale = sorted(k for k in cache if k not in keep)
+    if not stale:
+        print("No orphaned cache entries — nothing to prune.")
+        return
+
+    print(f"{len(stale)} orphaned cache entr{'y' if len(stale) == 1 else 'ies'} "
+          f"(no longer in any repo TSV)" + (" [DRY RUN]" if args.dry_run else "") + ":\n")
+    for k in stale:
+        e = cache[k] or {}
+        marks = "".join(("S" if e.get("spotify_id") else "-",
+                         "P" if e.get("image_url") else "-",
+                         "L" if e.get("lastfm") else "-",
+                         "R" if e.get("latest_release") else "-"))
+        print(f"  {k}  [{marks}]  sources: {', '.join(e.get('sources') or []) or '—'}")
+    print("\n  S=spotify_id  P=portrait  L=lastfm  R=latest_release — a populated entry "
+          "costs 2-3 Spotify calls to rebuild, so review before removing.")
+
+    if args.dry_run:
+        print("\n[DRY RUN] nothing removed.")
+        return
+
+    for k in stale:
+        del cache[k]
+    save_cache(cache)
+    print(f"\nRemoved {len(stale)}. Cache now holds {len(cache)} artists. "
+          f"Written: {OUTPUT_JSON}")
+
+
+# ── Spotify Web API ───────────────────────────────────────────────────────────
+
+_token_cache: dict = {}
+
+
+def _get_token(client_id: str, client_secret: str, force: bool = False) -> str:
+    if not force and _token_cache.get("token"):
+        return _token_cache["token"]
+    resp = requests.post(
+        SPOTIFY_TOKEN_URL,
+        data={"grant_type": "client_credentials"},
+        auth=(client_id, client_secret),
+        timeout=15,
+    )
+    resp.raise_for_status()
+    _token_cache["token"] = resp.json()["access_token"]
+    return _token_cache["token"]
+
+
+def _retry_after_seconds(resp) -> int:
+    """Retry-After in seconds. Per spec it's delta-seconds or an HTTP-date; on a
+    date or an unparseable value, assume a long wait so the caller bails rather
+    than guesses. Missing header => DEFAULT_RETRY_AFTER."""
+    raw = resp.headers.get("Retry-After")
+    if raw is None:
+        return DEFAULT_RETRY_AFTER
+    try:
+        return int(raw)
+    except ValueError:
+        return MAX_BACKOFF + 1
+
+
+def api_get(path: str, params: dict, creds: tuple[str, str]) -> dict | None:
+    """GET {SPOTIFY_API}{path} with one 401 refresh-retry and CAPPED 429 backoff.
+
+    Raises RateLimited when Spotify asks for a wait above MAX_BACKOFF (Dev-mode
+    lockouts run to hours) — the caller checkpoints and exits instead of sleeping
+    for hours. Also raises once retries are exhausted while still throttled, so a
+    sustained 429 doesn't churn every remaining artist into a false 'unresolved'.
+    """
+    url = f"{SPOTIFY_API}{path}"
+    for attempt in range(4):
+        token = _get_token(*creds)
+        resp = requests.get(url, params=params,
+                            headers={"Authorization": f"Bearer {token}"}, timeout=15)
+        if resp.status_code == 401:
+            _get_token(*creds, force=True)
+            continue
+        if resp.status_code == 429:
+            wait = _retry_after_seconds(resp)
+            if wait > MAX_BACKOFF:
+                raise RateLimited(wait)
+            print(f"    rate-limited; sleeping {wait + 1}s")
+            time.sleep(wait + 1)
+            continue
+        if resp.status_code == 404:
+            return None
+        resp.raise_for_status()
+        return resp.json()
+    raise RateLimited(MAX_BACKOFF)
+
+
+def extract_artist_id(url: str) -> str | None:
+    if not url:
+        return None
+    m = _ARTIST_ID_RE.search(url)
+    return m.group(1) if m else None
+
+
+def resolve_artist_id(name: str, url_hint: str | None, creds,
+                      cached_id: str | None = None, cached_url: str = "") -> tuple[str | None, str]:
+    """Prefer the id parsed from a stored Spotify URL (free, picks up corrections);
+    then a cached id (avoids re-searching on --refresh); else search by name."""
+    aid = extract_artist_id(url_hint or "")
+    if aid:
+        return aid, url_hint
+    if cached_id:
+        return cached_id, cached_url or url_hint or ""
+    data = api_get("/search", {"q": name, "type": "artist", "limit": 5}, creds)
+    items = (data or {}).get("artists", {}).get("items", [])
+    best, best_score = None, 0.0
+    for it in items:
+        score = similarity(name, it.get("name", ""))
+        if score > best_score and it.get("id"):
+            best, best_score = it, score
+    if best and best_score >= SEARCH_MIN_SCORE:
+        return best["id"], best.get("external_urls", {}).get("spotify", "")
+    return None, ""
+
+
+def _release_sort_key(rd: str) -> str:
+    # Pad a partial release_date to YYYY-MM-DD for comparison ONLY, anchored at the
+    # START of the period (year-only 2026 -> 2026-01-01), so a more precise date in
+    # the same period outranks it. The original release_date is what gets stored.
+    parts = (rd or "").split("-")
+    y = parts[0] if parts and parts[0] else "0000"
+    m = parts[1] if len(parts) > 1 and parts[1] else "01"
+    d = parts[2] if len(parts) > 2 and parts[2] else "01"
+    return f"{y.zfill(4)}-{m.zfill(2)}-{d.zfill(2)}"
+
+
+def _album_credits_artist(album: dict, aid: str, artist_name: str | None) -> bool:
+    """True if the album is actually credited to this artist (#100 guard).
+
+    /artists/{id}/albums has been observed returning an album that belongs to a
+    different artist for the given id (a Bach recording under Angelique Francis).
+    Accept on an exact Spotify-ID match against the album's credited artists; fall
+    back to an alias-aware name match (same `similarity`/threshold the resolver
+    uses) so a legitimate album whose id representation differs isn't false-
+    rejected. An album matching on neither — our id absent and only an unrelated
+    name credited, which is the #100 case — returns False and is dropped by the
+    caller. Residual: a *bidirectional* mis-link that also injects our id into the
+    album's own artist list is internally consistent and passes the id check;
+    that one is uncatchable from the payload alone (noted on #100)."""
+    album_artists = album.get("artists") or []
+    if any((a.get("id") or "") == aid for a in album_artists):
+        return True
+    if artist_name:
+        for a in album_artists:
+            if similarity(artist_name, a.get("name", "")) >= SEARCH_MIN_SCORE:
+                return True
+    return False
+
+
+def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | None:
+    """Most recent album/single for an artist, or None if they have none.
+
+    Uses GET /artists/{id}/albums (app-only reachable). include_groups is
+    album,single only — compilations and guest features are excluded so they
+    can't masquerade as new activity. One call, limit=ALBUMS_LIMIT (10 — the
+    endpoint's max; >10 returns 400 "Invalid limit"). Results are newest-first,
+    so the most recent is effectively always within the window.
+
+    #100 guard: items not actually credited to this artist (see
+    _album_credits_artist) are dropped BEFORE the newest is picked, so a Spotify
+    mis-link can neither be stored nor displace the real latest — the correct
+    release is recovered automatically when it sits elsewhere in the page. Each
+    drop is logged rejected-only (one stderr line), bounded by anomaly count
+    rather than traffic. Pass artist_name to enable the name backstop; with it
+    None, the guard is id-only.
+
+    Returns None when the artist genuinely has no qualifying release OR when the
+    app-only page comes back empty/all-rejected. Callers MUST NOT let a None here
+    overwrite a non-null cached latest_release — see the #109 null-preserve guard
+    in refresh_releases() and the main build loop.
+    """
+    data = api_get(f"/artists/{aid}/albums",
+                   {"include_groups": "album,single", "market": MARKET, "limit": ALBUMS_LIMIT},
+                   creds)
+    items = (data or {}).get("items", [])
+    if not items:
+        return None
+    credited, rejected = [], []
+    for it in items:
+        (credited if _album_credits_artist(it, aid, artist_name) else rejected).append(it)
+    for it in rejected:
+        credit = ", ".join(a.get("name", "") for a in (it.get("artists") or [])) or "?"
+        print(f"    ⚠ #100 guard: dropped '{it.get('name', '')}' ({it.get('id', '')}) — "
+              f"credited to [{credit}], not {artist_name or aid}", file=sys.stderr)
+    if not credited:
+        return None
+    best = max(credited, key=lambda it: _release_sort_key(it.get("release_date", "")))
+    return {
+        "date": best.get("release_date", ""),
+        "precision": best.get("release_date_precision", ""),
+        "name": best.get("name", ""),
+        "type": best.get("album_type", best.get("type", "")),
+        "spotify_id": best.get("id", ""),
+        "url": (best.get("external_urls") or {}).get("spotify", ""),
+        "image_url": _pick_image(best.get("images"), 300),  # album cover — 0 extra calls (#125)
+    }
+
+
+def _pick_image(images, target):
+    """URL of the image nearest `target` px wide (Spotify sorts images largest-first)."""
+    if not images:
+        return ""
+    best = min(images, key=lambda im: abs((im.get("width") or 0) - target))
+    return best.get("url", "")
+
+
+def artist_image(aid: str, creds) -> str:
+    """Artist portrait URL from GET /artists/{id}.
+
+    Dev-mode Client Credentials strips popularity/followers/genres from this
+    endpoint but KEEPS images[] (verified 2026-07-04, #125). One call; batch
+    /artists?ids= is 403 under the Dev app, so this is per-artist. Returns "" when
+    the artist has no portrait or the pull is empty — callers MUST NOT let that
+    overwrite a cached image_url (null-preserve).
+    """
+    data = api_get(f"/artists/{aid}", {}, creds)
+    return _pick_image((data or {}).get("images"), 300)
+
+
+def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
+    # Resolution anchor (id/url) + the artist's latest album/single (see LATEST
+    # RELEASE). Still one Spotify call here: spotify_url comes from the resolver
+    # or is derived from the id. The portrait (image_url) is fetched separately by
+    # --refresh-images (GET /artists/{id} keeps images[] despite the Dev-mode
+    # metadata strip, #125), so a build never spends that call — image_url and
+    # images_checked start null and are filled by that pass.
+    rel = latest_release(aid, creds, name)
+    return {
+        "spotify_id": aid,
+        "spotify_url": url or f"https://open.spotify.com/artist/{aid}",
+        "sources": sorted(sources),
+        "last_refreshed": date.today().isoformat(),
+        "latest_release": rel,
+        "latest_release_checked": date.today().isoformat(),
+        "image_url": None,          # artist portrait — populated by --refresh-images (#125)
+        "images_checked": None,     # cadence anchor for --refresh-images
+    }
+
+
+# ── Output ────────────────────────────────────────────────────────────────────
+
+def load_cache() -> dict:
+    if not os.path.exists(OUTPUT_JSON):
+        return {}
+    with open(OUTPUT_JSON, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_cache(cache: dict) -> None:
+    with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2, sort_keys=True)
+        f.write("\n")
+
+
+
+# ── Stale-days auto-inference ─────────────────────────────────────────────────
+
+
+def _days_since(iso_date: str) -> int:
+    """Days elapsed since an ISO-format date string. Returns 0 on parse error."""
+    try:
+        return (date.today() - date.fromisoformat(iso_date)).days
+    except ValueError:
+        return 0
+
+
+def _infer_stale_days(cache: dict) -> int:
+    """Infer --stale-days from the median latest_release_checked date in the cache.
+
+    The median is robust to outliers — a single artist checked today or a handful
+    never checked won't skew it. Falls back to 0 (check everything) when the cache
+    has fewer than 2 checked dates (e.g. first ever run / sparse cache).
+
+    Called automatically by refresh_releases() when --stale-days is not explicitly
+    passed. Pass --stale-days 0 to override and force a full brute-force refresh.
+    """
+    today = date.today()
+    ordinals = []
+    for info in cache.values():
+        c = info.get("latest_release_checked")
+        if c:
+            try:
+                ordinals.append(date.fromisoformat(c).toordinal())
+            except ValueError:
+                pass
+    if len(ordinals) < 2:
+        return 0
+    med = date.fromordinal(int(statistics.median(ordinals)))
+    return max(0, (today - med).days)
+
+
+# ── Latest-release-only refresh ───────────────────────────────────────────────
+
+def refresh_releases(cache: dict, creds, args) -> None:
+    """Re-pull ONLY latest_release for already-cached artists; leave the rest of
+    each entry untouched. Honors --artist, --stale-days, and --dry-run.
+
+    --stale-days N skips entries whose latest_release_checked is within the last N
+    days, which makes a multi-day back-audit resumable across the ~100/day cap:
+    each daily run advances past what an earlier run already refreshed instead of
+    restarting from the top. Unset (default) refreshes every cached artist.
+
+    #109 null-preserve: a null pull never overwrites a non-null cached release,
+    and on such a keep the entry's latest_release_checked is left untouched so the
+    sweep retries it rather than locking in a false null (and skipping it)."""
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to refresh releases for "
+              "(run a normal build first, or check --artist).")
+        return
+    # Auto-infer stale_days when not explicitly set. --stale-days 0 forces brute-force.
+    stale_days = args.stale_days
+    if stale_days is None:
+        stale_days = _infer_stale_days(cache)
+        inferred = True
+    else:
+        inferred = False
+
+    if getattr(args, 'count_pending', False):
+        # Dry-run count: local-only, zero API calls.
+        no_id = sum(1 for n in names if not cache[n].get("spotify_id"))
+        if stale_days:
+            skippable = sum(
+                1 for n in names
+                if cache[n].get("spotify_id") and cache[n].get("latest_release_checked")
+                and _days_since(cache[n]["latest_release_checked"]) < stale_days
+            )
+        else:
+            skippable = 0
+        checkable = len(names) - no_id - skippable
+        quota_cycles = checkable / 100
+        stale_src = f"auto-inferred from median last-checked" if inferred else "explicit"
+        if inferred:
+            print(f"auto stale-days: median last-checked → using --stale-days {stale_days}  [{stale_src}]")
+        print(f"--count-pending: {checkable} of {len(names)} artists would be checked "
+              f"({skippable} skipped by --stale-days {stale_days}, {no_id} skipped: no spotify_id)")
+        print(f"Estimated quota burn: ~{checkable} calls (~{quota_cycles:.1f} lockout cycles "
+              f"at 100-call ceiling)")
+        return
+
+    if inferred:
+        print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
+    print(f"Refreshing latest_release for {len(names)} cached artist(s)"
+          + (f" [skip checked < {stale_days}d]" if stale_days else "")
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    updated = 0
+    skipped = 0
+    kept = 0
+    for i, name in enumerate(names, 1):
+        entry = cache[name]
+        aid = entry.get("spotify_id")
+        if not aid:
+            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
+            continue
+        # --stale-days: skip entries refreshed within the window so a multi-day
+        # back-audit resumes across the daily cap instead of re-burning the first
+        # ~100 names each run. Entries never checked (null) fall through and
+        # refresh. Opt-in: with --stale-days unset, nothing here is skipped.
+        if stale_days:
+            checked = entry.get("latest_release_checked")
+            if checked:
+                try:
+                    if _days_since(checked) < stale_days:
+                        skipped += 1
+                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
+                              f"skipped (--stale-days {stale_days})")
+                        continue
+                except ValueError:
+                    pass  # unparseable stored date → fall through and refresh
+        try:
+            rel = latest_release(aid, creds, name)
+        except RateLimited:
+            if not args.dry_run:
+                save_cache(cache)
+                print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
+        time.sleep(DELAY)
+        old_rel = entry.get("latest_release")
+        old = (old_rel or {}).get("date")
+        new = (rel or {}).get("date")
+        # Null-preserve guard (#109): a null pull must not wipe a known release.
+        # App-only Dev-mode + market=US filtering can transiently return no albums
+        # for an artist who has them; overwriting good data with null AND stamping
+        # it fresh would both lose the release and hide it from the next
+        # --stale-days sweep. Keep the cached release and leave
+        # latest_release_checked untouched, so the entry stays eligible for a real
+        # refresh instead of locking in a false null.
+        if rel is None and old_rel is not None:
+            kept += 1
+            print(f"[{i}/{len(names)}] {name}  → null pull; kept {old} (not re-checked)")
+            print(f"    ⚠ app-only null for {name}; preserved cached {old}", file=sys.stderr)
+            continue
+        # Secondary (#100 Option 3): a new date older than the stored one is a
+        # regression worth a look (stale-cache overwrite or a pulled release).
+        # Cheap and rejected-only; does NOT catch the #100 case (its bad date was
+        # newer) — that's the membership guard's job, above.
+        if old and new and _release_sort_key(new) < _release_sort_key(old):
+            print(f"    ⚠ release date regressed {old} → {new} for {name}", file=sys.stderr)
+
+        if args.dry_run:
+            change = "unchanged" if old == new else f"{old or '∅'} → {new or '∅'}"
+            print(f"[{i}/{len(names)}] {name}  → {change}")
+            continue
+
+        entry["latest_release"] = rel
+        entry["latest_release_checked"] = date.today().isoformat()
+        if old != new:
+            updated += 1
+            print(f"[{i}/{len(names)}] {name}  → {new or '∅'}"
+                  + (f"  (was {old})" if old else ""))
+        else:
+            print(f"[{i}/{len(names)}] {name}  → {new or '∅'} (unchanged)")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written"
+              + (f"; {kept} kept on null pulls" if kept else "")
+              + (f"; {skipped} skipped as still-fresh (--stale-days {stale_days})"
+                 if stale_days else "")
+              + ".")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
+          + (f"; kept {kept} on null pulls" if kept else "")
+          + (f"; skipped {skipped} still-fresh (--stale-days {stale_days})"
+             if stale_days else "")
+          + f". Written: {OUTPUT_JSON}")
+
+
+def refresh_images(cache: dict, creds, args) -> None:
+    """Re-pull ONLY the artist portrait (image_url) for already-cached artists;
+    leave the rest of each entry untouched. Mirrors refresh_releases().
+
+    GET /artists/{id} per artist (+1 call each — batch /artists?ids= is 403 under
+    the Dev-mode app, #125). Honors --artist, --stale-days (gating on
+    images_checked), and --dry-run, so a multi-day portrait back-audit resumes
+    across the ~100/day cap. Null-preserve: an empty pull never wipes a cached
+    image_url, and leaves images_checked untouched so the sweep retries it rather
+    than locking in a false null.
+    """
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to refresh images for "
+              "(run a normal build first, or check --artist).")
+        return
+    print(f"Refreshing artist portrait for {len(names)} cached artist(s)"
+          + (f" [skip checked < {args.stale_days}d]" if args.stale_days is not None else "")
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    updated = 0
+    empty = 0
+    skipped = 0
+    for i, name in enumerate(names, 1):
+        entry = cache[name]
+        aid = entry.get("spotify_id")
+        if not aid:
+            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
+            continue
+        if args.stale_days is not None:
+            checked = entry.get("images_checked")
+            if checked:
+                try:
+                    if (date.today() - date.fromisoformat(checked)).days < args.stale_days:
+                        skipped += 1
+                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
+                              f"skipped (--stale-days {args.stale_days})")
+                        continue
+                except ValueError:
+                    pass  # unparseable stored date -> fall through and refresh
+        try:
+            img = artist_image(aid, creds)
+        except RateLimited:
+            if not args.dry_run:
+                save_cache(cache)
+                print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
+        time.sleep(DELAY)
+        old = entry.get("image_url")
+        # Empty pull: never stamp images_checked, so it self-heals on the next
+        # sweep (a transient empty, or an artist who gets a portrait later). A
+        # cached portrait is also preserved — an empty pull never wipes it.
+        if not img:
+            empty += 1
+            print(f"[{i}/{len(names)}] {name}  → empty pull; "
+                  + ("kept cached portrait" if old else "no image yet — left unstamped to retry"))
+            if old:
+                print(f"    ⚠ app-only empty image for {name}; preserved cached", file=sys.stderr)
+            continue
+        if args.dry_run:
+            print(f"[{i}/{len(names)}] {name}  → {'unchanged' if (old or '') == img else 'set'}")
+            continue
+        entry["image_url"] = img
+        entry["images_checked"] = date.today().isoformat()
+        if (old or "") != img:
+            updated += 1
+            print(f"[{i}/{len(names)}] {name}  → portrait set")
+        else:
+            print(f"[{i}/{len(names)}] {name}  → unchanged")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written"
+              + (f"; {empty} empty (left unstamped)" if empty else "")
+              + (f"; {skipped} skipped as still-fresh (--stale-days {args.stale_days})"
+                 if args.stale_days is not None else "")
+              + ".")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Updated {updated} portrait(s) across {len(names)} artist(s)"
+          + (f"; {empty} empty (left unstamped to retry)" if empty else "")
+          + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
+             if args.stale_days is not None else "")
+          + f". Written: {OUTPUT_JSON}")
+
+
+# ── ID-drift audit (--audit-ids / --repoint, #126) ─────────────────────────────
+
+class _Verdict:
+    REPOINT_SAFE = "REPOINT SAFE"
+    CAUTION      = "CAUTION (older release)"
+    CANONICAL    = "already-canonical (truly imageless)"
+    NO_HELP      = "no-help"
+
+
+def _audit_one(name: str, entry: dict, creds) -> tuple[str, dict]:
+    """Run the drift check for one cached artist. Returns (verdict, details).
+
+    details always carries: cached_id, cached_release (date or None). On
+    REPOINT_SAFE / CAUTION it additionally carries candidate_id, candidate_name,
+    candidate_release. Makes exactly one /search call when the cached id's
+    portrait is missing; zero calls otherwise (callers skip entries that already
+    have a portrait before calling this).
+    """
+    cached_id = entry.get("spotify_id")
+    cached_release = (entry.get("latest_release") or {}).get("date")
+    details = {"cached_id": cached_id, "cached_release": cached_release}
+
+    data = api_get("/search", {"q": name, "type": "artist", "limit": 5}, creds)
+    items = (data or {}).get("artists", {}).get("items", [])
+    best, best_score = None, 0.0
+    for it in items:
+        score = similarity(name, it.get("name", ""))
+        if score > best_score and it.get("id"):
+            best, best_score = it, score
+
+    if not best or best_score < SEARCH_MIN_SCORE:
+        return _Verdict.NO_HELP, details
+
+    candidate_id = best["id"]
+    if candidate_id == cached_id:
+        return _Verdict.CANONICAL, details
+
+    candidate_img = _pick_image(best.get("images"), 300)
+    if not candidate_img:
+        # The search-top itself has no portrait either — repointing wouldn't fix
+        # anything, so there's no help to offer even though the ids differ.
+        return _Verdict.NO_HELP, details
+
+    # Confirm the search-top's own /artists/{id}/albums pick for an apples-to-
+    # apples release comparison (search results don't carry release info).
+    candidate_release_obj = latest_release(candidate_id, creds, name)
+    candidate_release = (candidate_release_obj or {}).get("date")
+
+    details.update({
+        "candidate_id": candidate_id,
+        "candidate_name": best.get("name", ""),
+        "candidate_release": candidate_release,
+    })
+
+    if cached_release and candidate_release and \
+            _release_sort_key(candidate_release) < _release_sort_key(cached_release):
+        return _Verdict.CAUTION, details
+    return _Verdict.REPOINT_SAFE, details
+
+
+def audit_ids(cache: dict, creds, args) -> None:
+    """--audit-ids: read-only walk of the cache flagging likely secondary/wrong
+    Spotify profiles (#126). Never writes the cache. Skips any entry whose
+    cached id already has a portrait — a populated image_url is itself proof
+    the id isn't a portrait-less secondary, so there is no drift signal to
+    check and no reason to spend a /search call on it.
+    """
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached artists to audit (run a normal build first, or check --artist).")
+        return
+
+    candidates = [n for n in names if cache[n].get("spotify_id") and not cache[n].get("image_url")]
+    skipped_has_image = len(names) - len(candidates) - sum(
+        1 for n in names if not cache[n].get("spotify_id"))
+    skipped_no_id = sum(1 for n in names if not cache[n].get("spotify_id"))
+
+    print(f"Auditing {len(candidates)} cached artist(s) with a missing portrait "
+          f"(of {len(names)} selected; {skipped_has_image} already have a portrait, "
+          f"{skipped_no_id} have no spotify_id)\n")
+
+    if not candidates:
+        print("Nothing to audit — every selected artist either has a portrait "
+              "already or has no cached id.")
+        return
+
+    counts = {v: 0 for v in (
+        _Verdict.REPOINT_SAFE, _Verdict.CAUTION, _Verdict.CANONICAL, _Verdict.NO_HELP)}
+    safe_lines: list[str] = []
+
+    for i, name in enumerate(candidates, 1):
+        entry = cache[name]
+        try:
+            verdict, details = _audit_one(name, entry, creds)
+        except RateLimited:
+            print(f"\n…bailing after {i - 1}/{len(candidates)} audited (rate-limited). "
+                  f"--audit-ids makes no writes, so nothing to flush — re-run to resume.")
+            raise
+        time.sleep(DELAY)
+        counts[verdict] += 1
+
+        if verdict in (_Verdict.REPOINT_SAFE, _Verdict.CAUTION):
+            print(f"[{i}/{len(candidates)}] {name}")
+            print(f"    cached:     {details['cached_id']}  "
+                  f"(release {details['cached_release'] or '∅'})")
+            print(f"    candidate:  {details['candidate_id']}  "
+                  f"({details['candidate_name']!r}, release {details['candidate_release'] or '∅'})")
+            print(f"    verdict:    {verdict}")
+            if verdict == _Verdict.REPOINT_SAFE:
+                safe_lines.append(f'  --repoint "{name}={details["candidate_id"]}"')
+        else:
+            print(f"[{i}/{len(candidates)}] {name}  → {verdict}")
+
+    print("\n" + "=" * 60)
+    print(f"Audited {len(candidates)}: "
+          f"{counts[_Verdict.REPOINT_SAFE]} repoint-safe, "
+          f"{counts[_Verdict.CAUTION]} caution, "
+          f"{counts[_Verdict.CANONICAL]} already-canonical, "
+          f"{counts[_Verdict.NO_HELP]} no-help.")
+    if safe_lines:
+        print("\nSuggested --repoint arguments for the REPOINT SAFE artists:")
+        print("\n".join(safe_lines))
+        print("\n(--repoint writes immediately by default — add --dry-run to preview first)")
+
+
+def _find_tsv_row_with_url(name: str, path: str):
+    """Return (row_index, row_dict, header) for the row in `path` whose Artist
+    column matches `name` (via canonical() through the file's own alias map —
+    same matching the rest of the script uses), or None if no match / no
+    Spotify URL column present. Row_index is 0-based into the data rows (header
+    excluded), for use by _rewrite_tsv_url."""
+    if not os.path.exists(path):
+        return None
+    header = _tsv_header(path)
+    if "Spotify URL" not in header or "Artist" not in header:
+        return None
+    amap = load_aliases()
+    rows = read_tsv_rows(path)
+    for idx, row in enumerate(rows):
+        raw = (row.get("Artist") or "").strip()
+        if raw and canonical(raw, amap) == name:
+            return idx, row, header
+    return None
+
+
+def _rewrite_tsv_url(path: str, row_index: int, header: list[str], new_url: str) -> None:
+    """Rewrite one row's Spotify URL column in-place, leaving every other row and
+    every other column byte-for-byte as parsed (re-serialized via csv with the
+    file's own header order, so column order is preserved)."""
+    rows = read_tsv_rows(path)
+    rows[row_index]["Spotify URL"] = new_url
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=header, delimiter="\t", lineterminator="\n")
+        w.writeheader()
+        for row in rows:
+            w.writerow({k: row.get(k, "") for k in header})
+
+
+def _parse_repoint_args(specs: list[str]) -> list[tuple[str, str]]:
+    """Parse repeated 'Name=SpotifyID' strings into (name, id) pairs. Exits with a
+    clear message on a malformed spec rather than silently skipping it — a typo
+    here would otherwise repoint nothing and look like success."""
+    pairs = []
+    for spec in specs:
+        if "=" not in spec:
+            sys.exit(f"--repoint expects 'Name=SpotifyID', got: {spec!r}")
+        name, sid = spec.split("=", 1)
+        name, sid = name.strip(), sid.strip()
+        if not name or not sid:
+            sys.exit(f"--repoint expects 'Name=SpotifyID', got: {spec!r}")
+        # Accept a full Spotify URL as well as a bare id, for convenience when
+        # pasting straight from --audit-ids output or a browser tab.
+        maybe_id = extract_artist_id(sid) or sid
+        pairs.append((name, maybe_id))
+    return pairs
+
+
+def repoint_ids(cache: dict, pairs: list[tuple[str, str]], args) -> None:
+    """--repoint: apply one or more manual 'Name=canonicalID' corrections.
+
+    Unlike every other write path in this script, --repoint WRITES BY DEFAULT —
+    it names an exact artist and an exact id the person has already decided on
+    (typically copy-pasted from --audit-ids' REPOINT SAFE suggestions or chosen
+    by hand for a CAUTION / ambiguous case), so there's no batch of unreviewed
+    changes to gate behind an opt-in flag the way a --refresh-* sweep needs one.
+    Pass --dry-run to preview without writing (mirrors every other mode here).
+
+    For each pair:
+      1. Update the cache entry: spotify_id, spotify_url. Clear latest_release /
+         latest_release_checked / image_url / images_checked so the normal
+         --refresh-images / --refresh-releases passes re-fetch fresh data under
+         the corrected id, rather than displaying stale cached values that were
+         pulled under the WRONG id (the checked-dates being fresh would also
+         make --stale-days skip re-fetching them).
+      2. If artists.tsv (checked first) or fast_track.tsv carries a Spotify URL
+         for this artist, rewrite it too — a stored URL wins over both the cache
+         and a fresh /search in resolve_artist_id(), so leaving it stale would
+         silently revert the repoint on the very next build/refresh.
+    An artist not already in the cache is added as a fresh skeleton entry
+    (sources left empty — run a normal build afterward to populate them
+    properly; --repoint's job is the id correction, not full onboarding).
+    """
+    print(f"Repointing {len(pairs)} artist(s)" + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    changed = 0
+    for name, new_id in pairs:
+        new_url = f"https://open.spotify.com/artist/{new_id}"
+        entry = cache.get(name)
+        old_id = (entry or {}).get("spotify_id")
+
+        if old_id == new_id:
+            print(f"  {name}  → already points at {new_id}, nothing to do")
+            continue
+
+        print(f"  {name}")
+        print(f"    cache:  {old_id or '(not cached)'}  →  {new_id}")
+
+        tsv_hits = []
+        for path in _URL_BEARING_TSVS:
+            hit = _find_tsv_row_with_url(name, path)
+            if hit is not None:
+                idx, row, header = hit
+                old_tsv_url = row.get("Spotify URL", "")
+                if extract_artist_id(old_tsv_url) != new_id:
+                    tsv_hits.append((path, idx, header, old_tsv_url))
+                    print(f"    {os.path.basename(path)}:  "
+                          f"{old_tsv_url or '(blank)'}  →  {new_url}")
+
+        if args.dry_run:
+            print("    [DRY RUN] no changes written")
+            continue
+
+        cache[name] = {
+            **(entry or {"sources": []}),
+            "spotify_id": new_id,
+            "spotify_url": new_url,
+            "latest_release": None,
+            "latest_release_checked": None,
+            "image_url": None,
+            "images_checked": None,
+        }
+        for path, idx, header, _old in tsv_hits:
+            _rewrite_tsv_url(path, idx, header, new_url)
+
+        changed += 1
+        print("    ✓ applied — re-run --refresh-images / --refresh-releases "
+              "(or --new-artist) to re-populate under the new id")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Repointed {changed}/{len(pairs)} artist(s). Written: {OUTPUT_JSON}"
+          + (" and any updated TSV Spotify URL columns" if changed else ""))
+
+
+# ── Last.fm enrichment (separately refreshable; --refresh-lastfm only) ─────────
+
+def lastfm_get(params: dict, api_key: str) -> dict | None:
+    """GET the Last.fm 2.0 API; parsed JSON or None on transport/HTTP error.
+    Last.fm answers HTTP 200 with an {"error": N, ...} body for logical failures
+    (e.g. artist not found), so callers must check the body, not just the status."""
+    q = {**params, "api_key": api_key, "format": "json"}
+    for attempt in range(3):
+        try:
+            resp = requests.get(LASTFM_API, params=q,
+                                headers={"User-Agent": LASTFM_UA}, timeout=15)
+        except requests.RequestException:
+            return None
+        if resp.status_code == 429:
+            time.sleep(2 * (attempt + 1))
+            continue
+        if resp.status_code != 200:
+            return None
+        try:
+            return resp.json()
+        except ValueError:
+            return None
+    return None
+
+
+def _as_list(v):
+    """Last.fm gives a bare dict for a single tag/similar, a list for many, and
+    omits the key for none. Normalize to a list."""
+    if v is None:
+        return []
+    return v if isinstance(v, list) else [v]
+
+
+def _to_int(x) -> int | None:
+    try:
+        return int(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def lastfm_artist_info(name: str, api_key: str) -> dict | None:
+    """artist.getInfo -> a compact enrichment block, or None if not found / failed.
+    autocorrect=1 lets Last.fm fix minor name variants."""
+    data = lastfm_get(
+        {"method": "artist.getInfo", "artist": name, "autocorrect": "1"}, api_key)
+    if not data or "error" in data or "artist" not in data:
+        return None
+    a = data["artist"]
+    stats = a.get("stats") or {}
+    tags = [t.get("name", "").strip()
+            for t in _as_list((a.get("tags") or {}).get("tag"))
+            if isinstance(t, dict) and t.get("name")]
+    similar = [s.get("name", "").strip()
+               for s in _as_list((a.get("similar") or {}).get("artist"))
+               if isinstance(s, dict) and s.get("name")]
+    return {
+        "mbid": a.get("mbid", "") or "",
+        "url": a.get("url", "") or "",
+        "listeners": _to_int(stats.get("listeners")),
+        "playcount": _to_int(stats.get("playcount")),
+        "tags": tags[:LASTFM_TAGS],
+        "similar": similar[:LASTFM_SIMILAR],
+    }
+
+
+def lastfm_lookup(name: str, api_key: str) -> tuple[dict | None, str]:
+    """Last.fm artist info, trying the exact name then its surface forms / bill components.
+
+    Last.fm matches names EXACTLY — no fuzzy fallback — so a cache key that is a bill name
+    ("Lilly Hiatt Band", "TajMo: The Taj Mahal & Keb' Mo' Band") simply misses, and the
+    entry ends up with a null lastfm block that looks resolved (#160). Retries are free
+    (Last.fm is uncapped), so walk the fallbacks: exact first, then most specific.
+
+    Returns (info, matched_name). matched_name != name means a fallback won — the caller
+    logs it, so a wrong fold is visible rather than silent.
+    """
+    forms = lookup_forms(name)
+    for i, form in enumerate(forms):
+        info = lastfm_artist_info(form, api_key)
+        if info:
+            return info, form
+        if i < len(forms) - 1:
+            time.sleep(DELAY)
+    return None, name
+
+
+def _write_lastfm(entry: dict, info: dict | None) -> None:
+    """Store a Last.fm pull, mirroring the empty-pull rule the portrait pass uses (#125).
+
+    An empty pull never wipes a cached block and never stamps lastfm_checked, so the next
+    pass retries instead of locking in a false null. The old code stamped unconditionally,
+    which is how bill-named entries ended up permanently null-but-checked (#160).
+    """
+    if info:
+        entry["lastfm"] = info
+        entry["lastfm_checked"] = date.today().isoformat()
+        return
+    entry.setdefault("lastfm", None)   # keep any cached block; leave *_checked unstamped
+    if entry.get("lastfm") is None:
+        # Self-heal: clear a stamp left by the old unconditional-stamp code, so the
+        # invariant "lastfm_checked implies a successful pull" actually holds. Without
+        # this, entries stamped before #160 keep a stale timestamp forever — harmless
+        # today (refresh_lastfm re-queries everything) but it would silently skip them
+        # the moment a --stale-days gate is added here, as refresh_images already has.
+        entry.pop("lastfm_checked", None)
+
+
+def _spotify_placeholder(sources: set) -> dict:
+    """Cache skeleton for an artist Last.fm has seeded but Spotify hasn't resolved
+    yet: spotify_id is null so the next Spotify build (default add-missing mode)
+    picks it up, fills in id/url/latest_release, and preserves the lastfm block."""
+    return {
+        "spotify_id": None,
+        "spotify_url": None,
+        "sources": sorted(sources),
+        "last_refreshed": None,
+        "latest_release": None,
+        "latest_release_checked": None,
+    }
+
+
+def refresh_lastfm(cache: dict, api_key: str, args) -> None:
+    """Last.fm enrichment AND seed. First ensures every repo artist has a cache
+    entry — creating a Spotify-null skeleton (see _spotify_placeholder) for any
+    Spotify hasn't reached — so one Last.fm pass covers the whole roster even while
+    the Spotify side drips in over the daily Dev-mode quota. Then writes each
+    artist's lastfm block. Existing Spotify data is left untouched. Independent of
+    Spotify (no Spotify creds, no cap). Honors --artist and --dry-run."""
+    # Seed: a null-Spotify skeleton for any repo artist not yet cached.
+    repo_artists, _ = collect_artists(load_aliases())
+    seeded = 0
+    for nm, srcs in repo_artists.items():
+        if nm not in cache:
+            cache[nm] = _spotify_placeholder(srcs)
+            seeded += 1
+
+    names = sorted(cache)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No artists to enrich (check --artist, or the repo artist sources).")
+        return
+    print(f"Refreshing Last.fm enrichment for {len(names)} artist(s)"
+          + (f"  [{seeded} newly seeded]" if seeded else "")
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    enriched = 0
+    for i, name in enumerate(names, 1):
+        info, matched = lastfm_lookup(name, api_key)
+        time.sleep(DELAY)
+        listeners = (info or {}).get("listeners")
+        via = f"  [via {matched!r}]" if info and matched != name else ""
+
+        if args.dry_run:
+            shown = f"{listeners:,} listeners" if listeners is not None else "not found"
+            print(f"[{i}/{len(names)}] {name}  → {shown}{via}")
+            continue
+
+        _write_lastfm(cache[name], info)
+        if info:
+            enriched += 1
+            if listeners is not None:
+                tags = ", ".join(info["tags"][:3]) or "—"
+                print(f"[{i}/{len(names)}] {name}  → {listeners:,} listeners, tags: {tags}{via}")
+            else:
+                print(f"[{i}/{len(names)}] {name}  → enriched (listeners unknown){via}")
+        else:
+            print(f"[{i}/{len(names)}] {name}  → not found on Last.fm (left unstamped to retry)")
+        if (i % SAVE_EVERY) == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Enriched {enriched}/{len(names)} artist(s) from Last.fm. "
+          f"Written: {OUTPUT_JSON}")
+
+
+# ── --new-artist: resolve + portrait + Last.fm in one pass, per artist (#145) ──
+# Bringing a newly-added artist to a fully-populated cache entry otherwise takes three
+# separate invocations in a fixed order, which is easy to get wrong. This chains them.
+#
+# ATOMIC PER ARTIST: the entry is committed to the cache only after all three passes
+# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was
+# (absent, or still a skeleton), so the next run retries it. Committing after the resolve
+# pass would populate spotify_id, which would disqualify the artist from the skeleton
+# check below and strand it with no portrait and no Last.fm block — invisible until
+# someone noticed a missing image in the modal.
+
+_SKELETON_FIELDS = (
+    "spotify_id", "spotify_url", "last_refreshed",
+    "latest_release", "latest_release_checked",
+    "image_url", "images_checked",
+    "lastfm", "lastfm_checked",
+)
+
+
+def _is_unfilled_skeleton(entry: dict) -> bool:
+    """A pure Last.fm-seed skeleton (see _spotify_placeholder): sources populated,
+    nothing else. A missing key counts as unfilled just as an explicit None does — a
+    fresh placeholder omits image_url/images_checked/lastfm/lastfm_checked entirely.
+    Any truthy value in any field disqualifies the entry: the intent is "brand-new,
+    nothing done yet", not "partially populated, might be recoverable" (those are what
+    the targeted --refresh-* flags are for)."""
+    if not entry.get("sources"):
+        return False   # not even a skeleton
+    return all(entry.get(k) is None for k in _SKELETON_FIELDS)
+
+
+def _populate_new_artist(name: str, sources: set, url_hint: str | None,
+                         cache: dict, creds, lastfm_key: str, args) -> tuple[str, dict | None]:
+    """Run all three passes for one artist. Returns (status_line, entry|None).
+
+    The entry is NOT written into `cache` here — the caller commits it only on full
+    success (see the atomicity note above). Raises RateLimited straight through so the
+    caller can flush the artists already completed.
+    """
+    cached = cache.get(name) or {}
+
+    # Pass 1 — resolve + latest_release.
+    aid, url = resolve_artist_id(name, url_hint, creds,
+                                 cached.get("spotify_id"), cached.get("spotify_url", ""))
+    time.sleep(DELAY)
+    if not aid:
+        return "unresolved", None
+
+    if args.dry_run:
+        return f"→ {aid}  [would resolve + portrait + lastfm]", None
+
+    entry = build_entry(name, sources, aid, url, creds)
+    time.sleep(DELAY)
+
+    # Preserve guards, mirroring the add-missing loop in main(): a re-run over an
+    # already-populated artist must not wipe what the other passes wrote, and a null
+    # release pull must not overwrite a known one (#109).
+    prev = cache.get(name)
+    prev_rel = (prev or {}).get("latest_release")
+    if entry.get("latest_release") is None and prev_rel is not None:
+        entry["latest_release"] = prev_rel
+        entry["latest_release_checked"] = prev.get("latest_release_checked")
+        print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
+
+    # Pass 2 — portrait. Mirrors refresh_images' empty-pull rule (#125): an empty pull
+    # never wipes a cached portrait and never stamps images_checked, so the next sweep
+    # retries it rather than locking in a false null.
+    img = artist_image(aid, creds)
+    time.sleep(DELAY)
+    old_img = (prev or {}).get("image_url")
+    if img:
+        entry["image_url"] = img
+        entry["images_checked"] = date.today().isoformat()
+        portrait = "portrait ✓"
+    elif old_img:
+        entry["image_url"] = old_img
+        entry["images_checked"] = (prev or {}).get("images_checked")
+        portrait = "portrait — (empty pull; kept cached)"
+    else:
+        portrait = "portrait — (empty pull; left unstamped to retry)"
+
+    # Pass 3 — Last.fm. Independent of Spotify (no cap, no creds); mirrors refresh_lastfm,
+    # including the surface-form fallback and the empty-pull rule (#160).
+    info, matched = lastfm_lookup(name, lastfm_key)
+    time.sleep(DELAY)
+    _write_lastfm(entry, info)
+    listeners = (info or {}).get("listeners")
+    via = f" via {matched!r}" if info and matched != name else ""
+    lastfm_note = (f"lastfm ✓ ({listeners:,} listeners){via}" if listeners is not None
+                   else (f"lastfm ✓{via}" if info else "lastfm — (not found; left unstamped)"))
+
+    rel = (entry.get("latest_release") or {}).get("date") or "—"
+    return f"→ {aid}  latest {rel}  {portrait}  {lastfm_note}", entry
+
+
+def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
+    """--new-artist: one named artist, or every unfilled skeleton in the cache.
+
+    Processes one artist at a time through all three passes, rather than running each
+    pass across the whole batch. If the run bails on the Spotify cap, per-artist ordering
+    leaves every completed artist fully populated instead of leaving the whole batch
+    half-done.
+    """
+    amap = load_aliases()
+    artists, url_hints = collect_artists(amap)
+
+    if args.new_artist:                       # a name was given → target that artist
+        sub = args.new_artist.lower()
+        pool = sorted(set(artists) | set(cache))
+        names = [n for n in pool if sub in n.lower()]
+        if not names:
+            sys.exit(f"No artist matching '{args.new_artist}' in the repo TSVs or the cache. "
+                     f"Add the row first (--add-artist), then re-run.")
+    else:                                     # bare flag → every unfilled skeleton
+        names = sorted(n for n, e in cache.items() if _is_unfilled_skeleton(e))
+        if not names:
+            print("No unfilled skeleton entries — nothing to do.")
+            return
+        print(f"Found {len(names)} unfilled skeleton entr{'y' if len(names) == 1 else 'ies'}.")
+
+    print(f"Processing {len(names)} artist(s) through resolve + portrait + Last.fm"
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    done = 0
+    unresolved: list[str] = []
+
+    def _flush_on_bail():
+        # Persist the artists completed so far; the one that bailed was never committed,
+        # so it stays a skeleton and gets retried on the next run.
+        if not args.dry_run:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+
+    for i, name in enumerate(names, 1):
+        srcs = artists.get(name) or set((cache.get(name) or {}).get("sources") or [])
+        try:
+            status, entry = _populate_new_artist(name, srcs, url_hints.get(name),
+                                                 cache, creds, lastfm_key, args)
+        except RateLimited:
+            _flush_on_bail()
+            raise
+
+        print(f"[{i}/{len(names)}] {name}  {status}")
+        if entry is None:
+            if status == "unresolved":
+                unresolved.append(name)
+            continue
+
+        cache[name] = entry      # commit only now — all three passes succeeded
+        done += 1
+        if done % SAVE_EVERY == 0:
+            save_cache(cache)
+            print("    …checkpoint saved")
+
+    if args.dry_run:
+        print("\n[DRY RUN] no changes written.")
+        return
+
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Populated {done}/{len(names)} artist(s). Cache now holds {len(cache)} artists. "
+          f"Written: {OUTPUT_JSON}")
+    if unresolved:
+        print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
+              "or an alias entry):")
+        for n in unresolved:
+            print(f"  {n}")
+
+
+# ── --add-artist: append a cache-ready row to a low-commitment list (#94) ─────
+# Resolve an artist on Spotify and append a schema-valid row to research /
+# fast_track / seen_with. artists.tsv is REFUSED — a row there asserts Times Seen
+# / First Seen, derived from a real show row, which this tool won't fabricate (the
+# dual-bill ledger question is #103). Append is header-driven (uses each file's
+# own column order) and append-mode, so the rest of the file is left untouched; it
+# never writes a '#' comment block (the in-page editor derives the header from
+# line 1 and a comment block wipes the file — #80).
+
+NAR_TSV        = os.path.join(FOLLOWS,  "new_artist_research.tsv")
+FAST_TRACK_TSV = os.path.join(DATA_DIR, "fast_track.tsv")
+SEEN_WITH_TSV  = os.path.join(DATA_DIR, "seen_with.tsv")
+
+_ADD_DESTINATIONS = {
+    "research": NAR_TSV, "new_artist_research": NAR_TSV, "new_artist_research.tsv": NAR_TSV,
+    "fast_track": FAST_TRACK_TSV, "fast_track.tsv": FAST_TRACK_TSV,
+    "seen_with": SEEN_WITH_TSV, "seen_with.tsv": SEEN_WITH_TSV,
+}
+
+_ARTISTS_TSV_GUIDANCE = (
+    "artists.tsv is the seen-artist ledger — a row there asserts Times Seen / First "
+    "Seen, which derive from a real show row. This tool won't fabricate ledger "
+    "facts. Record the sighting via the post-show flow, or use new_artist_research "
+    "/ fast_track / seen_with.")
+
+
+def _tsv_header(path: str) -> list[str]:
+    with open(path, encoding="utf-8", newline="") as f:
+        return f.readline().rstrip("\r\n").split("\t")
+
+
+def _append_tsv_row(path: str, row: dict) -> None:
+    """Append one row aligned to the file's existing header order, in append mode
+    so the rest of the file stays byte-for-byte intact. csv handles any quoting;
+    no '#' comment block is ever introduced (#80)."""
+    header = _tsv_header(path)
+    with open(path, "rb") as f:
+        ends_nl = f.read()[-1:] == b"\n"
+    with open(path, "a", encoding="utf-8", newline="") as f:
+        if not ends_nl:
+            f.write("\n")
+        csv.writer(f, delimiter="\t", lineterminator="\n").writerow(
+            [row.get(col, "") for col in header])
+
+
+def _search_candidates(name: str, creds, limit: int = 8) -> list[tuple[float, dict]]:
+    data = api_get("/search", {"q": name, "type": "artist", "limit": limit}, creds)
+    items = (data or {}).get("artists", {}).get("items", [])
+    scored = [(similarity(name, it.get("name", "")), it) for it in items if it.get("id")]
+    scored.sort(key=lambda t: t[0], reverse=True)
+    return scored
+
+
+def _choose_artist(name: str, creds, dry_run: bool):
+    """Resolve `name` to (id, url, resolved_name). Auto-accepts a confident,
+    unambiguous top hit; else prints candidates and prompts (writes nothing on
+    dry-run or cancel). Returns None if declined / no hit."""
+    cands = _search_candidates(name, creds)
+    if not cands:
+        print(f"  No Spotify results for '{name}'.")
+        return None
+
+    def _info(it):
+        return it["id"], (it.get("external_urls") or {}).get("spotify", ""), it.get("name", "")
+
+    top_score, top = cands[0]
+    runner = cands[1][0] if len(cands) > 1 else 0.0
+    if top_score >= SEARCH_MIN_SCORE and (top_score - runner) >= 0.15:
+        aid, url, rn = _info(top)
+        print(f"  Resolved '{name}' → {rn}  ({url})  [score {top_score:.2f}]")
+        return aid, url, rn
+
+    print(f"  '{name}' is low-confidence or ambiguous — candidates:")
+    for i, (s, it) in enumerate(cands[:8], 1):
+        print(f"    {i}. {it.get('name','')}  "
+              f"({(it.get('external_urls') or {}).get('spotify','')})  [score {s:.2f}]")
+    if dry_run:
+        print("  [DRY RUN] would prompt for a pick; nothing written.")
+        return None
+    raw = input("  Pick number (Enter/'q' to cancel): ").strip().lower()
+    if not raw or raw == "q":
+        print("  Cancelled — nothing written.")
+        return None
+    try:
+        return _info(cands[int(raw) - 1][1])
+    except (ValueError, IndexError):
+        print("  Invalid pick — nothing written.")
+        return None
+
+
+def add_artist(args, creds) -> None:
+    name = args.add_artist.strip()
+    dest = (args.to or "").strip().lower()
+    if dest in ("artists", "artists.tsv"):
+        sys.exit("Refused: " + _ARTISTS_TSV_GUIDANCE)
+    path = _ADD_DESTINATIONS.get(dest)
+    if not path:
+        sys.exit(f"Unknown --to '{args.to}'. Allowed: research, fast_track, seen_with. "
+                 f"(artists.tsv is refused: {_ARTISTS_TSV_GUIDANCE})")
+
+    is_sw = path == SEEN_WITH_TSV
+    if is_sw and not (args.date and args.headliner):
+        sys.exit('--to seen_with requires --date YYYY-MM-DD and --headliner "<show-row Artist>".')
+
+    # Dedup: Artist for research/fast_track; Seen With + Date + Headliner for seen_with.
+    rows = read_tsv_rows(path)
+    if is_sw:
+        key = (_norm(name), args.date.strip(), _norm(args.headliner))
+        dup = any((_norm(r.get("Seen With", "")), r.get("Show Date", "").strip(),
+                   _norm(r.get("Headliner", ""))) == key for r in rows)
+    else:
+        dup = any(_norm(r.get("Artist", "")) == _norm(name) for r in rows)
+    if dup:
+        print(f"'{name}' already in {os.path.basename(path)} (dedup key matched) — skipped.")
+        return
+
+    chosen = _choose_artist(name, creds, args.dry_run)
+    if not chosen:
+        return
+    aid, url, _resolved = chosen
+
+    if is_sw:
+        row = {"Show Date": args.date.strip(), "Headliner": args.headliner.strip(),
+               "Seen With": name, "Role": (args.role or "").strip(),
+               "Spotify URL": url, "Notes": (args.notes or "").strip()}
+    elif path == FAST_TRACK_TSV:
+        row = {"Artist": name, "Spotify URL": url}            # descriptive cols left blank
+    else:  # NAR — no Spotify URL column; the cache re-resolves it on the next build
+        row = {"Artist": name, "Status": "pending-review", "Source": "added via --add-artist"}
+
+    if args.dry_run:
+        print(f"  [DRY RUN] would append to {os.path.basename(path)}: {row}")
+        return
+    _append_tsv_row(path, row)
+    print(f"  ✓ appended '{name}' to {os.path.basename(path)}")
+
+    # Cache it in the same run (one /albums call) unless --no-cache.
+    if not args.no_cache:
+        canon = canonical(name, load_aliases())
+        cache = load_cache()
+        try:
+            entry = build_entry(canon, {_source_tag(path)}, aid, url, creds)
+        except RateLimited:
+            save_cache(cache)
+            raise
+        prev = cache.get(canon)
+        if prev and "lastfm" in prev:
+            entry["lastfm"] = prev["lastfm"]
+            entry["lastfm_checked"] = prev.get("lastfm_checked")
+        cache[canon] = entry
+        save_cache(cache)
+        print(f"  ✓ cached {canon} → {aid}  "
+              f"latest {(entry.get('latest_release') or {}).get('date') or '—'}")
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+def _reject_mode_clashes(active: str, pairs, extra: str = "") -> None:
+    """Exit if a mode flag is combined with modes it cannot share a run with.
+    `pairs` is (flag_name, is_set). Shared by --new-artist (#145), --prune (#159),
+    and --audit-ids / --repoint (#126)."""
+    clashes = [flag for flag, on in pairs if on]
+    if clashes:
+        msg = f"{active} cannot be combined with {', '.join(clashes)}."
+        sys.exit(f"{msg} {extra}".strip())
+
+
+def main() -> None:
+    global DELAY
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--refresh", action="store_true",
+                    help="Re-pull metadata + latest release for ALL repo artists "
+                         "(default only adds artists missing from the cache).")
+    ap.add_argument("--refresh-releases", action="store_true",
+                    help="Re-pull ONLY each cached artist's latest release "
+                         "(album/single); leaves the rest of each entry "
+                         "untouched. Honors --artist, --stale-days, and --dry-run.")
+    ap.add_argument("--refresh-images", action="store_true",
+                    help="Re-pull ONLY each cached artist's portrait (image_url) "
+                         "via GET /artists/{id}; leaves the rest of each entry "
+                         "untouched. Honors --artist, --stale-days (on "
+                         "images_checked), and --dry-run — a resumable multi-day "
+                         "portrait back-audit across the ~100/day cap.")
+    ap.add_argument("--refresh-lastfm", action="store_true",
+                    help="Re-pull ONLY the Last.fm enrichment block (listeners, "
+                         "playcount, tags, similar) for cached artists. Independent "
+                         "of Spotify; needs LASTFM_API_KEY, not Spotify creds. "
+                         "Honors --artist and --dry-run.")
+    ap.add_argument("--new-artist", nargs="?", const="", default=None, metavar="NAME",
+                    help="chain all three passes (resolve + portrait + Last.fm) for one "
+                         "artist; with no NAME, for every unfilled skeleton entry in the "
+                         "cache. Cannot be combined with the --refresh-* / --artist / "
+                         "--add-artist / --prune modes.")
+    ap.add_argument("--prune", action="store_true",
+                    help="Drop cached artists no longer present in any repo TSV. Runs "
+                         "standalone (no Spotify credentials, no API calls); pair with "
+                         "--dry-run to list them first, or with --refresh to prune after "
+                         "a rebuild.")
+    ap.add_argument("--audit-ids", action="store_true",
+                    help="Read-only (#126): walk the cache and flag artists whose "
+                         "cached spotify_id has no portrait but a re-resolve by name "
+                         "finds a different id that DOES have one (a likely secondary/"
+                         "wrong Spotify profile). Prints a verdict per artist and "
+                         "suggested --repoint arguments for the safe cases; never "
+                         "writes the cache. Honors --artist and --delay. Cannot be "
+                         "combined with any other mode.")
+    ap.add_argument("--repoint", action="append", metavar="Name=SpotifyID", default=None,
+                    help="Apply a manual id correction: 'Artist Name=canonicalSpotifyID' "
+                         "(a full open.spotify.com/artist/... URL is also accepted). "
+                         "Repeatable — pass --repoint multiple times to fix several "
+                         "artists in one run. Updates the cache entry (clearing "
+                         "latest_release/image_url so they re-fetch under the "
+                         "corrected id) and, if present, the Spotify URL column in "
+                         "artists.tsv / fast_track.tsv. Unlike the --refresh-* sweeps, "
+                         "this WRITES BY DEFAULT — pass --dry-run to preview first. "
+                         "Cannot be combined with any other mode.")
+    ap.add_argument("--artist", metavar="NAME",
+                    help="Only process artists whose canonical name contains NAME "
+                         "(case-insensitive substring).")
+    ap.add_argument("--add-artist", metavar="NAME",
+                    help="Resolve NAME on Spotify and append a cache-ready row to the "
+                         "list chosen with --to. Caches it the same run unless --no-cache.")
+    ap.add_argument("--to", metavar="DEST",
+                    help="Destination for --add-artist: research | fast_track | seen_with "
+                         "(bare filenames accepted). seen_with also needs --date/--headliner.")
+    ap.add_argument("--date", metavar="YYYY-MM-DD",
+                    help="With --add-artist --to seen_with: the show date.")
+    ap.add_argument("--headliner", metavar="ARTIST",
+                    help="With --add-artist --to seen_with: the verbatim show-row "
+                         "Artist the member was seen with (the join key).")
+    ap.add_argument("--role", metavar="ROLE",
+                    help="With --add-artist --to seen_with: optional role (e.g. guitar).")
+    ap.add_argument("--notes", metavar="TEXT",
+                    help="With --add-artist --to seen_with: optional notes.")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="With --add-artist: append the row but skip the same-run cache "
+                         "build (avoids the /albums call when rate-limited).")
+    ap.add_argument("--stale-days", type=int, default=None, metavar="N",
+                    help="With --refresh-releases: skip artists whose latest_release "
+                         "was checked within the last N days. When omitted, the value "
+                         "is auto-inferred from the median latest_release_checked date "
+                         "in the cache (so a bare --refresh-releases only re-checks "
+                         "artists not reached by the last run). Pass 0 to force a "
+                         "full brute-force refresh of all artists. With "
+                         "--refresh-images: same logic gated on images_checked "
+                         "(--stale-days is still explicit-only for images; auto-infer "
+                         "is --refresh-releases only). No effect on the build or "
+                         "--refresh paths.")
+    ap.add_argument("--count-pending", action="store_true",
+                    help="With --refresh-releases: print how many artists would be "
+                         "checked under the current (auto-inferred or explicit) "
+                         "--stale-days value, then exit. Zero API calls; no mutations. "
+                         "Combine with --stale-days 0 to preview a full brute-force "
+                         "run. Example: python spotify_cache.py --refresh-releases "
+                         "--count-pending")
+    ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
+                    help="Seconds to sleep between Spotify calls (default "
+                         "%(default)s). The build packs ~1-2 calls/artist; raise "
+                         "this to stay under Dev-mode 429 lockouts on a big run, "
+                         "lower it (e.g. 0.3) for speed once limits relax or for "
+                         "the lighter --refresh-* passes.")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="Report what would change; write nothing. For --repoint, "
+                         "this is the OPT-IN safety net (--repoint writes by default "
+                         "otherwise); for every other write mode it's the existing "
+                         "preview behavior.")
+    args = ap.parse_args()
+
+    DELAY = args.delay
+
+    # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
+    # Reject the mode combinations rather than silently letting one win (#145).
+    if args.new_artist is not None:
+        _reject_mode_clashes("--new-artist", (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
+            ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
+        ), extra='Name the artist as --new-artist "NAME", or pass it bare to fill every '
+                 'unfilled skeleton.')
+        # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
+        # so there is nothing for it to skip. Ignored rather than rejected.
+
+    # --prune pairs only with --refresh (prune-after-rebuild). Every other mode owns the
+    # run and would silently skip the prune. Standalone --prune is dispatched below.
+    if args.prune:
+        _reject_mode_clashes("--prune", (
+            ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images),
+            ("--refresh-lastfm", args.refresh_lastfm),
+            ("--add-artist", args.add_artist),
+            ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
+        ), extra="Run --prune on its own (no API calls), or as --refresh --prune.")
+
+    # --audit-ids and --repoint (#126) are standalone modes like --new-artist — each
+    # owns its whole run and cannot be combined with any other mode, including each
+    # other (a --repoint the person is applying should be a deliberate, reviewed step,
+    # not folded into the same invocation as a read-only audit pass).
+    if args.audit_ids:
+        _reject_mode_clashes("--audit-ids", (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--add-artist", args.add_artist),
+            ("--new-artist", args.new_artist is not None), ("--repoint", args.repoint),
+        ))
+    if args.repoint:
+        _reject_mode_clashes("--repoint", (
+            ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
+            ("--refresh-images", args.refresh_images), ("--refresh-lastfm", args.refresh_lastfm),
+            ("--prune", args.prune), ("--add-artist", args.add_artist),
+            ("--new-artist", args.new_artist is not None), ("--audit-ids", args.audit_ids),
+            ("--artist", args.artist),
+        ), extra="--repoint names its own artists via 'Name=ID' pairs; --artist doesn't apply.")
+
+    # Last.fm enrichment is fully independent of Spotify — handle it before the
+    # Spotify credential check so it runs with only LASTFM_API_KEY set.
+    if args.refresh_lastfm:
+        lastfm_key = os.environ.get("LASTFM_API_KEY", "")
+        if not lastfm_key:
+            sys.exit("LASTFM_API_KEY must be set (scripts/.env or environment).")
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_lastfm(cache, lastfm_key, args)
+        return
+
+    # --prune standalone: no Spotify credentials, no API calls (#159). Sits above the
+    # credential check for that reason. `--refresh --prune` still prunes after the
+    # rebuild, further down.
+    if args.prune and not args.refresh:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        prune_cache(cache, args)
+        return
+
+    # --repoint is pure local edits (cache + TSV rewrite) — it trusts the id the
+    # person supplied and never calls the Spotify API to verify it, so it must
+    # not require SPOTIFY_CLIENT_ID/SECRET to be set. Sits ABOVE the credential
+    # check for that reason (unlike --audit-ids, which does call /search and so
+    # sits below it, alongside every other Spotify-backed mode).
+    if args.repoint:
+        cache = load_cache()
+        pairs = _parse_repoint_args(args.repoint)
+        repoint_ids(cache, pairs, args)
+        return
+
+    client_id     = os.environ.get("SPOTIFY_CLIENT_ID", "")
+    client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
+    if not client_id or not client_secret:
+        sys.exit("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set "
+                 "(scripts/.env or environment).")
+    creds = (client_id, client_secret)
+
+    # --audit-ids: read-only walk, one /search (+ one /albums on a repoint-safe
+    # candidate) per artist with a missing portrait.
+    if args.audit_ids:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        audit_ids(cache, creds, args)
+        return
+
+    # --new-artist: needs both credential sets — Spotify for passes 1-2, Last.fm for pass 3.
+    if args.new_artist is not None:
+        lastfm_key = os.environ.get("LASTFM_API_KEY", "")
+        if not lastfm_key:
+            sys.exit("LASTFM_API_KEY must be set for --new-artist (it chains the Last.fm "
+                     "pass). Set it in scripts/.env or the environment.")
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        new_artist_run(cache, creds, lastfm_key, args)
+        return
+
+    # --add-artist: resolve + append one artist to a low-commitment list (#94).
+    # Needs Spotify creds (for resolution), so it sits after the credential check.
+    if args.add_artist:
+        if not args.to:
+            sys.exit("--add-artist requires --to (research | fast_track | seen_with).")
+        add_artist(args, creds)
+        return
+
+    # Releases-only path operates on the existing cache, not the collected repo set.
+    if args.refresh_releases:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_releases(cache, creds, args)
+        return
+
+    if args.refresh_images:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        refresh_images(cache, creds, args)
+        return
+
+    amap = load_aliases()
+    artists, url_hints = collect_artists(amap)
+    cache = load_cache()
+    print(f"Repo artists collected: {len(artists)}  |  already cached: {len(cache)}")
+
+    # Selection
+    names = sorted(artists)
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    elif not args.refresh:
+        # Add-missing: brand-new artists AND Last.fm-seeded skeletons with no
+        # Spotify id yet (so the drip fills them in); skip fully-resolved entries.
+        names = [n for n in names if not (cache.get(n) or {}).get("spotify_id")]
+
+    if not names:
+        print("Nothing to do (use --refresh to re-pull existing entries).")
+        return
+    print(f"To process: {len(names)}" + (" [DRY RUN]" if args.dry_run else "") + "\n")
+
+    resolved = 0
+    unresolved: list[str] = []
+
+    def _flush_on_bail():
+        # On a RateLimited bail, persist everything collected so far. Without this
+        # the exception propagates to __main__ and exits, discarding entries added
+        # since the last SAVE_EVERY checkpoint (the 76-100 lost-on-bail bug).
+        if not args.dry_run:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+
+    for i, name in enumerate(names, 1):
+        cached = cache.get(name) or {}
+        try:
+            aid, url = resolve_artist_id(name, url_hints.get(name), creds,
+                                         cached.get("spotify_id"), cached.get("spotify_url", ""))
+        except RateLimited:
+            _flush_on_bail()
+            raise
+        time.sleep(DELAY)
+        if not aid:
+            print(f"[{i}/{len(names)}] {name}  → unresolved")
+            unresolved.append(name)
+            continue
+
+        if args.dry_run:
+            action = "refresh" if name in cache else "add"
+            print(f"[{i}/{len(names)}] {name}  → {aid}  [would {action}]")
+            resolved += 1
+            continue
+
+        try:
+            entry = build_entry(name, artists[name], aid, url, creds)
+        except RateLimited:
+            _flush_on_bail()
+            raise
+        time.sleep(DELAY)
+        # Preserve any Last.fm enrichment from a prior --refresh-lastfm; the Spotify
+        # build/refresh owns the Spotify fields only and must not wipe the rest.
+        prev = cache.get(name)
+        if prev and "lastfm" in prev:
+            entry["lastfm"] = prev["lastfm"]
+            entry["lastfm_checked"] = prev.get("lastfm_checked")
+        # Preserve any portrait from a prior --refresh-images: the build owns the
+        # Spotify anchor + release only and must not reset image_url/images_checked.
+        if prev and prev.get("images_checked"):
+            entry["image_url"] = prev.get("image_url")
+            entry["images_checked"] = prev.get("images_checked")
+        # Null-preserve guard (#109): don't let a null pull wipe a known release
+        # (app-only /market-filter flakiness). Keep the cached release AND its
+        # check-date so the entry stays eligible for a real refresh instead of
+        # locking in a false null. New artists (no prev) still store null.
+        prev_rel = (prev or {}).get("latest_release")
+        if entry.get("latest_release") is None and prev_rel is not None:
+            entry["latest_release"] = prev_rel
+            entry["latest_release_checked"] = prev.get("latest_release_checked")
+            print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
+        cache[name] = entry
+        rel = entry.get("latest_release") or {}
+        print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
+        resolved += 1
+        if resolved % SAVE_EVERY == 0:
+            save_cache(cache)
+            print(f"    …checkpoint saved ({resolved} written)")
+
+    if args.refresh and args.prune and not args.dry_run:
+        # Staleness is measured against the RAW TSV names, not the resolved universe:
+        # collect_artists() drops _SKIP_ARTISTS/_UNRESOLVABLE_ARTISTS and folds "X Band"
+        # into "X", and treating those as orphans deletes real, present artists — with no
+        # path back, since nothing re-seeds them (#159).
+        stale = [k for k in cache if k not in _prune_keep_set(amap, artists)]
+        for k in stale:
+            del cache[k]
+        if stale:
+            print(f"\nPruned {len(stale)} artist(s) no longer in the repo: {', '.join(sorted(stale))}")
+
+    if not args.dry_run:
+        save_cache(cache)
+
+    print("\n" + "=" * 60)
+    print(f"{'[DRY RUN] ' if args.dry_run else ''}Resolved {resolved}, "
+          f"{len(unresolved)} unresolved. Cache now holds {len(cache)} artists.")
+    if not args.dry_run:
+        print(f"Written: {OUTPUT_JSON}")
+    if unresolved:
+        print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
+              "or an alias entry):")
+        for n in unresolved:
+            print(f"  {n}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except RateLimited as e:
+        hrs = e.retry_after / 3600
+        sys.exit(f"\n⚠ Spotify rate-limited (Retry-After ~{e.retry_after}s ≈ {hrs:.1f}h). "
+                 f"Progress through the last checkpoint is saved; re-run to resume "
+                 f"once the lockout clears.")
