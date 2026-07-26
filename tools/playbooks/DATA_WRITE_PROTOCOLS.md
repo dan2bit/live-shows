@@ -75,7 +75,19 @@ and fast-forwards `main` if clean. Nothing is pushed to `main` directly.
 **`push_files` quirk:** The multi-file Git Data API (`push_files`) does **not** fire
 the `push` trigger on `staging` and therefore does **not** auto-promote. After any
 `push_files` call, follow up with a single-file `create_or_update_file` nudge commit
-to trigger promotion — or use sequential `create_or_update_file` calls instead.
+to trigger promotion — or, for one or two files, use sequential
+`create_or_update_file` calls instead.
+
+**Batches (3+ files): one `push_files` commit + nudge — never N sequential commits
+(2026-07-26).** N sequential pushes spawn N auto-promote runs and N chances to race
+a main-side PR merge. The #122 cull went out as 13 sequential commits just as PR
+#198 merged into `main`: the diverged fast-forward failed, and auto-promote's
+reset-on-failure handler force-reset `staging` back to `main`, discarding all 13
+staging commits mid-batch (recoverable that day only because the batch was
+reproducible; an in-page edit caught in the same window would have been silently
+lost). One `push_files` commit + one nudge is two pushes with near-zero race
+surface — and it reads as one change in history instead of thirteen. This also
+covers deletions: build the batch as a single tree update.
 
 **Multi-file same-show commits — bundle them, don't sequence them (2026-07-19).**
 When a single show update touches more than one file that the same CI check
