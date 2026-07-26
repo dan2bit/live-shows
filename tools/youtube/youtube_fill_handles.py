@@ -107,7 +107,7 @@ load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 SCOPES           = ["https://www.googleapis.com/auth/youtube"]
 CLIENT_SECRETS   = os.environ.get("YOUTUBE_CLIENT_SECRETS", "client_secrets.json")
 TOKEN_FILE       = os.environ.get("YOUTUBE_TOKEN_FILE",     "token.json")
-ARTISTS_TSV      = os.path.join(SCRIPT_DIR, "artists.tsv")
+ARTISTS_TSV      = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "..", "data", "artists.tsv"))  # canonical (#122; was a script-dir local copy)
 CANDIDATES_TSV   = os.path.join(SCRIPT_DIR, "youtube_handle_candidates.tsv")
 CANDIDATE_FIELDS = [
     "artist", "handle", "channel_title", "score",
