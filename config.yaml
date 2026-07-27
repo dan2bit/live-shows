@@ -21,6 +21,7 @@ site:
   about_hero_image: static/hero.jpg   # also in index.html: og:image, twitter:image
   about_hero_alt: "Galactic at 9:30 Club Jan 2025"   # also in index.html: og:image:alt
   about_footer: Life is short. Buy the tickets.
+  region: DC/MD/VA             # home region, used in visitor-facing copy (bystander banner, recommendation replies)
 
 # Page metadata mirrored into the static <head> of index.html. Social unfurlers and crawlers
 # do NOT run app.js, so these values are documentation — app.js does not apply them at runtime.
@@ -96,6 +97,12 @@ stages:
 # Scalar thresholds (#82).
 merch:
   event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
+  exempt_venues:   # venues where a high face price reflects the room, not a merch-table budget
+    - Wolf Trap Filene Center
+
+# Which past-year archive files exist under data/history/<year>.tsv. The current
+# year's shows live in live_shows_current.tsv until rollover adds its file here.
+history_years: [2021, 2022, 2023, 2024, 2025]
 
 badges:
   affinity:

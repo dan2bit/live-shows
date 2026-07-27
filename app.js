@@ -2,7 +2,8 @@ let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
 let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
 const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ticket)','Fees','Total Cost','Purchase Date','Food & Bev','Parking','Merch','Private Notes'];
-const HISTORY_YEARS=[2021,2022,2023,2024,2025],PAT_KEY='ghpat_liveshows';
+let HISTORY_YEARS=[2021,2022,2023,2024,2025];   // default; override with a top-level history_years list in config.yaml
+const PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
 var historyData={};
 HISTORY_YEARS.forEach(function(yr){historyData[yr]=null;});
@@ -56,6 +57,12 @@ function applyConfig(cfg){
   if(s.repo)REPO=s.repo;
   if(s.private_owner)OWNER_PRIVATE=s.private_owner;
   if(s.private_repo)REPO_PRIVATE=s.private_repo;
+  // Which data/history/<year>.tsv files exist for this fork; the default list
+  // above covers this repo's archive. Seed fetch slots for any added years.
+  if(Array.isArray(cfg.history_years)&&cfg.history_years.length){
+    HISTORY_YEARS=cfg.history_years.slice().sort();
+    HISTORY_YEARS.forEach(function(yr){if(!(yr in historyData))historyData[yr]=null;});
+  }
   // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
   // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
   // this project-pages setup; s.pages_base overrides the derived base for custom domains.
@@ -115,6 +122,11 @@ function _dataRef(){
 }
 // Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
+// Home region for visitor-facing copy (bystander banner, recommendation replies).
+function siteRegion(){var s=SITE_CONFIG.site;return(s&&s.region)||'my area';}
+// Venues exempt from the MERCH badge (config merch.exempt_venues) — places where a
+// high face price reflects the room, not a merch-table budget. Alias-resolved keys.
+function _merchExemptKeys(){var m=SITE_CONFIG.merch;return((m&&m.exempt_venues)||[]).map(function(v){return _venueCanonKey(v);});}
 // #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
 // Group = the public `Group=Y` flag; Solo = its absence. `which` is 'badge' or 'count',
 // `kind` is 'solo' or 'group'. Missing config defaults to group shown, solo hidden.
@@ -383,12 +395,12 @@ function _boxOfficeVenueKeys(){
 function buildBadges(row){
   if(!row['Ticket Access']&&!row['Face Value (per ticket)'])return'';
   var notes=(row['Notes / Memories']||'').toLowerCase(),pvt=(row['Private Notes']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+pvt+' '+seat+' '+access;
-  var isVip=(row['VIP']||'').trim().toUpperCase()==='Y',isWT=(row['Venue Name']||'').includes('Wolf Trap Filene');
+  var isVip=(row['VIP']||'').trim().toUpperCase()==='Y',isExempt=_merchExemptKeys().indexOf(_venueCanonKey(row['Venue Name']))>=0;
   var fv=parseFloat((row['Face Value (per ticket)']||'').replace(/[^0-9.]/g,''))||0;
   var badges=[],tl=ticketLabel(row['Ticket Access']||''),label=tl[0],isPaper=tl[1];
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
-  if(!isVip&&!isWT&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
+  if(!isVip&&!isExempt&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
   if(_boxOfficeVenueKeys()[_venueCanonKey(row['Venue Name'])])badges.push('<span class="badge badge-boxoffice" title="A flagged potential at this venue — buy at the box office while you\'re there">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
@@ -927,12 +939,15 @@ function buildSearchEmptyState(){
     if(n.support)n.support.split(/[/,]/).forEach(function(s){var t=s.trim();if(t)artists.add(t);});
     if(n.venueName)venues.add(shortVenueName(n.venueName));
   });
-  var firstDate=new Date(2021,6,11);
+  // Oldest attended row (rows sort newest-first) drives both the "first tracked
+  // show" line and the running day count — nothing here is hand-maintained.
+  var fo=rows.length?normalizeRow(rows[rows.length-1]):null;
   var now=new Date();now.setHours(0,0,0,0);
-  var days=Math.floor((now-firstDate)/86400000);
+  var firstDate=fo&&fo.showDate?new Date(fo.showDate.slice(0,10)+'T00:00:00'):null;
+  var days=firstDate&&!isNaN(firstDate)?Math.floor((now-firstDate)/86400000):0;
   var sc=rows.length,ac=artists.size,vc=venues.size;
   if(!sc)return'<div class="search-empty">Type to search across all shows</div>';
-  return '<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim)">first tracked show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
+  return (fo?'<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim)">first tracked show <span style="color:var(--text-muted)">'+esc(formatShowDateYear(fo.showDate))+' · '+esc(fo.artist)+' · '+esc(shortVenueName(fo.venueName))+'</span></div>':'')
     +'<div style="padding:28px 0 20px;text-align:center">'
     +'<div style="display:flex;justify-content:center;gap:0;margin-bottom:18px">'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-radius:3px 0 0 3px"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+sc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Shows</div></div>'
@@ -1312,7 +1327,7 @@ function serializeFastTrack(rows,headers){
 }
 function renderTourHere(){
   if(!fastTrackRows.length){document.getElementById('tourhereContent').innerHTML='<div class="loading" style="animation:none">No data</div>';return;}
-  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any DC/MD/VA date would be a strong buy.</span>'+recommendCtaHtml('+ Suggest an artist')+'</div>';
+  var banner='<div class="bystander-banner"><span>Artists I have never caught live yet &#8212; any '+esc(siteRegion())+' date would be a strong buy.</span>'+recommendCtaHtml('+ Suggest an artist')+'</div>';
   var thead='<thead><tr><th style="width:170px">Artist</th><th style="width:110px">Links</th><th style="width:80px">Tier</th><th>Why</th></tr></thead>';
   var tbody=fastTrackRows.map(function(r,ri){
     var tier=r['Tier']||'';
