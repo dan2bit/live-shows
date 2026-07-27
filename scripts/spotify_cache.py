@@ -976,34 +976,46 @@ def refresh_releases(cache: dict, creds, args) -> None:
 
     if inferred:
         print(f"auto stale-days: recent-band structure → using --stale-days {stale_days}")
-    print(f"Refreshing latest_release for {len(names)} cached artist(s)"
+
+    # Partition upfront so the progress denominator is the real workload, not the
+    # full cache. No-id entries are listed by name (they're either skeletons that
+    # need resolving with --new-artist, or known permanent-unresolvables); still-
+    # fresh entries collapse to one summary line — with oldest-first ordering
+    # they'd otherwise pile up as noise at the tail.
+    def _is_fresh(n):
+        if not stale_days:
+            return False
+        c = cache[n].get("latest_release_checked")
+        if not c:
+            return False
+        try:
+            return _days_since(c) < stale_days
+        except ValueError:
+            return False   # unparseable stored date → treat as due
+    no_id_names = [n for n in names if not cache[n].get("spotify_id")]
+    fresh = [n for n in names if cache[n].get("spotify_id") and _is_fresh(n)]
+    todo = [n for n in names
+            if cache[n].get("spotify_id") and not _is_fresh(n)]
+
+    if no_id_names:
+        print(f"{len(no_id_names)} without spotify_id — skipped "
+              "(resolve skeletons with --new-artist; bills/no-match stay skipped):")
+        for n in no_id_names:
+            print(f"    · {n}")
+    if fresh:
+        print(f"{len(fresh)} still-fresh entr{'y' if len(fresh) == 1 else 'ies'} "
+              f"skipped (--stale-days {stale_days})")
+
+    print(f"Refreshing latest_release for {len(todo)} of {len(names)} cached artist(s)"
           + (f" [skip checked < {stale_days}d]" if stale_days else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     updated = 0
-    skipped = 0
+    skipped = len(fresh)
     kept = 0
-    for i, name in enumerate(names, 1):
+    for i, name in enumerate(todo, 1):
         entry = cache[name]
         aid = entry.get("spotify_id")
-        if not aid:
-            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
-            continue
-        # --stale-days: skip entries refreshed within the window so a multi-day
-        # back-audit resumes across the daily cap instead of re-burning the first
-        # ~100 names each run. Entries never checked (null) fall through and
-        # refresh. Opt-in: with --stale-days unset, nothing here is skipped.
-        if stale_days:
-            checked = entry.get("latest_release_checked")
-            if checked:
-                try:
-                    if _days_since(checked) < stale_days:
-                        skipped += 1
-                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
-                              f"skipped (--stale-days {stale_days})")
-                        continue
-                except ValueError:
-                    pass  # unparseable stored date → fall through and refresh
         try:
             rel = latest_release(aid, creds, name)
         except RateLimited:
@@ -1024,7 +1036,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         # refresh instead of locking in a false null.
         if rel is None and old_rel is not None:
             kept += 1
-            print(f"[{i}/{len(names)}] {name}  → null pull; kept {old} (not re-checked)")
+            print(f"[{i}/{len(todo)}] {name}  → null pull; kept {old} (not re-checked)")
             print(f"    ⚠ app-only null for {name}; preserved cached {old}", file=sys.stderr)
             continue
         # Secondary (#100 Option 3): a new date older than the stored one is a
@@ -1036,17 +1048,17 @@ def refresh_releases(cache: dict, creds, args) -> None:
 
         if args.dry_run:
             change = "unchanged" if old == new else f"{old or '∅'} → {new or '∅'}"
-            print(f"[{i}/{len(names)}] {name}  → {change}")
+            print(f"[{i}/{len(todo)}] {name}  → {change}")
             continue
 
         entry["latest_release"] = rel
         entry["latest_release_checked"] = date.today().isoformat()
         if old != new:
             updated += 1
-            print(f"[{i}/{len(names)}] {name}  → {new or '∅'}"
+            print(f"[{i}/{len(todo)}] {name}  → {new or '∅'}"
                   + (f"  (was {old})" if old else ""))
         else:
-            print(f"[{i}/{len(names)}] {name}  → {new or '∅'} (unchanged)")
+            print(f"[{i}/{len(todo)}] {name}  → {new or '∅'} (unchanged)")
         if (i % SAVE_EVERY) == 0:
             save_cache(cache)
             print("    …checkpoint saved")
@@ -1060,7 +1072,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         return
     save_cache(cache)
     print("\n" + "=" * 60)
-    print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
+    print(f"Updated {updated} release date(s) across {len(todo)} checked artist(s)"
           + (f"; kept {kept} on null pulls" if kept else "")
           + (f"; skipped {skipped} still-fresh (--stale-days {stale_days})"
              if stale_days else "")
