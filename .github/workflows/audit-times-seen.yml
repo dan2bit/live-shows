@@ -1,6 +1,6 @@
 name: Audit Times Seen
 
-# Blocking check for #119: data/artists.tsv "Times Seen" must equal the canonical ledger
+# Blocking drift check: data/artists.tsv "Times Seen" must equal the canonical ledger
 # count from build_artist_index.py (except the notes-only allowlist inside the script).
 # Read-only — no commit; a non-zero exit fails the run visibly, like validate-current.yml.
 # Triggers on main after auto-promote, so it sees the post-promotion state.
