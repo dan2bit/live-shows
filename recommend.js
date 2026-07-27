@@ -135,13 +135,13 @@ function recAck(r){
     return'Yep \u2014 I\u2019ve caught <strong>'+name+'</strong>'+(t?' '+t+' time'+(t==='1'?'':'s'):'')+' already.<br>'
       +dates+'Thanks for thinking of me.';
   }
-  if(st==='fast_track')return'<strong>'+name+'</strong> is already on my fast-track list \u2014 any DC/MD/VA date is an instant buy. Thanks for the rec!';
+  if(st==='fast_track')return'<strong>'+name+'</strong> is already on my fast-track list \u2014 any '+esc(siteRegion())+' date is an instant buy. Thanks for the rec!';
   if(st==='potential'){
     var d=(r.decision||'').toLowerCase();
     if(d.indexOf('buy')===0||d==='choose')return'<strong>'+name+'</strong> is already on my radar \u2014 currently a \u201c'+esc(r.decision)+'\u201d in my potentials. Thanks!';
     return'I\u2019ve actually already weighed <strong>'+name+'</strong> and passed for now \u2014 but I appreciate the rec!';
   }
-  if(st==='follow')return'I\u2019m already following <strong>'+name+'</strong>, watching for a DC/MD/VA date. Thanks for thinking of me!';
+  if(st==='follow')return'I\u2019m already following <strong>'+name+'</strong>, watching for a '+esc(siteRegion())+' date. Thanks for thinking of me!';
   return'<strong>'+name+'</strong> is already on my list \u2014 thanks for thinking of me!';
 }
 function recKnownArtist(){
