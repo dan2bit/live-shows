@@ -250,9 +250,9 @@ async function mergePrivateData(){
   if(!authed||!featureOn('private_data'))return;
   // Sidecar joins normalize the Artist half of the key via _goalNorm (house identity
   // doctrine), so diacritic/case/encoding variants join anyway; any private row that
-  // still matches nothing gets a console.warn — billing-name or date drift (the
-  // Taj Mahal / Sierra Hull class) can't be bridged by normalization and
-  // must be fixed in the sidecar. See EMAIL_WORKFLOWS Routine 1 verbatim-key rule.
+  // still matches nothing gets a console.warn — billing-name or date drift can't be
+  // bridged by normalization and must be fixed in the sidecar. See EMAIL_WORKFLOWS
+  // Routine 1 verbatim-key rule.
   var _pk=function(a,d){return _goalNorm(a||'')+'␟'+(d||'').trim();};
   try{
     var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={},cseen={};
@@ -384,8 +384,8 @@ function ticketLabel(access){
 }
 // The 🏣 badge is driven by the explicit Box Office flag on Buy/Choose potentials
 // plus a venue match against the upcoming row, not by guessing at note phrasing.
-// Venue keys fold case, a leading "The", and punctuation ("Birchmere" == "The
-// Birchmere"); differently-worded venue names won't match — keep names consistent.
+// Venue keys fold case, a leading "The", and punctuation; true renames resolve
+// through data/venue_aliases.tsv (see _venueCanonical below).
 function _venueKey(v){return String(v||'').toLowerCase().replace(/^the\s+/,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
 function _boxOfficeVenueKeys(){
   var s={};
@@ -418,7 +418,7 @@ function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='
 // client-side against the small data/show_goals/*.tsv signature + eligibility files
 // loaded by loadGoalData(). Replicates build_artist_index.py credit_targets()+norm()
 // so client and builder agree. Degrades to nothing when show_goals is empty or the
-// goal folder is absent (the delete-show-goals exit criterion). No styles.css needed — colors come from
+// goal folder is absent. No styles.css needed — colors come from
 // the --<key>/-dim/-bg CSS vars emitted by applyTheme().
 var GOAL_DATA=null;
 function _goalNorm(s){

@@ -376,7 +376,7 @@
     .cell-venue-mobile{display:block;}
   }
 
-  /* ── Artist modal / #artist view — v3 unified design ─────────────── */
+  /* ── Artist modal / #artist view ─────────────────────────────────── */
   .artist-modal{background:none;border:none;padding:0;width:560px;max-width:94vw;box-shadow:none;overflow:visible;}
   .am-card{position:relative;background:var(--surface);border:1px solid var(--border-bright);border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.6);overflow:hidden;max-height:90vh;overflow-y:auto;overflow-x:hidden;}
   .am-close{position:absolute;top:12px;right:14px;z-index:5;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:3px;color:var(--text-muted);font-family:var(--mono);font-size:11px;padding:2px 8px;cursor:pointer;line-height:1.6;}
@@ -506,4 +506,4 @@
     .am-you-body{flex-wrap:wrap;}
     .am-gauge{align-self:center;margin:4px auto 0;}
   }
-/* cache-force: v3 modal styles */
+/* cache-force marker — this comment's presence busts stale CDN copies */
