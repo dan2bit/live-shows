@@ -13,7 +13,7 @@ _What the main dashboard site does_
 Enables calendar management, driving & parking directions, prevents double or dense bookings, enables decisions on what to attend, stages links for online purchase.
 
 ### History of Attended Shows
-Aggregates setlist.fm links, artist photos, bootleg videos, badges and personal show notes for all shows since the pandemic of 2020-2021. Includes a summary card for each artist, caching and normalizing information from last.fm, spotify, musicbrainz.
+Aggregates setlist.fm links, artist photos, bootleg videos, badges and personal show notes for all shows (in my case since the pandemic of 2020-2021). Includes a summary card for each artist, caching and normalizing information from last.fm, spotify, musicbrainz.
 
 ### Show Goals and Badges
 An optional layer on top of the history: hat signatures, autograph books, and artist photo albums tracked as event logs, rendered as badges and gauges on the artist summary cards. Spec: [`docs/GOALS_SPEC.md`](docs/GOALS_SPEC.md).
@@ -21,23 +21,25 @@ An optional layer on top of the history: hat signatures, autograph books, and ar
 ### Spend and Budget Management
 An optional, separate private sidecar repo records actual spending on and at shows — potential ticket prices are public; actual spend, seats, and quantities are not. Requires PAT authorization.
 
-*Detailed Data Schema documentation for the tsv file storage layer: [`docs/PROJECT.md`](docs/PROJECT.md)**
+*Detailed Data Schema documentation for all of the tsv file storage layer: [`docs/PROJECT.md`](docs/PROJECT.md)*
 
 ### Recommendation Intake
 Allows visitors to submit 1 or 2 recommendations in a day, which get reviewed in the github issue queue.
 
 ### CI Tools and gating
 
-A bespoke, optional automation layer: all agentic and bot writes land on a `staging` branch, pass a private-data guard, and auto-promote to `main`. A dozen or so python scripts in `scripts` back the workflows — see [`.github/workflows/README.md`](.github/workflows/README.md) for the full pipeline and catalog.
-- _agentic repo management is done in a staging branch through the official github MCP server_
+A bespoke, optional automation layer: all agentic and bot writes land on a `staging` branch, pass a private-data guard, and auto-promote to `main`. 
+A dozen or so python scripts in `scripts` back the workflows — see [`.github/workflows/README.md`](.github/workflows/README.md) for the full pipeline and catalog.
 
 ---
 
 **Want your own?** All of the Main Functionality above is forkable with no
 agentic dependency — fork the repo, edit `config.yaml`, enable Pages. The
 step-by-step guide is [`docs/FORK_SETUP.md`](docs/FORK_SETUP.md), organized in
-three levels (UI-only fork → private-data sidecar → full automation pipeline);
-most forks only need the first.
+three levels (most forks only need the first): 
+- UI-only fork: show tracking and history, optional goals and badges, optional recommendation intake
+- Add private-data sidecar for spending and private notes
+- Add full automation CI and gating guards, recommended for agentic support
 
 ---
 
