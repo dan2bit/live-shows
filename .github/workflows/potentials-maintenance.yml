@@ -1,6 +1,6 @@
 name: Potentials maintenance
 
-# Post-#76: main requires the `guard` status check. The prune commit goes to
+# main requires the `guard` status check. The prune commit goes to
 # `staging` via the promote deploy key (which also makes the staging push
 # trigger auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
 # auto-promote to run. A pruned potential.tsv promoted back to main retriggers
@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Reconcile purchases into potentials + fast_track (#152)
+      - name: Reconcile purchases into potentials + fast_track
         id: reconcile
         run: python scripts/reconcile_purchases.py
 
@@ -87,5 +87,5 @@ jobs:
         run: |
           echo "::warning::One or more Prev/Next bracket mismatches found in live_shows_potential.tsv — run scripts/check_brackets.py locally to review."
 
-      - name: Box Office flag guardrail (#186, warn-only)
+      - name: Box Office flag guardrail (warn-only)
         run: python scripts/check_box_office.py

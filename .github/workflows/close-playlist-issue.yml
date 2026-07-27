@@ -1,6 +1,6 @@
 name: Close playlist issue
 
-# Post-#76: main requires the `guard` status check, so the live_shows_current.tsv
+# main requires the `guard` status check, so the live_shows_current.tsv
 # write goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to
 # staging would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
 # fast-forward main. Triggered by a comment carrying the playlist URL on a

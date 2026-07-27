@@ -1,6 +1,7 @@
 name: Private data guard
 
-# Layer-3 backstop for the 2026-06-27 private-data leak (#76). Fails any push or
+# Layer-3 backstop for the private-data leak incident (see docs/ISSUE_LOG.md).
+# Fails any push or
 # PR that introduces the private sidecar into this PUBLIC repo. The private
 # ledger (cost / seat / qty / private notes) and fast-track caps belong ONLY in
 # the separate dan2bit/live-shows-private repo — never at a path inside this one.
@@ -52,7 +53,7 @@ jobs:
             echo ""
             echo "Private financial data (cost / seat / qty / private notes / fast-track caps)"
             echo "belongs ONLY in the separate repo dan2bit/live-shows-private — never at a path"
-            echo "inside this public repo. See issue #76 and the matching .gitignore block."
+            echo "inside this public repo. See docs/ISSUE_LOG.md and the matching .gitignore block."
             exit 1
           fi
 
