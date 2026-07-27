@@ -111,6 +111,17 @@ two commits would have closed that window entirely: `main` only ever advances by
 fast-forward, and a `push_files` commit followed by a nudge lands both files on `main`
 in one push, so the audit only ever sees the fully-reconciled state.
 
+**Evergreen commentary on forker-facing surfaces (2026-07-27, #72 pass A).** Code
+comments, docstrings, and workflow header comments in the forker-facing files
+(`app.js`, `recommend.js`, `artist-modal.js`, `index.html`, `styles.css`,
+`config.yaml`, `tools/research/graph/artist-graph.html`, `scripts/*.py`,
+`.github/workflows/*.yml`) must NOT carry `#NNN` issue references or incident
+dates — write the comment so it stands on its own, and when its origin story is
+load-bearing, add the design's row to `docs/ISSUE_LOG.md` in the same commit and
+point there. This applies at WRITE time to every new comment a session adds. A
+warn-only CI check (#204) backstops drift. `tools/` playbooks (including this
+file) and the private repo are exempt — issue refs there are working shorthand.
+
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
 
