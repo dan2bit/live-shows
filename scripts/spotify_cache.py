@@ -21,10 +21,10 @@ AUTH
     no stored or cached id) and GET /artists/{id}/albums (latest release). The
     plain GET /artists/{id} call was dropped — see RATE LIMITS.
 
-METADATA-ONLY (no top tracks)  — updated 2026-06-22
+METADATA-ONLY (no top tracks)
     This cache deliberately does NOT store per-artist top tracks. Spotify's
-    Feb/Mar-2026 API migration (effective 2026-02-11; all Dev-mode apps by
-    2026-03-09) restricted GET /artists/{id}/top-tracks for app-only auth — it
+    Dev-mode API migration restricted GET /artists/{id}/top-tracks for
+    app-only auth — it
     now returns 403 Forbidden under Client Credentials on a Dev-mode app. The
     user-OAuth path (the marcelmarais MCP server) is no substitute: it exposes
     only the *user's own* top tracks (/me/top/tracks), not an arbitrary artist's,
@@ -32,23 +32,23 @@ METADATA-ONLY (no top tracks)  — updated 2026-06-22
     selection for samplers happens at assembly time via the MCP's searchSpotify
     (results come back in relevance order — Spotify search has no sort param —
     so picks must be eyeballed, not trusted as a true top-10). Related-artists
-    and recommendations were removed in the 2024-11-27 cull and are likewise
+    and recommendations were removed in an earlier API cull and are likewise
     absent. If the app is ever promoted out of Dev mode (Extended Quota), revisit
     restoring a top_tracks field here.
 
-STRIPPED METADATA (no popularity / followers / genres)  — added 2026-06-23
+STRIPPED METADATA (no popularity / followers / genres)
     These three fields were the cache's original analytical payload. Spotify's
-    Feb/Mar-2026 Dev-mode migration removed them from the /artists/{id} response
+    Dev-mode migration removed them from the /artists/{id} response
     under app-only (Client Credentials) auth. It's a field-level removal tied to
     Development mode, not to the auth flow, so the user-OAuth path (the
     marcelmarais MCP token) does NOT recover them either — only Extended Quota
     Mode would, which is out of reach for a personal app. So build_entry no longer
     stores them; the cache is now a resolution map (id/url) + latest_release.
     The lost popularity/genre signal is backfilled from a separate source
-    (Last.fm) as its own refreshable layer, in a follow-on change — not here.
+    (Last.fm) as its own refreshable layer — see LAST.FM ENRICHMENT.
 
-RATE LIMITS  — added 2026-06-23
-    Spotify's Feb/Mar-2026 Dev-mode limits are tight: a 429 can carry a multi-HOUR
+RATE LIMITS
+    Spotify's Dev-mode limits are tight: a 429 can carry a multi-HOUR
     Retry-After (observed ~22h). So api_get caps its sleep at MAX_BACKOFF and
     raises RateLimited on anything longer — and on exhausted retries — so the run
     BAILS, keeping its periodic checkpoints, instead of sleeping for hours or
@@ -62,7 +62,7 @@ RATE LIMITS  — added 2026-06-23
     A multi-day --refresh-releases back-audit resumes across the daily cap with
     --stale-days (see LATEST RELEASE / that flag's help).
 
-LATEST RELEASE  — added 2026-06-23
+LATEST RELEASE
     Each entry carries a `latest_release` object — the artist's most recent
     album/single — from GET /artists/{id}/albums (a plain catalog read, reachable
     app-only; not in the migrated-restricted set). include_groups is album,single
@@ -91,7 +91,7 @@ LATEST RELEASE  — added 2026-06-23
     in the same year correctly outranks it); the original release_date + precision
     are what get stored.
 
-    MISATTRIBUTION GUARD (#100)  — added 2026-06-27
+    MISATTRIBUTION GUARD
         /artists/{id}/albums has been observed returning an album that belongs to
         a different artist for the given id (a Bach recording surfaced under
         Angelique Francis). Since the bad album was the newest, it won the pick
@@ -106,7 +106,7 @@ LATEST RELEASE  — added 2026-06-23
         as a side effect at no extra quota. That sweep is ~317 calls ≈ 3-4 days
         under the cap; --stale-days makes it resumable day to day (see below).
 
-    RESUMABLE RELEASE SWEEP (--stale-days)  — added 2026-06-27
+    RESUMABLE RELEASE SWEEP (--stale-days)
         refresh_releases walks sorted(cache) top-down and, by default, re-pulls
         every entry — so a naive daily re-run under the ~100/day cap re-burns the
         first ~100 names and never advances. --stale-days N skips entries whose
@@ -116,7 +116,7 @@ LATEST RELEASE  — added 2026-06-23
         re-pull still does exactly that. Pick N > sweep length (7 covers the 3-4
         day, ~317-artist sweep).
 
-    NULL-PRESERVE GUARD (#109)  — added 2026-06-29
+    NULL-PRESERVE GUARD
         A null pull (no album/single credited to the id, app-only / market=US)
         must NOT overwrite a non-null cached latest_release. App-only Dev-mode
         returns ∅ for artists who demonstrably have releases (confirmed via the
@@ -130,9 +130,9 @@ LATEST RELEASE  — added 2026-06-23
 
     Display/badging on this date (a "NEW" badge in the show lists) and recency
     weighting in follow-tier / potentials decisions are deliberately OUT of scope
-    here — this only captures and caches the data. See #85 / follow-on tickets.
+    here — this only captures and caches the data.
 
-LAST.FM ENRICHMENT  — added 2026-06-25
+LAST.FM ENRICHMENT
     A separate, independently-refreshable `lastfm` block backfills the analytical
     signal Spotify's Dev-mode migration stripped (popularity/followers/genres).
     Populated ONLY by --refresh-lastfm; the Spotify build/refresh never reads it,
@@ -158,8 +158,8 @@ LAST.FM ENRICHMENT  — added 2026-06-25
     (mood / "seen live" noise mixed with real genres) — filter before trusting
     them as a genre signal.
 
-ID-DRIFT AUDIT (--audit-ids / --repoint)  — added 2026-07-13 (#126)
-    #125's build-time image caching surfaced a class of cache corruption the
+ID-DRIFT AUDIT (--audit-ids / --repoint)
+    Build-time image caching surfaced a class of cache corruption the
     resolver had no way to self-correct: a stored/cached spotify_id that points
     at a real, valid Spotify artist profile, but a SECONDARY one Spotify minted
     for the same act — same discography shape, but no portrait, and sometimes
@@ -252,6 +252,11 @@ NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv ma
         script's de-accent / strip-apostrophe normalization, so an accent- or
         apostrophe-only variant can still split into two entries; fix those at the
         source or extend this step if they accumulate.
+
+HISTORY The scope above (metadata-only, stripped fields, the guards) was shaped
+        by Spotify's Dev-mode API deprecations and a handful of cache-corruption
+        incidents. The issue history behind these designs is logged in
+        docs/ISSUE_LOG.md.
 """
 
 import argparse
@@ -337,7 +342,7 @@ def _tsv_sources():
         (os.path.join(DATA_DIR, "fast_track.tsv"),            ["Artist"], ["Spotify URL"]),
         (os.path.join(FOLLOWS,  "follows_master.tsv"),        ["Artist"], []),
         (os.path.join(FOLLOWS,  "new_artist_research.tsv"),   ["Artist"], []),
-        # seen_with.tsv (#97): session/sit-in/supergroup members. Read the "Seen
+        # seen_with.tsv: session/sit-in/supergroup members. Read the "Seen
         # With" column (the member); its "Spotify URL" is the member's own URL, a
         # free resolution hint. Headliner is NOT read here — those names already
         # come from the show files, so re-reading them adds only redundant source
@@ -360,7 +365,7 @@ def _source_tag(path: str) -> str:
 # also correct, keyed by canonical artist name -> Artist column value used for
 # matching. artists.tsv is checked first (most authoritative / most commonly
 # stale), then fast_track.tsv. seen_with.tsv rows are members, not headliners,
-# and are left alone here — #126's drift cases are all headliner-level.
+# and are left alone here — observed id-drift cases are all headliner-level.
 _URL_BEARING_TSVS = (ARTISTS_TSV, os.path.join(DATA_DIR, "fast_track.tsv"))
 
 
@@ -403,8 +408,8 @@ _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
                  "john prine celebration"}
 
 # Real-looking strings that resolve to NO single Spotify artist and should be
-# dropped before resolution so they stop costing a /search call every run
-# (#97 / #73). Keep this list TIGHT — it is NOT a dumping ground for "didn't
+# dropped before resolution so they stop costing a /search call every run.
+# Keep this list TIGHT — it is NOT a dumping ground for "didn't
 # resolve". Only two kinds belong here:
 #   1. A genuine artist with zero Spotify presence (e.g. Eli Kollman — a support
 #      act seen once, no catalogue anywhere).
@@ -416,7 +421,7 @@ _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
 # Do NOT add combined "X & Y" bills whose components are real, separately-resolvable
 # artists you want in the cache/NAR (JD Simo & Luther Dickinson, Sarah Borges &
 # Eric Ambel, Laka Soul). Those are a SPLIT problem, not a skip — splitting
-# "&"-bills into their components is tracked in #94. Suppressing them here would
+# "&"-bills into their components is tracked separately. Suppressing them here would
 # also hide real artists (e.g. Luther Dickinson = North Mississippi Allstars,
 # already seen). Normalised through _norm so "&"/accents match the collected names.
 _UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
@@ -441,7 +446,7 @@ def read_tsv_rows(path: str) -> list[dict]:
     columns. csv.DictReader's default restval is None for those, which every caller
     here then blindly .strip()s; coercing to "" here (once, centrally) matches what
     parseTsv() already does client-side, instead of every caller needing its own
-    `or ""` guard (#183 — a short row crashed collect_artists() this way)."""
+    `or ""` guard (a short row once crashed collect_artists() this way)."""
     if not os.path.exists(path):
         return []
     with open(path, encoding="utf-8", newline="") as f:
@@ -550,7 +555,7 @@ def collect_raw_names(amap: dict[str, str]) -> set[str]:
     """Every artist name appearing anywhere in the repo TSVs, alias-canonicalised but
     NOT passed through _is_non_artist() and NOT Band-folded.
 
-    This — not collect_artists() — is the correct universe for --prune (#159).
+    This — not collect_artists() — is the correct universe for --prune.
     collect_artists() deliberately drops _SKIP_ARTISTS / _UNRESOLVABLE_ARTISTS so they
     never cost a /search call, and folds "X Band" into "X". Both are right for
     resolution and wrong for staleness: those artists are still real rows in the TSVs,
@@ -589,7 +594,7 @@ def prune_cache(cache: dict, args) -> None:
 
     Runs standalone: no Spotify credentials, no API calls. The staleness test is pure
     TSV reading — the only reason this ever needed --refresh (and its ~800-1000 calls
-    across the whole cache) was that it lived inside main()'s resolve loop (#159).
+    across the whole cache) was that it once lived inside main()'s resolve loop.
     """
     amap = load_aliases()
     artists, _ = collect_artists(amap)
@@ -725,7 +730,7 @@ def _release_sort_key(rd: str) -> str:
 
 
 def _album_credits_artist(album: dict, aid: str, artist_name: str | None) -> bool:
-    """True if the album is actually credited to this artist (#100 guard).
+    """True if the album is actually credited to this artist (misattribution guard).
 
     /artists/{id}/albums has been observed returning an album that belongs to a
     different artist for the given id (a Bach recording under Angelique Francis).
@@ -733,10 +738,10 @@ def _album_credits_artist(album: dict, aid: str, artist_name: str | None) -> boo
     back to an alias-aware name match (same `similarity`/threshold the resolver
     uses) so a legitimate album whose id representation differs isn't false-
     rejected. An album matching on neither — our id absent and only an unrelated
-    name credited, which is the #100 case — returns False and is dropped by the
-    caller. Residual: a *bidirectional* mis-link that also injects our id into the
-    album's own artist list is internally consistent and passes the id check;
-    that one is uncatchable from the payload alone (noted on #100)."""
+    name credited, which is the observed mis-link case — returns False and is
+    dropped by the caller. Residual: a *bidirectional* mis-link that also injects
+    our id into the album's own artist list is internally consistent and passes
+    the id check; that one is uncatchable from the payload alone."""
     album_artists = album.get("artists") or []
     if any((a.get("id") or "") == aid for a in album_artists):
         return True
@@ -756,7 +761,7 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
     endpoint's max; >10 returns 400 "Invalid limit"). Results are newest-first,
     so the most recent is effectively always within the window.
 
-    #100 guard: items not actually credited to this artist (see
+    Misattribution guard: items not actually credited to this artist (see
     _album_credits_artist) are dropped BEFORE the newest is picked, so a Spotify
     mis-link can neither be stored nor displace the real latest — the correct
     release is recovered automatically when it sits elsewhere in the page. Each
@@ -766,7 +771,7 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
 
     Returns None when the artist genuinely has no qualifying release OR when the
     app-only page comes back empty/all-rejected. Callers MUST NOT let a None here
-    overwrite a non-null cached latest_release — see the #109 null-preserve guard
+    overwrite a non-null cached latest_release — see the null-preserve guard
     in refresh_releases() and the main build loop.
     """
     data = api_get(f"/artists/{aid}/albums",
@@ -780,7 +785,7 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
         (credited if _album_credits_artist(it, aid, artist_name) else rejected).append(it)
     for it in rejected:
         credit = ", ".join(a.get("name", "") for a in (it.get("artists") or [])) or "?"
-        print(f"    ⚠ #100 guard: dropped '{it.get('name', '')}' ({it.get('id', '')}) — "
+        print(f"    ⚠ misattribution guard: dropped '{it.get('name', '')}' ({it.get('id', '')}) — "
               f"credited to [{credit}], not {artist_name or aid}", file=sys.stderr)
     if not credited:
         return None
@@ -792,7 +797,7 @@ def latest_release(aid: str, creds, artist_name: str | None = None) -> dict | No
         "type": best.get("album_type", best.get("type", "")),
         "spotify_id": best.get("id", ""),
         "url": (best.get("external_urls") or {}).get("spotify", ""),
-        "image_url": _pick_image(best.get("images"), 300),  # album cover — 0 extra calls (#125)
+        "image_url": _pick_image(best.get("images"), 300),  # album cover — 0 extra calls
     }
 
 
@@ -808,7 +813,7 @@ def artist_image(aid: str, creds) -> str:
     """Artist portrait URL from GET /artists/{id}.
 
     Dev-mode Client Credentials strips popularity/followers/genres from this
-    endpoint but KEEPS images[] (verified 2026-07-04, #125). One call; batch
+    endpoint but KEEPS images[] (verified in practice). One call; batch
     /artists?ids= is 403 under the Dev app, so this is per-artist. Returns "" when
     the artist has no portrait or the pull is empty — callers MUST NOT let that
     overwrite a cached image_url (null-preserve).
@@ -822,7 +827,7 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
     # RELEASE). Still one Spotify call here: spotify_url comes from the resolver
     # or is derived from the id. The portrait (image_url) is fetched separately by
     # --refresh-images (GET /artists/{id} keeps images[] despite the Dev-mode
-    # metadata strip, #125), so a build never spends that call — image_url and
+    # metadata strip), so a build never spends that call — image_url and
     # images_checked start null and are filled by that pass.
     rel = latest_release(aid, creds, name)
     return {
@@ -832,7 +837,7 @@ def build_entry(name: str, sources: set, aid: str, url: str, creds) -> dict:
         "last_refreshed": date.today().isoformat(),
         "latest_release": rel,
         "latest_release_checked": date.today().isoformat(),
-        "image_url": None,          # artist portrait — populated by --refresh-images (#125)
+        "image_url": None,          # artist portrait — populated by --refresh-images
         "images_checked": None,     # cadence anchor for --refresh-images
     }
 
@@ -875,7 +880,7 @@ def _infer_stale_days(cache: dict) -> int:
     A resumed sweep leaves a multi-day band of checked dates ordered by alphabet;
     any cutoff that lands INSIDE that band re-burns part of the previous sweep —
     and because the refresh loop walks alphabetically into the quota ceiling, it
-    is the same part every run (#197: the median cut the Jul 5-9 band in half and
+    is the same part every run (a median-based cutoff cut a sweep band in half and
     re-checked the A-H head until rate-limited, every time). max(age)+1 over the
     recent checks places the cutoff just past the whole band, so a bare
     --refresh-releases spends quota only on artists the last sweep never reached.
@@ -914,7 +919,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
     each daily run advances past what an earlier run already refreshed instead of
     restarting from the top. Unset (default) refreshes every cached artist.
 
-    #109 null-preserve: a null pull never overwrites a non-null cached release,
+    Null-preserve: a null pull never overwrites a non-null cached release,
     and on such a keep the entry's latest_release_checked is left untouched so the
     sweep retries it rather than locking in a false null (and skipping it)."""
     names = sorted(cache)
@@ -995,7 +1000,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         old_rel = entry.get("latest_release")
         old = (old_rel or {}).get("date")
         new = (rel or {}).get("date")
-        # Null-preserve guard (#109): a null pull must not wipe a known release.
+        # Null-preserve guard: a null pull must not wipe a known release.
         # App-only Dev-mode + market=US filtering can transiently return no albums
         # for an artist who has them; overwriting good data with null AND stamping
         # it fresh would both lose the release and hide it from the next
@@ -1007,10 +1012,10 @@ def refresh_releases(cache: dict, creds, args) -> None:
             print(f"[{i}/{len(names)}] {name}  → null pull; kept {old} (not re-checked)")
             print(f"    ⚠ app-only null for {name}; preserved cached {old}", file=sys.stderr)
             continue
-        # Secondary (#100 Option 3): a new date older than the stored one is a
+        # Secondary check: a new date older than the stored one is a
         # regression worth a look (stale-cache overwrite or a pulled release).
-        # Cheap and rejected-only; does NOT catch the #100 case (its bad date was
-        # newer) — that's the membership guard's job, above.
+        # Cheap and rejected-only; does NOT catch the misattribution case (its bad
+        # date was newer) — that's the membership guard's job, above.
         if old and new and _release_sort_key(new) < _release_sort_key(old):
             print(f"    ⚠ release date regressed {old} → {new} for {name}", file=sys.stderr)
 
@@ -1052,7 +1057,7 @@ def refresh_images(cache: dict, creds, args) -> None:
     leave the rest of each entry untouched. Mirrors refresh_releases().
 
     GET /artists/{id} per artist (+1 call each — batch /artists?ids= is 403 under
-    the Dev-mode app, #125). Honors --artist, --stale-days (gating on
+    the Dev-mode app). Honors --artist, --stale-days (gating on
     images_checked), and --dry-run, so a multi-day portrait back-audit resumes
     across the ~100/day cap. Null-preserve: an empty pull never wipes a cached
     image_url, and leaves images_checked untouched so the sweep retries it rather
@@ -1139,7 +1144,7 @@ def refresh_images(cache: dict, creds, args) -> None:
           + f". Written: {OUTPUT_JSON}")
 
 
-# ── ID-drift audit (--audit-ids / --repoint, #126) ─────────────────────────────
+# ── ID-drift audit (--audit-ids / --repoint) ──────────────────────────────────
 
 class _Verdict:
     REPOINT_SAFE = "REPOINT SAFE"
@@ -1201,7 +1206,7 @@ def _audit_one(name: str, entry: dict, creds) -> tuple[str, dict]:
 
 def audit_ids(cache: dict, creds, args) -> None:
     """--audit-ids: read-only walk of the cache flagging likely secondary/wrong
-    Spotify profiles (#126). Never writes the cache. Skips any entry whose
+    Spotify profiles. Never writes the cache. Skips any entry whose
     cached id already has a portrait — a populated image_url is itself proof
     the id isn't a portrait-less secondary, so there is no drift signal to
     check and no reason to spend a /search call on it.
@@ -1470,7 +1475,7 @@ def lastfm_lookup(name: str, api_key: str) -> tuple[dict | None, str]:
 
     Last.fm matches names EXACTLY — no fuzzy fallback — so a cache key that is a bill name
     ("Lilly Hiatt Band", "TajMo: The Taj Mahal & Keb' Mo' Band") simply misses, and the
-    entry ends up with a null lastfm block that looks resolved (#160). Retries are free
+    entry ends up with a null lastfm block that looks resolved. Retries are free
     (Last.fm is uncapped), so walk the fallbacks: exact first, then most specific.
 
     Returns (info, matched_name). matched_name != name means a fallback won — the caller
@@ -1487,11 +1492,11 @@ def lastfm_lookup(name: str, api_key: str) -> tuple[dict | None, str]:
 
 
 def _write_lastfm(entry: dict, info: dict | None) -> None:
-    """Store a Last.fm pull, mirroring the empty-pull rule the portrait pass uses (#125).
+    """Store a Last.fm pull, mirroring the empty-pull rule the portrait pass uses.
 
     An empty pull never wipes a cached block and never stamps lastfm_checked, so the next
     pass retries instead of locking in a false null. The old code stamped unconditionally,
-    which is how bill-named entries ended up permanently null-but-checked (#160).
+    which is how bill-named entries ended up permanently null-but-checked.
     """
     if info:
         entry["lastfm"] = info
@@ -1501,7 +1506,7 @@ def _write_lastfm(entry: dict, info: dict | None) -> None:
     if entry.get("lastfm") is None:
         # Self-heal: clear a stamp left by the old unconditional-stamp code, so the
         # invariant "lastfm_checked implies a successful pull" actually holds. Without
-        # this, entries stamped before #160 keep a stale timestamp forever — harmless
+        # this, entries stamped by that old code keep a stale timestamp forever — harmless
         # today (refresh_lastfm re-queries everything) but it would silently skip them
         # the moment a --stale-days gate is added here, as refresh_images already has.
         entry.pop("lastfm_checked", None)
@@ -1582,7 +1587,7 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
           f"Written: {OUTPUT_JSON}")
 
 
-# ── --new-artist: resolve + portrait + Last.fm in one pass, per artist (#145) ──
+# ── --new-artist: resolve + portrait + Last.fm in one pass, per artist ────────
 # Bringing a newly-added artist to a fully-populated cache entry otherwise takes three
 # separate invocations in a fixed order, which is easy to get wrong. This chains them.
 #
@@ -1638,7 +1643,7 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
 
     # Preserve guards, mirroring the add-missing loop in main(): a re-run over an
     # already-populated artist must not wipe what the other passes wrote, and a null
-    # release pull must not overwrite a known one (#109).
+    # release pull must not overwrite a known one (null-preserve).
     prev = cache.get(name)
     prev_rel = (prev or {}).get("latest_release")
     if entry.get("latest_release") is None and prev_rel is not None:
@@ -1646,7 +1651,7 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
         entry["latest_release_checked"] = prev.get("latest_release_checked")
         print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
 
-    # Pass 2 — portrait. Mirrors refresh_images' empty-pull rule (#125): an empty pull
+    # Pass 2 — portrait. Mirrors refresh_images' empty-pull rule: an empty pull
     # never wipes a cached portrait and never stamps images_checked, so the next sweep
     # retries it rather than locking in a false null.
     img = artist_image(aid, creds)
@@ -1664,7 +1669,7 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
         portrait = "portrait — (empty pull; left unstamped to retry)"
 
     # Pass 3 — Last.fm. Independent of Spotify (no cap, no creds); mirrors refresh_lastfm,
-    # including the surface-form fallback and the empty-pull rule (#160).
+    # including the surface-form fallback and the empty-pull rule.
     info, matched = lastfm_lookup(name, lastfm_key)
     time.sleep(DELAY)
     _write_lastfm(entry, info)
@@ -1751,14 +1756,14 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
             print(f"  {n}")
 
 
-# ── --add-artist: append a cache-ready row to a low-commitment list (#94) ─────
+# ── --add-artist: append a cache-ready row to a low-commitment list ───────────
 # Resolve an artist on Spotify and append a schema-valid row to research /
 # fast_track / seen_with. artists.tsv is REFUSED — a row there asserts Times Seen
 # / First Seen, derived from a real show row, which this tool won't fabricate (the
-# dual-bill ledger question is #103). Append is header-driven (uses each file's
-# own column order) and append-mode, so the rest of the file is left untouched; it
-# never writes a '#' comment block (the in-page editor derives the header from
-# line 1 and a comment block wipes the file — #80).
+# dual-bill ledger question is handled separately). Append is header-driven (uses
+# each file's own column order) and append-mode, so the rest of the file is left
+# untouched; it never writes a '#' comment block (the in-page editor derives the
+# header from line 1 and a comment block wipes the file).
 
 NAR_TSV        = os.path.join(FOLLOWS,  "new_artist_research.tsv")
 FAST_TRACK_TSV = os.path.join(DATA_DIR, "fast_track.tsv")
@@ -1785,7 +1790,8 @@ def _tsv_header(path: str) -> list[str]:
 def _append_tsv_row(path: str, row: dict) -> None:
     """Append one row aligned to the file's existing header order, in append mode
     so the rest of the file stays byte-for-byte intact. csv handles any quoting;
-    no '#' comment block is ever introduced (#80)."""
+    no '#' comment block is ever introduced (a comment block in an in-page-editable
+    TSV wipes the file on save)."""
     header = _tsv_header(path)
     with open(path, "rb") as f:
         ends_nl = f.read()[-1:] == b"\n"
@@ -1910,8 +1916,8 @@ def add_artist(args, creds) -> None:
 
 def _reject_mode_clashes(active: str, pairs, extra: str = "") -> None:
     """Exit if a mode flag is combined with modes it cannot share a run with.
-    `pairs` is (flag_name, is_set). Shared by --new-artist (#145), --prune (#159),
-    and --audit-ids / --repoint (#126)."""
+    `pairs` is (flag_name, is_set). Shared by --new-artist, --prune,
+    and --audit-ids / --repoint."""
     clashes = [flag for flag, on in pairs if on]
     if clashes:
         msg = f"{active} cannot be combined with {', '.join(clashes)}."
@@ -1951,7 +1957,7 @@ def main() -> None:
                          "--dry-run to list them first, or with --refresh to prune after "
                          "a rebuild.")
     ap.add_argument("--audit-ids", action="store_true",
-                    help="Read-only (#126): walk the cache and flag artists whose "
+                    help="Read-only: walk the cache and flag artists whose "
                          "cached spotify_id has no portrait but a re-resolve by name "
                          "finds a different id that DOES have one (a likely secondary/"
                          "wrong Spotify profile). Prints a verdict per artist and "
@@ -2024,7 +2030,7 @@ def main() -> None:
     DELAY = args.delay
 
     # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
-    # Reject the mode combinations rather than silently letting one win (#145).
+    # Reject the mode combinations rather than silently letting one win.
     if args.new_artist is not None:
         _reject_mode_clashes("--new-artist", (
             ("--refresh", args.refresh), ("--refresh-releases", args.refresh_releases),
@@ -2047,7 +2053,7 @@ def main() -> None:
             ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
         ), extra="Run --prune on its own (no API calls), or as --refresh --prune.")
 
-    # --audit-ids and --repoint (#126) are standalone modes like --new-artist — each
+    # --audit-ids and --repoint are standalone modes like --new-artist — each
     # owns its whole run and cannot be combined with any other mode, including each
     # other (a --repoint the person is applying should be a deliberate, reviewed step,
     # not folded into the same invocation as a read-only audit pass).
@@ -2078,7 +2084,7 @@ def main() -> None:
         refresh_lastfm(cache, lastfm_key, args)
         return
 
-    # --prune standalone: no Spotify credentials, no API calls (#159). Sits above the
+    # --prune standalone: no Spotify credentials, no API calls. Sits above the
     # credential check for that reason. `--refresh --prune` still prunes after the
     # rebuild, further down.
     if args.prune and not args.refresh:
@@ -2124,7 +2130,7 @@ def main() -> None:
         new_artist_run(cache, creds, lastfm_key, args)
         return
 
-    # --add-artist: resolve + append one artist to a low-commitment list (#94).
+    # --add-artist: resolve + append one artist to a low-commitment list.
     # Needs Spotify creds (for resolution), so it sits after the credential check.
     if args.add_artist:
         if not args.to:
@@ -2213,7 +2219,7 @@ def main() -> None:
         if prev and prev.get("images_checked"):
             entry["image_url"] = prev.get("image_url")
             entry["images_checked"] = prev.get("images_checked")
-        # Null-preserve guard (#109): don't let a null pull wipe a known release
+        # Null-preserve guard: don't let a null pull wipe a known release
         # (app-only /market-filter flakiness). Keep the cached release AND its
         # check-date so the entry stays eligible for a real refresh instead of
         # locking in a false null. New artists (no prev) still store null.
@@ -2234,7 +2240,7 @@ def main() -> None:
         # Staleness is measured against the RAW TSV names, not the resolved universe:
         # collect_artists() drops _SKIP_ARTISTS/_UNRESOLVABLE_ARTISTS and folds "X Band"
         # into "X", and treating those as orphans deletes real, present artists — with no
-        # path back, since nothing re-seeds them (#159).
+        # path back, since nothing re-seeds them.
         stale = [k for k in cache if k not in _prune_keep_set(amap, artists)]
         for k in stale:
             del cache[k]

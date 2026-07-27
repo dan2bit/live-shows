@@ -1,19 +1,20 @@
-// ── Artist modal / #artist/{slug} view (issue #107) ─────────────────────────
+// ── Artist modal / #artist/{slug} view ─────────────────────────
 // Isolated module (option a): lazy index load + render + overlay modal + a hash
 // route. Reads the prebuilt data/artist_modal_index.json (build_artist_index.py).
 // Render implements the approved "v3 unified" design: identity header → Artist
 // group (listener meter, latest release + play, similar, links) → bezelled
 // "@owner & this artist" footer (taste-tier meter, history/considering, brand-hat
 // favorite gauge). This phase uses a square oEmbed avatar beside the name in
-// place of the full-bleed banner (per Dan, 2026-07-04).
+// place of the full-bleed banner.
 //
 // Globals from app.js: esc, featureOn, SITE_CONFIG, _assetUrl, currentRows,
 // potentialRows. Own name-normalizer so it never depends on recommend.js.
+// The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 
 var AM_INDEX_PATH='data/artist_modal_index.json';
 var amIndexCache=null,amSlugMap=null,amRouting=false;
-// #116 explicit favorite — PUBLIC data (data/artist_favorites.tsv in this repo;
-// privacy reversal per Dan 2026-07-15, recorded on #116). The pinned gauge + star
+// Explicit favorite — PUBLIC data (data/artist_favorites.tsv in this repo; a
+// deliberate privacy reversal — see docs/ISSUE_LOG.md). The pinned gauge + star
 // are visible to ALL viewers, bystanders included; only the promote/remove CONTROL
 // is authed. Reads ride the Pages CDN; writes follow the standard public-TSV
 // pattern (fresh sha, PUT with branch:dataBranch() -> staging -> auto-promote).
@@ -107,7 +108,7 @@ function amHatUrl(){
 function amDays(date){var d=Date.parse(date);if(isNaN(d))return null;return Math.ceil((d-Date.now())/86400000);}
 function amYear(d){var m=(d||'').match(/(\d{4})/);return m?m[1]:'';}
 function amCap(s){s=s||'';return s.charAt(0).toUpperCase()+s.slice(1);}
-// #189 — delegate to app.js's shared venue resolution (aliases + Short Name);
+// Delegate to app.js's shared venue resolution (aliases + Short Name);
 // fall back to plain truncation if app.js isn't loaded.
 function amVenueShort(v){return typeof shortVenueName==='function'?shortVenueName(v):String(v||'').split(',')[0].trim();}
 
@@ -121,8 +122,8 @@ function amRowContext(key){
   return{upcoming:up,considering:con};
 }
 
-// ── #116 explicit favorite (gauge is the CTA; floor = the affinity gate) ──
-// Design per #116 + the 2026-07-14 floor/friction comment: no hard band floor —
+// ── Explicit favorite (gauge is the CTA; floor = the affinity gate) ──
+// Design intent: no hard band floor —
 // the control rides the gauge, which only renders when affinity is non-null, so
 // zero-relationship artists never see it. One-click promote at/above
 // favorite.confirm_below_band (default high); an evidence-quoting confirm below.
@@ -141,6 +142,7 @@ async function amLoadFavorites(){
   return amFavCache;
 }
 function amIsFav(key){return !!(amFavCache&&amFavCache[key]);}
+// Gauge click: toggle favorite, with confirm friction below the configured band and on remove.
 async function amFavClick(key){
   var cfg=amFavCfg();
   if(!cfg.enabled||!authed)return;
@@ -297,6 +299,7 @@ function amYou(rec,key){
   return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div></div>';
 }
 
+// Personal-footer badge strip: seen count, hat/book/VIP/photo, next-show countdown, fast-track.
 function amYouBadges(rec,rows,hatEligible){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0,out=[];
   var viaOnly=n>0&&(s.show_log||[]).every(function(x){return x.via;});
@@ -308,7 +311,7 @@ function amYouBadges(rec,rows,hatEligible){
   if(b.book==='completed')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book signed</span>');
   else if(b.book==='not_yet')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book</span>');
   if(b.vip>0)out.push('<span class="am-b-vip">VIP\u00d7'+b.vip+'</span>');
-  // #117: photo badge -> Google Photos link. Album URL (baked from artist-albums.tsv)
+  // Photo badge -> Google Photos link. Album URL (baked from artist-albums.tsv)
   // wins; a single photographed show falls back to that photo's own share link; 2+
   // photos with no album yet renders unlinked (reconcile_photos.py flags the gap).
   if(b.photo>0){
@@ -325,6 +328,7 @@ function amYouBadges(rec,rows,hatEligible){
   return'<div class="am-you-badges">'+out.join('')+'</div>';
 }
 
+// History block — renders one of: combined-bill note, considering card, or the seen timeline.
 function amYouHistory(rec,rows){
   var s=rec.seen||{},n=s.count||0,log=s.show_log||[];
   var headline=log.filter(function(x){return !x.via;}),via=log.filter(function(x){return x.via;});
@@ -344,7 +348,7 @@ function amYouHistory(rec,rows){
       +'<div class="am-consider"><div class="am-consider-body"><div class="am-consider-date">'+esc(c.date||'TBD')+'</div>'
       +'<div class="am-consider-venue">'+esc(c.venue||'')+'</div></div>'+btn+'</div>';
   }
-  // Seen timeline — full chronology, ALL roles (per Dan 2026-07-16). Previously
+  // Seen timeline — full chronology, ALL roles. Previously
   // headline shows first, then support/via, which made "+ N earlier" misleading
   // for mixed-role artists (e.g. Larkin Poe: headline + festival + support slots
   // interleave in time). log is already reverse-chron from the builder's
@@ -367,7 +371,7 @@ function amYouHistory(rec,rows){
 }
 
 // Brand-hat favorite gauge — conic fill by affinity.score.
-// #116: an explicit favorite pins the fill to 1.0 (favorite.pin_to_full) with a
+// An explicit favorite pins the fill to 1.0 (favorite.pin_to_full) with a
 // star marker, so earned-max (~0.98) and starred (1.0) stay visually distinct;
 // when authed and favorite.enabled the gauge itself is the promote/remove control.
 function amGauge(a,rec,key){

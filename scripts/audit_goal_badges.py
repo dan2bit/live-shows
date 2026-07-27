@@ -2,11 +2,11 @@
 """
 audit_goal_badges.py
 
-Enumerates every show row whose goal badges (#140) depend on bill-name decomposition or on
+Enumerates every show row whose goal badges depend on bill-name decomposition or on
 the support column, i.e. every row where the *exact* normalized join against the eligibility
 files fails but a bill component or a support act matches.
 
-Why this exists (#150): row badges join the row's `Artist` string against the goal
+Why this exists: row badges join the row's `Artist` string against the goal
 eligibility/signature files. Rows billed under a compound or variant name ("Victor Wooten &
 The Wooten Brothers", "Maggie Rose Band") don't match the tracked entity they're keyed on
 ("The Wooten Brothers", "Maggie Rose"), and support acts were never joined at all. app.js
@@ -15,14 +15,16 @@ now falls back to bill components (`_goalBillKeys`) and badges support acts
 carrying, so a new compound booking can be eyeballed for a wrong credit instead of being
 found by accident.
 
-Third check (#154): a forward-looking row (potential / upcoming) must not advertise a goal
+Third check: a forward-looking row (potential / upcoming) must not advertise a goal
 that has already been obtained. The eligibility files answer "does this artist meet the
 criteria?", not "do I still need this autograph?", so eligible-and-already-signed is the
 regression to watch — those rows must render no `planned` badge.
 
-The name vocabulary itself lives in name_forms.py (#160) — goal_norm() and
-bill_components() are the single canonical definition, shared with build_recommend_index
-and spotify_cache. app.js's _goalNorm/_goalBillKeys are the JS twins; keep them in step.
+The name vocabulary itself lives in name_forms.py — goal_norm() and bill_components()
+are the single canonical definition, shared with build_recommend_index and
+spotify_cache. app.js's _goalNorm/_goalBillKeys are the JS twins; keep them in step.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 
 Exit status:
   default   0 always (report mode; every finding is a row the fallback legitimately rescues)
@@ -51,7 +53,7 @@ PLUS_MORE = re.compile(r"\s*\+\s*\d*\s*more\s*$", re.I)
 def bill_keys(name):
     """Exact key first, then bill-component fallbacks. JS twin: _goalBillKeys() in app.js.
 
-    The vocabulary itself now lives in name_forms.py (#160) — norm() and bill_components()
+    The vocabulary itself now lives in name_forms.py — norm() and bill_components()
     are the single canonical definition, shared with build_recommend_index and
     spotify_cache. This stays a thin ordering wrapper: the exact key must be tried before
     any component, so an eligibility row keyed on the full bill still wins.
@@ -168,7 +170,7 @@ def main():
             if hits:
                 support_findings.append((src, artist, date, name, "+".join(sorted(hits))))
 
-        # #154 — a forward-looking row must not advertise a goal already obtained. Eligibility
+        # A forward-looking row must not advertise a goal already obtained. Eligibility
         # means "meets the criteria", not "still needed", so eligible-and-already-signed is the
         # regression to watch: these must render no `planned` badge.
         if src in FORWARD:
@@ -194,7 +196,7 @@ def main():
         print(f"  [{src}] {artist} ({date}) -> {name}: {labels}")
 
     print(f"\nForward-looking rows eligible for an ALREADY-OBTAINED goal "
-          f"(must render no 'planned' badge — #154): {len(signed_findings)}")
+          f"(must render no 'planned' badge — the signed-vs-completed rule): {len(signed_findings)}")
     for src, artist, date, name, label, dates in signed_findings:
         print(f"  [{src}] {artist} ({date}) -> {name}: {label} already signed {', '.join(dates)}")
 

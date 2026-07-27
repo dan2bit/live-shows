@@ -1,4 +1,6 @@
+  /* The issue history behind these designs is logged in docs/ISSUE_LOG.md. */
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap');
+  /* Design tokens — base palette plus per-status color triads (base/dim/bg) */
   :root{
     --mono:'IBM Plex Mono',monospace;
     --sans:'IBM Plex Sans',sans-serif;
@@ -43,16 +45,18 @@
 
   body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
 
+  /* Site header — title, hat/about button, and the header action buttons */
   .site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
   .site-title{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--amber);letter-spacing:.02em;flex:1;white-space:nowrap;margin:0;}
   .header-actions{display:flex;align-items:center;gap:8px;}
   .fetched-at{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
   .btn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--border-bright);background:var(--surface-bright);color:var(--text-muted);cursor:pointer;transition:border-color .15s,color .15s;white-space:nowrap;}
   .btn:hover{border-color:var(--amber-dim);color:var(--amber);}
-  a.btn{text-decoration:none;}  /* #180 — .btn on anchors (graph link) */
+  a.btn{text-decoration:none;}  /* .btn on anchors (the header graph link) */
   .btn-auth{position:relative;}
   .btn-auth.authed::after{content:'●';font-size:8px;color:var(--green);position:absolute;top:2px;right:2px;}
 
+  /* Tab strip + the On This Day carousel that rides its right edge */
   .tab-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;}
   .tabs{display:flex;flex:0 0 auto;}
   .tab{font-family:var(--mono);font-size:14px;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);transition:color .15s,border-color .15s;margin-bottom:-1px;user-select:none;text-decoration:none;}
@@ -79,6 +83,7 @@
   .otd-dot{width:5px;height:5px;border-radius:50%;background:var(--border-bright);}
   .otd-dot.active{background:var(--amber);}
 
+  /* Panels, loading/error states, and the transient toast */
   .panel{display:none;padding:20px;max-width:1400px;margin:0 auto;}
   .panel.active{display:block;}
   .loading{font-family:var(--mono);font-size:12px;color:var(--text-dim);padding:40px 0;text-align:center;}
@@ -92,6 +97,7 @@
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-bright);border:1px solid var(--border-bright);color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 16px;border-radius:4px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+  /* Shows/History tables — row states, cell typography, badges, notes */
   .shows-table{width:100%;border-collapse:collapse;}
   .shows-table th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface);}
   .shows-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px;}
@@ -106,7 +112,7 @@
   .cell-date .day-of-week{color:var(--text-dim);font-size:11px;display:block;}
   .cell-artist{font-weight:500;}
   .attended-table .cell-artist{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  /* #107 P2 — artist name as modal trigger: looks like text, behaves like a button */
+  /* Artist name as modal trigger: looks like text, behaves like a button */
   .artist-link{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left;display:inline;}
   .artist-link:hover{text-decoration:underline;text-underline-offset:2px;}
   .artist-link:focus-visible{outline:1px solid var(--amber);outline-offset:2px;border-radius:2px;}
@@ -145,6 +151,7 @@
   .support{color:var(--text-muted);font-size:12px;margin-top:2px;}
   .day-of-week{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-decoration:none;display:block;}
   .cell-cost{font-family:var(--mono);font-size:12px;color:var(--text-dim);white-space:nowrap;}
+  /* Inner tabs (History sub-views) + For Sale controls */
   .inner-tab-row{display:flex;align-items:center;border-bottom:1px solid var(--border);margin-bottom:16px;}
   .inner-tab{font-family:var(--mono);font-size:12px;padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-dim);transition:color .15s,border-color .15s;margin-bottom:-1px;user-select:none;}
   .inner-tab:hover{color:var(--text-muted);}
@@ -157,6 +164,7 @@
   .forsale-select{font-family:var(--mono);font-size:11px;background:var(--surface-bright);color:var(--sell);border:1px solid var(--sell);border-radius:3px;padding:3px 6px;cursor:pointer;outline:none;}
   .forsale-modal h3{font-family:var(--mono);font-size:12px;color:var(--sell);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;}
 
+  /* Multi-setlist modal, history year headers, and the search bar */
   .multi-trigger{font-family:var(--mono);font-size:13px;color:var(--text-dim);cursor:pointer;}
   .multi-trigger:hover{color:var(--text-muted);}
   .multiset-event{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px;}
@@ -182,6 +190,7 @@
   .attended-table .shows-table tr{color:var(--text-muted);}
   .attended-table .shows-table tr:hover{color:var(--text);}
 
+  /* Potentials — decision-grouped tables and the decision controls */
   .pot-table{width:100%;border-collapse:collapse;}
   .pot-table th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface);}
   .pot-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px;}
@@ -226,6 +235,7 @@
   .cell-pot-notes{font-size:12px;color:var(--text-muted);max-width:280px;line-height:1.4;}
   .save-indicator{font-family:var(--mono);font-size:10px;margin-left:6px;}
 
+  /* Modal base — backdrop, shell, and the auth form */
   .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;}
   .modal-backdrop.open{display:flex;}
   .modal{background:var(--surface);border:1px solid var(--border-bright);border-radius:6px;padding:24px;width:360px;max-width:90vw;}
@@ -239,6 +249,7 @@
   .btn-save:hover{background:#2a1c08;}
   .btn-clear{background:var(--red-bg);border-color:var(--red-dim);color:var(--red);}
 
+  /* About modal — hero image with overlaid handle/tagline, then the links */
   .about-modal{width:480px;max-width:92vw;padding:0;overflow:hidden;position:relative;}
   .about-hero{position:relative;height:200px;overflow:hidden;}
   .about-hero-img{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block;}
@@ -262,6 +273,7 @@
   .hat-btn{background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;font-size:22px;line-height:1;opacity:.85;transition:opacity .15s,transform .15s;}
   .hat-btn:hover{opacity:1;transform:rotate(-8deg) scale(1.08);}
 
+  /* Bystander banner (unauthed visitors) + For Sale / Suggest CTAs */
   .bystander-banner{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-muted);}
   .bystander-banner .forsale-cta{margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:600;background:none;border:1px solid var(--sell);border-radius:3px;color:var(--sell);padding:4px 10px;cursor:pointer;white-space:nowrap;transition:background .15s;}
   .bystander-banner .forsale-cta:hover{background:var(--sell-bg);}
@@ -271,6 +283,7 @@
   .recommend-cta-header.active:hover{background:var(--yellow-dim);color:var(--yellow);}
   .recommend-modal{width:460px;max-width:92vw;}
 
+  /* Inline notes editing (authed) + the config editor textarea */
   .notes-edit-wrap{display:flex;flex-direction:column;gap:4px;}
   .notes-textarea{font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:6px 8px;resize:vertical;min-height:60px;width:100%;outline:none;}
   .config-textarea{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--bg);border:1px solid var(--amber-dim);border-radius:3px;color:var(--text);padding:8px 10px;width:100%;box-sizing:border-box;min-height:340px;resize:vertical;white-space:pre;overflow:auto;tab-size:2;outline:none;}
@@ -284,7 +297,7 @@
   .notes-save-ind{font-family:var(--mono);font-size:10px;}
   .notes-field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.05em;}
 
-  /* #152 in-page purchase flow — 🎟 bought button + purchase modal */
+  /* In-page purchase flow — 🎟 bought button + purchase modal */
   .bought-btn{display:block;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--green-dim);background:var(--green-bg);color:var(--green);cursor:pointer;margin-top:5px;white-space:nowrap;}
   .bought-btn:hover{border-color:var(--green);}
   .purchase-modal{width:420px;max-width:92vw;}
@@ -298,6 +311,7 @@
   .pm-step-err{color:var(--red);}
   .pot-reconciling{font-family:var(--mono);font-size:11px;color:var(--green);white-space:nowrap;cursor:pointer;text-decoration:underline dotted;}
 
+  /* For Sale modal content */
   .fs-artist{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px;}
   .fs-detail{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
   .fs-price{font-family:var(--mono);font-size:14px;color:var(--text);margin:10px 0 8px;}
@@ -305,6 +319,7 @@
   .fs-buy-btn{display:inline-block;font-family:var(--mono);font-size:12px;background:var(--sell-bg);border:1px solid var(--sell);color:var(--sell);text-decoration:none;padding:6px 14px;border-radius:3px;margin-top:4px;}
   .fs-buy-btn:hover{background:var(--sell-dim);}
 
+  /* Fast-track (Waiting tab) table */
   .ft-table{width:100%;border-collapse:collapse;}
   .ft-table th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface);}
   .ft-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
@@ -315,6 +330,7 @@
   .ft-link-tour{background:var(--sell-bg);border:1px solid var(--sell-dim);color:var(--sell);}
   .ft-link-sp{background:#0e1e12;border:1px solid #1e4a28;color:var(--green);}
 
+  /* Suggest (recommend) modal content — paths, inputs, previews */
   .rec-debug-tag{font-family:var(--mono);font-size:10px;color:var(--red);margin-bottom:12px;}
   .rec-lead{font-size:13px;color:var(--text);margin-bottom:14px;}
   .rec-paths{display:flex;flex-direction:column;gap:8px;}
@@ -339,6 +355,7 @@
   .rec-prev-body{font-family:var(--mono);font-size:11px;color:var(--text-muted);background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 10px;white-space:pre-wrap;max-height:240px;overflow:auto;}
   .rec-prev-meta{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:2px;}
 
+  /* Mobile layout */
   @media(max-width:768px){
     .panel{padding:12px;}
     /* Tabs: 2x2 grid; hide OTD strip (too cramped) */
@@ -359,7 +376,7 @@
     .cell-venue-mobile{display:block;}
   }
 
-  /* ── Artist modal / #artist view (#107) — v3 unified design ──────── */
+  /* ── Artist modal / #artist view — v3 unified design ─────────────── */
   .artist-modal{background:none;border:none;padding:0;width:560px;max-width:94vw;box-shadow:none;overflow:visible;}
   .am-card{position:relative;background:var(--surface);border:1px solid var(--border-bright);border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.6);overflow:hidden;max-height:90vh;overflow-y:auto;overflow-x:hidden;}
   .am-close{position:absolute;top:12px;right:14px;z-index:5;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:3px;color:var(--text-muted);font-family:var(--mono);font-size:11px;padding:2px 8px;cursor:pointer;line-height:1.6;}
@@ -431,7 +448,7 @@
   .am-b-vip{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:4px;padding:4px 8px;}
   .am-b-next{font-family:var(--mono);font-size:11px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:3px;padding:4px 9px;}
   .am-b-fast{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:4px;padding:5px 9px;}
-  /* #117 photo badge — rides .am-b-book layout; sell triplet = outbound-link chip (ft-link-tour precedent) */
+  /* Photo badge — rides .am-b-book layout; sell triplet = outbound-link chip (ft-link-tour precedent) */
   .am-b-photo{color:var(--sell);background:var(--sell-bg);border-color:var(--sell-dim);}
   a.am-b-photo{text-decoration:none;}
   a.am-b-photo:hover{border-color:var(--sell);}
@@ -470,7 +487,7 @@
   .am-gauge-glow{position:absolute;inset:-16px;background:radial-gradient(circle at 54% 60%,rgba(200,48,32,var(--glow,.1)),rgba(200,48,32,0) 66%);}
   .am-gauge-base{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:grayscale(1) brightness(.55);opacity:.32;}
   .am-gauge-fill{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;-webkit-mask:conic-gradient(#000 calc(var(--aff)*1turn),transparent 0) center/100% 100% no-repeat;mask:conic-gradient(#000 calc(var(--aff)*1turn),transparent 0) center/100% 100% no-repeat;filter:drop-shadow(0 3px 7px rgba(0,0,0,.55));}
-  /* #116 explicit favorite — the gauge is the promote/remove CTA; star = pinned to full */
+  /* Explicit favorite — the gauge is the promote/remove CTA; star = pinned to full */
   .am-gauge-btn{cursor:pointer;transition:filter .12s;}
   .am-gauge-btn:hover{filter:brightness(1.15);}
   .am-gauge-btn:focus-visible{outline:1px solid var(--amber);outline-offset:3px;border-radius:4px;}
@@ -489,4 +506,4 @@
     .am-you-body{flex-wrap:wrap;}
     .am-gauge{align-self:center;margin:4px auto 0;}
   }
-/* cache-force: v3 modal styles 2026-07-04 */
+/* cache-force: v3 modal styles */

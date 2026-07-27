@@ -10,7 +10,7 @@ For each attended row in live_shows_current.tsv whose Show Date falls within <ye
   2. Appends it to history/<year>.tsv (creates the file with a header if it doesn't exist)
   3. Removes the row from live_shows_current.tsv
 
-Privacy-split architecture (since PR #59):
+Privacy-split architecture:
   Sensitive per-show data (seat info, ticket quantity, cost breakdown, private notes)
   lives in a SEPARATE private repo: live-shows-private/current_private.tsv, keyed by
   Show Date + Artist. The public files carry only denormalized flags (Seat Type / VIP /
@@ -36,6 +36,8 @@ Edge cases handled:
   - --force → suppresses the confirmation prompt
   - --private-repo given but current_private.tsv missing → aborts before any writes
     (prevents a public-only migration that silently skips the private side)
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import argparse

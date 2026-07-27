@@ -7,7 +7,7 @@ build_artist_index.py (history/*.tsv + live_shows_current.tsv attended rows + se
 deduped by date, with combined-bill components attributed via the Via column). The builder
 is the single source of truth for the count; this script just diffs artists.tsv against it.
 
-CI half of issue #119; the at-write-time half is the blocking Step 5b in
+CI half of the Times Seen drift audit; the at-write-time half is the blocking Step 5b in
 tools/playbooks/EMAIL_WORKFLOWS.md (Routine 2), which reconciles Times Seen the moment a
 show is recorded so this check stays green.
 
@@ -19,6 +19,8 @@ show becomes a structured row); an undercount, or an overcount beyond the allowe
 still flagged.
 
 Exits non-zero on any mismatch so the GitHub Actions workflow fails visibly.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import sys
@@ -31,7 +33,7 @@ ARTISTS_PATH = Path("data/artists.tsv")
 
 # Display name -> extra Times Seen allowed above the structured ledger count, because of a
 # notes-only sighting the builder can't count. Keys are normalized the same way the builder
-# keys artists, so spelling/case/punctuation here don't have to be exact. See #119.
+# keys artists, so spelling/case/punctuation here don't have to be exact.
 NOTES_ONLY_OK_RAW = {
     "New York's Finest": 1,  # 2026-04-18 State Theatre — prose-only Notes mention, not a structured row
 }

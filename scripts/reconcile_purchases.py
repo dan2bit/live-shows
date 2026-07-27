@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-reconcile_purchases.py  (#152)
+reconcile_purchases.py
 
 Derived-state reconciler for ticket purchases. A purchase is signaled by an
 `upcoming` row in data/live_shows_current.tsv — written by the in-page purchase
@@ -23,17 +23,19 @@ remove/re-sort/recompute transaction by hand:
      fast_track_caps.tsv twin is deleted client-side / in Routine 1; this
      script never touches the private repo.)
 
-Exact keys only, per the #152 design revision: normalization is a client and
+Exact keys only, by design: normalization is a client and
 display concern; the reconciler never guesses identity. A non-matching row is
 a no-op, never an error — this runs on EVERY current.tsv change (purchases,
 Routine 1 commits, notes edits) and must be silent when there is nothing to do.
 
 Idempotent: a second run over the same inputs writes nothing.
 Run in CI by .github/workflows/potentials-maintenance.yml (before the prune),
-which owns the staging commit and the #142 retry loop.
+which owns the staging commit and the push retry-with-rebase loop.
 
 Exit codes: 0 unless required files are missing (1). The workflow detects
 changes via git diff, not via exit code.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import re
