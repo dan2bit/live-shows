@@ -1,4 +1,4 @@
-﻿# DATA_WRITE_PROTOCOLS.md
+# DATA_WRITE_PROTOCOLS.md
 
 Canonical rules for every file write in the live-shows system. All agentic sessions
 (Inbox+Data, Site+Repo, Strategy) follow these. `EMAIL_WORKFLOWS.md` and
