@@ -932,7 +932,7 @@ function buildSearchEmptyState(){
   var days=Math.floor((now-firstDate)/86400000);
   var sc=rows.length,ac=artists.size,vc=venues.size;
   if(!sc)return'<div class="search-empty">Type to search across all shows</div>';
-  return '<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
+  return '<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim)">first tracked show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
     +'<div style="padding:28px 0 20px;text-align:center">'
     +'<div style="display:flex;justify-content:center;gap:0;margin-bottom:18px">'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-radius:3px 0 0 3px"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+sc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Shows</div></div>'
