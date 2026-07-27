@@ -1,4 +1,4 @@
-# DATA_WRITE_PROTOCOLS.md
+﻿# DATA_WRITE_PROTOCOLS.md
 
 Canonical rules for every file write in the live-shows system. All agentic sessions
 (Inbox+Data, Site+Repo, Strategy) follow these. `EMAIL_WORKFLOWS.md` and
@@ -56,6 +56,47 @@ sweep the row before committing.
 Applies to: the public and private TSVs, `config.yaml`, the JSON index sources,
 and the `Photo:` / `Playlist:` issue titles the close workflows parse. Prose
 docs (`.md`) are exempt — only pipeline-consumed data must stay ASCII.
+
+---
+
+## Warn-only CI guards — how the warnings actually surface (#204)
+
+`data-hygiene.yml` runs three read-only scans on every push to `main` that touches
+data or code paths, plus manual `workflow_dispatch`:
+
+- `scripts/check_ascii_punctuation.py` — the ASCII rule above
+- `scripts/check_name_drift.py` — artist-name near-collisions, near-miss drift,
+  alias coverage (via `name_forms.py` + `recommend_aliases.tsv`)
+- `scripts/check_evergreen.py` — issue refs / leading changelog dates creeping back
+  into forker-facing code comments
+
+**Commits are never blocked.** All three always exit 0; findings are GitHub Actions
+`::warning` annotations only. The staging → auto-promote pipeline is unaffected.
+
+**No notifications on warnings.** Because every run reports "success," GitHub sends
+no email or ping — it only notifies on *failures*. Warnings are visible only when
+you look: the Actions tab run summary (annotation boxes), or the commit's checks
+view. Practical implication: drift accumulates silently between looks. Sessions
+doing data work should glance at the latest `data-hygiene` run at session start;
+Dan sees warnings only by opening a run.
+
+**Running locally** (repo root; only non-stdlib dependency is `pyyaml`):
+
+```
+pip install pyyaml
+python scripts/check_ascii_punctuation.py
+python scripts/check_name_drift.py
+python scripts/check_evergreen.py
+```
+
+Or on demand in CI: Actions → data-hygiene → Run workflow (`workflow_dispatch`).
+
+**Escalation path if warn-only proves too passive:** add a `--strict` flag to the
+scripts (exit 1 when warnings exceed a threshold) — failed runs DO trigger GitHub
+notifications, with no other configuration. Note that even a failing `data-hygiene`
+run would not block anything by itself: it runs on `main` *after* promotion. Making
+it truly blocking would mean retargeting the workflow at `staging`/PRs and adding it
+to the required status checks — a deliberate redesign, not a flag flip.
 
 ---
 
