@@ -33,7 +33,11 @@ A bespoke, optional automation layer: all agentic and bot writes land on a `stag
 
 ---
 
-_[Work is in progress](https://github.com/dan2bit/live-shows/issues/72) to enable simple forking of the Main Functionality above, including `config.yaml` customization support. No agentic dependency required._
+**Want your own?** All of the Main Functionality above is forkable with no
+agentic dependency — fork the repo, edit `config.yaml`, enable Pages. The
+step-by-step guide is [`docs/FORK_SETUP.md`](docs/FORK_SETUP.md), organized in
+three levels (UI-only fork → private-data sidecar → full automation pipeline);
+most forks only need the first.
 
 ---
 
