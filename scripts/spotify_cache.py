@@ -1619,31 +1619,11 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
 # separate invocations in a fixed order, which is easy to get wrong. This chains them.
 #
 # ATOMIC PER ARTIST: the entry is committed to the cache only after all three passes
-# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was
-# (absent, or still a skeleton), so the next run retries it. Committing after the resolve
-# pass would populate spotify_id, which would disqualify the artist from the skeleton
-# check below and strand it with no portrait and no Last.fm block — invisible until
-# someone noticed a missing image in the modal.
-
-_SKELETON_FIELDS = (
-    "spotify_id", "spotify_url", "last_refreshed",
-    "latest_release", "latest_release_checked",
-    "image_url", "images_checked",
-    "lastfm", "lastfm_checked",
-)
-
-
-def _is_unfilled_skeleton(entry: dict) -> bool:
-    """A pure Last.fm-seed skeleton (see _spotify_placeholder): sources populated,
-    nothing else. A missing key counts as unfilled just as an explicit None does — a
-    fresh placeholder omits image_url/images_checked/lastfm/lastfm_checked entirely.
-    Any truthy value in any field disqualifies the entry: the intent is "brand-new,
-    nothing done yet", not "partially populated, might be recoverable" (those are what
-    the targeted --refresh-* flags are for)."""
-    if not entry.get("sources"):
-        return False   # not even a skeleton
-    return all(entry.get(k) is None for k in _SKELETON_FIELDS)
-
+# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was,
+# so the next run retries it. Committing after the resolve pass would populate
+# spotify_id, which would drop the artist from the bare-mode candidate set (entries
+# missing a spotify_id) and strand it with no portrait and no Last.fm block —
+# invisible until someone noticed a missing image in the modal.
 
 def _populate_new_artist(name: str, sources: set, url_hint: str | None,
                          cache: dict, creds, lastfm_key: str, args) -> tuple[str, dict | None]:
@@ -1710,7 +1690,8 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
 
 
 def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
-    """--new-artist: one named artist, or every unfilled skeleton in the cache.
+    """--new-artist: one named artist, or every cache entry missing a spotify_id
+    (known non-artists / permanent unresolvables excluded).
 
     Processes one artist at a time through all three passes, rather than running each
     pass across the whole batch. If the run bails on the Spotify cap, per-artist ordering
@@ -1727,12 +1708,22 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
         if not names:
             sys.exit(f"No artist matching '{args.new_artist}' in the repo TSVs or the cache. "
                      f"Add the row first (--add-artist), then re-run.")
-    else:                                     # bare flag → every unfilled skeleton
-        names = sorted(n for n, e in cache.items() if _is_unfilled_skeleton(e))
+    else:                                     # bare flag → every entry missing its id
+        # Bare mode: every entry still missing its Spotify identity that isn't a
+        # known non-artist / permanent-unresolvable. The old "pure skeleton"
+        # test (all fields None) was structurally empty in practice — the
+        # name-based Last.fm pass stamps unresolved entries long before this
+        # command runs, so no candidate ever stayed pure. Partially-filled
+        # entries are safe to process: _populate_new_artist's preserve-guards
+        # keep existing release/portrait/Last.fm data, and success writes
+        # spotify_id, which removes the artist from future candidate sets.
+        names = sorted(n for n, e in cache.items()
+                       if e.get("spotify_id") is None and not _is_non_artist(n))
         if not names:
-            print("No unfilled skeleton entries — nothing to do.")
+            print("No cache entries missing a spotify_id — nothing to do.")
             return
-        print(f"Found {len(names)} unfilled skeleton entr{'y' if len(names) == 1 else 'ies'}.")
+        print(f"Found {len(names)} entr{'y' if len(names) == 1 else 'ies'} "
+              "missing a spotify_id (known unresolvables excluded).")
 
     print(f"Processing {len(names)} artist(s) through resolve + portrait + Last.fm"
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
@@ -1777,8 +1768,10 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
     print(f"Populated {done}/{len(names)} artist(s). Cache now holds {len(cache)} artists. "
           f"Written: {OUTPUT_JSON}")
     if unresolved:
-        print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
-              "or an alias entry):")
+        print("\nUnresolved — each of these re-burns a search call on every bare run "
+              "until handled. Fix with a manual Spotify URL in artists.tsv/fast_track.tsv "
+              "or an alias entry; if the no-match is permanent (no Spotify entity), add "
+              "the name to _UNRESOLVABLE_ARTISTS instead:")
         for n in unresolved:
             print(f"  {n}")
 
@@ -1974,8 +1967,8 @@ def main() -> None:
                          "Honors --artist and --dry-run.")
     ap.add_argument("--new-artist", nargs="?", const="", default=None, metavar="NAME",
                     help="chain all three passes (resolve + portrait + Last.fm) for one "
-                         "artist; with no NAME, for every unfilled skeleton entry in the "
-                         "cache. Cannot be combined with the --refresh-* / --artist / "
+                         "artist; with no NAME, for every cache entry still missing a "
+                         "spotify_id (known unresolvables excluded). Cannot be combined with the --refresh-* / --artist / "
                          "--add-artist / --prune modes.")
     ap.add_argument("--prune", action="store_true",
                     help="Drop cached artists no longer present in any repo TSV. Runs "
@@ -2067,7 +2060,7 @@ def main() -> None:
             ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
             ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
         ), extra='Name the artist as --new-artist "NAME", or pass it bare to fill every '
-                 'unfilled skeleton.')
+                 'entry still missing a spotify_id.')
         # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
         # so there is nothing for it to skip. Ignored rather than rejected.
 
