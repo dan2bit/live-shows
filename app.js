@@ -122,7 +122,9 @@ function _dataRef(){
   return(SITE_CONFIG.site&&SITE_CONFIG.site.preview_data_branch)||'';
 }
 // Merch badge threshold: Face Value at/above which the MERCH badge shows.
-function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
+// Opt-in, unlike most config: no merch.event_cap means no badge at all (null),
+// since the merch-budget concept itself is an owner choice, not baseline behavior.
+function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:null;}
 // Home region for visitor-facing copy (bystander banner, recommendation replies).
 function siteRegion(){var s=SITE_CONFIG.site;return(s&&s.region)||'my area';}
 // Venues exempt from the MERCH badge (config merch.exempt_venues) — places where a
@@ -406,7 +408,8 @@ function buildBadges(row){
   var badges=[],tl=ticketLabel(row['Ticket Access']||''),label=tl[0],isPaper=tl[1];
   if(label)badges.push('<span class="badge '+(isPaper?'badge-paper':'badge-ticket')+'">'+esc(label)+'</span>');
   if(isVip)badges.push('<span class="badge badge-vip">⭐ VIP</span>');
-  if(!isVip&&!isExempt&&fv>=merchEventCap())badges.push('<span class="badge badge-merch">💸 MERCH</span>');
+  var mc=merchEventCap();
+  if(!isVip&&!isExempt&&mc!=null&&fv>=mc)badges.push('<span class="badge badge-merch">💸 MERCH</span>');
   if(_boxOfficeVenueKeys()[_venueCanonKey(row['Venue Name'])])badges.push('<span class="badge badge-boxoffice" title="A flagged potential at this venue — buy at the box office while you\'re there">🏣 BOX OFFICE</span>');
   return badges.length?'<div class="badges">'+badges.join('')+'</div>':'';
 }
