@@ -1,16 +1,40 @@
-# live-shows site config (#69)
-# Per-fork personalization. Any missing key falls back to DEFAULT_CONFIG in app.js.
+# live-shows site config — per-fork personalization, externalized from the site code.
+# Any missing key falls back to DEFAULT_CONFIG in app.js, so every block below is
+# safe to trim to just the keys you want to override.
+# Blocks are ordered by how likely a fork is to change them: features and site are
+# near-mandatory edits, theme is the look, and it tapers from there to tuning knobs.
+# The issue history behind these designs is logged in docs/ISSUE_LOG.md.
+
+# ── Feature toggles ──────────────────────────────────────────────────────────
+# Each is ON unless set to false — a fork omitting a key keeps full behavior.
+# Set false to hide that subsystem entirely.
+features:
+  web_edit: true               # in-page config editor (gear) for authed users
+  for_sale: true               # For Sale subsystem: sell group, listing banner, revoke
+  recommendations: true        # "Suggest a show" CTA + recommendation modal
+  calendar_integration: true   # Google Calendar link on upcoming shows
+  private_data: true           # fetch the private sidecar repo when authenticated;
+                               # false = fully public site, financial fields simply absent
+  fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
+  spotify_integration: true    # Spotify links in Waiting tab; false if no Spotify subsystem
+  favorite: true               # explicit favorite mark (public data/artist_favorites.tsv);
+                               # tuning knobs live in the favorite block below
+  in_page_purchase: true       # 🎟 bought action on authed Buy/Choose potentials rows. Moving
+                               # the show to live_shows_current + the reconciler tidy-up do NOT
+                               # need private_data; with it false, the cost-sidecar half drops out
+
+# ── Site identity & wiring ───────────────────────────────────────────────────
 site:
   title: live-shows           # also in index.html: <title>, og:title, og:site_name, twitter:title
   owner: dan2bit
   repo: live-shows
-  private_owner: dan2bit
+  private_owner: dan2bit       # only read when features.private_data is true
   private_repo: live-shows-private
   data_branch: staging         # branch for in-page TSV/config writes; omit or set 'main' if no staging pipeline
-  preview_data_branch: ""      # #89 read-side preview: reads public TSVs from this branch; ?dataref=<branch> on the URL wins; empty = default. Writes stay on data_branch.
-  # Brand/identity (#69 phase 3). Asset paths below are RELATIVE to repo root and are
-  # expanded in app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply
-  # time, because relative asset URLs 404 on this project-pages (github.io) setup. A
+  preview_data_branch: ""      # read-side preview: reads public TSVs from this branch; ?dataref=<branch> on the URL wins; empty = default. Writes stay on data_branch.
+  # Brand/identity. Asset paths below are RELATIVE to repo root and are expanded in
+  # app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply time,
+  # because relative asset URLs 404 on this project-pages (github.io) setup. A
   # custom-domain fork may serve these paths differently — see docs/FORK_SETUP.md.
   # pages_base: https://example.com   # uncomment to override the derived github.io base
   favicon: static/favicon.png
@@ -23,161 +47,11 @@ site:
   about_footer: Life is short. Buy the tickets.
   region: DC/MD/VA             # home region, used in visitor-facing copy (bystander banner, recommendation replies)
 
-# Page metadata mirrored into the static <head> of index.html. Social unfurlers and crawlers
-# do NOT run app.js, so these values are documentation — app.js does not apply them at runtime.
-# If you change one, also update the matching tag in index.html (flagged there with <!-- config: -->).
-meta:
-  description: "A live-music tracker for DC/MD/VA — blues, blues-rock, Americana, and roots at small venues. Where I've been, where I'm headed, and bootlegs from the shows."   # also in index.html: <meta name="description">, og:description, twitter:description
-
-# Shown in the About modal. An extensible list — add or remove entries freely;
-# each is rendered as a link. (#82)
-about_links:
-  - url: https://www.youtube.com/@dan2bit
-    label: "▶ bootlegs: @dan2bit on YouTube"
-  - url: https://linktr.ee/dan2bit
-    label: "🎵 music links on Linktree"
-  - url: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
-    label: "🎩 hat autographs"
-  - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
-    label: "📷 album: Guitar Gods & Goddesses"
-
-# Tab labels. Keys are the internal tab IDs (data-tab in index.html); only the display text
-# is editable. "tourhere" is the Waiting / Fast-Track tab — hide it entirely with
-# features.fast_track: false below. (#82)
-tabs:
-  shows: Shows
-  history: History
-  potential: Potential
-  tourhere: Waiting
-
-# Feature toggles. Each is ON unless set to false — a fork omitting a key keeps full
-# behavior. Set false to hide that subsystem entirely. (#82)
-features:
-  web_edit: true               # in-page config editor (gear) for authed users
-  for_sale: true               # For Sale subsystem: sell group, listing banner, revoke
-  recommendations: true        # "Suggest a show" CTA + recommendation modal
-  calendar_integration: true   # Google Calendar link on upcoming shows
-  private_data: true           # fetch the private sidecar repo when authenticated
-  fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
-  spotify_integration: true    # Spotify links in Waiting tab; set false to hide if no Spotify subsystem
-  favorite: true              # #116 explicit favorite (public data/artist_favorites.tsv); ships dark — delete or set true to enable
-  in_page_purchase: true       # #152 — 🎟 bought action on authed Buy/Choose potentials rows. Moving
-                               # the show to live_shows_current + the reconciler tidy-up do NOT need
-                               # private_data; with it false, the cost-sidecar half simply drops out.
-
-# Display preferences (#82).
-display:
-  # Date format for show dates:
-  #   mon_day  -> "Jun 12"   (default)   day_mon  -> "12 Jun"
-  #   m_d      -> "6/12"                 d_m      -> "12/6"
-  date_format: mon_day
-
-  # #87 — Group/Solo badge (bystander) + ticket-count (authed) visibility on upcoming shows.
-  #   Group = a multi-ticket show (public Group=Y flag); Solo = a single-ticket show.
-  badge: { solo: No, group: Yes }   # which badges bystanders see
-  count: { solo: No, group: Yes }   # which ticket counts authenticated users see
-
-# Decision-stage display (#82). The stage KEYS (buy/choose/pass) are fixed in code —
-# sort order, the decision dropdown, and per-stage CSS all key off them; only the display
-# strings are editable here. Stage COLORS live in the theme block (color_buy/choose/pass).
-stages:
-  buy:
-    icon: "🟩"
-    label: Buy
-    tagline: not purchased but probably going
-  choose:
-    icon: "🟡"
-    label: Choose
-    tagline: shows I am considering
-  pass:
-    icon: "◯"
-    label: Pass
-    tagline: considered, but not going
-
-# Scalar thresholds (#82).
-merch:
-  event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
-  exempt_venues:   # venues where a high face price reflects the room, not a merch-table budget
-    - Wolf Trap Filene Center
-
-# Which past-year archive files exist under data/history/<year>.tsv. The current
-# year's shows live in live_shows_current.tsv until rollover adds its file here.
-history_years: [2021, 2022, 2023, 2024, 2025]
-
-badges:
-  affinity:
-    weights:                     # 3 main dials — must total 1.0
-      tier: 0.35
-      seen: 0.40
-      goals: 0.25
-    tier_points:                 # follows_master Tier -> score (unlisted tiers, incl. Legacy, = 0)
-      Strong: 1.0
-      Medium-Strong: 0.7
-      Medium: 0.45
-      Lower: 0.2
-    fast_track_equiv_shows: 1    # never-seen fast-track artist counts as this many shows
-    goals_decay: 0.4             # G-term decay (#165): flat series over ALL goal completion
-                                 # events (any signature, any photo — equal bases). First
-                                 # completion = 1-d (0.6); the k-th adds d^(k-1)-d^k.
-    # rarely touched:
-    seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
-    bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
-
-# Explicit favorite (#116) — the brand-hat gauge in the artist modal becomes a promote /
-# remove control for authed users. The mark is binary and PUBLIC: it lives in
-# data/artist_favorites.tsv in this repo, and the pinned gauge + star are visible to
-# all viewers (privacy reversal per Dan, 2026-07-15 — see #116). Master switch:
-# features.favorite above. Tuning knobs only below.
-favorite:
-  pin_to_full: true            # a favorite pins the gauge to 1.0 (earned max stays ~0.98)
-  confirm_below_band: high     # one-click promote at/above this band; evidence-quoting confirm below
-
-# Show goals — the tracked accomplishments that produce badges on show rows and in the
-# artist modal, and contribute to the affinity G-term. See docs/GOALS_SPEC.md for the
-# full spec (source-binding vocabulary, state rules, weight validator). A fork may add,
-# remove, or edit any entry without code changes.
-#
-# Fields per entry:
-#   key         - stable identifier (hat, book, ...); used in badges, index, and CSS vars
-#   label       - short display string for the badge
-#   icon        - emoji string
-#   color       - base color; --<key>-dim and --<key>-bg are auto-derived via HSL darkening
-#   color_dim   - (optional) explicit override for --<key>-dim (skip HSL derivation)
-#   color_bg    - (optional) explicit override for --<key>-bg  (skip HSL derivation)
-#   source      - binding rule: event_log:<file> | column:<name> | interaction:<value>[|<value>]
-#   eligibility - (optional) eligibility file name (without extension) under data/show_goals/
-#
-# Affinity (#165): goals contribute through ONE flat diminishing series — every
-# completion event (each signature-log row, each photographed show) counts equally,
-# tuned by badges.affinity.goals_decay above. Per-goal weight fields are obsolete
-# and ignored (the builder warns if any remain).
-#
-# Deleting show_goals entirely (or emptying the list) yields a badge-free but functional
-# site — the #85 exit criterion. A video goal remains unadded (held with photo for #140,
-# closed; photo landed as a #117 follow-up).
-show_goals:
-  - key: hat
-    label: HAT
-    icon: "🎩"
-    color: "#d08040"                       # tan orange (was theme.color_hat)
-    source: event_log:hat_signatures
-    eligibility: hat_eligibility
-  - key: book
-    label: BOOK
-    icon: "📚"
-    color: "#a080c0"                       # lavender (was theme.color_book)
-    source: event_log:book_signatures
-    eligibility: autograph_books_eligibility
-  - key: photo
-    label: PHOTO
-    icon: "📷"
-    color: "#40a0a0"                       # teal (sell family); dim/bg HSL-derived
-    source: "column:Photo URL"
-
+# ── Theme ────────────────────────────────────────────────────────────────────
 theme:
   # Accent color — drives active tabs, dates, site title. Must pass WCAG AA as large-text.
-  # Current value #c83020 is intentionally preserved (see issue #71 / PR #81 discussion).
-  # Minimum AA-compliant value for this background: approx #ec4535.
+  # Current value #c83020 is intentionally preserved despite sitting just below the
+  # AA threshold; the minimum AA-compliant value for this background is approx #ec4535.
   color_accent: "#c83020"         # brick red
 
   # Decision group colors — _dim and _bg variants are computed automatically from the
@@ -208,3 +82,155 @@ theme:
   # To use system fonts, set fallback stacks directly: e.g. "monospace" or "sans-serif".
   font_mono: "'IBM Plex Mono', monospace"
   font_sans: "'IBM Plex Sans', sans-serif"
+
+# ── About-modal links ────────────────────────────────────────────────────────
+# An extensible list — add or remove entries freely; each renders as a link.
+# Deleting the whole block leaves the About modal with just its text.
+about_links:
+  - url: https://www.youtube.com/@dan2bit
+    label: "▶ bootlegs: @dan2bit on YouTube"
+  - url: https://linktr.ee/dan2bit
+    label: "🎵 music links on Linktree"
+  - url: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
+    label: "🎩 hat autographs"
+  - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
+    label: "📷 album: Guitar Gods & Goddesses"
+
+# ── Tab labels ───────────────────────────────────────────────────────────────
+# Keys are the internal tab IDs (data-tab in index.html); only the display text is
+# editable. "tourhere" is the Waiting / Fast-Track tab — hide it entirely with
+# features.fast_track: false above rather than blanking its label.
+tabs:
+  shows: Shows
+  history: History
+  potential: Potential
+  tourhere: Waiting
+
+# ── History archive years ────────────────────────────────────────────────────
+# Which past-year files exist under data/history/<year>.tsv. The current year's
+# shows live in live_shows_current.tsv until rollover adds its file here. A fork
+# starting fresh can set this to [] (History shows only current-year attended rows).
+history_years: [2021, 2022, 2023, 2024, 2025]
+
+# ── Display preferences ──────────────────────────────────────────────────────
+display:
+  # Date format for show dates:
+  #   mon_day  -> "Jun 12"   (default)   day_mon  -> "12 Jun"
+  #   m_d      -> "6/12"                 d_m      -> "12/6"
+  date_format: mon_day
+
+  # Group/Solo badge (bystander) + ticket-count (authed) visibility on upcoming shows.
+  #   Group = a multi-ticket show (public Group=Y flag); Solo = a single-ticket show.
+  # e.g. flip solo: Yes to advertise single-ticket nights too.
+  badge: { solo: No, group: Yes }   # which badges bystanders see
+  count: { solo: No, group: Yes }   # which ticket counts authenticated users see
+
+# ── Decision-stage display ───────────────────────────────────────────────────
+# The stage KEYS (buy/choose/pass) are fixed in code — sort order, the decision
+# dropdown, and per-stage CSS all key off them; only the display strings are
+# editable here. Stage COLORS live in the theme block (color_buy/choose/pass).
+stages:
+  buy:
+    icon: "🟩"
+    label: Buy
+    tagline: not purchased but probably going
+  choose:
+    icon: "🟡"
+    label: Choose
+    tagline: shows I am considering
+  pass:
+    icon: "◯"
+    label: Pass
+    tagline: considered, but not going
+
+# ── Merch badge threshold ────────────────────────────────────────────────────
+# Removing this whole block keeps the badge with its built-in $100 default;
+# raise event_cap to badge fewer shows, set it very high to effectively disable.
+merch:
+  event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
+  exempt_venues:   # venues where a high face price reflects the room, not a merch-table budget
+    - Wolf Trap Filene Center
+
+# ── Explicit favorite (tuning) ───────────────────────────────────────────────
+# The brand-hat gauge in the artist modal doubles as a promote/remove control for
+# authed users. The mark is binary and PUBLIC (data/artist_favorites.tsv in this
+# repo); the pinned gauge + star are visible to all viewers — a deliberate privacy
+# reversal (see docs/ISSUE_LOG.md). Master switch: features.favorite above.
+favorite:
+  pin_to_full: true            # a favorite pins the gauge to 1.0 (earned max stays ~0.98)
+  confirm_below_band: high     # one-click promote at/above this band; evidence-quoting confirm below
+
+# ── Affinity gauge tuning ────────────────────────────────────────────────────
+badges:
+  affinity:
+    weights:                     # 3 main dials — must total 1.0
+      tier: 0.35
+      seen: 0.40
+      goals: 0.25
+    tier_points:                 # follows_master Tier -> score (unlisted tiers, incl. Legacy, = 0)
+      Strong: 1.0
+      Medium-Strong: 0.7
+      Medium: 0.45
+      Lower: 0.2
+    fast_track_equiv_shows: 1    # never-seen fast-track artist counts as this many shows
+    goals_decay: 0.4             # G-term decay: one flat series over ALL goal completion
+                                 # events (any signature, any photo — equal bases). First
+                                 # completion = 1-d (0.6); the k-th adds d^(k-1)-d^k.
+    # rarely touched:
+    seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
+    bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)
+
+# ── Show goals ───────────────────────────────────────────────────────────────
+# The tracked accomplishments that produce badges on show rows and in the artist
+# modal, and contribute to the affinity G-term. See docs/GOALS_SPEC.md for the full
+# spec (source-binding vocabulary, state rules). A fork may add, remove, or edit
+# any entry without code changes.
+#
+# Fields per entry:
+#   key         - stable identifier (hat, book, ...); used in badges, index, and CSS vars
+#   label       - short display string for the badge
+#   icon        - emoji string
+#   color       - base color; --<key>-dim and --<key>-bg are auto-derived via HSL darkening
+#   color_dim   - (optional) explicit override for --<key>-dim (skip HSL derivation)
+#   color_bg    - (optional) explicit override for --<key>-bg  (skip HSL derivation)
+#   source      - binding rule: event_log:<file> | column:<name> | interaction:<value>[|<value>]
+#   eligibility - (optional) eligibility file name (without extension) under data/show_goals/
+#
+# Affinity: goals contribute through ONE flat diminishing series — every completion
+# event (each signature-log row, each photographed show) counts equally, tuned by
+# badges.affinity.goals_decay above. Per-goal weight fields are obsolete and
+# ignored (the builder warns if any remain).
+#
+# Deleting show_goals entirely (or emptying the list) yields a badge-free but
+# fully functional site — the designed exit criterion for a fork without goals.
+show_goals:
+  - key: hat
+    label: HAT
+    icon: "🎩"
+    color: "#d08040"                       # tan orange
+    source: event_log:hat_signatures
+    eligibility: hat_eligibility
+  - key: book
+    label: BOOK
+    icon: "📚"
+    color: "#a080c0"                       # lavender
+    source: event_log:book_signatures
+    eligibility: autograph_books_eligibility
+  - key: photo
+    label: PHOTO
+    icon: "📷"
+    color: "#40a0a0"                       # teal (sell family); dim/bg HSL-derived
+    source: "column:Photo URL"
+
+# ── Static-head metadata (documentation only) ────────────────────────────────
+# These values are mirrored into the static <head> of index.html by hand. Social
+# unfurlers and crawlers do NOT run app.js, so app.js never applies this block at
+# runtime — it exists so a fork has one checklist of every head value to update.
+# Each has a matching tag in index.html flagged with <!-- config: -->; title,
+# handle, hero image, and hero alt mirror the site.* keys above.
+meta:
+  description: "A live-music tracker for DC/MD/VA — blues, blues-rock, Americana, and roots at small venues. Where I've been, where I'm headed, and bootlegs from the shows."   # also in index.html: <meta name="description">, og:description, twitter:description
+  canonical: https://dan2bit.github.io/live-shows/   # <link rel="canonical">, og:url
+  theme_color: "#b3242b"        # browser-chrome tint — deliberately separate from theme.color_accent
+  og_image_width: 960           # dimensions of site.about_hero_image, for og:image:width/height
+  og_image_height: 540

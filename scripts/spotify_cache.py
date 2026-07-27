@@ -932,7 +932,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
     NAME additionally drops every artist sorting at or before NAME (alphabetic,
     case-insensitive) for manual resumes and range work.
 
-    #109 null-preserve: a null pull never overwrites a non-null cached release,
+    Null-preserve: a null pull never overwrites a non-null cached release,
     and on such a keep the entry's latest_release_checked is left untouched so the
     sweep retries it rather than locking in a false null (and skipping it)."""
     names = sorted(cache)
