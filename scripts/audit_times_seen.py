@@ -35,7 +35,7 @@ ARTISTS_PATH = Path("data/artists.tsv")
 # notes-only sighting the builder can't count. Keys are normalized the same way the builder
 # keys artists, so spelling/case/punctuation here don't have to be exact.
 NOTES_ONLY_OK_RAW = {
-    "New York's Finest": 1,  # 2026-04-18 State Theatre — prose-only Notes mention, not a structured row
+    "New York's Finest": 1,  # the State Theatre sighting is a prose-only Notes mention, not a structured row
 }
 
 

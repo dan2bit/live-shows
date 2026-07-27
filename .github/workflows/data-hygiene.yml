@@ -1,0 +1,45 @@
+# Data hygiene — read-only, warn-only drift scans.
+#
+# Three checks, all annotations-only (exit 0 always; nothing here can block a
+# merge or a promote):
+#   - check_ascii_punctuation.py — non-ASCII punctuation in pipeline-consumed
+#     data (curly quotes / long dashes orphan sidecar and goal-join keys)
+#   - check_name_drift.py — artist-name near-collisions, near-miss drift, and
+#     alias coverage across every artist-bearing column
+#   - check_evergreen.py — issue references and changelog dates creeping back
+#     into forker-facing code comments (history belongs in docs/ISSUE_LOG.md)
+name: data-hygiene
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "config.yaml"
+      - "scripts/**"
+      - "*.js"
+      - "*.css"
+      - "*.html"
+      - "tools/research/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: ASCII punctuation scan
+        run: python scripts/check_ascii_punctuation.py
+      - name: Artist-name drift scan
+        run: python scripts/check_name_drift.py
+      - name: Evergreen comment scan
+        run: python scripts/check_evergreen.py
