@@ -932,14 +932,14 @@ function buildSearchEmptyState(){
   var days=Math.floor((now-firstDate)/86400000);
   var sc=rows.length,ac=artists.size,vc=venues.size;
   if(!sc)return'<div class="search-empty">Type to search across all shows</div>';
-  return'<div style="padding:28px 0 20px;text-align:center">'
+  return '<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
+    +'<div style="padding:28px 0 20px;text-align:center">'
     +'<div style="display:flex;justify-content:center;gap:0;margin-bottom:18px">'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-radius:3px 0 0 3px"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+sc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Shows</div></div>'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+ac+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Artists</div></div>'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+vc+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Venues</div></div>'
     +'<div style="padding:12px 22px;border:1px solid var(--border);border-left:none;border-radius:0 3px 3px 0"><div style="font-family:var(--mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;margin-bottom:3px">'+days.toLocaleString()+'</div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)">Days</div></div>'
     +'</div>'
-    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">first post-pandemic show <span style="color:var(--text-muted)">Jul 11, 2021 · Oliver Wood · Patio Stage at Strathmore</span></div>'
     +(mr?'<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">most recent show <span style="color:var(--text-muted)">'+esc(formatShowDateYear(mr.showDate))+' · '+esc(mr.artist)+' · '+esc(shortVenueName(mr.venueName))+'</span></div>':'')
     +'<img src="'+_assetUrl((SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png')+'" alt="" style="width:120px;height:120px;object-fit:contain;display:block;margin:44px auto 0;opacity:.9">'
     +'</div>';
