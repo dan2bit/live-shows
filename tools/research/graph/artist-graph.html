@@ -73,10 +73,10 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 .cnode{fill:var(--bg);stroke:var(--sell);stroke-width:1.5;stroke-dasharray:3 2.5}
 .lbl{fill:var(--muted);font-size:9px;pointer-events:none;font-family:inherit}
 .lbl.big{fill:var(--text);font-size:10.5px}
-/* #180 — zoom tool (names the existing d3.zoom behavior; wheel/pinch/drag still work) */
+/* Zoom tool (names the existing d3.zoom behavior; wheel/pinch/drag still work) */
 #zoomer{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-direction:column;gap:4px}
 #zoomer .chip{margin:0;justify-content:center;font:inherit;font-size:13px;line-height:1.3;padding:3px 9px}
-/* #180 — tooltip goal badges, history-row treatment scaled for the 11.5px flyout */
+/* Tooltip goal badges — history-row treatment scaled for the 11.5px flyout */
 .gb{font-family:inherit;font-size:8.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 4px;border-radius:2px;margin-left:4px;white-space:nowrap;vertical-align:1px}
 .gb-hat{background:var(--hat-bg);color:var(--hat);border:1px solid var(--hat-dim)}
 .gb-book{background:var(--book-bg);color:var(--book);border:1px solid var(--book-dim)}
@@ -111,17 +111,18 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 <script>
 "use strict";
 /* ============================================================================
- * artist-graph — standalone research page (issue #171).
+ * artist-graph — standalone research page.
+ * The issue history behind these designs is logged in docs/ISSUE_LOG.md.
  * Fetches live data from the deployed site (same-origin relative paths):
  *   ../../../data/artist_modal_index.json   nodes (tier/seen/affinity/badges)
  *   ../../../data/artist_spotify.json       edges (lastfm.similar)
  *   ../../../data/recommend_aliases.tsv     normalization aliases
  *   ../../../config.yaml                    theme.color_accent -> tier ramp
  *   ../../../data/artists.tsv               Via column -> bill kinship edges
- *   ../../../data/related_acts.tsv          hand-maintained kinship edges (#174)
- *   ../../../data/seen_with.tsv             recurring sidemen -> shared-personnel edges (#177)
- *   ../../../data/live_shows_current.tsv    attended Supporting Artist -> bill edges (#177)
- *   ../../../data/history/<year>.tsv        Supporting Acts -> bill edges (#177)
+ *   ../../../data/related_acts.tsv          hand-maintained kinship edges
+ *   ../../../data/seen_with.tsv             recurring sidemen -> shared-personnel edges
+ *   ../../../data/live_shows_current.tsv    attended Supporting Artist -> bill edges
+ *   ../../../data/history/<year>.tsv        Supporting Acts -> bill edges
  *
  * NORMALIZATION replicates build_recommend_index.py's vocabulary exactly:
  * de-invert "X, The" -> accent-fold -> lowercase -> strip punctuation ->
@@ -177,7 +178,7 @@ function deriveTierRamp(accent){
   set("--t-lower",   hslToHex(h,s,Math.max(l*0.48,8)));
   set("--t-legacy",  hslToHex(h,s*0.85,Math.max(l*0.48,8)));
 }
-// #180 — tooltip badge triplets from the same _deriveTriad rules as app.js:
+// Tooltip badge triplets from the same _deriveTriad rules as app.js:
 // dim = hsl(h, s, max(l*.48, 8)); bg = hsl(h, s*.85, max(l*.16, 5)).
 function deriveBadgeVars(){
   const set=(k,v)=>document.documentElement.style.setProperty(k,v);
@@ -261,7 +262,7 @@ async function loadAll(){
     .map(n=>({name:n,indeg:candIn[n],via:[...candSrc[n]].sort().slice(0,10)}))
     .sort((a,b)=>b.indeg-a.indeg);
 
-  // Kinship edges (#174): data/related_acts.tsv rows + artists.tsv Via pairs.
+  // Kinship edges: data/related_acts.tsv rows + artists.tsv Via pairs.
   // Both endpoints must resolve to tracked nodes; rows that don't resolve are
   // skipped silently (a row may predate an artist's tracking). Pairs whose
   // endpoints normalize to the same node (alias-fused, e.g. Daniel Donato's
@@ -285,10 +286,10 @@ async function loadAll(){
       const p=l.split("\t"); if(p[ai]&&p[vi]&&p[vi].trim()) addKin(p[ai],p[vi],"via bill");
     });
   }
-  // Concert-history edges (#177): Dan's own attendance logs as edge sources,
+  // Concert-history edges: Dan's own attendance logs as edge sources,
   // merged into the same kin map — same solid render, same taste-edge
-  // suppression, one line per pair. Curated #174 rows win on overlap
-  // (addKinSoft never overwrites), so label precedence is
+  // suppression, one line per pair. Curated related_acts.tsv rows win on
+  // overlap (addKinSoft never overwrites), so label precedence is
   // curated relation > same bill > shared personnel.
   // Attended shows only: upcoming rows and potential-show Support are
   // deliberately excluded — "on a bill I'm considering" is not "I watched
@@ -301,7 +302,7 @@ async function loadAll(){
   }
   // Bill edges: headliner <-> each '/'-separated support act. Header differs
   // by era (Supporting Artist in current, Supporting Acts in history).
-  // Unresolved acts skip silently, per the #174 rule.
+  // Unresolved acts skip silently, per the kinship-edge rule.
   function billEdges(text,supCol,statusCol){
     const rows=text.split("\n").filter(l=>l.trim());
     if(!rows.length)return;
@@ -406,7 +407,7 @@ function toggleSpread(){
   document.getElementById("zspread").classList.add("sel");
   sim.alpha(.4).restart();
 }
-// #180 — zoom tool buttons; same behavior the wheel/pinch gestures drive
+// Zoom tool buttons; same behavior the wheel/pinch gestures drive
 document.getElementById("zin").addEventListener("click",()=>svg.transition().duration(200).call(zoom.scaleBy,1.5));
 document.getElementById("zout").addEventListener("click",()=>svg.transition().duration(200).call(zoom.scaleBy,1/1.5));
 document.getElementById("zreset").addEventListener("click",()=>svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity));

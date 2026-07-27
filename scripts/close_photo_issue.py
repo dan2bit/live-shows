@@ -32,7 +32,7 @@ only).
 Idempotent: if the share link's /photo/<ID> is already present, the append is
 skipped but the show-row mirror still runs (heals a half-applied state).
 
-Album-needed check (#117): after appending, the artist's photographed-show count is
+Album-needed check: after appending, the artist's photographed-show count is
 recomputed from the BUILT artist index (data/artist_modal_index.json — whose universe
 includes seen_with-only names like Brandon Miller; never artists.tsv). If the artist
 now has photos at 2+ distinct shows and no data/show_goals/artist-albums.tsv row, an
@@ -43,6 +43,8 @@ album (the share link is stable — no repo change needed).
 Exits:
     0  — row appended, or the photo was already present
     1  — error (title unparseable, file missing)
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import json
@@ -93,7 +95,7 @@ def canon(s, aliases):
 def find_index_record(arts, artist):
     """Look up an artist in the built index: canonical key first, then a display-name
     scan (covers alias-canonicalized keys). Joining the built index — not artists.tsv —
-    is what keeps seen_with-only names (e.g. Brandon Miller, #121) resolvable."""
+    is what keeps seen_with-only names (e.g. Brandon Miller) resolvable."""
     key = goal_norm(artist)
     rec = arts.get(key)
     if rec is None:
@@ -116,7 +118,7 @@ def load_albums():
 
 
 def album_check(artist, iso_date):
-    """#117: return a reminder line, or None. Trigger is photos at 2+ DISTINCT shows
+    """Return an album reminder line, or None. Trigger is photos at 2+ DISTINCT shows
     (the badge's show_log[].photo_url count — not times_seen), with the just-logged
     show date unioned in since the index may predate this photo's row."""
     if not INDEX_PATH.exists():
@@ -142,7 +144,7 @@ def album_check(artist, iso_date):
 
 
 def update_current_row(artist, iso, link):
-    """#193: mirror the share link into the matching live_shows_current.tsv row's
+    """Mirror the share link into the matching live_shows_current.tsv row's
     Photo URL (the last column — short rows from trailing-tab stripping are padded
     back to full width, which also restores the columns on write). Artist matching
     is alias-aware (see load_aliases) so billing drift resolves via

@@ -14,7 +14,7 @@ segment. Reports only — never auto-fixes:
              artist-photos.tsv (within 2 edits). This is the transcription-typo
              case: one of the two URLs is almost certainly broken.
 
-Standing album audit (#117):
+Standing album audit:
 
   ALBUM GAP — an artist has photos at 2+ distinct shows (counted from the BUILT
              index data/artist_modal_index.json show_log[].photo_url — never
@@ -34,6 +34,8 @@ Exit codes:
 Rationale for the split: CORRUPT is a real bug (a dead link on the live site),
 so it fails the run by default. MISSING and ALBUM GAP are to-dos, not errors,
 so they only fail under --strict.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import json
@@ -139,7 +141,7 @@ def load_album_keys():
 
 
 def album_gaps():
-    """#117 backstop: [(display name, photographed-show count)] for artists with
+    """Album-audit backstop: [(display name, photographed-show count)] for artists with
     photos at 2+ distinct shows and no artist-albums.tsv row. None if the built
     index is absent (report skipped, not failed)."""
     if not INDEX.exists():
@@ -195,7 +197,7 @@ def main():
         print("ALBUM AUDIT skipped — data/artist_modal_index.json not found.")
         gaps = []
     elif gaps:
-        print("ALBUM GAP — 2+ photographed shows but no artist-albums.tsv row (#117):")
+        print("ALBUM GAP — 2+ photographed shows but no artist-albums.tsv row (photo-badge):")
         for name, cnt in gaps:
             print(f"  {name}  ({cnt} photographed shows)")
     else:

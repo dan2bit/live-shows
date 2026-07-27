@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""check_box_office.py  (#186) — warn-only guardrail for the Box Office flag.
+"""check_box_office.py — warn-only guardrail for the Box Office flag.
 
 For every live_shows_potential.tsv row with Box Office = Y, resolve the venue
-through data/venue_aliases.tsv (#189) and look it up in data/venues.tsv (same
+through data/venue_aliases.tsv and look it up in data/venues.tsv (same
 chain as app.js: first-comma-truncate -> _venueKey normalization -> alias ->
 canonical) and emit a GitHub Actions ::warning when:
 
@@ -13,6 +13,8 @@ canonical) and emit a GitHub Actions ::warning when:
 
 Blank `In Person Box Office` means untested — no warning; that blank IS the
 discovery signal. Always exits 0: this advises, it never blocks the pipeline.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import re
@@ -32,7 +34,7 @@ def venue_key(v: str) -> str:
 
 
 def load_aliases() -> dict:
-    """#189 — venue_aliases.tsv rows (Alias -> canonical Venue Name), keyed the
+    """venue_aliases.tsv rows (Alias -> canonical Venue Name), keyed the
     same way as app.js: first-comma-truncate then venue_key. Missing file = {}."""
     if not ALIASES_PATH.exists():
         return {}

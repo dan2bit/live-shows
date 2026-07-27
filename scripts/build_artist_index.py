@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Build data/artist_modal_index.json — the precomputed artist-modal payload (issue #107).
+"""Build data/artist_modal_index.json — the precomputed artist-modal payload.
 
 Contract & field sources are frozen in tools/playbooks/DATA_WRITE_PROTOCOLS.md
 ("artist_modal_index.json — frozen schema"). This script is the *builder* half of the
 builder<->renderer interface; app.js renders from the emitted index.
 
 All inputs are PUBLIC, so the affinity score and the whole index are public-safe. The
-explicit favorite (issue #116) is never produced here — it merges client-side.
+explicit favorite is never produced here — it merges client-side.
 
 Run:  python3 scripts/build_artist_index.py [--root .] [--out data/artist_modal_index.json]
 Regenerated in CI by .github/workflows/artist-modal-index.yml on any payload/score source change.
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 import argparse
 import csv
@@ -112,10 +114,11 @@ def credit_targets(signer, attribution):
 
 
 def validate_goals_config(cfg):
-    """#165: the flat G-term has one knob — badges.affinity.goals_decay — instead of
+    """The flat G-term has one knob — badges.affinity.goals_decay — instead of
     per-goal weights. Validate it lies strictly between 0 and 1 (fails the build
     otherwise), and warn loudly about obsolete show_goals weight fields: they are
-    IGNORED since #165, so leaving them in config.yaml is harmless but misleading."""
+    IGNORED under the flat G-term, so leaving them in config.yaml is harmless but
+    misleading."""
     d = cfg["goals_decay"]
     if not (0.0 < d < 1.0):
         raise ValueError(
@@ -125,7 +128,7 @@ def validate_goals_config(cfg):
     stale = [g.get("key", "?") for g in (cfg.get("show_goals") or [])
              if isinstance(g, dict) and "weight" in g]
     if stale:
-        print(f"WARNING: show_goals 'weight' fields are obsolete since #165 and ignored "
+        print(f"WARNING: show_goals 'weight' fields are obsolete since the flat G-term model and ignored "
               f"({', '.join(stale)}) — remove them from config.yaml.")
 
 
@@ -137,7 +140,7 @@ def load_config(root):
     aff = badges.get("affinity") or {}
     weights = aff.get("weights") or {"tier": 0.35, "seen": 0.40, "goals": 0.25}
 
-    # #165: the G-term is a flat diminishing series over completion events (G = 1 − d^n).
+    # The G-term is a flat diminishing series over completion events (G = 1 − d^n).
     # Its only knob is goals_decay (first completion = 1−d ≈ the old hat weight at
     # d=0.4; the k-th adds d^(k−1) − d^k). Per-goal weights — the old goals_split dict
     # and show_goals[].weight — are obsolete and ignored; see validate_goals_config.
@@ -271,13 +274,13 @@ def build(root):
         if r.get("Artist"):
             pots.setdefault(canon(r["Artist"]), r)
     fast = {canon(r["Artist"]) for r in read_tsv(os.path.join(root, "data/fast_track.tsv")) if r.get("Artist")}
-    # Book eligibility (#85 S2): what artists are printed in either book + per-book
+    # Book eligibility: what artists are printed in either book + per-book
     # In/Page. Signed columns moved out to book_signatures.tsv (event log).
     books = {canon(r["Artist"]): r
              for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_eligibility.tsv"))
              if r.get("Artist")}
 
-    # Google Photos albums (#117): Artist -> shareable album URL. Keyed via canon() so
+    # Google Photos albums: Artist -> shareable album URL. Keyed via canon() so
     # the join runs against the built universe (which includes seen_with-only names,
     # e.g. Brandon Miller) — never against artists.tsv. Album URL is deliberately NOT
     # unique across rows: a shared band album (Brandon Miller / Danielle Nicole) is
@@ -288,7 +291,7 @@ def build(root):
         if art and aurl:
             albums[canon(art)] = aurl
 
-    # Hat eligibility (#115). Header column is "Eligible" post-#85 (uniform across goals).
+    # Hat eligibility. Header column is "Eligible" (uniform across goals).
     # Compat: also accept legacy "Hat Eligible" column name during any transition window.
     hat_elig = {}
     for r in read_tsv(os.path.join(root, "data/show_goals/hat_eligibility.tsv")):
@@ -297,7 +300,7 @@ def build(root):
         raw = (r.get("Eligible") or r.get("Hat Eligible") or "").strip().lower()
         hat_elig[canon(r["Artist"])] = (raw == "yes")
 
-    # Hat + book completion from canonical event logs (#115, #85). Attribution vocabulary
+    # Hat + book completion from canonical event logs. Attribution vocabulary
     # per docs/GOALS_SPEC.md § Source binding syntax; parsed uniformly via credit_targets.
     hat_completed = set()
     for r in read_tsv(os.path.join(root, "data/show_goals/hat_signatures.tsv")):
@@ -324,7 +327,7 @@ def build(root):
             entry = book_completed.setdefault(k, {"APS": False, "RHBS": False})
             entry[which] = True
 
-    # #165: flat G-term completion-event counts, driven by the config show_goals list
+    # Flat G-term completion-event counts, driven by the config show_goals list
     # (generic — a fork adding an event_log goal gets affinity contribution with no
     # code change here). Every event_log row crediting an artist is ONE completion
     # event: Book ×2 (APS + RHBS rows) is two events, and two band members signing
@@ -436,11 +439,11 @@ def build(root):
             recent = None
 
         # goals (signings)
-        hat_signed = k in hat_completed          # #115: sourced from hat_signatures.tsv
+        hat_signed = k in hat_completed          # sourced from hat_signatures.tsv
         hat_eligible = hat_elig.get(k)           # True / False / None (absent -> not-yet suppressed)
         in_aps = (bk.get("In APS") or "").strip().lower() == "yes"
         in_rhbs = (bk.get("In RHBS") or "").strip().lower() == "yes"
-        _book_state = book_completed.get(k, {})  # #85 S3: sourced from book_signatures.tsv
+        _book_state = book_completed.get(k, {})  # sourced from book_signatures.tsv
         aps_signed = _book_state.get("APS", False)
         rhbs_signed = _book_state.get("RHBS", False)
         book_signed = aps_signed or rhbs_signed
@@ -452,13 +455,13 @@ def build(root):
         tier_obj = {"label": tlabel, "rank": trank} if tlabel else None
 
         # photo completions = distinct photographed shows in the deduped log — the
-        # #117 badge metric, never times_seen. Needed by both affinity and badges.
+        # photo-badge metric, never times_seen. Needed by both affinity and badges.
         photo_count = sum(1 for r in log if r["photo_url"])
 
-        # affinity — #165 flat G-term: ONE diminishing series over all goal completion
+        # affinity — flat G-term: ONE diminishing series over all goal completion
         # events (signature events + photographed shows), order- and type-independent.
         # First completion = 1−d, k-th adds d^(k−1) − d^k; asymptotic below 1.0 so the
-        # earned-max vs #116-starred distinction is preserved.
+        # earned-max vs explicitly-starred distinction is preserved.
         is_fast = k in fast
         w = cfg["weights"]
         T = float(cfg["tier_points"].get(tlabel, 0.0)) if tlabel else 0.0
@@ -500,7 +503,7 @@ def build(root):
                 "type": lr.get("type"),
                 "date": lr.get("date"),
                 "url": lr.get("url"),
-                "image_url": lr.get("image_url"),  # album cover from spotify_cache (#125)
+                "image_url": lr.get("image_url"),  # album cover from spotify_cache
             }
 
         # links
@@ -513,14 +516,14 @@ def build(root):
             "lastfm": clean(lf.get("url")),
             "musicbrainz": f"https://musicbrainz.org/artist/{mbid}" if mbid else None,
             # Vanity path resolves to the canonical /a/{id} artist page; unknown
-            # artists fall through to the bandsintown.com homepage (verified
-            # 2026-07-21; /search?query= and /artist/<name> are both broken —
+            # artists fall through to the bandsintown.com homepage (verified;
+            # /search?query= and /artist/<name> are both broken —
             # they ignore the query and redirect).
             "bandsintown": f"https://www.bandsintown.com/{quote(disp)}",
             "seated": None,
             # Qobuz vanity slug redirects to the canonical /interpreter/<slug>/<id>
-            # page; unknown slugs fall through to the shop homepage (verified
-            # 2026-07-23). No ID cache needed; slugify already matches Qobuz's
+            # page; unknown slugs fall through to the shop homepage (verified).
+            # No ID cache needed; slugify already matches Qobuz's
             # kebab-case convention.
             "qobuz": f"https://www.qobuz.com/us-en/interpreter/{slugify(disp)}/download-streaming-albums",
             "setlistfm": f"https://www.setlist.fm/search?query={disp.replace(' ', '+')}",
@@ -531,7 +534,7 @@ def build(root):
             "slug": slugify(disp),
             "spotify_id": clean(sp.get("spotify_id")),
             "mbid": mbid,
-            "image_url": clean(sp.get("image_url")),  # artist portrait from spotify_cache (#125)
+            "image_url": clean(sp.get("image_url")),  # artist portrait from spotify_cache
             "banner_url": None,    # P2
             "genres": [t.lower() for t in (lf.get("tags") or [])[:3]],
             "listener": listener_for(sp),
@@ -544,7 +547,7 @@ def build(root):
                     {
                         "date": r["date"], "venue": r["venue"], "via": r["via"],
                         "photo_url": r["photo_url"],
-                        # #85 S3: event_log goal completions at this show for this artist,
+                        # Event_log goal completions at this show for this artist,
                         # baked so app.js row badges can join without extra fetches.
                         # Column/interaction goals stay per-row (not baked here).
                         "goals": sorted(signature_events.get(k, {}).get(r["date"], set())),
@@ -563,7 +566,7 @@ def build(root):
                 },
                 "vip": vip,
                 "photo": photo_count,
-                # #117: Google Photos album link for the photo badge. Nullable; present
+                # Google Photos album link for the photo badge. Nullable; present
                 # only when artist-albums.tsv has a row. Additive to the frozen schema.
                 "photo_album": albums.get(k),
             },

@@ -1,4 +1,5 @@
-// ── Recommendation feature (issue #10) ──────────────────
+// ── Recommendation feature ──────────────────
+// The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 var RECOMMEND_DEBUG=false;                 // DEBUG: preview the issue text instead of POSTing
 var RECOMMEND_PAT='github_pat_11AALROKQ0'+'8enkytFFRtky_dscAsfmFbTJktIMnkREDqvm0WLQmpJDAMIi76oCbhFuAYNY3W23O4o9G9tH'; // issues:write only — safe to embed in public repo
 var INDEX_PATH='data/recommend_index.json',VENUES_PATH='data/venues.tsv';
@@ -14,6 +15,7 @@ function recNorm(s){
   s=s.replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
   return s;
 }
+// Levenshtein edit distance — typo tolerance for the artist-index lookup.
 function recLev(a,b){
   var m=a.length,n=b.length,i,j,d=[];
   if(!m)return n;if(!n)return m;
@@ -25,6 +27,7 @@ function recLev(a,b){
   }
   return d[m][n];
 }
+// Submission timestamps from the last 24h — the localStorage rate limit's working set.
 function recRate(){
   var arr;try{arr=JSON.parse(localStorage.getItem(REC_RATE_KEY)||'[]');}catch(e){arr=[];}
   var cutoff=Date.now()-86400000;arr=arr.filter(function(t){return t>cutoff;});

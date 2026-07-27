@@ -19,6 +19,8 @@ Run from the repo root:
 
 Writes recommend_index.json and prints a build + collision summary to stderr.
 No third-party dependencies (stdlib only).
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 import csv
 import json
@@ -50,7 +52,7 @@ SKIP_POTENTIAL_AGGREGATE = re.compile(r"festival|blues summit", re.I)
 
 # ── normalization ───────────────────────────────────────────────────────────
 # strip_accents / norm / surface_forms / variant_keys now live in name_forms.py, the one
-# canonical definition (#160). surface_forms is IDENTITY only — it must never split a bill
+# canonical definition. surface_forms is IDENTITY only — it must never split a bill
 # into its members, because variant_keys feeds the union-find below and would fuse separate
 # artists into one cluster ("Tab Benoit & Anders Osborne" -> Tab Benoit + Anders Osborne).
 # Bill membership is name_forms.bill_components(), and is deliberately not used here.

@@ -1,6 +1,6 @@
 name: Build artist_modal_index.json
 
-# Post-#76: main requires the `guard` status check, so this commits to `staging`
+# main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
 # auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
 # auto-promote to run. artist_modal_index.json is not a watched path, so promotion
