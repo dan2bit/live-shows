@@ -871,26 +871,28 @@ def _days_since(iso_date: str) -> int:
 
 RECENT_SWEEP_WINDOW_DAYS = 30  # checks older than this are stale anyway; also stops
                                # one ancient date from inflating the inferred cutoff
+SWEEP_GAP_DAYS = 7             # a gap this large between age bands means "different
+                               # sweeps" — the newer band is an interrupted resume
 
 
 def _infer_stale_days(cache: dict) -> int:
-    """Infer --stale-days from the OLDEST latest_release_checked date within the
-    recent sweep window (last RECENT_SWEEP_WINDOW_DAYS days), plus one.
+    """Infer --stale-days for a bare --refresh-releases.
 
-    A resumed sweep leaves a multi-day band of checked dates ordered by alphabet;
-    any cutoff that lands INSIDE that band re-burns part of the previous sweep —
-    and because the refresh loop walks alphabetically into the quota ceiling, it
-    is the same part every run (a median-based cutoff cut a sweep band in half and
-    re-checked the A-H head until rate-limited, every time). max(age)+1 over the
-    recent checks places the cutoff just past the whole band, so a bare
-    --refresh-releases spends quota only on artists the last sweep never reached.
-    Entries checked before the window (or never) stay eligible, preserving the
-    monthly cadence.
+    Goal: spend quota only on artists the current refresh cycle has not reached.
+    Recent check ages (within RECENT_SWEEP_WINDOW_DAYS) cluster into bands — one
+    per run or sweep. Two cases:
 
-    Falls back to 0 (check everything) when fewer than 2 recent checked dates
-    exist (first ever run / sparse cache). Called automatically by
-    refresh_releases() when --stale-days is not explicitly passed; pass
-    --stale-days 0 to force a full brute-force refresh.
+    - Interrupted sweep: two bands separated by SWEEP_GAP_DAYS or more (e.g. a
+      fresh partial band at ~1d after a rate-limit bail, and the previous sweep
+      at ~18d). Cut just past the FRESH band (its max age + 1) so the older band
+      stays eligible — the run resumes where the bail left off.
+    - Single contiguous band: a completed sweep, possibly spread across a few
+      drip days. Cut past the whole band (max age + 1) — nothing is due yet.
+
+    Entries checked before the window (or never) always stay eligible. Falls
+    back to 0 (check everything) when fewer than 2 recent checked dates exist
+    (first ever run / sparse cache). Called automatically when --stale-days is
+    not passed; explicit --stale-days overrides, and 0 forces brute force.
     """
     today = date.today()
     ages = []
@@ -905,19 +907,30 @@ def _infer_stale_days(cache: dict) -> int:
                 ages.append(age)
     if len(ages) < 2:
         return 0
-    return max(ages) + 1
+    ages.sort()
+    for i in range(1, len(ages)):
+        if ages[i] - ages[i - 1] >= SWEEP_GAP_DAYS:
+            return ages[i - 1] + 1   # cut just past the freshest band
+    return ages[-1] + 1
 
 
 # ── Latest-release-only refresh ───────────────────────────────────────────────
 
 def refresh_releases(cache: dict, creds, args) -> None:
     """Re-pull ONLY latest_release for already-cached artists; leave the rest of
-    each entry untouched. Honors --artist, --stale-days, and --dry-run.
+    each entry untouched. Honors --artist, --start-after, --stale-days, --dry-run.
 
     --stale-days N skips entries whose latest_release_checked is within the last N
     days, which makes a multi-day back-audit resumable across the ~100/day cap:
     each daily run advances past what an earlier run already refreshed instead of
     restarting from the top. Unset (default) refreshes every cached artist.
+
+    The refresh loop runs OLDEST-CHECKED-FIRST (never-checked entries first, then
+    ascending by checked date, name as tiebreak), so a rate-limit bail always
+    leaves the neediest entries at the front of the next run — the tail of the
+    alphabet can never be stranded behind a freshly-stamped head. --start-after
+    NAME additionally drops every artist sorting at or before NAME (alphabetic,
+    case-insensitive) for manual resumes and range work.
 
     Null-preserve: a null pull never overwrites a non-null cached release,
     and on such a keep the entry's latest_release_checked is left untouched so the
@@ -926,10 +939,17 @@ def refresh_releases(cache: dict, creds, args) -> None:
     if args.artist:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
+    if getattr(args, "start_after", None):
+        cut = args.start_after.lower()
+        names = [n for n in names if n.lower() > cut]
     if not names:
         print("No cached artists to refresh releases for "
-              "(run a normal build first, or check --artist).")
+              "(run a normal build first, or check --artist/--start-after).")
         return
+    # Oldest-checked-first: the neediest entries go first, so a rate-limit bail
+    # never strands the tail — the next run re-serves whoever is still oldest.
+    # Never-checked entries (no date) sort first; name breaks ties.
+    names.sort(key=lambda n: (cache[n].get("latest_release_checked") or "", n))
     # Auto-infer stale_days when not explicitly set. --stale-days 0 forces brute-force.
     stale_days = args.stale_days
     if stale_days is None:
@@ -952,7 +972,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         checkable = len(names) - no_id - skippable
         quota_cycles = checkable / 100
         if inferred:
-            print(f"auto stale-days: oldest recent check + 1 → using --stale-days {stale_days}")
+            print(f"auto stale-days: recent-band structure → using --stale-days {stale_days}")
         print(f"--count-pending: {checkable} of {len(names)} artists would be checked "
               f"({skippable} skipped by --stale-days {stale_days}, {no_id} skipped: no spotify_id)")
         print(f"Estimated quota burn: ~{checkable} calls (~{quota_cycles:.1f} lockout cycles "
@@ -960,35 +980,47 @@ def refresh_releases(cache: dict, creds, args) -> None:
         return
 
     if inferred:
-        print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
-    print(f"Refreshing latest_release for {len(names)} cached artist(s)"
+        print(f"auto stale-days: recent-band structure → using --stale-days {stale_days}")
+
+    # Partition upfront so the progress denominator is the real workload, not the
+    # full cache. No-id entries are listed by name (they're either skeletons that
+    # need resolving with --new-artist, or known permanent-unresolvables); still-
+    # fresh entries collapse to one summary line — with oldest-first ordering
+    # they'd otherwise pile up as noise at the tail.
+    def _is_fresh(n):
+        if not stale_days:
+            return False
+        c = cache[n].get("latest_release_checked")
+        if not c:
+            return False
+        try:
+            return _days_since(c) < stale_days
+        except ValueError:
+            return False   # unparseable stored date → treat as due
+    no_id_names = [n for n in names if not cache[n].get("spotify_id")]
+    fresh = [n for n in names if cache[n].get("spotify_id") and _is_fresh(n)]
+    todo = [n for n in names
+            if cache[n].get("spotify_id") and not _is_fresh(n)]
+
+    if no_id_names:
+        print(f"{len(no_id_names)} without spotify_id — skipped "
+              "(resolve skeletons with --new-artist; bills/no-match stay skipped):")
+        for n in no_id_names:
+            print(f"    · {n}")
+    if fresh:
+        print(f"{len(fresh)} still-fresh entr{'y' if len(fresh) == 1 else 'ies'} "
+              f"skipped (--stale-days {stale_days})")
+
+    print(f"Refreshing latest_release for {len(todo)} of {len(names)} cached artist(s)"
           + (f" [skip checked < {stale_days}d]" if stale_days else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
     updated = 0
-    skipped = 0
+    skipped = len(fresh)
     kept = 0
-    for i, name in enumerate(names, 1):
+    for i, name in enumerate(todo, 1):
         entry = cache[name]
         aid = entry.get("spotify_id")
-        if not aid:
-            print(f"[{i}/{len(names)}] {name}  → no spotify_id, skipped")
-            continue
-        # --stale-days: skip entries refreshed within the window so a multi-day
-        # back-audit resumes across the daily cap instead of re-burning the first
-        # ~100 names each run. Entries never checked (null) fall through and
-        # refresh. Opt-in: with --stale-days unset, nothing here is skipped.
-        if stale_days:
-            checked = entry.get("latest_release_checked")
-            if checked:
-                try:
-                    if _days_since(checked) < stale_days:
-                        skipped += 1
-                        print(f"[{i}/{len(names)}] {name}  → checked {checked}, "
-                              f"skipped (--stale-days {stale_days})")
-                        continue
-                except ValueError:
-                    pass  # unparseable stored date → fall through and refresh
         try:
             rel = latest_release(aid, creds, name)
         except RateLimited:
@@ -1009,7 +1041,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         # refresh instead of locking in a false null.
         if rel is None and old_rel is not None:
             kept += 1
-            print(f"[{i}/{len(names)}] {name}  → null pull; kept {old} (not re-checked)")
+            print(f"[{i}/{len(todo)}] {name}  → null pull; kept {old} (not re-checked)")
             print(f"    ⚠ app-only null for {name}; preserved cached {old}", file=sys.stderr)
             continue
         # Secondary check: a new date older than the stored one is a
@@ -1021,17 +1053,17 @@ def refresh_releases(cache: dict, creds, args) -> None:
 
         if args.dry_run:
             change = "unchanged" if old == new else f"{old or '∅'} → {new or '∅'}"
-            print(f"[{i}/{len(names)}] {name}  → {change}")
+            print(f"[{i}/{len(todo)}] {name}  → {change}")
             continue
 
         entry["latest_release"] = rel
         entry["latest_release_checked"] = date.today().isoformat()
         if old != new:
             updated += 1
-            print(f"[{i}/{len(names)}] {name}  → {new or '∅'}"
+            print(f"[{i}/{len(todo)}] {name}  → {new or '∅'}"
                   + (f"  (was {old})" if old else ""))
         else:
-            print(f"[{i}/{len(names)}] {name}  → {new or '∅'} (unchanged)")
+            print(f"[{i}/{len(todo)}] {name}  → {new or '∅'} (unchanged)")
         if (i % SAVE_EVERY) == 0:
             save_cache(cache)
             print("    …checkpoint saved")
@@ -1045,7 +1077,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         return
     save_cache(cache)
     print("\n" + "=" * 60)
-    print(f"Updated {updated} release date(s) across {len(names)} artist(s)"
+    print(f"Updated {updated} release date(s) across {len(todo)} checked artist(s)"
           + (f"; kept {kept} on null pulls" if kept else "")
           + (f"; skipped {skipped} still-fresh (--stale-days {stale_days})"
              if stale_days else "")
@@ -1592,31 +1624,11 @@ def refresh_lastfm(cache: dict, api_key: str, args) -> None:
 # separate invocations in a fixed order, which is easy to get wrong. This chains them.
 #
 # ATOMIC PER ARTIST: the entry is committed to the cache only after all three passes
-# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was
-# (absent, or still a skeleton), so the next run retries it. Committing after the resolve
-# pass would populate spotify_id, which would disqualify the artist from the skeleton
-# check below and strand it with no portrait and no Last.fm block — invisible until
-# someone noticed a missing image in the modal.
-
-_SKELETON_FIELDS = (
-    "spotify_id", "spotify_url", "last_refreshed",
-    "latest_release", "latest_release_checked",
-    "image_url", "images_checked",
-    "lastfm", "lastfm_checked",
-)
-
-
-def _is_unfilled_skeleton(entry: dict) -> bool:
-    """A pure Last.fm-seed skeleton (see _spotify_placeholder): sources populated,
-    nothing else. A missing key counts as unfilled just as an explicit None does — a
-    fresh placeholder omits image_url/images_checked/lastfm/lastfm_checked entirely.
-    Any truthy value in any field disqualifies the entry: the intent is "brand-new,
-    nothing done yet", not "partially populated, might be recoverable" (those are what
-    the targeted --refresh-* flags are for)."""
-    if not entry.get("sources"):
-        return False   # not even a skeleton
-    return all(entry.get(k) is None for k in _SKELETON_FIELDS)
-
+# succeed. A mid-artist RateLimited bail therefore leaves that artist exactly as it was,
+# so the next run retries it. Committing after the resolve pass would populate
+# spotify_id, which would drop the artist from the bare-mode candidate set (entries
+# missing a spotify_id) and strand it with no portrait and no Last.fm block —
+# invisible until someone noticed a missing image in the modal.
 
 def _populate_new_artist(name: str, sources: set, url_hint: str | None,
                          cache: dict, creds, lastfm_key: str, args) -> tuple[str, dict | None]:
@@ -1683,7 +1695,8 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
 
 
 def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
-    """--new-artist: one named artist, or every unfilled skeleton in the cache.
+    """--new-artist: one named artist, or every cache entry missing a spotify_id
+    (known non-artists / permanent unresolvables excluded).
 
     Processes one artist at a time through all three passes, rather than running each
     pass across the whole batch. If the run bails on the Spotify cap, per-artist ordering
@@ -1700,12 +1713,22 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
         if not names:
             sys.exit(f"No artist matching '{args.new_artist}' in the repo TSVs or the cache. "
                      f"Add the row first (--add-artist), then re-run.")
-    else:                                     # bare flag → every unfilled skeleton
-        names = sorted(n for n, e in cache.items() if _is_unfilled_skeleton(e))
+    else:                                     # bare flag → every entry missing its id
+        # Bare mode: every entry still missing its Spotify identity that isn't a
+        # known non-artist / permanent-unresolvable. The old "pure skeleton"
+        # test (all fields None) was structurally empty in practice — the
+        # name-based Last.fm pass stamps unresolved entries long before this
+        # command runs, so no candidate ever stayed pure. Partially-filled
+        # entries are safe to process: _populate_new_artist's preserve-guards
+        # keep existing release/portrait/Last.fm data, and success writes
+        # spotify_id, which removes the artist from future candidate sets.
+        names = sorted(n for n, e in cache.items()
+                       if e.get("spotify_id") is None and not _is_non_artist(n))
         if not names:
-            print("No unfilled skeleton entries — nothing to do.")
+            print("No cache entries missing a spotify_id — nothing to do.")
             return
-        print(f"Found {len(names)} unfilled skeleton entr{'y' if len(names) == 1 else 'ies'}.")
+        print(f"Found {len(names)} entr{'y' if len(names) == 1 else 'ies'} "
+              "missing a spotify_id (known unresolvables excluded).")
 
     print(f"Processing {len(names)} artist(s) through resolve + portrait + Last.fm"
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
@@ -1750,8 +1773,10 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
     print(f"Populated {done}/{len(names)} artist(s). Cache now holds {len(cache)} artists. "
           f"Written: {OUTPUT_JSON}")
     if unresolved:
-        print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
-              "or an alias entry):")
+        print("\nUnresolved — each of these re-burns a search call on every bare run "
+              "until handled. Fix with a manual Spotify URL in artists.tsv/fast_track.tsv "
+              "or an alias entry; if the no-match is permanent (no Spotify entity), add "
+              "the name to _UNRESOLVABLE_ARTISTS instead:")
         for n in unresolved:
             print(f"  {n}")
 
@@ -1948,8 +1973,8 @@ def main() -> None:
                          "Honors --artist and --dry-run.")
     ap.add_argument("--new-artist", nargs="?", const="", default=None, metavar="NAME",
                     help="chain all three passes (resolve + portrait + Last.fm) for one "
-                         "artist; with no NAME, for every unfilled skeleton entry in the "
-                         "cache. Cannot be combined with the --refresh-* / --artist / "
+                         "artist; with no NAME, for every cache entry still missing a "
+                         "spotify_id (known unresolvables excluded). Cannot be combined with the --refresh-* / --artist / "
                          "--add-artist / --prune modes.")
     ap.add_argument("--prune", action="store_true",
                     help="Drop cached artists no longer present in any repo TSV. Runs "
@@ -1998,15 +2023,18 @@ def main() -> None:
     ap.add_argument("--stale-days", type=int, default=None, metavar="N",
                     help="With --refresh-releases: skip artists whose latest_release "
                          "was checked within the last N days. When omitted, the value "
-                         "is auto-inferred as 1 + the oldest latest_release_checked "
-                         "age within the last 30 days (so a bare --refresh-releases "
-                         "skips the entire previous sweep and only re-checks artists "
-                         "it never reached). Pass 0 to force a "
+                         "is auto-inferred from the band structure of recent checks: "
+                         "an interrupted sweep resumes past its fresh partial band; a "
+                         "completed sweep is skipped whole. Pass 0 to force a "
                          "full brute-force refresh of all artists. With "
                          "--refresh-images: same logic gated on images_checked "
                          "(--stale-days is still explicit-only for images; auto-infer "
                          "is --refresh-releases only). No effect on the build or "
                          "--refresh paths.")
+    ap.add_argument("--start-after", metavar="NAME", default=None,
+                    help="With --refresh-releases: only process artists sorting "
+                         "strictly after NAME (case-insensitive). Manual resume / "
+                         "range scalpel; combine with --stale-days as needed.")
     ap.add_argument("--count-pending", action="store_true",
                     help="With --refresh-releases: print how many artists would be "
                          "checked under the current (auto-inferred or explicit) "
@@ -2038,7 +2066,7 @@ def main() -> None:
             ("--prune", args.prune), ("--artist", args.artist), ("--add-artist", args.add_artist),
             ("--audit-ids", args.audit_ids), ("--repoint", args.repoint),
         ), extra='Name the artist as --new-artist "NAME", or pass it bare to fill every '
-                 'unfilled skeleton.')
+                 'entry still missing a spotify_id.')
         # --stale-days gates on a *_checked timestamp; a skeleton has none by definition,
         # so there is nothing for it to skip. Ignored rather than rejected.
 
