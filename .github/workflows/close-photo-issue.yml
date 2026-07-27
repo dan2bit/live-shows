@@ -1,10 +1,10 @@
 name: Close photo issue
 
-# Post-#76: main requires the `guard` status check, so the artist-photos.tsv write
+# main requires the `guard` status check, so the artist-photos.tsv write
 # goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to staging
 # would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
 # fast-forward main. Triggered by a comment carrying the Google Photos share link
-# on a "Photo:" issue. #193: the script also mirrors the share link into the
+# on a "Photo:" issue. The script also mirrors the share link into the
 # matching live_shows_current.tsv row's Photo URL, so both files ride one commit.
 
 on:

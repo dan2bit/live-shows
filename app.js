@@ -1,3 +1,4 @@
+// The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 let OWNER='dan2bit',REPO='live-shows';
 const CURRENT_PATH='data/live_shows_current.tsv',POTENTIAL_PATH='data/live_shows_potential.tsv';
 let OWNER_PRIVATE='dan2bit',REPO_PRIVATE='live-shows-private';const CURRENT_PRIVATE_PATH='current_private.tsv',POTENTIAL_PRIVATE_PATH='potential_private.tsv';
@@ -12,7 +13,7 @@ var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate
 var _srchTimer=null;
 var _allYearsLoaded=false;
 
-// ── Config (#69) ───────────────────────────
+// ── Config ───────────────────────────
 // Per-fork personalization loaded from config.yaml at boot. Any missing key falls
 // back to DEFAULT_CONFIG, so a failed/absent/invalid config never breaks the site.
 const DEFAULT_CONFIG={site:{title:'live-shows',owner:'dan2bit',repo:'live-shows',private_owner:'dan2bit',private_repo:'live-shows-private'}};
@@ -63,7 +64,7 @@ function applyConfig(cfg){
     HISTORY_YEARS=cfg.history_years.slice().sort();
     HISTORY_YEARS.forEach(function(yr){if(!(yr in historyData))historyData[yr]=null;});
   }
-  // Branding/identity (#69 phase 3). Relative asset paths are expanded to absolute
+  // Branding/identity. Relative asset paths are expanded to absolute
   // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
   // this project-pages setup; s.pages_base overrides the derived base for custom domains.
   function _asset(p){return _assetUrl(p,s);}
@@ -77,7 +78,7 @@ function applyConfig(cfg){
   if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
   if(s.about_hero_alt)_attr('.about-hero-img','alt',s.about_hero_alt);
   if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
-  // about_links: list of {url,label} objects (#82). Rebuilt dynamically so a fork can add
+  // about_links: list of {url,label} objects. Rebuilt dynamically so a fork can add
   // or remove links by editing config alone. The static anchors in index.html are the
   // pre-JS fallback shown if config.yaml is absent or about_links is not a list.
   var al=cfg.about_links;
@@ -94,7 +95,7 @@ function applyConfig(cfg){
       });
     }
   }
-  // Tab labels (#82). Keys are data-tab IDs; replace the label text node, keep the badge span.
+  // Tab labels. Keys are data-tab IDs; replace the label text node, keep the badge span.
   var _tabs=cfg.tabs;
   if(_tabs&&typeof _tabs==='object'){
     Object.keys(_tabs).forEach(function(k){
@@ -102,17 +103,17 @@ function applyConfig(cfg){
       if(el&&el.firstChild&&el.firstChild.nodeType===3)el.firstChild.nodeValue=_tabs[k]+' ';
     });
   }
-  // Waiting / Fast-Track tab show-hide (features.fast_track, #82).
+  // Waiting / Fast-Track tab show-hide (features.fast_track).
   if(!featureOn('fast_track')){
     var _wt=document.querySelector('.tab[data-tab="tourhere"]');if(_wt)_wt.style.display='none';
     var _wp=document.getElementById('panel-tourhere');if(_wp)_wp.style.display='none';
   }
 }
-// Feature flags (#82). A flag is ON unless config explicitly sets it to false, so a
+// Feature flags. A flag is ON unless config explicitly sets it to false, so a
 // fork that omits the features block — or any single key — keeps full behavior.
 function featureOn(name){var f=SITE_CONFIG.features;return !f||f[name]!==false;}
 function dataBranch(){return(SITE_CONFIG.site&&SITE_CONFIG.site.data_branch)||'main';}
-// #89 read-side preview override: ?dataref=<branch> (URL) > site.preview_data_branch
+// Read-side preview override: ?dataref=<branch> (URL) > site.preview_data_branch
 // (config) > '' = default branch. READS ONLY — write PUT bodies stay on dataBranch()
 // (the staging pipeline); the two must never be conflated. Public repo only — the
 // private sidecar always resolves from its own default branch.
@@ -120,18 +121,18 @@ function _dataRef(){
   try{var q=new URLSearchParams(location.search).get('dataref');if(q)return q.trim();}catch(e){}
   return(SITE_CONFIG.site&&SITE_CONFIG.site.preview_data_branch)||'';
 }
-// Merch badge threshold (#82): Face Value at/above which the MERCH badge shows.
+// Merch badge threshold: Face Value at/above which the MERCH badge shows.
 function merchEventCap(){var m=SITE_CONFIG.merch;return m&&m.event_cap!=null?m.event_cap:100;}
 // Home region for visitor-facing copy (bystander banner, recommendation replies).
 function siteRegion(){var s=SITE_CONFIG.site;return(s&&s.region)||'my area';}
 // Venues exempt from the MERCH badge (config merch.exempt_venues) — places where a
 // high face price reflects the room, not a merch-table budget. Alias-resolved keys.
 function _merchExemptKeys(){var m=SITE_CONFIG.merch;return((m&&m.exempt_venues)||[]).map(function(v){return _venueCanonKey(v);});}
-// #87 — Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
+// Group/Solo upcoming badge (bystander) + ticket-count (authed) visibility, per config.
 // Group = the public `Group=Y` flag; Solo = its absence. `which` is 'badge' or 'count',
 // `kind` is 'solo' or 'group'. Missing config defaults to group shown, solo hidden.
 function displayOn(which,kind){var d=SITE_CONFIG.display,v=d&&d[which]&&d[which][kind];if(v==null)return kind==='group';return v===true||(''+v).trim().toLowerCase()==='yes';}
-// Decision-stage display (#82). Stage KEYS are fixed in code (sort order, dropdown, CSS);
+// Decision-stage display. Stage KEYS are fixed in code (sort order, dropdown, CSS);
 // only the display copy is configurable, and stage colors live in the theme block. Falls
 // back to the built-in copy so a config without a stages block renders identically.
 function stageHeader(key){
@@ -142,7 +143,7 @@ function stageHeader(key){
   var icon=d.icon!=null?d.icon:def.icon,label=d.label!=null?d.label:def.label,tagline=d.tagline!=null?d.tagline:def.tagline;
   return esc(icon)+' '+esc(label)+def.sep+esc(tagline);
 }
-// ── Theme (#71) ───────────────────────────
+// ── Theme ───────────────────────────
 // HSL helpers for deriving _dim and _bg variants from a base color.
 // A forker only needs to set the 5 base colors; triads are computed automatically.
 // Explicit overrides (e.g. color_accent_dim) always win over computed values.
@@ -188,7 +189,7 @@ function applyTheme(cfg){
     set(t[p[0]+'_dim']||triad.dim,p[1]+'-dim');
     set(t[p[0]+'_bg']||triad.bg,p[1]+'-bg');
   });
-  // Show goal badge colors — iterate cfg.show_goals (#85 S3) and emit --<key> /
+  // Show goal badge colors — iterate cfg.show_goals and emit --<key> /
   // --<key>-dim / --<key>-bg CSS var triads. Auto-derived from goal.color via HSL
   // darkening (same _deriveTriad used for semantic colors above); a fork may also
   // provide explicit goal.color_dim / goal.color_bg overrides if the auto-derived
@@ -225,13 +226,14 @@ function applyTheme(cfg){
   }
 }
 
+// Contents-API fetch (public repo by default); attaches the stored PAT when present.
 async function ghFetch(path,opts,owner,repo){
   opts=opts||{};
   var pat=localStorage.getItem(PAT_KEY);
   var headers={'Accept':'application/vnd.github.v3+json'};
   if(pat)headers['Authorization']='token '+pat;
   var url='https://api.github.com/repos/'+(owner||OWNER)+'/'+(repo||REPO)+'/contents/'+path;
-  var _ref=_dataRef();   // #89: reads may target a preview branch (public repo only)
+  var _ref=_dataRef();   // reads may target a preview branch (public repo only)
   if(_ref&&(owner||OWNER)===OWNER&&(repo||REPO)===REPO)url+='?ref='+encodeURIComponent(_ref);
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
   if(!res.ok){
@@ -248,9 +250,9 @@ async function mergePrivateData(){
   if(!authed||!featureOn('private_data'))return;
   // Sidecar joins normalize the Artist half of the key via _goalNorm (house identity
   // doctrine), so diacritic/case/encoding variants join anyway; any private row that
-  // still matches nothing gets a console.warn — billing-name or date drift (the
-  // Taj Mahal / Sierra Hull class, 2026-07-16) can't be bridged by normalization and
-  // must be fixed in the sidecar. See EMAIL_WORKFLOWS Routine 1 verbatim-key rule.
+  // still matches nothing gets a console.warn — billing-name or date drift can't be
+  // bridged by normalization and must be fixed in the sidecar. See EMAIL_WORKFLOWS
+  // Routine 1 verbatim-key rule.
   var _pk=function(a,d){return _goalNorm(a||'')+'␟'+(d||'').trim();};
   try{
     var cp=await ghFetch(CURRENT_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),cmap={},cseen={};
@@ -265,6 +267,7 @@ async function mergePrivateData(){
     Object.keys(pmap).forEach(function(k){if(!pseen[k])console.warn('potential_private row matched no potential:',pmap[k]['Artist'],pmap[k]['Date']);});
   }catch(e){console.warn('private potential merge skipped:',e.message);}
 }
+// Upsert one field on a keyed row in a private-sidecar TSV (appends the row if absent).
 async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
   var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
   var fd=await ghFetch(path,{},OWNER_PRIVATE,REPO_PRIVATE);
@@ -276,6 +279,7 @@ async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
   var res=await fetch('https://api.github.com/repos/'+OWNER_PRIVATE+'/'+REPO_PRIVATE+'/contents/'+path,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:path+': update '+(keyVals['Artist']||'')+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha})});
   if(!res.ok)throw new Error(await res.text());
 }
+// TSV -> row objects keyed by the line-1 header; short rows are padded with ''.
 function parseTsv(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
   var headers=lines[0].split('\t').map(function(h){return h.trim();});
@@ -302,7 +306,7 @@ function daysFromNow(s){var d=parseISODate(s);if(!d)return 999;var now=new Date(
 function isOtdMatch(s){var m=(s||'').match(/^\d{4}-(\d{2}-\d{2})/);return m?m[1]===_todayMmDd:false;}
 function gcalUrl(artist){var now=new Date(),pad=function(n){return String(n).padStart(2,'0');};return'https://calendar.google.com/calendar/r/search?q='+encodeURIComponent(artist)+'&start='+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'&end='+(now.getFullYear()+1)+pad(now.getMonth()+1)+pad(now.getDate());}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-// ── Venue identity (#189) ─────────────────────────────
+// ── Venue identity ─────────────────────────────
 // Shared resolution over data/venue_aliases.tsv (true renames only — case /
 // leading-"The" / punctuation variants fold in _venueKey) and data/venues.tsv
 // (canonical names + Short Name display column; blank Short Name = identity).
@@ -335,7 +339,7 @@ function shortVenueName(full){var c=_venueCanonical(full);return VENUE_SHORT_NAM
 // ── On This Day ──────────────────────────────
 // Renders the On-This-Day strip from already-loaded historyData (no fetch); reveals the
 // strip, which starts hidden (index.html) until History is first opened. Called by loadAllHistory.
-// #148 — "On This Day" carousel: show one match at a time (newest first), with a trailing
+// "On This Day" carousel: show one match at a time (newest first), with a trailing
 // ‹ dots › control when >1 show shares today's month/day. The total goes in the label; the
 // visible row's ♫/▶ links render exactly as before. State + helpers below.
 var _otdMatches=[],_otdIndex=0;
@@ -369,6 +373,7 @@ function renderOnThisDay(){
 }
 
 // ── Badges ──────────────────────────────────────────────
+// Map a Ticket Access string to a short platform label; returns [label, isPaper].
 function ticketLabel(access){
   var a=(access||'').toLowerCase();
   if(a.includes('axs'))return['AXS',false];if(a.includes('ticketmaster'))return['TM',false];
@@ -377,10 +382,10 @@ function ticketLabel(access){
   if(a.includes('paper'))return['PAPER',true];if(a.includes('freshtix'))return['Freshtix',false];
   return access?[access.split(' ')[0],false]:[null,false];
 }
-// #186 — 🏣 badge is driven by the explicit Box Office flag on Buy/Choose potentials
+// The 🏣 badge is driven by the explicit Box Office flag on Buy/Choose potentials
 // plus a venue match against the upcoming row, not by guessing at note phrasing.
-// Venue keys fold case, a leading "The", and punctuation ("Birchmere" == "The
-// Birchmere"); differently-worded venue names won't match — keep names consistent.
+// Venue keys fold case, a leading "The", and punctuation; true renames resolve
+// through data/venue_aliases.tsv (see _venueCanonical below).
 function _venueKey(v){return String(v||'').toLowerCase().replace(/^the\s+/,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
 function _boxOfficeVenueKeys(){
   var s={};
@@ -392,6 +397,7 @@ function _boxOfficeVenueKeys(){
   });
   return s;
 }
+// Authed row badge cluster: ticket platform, VIP, merch threshold, box-office.
 function buildBadges(row){
   if(!row['Ticket Access']&&!row['Face Value (per ticket)'])return'';
   var notes=(row['Notes / Memories']||'').toLowerCase(),pvt=(row['Private Notes']||'').toLowerCase(),seat=(row['Seat Info / GA']||'').toLowerCase(),access=(row['Ticket Access']||'').toLowerCase(),all=notes+' '+pvt+' '+seat+' '+access;
@@ -407,12 +413,12 @@ function buildBadges(row){
 function seatTypeBadge(seatType){var s=(seatType||'').toLowerCase();if(!s)return'';return'<span class="badge badge-seat">'+(s.indexOf('ga')>-1?'GA':'Seated')+'</span>';}
 function publicBadges(row){var b=[];if((row['VIP']||'').trim().toUpperCase()==='Y')b.push('<span class="badge badge-vip">⭐ VIP</span>');var isGroup=(row['Group']||'').trim().toUpperCase()==='Y';if(isGroup){if(displayOn('badge','group'))b.push('<span class="badge badge-group">👥 Group</span>');}else if(displayOn('badge','solo'))b.push('<span class="badge badge-solo">🧍 Solo</span>');return b.length?'<div class="badges">'+b.join('')+'</div>':'';}
 
-// ── Show-goal badges (#140 / #85 S4) ─────────────────────
+// ── Show-goal badges ─────────────────────
 // Config-driven goal badges. Iterates SITE_CONFIG.show_goals; event_log goals join
 // client-side against the small data/show_goals/*.tsv signature + eligibility files
 // loaded by loadGoalData(). Replicates build_artist_index.py credit_targets()+norm()
 // so client and builder agree. Degrades to nothing when show_goals is empty or the
-// goal folder is absent (#85 exit criterion). No styles.css needed — colors come from
+// goal folder is absent. No styles.css needed — colors come from
 // the --<key>/-dim/-bg CSS vars emitted by applyTheme().
 var GOAL_DATA=null;
 function _goalNorm(s){
@@ -429,11 +435,11 @@ function _goalCreditTargets(signer,attribution){
   else if(al.slice(-6)===' entry'){var alias=a.slice(0,a.length-6).trim();if(alias)targets.push(alias);}
   return targets;
 }
-// #150 — bill-name decomposition for the goal join. A row is often billed under a compound
+// Bill-name decomposition for the goal join. A row is often billed under a compound
 // or variant name ("Victor Wooten & The Wooten Brothers", "Maggie Rose Band") while the
 // eligibility/signature files are keyed on the tracked entity ("The Wooten Brothers",
 // "Maggie Rose"). Returns the exact key first, then component fallbacks — exact always wins.
-// Separators are explicit; no fuzzy matching (#150 non-goal). The trailing-" Band" drop
+// Separators are explicit; no fuzzy matching (an explicit non-goal). The trailing-" Band" drop
 // mirrors surface_forms() in scripts/build_recommend_index.py, the house rule for that same
 // variant. Python twin: bill_keys() in scripts/audit_goal_badges.py — keep the two in step.
 var _GOAL_BILL_SEP=/\s+(?:&|and his|and her|and|w\/|feat\.?|featuring|with)\s+|\s*,\s*/i;
@@ -453,7 +459,7 @@ async function loadGoalData(){
   GOAL_DATA={};
   var goals=_goalEventList();if(!goals.length)return;
   await Promise.all(goals.map(async function(g){
-    // #154 — `signed` is per-artist (any date); `completed` stays per-artist+date. Forward-looking
+    // `signed` is per-artist (any date); `completed` stays per-artist+date. Forward-looking
     // rows use `signed` to suppress a goal that's already been obtained.
     var d={completed:{},eligible:{},signed:{}},file=(g.source||'').replace(/^event_log:/,'').trim();
     try{
@@ -483,7 +489,7 @@ function _goalBadgeSpans(artist,showDate,isUpcoming){
   goals.forEach(function(g){
     var d=GOAL_DATA[g.key];if(!d)return;
     var completed=keys.some(function(k){return !!d.completed[k+'␟'+sd];});
-    // #154 — eligibility answers "meets the criteria", not "still needed". Once the autograph
+    // Eligibility answers "meets the criteria", not "still needed". Once the autograph
     // exists for this goal (from any past show), don't advertise it as planned on a future row;
     // that badge belongs only on the row where it was obtained. Per-goal, so a signed hat never
     // hides an unsigned book.
@@ -500,7 +506,7 @@ function _goalBadgeSpans(artist,showDate,isUpcoming){
 }
 function rowGoalBadges(artist,showDate,isUpcoming){var s=_goalBadgeSpans(artist,showDate,isUpcoming);return s?'<div class="badges">'+s+'</div>':'';}
 
-// ── Artist-name modal triggers (#107 P2) ─────────────────
+// ── Artist-name modal triggers ─────────────────
 // Any artist name in a list becomes a keyboard-accessible button that opens the
 // artist modal (openArtistModal, artist-modal.js) via the delegated handler below.
 // Names not in the index render a graceful minimal card. Multi-artist support /
@@ -512,7 +518,7 @@ function artistNames(str){
   return str.split(' / ').map(function(p){return artistLink(p);}).filter(Boolean).join(' / ')+more;
 }
 
-// #150 — support acts carry their own goal badges, rendered inline beside each name rather
+// Support acts carry their own goal badges, rendered inline beside each name rather
 // than merged into the headliner's badge cluster, so it stays clear whose badge it is.
 // Same " / " split and "+ more" handling as artistNames.
 function supportGoalNames(str,showDate,isUpcoming){
@@ -629,6 +635,7 @@ function cancelEdit(cellId,fileKey,rowIdx,field){
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
   }
 }
+// Persist an inline edit to the right store: public TSV, private sidecar, fast-track, or a history year.
 async function saveEdit(cellId,fileKey,rowIdx,field){
   var ta=document.getElementById('ta-'+cellId);if(!ta)return;
   var newVal=ta.value;
@@ -814,7 +821,7 @@ async function loadHistoryYear(yr){
 // independently of HISTORY_YEARS — so 2026.json is warmed even before rollover adds 2026
 // to the history TSV set.
 var _historyLoad=null;
-// #102 — seen_with lookup: "Show Date|Headliner" -> [session/sit-in/supergroup names].
+// seen_with lookup: "Show Date|Headliner" -> [session/sit-in/supergroup names].
 // Loaded once with the history years so those names are searchable and annotated in results.
 var _seenWith={};
 function _buildSeenWithLookup(rows){
@@ -842,7 +849,7 @@ function loadAllHistory(){
         await Promise.allSettled(years.map(function(yr){return _loadSetlistsForYear(yr);}));
       }catch(e){console.warn('setlists prime failed:',e.message);}
     })();
-    // #102 — load seen_with.tsv once (supplementary; a failure just leaves the lookup empty).
+    // Load seen_with.tsv once (supplementary; a failure just leaves the lookup empty).
     var seenWithPrime=(async function(){
       try{var res=await ghFetch('data/seen_with.tsv');_buildSeenWithLookup(parseTsv(_decodeB64(res.content)));}
       catch(e){console.warn('seen_with load failed:',e.message);}
@@ -870,7 +877,7 @@ function _historyLoadedDom(){
   var hb=document.getElementById('historyBadge');if(hb)hb.textContent=total||'—';
   populateSearchDatalists();
   renderOnThisDay();
-  // #146 — history lazy-loads after the search panel already baked its empty state, so refresh
+  // History lazy-loads after the search panel already baked its empty state, so refresh
   // #srchResults here (the single load-complete chokepoint) to swap the "Type to search"
   // fallback for the stat boxes. Idle inputs only, so an active search isn't clobbered.
   var _sr=document.getElementById('srchResults'),_sa=document.getElementById('srchArtist'),_sv=document.getElementById('srchVenue');
@@ -929,6 +936,7 @@ function clearSearch(){
   if(r)r.innerHTML=buildSearchEmptyState();
   if(a)a.focus();
 }
+// Search-panel idle state: first/most-recent show lines plus show/artist/venue/day stat boxes.
 function buildSearchEmptyState(){
   var rows=allAttendedRows();
   var mr=rows.length?normalizeRow(rows[0]):null;
@@ -988,7 +996,7 @@ async function switchHistoryTab(yr){
   }else{requestAnimationFrame(revealToggles);}
 }
 
-// ── In-page purchase flow (#152) ─────────────────────
+// ── In-page purchase flow ─────────────────────
 // The 🎟 bought button on authed Buy/Choose potentials rows records a purchase
 // with FOUR simple client writes: (1) append the public current row (staging
 // via dataBranch() → guard → auto-promote), (2) append the private cost row
@@ -1200,7 +1208,7 @@ function renderPotentialRowAuthed(r,gi){
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
   var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
   if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
-  if((r['Box Office']||'').trim().toUpperCase()==='Y')ph+=' <span title="Buy at the box office — not online (#186)">🏣</span>';
+  if((r['Box Office']||'').trim().toUpperCase()==='Y')ph+=' <span title="Buy at the box office — not online">🏣</span>';
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
@@ -1304,6 +1312,7 @@ async function handleDecisionChange(select){
 var fastTrackRows=[];
 var FAST_TRACK_PATH='data/fast_track.tsv';
 var _fastTrackComments='';
+// fast_track.tsv parser — stashes leading # comment lines so serializeFastTrack re-emits them verbatim.
 function parseFastTrack(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
   var commentLines=[];
@@ -1434,10 +1443,10 @@ function openMultisetModal(dateKey){
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
-// -- Config editor (#77) --
+// -- Config editor --
 var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
 function _gearVisible(){
-  // #180 — authed-only artist-graph link rides the same auth-visibility hook as the gear
+  // Authed-only artist-graph link rides the same auth-visibility hook as the gear
   var gl=document.getElementById('graphLink');if(gl)gl.style.display=authed?'':'none';
   var gear=document.getElementById('configGearBtn');if(!gear)return;
   var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
@@ -1511,7 +1520,7 @@ if(localStorage.getItem(PAT_KEY)){authed=true;document.getElementById('authBtn')
 var defaultTab='shows';
 document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===defaultTab);});
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+defaultTab);});
-// #107 P2 — delegated artist-name click -> artist modal (survives re-renders)
+// Delegated artist-name click -> artist modal (survives re-renders)
 document.addEventListener('click',function(e){var t=e.target;var b=t&&t.closest?t.closest('.artist-link'):null;if(b&&b.dataset.artist&&typeof openArtistModal==='function')openArtistModal(b.dataset.artist);});
 (async function boot(){
   await loadConfig();

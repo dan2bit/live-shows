@@ -1,6 +1,6 @@
 name: Auto-promote staging to main
 
-# Plan C for the post-#76 guard. `main` requires the `guard` status check, so a
+# Promotion pipeline for the private-data guard. `main` requires the `guard` status check, so a
 # direct push is rejected. Data work and bot output are pushed to `staging`; this
 # job re-runs the private-data guard and, only if clean, fast-forwards `main`
 # using a deploy key that is the sole ruleset bypass actor. `main` only ever

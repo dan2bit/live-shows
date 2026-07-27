@@ -5,7 +5,7 @@ name_forms.py — the one place that knows when two artist strings mean the same
 Before this module the rule lived in three copies (build_recommend_index.surface_forms,
 app.js _goalBillKeys, audit_goal_badges.bill_keys) and was missing from a fourth consumer
 (spotify_cache), which is how bill-named cache entries ended up with a null Last.fm block
-(#160).
+(see docs/ISSUE_LOG.md).
 
 TWO QUESTIONS, DELIBERATELY KEPT APART
 --------------------------------------
@@ -23,7 +23,7 @@ They look similar and must never be merged:
   bill_components(raw)   "this bill CONTAINS that entity"
                          split on & / and / w/ / feat / with / colon; strip a trailing
                          parenthetical. Used for MEMBERSHIP — the goal badges ask "is a
-                         hat-eligible artist on this bill?" (#150). Never feed these into
+                         hat-eligible artist on this bill?". Never feed these into
                          clustering.
 
   lookup_forms(raw)      surface_forms | bill_components. Fallbacks to try against a
@@ -42,6 +42,8 @@ JS TWINS (app.js/recommend.js can't import Python — keep them in step by hand)
   _goalNorm()     in app.js        <-> goal_norm()
   _goalBillKeys() in app.js        <-> goal_norm() + bill_components()
   recNorm()       in recommend.js  <-> norm()
+
+The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
 import re

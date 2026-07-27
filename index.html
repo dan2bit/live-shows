@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- The issue history behind these designs is logged in docs/ISSUE_LOG.md. -->
 <!-- config: site.title -->
 <title>live-shows</title>
 <!-- Canonical -->
@@ -115,7 +116,7 @@
   </div>
 </div>
 
-<!-- Purchase modal (#152) — records a ticket purchase from a Buy/Choose potentials row -->
+<!-- Purchase modal — records a ticket purchase from a Buy/Choose potentials row -->
 <div class="modal-backdrop" id="purchaseModal">
   <div class="modal purchase-modal" role="dialog" aria-labelledby="purchaseHeading">
     <h3 id="purchaseHeading">&#127903; Bought tickets</h3>
@@ -145,7 +146,7 @@
   </div>
 </div>
 
-<!-- Artist modal / #artist/{slug} view (#107) -->
+<!-- Artist modal / #artist/{slug} view -->
 <div class="modal-backdrop" id="artistModal">
   <div class="modal artist-modal" role="dialog" aria-labelledby="artistHeading">
     <h3 id="artistHeading" class="visually-hidden">Artist</h3>
@@ -154,7 +155,7 @@
   </div>
 </div>
 
-<!-- Auth modal + its config-editor subsection are utility surfaces: placed at the end of the DOM (#124) -->
+<!-- Auth modal + its config-editor subsection are utility surfaces: placed at the end of the DOM -->
 <div class="modal-backdrop" id="authModal">
   <div class="modal" role="dialog" aria-labelledby="authHeading">
     <h3 id="authHeading">GitHub Authentication</h3>
@@ -168,7 +169,7 @@
   </div>
 </div>
 
-<!-- Config editor (#77) — auth-gated subsection of GitHub Authentication (h4 under the auth h3) -->
+<!-- Config editor — auth-gated subsection of GitHub Authentication (h4 under the auth h3) -->
 <div class="modal-backdrop" id="configModal" onclick="if(event.target===this)closeConfigEditor()">
   <div class="modal config-modal" role="dialog" aria-labelledby="configHeading" style="max-width:760px;width:92%">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
