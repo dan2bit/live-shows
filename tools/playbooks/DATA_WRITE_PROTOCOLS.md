@@ -385,9 +385,24 @@ Name-keyed dict (key = normalized name, post-`recommend_aliases.tsv`):
 {
   "schema_version": 1,
   "generated_at": "2026-07-02T20:00:00Z",
-  "artists": { "vanessa collier": { /* per-artist object */ } }
+  "artists": { "vanessa collier": { /* per-artist object */ } },
+  "aliases": { "trombone shorty": "trombone shorty orleans avenue" }   // additive (#199-era; see below)
 }
 ```
+
+**`aliases` (additive top-level key):** `{norm-space alias → canonical artist key}`,
+emitted by `build_artist_index.py` from `recommend_aliases.tsv` and consumed by
+`openArtistModal`'s fallback in `artist-modal.js`, so alias-form names (bare
+"Trombone Shorty", "X and Y" billings) resolve to the canonical record. Three facts
+worth knowing:
+- **Additive only** — the `artists` contract is unchanged. A fork regenerating the
+  index gets the key automatically; an index without it degrades gracefully (the
+  client fallback is null-guarded).
+- A billing variant that renders "No details on file yet." in the modal is fixed
+  with a `recommend_aliases.tsv` row, **not code**.
+- The same alias file drives three consumers: the recommend index, this artist
+  index, and the show-row match in `close_photo_issue.py` — one data file, three
+  joins.
 
 ### Per-artist object (source · null-rule per field)
 

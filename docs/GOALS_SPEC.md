@@ -285,7 +285,9 @@ remain load-bearing:
   exposes thresholds and colors only, as today.
 - **No per-book row-level badges.** The book row badge shows the artist's overall signed
   state; per-book detail (`In APS` / `APS Page` / `In RHBS` + signed states) remains
-  modal-only via `badges.book_detail` (part of the frozen index schema).
+  modal-only via `badges.book_detail` (part of the frozen index schema — which also
+  carries an additive top-level `aliases` map so alias-form names resolve to the
+  canonical record; see the frozen-schema section in the data-write playbook).
 - **Icons stay emoji strings.** No icon-path system, no font-icon integration.
 - **No storage of `planned` state.** It's computed at render time from eligibility +
   upcoming + not-yet-completed. There is no `Goal Planned` column anywhere.

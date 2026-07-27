@@ -1,48 +1,255 @@
 # FORK_SETUP.md
 
-> Setup guide for forking live-shows as a template.
-> Work in progress — this currently covers credentials; the rest is filled in as the fork process is exercised.
+> Setup guide for running your own copy of live-shows. It's organized in three
+> levels; **each level is a complete, working stopping point**. Most forks only
+> need Level 0. The issue history behind these designs is logged in
+> [`ISSUE_LOG.md`](ISSUE_LOG.md).
 
-## Credentials & tokens
+- **Level 0 — UI-only fork.** A public tracker site you edit in the browser or on
+  GitHub.com. No private data, no automation.
+- **Level 1 — private data sidecar.** Adds a second, private repo for costs,
+  seats, and private notes, merged into the site only when you authenticate.
+- **Level 2 — automation + CI pipeline.** The staging branch, private-data guard,
+  auto-promotion, and an agentic/MCP token — the full operating setup.
 
-live-shows uses two kinds of credentials, kept in two different places:
+The [Spotify section](#spotify-optional-any-level) at the end is optional at any
+level. Operational reference for a running Level 2 setup:
+[`AGENTIC_WORKFLOWS.md`](AGENTIC_WORKFLOWS.md) (this file tells you how to build
+the pipeline; that one tells you how to work inside it).
 
-- **Tool credentials** (YouTube + Spotify) live in a gitignored `.env` next to the scripts — see [`env.example`](env.example). They never leave your machine.
-- **GitHub tokens** are described below. **None of them belong in `.env`.** Store them in a password manager, and put each only where the thing that consumes it needs it — the browser, `app.js`, or your automation/MCP config.
+---
 
-All GitHub tokens are **fine-grained PATs**: <https://github.com/settings/personal-access-tokens/new>
+## Level 0 — UI-only fork
 
-### 1. Site-editing token — required for in-browser edits
+### 1. Fork and serve
 
-Lets you edit Decisions and notes from the site's auth modal (the 🔑 button in `index.html`).
+1. Fork the repo on GitHub.
+2. Settings → Pages → **Deploy from a branch** → branch `main`, folder `/ (root)`.
+3. Your site appears at `https://<you>.github.io/<repo>/` within a minute or two.
 
-- **Repository:** your public repo (and your private sidecar, if you enabled private data)
+### 2. Point `config.yaml` at yourself
+
+`config.yaml` is the personalization layer — the site code never needs editing
+for a rename. At minimum change:
+
+```yaml
+site:
+  title: my-shows
+  owner: <your-github-username>
+  repo: <your-repo-name>
+  about_handle: "About @you"
+  about_tagline: ...
+  about_text: ...
+  region: <your metro>        # appears in visitor-facing copy
+history_years: []             # unless you import past-year archives (see below)
+```
+
+Every block is annotated in-file with what it does and what removing it does.
+The `owner`/`repo` keys matter beyond display: asset URLs and all in-browser
+editing derive from them.
+
+**The static `<head>` is a hand-edit.** Social unfurlers don't run JavaScript, so
+the `<title>`, OpenGraph, and Twitter tags in `index.html` must be edited
+directly — every such tag is flagged with a `<!-- config: -->` marker, and the
+`meta:` block at the bottom of `config.yaml` is the checklist of them. Editing
+that block alone does nothing.
+
+### 3. Data files
+
+Everything the site shows lives in TSVs under `data/`:
+
+| File | What it holds |
+|---|---|
+| `live_shows_current.tsv` | This year's shows, upcoming + attended (19 columns; `-` sentinels for empty link cells) |
+| `live_shows_potential.tsv` | Shows you're considering — `Buy` / `Choose` / `Pass` (+ `Sell` listings) |
+| `fast_track.tsv` | Artists you'd buy instantly if they toured near you (the Waiting tab) |
+| `artists.tsv` | Per-artist ledger: times seen, first/last seen, YouTube/Spotify links |
+| `history/<year>.tsv` | Past-year archives (list the years in config `history_years`) |
+| `venues.tsv` + `venue_aliases.tsv` | Venue facts + name-variant resolution |
+| `recommend_aliases.tsv` | Artist name variants → canonical names (drives several joins) |
+| `show_goals/` | Optional achievement logs (signatures, photos) — delete along with config `show_goals` for a badge-free site |
+
+Start by emptying the personal rows and adding your own. Two format rules
+matter: keep header rows intact (the in-page editor derives columns from line 1 —
+never add `#` comment lines to `current`/`potential`/`fast_track`), and use plain
+ASCII punctuation in data values (curly quotes and long dashes silently break
+name joins).
+
+The derived JSON files under `data/` (`artist_modal_index.json`,
+`recommend_index.json`, `artist_spotify.json`) are build products — at Level 0
+you can leave the stale ones in place (artist modals will show Dan's data until
+regenerated) or delete them (modals degrade gracefully). Level 2's CI rebuilds
+the first two automatically; the Spotify cache is optional back-office tooling.
+
+### 4. The site-editing token (in-browser edits)
+
+A fine-grained PAT (<https://github.com/settings/personal-access-tokens/new>):
+
+- **Repository:** your public repo
 - **Permissions:** Contents → Read and write · Issues → Read and write
-- **Where it lives:** your password manager. You paste it into the auth modal when editing; it is never written to disk or committed.
+- **Where it lives:** your password manager; paste it into the site's 🔑 auth
+  modal. It is stored in your browser's localStorage only.
 
-### 2. Recommendations token — optional, only if you enable the recommendations feature
+Authenticated, the site edits data in-page: decision dropdowns and notes on
+potentials, the config editor (gear), show-row notes, and — if enabled — the
+purchase flow and favorites. Everything else (adding shows, new columns,
+history files) is a normal git/GitHub edit. Without a staging pipeline
+(Level 2), in-page writes go straight to `main`: leave `site.data_branch` unset.
 
-Lets visitors submit artist/show recommendations, which the site files as issues.
+### 5. Optional trims
 
-- **Repository:** your **public** repo only
-- **Permissions:** Issues → Read and write (nothing else)
-- **Where it lives:** embedded in `app.js`, split across two concatenated string literals.
+- `features:` in config — turn off any subsystem (`for_sale`, `recommendations`,
+  `fast_track`, `spotify_integration`, `favorite`, `in_page_purchase`…).
+  `private_data: false` (or just never authenticating) means a fully public
+  site; financial fields simply don't exist anywhere in the public schema.
+- The **recommendations feature** needs its own throwaway token — see
+  [Tokens](#the-three-tokens-summary) below for why it's world-readable by design.
+- The `tools/` tree is the original owner's personal research kit — **nothing
+  on the site or in CI reads it** (the only consumed trees are `data/`,
+  `scripts/`, the root site files, and `static/`). Delete it, or keep whatever
+  amuses you (`tools/research/graph/` is a self-contained artist-network page).
 
-**Important — this token is effectively public.** The split-literal trick only gets it past GitHub's commit-time secret scanner; it does **not** hide the token from anyone reading the deployed `app.js` or your repo source. Treat it as readable by the world. That is acceptable *only* because its scope is Issues-on-a-public-repo (worst case: someone opens spam issues). Never put a broader-scoped token here.
+**You know Level 0 works when:** your Pages URL renders your shows, the About
+modal shows your text and links, and an authed decision change on a potentials
+row commits to `main` under your name.
 
-### 3. Automation / agentic token — optional, for the agentic playbooks / MCP
+---
 
-Used by the MCP server and the automation playbooks to read and write the repo on your behalf.
+## Level 1 — private data sidecar
 
-- **Repository:** your public repo (and private sidecar, if used)
-- **Permissions:** Contents → Read and write · Issues → Read and write · Pull requests → Read and write · Workflows → Read and write
-- **Where it lives:** your password manager (canonical copy), and wherever your automation/MCP reads it (e.g. the MCP connector config). Not in `.env`, not committed.
+The public schema deliberately carries no money. Costs, seat details, ticket
+quantities, and private notes live in a **separate private repo**, merged into
+the page at runtime only when you're authed.
+
+### 1. Create the sidecar
+
+Create `<you>/<repo>-private` (private). Seed three files at its **root**:
+
+```
+current_private.tsv    →  Show Date	Artist	Seat Info / GA	Ticket Quantity	Face Value (per ticket)	Fees	Total Cost	Purchase Date	Food & Bev	Parking	Merch	Private Notes
+potential_private.tsv  →  Artist	Date	Private Notes
+fast_track_caps.tsv    →  Artist	Price Cap	Distance Cap	Venue Cap
+```
+
+(Header rows only, to start.)
+
+### 2. Wire it up
+
+- Expand the **site-editing PAT** to cover both repos (same token, add the
+  private repo; same two permissions).
+- In config:
+
+```yaml
+features:
+  private_data: true
+site:
+  private_owner: <you>
+  private_repo: <repo>-private
+```
+
+### 3. How the merge works
+
+`mergePrivateData()` joins sidecar rows onto the loaded public rows at render
+time — nothing private is ever written to the public repo. Join keys:
+`Show Date + Artist` (current), `Artist + Date` (potentials). **Copy the key
+fields verbatim from the public row** when adding sidecar rows; name or date
+drift orphans the row (the site console-warns about orphans on authed loads).
+
+Public vs private, per show: the public row keeps denormalized flags (`Seat
+Type`, `VIP`, `Group`) and show metadata; the sidecar holds everything with a
+dollar sign plus `Private Notes`. A show's public and private halves are **two
+separate commits to two separate repos**, never one.
+
+**You know Level 1 works when:** an authed reload shows COST columns on attended
+rows and your private notes on potentials — and an incognito window shows
+neither.
+
+---
+
+## Level 2 — automation + CI pipeline
+
+The full setup: bots and agents write freely to a `staging` branch, a
+server-side guard proves each commit leaks nothing private, and only clean
+commits fast-forward to `main` (and therefore to Pages).
+
+### 1. Staging branch + required check
+
+1. Create `staging` from `main`.
+2. Settings → Branches → protect `main`: require the **`guard`** status check
+   (from `private-data-guard.yml`), and allow no direct pushes.
+3. Set `site.data_branch: staging` in config so in-page edits ride the pipeline
+   too.
+
+The guard blocks: any `live-shows-private/` path, any `*_private.tsv` or
+`*_caps.tsv` file, and any TSV whose header contains `Private Notes` (a private
+schema smuggled in under another name). It exists because exactly that leak
+happened once — see `ISSUE_LOG.md`. Verify it's alive by pushing a scratch
+branch with a file named `test_private.tsv` and watching the check fail.
+
+### 2. Auto-promotion + deploy key
+
+`auto-promote.yml` re-runs the guard on every staging push and fast-forwards
+`main` when clean. It pushes via a deploy key (the sole branch-protection
+bypass):
+
+```
+ssh-keygen -t ed25519 -f promote_key -N ""
+```
+
+- Public key → repo Settings → Deploy keys (write access).
+- Private key → Actions secret **`PROMOTE_DEPLOY_KEY`**.
+
+Two behaviors worth knowing before you rely on it: a guard-failing commit is
+**reset off staging** (the reset also fires if `main` diverges — merge PRs
+based on `main` only when staging is quiet, and re-sync staging afterward), and
+bot pushes retry with rebase to survive races.
+
+### 3. The automation/MCP token
+
+A third fine-grained PAT for whatever drives your automation (MCP server,
+scripts): both repos, Contents + Issues + Pull requests read/write — and
+**Workflows read/write if you want it to edit workflow files** (without that
+scope, workflow edits 404 and must go through another path).
+
+### 4. Working rules that keep the pipeline honest
+
+The operational versions live in the playbooks; the ones a new setup trips over:
+
+- Data commits target `staging`; the private sidecar's `main` has no pipeline —
+  commit to it directly.
+- Batch multi-file changes into one commit (a multi-file Git Data push may not
+  fire the staging trigger — follow with a single-file nudge commit).
+- PRs based on `staging` don't auto-close their linked issues (the closes
+  keyword only fires on default-branch merges) — close manually.
+- PR previews: `site.preview_data_branch` in config, or `?dataref=<branch>` on
+  the URL, points the site's reads at a branch; writes stay on `data_branch`.
+
+**You know Level 2 works when:** a TSV commit to `staging` appears on `main` by
+itself within a minute, and the scratch `test_private.tsv` push gets rejected.
+
+---
+
+## The three tokens (summary)
+
+| Token | Repos | Permissions | Lives in |
+|---|---|---|---|
+| Site-editing | public (+ private at Level 1) | Contents, Issues RW | Password manager → 🔑 modal |
+| Recommendations (optional) | public only | Issues RW **only** | Split across two string literals in `app.js` |
+| Automation/MCP (Level 2) | both | Contents, Issues, PRs (+ Workflows) RW | Your MCP/automation config |
+
+**The recommendations token is effectively public.** The split-literal trick
+only defeats GitHub's commit-time secret scanner; anyone reading the deployed
+`app.js` can reassemble it. That's acceptable *only* because its blast radius is
+opening issues on a public repo. Never widen its scope.
+
+Tool credentials (YouTube/Spotify/Last.fm) are separate and live in gitignored
+`.env` files — see [`env.example`](env.example).
+
+---
 
 ## GitHub Pages & asset URLs
 
-The site is built to run from **GitHub Pages**, and there is one Pages-specific wrinkle worth understanding before you change the brand assets (favicon, hat icon, hero image). Everything else is path-agnostic.
-
-In `config.yaml`, the asset fields hold **repo-relative paths**:
+In `config.yaml`, the brand asset fields hold **repo-relative paths**:
 
 ```yaml
 site:
@@ -51,28 +258,59 @@ site:
   about_hero_image: static/hero.jpg
 ```
 
-At load time `app.js` expands each of these into an absolute `https://<owner>.github.io/<repo>/<path>` URL, derived from your `site.owner` and `site.repo`. **This expansion is required, not cosmetic.** On a GitHub *project page* (served from `<user>.github.io/<repo>/`), a bare relative asset URL resolves against the current page path and 404s, so the absolute form is the only one that works here. Doing the expansion in code keeps `config.yaml` short and portable: change `owner`/`repo` and the asset URLs follow automatically.
+At load time `app.js` expands each into an absolute
+`https://<owner>.github.io/<repo>/<path>` URL. **This expansion is required, not
+cosmetic** — on a GitHub *project page* a bare relative asset URL resolves
+against the current page path and 404s.
 
-**Custom domains and user/org pages behave differently.** If you serve from a custom domain, or from a user/organization page (site root, with no `/<repo>/` segment in the path), relative paths may resolve fine on their own and the github.io derivation will not point at your host. Two ways to handle it:
-
-- Set `site.pages_base` to your site's base URL (e.g. `https://example.com`). `app.js` uses it verbatim as the base instead of deriving `<owner>.github.io/<repo>`.
-- Or put fully-qualified absolute URLs (starting `https://`) directly in the asset fields. Any value that already begins with `http(s)://` is passed through untouched.
-
-> Note: this only affects the three image asset fields. The site code files (`app.js`, `styles.css`, `recommend.js`) and `config.yaml` itself load as plain relative URLs and must stay that way.
-
----
-
-## The `tools/` tree — operator-specific, safe to delete
-
-Everything under `tools/` is the repo owner's personal research and workflow kit — artist
-research pipelines, browser-scraping playbooks, personal reference data, and archived
-point-in-time snapshots. **None of it is consumed by the site or by CI.** The only trees
-the deployed site and the workflows read are `data/`, `scripts/`, the root site files
-(`index.html`, `app.js`, `recommend.js`, `styles.css`, `config.yaml`), and `static/`.
-
-For your fork, either delete `tools/` outright or add it to your fork's `.gitignore` and
-build your own workflow kit in its place. Nothing on the site will change either way.
+**Custom domains and user/org pages behave differently.** If relative paths
+already resolve at your host, either set `site.pages_base` to your base URL
+(used verbatim instead of the github.io derivation) or put full `https://` URLs
+directly in the asset fields (passed through untouched). This affects only the
+three image fields; the site code files and `config.yaml` itself load as plain
+relative URLs and must stay that way.
 
 ---
 
-*Remaining setup sections — Pages, `config.yaml`, data files, private sidecar — to be written as the fork process is exercised.*
+## Spotify (optional, any level)
+
+Back-office tooling, not a site dependency: `features.spotify_integration` only
+gates Spotify links on the Waiting tab — set it `false` (or omit the whole
+subsystem) and nothing else changes.
+
+Two components with a **two-tier trust posture**:
+
+- **Read side** — `scripts/spotify_cache.py` builds `data/artist_spotify.json`
+  under **client credentials** (no account access). Credentials in
+  `scripts/.env` (`SPOTIFY_CLIENT_ID/SECRET`), plus **`LASTFM_API_KEY`** — the
+  enrichment layer's only credential (tags, listeners, similar-artists).
+- **Write side** — the marcelmarais `spotify-mcp-server` holds a **user-OAuth
+  token that can modify your account**. Treat its `spotify-config.json` like a
+  GitHub PAT: it lives in the cloned server's directory, never in this repo.
+
+Write-MCP setup, with the traps pre-sprung:
+
+1. Create a Spotify app (developer dashboard). In its settings the Redirect URI
+   **must be exactly `http://127.0.0.1:8888/callback`** — loopback IP, `http`,
+   port, path. Spotify rejects `https://localhost` forms; a mismatch surfaces as
+   `redirect_uri: Not matching configuration` at auth time.
+2. **Dev-Mode User Management:** a development-mode app only serves accounts
+   listed under dashboard → User Management. Add the authorizing account (name +
+   email) or every playlist write 403s.
+3. Clone/build/auth: `git clone … && npm install && npm run build`, fill
+   `spotify-config.json` (client id/secret + the redirect URI), `npm run auth`
+   (one-time browser consent; tokens self-refresh).
+4. **SDK endpoint patch:** the server's pinned `@spotify/web-api-ts-sdk` still
+   calls retired playlist endpoints (`POST /users/{id}/playlists` →
+   `/me/playlists`; `/playlists/{id}/tracks` → `/playlists/{id}/items` for item
+   ops), which surfaces as a misleading `403 "Bad OAuth request"` on
+   `createPlaylist`. Patch both `dist/mjs` and `dist/cjs` copies of
+   `PlaylistsEndpoints.js` (leave `getUsersPlaylists` alone) and add a
+   `postinstall` hook to reapply — any `npm install` wipes the patch. This is a
+   local workaround for an upstream bug, needed until it's fixed there.
+5. Dev-mode quotas are real: search caps at ~10 results (eyeball same-name
+   artists), and the cache's release sweeps drip at ~100 calls/day
+   (`--count-pending` before spending; bare runs self-resume).
+
+Workflow recipes (sampler / bill top-tracks / playlist→research) live in
+`tools/playbooks/SPOTIFY_WORKFLOWS.md`.
