@@ -866,26 +866,28 @@ def _days_since(iso_date: str) -> int:
 
 RECENT_SWEEP_WINDOW_DAYS = 30  # checks older than this are stale anyway; also stops
                                # one ancient date from inflating the inferred cutoff
+SWEEP_GAP_DAYS = 7             # a gap this large between age bands means "different
+                               # sweeps" — the newer band is an interrupted resume
 
 
 def _infer_stale_days(cache: dict) -> int:
-    """Infer --stale-days from the OLDEST latest_release_checked date within the
-    recent sweep window (last RECENT_SWEEP_WINDOW_DAYS days), plus one.
+    """Infer --stale-days for a bare --refresh-releases.
 
-    A resumed sweep leaves a multi-day band of checked dates ordered by alphabet;
-    any cutoff that lands INSIDE that band re-burns part of the previous sweep —
-    and because the refresh loop walks alphabetically into the quota ceiling, it
-    is the same part every run (#197: the median cut the Jul 5-9 band in half and
-    re-checked the A-H head until rate-limited, every time). max(age)+1 over the
-    recent checks places the cutoff just past the whole band, so a bare
-    --refresh-releases spends quota only on artists the last sweep never reached.
-    Entries checked before the window (or never) stay eligible, preserving the
-    monthly cadence.
+    Goal: spend quota only on artists the current refresh cycle has not reached.
+    Recent check ages (within RECENT_SWEEP_WINDOW_DAYS) cluster into bands — one
+    per run or sweep. Two cases:
 
-    Falls back to 0 (check everything) when fewer than 2 recent checked dates
-    exist (first ever run / sparse cache). Called automatically by
-    refresh_releases() when --stale-days is not explicitly passed; pass
-    --stale-days 0 to force a full brute-force refresh.
+    - Interrupted sweep: two bands separated by SWEEP_GAP_DAYS or more (e.g. a
+      fresh partial band at ~1d after a rate-limit bail, and the previous sweep
+      at ~18d). Cut just past the FRESH band (its max age + 1) so the older band
+      stays eligible — the run resumes where the bail left off.
+    - Single contiguous band: a completed sweep, possibly spread across a few
+      drip days. Cut past the whole band (max age + 1) — nothing is due yet.
+
+    Entries checked before the window (or never) always stay eligible. Falls
+    back to 0 (check everything) when fewer than 2 recent checked dates exist
+    (first ever run / sparse cache). Called automatically when --stale-days is
+    not passed; explicit --stale-days overrides, and 0 forces brute force.
     """
     today = date.today()
     ages = []
@@ -900,19 +902,30 @@ def _infer_stale_days(cache: dict) -> int:
                 ages.append(age)
     if len(ages) < 2:
         return 0
-    return max(ages) + 1
+    ages.sort()
+    for i in range(1, len(ages)):
+        if ages[i] - ages[i - 1] >= SWEEP_GAP_DAYS:
+            return ages[i - 1] + 1   # cut just past the freshest band
+    return ages[-1] + 1
 
 
 # ── Latest-release-only refresh ───────────────────────────────────────────────
 
 def refresh_releases(cache: dict, creds, args) -> None:
     """Re-pull ONLY latest_release for already-cached artists; leave the rest of
-    each entry untouched. Honors --artist, --stale-days, and --dry-run.
+    each entry untouched. Honors --artist, --start-after, --stale-days, --dry-run.
 
     --stale-days N skips entries whose latest_release_checked is within the last N
     days, which makes a multi-day back-audit resumable across the ~100/day cap:
     each daily run advances past what an earlier run already refreshed instead of
     restarting from the top. Unset (default) refreshes every cached artist.
+
+    The refresh loop runs OLDEST-CHECKED-FIRST (never-checked entries first, then
+    ascending by checked date, name as tiebreak), so a rate-limit bail always
+    leaves the neediest entries at the front of the next run — the tail of the
+    alphabet can never be stranded behind a freshly-stamped head. --start-after
+    NAME additionally drops every artist sorting at or before NAME (alphabetic,
+    case-insensitive) for manual resumes and range work.
 
     #109 null-preserve: a null pull never overwrites a non-null cached release,
     and on such a keep the entry's latest_release_checked is left untouched so the
@@ -921,10 +934,17 @@ def refresh_releases(cache: dict, creds, args) -> None:
     if args.artist:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
+    if getattr(args, "start_after", None):
+        cut = args.start_after.lower()
+        names = [n for n in names if n.lower() > cut]
     if not names:
         print("No cached artists to refresh releases for "
-              "(run a normal build first, or check --artist).")
+              "(run a normal build first, or check --artist/--start-after).")
         return
+    # Oldest-checked-first: the neediest entries go first, so a rate-limit bail
+    # never strands the tail — the next run re-serves whoever is still oldest.
+    # Never-checked entries (no date) sort first; name breaks ties.
+    names.sort(key=lambda n: (cache[n].get("latest_release_checked") or "", n))
     # Auto-infer stale_days when not explicitly set. --stale-days 0 forces brute-force.
     stale_days = args.stale_days
     if stale_days is None:
@@ -947,7 +967,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         checkable = len(names) - no_id - skippable
         quota_cycles = checkable / 100
         if inferred:
-            print(f"auto stale-days: oldest recent check + 1 → using --stale-days {stale_days}")
+            print(f"auto stale-days: recent-band structure → using --stale-days {stale_days}")
         print(f"--count-pending: {checkable} of {len(names)} artists would be checked "
               f"({skippable} skipped by --stale-days {stale_days}, {no_id} skipped: no spotify_id)")
         print(f"Estimated quota burn: ~{checkable} calls (~{quota_cycles:.1f} lockout cycles "
@@ -955,7 +975,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
         return
 
     if inferred:
-        print(f"auto stale-days: median last-checked → using --stale-days {stale_days}")
+        print(f"auto stale-days: recent-band structure → using --stale-days {stale_days}")
     print(f"Refreshing latest_release for {len(names)} cached artist(s)"
           + (f" [skip checked < {stale_days}d]" if stale_days else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
@@ -1992,15 +2012,18 @@ def main() -> None:
     ap.add_argument("--stale-days", type=int, default=None, metavar="N",
                     help="With --refresh-releases: skip artists whose latest_release "
                          "was checked within the last N days. When omitted, the value "
-                         "is auto-inferred as 1 + the oldest latest_release_checked "
-                         "age within the last 30 days (so a bare --refresh-releases "
-                         "skips the entire previous sweep and only re-checks artists "
-                         "it never reached). Pass 0 to force a "
+                         "is auto-inferred from the band structure of recent checks: "
+                         "an interrupted sweep resumes past its fresh partial band; a "
+                         "completed sweep is skipped whole. Pass 0 to force a "
                          "full brute-force refresh of all artists. With "
                          "--refresh-images: same logic gated on images_checked "
                          "(--stale-days is still explicit-only for images; auto-infer "
                          "is --refresh-releases only). No effect on the build or "
                          "--refresh paths.")
+    ap.add_argument("--start-after", metavar="NAME", default=None,
+                    help="With --refresh-releases: only process artists sorting "
+                         "strictly after NAME (case-insensitive). Manual resume / "
+                         "range scalpel; combine with --stale-days as needed.")
     ap.add_argument("--count-pending", action="store_true",
                     help="With --refresh-releases: print how many artists would be "
                          "checked under the current (auto-inferred or explicit) "
