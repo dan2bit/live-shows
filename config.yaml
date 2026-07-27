@@ -203,7 +203,7 @@ badges:
 # ignored (the builder warns if any remain).
 #
 # Deleting show_goals entirely (or emptying the list) yields a badge-free but
-# fully functional site — the designed exit criterion for a fork without goals.
+# fully functional site.
 show_goals:
   - key: hat
     label: HAT
@@ -223,12 +223,12 @@ show_goals:
     color: "#40a0a0"                       # teal (sell family); dim/bg HSL-derived
     source: "column:Photo URL"
 
-# ── Static-head metadata (documentation only) ────────────────────────────────
-# These values are mirrored into the static <head> of index.html by hand. Social
-# unfurlers and crawlers do NOT run app.js, so app.js never applies this block at
-# runtime — it exists so a fork has one checklist of every head value to update.
-# Each has a matching tag in index.html flagged with <!-- config: -->; title,
-# handle, hero image, and hero alt mirror the site.* keys above.
+# ── Static-head metadata (record only — editing this block does NOTHING) ─────
+# Nothing reads these values. They are a checklist of the head tags you must edit
+# BY HAND in index.html (each is flagged there with <!-- config: -->); social
+# unfurlers and crawlers never run app.js, so no code can apply them for you.
+# Once index.html says what you want, this block can drift or be deleted outright.
+# Title, handle, hero image, and hero alt mirror the site.* keys above.
 meta:
   description: "A live-music tracker for DC/MD/VA — blues, blues-rock, Americana, and roots at small venues. Where I've been, where I'm headed, and bootlegs from the shows."   # also in index.html: <meta name="description">, og:description, twitter:description
   canonical: https://dan2bit.github.io/live-shows/   # <link rel="canonical">, og:url
