@@ -144,8 +144,9 @@ stages:
     tagline: considered, but not going
 
 # ── Merch badge threshold ────────────────────────────────────────────────────
-# Removing this whole block keeps the badge with its built-in $100 default;
-# raise event_cap to badge fewer shows, set it very high to effectively disable.
+# OPT-IN (an exception to the missing-key-keeps-behavior rule): remove this block
+# — or just event_cap — and the MERCH badge never renders. The merch-budget
+# concept is an owner choice a fork may never want, so absence means off.
 merch:
   event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
   exempt_venues:   # venues where a high face price reflects the room, not a merch-table budget
