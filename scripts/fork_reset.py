@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """fork_reset.py — reset a fresh fork of live-shows to a clean, working, empty
-tracker (issue #216, the "Level 0" bootstrap).
+tracker (the "Level 0" fork bootstrap).
 
 What it does (see --dry-run for the exact file list):
   1. Copies every sample-files/*-sample.tsv over its canonical data/ file
@@ -11,7 +11,7 @@ What it does (see --dry-run for the exact file list):
      `history_years: []` in config.yaml so nothing 404s.
   4. Optionally (--patch-meta) applies config.yaml site/meta values to the
      hand-maintained static <head> block in index.html — a ONE-SHOT bootstrap;
-     the block stays hand-maintained afterward (per the #82 decision).
+     the block stays hand-maintained afterward, by design.
   5. Optionally (--private-dir PATH) seeds the private-repo files
      (current_private.tsv, potential_private.tsv, fast_track_caps.tsv,
      spending.tsv, taste_profile.md) into a directory that MUST be outside
@@ -69,8 +69,8 @@ PRIVATE_MAP = {
 
 
 def empty_caches(now_iso: str, today: str) -> dict:
-    """Each derived JSON cache's empty-but-parseable form (shapes verified
-    against the live builders' output, 2026-07)."""
+    """Each derived JSON cache's empty-but-parseable form. Shapes are verified
+    against the live builders' output; re-verify if a builder's schema changes."""
     return {
         "data/artist_spotify.json": {},
         "data/artist_modal_index.json": {
@@ -209,8 +209,8 @@ NEXT_STEPS = """
     recommend.js to pass push protection; do NOT "fix" it into one string.
     Spotify cache workflows need Spotify API credentials. Details:
     docs/FORK_SETUP.md Level 2.
- 7. Cosmetic leftovers tracked in issue #69: the four About-modal link labels
-    and the hero alt text are still hardcoded in index.html.
+ 7. Cosmetic leftovers: the four About-modal link labels and the hero alt text
+    are still hardcoded in index.html - edit them there.
 ──────────────────────────────────────────────────────────────────────────────
 """
 
