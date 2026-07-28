@@ -1,0 +1,7 @@
+# fast_track_caps.tsv — private buy-constraint sidecar, keyed to the public
+# fast_track.tsv by Artist. Blank cell = your default. Define your own cap
+# vocabulary (price ceiling, distance radius, venue scale) in this comment
+# block; agents read it as policy. This file lives at the ROOT of your
+# PRIVATE repo — never inside the public one.
+Artist	Price Cap	Distance Cap	Venue Cap
+The Example Band			
