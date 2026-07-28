@@ -57,6 +57,14 @@ references as working shorthand and are not logged here.
 | [#189](https://github.com/dan2bit/live-shows/issues/189) | Venue identity as shared data: `venue_aliases.tsv` + venues.tsv `Short Name`, one resolution chain across app.js, the guardrail, and the YouTube tooling. |
 | [#193](https://github.com/dan2bit/live-shows/issues/193) | Photo-issue close also writes the share link into the matching show row's `Photo URL`. |
 | [#197](https://github.com/dan2bit/live-shows/issues/197) | Stale-days inference from the sweep's oldest recent check (the median re-burned half the previous sweep against the API quota). |
+| [#199](https://github.com/dan2bit/live-shows/issues/199) | De-bespoke sweep: owner-specific assumptions pulled out of the shared surfaces so a fork reads as a template, not as one person's tracker. |
+| [#200](https://github.com/dan2bit/live-shows/issues/200) | This log, plus the evergreen-comment convention: forker-facing comments stand on their own; issue history lives here. |
+| [#201](https://github.com/dan2bit/live-shows/issues/201) | config.yaml restructured into forker reading order, with opt-in blocks (merch cap) marked as such and the meta block documented as record-only. |
+| [#202](https://github.com/dan2bit/live-shows/issues/202) | FORK_SETUP rewritten as three stopping points: UI-only, private sidecar, full CI pipeline. |
+| [#203](https://github.com/dan2bit/live-shows/issues/203) | Spotify workflows split into their own playbook, with the ephemeral-by-default persistence rule. |
+| [#204](https://github.com/dan2bit/live-shows/issues/204) | Warn-only data-hygiene guards (ASCII punctuation, artist-name drift, evergreen comments) as a CI backstop for conventions previously enforced only at write time. |
+| [#205](https://github.com/dan2bit/live-shows/issues/205) | Playbook additions: batch-commit rule, ASCII punctuation rule, alias-key frozen schema. |
+| [#216](https://github.com/dan2bit/live-shows/issues/216) | Level 0 fork bootstrap: the sample-files/ exemplar tree, fork_reset.py, and the CI check that fails when a sample header drifts from its canonical file. The private-data guard and its auto-promote mirror gained a sample-files/private/ exemption; both copies of the sniff must be edited together. |
 
 Other incident dates that appear in history: the Spotify Web API deprecations of
 2024-11-27 (dev-mode metadata strip) and the 2026-02-11 → 2026-03-09 endpoint
