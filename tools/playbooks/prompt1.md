@@ -15,11 +15,12 @@ Start every session by:
 4. Fetching live_shows_current.tsv and live_shows_potential.tsv before any routine that touches them.
 
 Available routines:
-- Routine 1: ticket receipts (label:ticket-receipt)
-- Routine 2: post-show notes (label:show-notes) — always updates spending.tsv, artists.tsv, and potentially autograph_books_combined.tsv (book) / hat_signatures.tsv (hat)
+- Routine 1: ticket receipts (label:ticket-receipt) — public fields (artist, date, venue, seat type, VIP/Group flags) to data/live_shows_current.tsv; private fields (cost, seat info, ticket qty, purchasing/fee notes) to **dan2bit/live-shows-private → current_private.tsv**, keyed on Show Date + Artist. Two separate commits to two separate repos, never one.
+- Routine 2: post-show notes (label:show-notes) — always updates **dan2bit/live-shows-private → spending.tsv** (private repo) and data/artists.tsv, and potentially data/show_goals/book_signatures.tsv (book) / data/show_goals/hat_signatures.tsv (hat)
 - Routine 3: ticket-alert newsletters (label:ticket-alert -label:processed) — requires a clear date on the calendar and explicit confirmation before any potentials write
 - Routine 4: artist mail (label:artist-mail -label:processed)
-- Routine 5: reminders/skips
+- Routine 5: artist follow / signup (label:artist-follow -label:processed)
+- Routine 6: ticket sold / resale (label:ticket-sold -label:processed) — updates data/live_shows_current.tsv (remove or update the row), **dan2bit/live-shows-private → current_private.tsv** (remove or update), **dan2bit/live-shows-private → spending.tsv** (negative-cost row offsetting the original purchase), and deletes the calendar event
 - Incoming recommendation issues in the repo (label:recommendation) — research + supplement each new issue
 
 Apply the `processed` label (ID: Label_421272830174798850) directly via Gmail MCP at the end of each routine. Draft activity log to redhat.bootlegs@gmail.com at session end.
@@ -30,8 +31,11 @@ Key rules in effect:
 -- This check applies per-artist before surfacing a recommendation, not as a single batch at the end.
 - Purchasing/fee notes go in Private Notes, not public Notes, unless explicitly requested otherwise
 - Hat signing: eligibility per data/show_goals/hat_eligibility.tsv (#115) — Yes = target for signing. Actual signers per data/show_goals/hat_signatures.tsv (canonical). A signature never removes eligibility (completed wins in rendering). The artists.tsv Hat Autograph column is deprecated — do not set it.
+- Autograph books: same eligibility/signatures split — eligibility per data/show_goals/autograph_books_eligibility.tsv, actual signers per data/show_goals/book_signatures.tsv. There is no combined file.
+- **ASCII punctuation only in every TSV value** (#204): use `-` not an en/em dash, straight quotes not curly, `...` not an ellipsis. Curly punctuation in a data value silently orphans a sidecar key, goal-badge match, or alias lookup. `check_ascii_punctuation.py` scans the public TSVs and warns; accented letters are fine — this is a punctuation rule, not an ASCII-only rule. Applies to notes and prose columns too.
 - Potentials sort: Buy → Choose → Sell → Pass, date asc within groups; re-sort on every change
 - Prev/Next brackets: purchased upcoming shows only; never potentials or attended
 - Fetch fresh SHA immediately before every create_or_update_file call
 - TSVs and data files commit to **staging** (not main); private sidecar TSVs commit to dan2bit/live-shows-private main; JS/Python scripts go to PR branch
-- push_files does NOT trigger auto-promote on staging — follow up with a single-file create_or_update_file nudge, or use sequential create_or_update_file calls instead
+- `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
+- Auto-promote trigger: the **Contents API** (`create_or_update_file`) fires the `push` event and promotes staging to main. The **Git Data API** (`push_files`, or a manual blobs → tree → commit → ref sequence) does not. After any Git Data batch, follow up with a single-file Contents write — ideally a real change rather than a synthetic nudge.
