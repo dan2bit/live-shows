@@ -21,6 +21,30 @@ the pipeline; that one tells you how to work inside it).
 
 ## Level 0 — UI-only fork
 
+### 0. Level 0 in five commands
+
+The fastest path — fork on GitHub, then:
+
+```bash
+git clone https://github.com/<you>/<repo>.git && cd <repo>
+python3 scripts/fork_reset.py --dry-run     # review the plan
+python3 scripts/fork_reset.py --patch-meta  # reset data; bootstrap the <head>
+git commit -am "fork reset" && git push
+# then: Settings -> Pages -> Deploy from a branch -> main / root
+```
+
+`fork_reset.py` replaces every data file with its exemplar from
+`sample-files/` (canonical header + one synthetic row you delete via the
+in-page editor), empties the derived JSON caches to valid structures, clears
+`data/history/` + `data/setlists/` and sets `history_years: []`, and — with
+`--patch-meta` — applies your `config.yaml` values to the hand-maintained
+static `<head>` once. It refuses to run against the original repo and prints
+the full manual-steps checklist (secrets, tokens, image guidance) when done.
+**Acceptance test:** your Pages URL renders an empty, correctly-branded
+tracker with no console errors. Sections 1–5 below are the same ground in
+detail; Level 1's private seeds come from the same tool
+(`--private-dir <path-to-your-private-clone>`).
+
 ### 1. Fork and serve
 
 1. Fork the repo on GitHub.
@@ -69,7 +93,10 @@ Everything the site shows lives in TSVs under `data/`:
 | `recommend_aliases.tsv` | Artist name variants → canonical names (drives several joins) |
 | `show_goals/` | Optional achievement logs (signatures, photos) — delete along with config `show_goals` for a badge-free site |
 
-Start by emptying the personal rows and adding your own. Two format rules
+`fork_reset.py` (above) empties these for you from `sample-files/` — each
+sample is the live header plus one synthetic row, and CI guards the sample
+headers against schema drift. If you'd rather do it by hand, start by emptying
+the personal rows and adding your own. Two format rules
 matter: keep header rows intact (the in-page editor derives columns from line 1 —
 never add `#` comment lines to `current`/`potential`/`fast_track`), and use plain
 ASCII punctuation in data values (curly quotes and long dashes silently break
