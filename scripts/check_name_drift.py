@@ -21,7 +21,10 @@ orphan joins (sidecar keys, goal-badge matches, modal/recommend lookups):
 Legitimately-distinct near-pairs (e.g. Eric Johanson / Eric Johnson) live in
 the allowlist below and are exempt from checks 1 and 2.
 
-Always exits 0 — read-only, warn-only, like the other data-hygiene checks.
+Always exits 0 — read-only, warn-only, and deliberately kept that way. Near-miss
+matching has intrinsic false positives, and a fuzzy check that can block a
+promotion is how a guard ends up switched off. Findings are delivered as
+annotations and as a job-summary section; they never gate anything.
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
@@ -33,6 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from name_forms import goal_norm, variant_keys, bill_components  # noqa: E402
+from hygiene_report import Report  # noqa: E402
 
 ALIASES_PATH = "data/recommend_aliases.tsv"
 
@@ -54,13 +58,11 @@ def max_distance(a, b):
         return 1
     return 0
 
-warned = 0
+report = Report("check_name_drift")
 
 
 def warn(msg):
-    global warned
-    warned += 1
-    print(f"::warning::{msg}")
+    report.warn(msg)
 
 
 def read_col(path, *cols):
@@ -176,9 +178,7 @@ def main() -> int:
     print(f"surface census: {len(names)} distinct names, "
           f"{len(unresolved)} untracked (one-off support acts are normal)")
 
-    print(f"check_name_drift: {warned} warning(s)." if warned
-          else "check_name_drift: clean.")
-    return 0
+    return report.finish()
 
 
 if __name__ == "__main__":
