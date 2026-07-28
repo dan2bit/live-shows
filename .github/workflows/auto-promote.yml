@@ -47,7 +47,7 @@ jobs:
           fi
 
           # sample-files/private/ is exempt: forker seed schemas, synthetic
-          # rows only — see sample-files/README.md and issue #216.
+          # rows only — see sample-files/README.md.
           sniff="$(git ls-files '*.tsv' | grep -v '^sample-files/private/' | while IFS= read -r f; do
             if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
           done)"

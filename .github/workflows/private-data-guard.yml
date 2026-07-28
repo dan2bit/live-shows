@@ -46,7 +46,7 @@ jobs:
           #    presence in a header line means a private sidecar slipped in renamed.
           # sample-files/private/ is exempt: those files carry the private schema
           # headers ON PURPOSE (forker seeds, synthetic rows only — see
-          # sample-files/README.md and issue #216).
+          # sample-files/README.md).
           sniff="$(git ls-files '*.tsv' | grep -v '^sample-files/private/' | while IFS= read -r f; do
             if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
           done)"
@@ -66,7 +66,7 @@ jobs:
 
           echo "OK — no private sidecar files or private-schema headers in the public repo."
 
-      - name: Sample-file header drift check (#216)
+      - name: Sample-file header drift check
         shell: bash
         run: |
           set -euo pipefail
