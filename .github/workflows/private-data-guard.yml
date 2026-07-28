@@ -40,7 +40,10 @@ jobs:
           # 2. Content sniff — a private schema header smuggled in under another
           #    name. Public TSVs carry no "Private Notes" column by design, so its
           #    presence in a header line means a private sidecar slipped in renamed.
-          sniff="$(git ls-files '*.tsv' | while IFS= read -r f; do
+          # sample-files/private/ is exempt: those files carry the private schema
+          # headers ON PURPOSE (forker seeds, synthetic rows only — see
+          # sample-files/README.md and issue #216).
+          sniff="$(git ls-files '*.tsv' | grep -v '^sample-files/private/' | while IFS= read -r f; do
             if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
           done)"
           if [ -n "$sniff" ]; then
@@ -58,3 +61,35 @@ jobs:
           fi
 
           echo "OK — no private sidecar files or private-schema headers in the public repo."
+
+      - name: Sample-file header drift check (#216)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'EOF'
+          # Compare each public sample's header against its canonical file.
+          # The mapping is imported from fork_reset.py so there is exactly one
+          # source of truth; private samples are not in SAMPLE_MAP (their
+          # canonicals live in the private repo) and are hand-maintained.
+          import importlib.util, sys
+          spec = importlib.util.spec_from_file_location("fr", "scripts/fork_reset.py")
+          fr = importlib.util.module_from_spec(spec); spec.loader.exec_module(fr)
+          def header(path):
+              with open(path, encoding="utf-8-sig") as f:
+                  for line in f:
+                      if not line.startswith("#"):
+                          return line.rstrip("\n")
+              return ""
+          bad = []
+          for sample, canon in fr.SAMPLE_MAP.items():
+              hs, hc = header(sample), header(canon)
+              if hs != hc:
+                  bad.append((sample, canon, hs, hc))
+          if bad:
+              for s, c, hs, hc in bad:
+                  print(f"::error::sample header drift: {s} != {c}")
+                  print(f"  sample:    {hs}")
+                  print(f"  canonical: {hc}")
+              sys.exit(1)
+          print(f"OK — {len(fr.SAMPLE_MAP)} sample headers match their canonical files.")
+          EOF
