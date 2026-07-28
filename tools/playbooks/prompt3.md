@@ -7,7 +7,7 @@ quarterly inbox refresh analysis (Routine 3 deep pass), artist discovery (Gnoosi
 award nominees), and fork-template design (the #19 / #72 successors — see Active strategic threads).
 
 Start every session by:
-1. **Tool preflight (blocking — do this first, before any work).** Enumerate the tools actually available this session and report which of these are present: `tool_search`, `github:issue_write`, and (if the session's work needs them) Spotify, Calendar, time, and Claude-in-Chrome.
+1. **Tool preflight (blocking — do this first, before any work).** Enumerate the tools actually available this session and report which of these are present: `tool_search`, `github:issue_write`, and (if the session's work needs them) Spotify, Calendar, the `time` connector (`mcp__time__get_current_time`), and Claude-in-Chrome.
    - If `tool_search` is ABSENT: this is an eager-tool session — every deferred tool (Spotify, Calendar, time, Chrome, Gmail) is unreachable, and `tool_search` cannot be summoned by anything in this prompt (provisioning happens before the prompt is read). STOP and tell Dan plainly which tools are present, that the deferred ones are unavailable, and ask whether to (a) proceed with the subset that works (often GitHub-only — issue/architecture/research-writeup work, no Spotify/Chrome/calendar), or (b) restart in a fresh session/chat to try to get the deferred set. Do NOT silently start work that will hit a wall three steps in.
    - If `github:issue_write` is absent: STOP and alert Dan — most strategy work lands as issues, so this is a hard blocker.
    - Only proceed once the tool state is stated and, if degraded, Dan has chosen the path.
