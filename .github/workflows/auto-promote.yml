@@ -33,6 +33,12 @@ jobs:
           set -euo pipefail
           fail=0
 
+          # NOTE: this sniff is a MIRROR of the one in private-data-guard.yml —
+          # any change there must be applied here too (and vice versa). The
+          # drift check is deliberately NOT mirrored: promotion gates on leak
+          # prevention only, so a sample-header lag shows a red X on the guard
+          # run without resetting data commits off staging.
+
           offending="$(git ls-files | grep -E '^live-shows-private/|_private\.tsv$|_caps\.tsv$' || true)"
           if [ -n "$offending" ]; then
             echo "::error::Private sidecar path(s) in the public repo:"
@@ -40,7 +46,9 @@ jobs:
             fail=1
           fi
 
-          sniff="$(git ls-files '*.tsv' | while IFS= read -r f; do
+          # sample-files/private/ is exempt: forker seed schemas, synthetic
+          # rows only — see sample-files/README.md and issue #216.
+          sniff="$(git ls-files '*.tsv' | grep -v '^sample-files/private/' | while IFS= read -r f; do
             if head -n 1 -- "$f" | grep -qi 'Private Notes'; then printf '%s\n' "$f"; fi
           done)"
           if [ -n "$sniff" ]; then
