@@ -1,18 +1,33 @@
-# Data hygiene — read-only, warn-only drift scans.
+# Data hygiene — drift scans, blocking or advisory depending on the check.
 #
-# Three checks, all annotations-only (exit 0 always; nothing here can block a
-# merge or a promote):
 #   - check_ascii_punctuation.py — non-ASCII punctuation in pipeline-consumed
-#     data (curly quotes / long dashes orphan sidecar and goal-join keys)
+#     data (curly quotes / long dashes orphan sidecar and goal-join keys).
+#     BLOCKING on staging: eight fixed characters, no heuristic, mechanical fix.
 #   - check_name_drift.py — artist-name near-collisions, near-miss drift, and
-#     alias coverage across every artist-bearing column
+#     alias coverage across every artist-bearing column. ADVISORY everywhere,
+#     permanently: near-miss matching has intrinsic false positives, and a fuzzy
+#     check that can fail a run is how a guard ends up switched off.
 #   - check_evergreen.py — issue references and changelog dates creeping back
-#     into forker-facing code comments (history belongs in docs/ISSUE_LOG.md)
+#     into forker-facing comments and printed strings (history belongs in
+#     docs/ISSUE_LOG.md). BLOCKING on staging, but only for the files the push
+#     touched; the full-repo scan stays advisory.
+#
+# On main every check runs advisory, so a pre-existing finding elsewhere in the
+# repo never fails an unrelated run. All three write a $GITHUB_STEP_SUMMARY
+# section every run, clean or not, so the findings are readable without opening
+# a job log.
+#
+# WHAT "BLOCKING" MEANS HERE: a strict failure fails THIS workflow, which marks
+# the staging commit red and sends the usual workflow-failure notification. It
+# does not by itself stop auto-promote.yml from fast-forwarding main — that
+# workflow does not depend on this one, and main's required status check is the
+# private-data guard. Gating the promote on hygiene is a change to
+# auto-promote.yml, not something this file can do.
 name: data-hygiene
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "data/**"
       - "config.yaml"
@@ -32,14 +47,62 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: the evergreen scope is derived from the push diff.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install pyyaml
+
+      - name: Resolve the push diff
+        id: diff
+        if: github.ref == 'refs/heads/staging'
+        shell: bash
+        run: |
+          set -euo pipefail
+          before='${{ github.event.before }}'
+          # A new branch, or a push whose old tip is no longer reachable, leaves
+          # nothing usable in event.before; fall back to the first parent.
+          if [ -z "$before" ] \
+            || [ "$before" = "0000000000000000000000000000000000000000" ] \
+            || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            # --verify -q so a missing parent yields an empty string rather
+            # than rev-parse echoing the literal argument back.
+            before="$(git rev-parse --verify -q 'HEAD~1' || true)"
+          fi
+          files=""
+          if [ -n "$before" ]; then
+            files="$(git diff --name-only --diff-filter=d "$before" '${{ github.sha }}' \
+              -- '*.py' '*.js' '*.css' '*.html' '*.yml' 'config.yaml' | tr '\n' ' ')"
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "evergreen scope: ${files:-<none - advisory this run>}"
+
       - name: ASCII punctuation scan
-        run: python scripts/check_ascii_punctuation.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ '${{ github.ref }}' = 'refs/heads/staging' ]; then
+            python scripts/check_ascii_punctuation.py --strict
+          else
+            python scripts/check_ascii_punctuation.py
+          fi
+
       - name: Artist-name drift scan
         run: python scripts/check_name_drift.py
-      - name: Evergreen comment scan
-        run: python scripts/check_evergreen.py
+
+      - name: Evergreen scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          files='${{ steps.diff.outputs.files }}'
+          # An empty list would mean "the whole repo" to --strict, which is not
+          # the intent when a push touched no scannable file; stay advisory.
+          if [ '${{ github.ref }}' = 'refs/heads/staging' ] && [ -n "$files" ]; then
+            # shellcheck disable=SC2086
+            python scripts/check_evergreen.py --strict $files
+          else
+            python scripts/check_evergreen.py
+          fi
