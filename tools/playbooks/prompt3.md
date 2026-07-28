@@ -4,7 +4,7 @@ Repo: dan2bit/live-shows (public). GitHub Pages: https://dan2bit.github.io/live-
 
 This session is for open-ended work: architectural design, artist research and follow tier decisions, 
 quarterly inbox refresh analysis (Routine 3 deep pass), artist discovery (Gnoosic, festival lineups, 
-award nominees), and issue #19 (fork-ready template design).
+award nominees), and fork-template design (the #19 / #72 successors — see Active strategic threads).
 
 Start every session by:
 1. **Tool preflight (blocking — do this first, before any work).** Enumerate the tools actually available this session and report which of these are present: `tool_search`, `github:issue_write`, and (if the session's work needs them) Spotify, Calendar, time, and Claude-in-Chrome.
@@ -15,8 +15,8 @@ Start every session by:
 
 Before substantive work, check:
 - Open issues relevant to the session's focus area
-- Current state of issue #19 including all comments, if doing template design work
-- follows/follows_master.tsv and follows/new_artist_research.tsv if doing artist research
+- The open fork-template threads (see Active strategic threads) if doing template design work
+- tools/research/follows/follows_master.tsv and tools/research/follows/new_artist_research.tsv if doing artist research
 - **dan2bit/live-shows-private → taste_profile.md** if doing artist research or follow-tier work
   (private repo, file at repo root — fetch via MCP get_file_contents; raw.githubusercontent does
   NOT work for the private repo)
@@ -42,11 +42,20 @@ Follow tier model:
 Commit rules (for any file writes in this session):
 - TSVs and data files → **staging** branch in dan2bit/live-shows; auto-promote.yml fast-forwards main after guard passes
 - Private sidecar TSVs → dan2bit/live-shows-private main directly
-- push_files does NOT trigger auto-promote on staging — follow up with a single-file create_or_update_file nudge, or use sequential create_or_update_file calls
 - Scripts and code → PR branch; Dan merges
+- `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
+- Auto-promote trigger: the **Contents API** (`create_or_update_file`) fires the `push` event and promotes staging to main. The **Git Data API** (`push_files`, or a manual blobs → tree → commit → ref sequence) does not. After any Git Data batch, follow up with a single-file Contents write — ideally a real change rather than a synthetic nudge.
+- **ASCII punctuation only in every TSV value** (#204): `-` not an en/em dash, straight quotes not curly, `...` not an ellipsis. Curly punctuation silently orphans sidecar keys, goal-badge matches, and alias lookups. Accented letters are fine — this is a punctuation rule, not an ASCII-only rule.
 
 Active strategic threads:
-- Issue #19 and related issues: fork-ready template (config.yaml, CSS/JS separation, fast_track exemplar, features flags)
+- Fork-ready template. #19 (restructure as reusable template, closed 2026-06-22) and #72
+  (annotations and documentation for forking, closed 2026-07-27) are both DONE — read them for
+  history only. The live work is #199–#205 (de-bespoke sweep, issue log + evergreen-comment
+  convention, config restructure, FORK_SETUP levels, Spotify playbook split, CI hygiene guards),
+  #216 (Level 0 bootstrap: sample-files/ exemplar tree + fork_reset.py + header drift check),
+  and #220 (data-hygiene: blocking vs advisory split, and giving the advisory half a reader).
 - Gnoosic artist discovery (Claude in Chrome, work interrupted — resume from https://www.gnoosic.com/artist/larkin+poe)
 - Quarterly artist research workflow: first run Jul 7, 2026 (festival lineups + award nominees)
-- On-sale dates to watch: Shemekia Copeland Aug 4, Angélique Kidjo Aug 4, Whitney Mongé by email invite early August
+- On-sale dates to watch: read the `Watching For` column in data/live_shows_potential.tsv — that
+  column is the source of truth and is maintained by Routine 3. Do not keep a hand-copied list
+  here; it drifts out of date between sessions.
