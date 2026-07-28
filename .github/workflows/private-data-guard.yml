@@ -29,6 +29,10 @@ jobs:
           set -euo pipefail
           fail=0
 
+          # NOTE: the path rule + sniff below are MIRRORED in auto-promote.yml's
+          # inline guard step — any change here must be applied there too (and
+          # vice versa). The drift check further down is guard-only by design.
+
           # 1. Path patterns — the private sidecar must never be tracked here.
           offending="$(git ls-files | grep -E '^live-shows-private/|_private\.tsv$|_caps\.tsv$' || true)"
           if [ -n "$offending" ]; then
