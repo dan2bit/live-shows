@@ -108,6 +108,28 @@ you can leave the stale ones in place (artist modals will show Dan's data until
 regenerated) or delete them (modals degrade gracefully). Level 2's CI rebuilds
 the first two automatically; the Spotify cache is optional back-office tooling.
 
+Two more TSVs under `data/` are **optional sidecars**, and they work differently
+from everything in the table above: they are not in `sample-files/`, so
+`fork_reset.py` neither seeds nor clears them, and the site treats a missing,
+empty, or header-only file as "no data" — the fetch fails soft, nothing 404s
+visibly, and the UI renders exactly as it would without the feature. Your fork
+gains each one the day it has a row to put in it.
+
+| File | How it appears | What it does |
+|---|---|---|
+| `artist_favorites.tsv` | Written by the site — click the brand-hat gauge in an artist modal while authed (needs config `features.favorite`) | Pins that artist's gauge to full with a star. Columns: `Artist`, `Since`. Public by design: the star and pinned gauge are visible to every viewer; only the promote/remove control is authed |
+| `artist_status.tsv` | Hand-curated — create it yourself | Renders one muted line under the artist name in the modal for an act that is no longer active |
+
+`artist_status.tsv` columns are `Artist`, `Status`, `Years`, `Status Date`,
+`Note`, `Source`. `Status` is one of `deceased`, `defunct`, or `retired`, and the
+file is **sparse on purpose: absence means active** — never write an `active`
+row, so every row in the file means something. The line renders as `d. 2026`,
+`disbanded 2025`, or `retired 2021`; the year comes from `Status Date`, falling
+back to the closing year of `Years`. `Note` becomes the line's tooltip, and
+`Source` is your own provenance note. The ASCII-punctuation rule applies to the
+values like any other data file — write `1970-2026` with a plain hyphen, and let
+the renderer do the typography.
+
 ### 4. The site-editing token (in-browser edits)
 
 A fine-grained PAT (<https://github.com/settings/personal-access-tokens/new>):
