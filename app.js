@@ -81,7 +81,7 @@ function applyConfig(cfg){
   // about_links: list of {url,label} objects. Rebuilt dynamically so a fork can add
   // or remove links by editing config alone. The static anchors in index.html are the
   // pre-JS fallback shown if config.yaml is absent or about_links is not a list.
-  var al=cfg.about_links;
+  var al=s.about_links;
   if(Array.isArray(al)&&al.length){
     var box=document.querySelector('#aboutModal .about-links');
     if(box){
