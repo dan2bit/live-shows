@@ -371,7 +371,10 @@
     /* Hide venue column (shown in Artist cell via cell-venue-mobile instead) */
     .col-support,.col-seat,.col-cost,.cell-venue{display:none;}
     .cell-notes{max-width:220px;}
-    .col-watching,.col-tier,.col-price,.col-context{display:none;}
+    /* Face/price column stays visible so the Buy Tickets link (.price-link) remains
+       reachable on mobile; only the $ amount (.price-amt) is hidden for space. */
+    .col-watching,.col-tier,.col-context{display:none;}
+    .price-amt{display:none;}
     .cell-pot-notes{max-width:160px;}
     .cell-venue-mobile{display:block;}
   }
