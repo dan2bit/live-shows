@@ -20,6 +20,12 @@ var amIndexCache=null,amSlugMap=null,amRouting=false;
 // pattern (fresh sha, PUT with branch:dataBranch() -> staging -> auto-promote).
 var AM_FAV_PATH='data/artist_favorites.tsv';
 var amFavCache=null;   // {amNorm(Artist): row} - loaded for all viewers when features.favorite is on
+// Artist status — PUBLIC, curated, and entirely optional (data/artist_status.tsv).
+// Sparse by design: a row exists only for an artist who is no longer active, so
+// absence means active, and a missing or header-only file is a silent no-op. The
+// modal renders one muted line under the name; nothing else in the site reads it.
+var AM_STATUS_PATH='data/artist_status.tsv';
+var amStatusCache=null;   // {amNorm(Artist): row}
 
 // Mirrors build_artist_index.py norm(): de-invert "Lone Bellow, The", de-accent,
 // drop one leading article, punctuation -> space, collapse whitespace.
@@ -58,6 +64,7 @@ async function openArtistModal(name){
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
+  await amLoadStatus();
   var key=amNorm(name),rec=(data.artists||{})[key]||null;
   if(!rec&&data.aliases&&data.aliases[key]){key=data.aliases[key];rec=(data.artists||{})[key]||null;}
   amOpenRec(rec,name,key);
@@ -67,6 +74,7 @@ async function openArtistBySlug(slug){
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
+  await amLoadStatus();
   var key=(amSlugMap||{})[slug]||null,rec=key?data.artists[key]:null;
   amOpenRec(rec,rec?rec.name:slug.replace(/-/g,' '),key||slug);
 }
@@ -141,6 +149,17 @@ async function amLoadFavorites(){
   }catch(e){console.warn('favorites load skipped:',e.message);}
   return amFavCache;
 }
+// Read-only, low-churn, no auth: a plain relative fetch off the Pages CDN. Any
+// failure (absent file included) leaves the map empty and the modal unchanged.
+async function amLoadStatus(){
+  if(amStatusCache)return amStatusCache;
+  amStatusCache={};
+  try{
+    var res=await fetch(AM_STATUS_PATH);
+    if(res.ok)parseTsv(await res.text()).forEach(function(r){var k=amNorm(r['Artist']||'');if(k)amStatusCache[k]=r;});
+  }catch(e){console.warn('artist status load skipped:',e.message);}
+  return amStatusCache;
+}
 function amIsFav(key){return !!(amFavCache&&amFavCache[key]);}
 // Gauge click: toggle favorite, with confirm friction below the configured band and on remove.
 async function amFavClick(key){
@@ -195,6 +214,7 @@ function amRender(rec,displayName,key){
     ?'<div class="am-avatar am-avatar-photo"><img class="am-photo" src="'+esc(rec.image_url)+'" alt="'+esc(rec.name||'')+'" referrerpolicy="no-referrer"></div>'
     :'<div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>';
   h+='<div class="am-id"><div class="am-name">'+esc(rec.name||displayName||'')+'</div>';
+  h+=amStatusLine(rec.name||displayName||'');
   if(rec.genres&&rec.genres.length)
     h+='<div class="am-genres">'+rec.genres.slice(0,4).map(function(g){return'<span class="am-genre">'+esc(g)+'</span>';}).join('')+'</div>';
   h+='</div></div>';
@@ -211,6 +231,7 @@ function amUnknown(displayName,key){
   return'<div class="am-card"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
     +'<div class="am-head"><div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>'
     +'<div class="am-id"><div class="am-name">'+esc(displayName||'Unknown')+'</div>'
+    +amStatusLine(displayName||'')
     +'<div class="am-none">No details on file yet.</div></div></div>'
     +amRowOnly(key)
     +'<div class="am-links"><a class="am-link" href="https://open.spotify.com/search/'+encodeURIComponent(displayName||'')+'" target="_blank">Search Spotify</a></div></div>';
@@ -221,6 +242,25 @@ function amRowOnly(key){
   if(r.upcoming)h+='<div class="am-next-inline">\ud83c\udf9f Upcoming \u2014 '+esc(r.upcoming.date)+(r.upcoming.venue?' \u00b7 '+esc(amVenueShort(r.upcoming.venue)):'')+'</div>';
   if(r.considering)h+='<div class="am-next-inline">\ud83d\udc40 Considering \u2014 '+esc(r.considering.date||'TBD')+(r.considering.venue?' \u00b7 '+esc(r.considering.venue):'')+'</div>';
   return h+'</div>';
+}
+
+// One muted line under the artist name for an artist who is no longer active:
+// a lifespan for deceased, "disbanded"/"retired" plus the year for an act that
+// has stopped. Deliberately not a badge — the wording alone separates the states,
+// so no color coding is needed at this size. The Years value is stored ASCII in
+// the TSV, as pipeline-consumed data must be; the en dash is applied here, at
+// render time. An optional Note rides along as the tooltip.
+function amStatusLine(name){
+  var r=amStatusCache&&amStatusCache[amNorm(name||'')];
+  if(!r)return'';
+  var st=(r['Status']||'').toLowerCase();if(!st)return'';
+  var yrs=(r['Years']||'').trim(),when=amYear(r['Status Date']||''),txt='';
+  if(st==='deceased')txt=yrs?yrs.replace(/\s*-\s*/,' \u2013 '):(when?'d. '+when:'');
+  else if(st==='defunct')txt='disbanded'+(when?' '+when:'');
+  else if(st==='retired')txt='retired'+(when?' '+when:'');
+  if(!txt)return'';
+  var note=(r['Note']||'').trim();
+  return'<div class="am-status am-status-'+esc(st)+'"'+(note?' title="'+esc(note)+'"':'')+'>'+esc(txt)+'</div>';
 }
 
 // 5-bar listener meter (emerging<niche<mid<popular<major). Null -> omit.
