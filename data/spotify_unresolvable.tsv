@@ -1,0 +1,6 @@
+Artist	Reason	Marked Date	Recheck After	Notes
+Blood Brothers	name_collision	2026-07-30	2027-01-30	Zito/Castiglia duo — records as "Mike Zito & Albert Castiglia"; bare search hits the unrelated Seattle post-hardcore band instead. Fixable via a recommend_aliases.tsv entry mapping to the correct search name.
+Eli Kollman	no_presence	2026-07-30	2027-07-30	Support act seen once; no catalogue found on Spotify.
+SatchVai Band	needs_split	2026-07-30		Combined-bill artifact — Spotify catalogs their joint work under Joe Satriani and Steve Vai separately, never under "SatchVai Band." Both members already resolve individually; skipping the bill name suppresses nothing. Needs bill-splitting support to resolve properly, not a recheck.
+TJ Turqman	no_presence	2026-07-30	2027-07-30	Local session bassist (seen_with only) — no Spotify catalogue.
+The Side Cars Band	no_presence	2026-07-30	2027-07-30	Tribute band — no independent Spotify entity.
