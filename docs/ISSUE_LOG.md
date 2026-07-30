@@ -65,6 +65,7 @@ references as working shorthand and are not logged here.
 | [#204](https://github.com/dan2bit/live-shows/issues/204) | Warn-only data-hygiene guards (ASCII punctuation, artist-name drift, evergreen comments) as a CI backstop for conventions previously enforced only at write time. |
 | [#205](https://github.com/dan2bit/live-shows/issues/205) | Playbook additions: batch-commit rule, ASCII punctuation rule, alias-key frozen schema. |
 | [#216](https://github.com/dan2bit/live-shows/issues/216) | Level 0 fork bootstrap: the sample-files/ exemplar tree, fork_reset.py, and the CI check that fails when a sample header drifts from its canonical file. The private-data guard and its auto-promote mirror gained a sample-files/private/ exemption; both copies of the sniff must be edited together. |
+| [#227](https://github.com/dan2bit/live-shows/issues/227) | Replaced the hardcoded `_UNRESOLVABLE_ARTISTS` set with `data/spotify_unresolvable.tsv` (dated, reasoned, self-expiring via `Recheck After`); the `--new-artist`/bare-mode "Unresolved" reports now print ready-to-paste rows instead of just names. |
 
 Other incident dates that appear in history: the Spotify Web API deprecations of
 2024-11-27 (dev-mode metadata strip) and the 2026-02-11 → 2026-03-09 endpoint

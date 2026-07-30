@@ -55,8 +55,10 @@ RATE LIMITS
     churning every remaining artist into a false 'unresolved'. To keep request
     volume down per build: build_entry makes ONE call (latest_release); a stored
     or cached id skips the /search; and non-artist rows (festival/event names in
-    the Artist column of Pass potentials) are dropped before resolution via
-    _is_non_artist (explicit set + "festival" substring) so they never cost a call.
+    the Artist column of Pass potentials, plus known-unresolvable artists from
+    data/spotify_unresolvable.tsv) are dropped before resolution via
+    _is_non_artist (explicit set + the unresolvable table + "festival" substring)
+    so they never cost a call.
     Pace the calls with --delay (default 2.0s) — raise it on a big first build to
     stay under the limit, lower it once limits relax or for the lighter passes.
     A multi-day --refresh-releases back-audit resumes across the daily cap with
@@ -253,6 +255,12 @@ NOTE    Canonicalization here applies the explicit data/recommend_aliases.tsv ma
         apostrophe-only variant can still split into two entries; fix those at the
         source or extend this step if they accumulate.
 
+UNRESOLVABLE  data/spotify_unresolvable.tsv (Artist / Reason / Marked Date /
+        Recheck After / Notes) is the dated, reasoned record of artists that
+        resolve to no single Spotify entity — see load_unresolvable() and
+        _is_non_artist(). A row's Recheck After date expiring returns that
+        artist to normal resolve candidacy automatically (#227).
+
 HISTORY The scope above (metadata-only, stripped fields, the guards) was shaped
         by Spotify's Dev-mode API deprecations and a handful of cache-corruption
         incidents. The issue history behind these designs is logged in
@@ -291,6 +299,7 @@ FOLLOWS    = os.path.join(REPO_ROOT, "tools", "research", "follows")
 ALIASES_TSV = os.path.join(DATA_DIR, "recommend_aliases.tsv")
 OUTPUT_JSON = os.path.join(DATA_DIR, "artist_spotify.json")
 ARTISTS_TSV = os.path.join(DATA_DIR, "artists.tsv")
+UNRESOLVABLE_TSV = os.path.join(DATA_DIR, "spotify_unresolvable.tsv")
 
 load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 
@@ -409,34 +418,18 @@ _SKIP_ARTISTS = {"all things go music festival", "hot august music festival",
 
 # Real-looking strings that resolve to NO single Spotify artist and should be
 # dropped before resolution so they stop costing a /search call every run.
-# Keep this list TIGHT — it is NOT a dumping ground for "didn't
-# resolve". Only two kinds belong here:
-#   1. A genuine artist with zero Spotify presence (e.g. Eli Kollman — a support
-#      act seen once, no catalogue anywhere).
-#   2. A bill name that exists ONLY as an amalgamation of members who each have
-#      their own Spotify entity, with no entry for the combined name (e.g.
-#      "SatchVai Band" — Spotify lists their joint EP under Joe Satriani AND
-#      Steve Vai separately, never under "SatchVai Band"; both members are already
-#      in seen_with.tsv, so skipping the bill suppresses nothing).
-# Do NOT add combined "X & Y" bills whose components are real, separately-resolvable
-# artists you want in the cache/NAR (JD Simo & Luther Dickinson, Sarah Borges &
-# Eric Ambel, Laka Soul). Those are a SPLIT problem, not a skip — splitting
-# "&"-bills into their components is tracked separately. Suppressing them here would
-# also hide real artists (e.g. Luther Dickinson = North Mississippi Allstars,
-# already seen). Normalised through _norm so "&"/accents match the collected names.
-_UNRESOLVABLE_ARTISTS = {_norm(x) for x in (
-    "Blood Brothers",      # Zito/Castiglia duo — records as "Mike Zito & Albert Castiglia";
-                           # a bare search hits the Seattle post-hardcore band instead
-    "Eli Kollman",
-    "SatchVai Band",
-    "TJ Turqman",          # local session bassist (seen_with only) — no Spotify catalogue
-    "The Side Cars Band",  # tribute band — no independent Spotify entity
-)}
+# Loaded from data/spotify_unresolvable.tsv (Artist / Reason / Marked Date /
+# Recheck After / Notes) rather than hardcoded here — see load_unresolvable(),
+# below, for the loader and the module-scope _UNRESOLVABLE it builds. Keep that
+# TSV TIGHT — it is NOT a dumping ground for "didn't resolve". Only genuine
+# no-presence artists, name collisions, and bill-splitting gaps belong there;
+# a real-but-currently-unresolved artist should get a Recheck After date, not
+# a permanent entry.
 
 
 def _is_non_artist(name: str) -> bool:
     n = _norm(name)
-    return n in _SKIP_ARTISTS or n in _UNRESOLVABLE_ARTISTS or "festival" in n
+    return n in _SKIP_ARTISTS or n in _UNRESOLVABLE or "festival" in n
 
 
 # ── TSV reading (comment-tolerant) ────────────────────────────────────────────
@@ -454,6 +447,42 @@ def read_tsv_rows(path: str) -> list[dict]:
     if not lines:
         return []
     return [{k: (v or "") for k, v in row.items()} for row in csv.DictReader(lines, delimiter="\t")]
+
+
+def load_unresolvable() -> dict[str, dict]:
+    """Map _norm(Artist) -> row dict, from data/spotify_unresolvable.tsv (#227).
+
+    Returns {} if the file is missing (read_tsv_rows already tolerates that).
+    A row whose Recheck After date has passed is dropped here, so that artist
+    falls back into normal resolve candidacy automatically instead of staying
+    silently skipped forever. Blank Recheck After never expires (currently only
+    needs_split rows, which need a feature change, not a data refresh, to ever
+    resolve). A malformed Recheck After doesn't crash the loader — mirrors how
+    a bad date.fromisoformat is handled elsewhere in this file (see
+    _days_since / _infer_stale_days): skip the recheck check and keep the row
+    unresolvable, rather than let one bad date break the load."""
+    umap: dict[str, dict] = {}
+    today = date.today()
+    for row in read_tsv_rows(UNRESOLVABLE_TSV):
+        artist = (row.get("Artist") or "").strip()
+        if not artist:
+            continue
+        recheck = (row.get("Recheck After") or "").strip()
+        if recheck:
+            try:
+                if date.fromisoformat(recheck) <= today:
+                    continue   # expired — back to normal resolve candidacy
+            except ValueError:
+                pass   # malformed date — treat as still-unresolvable
+        umap[_norm(artist)] = row
+    return umap
+
+
+# Built once at import time, mirroring _SKIP_ARTISTS as a plain module-level
+# lookup set _is_non_artist can check without threading a loaded map through
+# every caller. Defined here (after read_tsv_rows) rather than up next to
+# _SKIP_ARTISTS so the loader it calls already exists at module-load time.
+_UNRESOLVABLE = load_unresolvable()
 
 
 def load_aliases() -> dict[str, str]:
@@ -556,8 +585,9 @@ def collect_raw_names(amap: dict[str, str]) -> set[str]:
     NOT passed through _is_non_artist() and NOT Band-folded.
 
     This — not collect_artists() — is the correct universe for --prune.
-    collect_artists() deliberately drops _SKIP_ARTISTS / _UNRESOLVABLE_ARTISTS so they
-    never cost a /search call, and folds "X Band" into "X". Both are right for
+    collect_artists() deliberately drops _SKIP_ARTISTS / the unresolvable table
+    (data/spotify_unresolvable.tsv, via _UNRESOLVABLE) so they never cost a
+    /search call, and folds "X Band" into "X". Both are right for
     resolution and wrong for staleness: those artists are still real rows in the TSVs,
     so a cache entry for one of them is NOT an orphan. Pruning against collect_artists()
     deletes them *permanently* — nothing re-seeds them, because refresh_lastfm()'s
@@ -1694,6 +1724,19 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
     return f"→ {aid}  latest {rel}  {portrait}  {lastfm_note}", entry
 
 
+def _print_unresolved_tsv_rows(names: list[str]) -> None:
+    """Print one ready-to-paste data/spotify_unresolvable.tsv row per name, for
+    the end-of-run "Unresolved" report. Shared by new_artist_run() and main()'s
+    bare-mode add-missing loop — keeping one copy of the row format is the whole
+    point (two independently-worded copies of this advice was part of #227's
+    original problem). Reason and Notes are left as fill-in placeholders; which
+    of no_presence / name_collision / needs_split applies is a human judgment
+    call, not something this script can infer from a failed /search."""
+    today_iso = date.today().isoformat()
+    for n in names:
+        print(f"  {n}\t<no_presence|name_collision|needs_split>\t{today_iso}\t\t<why — fill in>")
+
+
 def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
     """--new-artist: one named artist, or every cache entry missing a spotify_id
     (known non-artists / permanent unresolvables excluded).
@@ -1775,10 +1818,9 @@ def new_artist_run(cache: dict, creds, lastfm_key: str, args) -> None:
     if unresolved:
         print("\nUnresolved — each of these re-burns a search call on every bare run "
               "until handled. Fix with a manual Spotify URL in artists.tsv/fast_track.tsv "
-              "or an alias entry; if the no-match is permanent (no Spotify entity), add "
-              "the name to _UNRESOLVABLE_ARTISTS instead:")
-        for n in unresolved:
-            print(f"  {n}")
+              "or an alias entry; if the no-match is permanent, paste a row (fill in Reason "
+              "and Notes) into data/spotify_unresolvable.tsv instead:")
+        _print_unresolved_tsv_rows(unresolved)
 
 
 # ── --add-artist: append a cache-ready row to a low-commitment list ───────────
@@ -2214,7 +2256,7 @@ def main() -> None:
         cached = cache.get(name) or {}
         try:
             aid, url = resolve_artist_id(name, url_hints.get(name), creds,
-                                         cached.get("spotify_id"), cached.get("spotify_url", ""))
+                                       cached.get("spotify_id"), cached.get("spotify_url", ""))
         except RateLimited:
             _flush_on_bail()
             raise
@@ -2266,7 +2308,7 @@ def main() -> None:
 
     if args.refresh and args.prune and not args.dry_run:
         # Staleness is measured against the RAW TSV names, not the resolved universe:
-        # collect_artists() drops _SKIP_ARTISTS/_UNRESOLVABLE_ARTISTS and folds "X Band"
+        # collect_artists() drops _SKIP_ARTISTS/the unresolvable table and folds "X Band"
         # into "X", and treating those as orphans deletes real, present artists — with no
         # path back, since nothing re-seeds them.
         stale = [k for k in cache if k not in _prune_keep_set(amap, artists)]
@@ -2285,9 +2327,9 @@ def main() -> None:
         print(f"Written: {OUTPUT_JSON}")
     if unresolved:
         print("\nUnresolved (need a manual Spotify URL in artists.tsv/fast_track.tsv, "
-              "or an alias entry):")
-        for n in unresolved:
-            print(f"  {n}")
+              "or an alias entry; if the no-match is permanent, paste a row (fill in "
+              "Reason and Notes) into data/spotify_unresolvable.tsv instead):")
+        _print_unresolved_tsv_rows(unresolved)
 
 
 if __name__ == "__main__":
