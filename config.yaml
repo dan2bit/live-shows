@@ -1,22 +1,19 @@
 # live-shows site config — per-fork personalization, externalized from the site code.
-# Any missing key falls back to DEFAULT_CONFIG in app.js, so every block below is
-# safe to trim to just the keys you want to override.
-# Blocks are ordered by how likely a fork is to change them: features and site are
-# near-mandatory edits, theme is the look, and it tapers from there to tuning knobs.
-# The issue history behind these designs is logged in docs/ISSUE_LOG.md.
+# Any missing key falls back to DEFAULT_CONFIG in app.js, so trim to just the keys you want to override.
+# features and site are the mandatory edits, theme is the look, the rest is tuning.
 
 # ── Feature toggles ──────────────────────────────────────────────────────────
 # Each is ON unless set to false — a fork omitting a key keeps full behavior.
 # Set false to hide that subsystem entirely.
 features:
-  web_edit: true               # in-page config editor (gear) for authed users
-  for_sale: true               # For Sale subsystem: sell group, listing banner, revoke
-  recommendations: true        # "Suggest a show" CTA + recommendation modal
-  calendar_integration: true   # Google Calendar link on upcoming shows
+  web_edit: true               # in-page editor (gear) for this file for authed users. false = you only want to edit via git
+  for_sale: true               # For Sale subsystem: sell group, listing banner, revoke. false = you don't sell tickets here
+  recommendations: true        # "Suggest a show" CTA + recommendation modal. false = you don't want to solicit recommendations
+  calendar_integration: true   # Google Calendar link on upcoming shows. false = you don't use a Google calendar.
   private_data: true           # fetch the private sidecar repo when authenticated;
-                               # false = fully public site, financial fields simply absent
-  fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)
-  spotify_integration: true    # Spotify links in Waiting tab; false if no Spotify subsystem
+                               # false = fully public site, financial fields & second repo simply absent
+  fast_track: true             # Waiting / Fast-Track tab (artists I want to see tour here)/ false = no Waiting tab
+  spotify_integration: true    # Spotify links in artist modal; false if no Spotify subsystem
   favorite: true               # explicit favorite mark (public data/artist_favorites.tsv);
                                # tuning knobs live in the favorite block below
   in_page_purchase: true       # 🎟 bought action on authed Buy/Choose potentials rows. Moving
@@ -25,27 +22,41 @@ features:
 
 # ── Site identity & wiring ───────────────────────────────────────────────────
 site:
-  title: live-shows           # also in index.html: <title>, og:title, og:site_name, twitter:title
-  owner: dan2bit
+  title: live-shows            # also in index.html: <title>, og:title, og:site_name, twitter:title
+  owner: dan2bit               # CHANGE TO YOUR OWN GITHUB HANDLE
   repo: live-shows
-  private_owner: dan2bit       # only read when features.private_data is true
-  private_repo: live-shows-private
+  private_owner: dan2bit       # CHANGE TO YOUR OWN GITHUB HANDLE. skipped unless features.private_data is true
+  private_repo: live-shows-private # skipped unless features.private_data is true
   data_branch: staging         # branch for in-page TSV/config writes; omit or set 'main' if no staging pipeline
   preview_data_branch: ""      # read-side preview: reads public TSVs from this branch; ?dataref=<branch> on the URL wins; empty = default. Writes stay on data_branch.
+  
   # Brand/identity. Asset paths below are RELATIVE to repo root and are expanded in
-  # app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply time,
-  # because relative asset URLs 404 on this project-pages (github.io) setup. A
-  # custom-domain fork may serve these paths differently — see docs/FORK_SETUP.md.
-  # pages_base: https://example.com   # uncomment to override the derived github.io base
+  # app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply time, to
+  # satisfy github.io Set pages_base ONLY if you have a custom domain or similar setup
+  # pages_base: https://example.com
   favicon: static/favicon.png
   brand_icon: static/brand-hat.png
   about_handle: "About @dan2bit"
-  about_tagline: GenX DC native with a serious live music fixation
+  about_tagline: "GenX DC native with a serious live music fixation"
   about_text: "I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg phone recordings from what I catch. This page tracks where I've been and where I'm going."
   about_hero_image: static/hero.jpg   # also in index.html: og:image, twitter:image
   about_hero_alt: "Galactic at 9:30 Club Jan 2025"   # also in index.html: og:image:alt
-  about_footer: Life is short. Buy the tickets.
-  region: DC/MD/VA             # home region, used in visitor-facing copy (bystander banner, recommendation replies)
+  
+  # ── About-modal links ────────────────────────────────────────────────────────
+  # An extensible list — add or remove entries freely; each renders as a link.
+  # Deleting the whole block leaves the About modal with just its text.
+  about_links:
+      - url: https://www.youtube.com/@dan2bit
+        label: "▶ bootlegs: @dan2bit on YouTube"
+      - url: https://linktr.ee/dan2bit
+        label: "🎵 music links on Linktree"
+      - url: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
+        label: "🎩 hat autographs"
+      - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
+        label: "📷 album: Guitar Gods & Goddesses"
+
+  about_footer: "Life is short. Buy the tickets."
+  region: "DC/MD/VA"             # home region, used in visitor-facing copy (bystander banner, recommendation replies)
 
 # ── Theme ────────────────────────────────────────────────────────────────────
 theme:
@@ -55,27 +66,28 @@ theme:
   color_accent: "#c83020"         # brick red
 
   # Decision group colors — _dim and _bg variants are computed automatically from the
-  # base color using HSL darkening; override them explicitly if you want fine control.
-  color_buy: "#4a9a5a"            # sea green
+  # base color using HSL darkening; override them explicitly if you want fine control, e.g.
+  # color_buy_dim: 
+  color_buy:    "#4a9a5a"         # sea green
   color_choose: "#c8a830"         # goldenrod
-  color_sell: "#40a0a0"           # teal
-  color_pass: "#878380"           # stone gray
+  color_sell:   "#40a0a0"         # teal
+  color_pass:   "#878380"         # stone gray
 
   # Page chrome — neutral scaffold, independent of accent system. `_bright` is the raised
   # layer (buttons, inputs, pills, hover borders) sitting one step above the base.
-  color_bg: "#0f0f0f"             # near-black
-  color_surface: "#1a1a1a"        # charcoal
+  color_bg:             "#0f0f0f" # near-black
+  color_surface:        "#1a1a1a" # charcoal
   color_surface_bright: "#222222" # dark gray
-  color_border: "#2e2e2e"         # gray
-  color_border_bright: "#3a3a3a"  # medium gray
-  color_text: "#e8e4dc"           # bone white
-  color_text_muted: "#9a928a"     # taupe gray
-  color_text_dim: "#8e8a7a"       # khaki gray
+  color_border:         "#2e2e2e" # gray
+  color_border_bright:  "#3a3a3a" # medium gray
+  color_text:           "#e8e4dc" # bone white
+  color_text_muted:     "#9a928a" # taupe gray
+  color_text_dim:       "#8e8a7a" # khaki gray
 
-  # Status row tints
-  color_today_bg: "#1e0e0e"       # very dark maroon
-  color_soon_bg: "#1a1408"        # very dark amber-brown
-  color_otd_bg: "#0e1a10"         # very dark green
+  # Status row tints for shows that are coming soon and the on this day widget
+  color_today_bg:   "#1e0e0e"     # very dark maroon
+  color_soon_bg:    "#1a1408"     # very dark amber-brown
+  color_otd_bg:     "#0e1a10"     # very dark green
   color_otd_border: "#1a4a28"     # forest green
 
   # Fonts — loaded from Google Fonts. Change both names to swap the entire typeface.
@@ -83,33 +95,21 @@ theme:
   font_mono: "'IBM Plex Mono', monospace"
   font_sans: "'IBM Plex Sans', sans-serif"
 
-# ── About-modal links ────────────────────────────────────────────────────────
-# An extensible list — add or remove entries freely; each renders as a link.
-# Deleting the whole block leaves the About modal with just its text.
-about_links:
-  - url: https://www.youtube.com/@dan2bit
-    label: "▶ bootlegs: @dan2bit on YouTube"
-  - url: https://linktr.ee/dan2bit
-    label: "🎵 music links on Linktree"
-  - url: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
-    label: "🎩 hat autographs"
-  - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
-    label: "📷 album: Guitar Gods & Goddesses"
-
 # ── Tab labels ───────────────────────────────────────────────────────────────
 # Keys are the internal tab IDs (data-tab in index.html); only the display text is
 # editable. "tourhere" is the Waiting / Fast-Track tab — hide it entirely with
 # features.fast_track: false above rather than blanking its label.
 tabs:
-  shows: Shows
-  history: History
+  shows:     Shows
+  history:   History
   potential: Potential
-  tourhere: Waiting
+  tourhere:  Waiting
 
 # ── History archive years ────────────────────────────────────────────────────
 # Which past-year files exist under data/history/<year>.tsv. The current year's
 # shows live in live_shows_current.tsv until rollover adds its file here. A fork
 # starting fresh can set this to [] (History shows only current-year attended rows).
+# history_years: []
 history_years: [2021, 2022, 2023, 2024, 2025]
 
 # ── Display preferences ──────────────────────────────────────────────────────
@@ -143,10 +143,10 @@ stages:
     label: Pass
     tagline: considered, but not going
 
-# ── Merch badge threshold ────────────────────────────────────────────────────
+# ── Merch budget threshold ────────────────────────────────────────────────────
+# used to alert when a ticket price is high enough to want to "cool it" on merch
 # OPT-IN (an exception to the missing-key-keeps-behavior rule): remove this block
-# — or just event_cap — and the MERCH badge never renders. The merch-budget
-# concept is an owner choice a fork may never want, so absence means off.
+# — or just event_cap — and the MERCH badge never renders. 
 merch:
   event_cap: 100   # MERCH badge shows when Face Value (per ticket) is at or above this
   exempt_venues:   # venues where a high face price reflects the room, not a merch-table budget
@@ -162,6 +162,9 @@ favorite:
   confirm_below_band: high     # one-click promote at/above this band; evidence-quoting confirm below
 
 # ── Affinity gauge tuning ────────────────────────────────────────────────────
+# used to calculate a scale for how much an artist is liked/important
+# it's calculated by taste match (tier), how many shows seen, and whether autographs or 
+# other show goals have been obtained
 badges:
   affinity:
     weights:                     # 3 main dials — must total 1.0
@@ -186,6 +189,8 @@ badges:
 # modal, and contribute to the affinity G-term. See docs/GOALS_SPEC.md for the full
 # spec (source-binding vocabulary, state rules). A fork may add, remove, or edit
 # any entry without code changes.
+
+# if set lists, or vinyl, or picks are a show goal, they go here
 #
 # Fields per entry:
 #   key         - stable identifier (hat, book, ...); used in badges, index, and CSS vars
