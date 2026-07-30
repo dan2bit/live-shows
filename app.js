@@ -445,7 +445,7 @@ function _goalCreditTargets(signer,attribution){
 // Separators are explicit; no fuzzy matching (an explicit non-goal). The trailing-" Band" drop
 // mirrors surface_forms() in scripts/build_recommend_index.py, the house rule for that same
 // variant. Python twin: bill_keys() in scripts/audit_goal_badges.py — keep the two in step.
-var _GOAL_BILL_SEP=/\s+(?:&|and his|and her|and|w\/|feat\.?|featuring|with)\s+|\s*,\s*/i;
+var _GOAL_BILL_SEP=/\s+(?:&|andhis|and her|and|w\/|feat\.?|featuring|with)\s+|\s*,\s*/i;
 function _goalBillKeys(name){
   var base=_goalNorm(name),keys=base?[base]:[];
   if(!name)return keys;
@@ -1183,8 +1183,8 @@ function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
-  var isSell=dec.toLowerCase()==='sell',ph=esc(r['Face Price']||'');
-  if(isSell&&r['Purchase URL'])ph+=' <a class="icon-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a>';
+  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),phLink=(isSell&&r['Purchase URL'])?'<a class="icon-link price-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a> ':'';
+  var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
@@ -1209,9 +1209,10 @@ function renderPotentialRowAuthed(r,gi){
   if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<a href="#" class="pot-reconciling" onclick="event.preventDefault();refreshAfterPurchase();">🎟 purchased — reconciling… (tap to refresh)</a>';}
   else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
-  var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),ph=esc(r['Face Price']||'');
-  if(sl)ph+=' <a class="icon-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a>';
-  if((r['Box Office']||'').trim().toUpperCase()==='Y')ph+=' <span title="Buy at the box office — not online">🏣</span>';
+  var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
+  var phLink=sl?'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a> ':'';
+  if((r['Box Office']||'').trim().toUpperCase()==='Y')phLink+='<span title="Buy at the box office — not online">🏣</span> ';
+  var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
@@ -1262,7 +1263,7 @@ function renderPotentialGroup(rows,groupKey,label){
   if(!rows.length)return'';
   var tbody=authed?rows.map(function(r){return renderPotentialRowAuthed(r,potentialRows.indexOf(r));}).join(''):rows.map(function(r){return renderPotentialRowBystander(r,potentialRows.indexOf(r));}).join('');
   var table='<table class="pot-table"><thead><tr><th></th><th>Date</th><th>Artist</th><th>Venue</th><th class="col-tier">Tier</th><th class="col-price">Face</th><th class="col-watching">Watching For</th><th class="col-context">Prev / Next</th><th>Notes</th></tr></thead><tbody>'+tbody+'</tbody></table>';
-  if(groupKey==='pass')return'<div class="potential-group"><details class="pass-details"><summary>'+label+' <span class="group-count">('+rows.length+')</span></summary><div class="group-table-wrap group-table-pass">'+table+'</div></details></div>';
+  if(groupKey=='pass')return'<div class="potential-group"><details class="pass-details"><summary>'+label+' <span class="group-count">('+rows.length+')</span></summary><div class="group-table-wrap group-table-pass">'+table+'</div></details></div>';
   return'<div class="potential-group"><div class="group-header group-header-'+groupKey+'">'+label+' <span class="group-count">('+rows.length+')</span></div><div class="group-table-wrap group-table-'+groupKey+'">'+table+'</div></div>';
 }
 function renderPotential(){
@@ -1442,7 +1443,7 @@ function openMultisetModal(dateKey){
         +'<a class="ext-link" href="'+esc(s.url)+'" target="_blank">setlist.fm</a></div>';
     }).join('');
     body.innerHTML='<div class="multiset-event">'+esc(entry.event)+'</div><div class="multiset-list">'+items+'</div>';
-  }).catch(function(e){body.innerHTML='<div class="multiset-loading">Error: '+esc(e.message)+'</div>';});
+ }).catch(function(e){body.innerHTML='<div class="multiset-loading">Error: '+esc(e.message)+'</div>';});
 }
 function closeMultisetModal(){document.getElementById('multisetModal').classList.remove('open');}
 
