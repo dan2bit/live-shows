@@ -245,17 +245,17 @@ function amRowOnly(key){
 }
 
 // One muted line under the artist name for an artist who is no longer active:
-// a lifespan for deceased, "disbanded"/"retired" plus the year for an act that
-// has stopped. Deliberately not a badge — the wording alone separates the states,
-// so no color coding is needed at this size. The Years value is stored ASCII in
-// the TSV, as pipeline-consumed data must be; the en dash is applied here, at
-// render time. An optional Note rides along as the tooltip.
+// "d." plus the year for deceased, "disbanded"/"retired" plus the year for an act
+// that has stopped. Deliberately not a badge — the wording alone separates the
+// states, so no color coding is needed at this size. An optional Note rides along
+// as the tooltip. Status Date is the year source, with the closing year of Years
+// as the fallback so a row carrying only a lifespan still renders.
 function amStatusLine(name){
   var r=amStatusCache&&amStatusCache[amNorm(name||'')];
   if(!r)return'';
   var st=(r['Status']||'').toLowerCase();if(!st)return'';
   var yrs=(r['Years']||'').trim(),when=amYear(r['Status Date']||''),txt='';
-  if(st==='deceased')txt=yrs?yrs.replace(/\s*-\s*/,' \u2013 '):(when?'d. '+when:'');
+  if(st==='deceased'){var dy=when||amYear(yrs.split('-').pop()||'');txt=dy?'d. '+dy:'';}
   else if(st==='defunct')txt='disbanded'+(when?' '+when:'');
   else if(st==='retired')txt='retired'+(when?' '+when:'');
   if(!txt)return'';
