@@ -32,10 +32,10 @@ jobs:
   resolve:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install deps
@@ -48,6 +48,7 @@ jobs:
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
         run: python3 scripts/spotify_cache.py --new-artist --limit 30
       - name: Commit to staging if changed
         run: |
