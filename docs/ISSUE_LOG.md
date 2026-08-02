@@ -66,6 +66,7 @@ references as working shorthand and are not logged here.
 | [#205](https://github.com/dan2bit/live-shows/issues/205) | Playbook additions: batch-commit rule, ASCII punctuation rule, alias-key frozen schema. |
 | [#216](https://github.com/dan2bit/live-shows/issues/216) | Level 0 fork bootstrap: the sample-files/ exemplar tree, fork_reset.py, and the CI check that fails when a sample header drifts from its canonical file. The private-data guard and its auto-promote mirror gained a sample-files/private/ exemption; both copies of the sniff must be edited together. |
 | [#227](https://github.com/dan2bit/live-shows/issues/227) | Replaced the hardcoded `_UNRESOLVABLE_ARTISTS` set with `data/spotify_unresolvable.tsv` (dated, reasoned, self-expiring via `Recheck After`); the `--new-artist`/bare-mode "Unresolved" reports now print ready-to-paste rows instead of just names. |
+| [#229](https://github.com/dan2bit/live-shows/issues/229) | Scheduled Spotify sweeps: the `--limit` voluntary request budget enforced at the shared request layer (`BudgetExhausted` exits 0 — a spent budget is a scheduled run's expected end; a real 429 stays exit 1), the late-month `--refresh-releases` workflow with an explicit `--stale-days` sized for the monthly gap the auto-inferrer can't straddle, and the weekly Last.fm-seed → `--new-artist` resolve pass (seeding must run first: bare mode only sees cache skeletons). |
 
 Other incident dates that appear in history: the Spotify Web API deprecations of
 2024-11-27 (dev-mode metadata strip) and the 2026-02-11 → 2026-03-09 endpoint

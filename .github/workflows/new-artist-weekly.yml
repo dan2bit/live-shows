@@ -1,6 +1,7 @@
 name: Weekly new-artist resolve (spotify_cache)
 
-# Companion cadence to #229's monthly releases burst: a cheap weekly pass that
+# Companion cadence to the monthly releases burst
+# (refresh-releases-monthly.yml): a cheap weekly pass that
 # resolves artists added to the TSVs during the week (potentials, follows,
 # purchases) so their modal portrait + release + Last.fm block exist within
 # days instead of waiting for month-end.

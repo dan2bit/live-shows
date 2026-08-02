@@ -259,7 +259,7 @@ UNRESOLVABLE  data/spotify_unresolvable.tsv (Artist / Reason / Marked Date /
         Recheck After / Notes) is the dated, reasoned record of artists that
         resolve to no single Spotify entity — see load_unresolvable() and
         _is_non_artist(). A row's Recheck After date expiring returns that
-        artist to normal resolve candidacy automatically (#227).
+        artist to normal resolve candidacy automatically.
 
 HISTORY The scope above (metadata-only, stripped fields, the guards) was shaped
         by Spotify's Dev-mode API deprecations and a handful of cache-corruption
@@ -466,7 +466,7 @@ def read_tsv_rows(path: str) -> list[dict]:
 
 
 def load_unresolvable() -> dict[str, dict]:
-    """Map _norm(Artist) -> row dict, from data/spotify_unresolvable.tsv (#227).
+    """Map _norm(Artist) -> row dict, from data/spotify_unresolvable.tsv.
 
     Returns {} if the file is missing (read_tsv_rows already tolerates that).
     A row whose Recheck After date has passed is dropped here, so that artist
@@ -1748,8 +1748,9 @@ def _print_unresolved_tsv_rows(names: list[str]) -> None:
     """Print one ready-to-paste data/spotify_unresolvable.tsv row per name, for
     the end-of-run "Unresolved" report. Shared by new_artist_run() and main()'s
     bare-mode add-missing loop — keeping one copy of the row format is the whole
-    point (two independently-worded copies of this advice was part of #227's
-    original problem). Reason and Notes are left as fill-in placeholders; which
+    point (two independently-worded copies of this advice drifting apart was
+    part of the original problem the data-backed table replaced — see
+    docs/ISSUE_LOG.md). Reason and Notes are left as fill-in placeholders; which
     of no_presence / name_collision / needs_split applies is a human judgment
     call, not something this script can infer from a failed /search."""
     today_iso = date.today().isoformat()
@@ -2113,7 +2114,7 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=None, metavar="N",
                     help="Voluntary Spotify request budget for this run. When spent, "
                          "the run checkpoints and exits 0 — the expected, successful "
-                         "end of a scheduled invocation (#229). A real 429 while the "
+                         "end of a scheduled run. A real 429 while the "
                          "budget is unspent still exits 1. Counts every HTTP request "
                          "including retries; applies to every mode.")
     ap.add_argument("--dry-run", action="store_true",

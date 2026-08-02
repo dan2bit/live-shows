@@ -1,18 +1,18 @@
 name: Monthly release refresh (spotify_cache)
 
-# #229: scheduled `--refresh-releases` burst, late in the month — one run per
-# day on the 26th-29th, each spending a voluntary --limit budget and exiting 0
+# Scheduled `--refresh-releases` burst, late in the month — one run per day
+# on the 26th-29th, each spending a voluntary --limit budget and exiting 0
 # when it's spent (BudgetExhausted). The next day's run resumes from the
 # checkpoint. A real Spotify 429 while the budget is unspent still exits 1 and
 # surfaces as a genuine failure.
 #
-# --stale-days 25 is EXPLICIT AND REQUIRED (#229 §2): the auto-inferrer is
-# tuned for short retry gaps, not the ~27-31-day monthly gap; 25 keeps this
-# burst's own commits skipped while reliably reopening last month's batch.
+# --stale-days 25 is EXPLICIT AND REQUIRED: the auto-inferrer is tuned for
+# short retry gaps, not the ~27-31-day monthly gap; 25 keeps this burst's own
+# commits skipped while reliably reopening last month's batch.
 #
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote. data/artist_spotify.json promoting to main cascade-triggers
-# artist-modal-index.yml — expected, desired (#229 "side effect" note).
+# artist-modal-index.yml — expected and desired. History: docs/ISSUE_LOG.md.
 
 on:
   schedule:
