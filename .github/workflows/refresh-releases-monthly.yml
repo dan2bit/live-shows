@@ -1,0 +1,77 @@
+name: Monthly release refresh (spotify_cache)
+
+# #229: scheduled `--refresh-releases` burst, late in the month — one run per
+# day on the 26th-29th, each spending a voluntary --limit budget and exiting 0
+# when it's spent (BudgetExhausted). The next day's run resumes from the
+# checkpoint. A real Spotify 429 while the budget is unspent still exits 1 and
+# surfaces as a genuine failure.
+#
+# --stale-days 25 is EXPLICIT AND REQUIRED (#229 §2): the auto-inferrer is
+# tuned for short retry gaps, not the ~27-31-day monthly gap; 25 keeps this
+# burst's own commits skipped while reliably reopening last month's batch.
+#
+# Commits ride the established bot pattern: deploy key -> staging ->
+# auto-promote. data/artist_spotify.json promoting to main cascade-triggers
+# artist-modal-index.yml — expected, desired (#229 "side effect" note).
+
+on:
+  schedule:
+    - cron: "47 6 26-29 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-releases-monthly
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install requests python-dotenv
+      - name: Refresh releases (budgeted)
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: python3 scripts/spotify_cache.py --refresh-releases --stale-days 25 --limit 90
+      - name: Commit to staging if changed
+        run: |
+          git add data/artist_spotify.json
+          if git diff --cached --quiet; then
+            echo "data/artist_spotify.json unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "ci: monthly --refresh-releases sweep (spotify_cache)"
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
+          fi
