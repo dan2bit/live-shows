@@ -338,6 +338,22 @@ class RateLimited(Exception):
         super().__init__(f"rate-limited; Retry-After {retry_after}s")
 
 
+class BudgetExhausted(RateLimited):
+    """The voluntary --limit request budget is spent. Subclasses RateLimited on
+    purpose: every sweep's `except RateLimited` flush-and-bail path (checkpoint,
+    save, re-raise) applies unchanged. Only the top-level handler distinguishes
+    them — a spent budget is the EXPECTED, successful end of a scheduled run
+    (exit 0), while a real 429 with the budget unspent is a failure (exit 1)."""
+
+
+# --limit accounting: a single global budget enforced at the api_get() choke
+# point, so every mode (--refresh-releases, --refresh-images, --new-artist, …)
+# inherits it with no per-sweep code. Counts actual HTTP requests, including
+# retries, so the number is honest against Spotify's quota.
+_CALL_BUDGET: int | None = None
+_CALLS_MADE = 0
+
+
 # ── Source files: (path, [artist-bearing columns], [url columns]) ─────────────
 # Comment-prefixed (#) and blank lines are stripped before the header is read,
 # so fast_track.tsv and recommend_aliases.tsv parse cleanly. Missing files and
@@ -699,8 +715,12 @@ def api_get(path: str, params: dict, creds: tuple[str, str]) -> dict | None:
     sustained 429 doesn't churn every remaining artist into a false 'unresolved'.
     """
     url = f"{SPOTIFY_API}{path}"
+    global _CALLS_MADE
     for attempt in range(4):
+        if _CALL_BUDGET is not None and _CALLS_MADE >= _CALL_BUDGET:
+            raise BudgetExhausted(0)
         token = _get_token(*creds)
+        _CALLS_MADE += 1
         resp = requests.get(url, params=params,
                             headers={"Authorization": f"Bearer {token}"}, timeout=15)
         if resp.status_code == 401:
@@ -2090,6 +2110,12 @@ def main() -> None:
                          "this to stay under Dev-mode 429 lockouts on a big run, "
                          "lower it (e.g. 0.3) for speed once limits relax or for "
                          "the lighter --refresh-* passes.")
+    ap.add_argument("--limit", type=int, default=None, metavar="N",
+                    help="Voluntary Spotify request budget for this run. When spent, "
+                         "the run checkpoints and exits 0 — the expected, successful "
+                         "end of a scheduled invocation (#229). A real 429 while the "
+                         "budget is unspent still exits 1. Counts every HTTP request "
+                         "including retries; applies to every mode.")
     ap.add_argument("--dry-run", action="store_true",
                     help="Report what would change; write nothing. For --repoint, "
                          "this is the OPT-IN safety net (--repoint writes by default "
@@ -2098,6 +2124,10 @@ def main() -> None:
     args = ap.parse_args()
 
     DELAY = args.delay
+    if args.limit is not None:
+        if args.limit <= 0:
+            sys.exit("--limit must be a positive request count")
+        globals()["_CALL_BUDGET"] = args.limit
 
     # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
     # Reject the mode combinations rather than silently letting one win.
@@ -2335,6 +2365,12 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
+    except BudgetExhausted:
+        print(f"\n✓ --limit budget spent ({_CALLS_MADE} request(s) made). Progress "
+              f"through the last checkpoint is saved; the next run resumes where "
+              f"this one stopped. Exiting 0 — this is the expected end of a "
+              f"scheduled run.")
+        sys.exit(0)
     except RateLimited as e:
         hrs = e.retry_after / 3600
         sys.exit(f"\n⚠ Spotify rate-limited (Retry-After ~{e.retry_after}s ≈ {hrs:.1f}h). "

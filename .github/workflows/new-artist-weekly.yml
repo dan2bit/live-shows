@@ -1,0 +1,82 @@
+name: Weekly new-artist resolve (spotify_cache)
+
+# Companion cadence to #229's monthly releases burst: a cheap weekly pass that
+# resolves artists added to the TSVs during the week (potentials, follows,
+# purchases) so their modal portrait + release + Last.fm block exist within
+# days instead of waiting for month-end.
+#
+# TWO invocations, ORDER MATTERS: bare `--new-artist` only processes cache
+# entries missing a spotify_id — brand-new TSV names are invisible to it until
+# something seeds their cache skeletons. `--refresh-lastfm` is that seeder
+# (name-based, ZERO Spotify quota; Last.fm's limits are generous), so it runs
+# first. The `--new-artist` pass then resolves the skeletons atomically
+# (resolve + portrait + Last.fm per artist, ~3 Spotify calls each).
+#
+# Quota: a typical week adds 0-5 artists ≈ ≤15 calls; --limit 30 caps a
+# surprise backlog at ~10 artists and rolls the rest to next week, exit 0.
+
+on:
+  schedule:
+    - cron: "23 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: new-artist-weekly
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install requests python-dotenv
+      - name: Seed + refresh Last.fm (no Spotify quota)
+        env:
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: python3 scripts/spotify_cache.py --refresh-lastfm
+      - name: Resolve new artists (budgeted)
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: python3 scripts/spotify_cache.py --new-artist --limit 30
+      - name: Commit to staging if changed
+        run: |
+          git add data/artist_spotify.json
+          if git diff --cached --quiet; then
+            echo "data/artist_spotify.json unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "ci: weekly --new-artist resolve (spotify_cache)"
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
+          fi
