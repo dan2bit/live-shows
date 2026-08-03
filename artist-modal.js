@@ -26,6 +26,14 @@ var amFavCache=null;   // {amNorm(Artist): row} - loaded for all viewers when fe
 // modal renders one muted line under the name; nothing else in the site reads it.
 var AM_STATUS_PATH='data/artist_status.tsv';
 var amStatusCache=null;   // {amNorm(Artist): row}
+// Kinship cross-links — PUBLIC, hand-maintained (data/related_acts.tsv, #174/#235).
+// One row per membership/kinship relation co-listening data can't see (fronts,
+// member-of, successor-of, sibling...). Read at render time like status/favorites;
+// resolved against the already-loaded index, so a row whose endpoint isn't a tracked
+// artist is silently skipped. This is a DISPLAY layer over act-level data — it never
+// merges rows or alters any times_seen count (person-level view, act-level storage).
+var AM_RELATED_PATH='data/related_acts.tsv';
+var amRelatedCache=null;   // {amNorm(Artist): [{other:amNorm, rel, selfIsA}]} - bidirectional adjacency
 
 // Mirrors build_artist_index.py norm(): de-invert "Lone Bellow, The", de-accent,
 // drop one leading article, punctuation -> space, collapse whitespace.
@@ -65,6 +73,7 @@ async function openArtistModal(name){
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
   await amLoadStatus();
+  await amLoadRelated();
   var key=amNorm(name),rec=(data.artists||{})[key]||null;
   if(!rec&&data.aliases&&data.aliases[key]){key=data.aliases[key];rec=(data.artists||{})[key]||null;}
   amOpenRec(rec,name,key);
@@ -75,6 +84,7 @@ async function openArtistBySlug(slug){
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
   await amLoadStatus();
+  await amLoadRelated();
   var key=(amSlugMap||{})[slug]||null,rec=key?data.artists[key]:null;
   amOpenRec(rec,rec?rec.name:slug.replace(/-/g,' '),key||slug);
 }
@@ -160,6 +170,62 @@ async function amLoadStatus(){
   }catch(e){console.warn('artist status load skipped:',e.message);}
   return amStatusCache;
 }
+// Read-only, low-churn, no auth: a plain relative fetch off the Pages CDN, same
+// shape as amLoadStatus. Builds a bidirectional adjacency keyed by amNorm(name),
+// recording for each edge which side of the A|B pair this endpoint is (selfIsA),
+// so the render phrasing can stay directional. Any failure leaves the map empty
+// and the modal unchanged.
+async function amLoadRelated(){
+  if(amRelatedCache)return amRelatedCache;
+  amRelatedCache={};
+  try{
+    var res=await fetch(AM_RELATED_PATH);
+    if(res.ok){
+      parseTsv(await res.text()).forEach(function(r){
+        var a=amNorm(r['Artist A']||''),b=amNorm(r['Artist B']||''),rel=(r['Relation']||'').trim();
+        if(!a||!b||!rel)return;
+        (amRelatedCache[a]=amRelatedCache[a]||[]).push({other:b,rel:rel,selfIsA:true});
+        (amRelatedCache[b]=amRelatedCache[b]||[]).push({other:a,rel:rel,selfIsA:false});
+      });
+    }
+  }catch(e){console.warn('related acts load skipped:',e.message);}
+  return amRelatedCache;
+}
+// Directional relation phrasing. For a row "A <rel> B": the individual is A, the
+// band/successor is B. On A's panel we phrase from A's side; on B's panel, the
+// reverse. sibling is symmetric. Unknown relations fall back to a neutral form.
+var AM_REL_PHRASE={
+  'fronts':        ['fronts',            'fronted by'],
+  'member-of':     ['member of',         'features'],
+  'former-member': ['former member of',  'formerly featured'],
+  'successor-of':  ['successor to',      'succeeded by'],
+  'sibling':       ['sibling of',        'sibling of']
+};
+function amRelPhrase(rel,selfIsA){
+  var p=AM_REL_PHRASE[rel];
+  if(!p)return'related to';
+  return selfIsA?p[0]:p[1];
+}
+// Resolve this artist's related-act edges to tracked records only (skip rule:
+// an endpoint absent from the index is dropped). Returns display-ready entries.
+function amRelatedFor(key){
+  var edges=(amRelatedCache&&amRelatedCache[key])||[];
+  if(!edges.length||!amIndexCache)return[];
+  var arts=amIndexCache.artists||{},out=[],seenSlugs={};
+  edges.forEach(function(e){
+    var other=arts[e.other];
+    if(!other||!other.slug)return;                 // endpoint not tracked -> skip
+    if(seenSlugs[other.slug])return;               // de-dupe (e.g. two rows to same act)
+    seenSlugs[other.slug]=1;
+    out.push({
+      name:other.name||'',
+      slug:other.slug,
+      phrase:amRelPhrase(e.rel,e.selfIsA),
+      seen:(other.seen&&other.seen.count)||0
+    });
+  });
+  return out;
+}
 function amIsFav(key){return !!(amFavCache&&amFavCache[key]);}
 // Gauge click: toggle favorite, with confirm friction below the configured band and on remove.
 async function amFavClick(key){
@@ -222,6 +288,7 @@ function amRender(rec,displayName,key){
   h+='<div class="am-band"><span class="am-band-lbl">Artist</span><span class="am-rule"></span>'+amListenerMeter(rec.listener)+'</div>';
   if(spotify)h+=amRelease(rec.latest_release);
   if(spotify)h+=amSimilar(rec.similar);
+  h+=amRelated(key);
   h+=amLinks(rec.links,spotify);
   h+=amYou(rec,key);
   return h+'</div>';
@@ -304,6 +371,24 @@ function amSimilar(sim){
     return'<a class="am-sim" title="Last.fm" href="https://www.last.fm/search?q='+encodeURIComponent(s.name||'')+'" target="_blank">&#x1F517; '+esc(s.name)+'</a>';
   }).join('');
   return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
+}
+
+// Related acts (kinship from related_acts.tsv, #235). Sits beside "Similar" as an
+// identity fact about the act — NOT in the personal footer, since kinship isn't
+// about @owner's relationship to them. Each chip opens the related act; when that
+// act is itself in the seen history, its own count rides along ("seen 3x"). Counts
+// are never summed across the edge — that would double-count siblings and misread
+// lineage as identity (see #235). Directional phrasing via amRelPhrase.
+function amRelated(key){
+  var rel=amRelatedFor(key);
+  if(!rel.length)return'';
+  var chips=rel.map(function(r){
+    var seen=r.seen>0?'<span class="am-rel-seen">seen '+r.seen+'\u00d7</span>':'';
+    return'<button class="am-sim am-sim-in am-rel-chip" title="kinship \u2014 open artist" onclick="openArtistBySlug(\''+esc(r.slug)+'\')">'
+      +'<span class="am-rel-dot"></span>'
+      +'<span class="am-rel-verb">'+esc(r.phrase)+'</span> '+esc(r.name)+seen+'</button>';
+  }).join('');
+  return'<div class="am-sec"><div class="am-sec-h">Related acts</div><div class="am-simrow">'+chips+'</div></div>';
 }
 
 function amLinks(L,spotify){
