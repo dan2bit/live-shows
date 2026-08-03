@@ -429,6 +429,12 @@
   .am-sim-in{display:inline-flex;align-items:center;gap:5px;color:var(--text);background:var(--surface-bright);border-color:var(--border-bright);}
   .am-sim:hover{border-color:var(--border-bright);color:var(--text);}
   .am-sim-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);}
+  /* related acts (kinship, #235): same chip as a tracked "similar" act, but a cool
+     dot + a mono relation verb distinguish kinship from acoustic similarity. */
+  .am-rel-chip{gap:6px;}
+  .am-rel-dot{width:5px;height:5px;border-radius:50%;background:#5b8bb0;flex:0 0 auto;}
+  .am-rel-verb{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim);}
+  .am-rel-seen{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-left:6px;padding-left:6px;border-left:1px solid var(--border);}
   .am-links{display:flex;flex-wrap:wrap;gap:7px;}
   .am-link{font-family:var(--mono);font-size:10px;color:var(--text-muted);background:var(--surface-bright);border:1px solid var(--border);border-radius:3px;padding:5px 9px;text-decoration:none;cursor:pointer;}
   .am-link:hover{color:var(--text);border-color:var(--border-bright);}
