@@ -161,11 +161,25 @@ event must have a Location set; a missing Location is a defect on the same footi
 calendar event entirely (see `EMAIL_WORKFLOWS.md` Routine 1 Step 8) — don't leave it blank
 because the venue's parking situation is ambiguous. Confirm with Dan if genuinely unclear.
 
+**Description must carry the venue address whenever Location isn't the venue door — REINFORCED.**
+This is the other half of the same rule, and it is the half that has actually drifted in
+practice (most recently the DC9 event): when Location is set to a parking-lot address per the
+"WITHOUT on-site parking" case above, add a `Venue: [Name], [street address]` line to the event
+Description, using `venues.tsv` column 2 for the address. Do this every time the description is
+written or touched — on create, and on every subsequent update — not just the first time. A
+description that was only ever patched for Location and never got the Venue line is still
+non-compliant; fix it the next time the event is opened for any reason, not just when explicitly
+asked to. Venues WITH on-site parking need no separate Venue line in the Description — Location
+already **is** the venue address, so nothing is lost.
+
 ### Description
 
 ```
 BRING RHBS -- [Artist] p.[N]          <- only if in autograph book, not yet signed
                                           (see Show-Goals Check above for the full procedure)
+Venue: [Name], [street address]       <- only if Location is the parking lot, not the venue
+                                          door (see Location rule above); omit for on-site-
+                                          parking venues, where Location already is the address
 
 [Order # / Ref] ([Ticketer])
 Ticket access: [method]
