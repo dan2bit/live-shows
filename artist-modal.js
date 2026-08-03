@@ -26,7 +26,7 @@ var amFavCache=null;   // {amNorm(Artist): row} - loaded for all viewers when fe
 // modal renders one muted line under the name; nothing else in the site reads it.
 var AM_STATUS_PATH='data/artist_status.tsv';
 var amStatusCache=null;   // {amNorm(Artist): row}
-// Kinship cross-links — PUBLIC, hand-maintained (data/related_acts.tsv, #174/#235).
+// Kinship cross-links — PUBLIC, hand-maintained (data/related_acts.tsv).
 // One row per membership/kinship relation co-listening data can't see (fronts,
 // member-of, successor-of, sibling...). Read at render time like status/favorites;
 // resolved against the already-loaded index, so a row whose endpoint isn't a tracked
@@ -373,12 +373,12 @@ function amSimilar(sim){
   return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
 }
 
-// Related acts (kinship from related_acts.tsv, #235). Sits beside "Similar" as an
+// Related acts (kinship from related_acts.tsv). Sits beside "Similar" as an
 // identity fact about the act — NOT in the personal footer, since kinship isn't
 // about @owner's relationship to them. Each chip opens the related act; when that
 // act is itself in the seen history, its own count rides along ("seen 3x"). Counts
 // are never summed across the edge — that would double-count siblings and misread
-// lineage as identity (see #235). Directional phrasing via amRelPhrase.
+// lineage as identity. Directional phrasing via amRelPhrase.
 function amRelated(key){
   var rel=amRelatedFor(key);
   if(!rel.length)return'';

@@ -429,7 +429,7 @@
   .am-sim-in{display:inline-flex;align-items:center;gap:5px;color:var(--text);background:var(--surface-bright);border-color:var(--border-bright);}
   .am-sim:hover{border-color:var(--border-bright);color:var(--text);}
   .am-sim-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);}
-  /* related acts (kinship, #235): same chip as a tracked "similar" act, but a cool
+  /* related acts (kinship): same chip as a tracked "similar" act, but a cool
      dot + a mono relation verb distinguish kinship from acoustic similarity. */
   .am-rel-chip{gap:6px;}
   .am-rel-dot{width:5px;height:5px;border-radius:50%;background:#5b8bb0;flex:0 0 auto;}
