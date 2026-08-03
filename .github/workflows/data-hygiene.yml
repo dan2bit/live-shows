@@ -2,31 +2,58 @@
 #
 #   - check_ascii_punctuation.py — non-ASCII punctuation in pipeline-consumed
 #     data (curly quotes / long dashes orphan sidecar and goal-join keys).
-#     BLOCKING on staging: eight fixed characters, no heuristic, mechanical fix.
+#     BLOCKING on a staging push and on any PR into main/staging: eight fixed
+#     characters, no heuristic, mechanical fix.
 #   - check_name_drift.py — artist-name near-collisions, near-miss drift, and
 #     alias coverage across every artist-bearing column. ADVISORY everywhere,
 #     permanently: near-miss matching has intrinsic false positives, and a fuzzy
 #     check that can fail a run is how a guard ends up switched off.
 #   - check_evergreen.py — issue references and changelog dates creeping back
 #     into forker-facing comments and printed strings (history belongs in
-#     docs/ISSUE_LOG.md). BLOCKING on staging, but only for the files the push
-#     touched; the full-repo scan stays advisory.
+#     docs/ISSUE_LOG.md). BLOCKING on a staging push and on any PR into
+#     main/staging, but only for the files the change touched; the full-repo
+#     scan stays advisory.
 #
-# On main every check runs advisory, so a pre-existing finding elsewhere in the
-# repo never fails an unrelated run. All three write a $GITHUB_STEP_SUMMARY
-# section every run, clean or not, so the findings are readable without opening
-# a job log.
+# WHERE IT BLOCKS: a staging push and a PR into main/staging are the blocking
+# contexts. A direct push to main runs everything advisory, so a pre-existing
+# finding elsewhere in the repo never fails an unrelated run (the PR that
+# introduced a change is where it gets caught; the post-merge main push is a
+# backstop, not the gate). All three write a $GITHUB_STEP_SUMMARY section every
+# run, clean or not, so the findings are readable without opening a job log.
 #
-# WHAT "BLOCKING" MEANS HERE: a strict failure fails THIS workflow, which marks
-# the staging commit red and sends the usual workflow-failure notification. It
-# does not by itself stop auto-promote.yml from fast-forwarding main — that
-# workflow does not depend on this one, and main's required status check is the
-# private-data guard. Gating the promote on hygiene is a change to
-# auto-promote.yml, not something this file can do.
+# WHAT "BLOCKING" MEANS HERE:
+#   - On a staging PUSH: a strict failure fails THIS workflow, which marks the
+#     commit red and sends the usual workflow-failure notification. It does not
+#     by itself stop auto-promote.yml from fast-forwarding main — that workflow
+#     does not depend on this one, and main's required status check is the
+#     private-data guard. Gating the promote on hygiene is a change to
+#     auto-promote.yml, not something this file can do. So on a push this is a
+#     loud signal, not a hard gate.
+#   - On a PULL REQUEST into main/staging: a strict failure fails the workflow
+#     run reported against the PR. That becomes a hard gate ONLY if this check
+#     is added to the target branch's required status checks in branch
+#     protection (the check name to require is the job, "hygiene"). Until then
+#     it is the same loud-signal-not-a-gate as the push case — a red X on the
+#     PR that a reviewer can still merge past. Making it a true pre-merge gate
+#     is a branch-protection setting, not something this file can do.
 name: data-hygiene
 
 on:
   push:
+    branches: [main, staging]
+    paths:
+      - "data/**"
+      - "config.yaml"
+      - "scripts/**"
+      - "*.js"
+      - "*.css"
+      - "*.html"
+      - "tools/research/**"
+      - ".github/workflows/**"
+  pull_request:
+    # PRs into either integration branch get the same scans BEFORE the merge,
+    # so a blocking finding is caught pre-merge rather than after it lands on
+    # staging. Same paths filter as push.
     branches: [main, staging]
     paths:
       - "data/**"
@@ -56,35 +83,52 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: Resolve the push diff
+      - name: Resolve blocking mode and the change diff
         id: diff
-        if: github.ref == 'refs/heads/staging'
         shell: bash
         run: |
           set -euo pipefail
-          before='${{ github.event.before }}'
-          # A new branch, or a push whose old tip is no longer reachable, leaves
-          # nothing usable in event.before; fall back to the first parent.
-          if [ -z "$before" ] \
-            || [ "$before" = "0000000000000000000000000000000000000000" ] \
-            || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
-            # --verify -q so a missing parent yields an empty string rather
-            # than rev-parse echoing the literal argument back.
-            before="$(git rev-parse --verify -q 'HEAD~1' || true)"
+          # Blocking contexts: a push to staging, or a PR into main/staging.
+          # Everything else (a direct push to main, a manual dispatch) is
+          # advisory. Computed once here so the scan steps stay simple.
+          blocking=false
+          before=""
+          head='${{ github.sha }}'
+          if [ '${{ github.event_name }}' = 'pull_request' ]; then
+            blocking=true
+            # The PR range is base..head. github.sha on a pull_request event is
+            # the ephemeral merge commit, not the PR head; use the PR head sha so
+            # the diff reflects exactly what the PR changes.
+            before='${{ github.event.pull_request.base.sha }}'
+            head='${{ github.event.pull_request.head.sha }}'
+          elif [ '${{ github.ref }}' = 'refs/heads/staging' ]; then
+            blocking=true
+            before='${{ github.event.before }}'
+            # A new branch, or a push whose old tip is no longer reachable, leaves
+            # nothing usable in event.before; fall back to the first parent.
+            if [ -z "$before" ] \
+              || [ "$before" = "0000000000000000000000000000000000000000" ] \
+              || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+              # --verify -q so a missing parent yields an empty string rather
+              # than rev-parse echoing the literal argument back.
+              before="$(git rev-parse --verify -q 'HEAD~1' || true)"
+            fi
           fi
           files=""
-          if [ -n "$before" ]; then
-            files="$(git diff --name-only --diff-filter=d "$before" '${{ github.sha }}' \
+          if [ -n "$before" ] && git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            files="$(git diff --name-only --diff-filter=d "$before" "$head" \
               -- '*.py' '*.js' '*.css' '*.html' '*.yml' 'config.yaml' | tr '\n' ' ')"
           fi
+          echo "blocking=$blocking" >> "$GITHUB_OUTPUT"
           echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "blocking mode: $blocking"
           echo "evergreen scope: ${files:-<none - advisory this run>}"
 
       - name: ASCII punctuation scan
         shell: bash
         run: |
           set -euo pipefail
-          if [ '${{ github.ref }}' = 'refs/heads/staging' ]; then
+          if [ '${{ steps.diff.outputs.blocking }}' = 'true' ]; then
             python scripts/check_ascii_punctuation.py --strict
           else
             python scripts/check_ascii_punctuation.py
@@ -99,8 +143,8 @@ jobs:
           set -euo pipefail
           files='${{ steps.diff.outputs.files }}'
           # An empty list would mean "the whole repo" to --strict, which is not
-          # the intent when a push touched no scannable file; stay advisory.
-          if [ '${{ github.ref }}' = 'refs/heads/staging' ] && [ -n "$files" ]; then
+          # the intent when a change touched no scannable file; stay advisory.
+          if [ '${{ steps.diff.outputs.blocking }}' = 'true' ] && [ -n "$files" ]; then
             # shellcheck disable=SC2086
             python scripts/check_evergreen.py --strict $files
           else
