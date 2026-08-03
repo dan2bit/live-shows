@@ -2,9 +2,9 @@
 // The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 var RECOMMEND_DEBUG=false;                 // DEBUG: preview the issue text instead of POSTing
 var RECOMMEND_PAT='github_pat_11AALROKQ0'+'8enkytFFRtky_dscAsfmFbTJktIMnkREDqvm0WLQmpJDAMIi76oCbhFuAYNY3W23O4o9G9tH'; // issues:write only — safe to embed in public repo
-var INDEX_PATH='data/recommend_index.json',VENUES_PATH='data/venues.tsv';
+var INDEX_PATH='data/recommend_index.json',VENUES_PATH='data/venues.tsv',RELATED_PATH='data/related_acts.tsv';
 var REC_RATE_KEY='rec_submits',REC_RATE_MAX=2;
-var recIndexCache=null,recVenuesCache=null,recState={};
+var recIndexCache=null,recVenuesCache=null,recRelatedCache=null,recState={};
 
 function recStripCtl(s){return(s||'').replace(/[\u0000-\u001f\u007f]/g,'').trim();}
 // Normalization MUST match build_recommend_index.py: de-accent, lowercase,
@@ -67,6 +67,67 @@ function recMatchIndex(name,idx){
   return{record:best,dist:bestD};
 }
 
+// Kinship edges (related_acts.tsv) — a person shared across billed acts that the
+// times_seen count, which is per billed act, can't see. Loaded like venues; a
+// bidirectional adjacency keyed by recNorm(name), recording which side of the
+// A|B pair each endpoint is (selfIsA) so the ack phrasing can stay directional.
+// This only enriches the acknowledgment copy; it never changes any count.
+async function recLoadRelated(){
+  if(recRelatedCache)return recRelatedCache;
+  var adj={};
+  try{
+    var rows=await recLoadTsv(RELATED_PATH,function(){return null;},function(){});
+    rows.forEach(function(r){
+      var a=recNorm(r['Artist A']||''),b=recNorm(r['Artist B']||''),rel=(r['Relation']||'').trim();
+      if(!a||!b||!rel)return;
+      (adj[a]=adj[a]||[]).push({other:b,rel:rel,selfIsA:true});
+      (adj[b]=adj[b]||[]).push({other:a,rel:rel,selfIsA:false});
+    });
+  }catch(e){/* absent/unreadable file -> no cross-mentions, ack still renders */}
+  recRelatedCache=adj;
+  return adj;
+}
+// Directional phrasing for a row "A <rel> B": the individual is A, the band or
+// successor is B. From A's side we use the first form; from B's side, the second.
+var REC_REL_PHRASE={
+  'fronts':        ['fronts',            'fronted by'],
+  'member-of':     ['member of',         'features'],
+  'former-member': ['former member of',  'formerly featured'],
+  'successor-of':  ['successor to',      'succeeded by']
+};
+// Identity relations mean the same person on both sides, so the related act's own
+// count reads as "also you"; successor-of is lineage, mentioned without that framing.
+var REC_REL_IDENTITY={'fronts':1,'member-of':1,'former-member':1};
+function recRelPhrase(rel,selfIsA){
+  var p=REC_REL_PHRASE[rel];
+  if(!p)return'related to';
+  return selfIsA?p[0]:p[1];
+}
+// Resolve a recommended artist's kinship edges to acts that are actually SEEN,
+// reading from the already-loaded index + related cache (synchronous, so the ack
+// stays sync for both the direct and the "did you mean -> yes" paths). Siblings
+// are dropped (different people; a combined count would be wrong); untracked or
+// not-yet-seen endpoints are skipped. Counts are reported per act, never summed.
+function recRelatedMentions(name){
+  if(!recRelatedCache||!recIndexCache)return[];
+  var edges=recRelatedCache[recNorm(name)];
+  if(!edges||!edges.length)return[];
+  var variants=recIndexCache.variants||{},records=recIndexCache.records||[];
+  var out=[],seen={};
+  edges.forEach(function(e){
+    if(e.rel==='sibling')return;
+    if(!Object.prototype.hasOwnProperty.call(variants,e.other))return;
+    var rec=records[variants[e.other]];
+    if(!rec||rec.status!=='seen')return;
+    var canon=rec.canonical||'';
+    if(seen[canon])return;
+    seen[canon]=1;
+    out.push({name:canon,phrase:recRelPhrase(e.rel,e.selfIsA),
+      times:String(rec.times_seen||''),identity:!!REC_REL_IDENTITY[e.rel]});
+  });
+  return out;
+}
+
 function openRecommendModal(){recState={};document.getElementById('recommendModal').classList.add('open');recRenderIntake();}
 function closeRecommendModal(){document.getElementById('recommendModal').classList.remove('open');}
 function recBody(html){document.getElementById('recommendModalBody').innerHTML=html;}
@@ -108,6 +169,7 @@ async function recArtistCheck(){
   recState.note=recStripCtl(document.getElementById('recArtNote').value);
   res.innerHTML='<p class="rec-msg">Checking\u2026</p>';
   var idx;try{idx=await recLoadIndex();}catch(e){res.innerHTML='<p class="rec-err">Couldn\u2019t load the artist index \u2014 please try again.</p>';return;}
+  await recLoadRelated();   // primes the kinship cache so recAck can resolve synchronously (best-effort)
   var m=recMatchIndex(name,idx);recState.candidate=m.record;
   if(m.record&&m.dist<=1)return recKnownArtist();
   // "Did you mean" band: allow a looser edit distance for longer names
@@ -121,6 +183,21 @@ async function recArtistCheck(){
     return;
   }
   recArtistUnknown();
+}
+// One line naming any SAME-PERSON or lineage acts I've also seen, each with its
+// own count (never summed). Identity relations read as "also" (it's still you);
+// a successor/lineage act is named without that framing. Empty when there's
+// nothing seen to add, so the base ack is unchanged for most artists.
+function recRelatedClause(r){
+  var ms=recRelatedMentions(r.canonical||'');
+  if(!ms.length)return'';
+  var ident=ms.filter(function(m){return m.identity;}),
+      lin=ms.filter(function(m){return !m.identity;}),parts=[];
+  function fmt(m){return'<strong>'+esc(m.name)+'</strong> ('+esc(m.phrase)+')'
+    +(m.times?' '+m.times+' time'+(m.times==='1'?'':'s'):'');}
+  if(ident.length)parts.push('I\u2019ve also seen '+ident.map(fmt).join(' and '));
+  if(lin.length)parts.push('Related: '+lin.map(fmt).join(' and '));
+  return parts.join(' \u00b7 ')+'.<br>';
 }
 // Status-aware acknowledgment text for an already-known artist.
 function recAck(r){
@@ -136,7 +213,7 @@ function recAck(r){
       dates='<span class="rec-sub">First: '+(first||'\u2014')+' \u00b7 Most recent: '+(recent||'\u2014')+'</span><br>';
     }
     return'Yep \u2014 I\u2019ve caught <strong>'+name+'</strong>'+(t?' '+t+' time'+(t==='1'?'':'s'):'')+' already.<br>'
-      +dates+'Thanks for thinking of me.';
+      +dates+recRelatedClause(r)+'Thanks for thinking of me.';
   }
   if(st==='fast_track')return'<strong>'+name+'</strong> is already on my fast-track list \u2014 any '+esc(siteRegion())+' date is an instant buy. Thanks for the rec!';
   if(st==='potential'){
