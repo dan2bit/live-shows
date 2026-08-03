@@ -23,8 +23,8 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 **A — Web-src discovery diff**
 
 1. Diff the fresh `rhbl-bandsintown-dc-recommends-YYYY-MM.tsv` and `rhbl-hereforthebands-dc-YYYY-MM.tsv` against the prior month's exports.
-2. For every artist name newly surfaced in the diff, check against **all five** tracking files: `data/live_shows_current.tsv`, `data/live_shows_potential.tsv`, `data/fast_track.tsv`, `tools/research/follows/follows_master.tsv`, and `tools/research/follows/new_artist_research.tsv`.
-3. Any artist not in any of the five → surface in conversation for a tier-placement decision (the tier is Dan's call).
+2. For every artist name newly surfaced in the diff, check against **all six** tracking files: `data/live_shows_current.tsv`, `data/live_shows_potential.tsv`, `data/fast_track.tsv`, `tools/research/follows/follows_master.tsv`, `tools/research/follows/new_artist_research.tsv`, and `data/artists.tsv`. The last one catches artists already seen live but carrying no follow row (it aggregates the history files, so those need no separate check) — without it, previously-seen artists false-flag as new every time they resurface (the John Hiatt lesson, 2026-08).
+3. Any artist not in any of the six → surface in conversation for a tier-placement decision (the tier is Dan's call).
 
 **B — BIT/Seated roster refresh**
 
