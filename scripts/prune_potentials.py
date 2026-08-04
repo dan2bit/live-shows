@@ -95,10 +95,10 @@ def main() -> int:
 
     existing_nar_artists = {r.get("Artist", "").lower() for r in nar_rows}
 
-    # #240 — an artist who's already been seen (artists.tsv) or is already
-    # tracked (follows_master.tsv) doesn't belong in NAR just because a
-    # potentials row for them got pruned; NAR is for *new*-artist discovery,
-    # not a place a known artist can end up via the Pass/pruning path.
+    # An artist who's already been seen (artists.tsv) or is already tracked
+    # (follows_master.tsv) doesn't belong in NAR just because a potentials
+    # row for them got pruned; NAR is for *new*-artist discovery, not a
+    # place a known artist can end up via the Pass/pruning path.
     known_artists: set[str] = set()
     if ARTISTS_PATH.exists():
         _, artists_rows = read_tsv(ARTISTS_PATH)
