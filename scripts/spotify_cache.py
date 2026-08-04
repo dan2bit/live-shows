@@ -1141,7 +1141,9 @@ def refresh_images(cache: dict, creds, args) -> None:
     GET /artists/{id} per artist (+1 call each — batch /artists?ids= is 403 under
     the Dev-mode app). Honors --artist, --stale-days (gating on
     images_checked), and --dry-run, so a multi-day portrait back-audit resumes
-    across the ~100/day cap. Null-preserve: an empty pull never wipes a cached
+    across the ~100/day cap. With --heal-only the sweep restricts itself to
+    entries never stamped by a successful pull — the empty-at-resolve heal set,
+    the only non-cosmetic slice of portrait maintenance. Null-preserve: an empty pull never wipes a cached
     image_url, and leaves images_checked untouched so the sweep retries it rather
     than locking in a false null.
     """
@@ -1149,11 +1151,21 @@ def refresh_images(cache: dict, creds, args) -> None:
     if args.artist:
         sub = args.artist.lower()
         names = [n for n in names if sub in n.lower()]
+    if getattr(args, "heal_only", False):
+        # The heal set: entries never stamped by a successful portrait pull
+        # (empty at resolve time, or empty on every sweep since). Typically
+        # single-digit sized, so it rides any scheduled run's budget as a
+        # rounding error — the full-roster sweep exists only for cosmetics.
+        names = [n for n in names
+                 if cache[n].get("spotify_id") and not cache[n].get("images_checked")]
     if not names:
         print("No cached artists to refresh images for "
-              "(run a normal build first, or check --artist).")
+              "(run a normal build first, or check --artist"
+              + (" / nothing currently in the --heal-only set" if getattr(args, "heal_only", False) else "")
+              + ").")
         return
     print(f"Refreshing artist portrait for {len(names)} cached artist(s)"
+          + (" [HEAL-ONLY: unstamped entries]" if getattr(args, "heal_only", False) else "")
           + (f" [skip checked < {args.stale_days}d]" if args.stale_days is not None else "")
           + (" [DRY RUN]" if args.dry_run else "") + "\n")
 
@@ -1224,6 +1236,98 @@ def refresh_images(cache: dict, creds, args) -> None:
           + (f"; skipped {skipped} still-fresh (--stale-days {args.stale_days})"
              if args.stale_days is not None else "")
           + f". Written: {OUTPUT_JSON}")
+
+
+def _head_status(url: str) -> int:
+    """HTTP status of a bare HEAD request against a cached portrait URL.
+
+    Deliberately OUTSIDE api_get(): i.scdn.co is a public CDN — no auth token,
+    no Spotify quota, and NOT counted against --limit. Returns 0 for network
+    trouble (timeout/DNS/connection), which callers must treat as inconclusive,
+    never as rot.
+    """
+    try:
+        resp = requests.head(url, timeout=15, allow_redirects=True)
+        return resp.status_code
+    except requests.RequestException:
+        return 0
+
+
+def check_image_rot(cache: dict, creds, args) -> None:
+    """HEAD-check every cached portrait URL and re-fetch only the dead ones.
+
+    Two phases with two very different price tags:
+      1. HEAD every cached image_url via _head_status() — zero Spotify quota,
+         the whole roster in seconds-to-minutes.
+      2. Only for URLs answering 404/410: re-pull the portrait through the
+         metered GET /artists/{id} path (budget-honored inside api_get()).
+
+    A dead URL whose re-pull comes back empty is CLEARED and left unstamped —
+    the one deliberate exception to null-preserve, because the preserved value
+    is provably dead; clearing hands the artist to the --heal-only set instead
+    of serving a broken image forever. Honors --artist and --dry-run (phase 1
+    runs either way — it is read-only — but a dry run writes nothing).
+    """
+    names = [n for n in sorted(cache)
+             if cache[n].get("image_url") and cache[n].get("spotify_id")]
+    if args.artist:
+        sub = args.artist.lower()
+        names = [n for n in names if sub in n.lower()]
+    if not names:
+        print("No cached portrait URLs to check (run --refresh-images first, "
+              "or check --artist).")
+        return
+    print(f"HEAD-checking {len(names)} cached portrait URL(s) — unmetered"
+          + (" [DRY RUN]" if args.dry_run else "") + "\n")
+    rotted = []
+    inconclusive = 0
+    for i, name in enumerate(names, 1):
+        st = _head_status(cache[name]["image_url"])
+        if st in (404, 410):
+            rotted.append(name)
+            print(f"[{i}/{len(names)}] {name}  → {st} DEAD")
+        elif 200 <= st < 400:
+            pass  # healthy; stay quiet — rot is rare and the roster is large
+        else:
+            inconclusive += 1
+            print(f"[{i}/{len(names)}] {name}  → status {st or 'network error'}, "
+                  "inconclusive (no action)")
+    print(f"\nHealthy: {len(names) - len(rotted) - inconclusive}"
+          f" | dead: {len(rotted)} | inconclusive: {inconclusive}")
+    if not rotted:
+        print("No rot found; nothing to re-fetch.")
+        return
+    if args.dry_run:
+        print(f"[DRY RUN] would re-fetch {len(rotted)} portrait(s) via the "
+              "metered API: " + ", ".join(rotted))
+        return
+    print(f"\nRe-fetching {len(rotted)} dead portrait(s) via GET /artists/{{id}} (metered):")
+    refreshed = 0
+    cleared = 0
+    for i, name in enumerate(rotted, 1):
+        entry = cache[name]
+        try:
+            img = artist_image(entry["spotify_id"], creds)
+        except RateLimited:
+            save_cache(cache)
+            print(f"    …flushed {len(cache)} cached entries before bailing")
+            raise
+        time.sleep(DELAY)
+        if img:
+            entry["image_url"] = img
+            entry["images_checked"] = date.today().isoformat()
+            refreshed += 1
+            print(f"[{i}/{len(rotted)}] {name}  → portrait replaced")
+        else:
+            entry["image_url"] = None
+            entry["images_checked"] = None
+            cleared += 1
+            print(f"[{i}/{len(rotted)}] {name}  → dead URL, empty re-pull; "
+                  "cleared and left unstamped for --heal-only")
+    save_cache(cache)
+    print("\n" + "=" * 60)
+    print(f"Replaced {refreshed} portrait(s); cleared {cleared} dead-and-empty. "
+          f"Written: {OUTPUT_JSON}")
 
 
 # ── ID-drift audit (--audit-ids / --repoint) ──────────────────────────────────
@@ -2029,6 +2133,17 @@ def main() -> None:
                          "untouched. Honors --artist, --stale-days (on "
                          "images_checked), and --dry-run — a resumable multi-day "
                          "portrait back-audit across the ~100/day cap.")
+    ap.add_argument("--heal-only", action="store_true",
+                    help="Modifier for --refresh-images: restrict the sweep to "
+                         "entries never stamped by a successful portrait pull "
+                         "(the empty-at-resolve heal set, typically single-digit "
+                         "sized) — the non-cosmetic slice of portrait maintenance "
+                         "at rounding-error request cost.")
+    ap.add_argument("--check-image-rot", action="store_true",
+                    help="HEAD-check every cached portrait URL (public CDN — "
+                         "unmetered, not counted against --limit) and re-fetch "
+                         "via the metered API only those answering 404/410. "
+                         "Honors --artist and --dry-run.")
     ap.add_argument("--refresh-lastfm", action="store_true",
                     help="Re-pull ONLY the Last.fm enrichment block (listeners, "
                          "playcount, tags, similar) for cached artists. Independent "
@@ -2129,6 +2244,9 @@ def main() -> None:
         if args.limit <= 0:
             sys.exit("--limit must be a positive request count")
         globals()["_CALL_BUDGET"] = args.limit
+
+    if args.heal_only and not args.refresh_images:
+        ap.error("--heal-only is a modifier for --refresh-images")
 
     # --new-artist is a distinct operational mode, not a modifier: it owns the whole run.
     # Reject the mode combinations rather than silently letting one win.
@@ -2250,6 +2368,12 @@ def main() -> None:
         cache = load_cache()
         print(f"Already cached: {len(cache)}")
         refresh_images(cache, creds, args)
+        return
+
+    if args.check_image_rot:
+        cache = load_cache()
+        print(f"Already cached: {len(cache)}")
+        check_image_rot(cache, creds, args)
         return
 
     amap = load_aliases()
