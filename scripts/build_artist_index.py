@@ -64,6 +64,17 @@ def slugify(name):
     return n.replace(" ", "-") if n else None
 
 
+def display_name(raw):
+    """Prefer natural 'The X' order for the human-facing name — mirrors the
+    helper in build_recommend_index.py. Keys and slugs are unaffected: both
+    already de-invert inside norm(), so this changes display text only."""
+    raw = (raw or "").strip()
+    m = re.match(r"^(.*),\s*(the|a|an)$", raw, re.I)
+    if m:
+        return "%s %s" % (m.group(2).capitalize(), m.group(1))
+    return raw
+
+
 def read_tsv(path, skip_comments=False):
     if not os.path.exists(path):
         return []
@@ -385,8 +396,6 @@ def build(root):
         see(r.get("Artist", ""))
     for name in spotify_raw:
         see(name)
-    for k in list(follows) + list(pots) + list(fast) + list(books):
-        display.setdefault(k, k)  # fall back to the key if no nicer form seen
     for r in read_tsv(os.path.join(root, "data/live_shows_current.tsv")):
         see(r.get("Artist", ""))
         for s in SUPPORT_SPLIT.split(clean(r.get("Supporting Artist")) or ""):
@@ -396,6 +405,21 @@ def build(root):
         see(r.get("Artist", ""))
     for r in read_tsv(os.path.join(root, "data/seen_with.tsv")):
         see(r.get("Seen With", ""))
+    # Surface-casing passes for sources collected above as normalized keys only.
+    # Without these, an artist reachable solely through follows / fast-track /
+    # book-eligibility never reaches see(), so the properly cased name in the
+    # source row is discarded and the record falls back to the lowercased key.
+    for r in read_tsv(os.path.join(root, "tools/research/follows/follows_master.tsv")):
+        see(r.get("Artist", ""))
+    for r in read_tsv(os.path.join(root, "data/fast_track.tsv")):
+        see(r.get("Artist", ""))
+    for r in read_tsv(os.path.join(root, "data/show_goals/autograph_books_eligibility.tsv")):
+        see(r.get("Artist", ""))
+    # Universe fallback runs LAST so every cased surface form above gets first
+    # claim on the slot; Title-Case is the true last resort for a key with no
+    # cased form in any source.
+    for k in list(follows) + list(pots) + list(fast) + list(books):
+        display.setdefault(k, k.title())
 
     universe = set(display)
 
@@ -423,7 +447,7 @@ def build(root):
         sp = spotify.get(k, {})
         lf = (sp.get("lastfm") or {})
         bk = books.get(k, {})
-        disp = display.get(k, k)
+        disp = display_name(display.get(k, k))
 
         # sightings (own) + Via bill-borrow (component artists inherit the bill's sightings)
         rows = list(sightings.get(k, []))
