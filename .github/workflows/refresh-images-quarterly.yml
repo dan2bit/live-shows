@@ -1,17 +1,13 @@
-name: Monthly release refresh (spotify_cache)
+name: Quarterly portrait rot check (spotify_cache)
 
-# Scheduled `--refresh-releases` burst, late in the month — one run per day
-# on the 26th-29th, each spending a voluntary --limit budget and exiting 0
-# when it's spent (BudgetExhausted). The next day's run resumes from the
-# checkpoint. A real Spotify 429 while the budget is unspent still exits 1 and
-# surfaces as a genuine failure.
+# Scheduled `--check-image-rot`: HEAD-check every cached portrait URL against
+# the public CDN (unauthenticated, unmetered, outside --limit) and re-fetch
+# via the metered API only URLs answering 404/410. The whole roster takes
+# about a minute; metered calls happen only when rot is actually found.
 #
-# --stale-days 25 is EXPLICIT AND REQUIRED: the auto-inferrer is tuned for
-# short retry gaps, not the ~27-31-day monthly gap; 25 keeps this burst's own
-# commits skipped while reliably reopening last month's batch.
-#
-# A budgeted --heal-only portrait step rides the same run: the only
-# non-cosmetic portrait maintenance, at rounding-error request cost.
+# The cosmetic full-roster sweep (`--refresh-images --stale-days 80`) is
+# workflow_dispatch-only via the full_sweep input — portrait drift is
+# slow-moving and never worth a scheduled burst.
 #
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote. data/artist_spotify.json promoting to main cascade-triggers
@@ -19,14 +15,19 @@ name: Monthly release refresh (spotify_cache)
 
 on:
   schedule:
-    - cron: "47 6 26-29 * *"
+    - cron: "23 7 3 1,4,7,10 *"
   workflow_dispatch:
+    inputs:
+      full_sweep:
+        description: "Run the cosmetic full-roster portrait sweep instead of the rot check"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 concurrency:
-  group: refresh-releases-monthly
+  group: refresh-images-quarterly
   cancel-in-progress: false
 
 jobs:
@@ -41,20 +42,18 @@ jobs:
           python-version: "3.12"
       - name: Install deps
         run: pip install requests python-dotenv
-      - name: Refresh releases (budgeted)
+      - name: Rot check (unmetered HEADs; metered re-fetch only on 404/410)
+        if: ${{ inputs.full_sweep != true }}
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: python3 scripts/spotify_cache.py --refresh-releases --stale-days 25 --limit 90
-      - name: Heal unstamped portraits (budgeted)
-        # The empty-at-resolve heal set: entries never stamped by a successful
-        # portrait pull. Typically single-digit sized, so 15 is generous — a
-        # separate process gets a fresh --limit budget even when the releases
-        # step above exits via BudgetExhausted. History: docs/ISSUE_LOG.md.
+        run: python3 scripts/spotify_cache.py --check-image-rot --limit 40
+      - name: Cosmetic full sweep (dispatch-only, budgeted)
+        if: ${{ inputs.full_sweep == true }}
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
+        run: python3 scripts/spotify_cache.py --refresh-images --stale-days 80 --limit 90
       - name: Commit to staging if changed
         run: |
           git add data/artist_spotify.json
@@ -70,7 +69,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
-            git commit -m "ci: monthly --refresh-releases sweep (spotify_cache)"
+            git commit -m "ci: quarterly portrait maintenance (spotify_cache)"
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
