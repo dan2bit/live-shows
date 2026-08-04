@@ -21,6 +21,8 @@ from pathlib import Path
 TODAY = date.today()
 POTENTIALS_PATH = Path("data/live_shows_potential.tsv")
 NAR_PATH = Path("tools/research/follows/new_artist_research.tsv")
+ARTISTS_PATH = Path("data/artists.tsv")
+FOLLOWS_MASTER_PATH = Path("tools/research/follows/follows_master.tsv")
 
 
 def extract_last_date(date_str: str) -> date | None:
@@ -93,6 +95,18 @@ def main() -> int:
 
     existing_nar_artists = {r.get("Artist", "").lower() for r in nar_rows}
 
+    # #240 — an artist who's already been seen (artists.tsv) or is already
+    # tracked (follows_master.tsv) doesn't belong in NAR just because a
+    # potentials row for them got pruned; NAR is for *new*-artist discovery,
+    # not a place a known artist can end up via the Pass/pruning path.
+    known_artists: set[str] = set()
+    if ARTISTS_PATH.exists():
+        _, artists_rows = read_tsv(ARTISTS_PATH)
+        known_artists |= {r.get("Artist", "").lower() for r in artists_rows}
+    if FOLLOWS_MASTER_PATH.exists():
+        _, follows_rows = read_tsv(FOLLOWS_MASTER_PATH)
+        known_artists |= {r.get("Artist", "").lower() for r in follows_rows}
+
     kept = []
     pruned_rows = []
 
@@ -123,11 +137,15 @@ def main() -> int:
             if r.get("Decision", "").lower() == "sell":
                 continue
             artist = r.get("Artist", "").lower()
-            if artist and artist not in existing_nar_artists:
-                nar_rows.append(nar_row_for(r, nar_headers))
-                existing_nar_artists.add(artist)
-                added += 1
-                print(f"  + Added to NAR as pending-review: {r.get('Artist')} [{nar_source_for(r.get('Decision',''))}]")
+            if not artist or artist in existing_nar_artists:
+                continue
+            if artist in known_artists:
+                print(f"  skip (already known): {r.get('Artist')}")
+                continue
+            nar_rows.append(nar_row_for(r, nar_headers))
+            existing_nar_artists.add(artist)
+            added += 1
+            print(f"  + Added to NAR as pending-review: {r.get('Artist')} [{nar_source_for(r.get('Decision',''))}]")
         if added:
             write_tsv(NAR_PATH, nar_headers, nar_rows)
 
