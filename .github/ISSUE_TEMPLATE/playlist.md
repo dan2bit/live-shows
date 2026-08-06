@@ -24,7 +24,10 @@ Show note:
   DATE_DESC  = MM/DD/YYYY    video descriptions
   VENUE      = short form for titles, e.g. Pier Six (MD)
   VENUE_FULL = full name for descriptions, e.g. Pier Six Pavilion (MD)
-  SEAT       = seat/location token for the playlist description
+  VANTAGE    = filming location for the playlist description ("select tracks
+             from <location>", esp. for GA). From the `vantage:` field in the
+             show-notes email; if absent, use the seat/location from show data
+             (public post-show).
   SHOW_NOTE  public Notes for the show (data/live_shows_current.tsv); may hold
              song-ID context, e.g. an act known for playing covers. Omit if none.
 -->
@@ -38,7 +41,7 @@ Task List:
 - [ ] per video (headliner), set Description: `from {{VENUE_FULL}} on {{DATE_DESC}} {{HEADLINER_HANDLE}}`
 - [ ] add each video to a new Playlist
 - [ ] set Playlist Title: `{{HEADLINER}} LIVE @ {{VENUE}} {{DATE_DISP}}`
-- [ ] set Playlist Description: `select tracks from {{SEAT}} - full playlists at {{SETLIST_FM_HEADLINER}} and {{SETLIST_FM_SUPPORT}}`
+- [ ] set Playlist Description: `select tracks from {{VANTAGE}} - full playlists at {{SETLIST_FM_HEADLINER}} and {{SETLIST_FM_SUPPORT}}`
 - [ ] for each new video, reuse details from the first, set Monetization on, and Submit Rating "none of the above"
 - [ ] per video (support), set Title: `{{SUPPORT}} LIVE @ {{VENUE}} {{DATE_DISP}}`
 - [ ] per video (support), set Description: `from {{VENUE_FULL}} on {{DATE_DESC}} {{SUPPORT_HANDLE}} supporting {{HEADLINER_HANDLE}}`
