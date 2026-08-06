@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-08-05T23:23:40Z",
+"generated_at":"2026-08-06T02:02:41Z",
 "aliases":{
 "billy f gibbons":"billy gibbons",
 "trombone shorty":"trombone shorty orleans avenue",
@@ -3240,8 +3240,8 @@
 },
 {
 "name":"The Wailin' Jennys",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"wailin-jennys"
 },
 {
 "name":"Foy Vance",
@@ -4010,6 +4010,61 @@
 "seated":null,
 "qobuz":"https://www.qobuz.com/us-en/interpreter/baskery/download-streaming-albums",
 "setlistfm":"https://www.setlist.fm/search?query=Baskery"
+},
+"similar":[]
+},
+"beat belew vai levin bozzio":{
+"name":"BEAT (Belew/Vai/Levin/Bozzio)",
+"slug":"beat-belew-vai-levin-bozzio",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Medium",
+"rank":2
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.158,
+"band":"low"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0,
+"photo_album":null
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/BEAT%20%28Belew/Vai/Levin/Bozzio%29",
+"seated":null,
+"qobuz":"https://www.qobuz.com/us-en/interpreter/beat-belew-vai-levin-bozzio/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=BEAT+(Belew/Vai/Levin/Bozzio)"
 },
 "similar":[]
 },
@@ -17724,8 +17779,8 @@
 },
 {
 "name":"Punch Brothers",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"punch-brothers"
 }
 ]
 },
@@ -21765,7 +21820,10 @@
 "tranche":"popular",
 "raw":399192
 },
-"tier":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
 "seen":{
 "count":1,
 "first":"2024-06-10",
@@ -21782,8 +21840,8 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.132,
-"band":"low"
+"score":0.482,
+"band":"medium"
 },
 "badges":{
 "hat":"absent",
@@ -31073,7 +31131,10 @@
 "banner_url":null,
 "genres":[],
 "listener":null,
-"tier":null,
+"tier":{
+"label":"Medium-Strong",
+"rank":3
+},
 "seen":{
 "count":0,
 "first":null,
@@ -31081,7 +31142,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.245,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -35048,6 +35112,61 @@
 "slug":null
 }
 ]
+},
+"punch brothers":{
+"name":"Punch Brothers",
+"slug":"punch-brothers",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0,
+"photo_album":null
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/Punch%20Brothers",
+"seated":null,
+"qobuz":"https://www.qobuz.com/us-en/interpreter/punch-brothers/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=Punch+Brothers"
+},
+"similar":[]
 },
 "quinn sullivan":{
 "name":"Quinn Sullivan",
@@ -39194,8 +39313,8 @@
 },
 {
 "name":"The Wailin' Jennys",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"wailin-jennys"
 },
 {
 "name":"Brandi Carlile",
@@ -46515,6 +46634,61 @@
 "slug":null
 }
 ]
+},
+"wailin jennys":{
+"name":"The Wailin' Jennys",
+"slug":"wailin-jennys",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
+"seen":{
+"count":0,
+"first":null,
+"recent":null,
+"show_log":[]
+},
+"fast_track":false,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0,
+"photo_album":null
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/The%20Wailin%27%20Jennys",
+"seated":null,
+"qobuz":"https://www.qobuz.com/us-en/interpreter/wailin-jennys/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=The+Wailin'+Jennys"
+},
+"similar":[]
 },
 "walter trout":{
 "name":"Walter Trout",
