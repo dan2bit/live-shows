@@ -13,6 +13,9 @@ YouTube:
 - {{HEADLINER}}: {{HEADLINER_HANDLE}}
 - {{SUPPORT}}: {{SUPPORT_HANDLE}}
 
+Show note:
+{{SHOW_NOTE}}
+
 <!-- Fill-in values, used by the steps below:
   HEADLINER / SUPPORT        band names
   *_HANDLE                   @channel handles
@@ -22,6 +25,8 @@ YouTube:
   VENUE      = short form for titles, e.g. Pier Six (MD)
   VENUE_FULL = full name for descriptions, e.g. Pier Six Pavilion (MD)
   SEAT       = seat/location token for the playlist description
+  SHOW_NOTE  public Notes for the show (data/live_shows_current.tsv); may hold
+             song-ID context, e.g. an act known for playing covers. Omit if none.
 -->
 
 Task List:
