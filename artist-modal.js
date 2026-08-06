@@ -41,7 +41,7 @@ function amNorm(s){
   s=(s||'').trim();
   var m=s.match(/^(.*),\s+(the|a|an)$/i);
   if(m)s=m[2]+' '+m[1];
-  s=s.normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  s=s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   s=s.replace(/^\s*(the|a|an)\s+/,'');
   s=s.replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
   return s;
@@ -69,8 +69,8 @@ function amErr(msg){return'<div class="am-loose"><p class="am-err">'+esc(msg)+'<
 
 async function openArtistModal(name){
   amShow();
-  amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading…</span></div>');
-  var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn’t load artist data — please try again.'));return;}
+  amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
+  var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
   await amLoadStatus();
   await amLoadRelated();
@@ -80,8 +80,8 @@ async function openArtistModal(name){
 }
 async function openArtistBySlug(slug){
   amShow();
-  amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading…</span></div>');
-  var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn’t load artist data — please try again.'));return;}
+  amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
+  var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
   await amLoadFavorites();
   await amLoadStatus();
   await amLoadRelated();
@@ -245,7 +245,7 @@ async function amFavClick(key){
       var cut=rank[cfg.confirmBelow]!==undefined?rank[cfg.confirmBelow]:2;
       if((rank[a.band]||0)<cut){
         var seen=(rec.seen&&rec.seen.count)||0,nfav=Object.keys(amFavCache).length;
-        if(!confirm('Pin '+name+' to full favorite?\n\nSeen '+seen+'× · affinity '+a.score+' ('+a.band+')\nThis would be favorite #'+(nfav+1)+'.'))return;
+        if(!confirm('Pin '+name+' to full favorite?\n\nSeen '+seen+'\u00d7 \u00b7 affinity '+a.score+' ('+a.band+')\nThis would be favorite #'+(nfav+1)+'.'))return;
       }
       amFavCache[key]={'Artist':name,'Since':new Date().toISOString().slice(0,10)};
       await amFavSave('favorites: add '+name);
@@ -273,7 +273,7 @@ function amRender(rec,displayName,key){
   if(!rec)return amUnknown(displayName,key);
   var spotify=featureOn('spotify');
   var h='<div class="am-card">';
-  h+='<button class="am-close" onclick="closeArtistModal()" aria-label="Close">✕</button>';
+  h+='<button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>';
   // Identity header (square-avatar fallback for the banner)
   h+='<div class="am-head">';
   h+=rec.image_url
@@ -295,7 +295,7 @@ function amRender(rec,displayName,key){
 }
 
 function amUnknown(displayName,key){
-  return'<div class="am-card"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">✕</button>'
+  return'<div class="am-card"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
     +'<div class="am-head"><div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>'
     +'<div class="am-id"><div class="am-name">'+esc(displayName||'Unknown')+'</div>'
     +amStatusLine(displayName||'')
@@ -306,8 +306,8 @@ function amUnknown(displayName,key){
 function amRowOnly(key){
   var r=amRowContext(key);if(!r.upcoming&&!r.considering)return'';
   var h='<div class="am-sec">';
-  if(r.upcoming)h+='<div class="am-next-inline">🎟 Upcoming — '+esc(r.upcoming.date)+(r.upcoming.venue?' · '+esc(amVenueShort(r.upcoming.venue)):'')+'</div>';
-  if(r.considering)h+='<div class="am-next-inline">👀 Considering — '+esc(r.considering.date||'TBD')+(r.considering.venue?' · '+esc(r.considering.venue):'')+'</div>';
+  if(r.upcoming)h+='<div class="am-next-inline">\ud83c\udf9f Upcoming \u2014 '+esc(r.upcoming.date)+(r.upcoming.venue?' \u00b7 '+esc(amVenueShort(r.upcoming.venue)):'')+'</div>';
+  if(r.considering)h+='<div class="am-next-inline">\ud83d\udc40 Considering \u2014 '+esc(r.considering.date||'TBD')+(r.considering.venue?' \u00b7 '+esc(r.considering.venue):'')+'</div>';
   return h+'</div>';
 }
 
@@ -345,7 +345,7 @@ function amListenerMeter(l){
 function amTierMeter(t){
   if(!t||!t.rank)return'';
   var bars='';for(var i=1;i<=4;i++)bars+='<span class="am-bar'+(i<=t.rank?' on':'')+'"></span>';
-  return'<span class="am-meter" title="Your taste tier — how much you like them, independent of popularity">'
+  return'<span class="am-meter" title="Your taste tier \u2014 how much you like them, independent of popularity">'
     +'<span class="am-meter-k">tier</span>'
     +'<span class="am-bars">'+bars+'</span>'
     +'<span class="am-meter-lbl">'+esc(t.label||'')+'</span></span>';
@@ -356,8 +356,8 @@ function amRelease(lr){
   var art=lr.image_url
     ?'<img class="am-rel-art" src="'+esc(lr.image_url)+'" alt="" referrerpolicy="no-referrer">'
     :'<div class="am-rel-art am-rel-art-ph"><span>album<br>art</span></div>';
-  var play=lr.url?'<a class="am-play" href="'+esc(lr.url)+'" target="_blank" title="Play on Spotify" aria-label="Play on Spotify">▶</a>':'';
-  var meta=amCap(lr.type||'release')+(amYear(lr.date)?' · '+amYear(lr.date):'');
+  var play=lr.url?'<a class="am-play" href="'+esc(lr.url)+'" target="_blank" title="Play on Spotify" aria-label="Play on Spotify">\u25b6</a>':'';
+  var meta=amCap(lr.type||'release')+(amYear(lr.date)?' \u00b7 '+amYear(lr.date):'');
   return'<div class="am-sec"><div class="am-sec-h">Latest release</div>'
     +'<div class="am-release">'+art
     +'<div class="am-rel-body"><div class="am-rel-name">'+esc(lr.name)+'</div>'
@@ -367,10 +367,10 @@ function amRelease(lr){
 function amSimilar(sim){
   sim=sim||[];if(!sim.length)return'';
   var chips=sim.slice(0,8).map(function(s){
-    if(s.in_tracker&&s.slug)return'<button class="am-sim am-sim-in" title="tracked artist — open artist" onclick="openArtistBySlug(\''+esc(s.slug)+'\')"><span class="am-sim-dot"></span>'+esc(s.name)+'</button>';
+    if(s.in_tracker&&s.slug)return'<button class="am-sim am-sim-in" title="tracked artist \u2014 open artist" onclick="openArtistBySlug(\''+esc(s.slug)+'\')"><span class="am-sim-dot"></span>'+esc(s.name)+'</button>';
     return'<a class="am-sim" title="Last.fm" href="https://www.last.fm/search?q='+encodeURIComponent(s.name||'')+'" target="_blank">&#x1F517; '+esc(s.name)+'</a>';
   }).join('');
-  return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">· ● tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
+  return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
 }
 
 // Related acts (kinship from related_acts.tsv). Sits beside "Similar" as an
@@ -383,8 +383,8 @@ function amRelated(key){
   var rel=amRelatedFor(key);
   if(!rel.length)return'';
   var chips=rel.map(function(r){
-    var seen=r.seen>0?'<span class="am-rel-seen">seen '+r.seen+'×</span>':'';
-    return'<button class="am-sim am-sim-in am-rel-chip" title="kinship — open artist" onclick="openArtistBySlug(\''+esc(r.slug)+'\')">'
+    var seen=r.seen>0?'<span class="am-rel-seen">seen '+r.seen+'\u00d7</span>':'';
+    return'<button class="am-sim am-sim-in am-rel-chip" title="kinship \u2014 open artist" onclick="openArtistBySlug(\''+esc(r.slug)+'\')">'
       +'<span class="am-rel-dot"></span>'
       +'<span class="am-rel-verb">'+esc(r.phrase)+'</span> '+esc(r.name)+seen+'</button>';
   }).join('');
@@ -414,7 +414,7 @@ function amYou(rec,key){
   var rows=amRowContext(key),considering=rows.considering;
   if(!(n>0||considering||hatEligible||rec.affinity)){
     // 1e edge case: hat-ineligible, never seen, not considering -> no personal panel
-    return'<div class="am-minimal">Never seen — no personal panel yet.</div>';
+    return'<div class="am-minimal">Never seen \u2014 no personal panel yet.</div>';
   }
   var head='<div class="am-you-head"><span class="am-you-dot"></span>'
     +'<span class="am-you-lbl">'+esc('@'+OWNER)+' &amp; this artist</span><span class="am-rule"></span>'
@@ -428,27 +428,27 @@ function amYou(rec,key){
 function amYouBadges(rec,rows,hatEligible){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0,out=[];
   var viaOnly=n>0&&(s.show_log||[]).every(function(x){return x.via;});
-  if(n>0&&!viaOnly)out.push('<span class="am-seen">Seen <b>'+n+'×</b></span>');
+  if(n>0&&!viaOnly)out.push('<span class="am-seen">Seen <b>'+n+'\u00d7</b></span>');
   if(hatEligible){
-    if(b.hat==='completed')out.push('<span class="am-b-hat am-b-hat-yes"><img src="'+esc(amHatUrl())+'" alt="hat">signed ✓</span>');
-    else out.push('<span class="am-b-hat am-b-hat-no"><img src="'+esc(amHatUrl())+'" alt="hat">hat — not signed yet</span>');
+    if(b.hat==='completed')out.push('<span class="am-b-hat am-b-hat-yes"><img src="'+esc(amHatUrl())+'" alt="hat">signed \u2713</span>');
+    else out.push('<span class="am-b-hat am-b-hat-no"><img src="'+esc(amHatUrl())+'" alt="hat">hat \u2014 not signed yet</span>');
   }
   if(b.book==='completed')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book signed</span>');
   else if(b.book==='not_yet')out.push('<span class="am-b-book"><span class="am-book-dot"></span>book</span>');
-  if(b.vip>0)out.push('<span class="am-b-vip">VIP×'+b.vip+'</span>');
+  if(b.vip>0)out.push('<span class="am-b-vip">VIP\u00d7'+b.vip+'</span>');
   // Photo badge -> Google Photos link. Album URL (baked from artist-albums.tsv)
   // wins; a single photographed show falls back to that photo's own share link; 2+
   // photos with no album yet renders unlinked (reconcile_photos.py flags the gap).
   if(b.photo>0){
     var pHref=b.photo_album||null;
     if(!pHref&&b.photo===1)(s.show_log||[]).some(function(x){if(x.photo_url){pHref=x.photo_url;return true;}return false;});
-    var pTxt='📷'+(b.photo>1?'×'+b.photo:'');
+    var pTxt='\ud83d\udcf7'+(b.photo>1?'\u00d7'+b.photo:'');
     if(pHref)out.push('<a class="am-b-book am-b-photo" href="'+esc(pHref)+'" target="_blank" rel="noopener" title="'+(b.photo_album?'Google Photos album':'Show photo')+'">'+pTxt+'</a>');
-    else out.push('<span class="am-b-book am-b-photo" title="'+b.photo+' show photos — album pending">'+pTxt+'</span>');
+    else out.push('<span class="am-b-book am-b-photo" title="'+b.photo+' show photos \u2014 album pending">'+pTxt+'</span>');
   }
   if(rows.upcoming){var d=amDays(rows.upcoming.date);out.push('<span class="am-b-next">next: '+(d!=null&&d>=0?('in '+d+' day'+(d===1?'':'s')):'upcoming')+'</span>');}
-  if(rec.fast_track&&n===0)out.push('<span class="am-b-fast">★ fast-track · 1st show</span>');
-  else if(rec.fast_track&&viaOnly)out.push('<span class="am-b-fast">★ fast-track</span>');
+  if(rec.fast_track&&n===0)out.push('<span class="am-b-fast">\u2605 fast-track \u00b7 1st show</span>');
+  else if(rec.fast_track&&viaOnly)out.push('<span class="am-b-fast">\u2605 fast-track</span>');
   if(n===0&&!rec.fast_track&&!rows.considering)out.push('<span class="am-never">never seen</span>');
   return'<div class="am-you-badges">'+out.join('')+'</div>';
 }
@@ -462,7 +462,7 @@ function amYouHistory(rec,rows){
     var v=via[0];
     return'<div class="am-subh">History</div>'
       +'<div class="am-combined"><span class="am-combined-tag">combined bill</span>'
-      +'<div class="am-combined-body">Seen with <b>'+esc(v.via)+'</b> <span class="am-dot-sep">·</span> <span class="am-combined-date">'+esc(v.date||'')+'</span>'
+      +'<div class="am-combined-body">Seen with <b>'+esc(v.via)+'</b> <span class="am-dot-sep">\u00b7</span> <span class="am-combined-date">'+esc(v.date||'')+'</span>'
       +'<br><span class="am-combined-note">Never seen headlining under this name.</span></div></div>';
   }
   // Considering (never-seen potential)
@@ -483,8 +483,8 @@ function amYouHistory(rec,rows){
     var shown=log.slice(0,3),extra=n-shown.length;
     var items=shown.map(function(x,i){
       var recent=(i===0);
-      var venue=esc(amVenueShort(x.venue)||'—');
-      if(x.via)venue+=' · w/ '+esc(x.via);
+      var venue=esc(amVenueShort(x.venue)||'\u2014');
+      if(x.via)venue+=' \u00b7 w/ '+esc(x.via);
       return'<div class="am-tl-item"><span class="am-tl-dot'+(recent?' on':'')+'"></span>'
         +'<div class="am-tl-date">'+esc(x.date||'')+'</div>'
         +'<div class="am-tl-venue">'+venue+'</div></div>';
@@ -505,8 +505,8 @@ function amGauge(a,rec,key){
   if(fav&&cfg.pin)score=1;
   var glow=fav?0.34:({high:0.28,medium:0.16,low:0.07}[a.band]||0.10);
   var tip=fav
-    ?'Favorite ★ — pinned to full (earned '+(a.score||0)+')'
-    :'Favorite affinity: '+(a.band||'')+' — composite of tier, times seen, and goal completions';
+    ?'Favorite \u2605 \u2014 pinned to full (earned '+(a.score||0)+')'
+    :'Favorite affinity: '+(a.band||'')+' \u2014 composite of tier, times seen, and goal completions';
   var canClick=cfg.enabled&&authed;
   if(canClick)tip+=fav?'. Click to remove.':'. Click to favorite.';
   var hat=esc(amHatUrl());
@@ -515,7 +515,7 @@ function amGauge(a,rec,key){
     +'<div class="am-gauge-glow"></div>'
     +'<img class="am-gauge-base" src="'+hat+'" alt="">'
     +'<img class="am-gauge-fill" src="'+hat+'" alt="">'
-    +(fav?'<span class="am-gauge-star">★</span>':'')+'</div>';
+    +(fav?'<span class="am-gauge-star">\u2605</span>':'')+'</div>';
 }
 
 // ── init ──
