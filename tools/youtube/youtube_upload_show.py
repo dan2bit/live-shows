@@ -98,11 +98,13 @@ from yt_common import (
     DATA_DIR,
     REPO_ROOT,
     append_log,
+    artist_handle,
     data_path,
     get_authenticated_service,
     read_tsv,
     script_path,
     slugify,
+    venue_short,
     write_tsv,
 )
 
@@ -368,40 +370,71 @@ def carry_orphans(clips: list, existing: dict[str, dict]) -> list[dict]:
 
 # ── titles and descriptions ────────────────────────────────────────────────
 
-def build_title(row: dict, show: dict) -> str:
-    """Video title, using the segment's own artist rather than the headliner.
+SONG_PLACEHOLDER = "#song-title"
 
-    A support-set clip is titled with the opener's name: someone searching for
-    the opener should find it. Until a song is identified the title carries the
-    clip number so the video is recognizable in Studio; --apply replaces it.
+
+def build_title(row: dict, show: dict) -> str:
+    """Video title in the channel's one shape: ARTIST LIVE - SONG (bootleg).
+
+    The segment's own artist is used rather than the headliner, so a support-set
+    clip carries the opener's name — someone searching for the opener should
+    find it.
+
+    An unidentified clip keeps that same shape and fills the song slot with a
+    numbered placeholder. Nothing structural changes between an identified and
+    an unidentified clip, and the date stays out of the title: the channel puts
+    the date and venue in the description, not the title.
+
+    The placeholder is numbered so each clip's is unique and greppable. Bare
+    placeholders have reached the public channel more than once, so --apply
+    must refuse to publish a title that still contains one.
     """
     artist = (row.get("Set Artist") or "").strip() or show["artist"]
     song   = (row.get("Song") or "").strip()
-    if song:
-        return f"{artist} LIVE - {song} (bootleg)"
-    return f"{artist} LIVE - {show['date']} clip {row.get('Capture Order', '?')} (bootleg)"
+    if not song:
+        song = f"{SONG_PLACEHOLDER}-{row.get('Capture Order', '?')}"
+    return f"{artist} LIVE - {song} (bootleg)"
+
+
+def format_show_date(date_str: str) -> str:
+    """YYYY-MM-DD to the MM/DD/YY the channel's descriptions use."""
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m/%d/%y")
+    except ValueError:
+        return date_str
 
 
 def build_description(row: dict, show: dict) -> str:
-    """Minimal description written at upload time.
+    """Description in the channel's convention: where, when, and who.
 
-    Deliberately sparse. The channel's full description convention is applied
-    by --apply once songs are identified; writing a rich description here would
-    only have to be rewritten, and a wrong one is worse than a thin one.
+        from Wolf Trap (VA) on 07/18/26 @TromboneShorty
+        Solomon Burke cover from Wolf Trap (VA) on 07/18/26 @TromboneShorty
+
+    A cover note leads, matching how the channel already annotates covers —
+    in the description rather than the title, where a parenthetical would
+    compete with the (bootleg) suffix.
+
+    Each piece degrades on its own: an unrecognized venue prints as written, a
+    venue with no parseable state loses only the state, and an artist with no
+    usable handle simply has no mention. The setlist link is deliberately
+    absent — that belongs on the playlist description, not the video.
     """
     artist = (row.get("Set Artist") or "").strip() or show["artist"]
-    venue  = show.get("venue", "").strip()
-
-    lines = [f"{artist} live at {venue}, {show['date']}." if venue
-             else f"{artist} live, {show['date']}."]
+    venue  = venue_short(show.get("venue", ""))
+    parts  = []
 
     cover = (row.get("Cover") or "").strip()
     if cover:
-        lines.append(f"({cover} cover)")
-    if show.get("setlist_url"):
-        lines.append(f"Setlist: {show['setlist_url']}")
+        parts.append(f"{cover} cover")
 
-    return "\n\n".join(lines)
+    parts.append(f"from {venue}" if venue else "from an unrecorded venue")
+    parts.append(f"on {format_show_date(show['date'])}")
+
+    handle = artist_handle(artist)
+    if handle:
+        parts.append(handle)
+
+    return " ".join(parts)
 
 
 # ── upload ─────────────────────────────────────────────────────────────────
