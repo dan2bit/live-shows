@@ -34,6 +34,13 @@ fast_track_caps.tsv
 
 # Logs
 logs/*.log
+logs/*.tsv
+
+# Per-show upload manifests and their scan sidecars. Local working files, one set
+# per show, carrying no private data — ignored to keep per-show churn out of the
+# repo. Delete a manifest only when its clips are published; it holds the video
+# IDs that let an interrupted upload resume.
+tools/youtube/manifests/
 
 # Editor
 .vscode/
