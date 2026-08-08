@@ -140,7 +140,8 @@ except ImportError:
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 # ── constants ─────────────────────────────────────────────────────────────────────────────
-SCOPES = ["https://www.googleapis.com/auth/youtube"]
+SCOPES = ["https://www.googleapis.com/auth/youtube",
+          "https://www.googleapis.com/auth/youtube.upload"]
 CLIENT_SECRETS    = os.environ.get("YOUTUBE_CLIENT_SECRETS", "client_secrets.json")
 TOKEN_FILE        = os.environ.get("YOUTUBE_TOKEN_FILE",     "token.json")
 CHANNEL_HANDLE    = "dan2bit"
