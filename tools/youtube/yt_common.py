@@ -209,8 +209,10 @@ VENUES_TSV        = "venues.tsv"
 VENUE_ALIASES_TSV = "venue_aliases.tsv"
 ARTISTS_TSV       = "artists.tsv"
 
-# venues.tsv has no state column; the two-letter code is parsed out of the
-# free-text Address, which ends "..., CITY, ST ZIP".
+# The State column is authoritative. The Address parse below is kept only as a
+# fallback for a row whose State is blank, so a venue added by hand without one
+# still resolves. Addresses end "..., CITY, ST ZIP"; the ZIP anchor is what
+# stops a stray two-letter token (a quadrant like NE) from matching.
 _STATE_RE = re.compile(r",\s*([A-Z]{2})\s+\d{5}")
 
 _IDENTITY_CACHE: dict = {}
@@ -240,13 +242,18 @@ def _load_venue_identity() -> tuple[dict, dict, dict]:
         if not name:
             continue
         key = _venue_key(name)
-        # Rows are ragged — trailing empty columns are truncated rather than
-        # written, so DictReader yields None for the tail. Short Name is the
-        # last column and the usual casualty, hence (x or "") throughout.
+        # (x or "") throughout: rows were historically ragged, truncating
+        # trailing empty columns so DictReader yielded None rather than "".
+        # The file is padded to full width now, but a hand-edited row can
+        # reintroduce a short line at any time and this costs nothing.
         short[key] = (row.get("Short Name") or "").strip() or name
-        match = _STATE_RE.search(row.get("Address") or "")
-        if match:
-            state[key] = match.group(1)
+
+        code = (row.get("State") or "").strip()
+        if not code:
+            match = _STATE_RE.search(row.get("Address") or "")
+            code = match.group(1) if match else ""
+        if code:
+            state[key] = code
 
     return aliases, short, state
 
@@ -255,9 +262,10 @@ def venue_short(venue_str: str) -> str:
     """'Wolf Trap (VA)' from whatever spelling a show row carries.
 
     Falls back to the full venue name where no short name is recorded (most
-    venues have none), and omits the state where the address has no parseable
-    one. Never raises on an unknown venue — an unrecognized name is returned
-    as given, which is better than a blank in a description.
+    venues have none), and omits the state where neither the State column nor
+    the address supplies one. Never raises on an unknown venue — an
+    unrecognized name is returned as given, which is better than a blank in a
+    description.
     """
     raw = (venue_str or "").split(",")[0].strip()
     if not raw:
