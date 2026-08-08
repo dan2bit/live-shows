@@ -52,6 +52,23 @@ deactivate
 
 ## Credential Configuration
 
+### Account split (read first — it spans TWO Google accounts)
+
+Two different accounts are involved, and mixing them up is the usual cause of an
+auth flow that succeeds but can't see the channel:
+
+- **The Google Cloud project** — the OAuth client (`client_secrets.json`), the
+  OAuth consent screen, and the `YOUTUBE_API_KEY` — is administered under the
+  **`redhat.bootlegs@gmail.com` (rhbl)** account. All Cloud Console work
+  (creating/editing the client, the API key, adding scopes) is done signed in as
+  **rhbl**.
+- **The @dan2bit channel** is a **brand account under `dan2bit@gmail.com`**, and
+  the **@dan2bit brand channel** is the identity you select in the OAuth
+  **consent flow** — it owns the videos and playlists.
+
+Net: **administer the client as rhbl; authorize/consent as the dan2bit brand
+channel.**
+
 ### 1. Copy env.example to .env
 
 ```bash
@@ -62,6 +79,9 @@ Then fill in `.env` with your values. It is gitignored and must never be committ
 
 ### 2. YouTube API key (read-only, for youtube_fetch.py)
 
+Signed in to Google Cloud Console as **`redhat.bootlegs@gmail.com` (rhbl)** — the
+account that owns the Cloud project:
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials
 2. Create an API Key
 3. Paste it into `.env` as `YOUTUBE_API_KEY=...`
@@ -69,8 +89,9 @@ Then fill in `.env` with your values. It is gitignored and must never be committ
 ### 3. OAuth credentials (required for write operations)
 
 All playlist creation and description updates are write operations requiring OAuth.
+Create the client under the **rhbl** Cloud project (same account as the API key):
 
-1. Google Cloud Console → APIs & Services → Credentials → Create OAuth 2.0 Client ID
+1. Google Cloud Console (signed in as **rhbl**) → APIs & Services → Credentials → Create OAuth 2.0 Client ID
 2. Application type: Desktop App
 3. Download the JSON file and save it as `client_secrets.json` in the repo root
 4. Set `.env`: `YOUTUBE_CLIENT_SECRETS=client_secrets.json`
@@ -84,11 +105,15 @@ source .venv/bin/activate
 python3 youtube_create_playlists.py --auth-only
 ```
 
-A browser window opens. **Sign in as `dan2bit@gmail.com` — not `redhat.bootlegs`.**
-When prompted to choose an identity, select the **@dan2bit brand channel**,
-not the gmail account itself. The brand channel is what owns the videos and playlists.
-`token.json` is written to the repo root (gitignored). Future runs refresh
-it automatically.
+A browser window opens. This is the **consent** step, so it uses the **channel**
+identity, not the Cloud-project account: sign in with `dan2bit@gmail.com`, and when
+prompted to choose an identity, select the **@dan2bit brand channel** — not the
+gmail account itself, and not `redhat.bootlegs`. The brand channel is what owns the
+videos and playlists. `token.json` is written to the repo root (gitignored). Future
+runs refresh it automatically.
+
+(The Cloud *project* is administered under rhbl — see the Account split above — but
+the token is *authorized* as the dan2bit brand channel here.)
 
 ### 5. Fixing invalid_grant errors
 
@@ -100,12 +125,12 @@ rm token.json
 python3 youtube_create_playlists.py --auth-only
 ```
 
-In the browser flow: sign in as `dan2bit@gmail.com` (not `redhat.bootlegs`),
-then select the **@dan2bit brand channel** identity, not the gmail account.
-A fresh `token.json` will be written and subsequent runs will work normally.
+In the browser consent flow: choose the **@dan2bit brand channel** identity (under
+`dan2bit@gmail.com`), not the gmail account itself. A fresh `token.json` will be
+written and subsequent runs will work normally.
 
 Common causes: venv was recreated, token expired after extended inactivity,
-or the wrong Google account was selected during a previous auth flow.
+or the wrong identity was selected during a previous auth flow.
 
 ---
 
@@ -278,9 +303,11 @@ python3 youtube_create_playlists.py --fix-descriptions \
 
 ## Notes
 
-- OAuth account is `dan2bit@gmail.com` — not `redhat.bootlegs`
-- In the browser auth flow, always select the **@dan2bit brand channel** identity,
-  not the gmail account itself
+- The Google Cloud project (OAuth client, consent screen, API key) is under
+  **`redhat.bootlegs@gmail.com` (rhbl)** — do all Cloud Console work signed in as rhbl
+- In the browser auth flow, always select the **@dan2bit brand channel** identity
+  (under `dan2bit@gmail.com`), not the gmail account itself — the brand channel owns
+  the videos and playlists
 - Videos must be uploaded to YouTube Studio before running any script —
   the script matches by upload date and video title
 - Private videos are fine; draft/unsubmitted videos will not appear
