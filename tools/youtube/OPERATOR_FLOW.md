@@ -2,8 +2,8 @@
 
 How a show actually gets from your phone to a titled, ordered playlist.
 
-**Status:** only `--scan` is built today. Steps 4 and 6 below are the agreed design and
-are marked accordingly — the CLI accepts those flags and stops with a "not implemented
+**Status:** `--scan` and `--upload` are built. Step 6 below is the agreed design and
+is marked accordingly — the CLI accepts those flags and stops with a "not implemented
 yet" message, so nothing silently half-works.
 
 ---
@@ -37,8 +37,22 @@ that's a visual call no script makes.
 ```bash
 cd tools/youtube
 source ../../.venv/bin/activate
-python3 youtube_upload_show.py --show 2026-08-04 --clips ~/Downloads/pier6 --scan
+python3 youtube_upload_show.py --clips ~/Downloads/pier6 --scan
 ```
+
+**You don't pass a date.** The clips carry their own capture timestamps, so the scan
+collects them and matches against your attended shows. It prints what it resolved:
+
+```
+Lake Street Dive — 2026-08-04 — Pier Six Pavilion
+support: The Dip
+(resolved from 10 clips; pass --show to override)
+```
+
+A set running past midnight still resolves, because only one of the two candidate
+dates is a show. If it can't resolve or finds two shows, it stops and tells you
+rather than guessing — `--show 2026-08-04` overrides. If you're already sitting in
+the clip folder you can drop `--clips` too.
 
 Reads every file locally. No network, no OAuth, nothing uploaded — safe to run
 repeatedly. It needs `ffprobe` (`brew install ffmpeg`); without it durations fall back
@@ -64,35 +78,62 @@ Open the manifest. Columns split into three kinds:
 |---|---|---|
 | `Decision`, `Song`, `Set Artist`, `Skip Reason`, `Cover` | `Clip`, `Capture Order`, `Capture Start`, `Duration`, `Size MB`, `Integrity`, `Set` | `Confidence`, `Evidence`, `Candidates`, `Lyric Hint`, `Setlist Pos`, `Video ID`, `Upload Status`, `Title Set` |
 
-Right now the useful edits are:
+The edits worth making before uploading:
 
 - **`Decision`** — `got` or `skip`. Flip any wrongly flagged fragment back to `got`.
 - **`Set Artist`** — the tool guesses the opener played segment 1. That's right on a
   support night and wrong when *you* played two sets of the same artist (acoustic then
   full band). This drives the video title, so it matters.
+- **`Song`** — optional here. Anything you already know saves a retitle later; the
+  rest gets a placeholder and is fixed in step 6.
 
 Re-running `--scan` after editing is safe: it refreshes only its own columns and never
 touches a `Song` you typed. `--reseed` resets `Decision` and `Set Artist` back to
 guesses — but still leaves `Song` alone.
 
-## 4. Upload  *(designed, not built)*
+## 4. Upload  *(built)*
 
 ```bash
-python3 youtube_upload_show.py --show 2026-08-04 --upload --dry-run   # always first
-python3 youtube_upload_show.py --show 2026-08-04 --upload
+python3 youtube_upload_show.py --upload --dry-run   # always first
+python3 youtube_upload_show.py --upload
 ```
 
-Uploads every row marked `got`, resumable, landing **private**. Writes each `Video ID`
-back to the manifest as it goes.
+No date and no folder needed — the scan recorded both. Uploads every row marked `got`,
+landing each video **private**, and writes its `Video ID` back to the manifest as it
+goes.
 
 **Resuming is automatic.** A blank `Video ID` is the entire work queue. Laptop sleeps,
-network drops, you get bored and close the lid — re-run the same command and it picks
-up exactly where it stopped. Same mechanism if you want to split a big night across
-two days: just stop, and run it again later.
+network drops, you close the lid — re-run the same command and it picks up exactly
+where it stopped. Same mechanism if you want to split a big night across two days:
+just stop, and run it again later. A clip that fails outright is recorded as
+`failed:upload` and stays in the queue; the rest of the run continues.
 
-Quota is no longer the constraint it was — Google cut `videos.insert` from ~1,600 units
-to ~100 in Dec 2025, so a 14-clip night fits comfortably where it used to blow the
-daily cap at 6.
+`--limit 1` uploads a single clip and stops, which is the right way to start on a
+night you care about.
+
+Quota is no longer the constraint it once was — Google cut `videos.insert` from ~1,600
+units to ~100 in Dec 2025, so a 14-clip night fits comfortably where it used to blow
+the daily cap at 6.
+
+### What the titles look like
+
+Every video gets the channel's one shape, whether or not the song is known:
+
+```
+Lake Street Dive LIVE - Good Kisser (bootleg)      ← Song filled in
+Lake Street Dive LIVE - #song-title-7 (bootleg)    ← not yet identified
+```
+
+The date and venue are **not** in the title — they go in the description, matching
+what the channel has done since 2023:
+
+```
+from Pier Six Pavilion (MD) on 08/04/26 @lakestreetdive
+```
+
+The numbered placeholder is deliberate: it's unique per clip and greppable, so an
+un-replaced one is easy to find before it goes public. Bare `#song-title` has reached
+the public channel more than once.
 
 ## 5. Studio pass  *(manual, unavoidable)*
 
@@ -102,7 +143,7 @@ stays a Studio visit regardless of how much else gets automated.
 ## 6. Identify, correct, apply  *(designed, not built)*
 
 ```bash
-python3 youtube_upload_show.py --show 2026-08-04 --identify
+python3 youtube_upload_show.py --identify
 ```
 
 Run this **after** YouTube has finished its Content ID scan — minutes to hours after
@@ -113,9 +154,12 @@ a `Song` you typed.
 Then correct by lyric or by ear, and write it back:
 
 ```bash
-python3 youtube_upload_show.py --show 2026-08-04 --apply --dry-run
-python3 youtube_upload_show.py --show 2026-08-04 --apply --publish
+python3 youtube_upload_show.py --apply --dry-run
+python3 youtube_upload_show.py --apply --publish
 ```
+
+`--publish` will refuse to make a video public while its title still contains
+`#song-title`, so an unfinished clip cannot escape.
 
 **Trust order when the tool and your memory disagree:** Content ID beats everything,
 then a lyric match, then the setlist, and the capture-order guess is last. Sets get
@@ -141,15 +185,27 @@ Then paste the playlist link into the playlist issue body and close it.
 **Wrong number of segments.** Ranked gap list at the bottom of the scan shows every
 gap and which ones became boundaries. Re-run with `--min-gap-minutes`.
 
+**"No show matches the clips' capture date(s)."** Either the show row doesn't exist
+yet, or the folder holds clips from a different night. Add the row, or pass `--show`.
+
 **A manifest row has no file.** Kept, not deleted, with a warning — because that row
 may hold the `Video ID` proving the clip is already uploaded. Delete the row yourself
 if it's genuinely dead.
+
+**A clip failed to upload.** Its row reads `failed:upload` and it's still in the
+queue, so re-running picks it up. Transient server errors retry automatically with
+backoff; a permanent one (bad file, rejected metadata) needs a look.
 
 **`invalid_grant` on upload.** Token is stale. `rm token.json`, re-run, and in the
 browser pick the **@dan2bit brand channel** — not the gmail account, not
 redhat.bootlegs. (Cloud project is administered as rhbl; consent is as the brand
 channel. Mixing these up is the usual cause of an auth flow that succeeds but can't
 see the channel.)
+
+**Manifests showing up in `git status`.** They shouldn't — `tools/youtube/manifests/`
+and `logs/*.tsv` are ignored. If they appear, they were staged before the ignore rule
+existed; `git reset` unstages them without deleting anything. Keep the files: the
+manifest holds the video IDs that let an interrupted upload resume.
 
 **No setlist on the show row.** Not fatal. You still get correct ordering, fragment
 flags, and set structure — a title-less skeleton you name by ear.
