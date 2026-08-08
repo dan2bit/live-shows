@@ -146,13 +146,23 @@ CLIENT_SECRETS    = os.environ.get("YOUTUBE_CLIENT_SECRETS", "client_secrets.jso
 TOKEN_FILE        = os.environ.get("YOUTUBE_TOKEN_FILE",     "token.json")
 CHANNEL_HANDLE    = "dan2bit"
 
-# Input files
-VIDEOS_TSV        = "youtube_videos.tsv"
-HISTORY_GLOB      = "history/*.tsv"          # per-year archive files
-SHOWS_CURRENT_TSV = "live_shows_current.tsv" # current year
+# ── paths ─────────────────────────────────────────────────────────────────────────────────
+# Anchored to this file's location so the script works from any working directory.
+# The bare relative names these replace predate the repo reorganization that moved
+# the show data under data/ and this script under tools/youtube/ — they matched no
+# actual working directory, so the venue/show lookups silently degraded unless run
+# from exactly the right place.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT  = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+DATA_DIR   = os.path.join(REPO_ROOT, "data")
 
-# Log file — written to logs/ subdir which is gitignored
-LOG_TSV = os.path.join("logs", "playlist_creation_log.tsv")
+# Input files
+VIDEOS_TSV        = os.path.join(SCRIPT_DIR, "youtube_videos.tsv")
+HISTORY_GLOB      = os.path.join(DATA_DIR, "history", "*.tsv")       # per-year archive files
+SHOWS_CURRENT_TSV = os.path.join(DATA_DIR, "live_shows_current.tsv") # current year
+
+# Log file — written to logs/ at the repo root, which is gitignored
+LOG_TSV = os.path.join(REPO_ROOT, "logs", "playlist_creation_log.tsv")
 
 # Default description template for --fix-descriptions
 DEFAULT_DESCRIPTION_TEMPLATE = "Select tracks from {setlist_url}"
@@ -285,10 +295,11 @@ def format_date_short(date_str):
 # app.js (_venueKey / shortVenueName) and scripts/check_box_office.py:
 #   first-comma-truncate -> key-fold (case, leading "The", punctuation) -> alias -> canonical
 # Short Name column (blank = canonical name) supplies the display name; the (VA)/(DC)/(MD)
-# tag is derived from the venues.tsv Address column's state. Missing files degrade to
-# plain first-comma truncation, same as before.
-VENUES_TSV        = "venues.tsv"
-VENUE_ALIASES_TSV = "venue_aliases.tsv"
+# tag comes from the venues.tsv State column, falling back to parsing the Address for a
+# row whose State is blank. Missing files degrade to plain first-comma truncation, same
+# as before.
+VENUES_TSV        = os.path.join(DATA_DIR, "venues.tsv")
+VENUE_ALIASES_TSV = os.path.join(DATA_DIR, "venue_aliases.tsv")
 
 
 def _venue_key(v):
@@ -314,9 +325,12 @@ def _load_venue_identity():
             if not k:
                 continue
             short[k] = (r.get("Short Name") or "").strip() or name
-            m = re.search(r",\s*([A-Z]{2})[\s,]", (r.get("Address") or "") + " ")
-            if m:
-                state[k] = m.group(1)
+            st = (r.get("State") or "").strip()
+            if not st:
+                m = re.search(r",\s*([A-Z]{2})[\s,]", (r.get("Address") or "") + " ")
+                st = m.group(1) if m else ""
+            if st:
+                state[k] = st
     except FileNotFoundError:
         pass
     return aliases, short, state
