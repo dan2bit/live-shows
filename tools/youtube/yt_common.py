@@ -197,6 +197,105 @@ def append_log(path: str, fieldnames: list[str], rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
+# ── venue and artist identity ──────────────────────────────────────────────
+#
+# Resolves the surface forms the channel's descriptions use. This is the same
+# alias -> canonical -> short-name chain that youtube_create_playlists.py runs
+# for playlist titles; it is reimplemented here rather than imported because
+# that module does its lookups at import time against cwd-relative paths.
+# Consolidating the two into one shared chain is tracked separately.
+
+VENUES_TSV        = "venues.tsv"
+VENUE_ALIASES_TSV = "venue_aliases.tsv"
+ARTISTS_TSV       = "artists.tsv"
+
+# venues.tsv has no state column; the two-letter code is parsed out of the
+# free-text Address, which ends "..., CITY, ST ZIP".
+_STATE_RE = re.compile(r",\s*([A-Z]{2})\s+\d{5}")
+
+_IDENTITY_CACHE: dict = {}
+
+
+def _venue_key(value: str) -> str:
+    """Fold a venue name to a match key: no leading 'the', no punctuation."""
+    key = re.sub(r"^the\s+", "", value.strip().lower())
+    key = re.sub(r"[^a-z0-9 ]+", " ", key)
+    return re.sub(r"\s+", " ", key).strip()
+
+
+def _load_venue_identity() -> tuple[dict, dict, dict]:
+    """Build (aliases, short names, states) keyed by folded venue name."""
+    aliases: dict = {}
+    short:   dict = {}
+    state:   dict = {}
+
+    for row in read_tsv(data_path(VENUE_ALIASES_TSV)):
+        alias = (row.get("Alias") or "").strip()
+        canon = (row.get("Venue Name") or "").strip()
+        if alias and canon:
+            aliases[_venue_key(alias)] = canon
+
+    for row in read_tsv(data_path(VENUES_TSV)):
+        name = (row.get("Venue Name") or "").strip()
+        if not name:
+            continue
+        key = _venue_key(name)
+        # Rows are ragged — trailing empty columns are truncated rather than
+        # written, so DictReader yields None for the tail. Short Name is the
+        # last column and the usual casualty, hence (x or "") throughout.
+        short[key] = (row.get("Short Name") or "").strip() or name
+        match = _STATE_RE.search(row.get("Address") or "")
+        if match:
+            state[key] = match.group(1)
+
+    return aliases, short, state
+
+
+def venue_short(venue_str: str) -> str:
+    """'Wolf Trap (VA)' from whatever spelling a show row carries.
+
+    Falls back to the full venue name where no short name is recorded (most
+    venues have none), and omits the state where the address has no parseable
+    one. Never raises on an unknown venue — an unrecognized name is returned
+    as given, which is better than a blank in a description.
+    """
+    raw = (venue_str or "").split(",")[0].strip()
+    if not raw:
+        return ""
+
+    if "venues" not in _IDENTITY_CACHE:
+        _IDENTITY_CACHE["venues"] = _load_venue_identity()
+    aliases, short, state = _IDENTITY_CACHE["venues"]
+
+    key = _venue_key(raw)
+    if key in aliases:
+        key = _venue_key(aliases[key])
+
+    name = short.get(key, raw)
+    code = state.get(key, "")
+    return f"{name} ({code})" if code else name
+
+
+def artist_handle(artist: str) -> str:
+    """The @handle for an artist, or "" when there is no usable one.
+
+    The YouTube Channel column holds three things that are not handles: blank,
+    the literal N/A, and a bare channel URL for artists with no custom handle.
+    None of those belong in a description, so they resolve to nothing rather
+    than to a broken mention.
+    """
+    if "artists" not in _IDENTITY_CACHE:
+        index = {}
+        for row in read_tsv(data_path(ARTISTS_TSV)):
+            name = (row.get("Artist") or "").strip()
+            if name:
+                index[name.casefold()] = (row.get("YouTube Channel") or "").strip()
+        _IDENTITY_CACHE["artists"] = index
+
+    handle = _IDENTITY_CACHE["artists"].get((artist or "").strip().casefold(), "")
+    return handle if handle.startswith("@") else ""
+
+
 # ── formatting ─────────────────────────────────────────────────────────────
 
 def dry(dry_run: bool) -> str:
