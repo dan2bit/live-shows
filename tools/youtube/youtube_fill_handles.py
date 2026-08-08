@@ -106,7 +106,8 @@ except ImportError:
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(SCRIPT_DIR, ".env"))
 
-SCOPES           = ["https://www.googleapis.com/auth/youtube"]
+SCOPES           = ["https://www.googleapis.com/auth/youtube",
+                    "https://www.googleapis.com/auth/youtube.upload"]
 CLIENT_SECRETS   = os.environ.get("YOUTUBE_CLIENT_SECRETS", "client_secrets.json")
 TOKEN_FILE       = os.environ.get("YOUTUBE_TOKEN_FILE",     "token.json")
 ARTISTS_TSV      = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "..", "data", "artists.tsv"))  # canonical (#122; was a script-dir local copy)
