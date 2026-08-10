@@ -22,8 +22,8 @@ The file's UTF-8 BOM header is preserved. Columns written:
 
 Additionally mirrors the share link into the matching live_shows_current.tsv
 row's Photo URL column (the badge/affinity photo credit reads the show row,
-not artist-photos.tsv). Row match is show-date + artist, canonicalized through
-recommend_aliases.tsv (the same alias data the recommend/artist-index builders
+not artist-photos.tsv). Row match is show-date + headliner-or-supporting-act,
+canonicalized through recommend_aliases.tsv (the same alias data the recommend/artist-index builders
 use) so billing drift ("X & Y" title vs "X and Y" row) resolves via a data row,
 never a code change. An existing different link is never clobbered; no-match is
 a warning, not a failure. History-year shows are out of scope (legacy/backfill
@@ -146,8 +146,10 @@ def album_check(artist, iso_date):
 def update_current_row(artist, iso, link):
     """Mirror the share link into the matching live_shows_current.tsv row's
     Photo URL (the last column — short rows from trailing-tab stripping are padded
-    back to full width, which also restores the columns on write). Artist matching
-    is alias-aware (see load_aliases) so billing drift resolves via
+    back to full width, which also restores the columns on write). The row is
+    matched on the headliner Artist OR any act in the "/"-separated Supporting
+    Artist field, so a support-act photo reaches the show row too; matching is
+    alias-aware (see load_aliases) so billing drift resolves via
     recommend_aliases.tsv. Never clobbers a different existing link. Returns a
     status line for the workflow log."""
     if not CURRENT_PATH.exists():
@@ -161,6 +163,11 @@ def update_current_row(artist, iso, link):
         pi = header.index("Photo URL")
     except ValueError:
         return "WARN: live_shows_current.tsv header missing expected columns - Photo URL not written"
+    # A support-act photo issue must reach the show row, which is keyed on the
+    # headliner Artist. Match the headliner OR any act in the "/"-separated
+    # Supporting Artist field. Not split on "&" - that is part of band names
+    # like "Robert Jon & The Wreck".
+    si = header.index("Supporting Artist") if "Supporting Artist" in header else None
     aliases = load_aliases()
     want = canon(artist, aliases)
     for i in range(1, len(lines)):
@@ -169,7 +176,12 @@ def update_current_row(artist, iso, link):
         cells = lines[i].split("\t")
         if len(cells) < len(header):
             cells += [""] * (len(header) - len(cells))
-        if cells[di].strip() != iso or canon(cells[ai], aliases) != want:
+        if cells[di].strip() != iso:
+            continue
+        row_acts = {canon(cells[ai], aliases)}
+        if si is not None and cells[si].strip():
+            row_acts |= {canon(a, aliases) for a in cells[si].split("/") if a.strip()}
+        if want not in row_acts:
             continue
         cur = cells[pi].strip()
         if cur == link:
