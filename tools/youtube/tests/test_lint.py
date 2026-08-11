@@ -69,16 +69,25 @@ class TestLint(unittest.TestCase):
     def test_short_row_padded_not_flagged(self):
         # GitHub comments and the MCP strip trailing tabs; a short row is
         # padded, matching the parseTsv() precedent in index.html.
-        text = "\t".join(LEAN_FIELDS) + "\na.mp4\tgot\tX\n"
+        text = "\t".join(LEAN_FIELDS) + "\na.mp4\t3:00\tgot\tX\n"
         errors, _, stats = run_lint(text)
         self.assertEqual(errors, [])
         self.assertEqual(stats["keepers"], 1)
 
     def test_overlong_row_flagged(self):
         text = ("\t".join(LEAN_FIELDS)
-                + "\na.mp4\tgot\tX\tSong\t\t\t\t\textra\n")
+                + "\na.mp4\t3:00\tgot\tX\tSong\t\t\t\t\textra\n")
         errors, _, _ = run_lint(text)
         self.assertTrue(any("shifted row" in e for e in errors))
+
+    def test_v1_lean_header_accepted_with_note(self):
+        from yt_manifest import LEAN_FIELDS_V1
+        text = ("\t".join(LEAN_FIELDS_V1)
+                + "\na.mp4\tgot\tX\tOne\n")
+        errors, warnings, stats = run_lint(text)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("pre-Duration" in w for w in warnings))
+        self.assertEqual(stats["named"], 1)
 
     def test_bad_decision(self):
         errors, _, _ = run_lint(tsv([{"Clip": "a.mp4", "Decision": "keep"}]))

@@ -21,8 +21,8 @@ THE COMMENT CONVENTION
   info string is `machine`:
 
       ```manifest
-      Clip	Decision	Set Artist	Song	...
-      PXL_1.mp4	got	Sabine McCalla	Louisiana Hound Dog	...
+      Clip	Duration	Decision	Set Artist	Song	...
+      PXL_1.mp4	3:20	got	Sabine McCalla	Louisiana Hound Dog	...
       ```
 
       ```machine
@@ -36,7 +36,7 @@ THE COMMENT CONVENTION
 WHAT GETS CHECKED
 
   Errors (the wrong-title-in-public class):
-    - unrecognized header (neither the lean schema nor the legacy 20-column)
+    - unrecognized header (neither lean layout nor the legacy 20-column)
     - a row with more non-blank columns than the header (a shifted row);
       SHORT rows are padded instead of flagged, because GitHub comments and
       the MCP both strip trailing tabs — the same reality parseTsv() in
@@ -51,6 +51,7 @@ WHAT GETS CHECKED
     - a skip row that carries a Song (which one is wrong?)
     - a skip row that carries a Video ID (uploaded, then demoted — deliberate?)
     - a legacy single-file manifest (any stage run will migrate it)
+    - the pre-Duration lean layout (still valid; the next save upgrades it)
 
   Neither: got rows with a blank Song are PROGRESS, not errors — that is
   what a manifest looks like between --scan and the correction pass. They
@@ -71,7 +72,12 @@ import json
 import re
 import sys
 
-from yt_manifest import LEAN_FIELDS, LEGACY_FIELDS, MACHINE_FIELDS
+from yt_manifest import (
+    LEAN_FIELDS,
+    LEAN_FIELDS_V1,
+    LEGACY_FIELDS,
+    MACHINE_FIELDS,
+)
 
 
 VALID_DECISIONS = {"got", "skip"}
@@ -85,7 +91,7 @@ _FENCE_RE = re.compile(
     r"```[ \t]*(manifest|machine)[ \t]*\r?\n(.*?)```", re.DOTALL)
 
 
-# ── comment parsing ──────────────────────────────────────────────────────
+# ── comment parsing ────────────────────────────────────────────────────────
 
 def extract_blocks(body: str) -> tuple[str | None, str | None]:
     """The (manifest_tsv, machine_json) text blocks from a comment body."""
@@ -139,13 +145,21 @@ def lint(header: list[str], rows: list[list[str]],
         warnings.append(
             "legacy single-file manifest — running any pipeline stage will "
             "migrate it to the lean TSV + machine sidecar split")
+    elif header == LEAN_FIELDS_V1:
+        warnings.append(
+            "pre-Duration lean layout — still valid; the next save upgrades it")
     elif header != LEAN_FIELDS:
         errors.append(
             f"unrecognized header ({len(header)} columns). Expected the lean "
             f"schema: `{'` | `'.join(LEAN_FIELDS)}`")
         return errors, warnings, {}
 
-    fields = LEGACY_FIELDS if legacy else LEAN_FIELDS
+    if legacy:
+        fields = LEGACY_FIELDS
+    elif header == LEAN_FIELDS_V1:
+        fields = LEAN_FIELDS_V1
+    else:
+        fields = LEAN_FIELDS
     records: list[dict] = []
     seen_clips: set[str] = set()
 
@@ -245,7 +259,7 @@ def _stats(records: list[dict], machine: dict[str, dict]) -> dict:
     }
 
 
-# ── rendering ────────────────────────────────────────────────────────────────
+# ── rendering ──────────────────────────────────────────────────────────────
 
 def render_scoreboard(stats: dict) -> str:
     """The progress checklist that lives in the issue body."""
@@ -317,7 +331,7 @@ def update_body(body: str, scoreboard: str) -> str:
     return body.rstrip() + "\n\n" + scoreboard + "\n"
 
 
-# ── cli ──────────────────────────────────────────────────────────────────────
+# ── cli ────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     parser = argparse.ArgumentParser(
