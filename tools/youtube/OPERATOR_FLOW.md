@@ -22,9 +22,11 @@ The **manifest** carries state between every step, split into two files joined
 on the clip name (issue #251):
 
 - `tools/youtube/manifests/YYYY-MM-DD-artist-slug.tsv` — the **lean edit file**,
-  the only file you touch: `Clip | Decision | Set Artist | Song | Cover |
-  Skip Reason`, plus two read-only aids (`Candidates`, `Lyric Hint`) that
-  `--identify` maintains for you.
+  the only file you touch: `Clip | Duration | Decision | Set Artist | Song |
+  Cover | Skip Reason`, plus two read-only aids (`Candidates`, `Lyric Hint`)
+  that `--identify` maintains for you. `Duration` is read-only too — it's
+  there because the Studio UI shows durations everywhere and clip filenames
+  nowhere, so it's the fastest way to be sure which row is which video.
 - `…-artist-slug.machine.json` — everything the tools own (durations, video
   IDs, upload status, confidence, positions). Never edit it; never delete it —
   it holds the video IDs that make an interrupted upload resumable.
@@ -84,8 +86,8 @@ fragment flags still work.
 
 Open the lean manifest TSV. Every column is either yours (`Decision`,
 `Set Artist`, `Song`, `Cover`, `Skip Reason`) or a read-only aid
-(`Candidates`, `Lyric Hint`) — the machine bookkeeping lives in the JSON
-sidecar and stays out of your way.
+(`Duration`, `Candidates`, `Lyric Hint`) — the machine bookkeeping lives in
+the JSON sidecar and stays out of your way.
 
 The edits worth making before uploading:
 
@@ -173,7 +175,25 @@ resolve every act via `data/setlists/<year>.json` — then works each act's clip
   the warning has proved accurate.
 - It never overwrites a `Song` you typed, even with `--reseed`.
 
-Then correct by lyric or by ear in the lean manifest, and write it back:
+Then correct — either straight in the lean manifest, or in the browser:
+
+```bash
+python3 youtube_upload_show.py --edit
+```
+
+`--edit` serves the manifest as a page on localhost and opens it — meant to
+sit in the tab next to Studio. Each keeper clip gets a dropdown of its Set
+Artist's setlist songs in setlist order; a song picked on one clip vanishes
+from every other clip's options, so duplicate titles are impossible by
+construction. Rows link straight to their video's Studio edit page, show the
+duration and thumbnail, and carry the `Candidates`/`Lyric Hint` aids. Free
+text and the `unknown` sentinel are one click away. Save rewrites only the
+lean TSV — the machine sidecar is never touched, nothing talks to YouTube,
+and the page dies with the process. Run `--identify` first (even `--dry-run`)
+so the setlists are cached; without a cached setlist an artist's rows
+degrade to free-text entry.
+
+Either way, write it back:
 
 ```bash
 python3 youtube_upload_show.py --apply --dry-run
