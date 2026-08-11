@@ -52,7 +52,7 @@ DEFAULT_PORT = 8765
 EDITABLE_FIELDS = ("Decision", "Set Artist", "Song", "Cover", "Skip Reason")
 
 
-# ── state assembly ─────────────────────────────────────────────────────
+# ── state assembly ─────────────────────────────────────────────────────────
 
 def build_state(rows: list[dict], setlists: dict, show: dict) -> dict:
     """Everything the page needs, JSON-serializable.
@@ -531,4 +531,3 @@ def serve(manifest_path: str, show: dict, setlists: dict,
         server.server_close()
     print("Editor closed. Next:\n"
           "  python3 youtube_upload_show.py --apply --dry-run")
-""".rstrip() if False else None
