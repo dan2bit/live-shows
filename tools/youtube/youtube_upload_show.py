@@ -22,6 +22,10 @@ playlist. Four stages against one durable per-show manifest.
                flip privacy to public — refusing the whole show while any
                title still carries an unpublishable placeholder.
 
+  --edit       Open the manifest in a local browser page: setlist-song
+               dropdowns with live duplicate exclusion, Studio links per
+               clip. Saves only the lean TSV. No YouTube access.
+
   --auth-only  Just run the OAuth flow and report which channel the token
                sees. Catches the wrong-identity consent mistake immediately.
 
@@ -82,7 +86,8 @@ USAGE:
   # 3. After YouTube has finished scanning, seed the song IDs.
   python3 youtube_upload_show.py --identify
 
-  # 4. Correct the manifest by hand, then write it back.
+  # 4. Correct the manifest by hand or in the browser, then write it back.
+  python3 youtube_upload_show.py --edit
   python3 youtube_upload_show.py --apply --dry-run
   python3 youtube_upload_show.py --apply --publish
 
@@ -100,6 +105,7 @@ import time
 from datetime import datetime, timezone
 
 import yt_clipscan
+import yt_edit
 import yt_manifest
 import yt_songid
 from yt_clipscan import human_duration
@@ -118,7 +124,7 @@ from yt_common import (
 )
 
 
-# ── constants ────────────────────────────────────────────────────────────────
+# ── constants ──────────────────────────────────────────────────────────────
 
 MANIFEST_DIR = script_path("manifests")
 
@@ -145,7 +151,7 @@ CATEGORY_MUSIC      = "10"
 UPLOAD_PRIVACY      = "private"
 
 
-# ── show lookup ──────────────────────────────────────────────────────────────
+# ── show lookup ────────────────────────────────────────────────────────────
 
 def _iter_show_rows():
     """Yield normalized show dicts from the current file, then the archives.
@@ -262,7 +268,7 @@ def support_acts(show: dict) -> list[str]:
     return [p for p in parts if p]
 
 
-# ── manifest ─────────────────────────────────────────────────────────────────
+# ── manifest ───────────────────────────────────────────────────────────────
 
 def manifest_path(show: dict) -> str:
     """Per-show manifest location, keyed on date and headliner."""
@@ -374,7 +380,7 @@ def carry_orphans(clips: list, existing: dict[str, dict]) -> list[dict]:
     return [row for name, row in sorted(existing.items()) if name not in present]
 
 
-# ── titles and descriptions ──────────────────────────────────────────────────
+# ── titles and descriptions ────────────────────────────────────────────────
 
 SONG_PLACEHOLDER = "#song-title"
 
@@ -464,7 +470,7 @@ def build_description(row: dict, show: dict) -> str:
     return " ".join(parts)
 
 
-# ── upload ───────────────────────────────────────────────────────────────────
+# ── upload ─────────────────────────────────────────────────────────────────
 
 def upload_clip(youtube, file_path: str, title: str, description: str,
                 privacy: str = UPLOAD_PRIVACY) -> str:
@@ -538,7 +544,7 @@ def pending_uploads(rows: list[dict]) -> list[dict]:
             and not (row.get("Video ID") or "").strip()]
 
 
-# ── stages ───────────────────────────────────────────────────────────────────
+# ── stages ─────────────────────────────────────────────────────────────────
 
 def resolve_clip_dir(args) -> str | None:
     """The folder of clips: explicit, else the working directory if it has video."""
@@ -795,6 +801,27 @@ def stage_identify(args, show: dict) -> None:
     print(f"\nManifest updated: {path}")
 
 
+def stage_edit(args, show: dict) -> None:
+    """Serve the correction-pass editor on localhost (#264).
+
+    Reuses --identify's setlist resolution and cache, needs no OAuth, and
+    writes only the lean TSV through yt_edit's save path.
+    """
+    path = args.manifest or manifest_path(show)
+    if not yt_manifest.load(path):
+        sys.exit(f"No manifest at {path}. Run --scan first.")
+
+    urls, url_status = resolve_setlist_urls(show)
+    print(f"  setlists: {url_status}")
+    setlists = {}
+    for artist, url in urls.items():
+        setlist, status = load_setlist(artist, url, cache_dir=MANIFEST_DIR)
+        setlists[artist] = setlist
+        print(f"    {artist}: {status}")
+
+    yt_edit.serve(path, show, setlists, port=args.port)
+
+
 def publish_blockers(rows: list[dict], show: dict) -> list[tuple[str, str]]:
     """Every uploaded keeper whose title is not fit to go public.
 
@@ -988,7 +1015,7 @@ def stage_auth_only() -> None:
               "rm token.json and re-consent as the brand channel.")
 
 
-# ── cli ──────────────────────────────────────────────────────────────────────
+# ── cli ────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -1013,6 +1040,9 @@ def main() -> None:
                        help="Seed song titles from Content ID, setlist and lyrics.")
     stage.add_argument("--apply", action="store_true",
                        help="Write corrected titles and descriptions to YouTube.")
+    stage.add_argument("--edit", action="store_true",
+                       help="Open the manifest correction page in the local "
+                            "browser. Writes only the lean TSV.")
     stage.add_argument("--auth-only", action="store_true",
                        help="Just run the OAuth flow and report which channel "
                             "the token sees. No other action.")
@@ -1029,6 +1059,10 @@ def main() -> None:
                              "cautious first upload.")
     parser.add_argument("--publish", action="store_true",
                         help="With --apply, flip privacy from private to public.")
+    parser.add_argument("--port", type=int, default=yt_edit.DEFAULT_PORT,
+                        metavar="N",
+                        help=f"Local port for --edit. Default: "
+                             f"{yt_edit.DEFAULT_PORT}.")
     parser.add_argument("--refresh-setlist", action="store_true",
                         help="With --identify, refetch setlist.fm pages "
                              "instead of using the cached copies.")
@@ -1082,6 +1116,8 @@ def main() -> None:
         stage_upload(args, show, youtube)
     elif args.identify:
         stage_identify(args, show)
+    elif args.edit:
+        stage_edit(args, show)
     elif args.apply:
         youtube = None if args.dry_run else get_authenticated_service()
         stage_apply(args, show, youtube)
