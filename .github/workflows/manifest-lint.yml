@@ -1,0 +1,111 @@
+name: Manifest lint + scoreboard
+
+# Validator and scoreboard for the bootleg-upload pipeline (#247) — NOT a
+# state machine and NOT an executor. Paste a manifest into a comment on a
+# "Playlist:" issue inside a ```manifest fenced block (optionally with the
+# sidecar in a ```machine block); this replies with lint findings and mirrors
+# a progress checklist into the issue body between the scoreboard markers.
+#
+# Deliberate boundaries, recorded in #247 so they are not re-litigated:
+#   - No credential of any kind is used here. GITHUB_TOKEN with issues:write
+#     is the entire blast radius. The channel-write OAuth token must never
+#     land in Actions secrets (see #76 for why that lesson is pre-learned).
+#   - --scan/--upload can never move to CI: the clips live on a laptop.
+#   - Signals here are advisory; the local CLI remains the thing that acts.
+#
+# Trigger filter: the ```manifest fence. Chosen so a lint comment can never
+# collide with close-playlist-issue.yml, which watches the same issues for a
+# youtube.com/playlist URL.
+
+on:
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: manifest-lint-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  lint:
+    # Only run when:
+    # 1. The comment is on an issue (not a PR)
+    # 2. The issue title starts with "Playlist:"
+    # 3. The comment contains a ```manifest fenced block
+    if: |
+      github.event.issue.pull_request == null &&
+      startsWith(github.event.issue.title, 'Playlist:') &&
+      contains(github.event.comment.body, '```manifest')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run the linter
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          printf '%s' "$COMMENT_BODY" > /tmp/comment.txt
+          cd tools/youtube
+          python3 lint_manifest.py \
+            --comment-file /tmp/comment.txt \
+            --scoreboard-file /tmp/scoreboard.md \
+            > /tmp/reply.md
+          echo "--- reply ---"
+          cat /tmp/reply.md
+
+      - name: Post the lint reply
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reply = fs.readFileSync('/tmp/reply.md', 'utf8').trim();
+            if (!reply) return;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: reply,
+            });
+
+      - name: Mirror the scoreboard into the issue body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let board = '';
+            try { board = fs.readFileSync('/tmp/scoreboard.md', 'utf8').trim(); }
+            catch (e) { return; }
+            if (!board) return;
+
+            const START = '<!-- manifest-scoreboard:start -->';
+            const END = '<!-- manifest-scoreboard:end -->';
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            let body = issue.body || '';
+            if (body.includes(START) && body.includes(END)) {
+              const pattern = new RegExp(
+                START.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\s\\S]*?'
+                + END.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+              body = body.replace(pattern, board);
+            } else {
+              body = body.trimEnd() + '\n\n' + board + '\n';
+            }
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
