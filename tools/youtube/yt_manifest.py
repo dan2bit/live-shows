@@ -56,7 +56,7 @@ LEAN_FIELDS  = HUMAN_FIELDS + AID_FIELDS
 MACHINE_FIELDS = [
     "Capture Order", "Capture Start", "Duration", "Size MB", "Integrity",
     "Set", "Confidence", "Evidence", "Setlist Pos",
-    "Video ID", "Upload Status", "Title Set",
+    "Video ID", "Upload Status", "Title Set", "Desc Set", "Privacy",
 ]
 
 # The pre-split single-file schema, kept only so a legacy manifest can be

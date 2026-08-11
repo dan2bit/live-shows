@@ -19,7 +19,11 @@ playlist. Four stages against one durable per-show manifest.
                yt_songid.py).
 
   --apply      Write the corrected titles and descriptions. With --publish,
-               flip privacy to public.
+               flip privacy to public — refusing the whole show while any
+               title still carries an unpublishable placeholder.
+
+  --auth-only  Just run the OAuth flow and report which channel the token
+               sees. Catches the wrong-identity consent mistake immediately.
 
 WHY STAGES AND NOT ONE PASS
 
@@ -374,6 +378,22 @@ def carry_orphans(clips: list, existing: dict[str, dict]) -> list[dict]:
 
 SONG_PLACEHOLDER = "#song-title"
 
+# A Song typed as one of these means "genuinely unidentifiable — publish it
+# and crowdsource the title" (instrumental, non-English, poor audio; the Sona
+# Jobarteh case from #252). It renders as a numbered "Unknown Song #N" title,
+# which deliberately does NOT trip the publish guard: one stubborn track must
+# not hold a whole night hostage. The description asks viewers for help.
+UNKNOWN_SENTINELS = {"unknown", "unknown song", "?"}
+
+# Titles that must never go public: the numbered placeholder family, and the
+# pre-2026 "???" notation for the same condition (#249).
+UNPUBLISHABLE_MARKS = (SONG_PLACEHOLDER, "???")
+
+
+def is_unknown_song(row: dict) -> bool:
+    """True when the Song was deliberately marked unidentifiable."""
+    return (row.get("Song") or "").strip().lower() in UNKNOWN_SENTINELS
+
 
 def build_title(row: dict, show: dict) -> str:
     """Video title in the channel's one shape: ARTIST LIVE - SONG (bootleg).
@@ -393,7 +413,9 @@ def build_title(row: dict, show: dict) -> str:
     """
     artist = (row.get("Set Artist") or "").strip() or show["artist"]
     song   = (row.get("Song") or "").strip()
-    if not song:
+    if is_unknown_song(row):
+        song = f"Unknown Song #{row.get('Capture Order', '?')}"
+    elif not song:
         song = f"{SONG_PLACEHOLDER}-{row.get('Capture Order', '?')}"
     return f"{artist} LIVE - {song} (bootleg)"
 
@@ -435,6 +457,9 @@ def build_description(row: dict, show: dict) -> str:
     handle = artist_handle(artist)
     if handle:
         parts.append(handle)
+
+    if is_unknown_song(row):
+        parts.append("— can you name this song? Leave a comment!")
 
     return " ".join(parts)
 
@@ -770,13 +795,197 @@ def stage_identify(args, show: dict) -> None:
     print(f"\nManifest updated: {path}")
 
 
-def stage_not_implemented(name: str) -> None:
-    """Honest stop for a stage whose change has not landed yet."""
-    sys.exit(
-        f"--{name} is not implemented yet.\n"
-        "--scan, --upload and --identify have landed. --apply ships in its "
-        "own change so each can be reviewed on its own."
-    )
+def publish_blockers(rows: list[dict], show: dict) -> list[tuple[str, str]]:
+    """Every uploaded keeper whose title is not fit to go public.
+
+    A title still carrying the numbered placeholder, or the older "???"
+    notation, must never reach the public channel — that has happened more
+    than once (#249, #252). The deliberate escape hatch is the `unknown`
+    sentinel, which renders as "Unknown Song #N" and passes.
+    """
+    bad = []
+    for row in rows:
+        if (row.get("Decision") or "").strip() != "got":
+            continue
+        if not (row.get("Video ID") or "").strip():
+            continue
+        title = build_title(row, show)
+        if any(mark in title for mark in UNPUBLISHABLE_MARKS):
+            bad.append((row["Clip"], title))
+    return bad
+
+
+def _fetch_video_state(youtube, video_ids: list[str]) -> dict[str, dict]:
+    """Current snippet+status for each video, keyed by ID, in batches of 50.
+
+    videos.update REPLACES the parts it is given, so the update body must be
+    the fetched snippet with only title and description changed — sending a
+    minimal snippet would silently wipe tags, language and the rest.
+    """
+    state = {}
+    for start in range(0, len(video_ids), 50):
+        chunk = video_ids[start:start + 50]
+        resp = youtube.videos().list(
+            part="snippet,status", id=",".join(chunk)).execute()
+        for item in resp.get("items", []):
+            state[item["id"]] = item
+    return state
+
+
+def stage_apply(args, show: dict, youtube) -> None:
+    """Write corrected titles and descriptions to YouTube; optionally publish.
+
+    Metadata and publishing are deliberately separate: --apply alone sets
+    titles and descriptions while everything stays private, so there are
+    nights where the titles are right but you want another listen before
+    anything goes public. --publish flips privacy — and hard-refuses the
+    whole show if ANY title still carries an unpublishable mark, rather than
+    publishing the good ones and leaving a partial state.
+    """
+    path = args.manifest or manifest_path(show)
+    rows = yt_manifest.load(path)
+    if not rows:
+        sys.exit(f"No manifest at {path}. Run --scan first.")
+
+    targets = [r for r in rows
+               if (r.get("Decision") or "").strip() == "got"
+               and (r.get("Video ID") or "").strip()]
+    if not targets:
+        sys.exit("Nothing to apply: no keeper row carries a Video ID yet. "
+                 "Run --upload first.")
+
+    print(f"\n{show['artist']} — {show['date']} — apply"
+          + (" + publish" if args.publish else ""))
+
+    # The guard runs first, even on a dry run, so the report is always seen.
+    blockers = publish_blockers(rows, show)
+    if args.publish and blockers:
+        print("\n  PUBLISH REFUSED — these titles are not fit to go public:")
+        for clip, title in blockers:
+            print(f"    {clip}: {title}")
+        print("\n  Fix the Song column (or mark a genuinely unidentifiable "
+              "track as 'unknown'\n  to publish it with a crowdsourcing "
+              "title), then re-run.")
+        sys.exit(1)
+
+    # Unresolved handles ship without a mention — flagged, not fatal (#252).
+    missing_handles = sorted({(r.get("Set Artist") or show["artist"]).strip()
+                              for r in targets
+                              if not artist_handle((r.get("Set Artist")
+                                                    or show["artist"]).strip())})
+    if missing_handles:
+        print("  NOTE: no @handle in artists.tsv for: "
+              + ", ".join(missing_handles)
+              + " — their descriptions ship without a mention.")
+
+    plan = []
+    for row in targets:
+        title = build_title(row, show)
+        desc = build_description(row, show)
+        meta_change = (title != (row.get("Title Set") or "")
+                       or desc != (row.get("Desc Set") or ""))
+        pub_change = args.publish and (row.get("Privacy") or "") != "public"
+        plan.append((row, title, desc, meta_change, pub_change))
+
+        marks = []
+        if meta_change:
+            marks.append("title/desc")
+        if pub_change:
+            marks.append("publish")
+        status = " + ".join(marks) if marks else "unchanged"
+        print(f"\n  [{status}] {row['Clip']}  ({row['Video ID']})")
+        if meta_change:
+            old_title = row.get("Title Set") or "(none recorded)"
+            print(f"    OLD: {old_title}")
+            print(f"    NEW: {title}")
+            print(f"    desc: {desc}")
+
+    todo = [p for p in plan if p[3] or p[4]]
+    if not todo:
+        print("\nEverything already matches. Nothing to write.")
+        return
+
+    if args.dry_run:
+        print(f"\n[DRY RUN] {len(todo)} video(s) would be updated. "
+              "Nothing was written.")
+        return
+
+    state = _fetch_video_state(youtube,
+                               [p[0]["Video ID"] for p in todo])
+
+    applied = failed = 0
+    for row, title, desc, meta_change, pub_change in todo:
+        video_id = row["Video ID"]
+        current = state.get(video_id)
+        if current is None:
+            print(f"  FAILED {row['Clip']}: video {video_id} not visible to "
+                  "this account — deleted, or wrong channel identity?")
+            failed += 1
+            continue
+
+        try:
+            if meta_change:
+                snippet = current["snippet"]
+                snippet["title"] = title[:100]
+                snippet["description"] = desc[:5000]
+                snippet["categoryId"] = snippet.get("categoryId",
+                                                    CATEGORY_MUSIC)
+                youtube.videos().update(
+                    part="snippet",
+                    body={"id": video_id, "snippet": snippet}).execute()
+                row["Title Set"] = title
+                row["Desc Set"] = desc
+
+            if pub_change:
+                status_body = current.get("status", {})
+                status_body["privacyStatus"] = "public"
+                youtube.videos().update(
+                    part="status",
+                    body={"id": video_id, "status": status_body}).execute()
+                row["Privacy"] = "public"
+        except Exception as error:                      # noqa: BLE001
+            print(f"  FAILED {row['Clip']}: {error}")
+            failed += 1
+            _persist(path, rows, dry_run=False)
+            continue
+
+        applied += 1
+        _persist(path, rows, dry_run=False)
+
+    print(f"\n{applied} video(s) updated, {failed} failed. Manifest: {path}")
+    if args.publish and not failed:
+        print("\nAll public. Hand off to the playlist script:\n"
+              "  python3 youtube_fetch.py\n"
+              f"  python3 youtube_create_playlists.py --new-show "
+              f"{show['date']} --update-history")
+    elif not args.publish:
+        print("\nStill private. Publish with:\n"
+              f"  python3 {os.path.basename(__file__)} --apply --publish")
+
+
+def stage_auth_only() -> None:
+    """Authenticate (minting or refreshing token.json) and prove the identity.
+
+    Printing the channel matters more than the token: the classic failure is
+    an auth flow that succeeds as the WRONG identity — the gmail account or
+    redhat.bootlegs instead of the @dan2bit brand channel — and then cannot
+    see the videos. See HOWTO_CHANNEL.md → Account split.
+    """
+    youtube = get_authenticated_service()
+    resp = youtube.channels().list(part="snippet", mine=True).execute()
+    items = resp.get("items", [])
+    if not items:
+        sys.exit("Authenticated, but this identity owns NO channel — the "
+                 "wrong account was chosen in the consent flow.\n"
+                 "rm token.json and re-run; pick the @dan2bit brand channel.")
+    snippet = items[0]["snippet"]
+    handle = snippet.get("customUrl", "")
+    print(f"Authenticated as: {snippet.get('title', '?')} "
+          + (f"({handle})" if handle else "")
+          + f"\n  channel id: {items[0]['id']}")
+    if handle and handle.lstrip("@").lower() != "dan2bit":
+        print("  WARNING: this is not @dan2bit. If that is unexpected, "
+              "rm token.json and re-consent as the brand channel.")
 
 
 # ── cli ──────────────────────────────────────────────────────────────────────
@@ -804,6 +1013,9 @@ def main() -> None:
                        help="Seed song titles from Content ID, setlist and lyrics.")
     stage.add_argument("--apply", action="store_true",
                        help="Write corrected titles and descriptions to YouTube.")
+    stage.add_argument("--auth-only", action="store_true",
+                       help="Just run the OAuth flow and report which channel "
+                            "the token sees. No other action.")
 
     parser.add_argument("--clips", metavar="DIR",
                         help="Folder of exported clips. Defaults to the working "
@@ -855,6 +1067,10 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    if args.auth_only:
+        stage_auth_only()
+        return
+
     if args.scan:
         stage_scan(args)
         return
@@ -867,7 +1083,8 @@ def main() -> None:
     elif args.identify:
         stage_identify(args, show)
     elif args.apply:
-        stage_not_implemented("apply")
+        youtube = None if args.dry_run else get_authenticated_service()
+        stage_apply(args, show, youtube)
 
 
 if __name__ == "__main__":
