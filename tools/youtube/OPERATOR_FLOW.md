@@ -2,9 +2,9 @@
 
 How a show actually gets from your phone to a titled, ordered playlist.
 
-**Status:** `--scan` and `--upload` are built. Step 6 below is the agreed design and
-is marked accordingly — the CLI accepts those flags and stops with a "not implemented
-yet" message, so nothing silently half-works.
+**Status:** all four stages are built — `--scan`, `--upload`, `--identify`,
+`--apply` (with `--publish`). Credentials and the surrounding utility scripts are
+covered in **HOWTO_CHANNEL.md**, next to this file.
 
 ---
 
@@ -18,9 +18,19 @@ export from Photos  →  scan  →  read the table  →  upload  →  (wait)
                                              apply → playlist
 ```
 
-One file carries state between every step: the **manifest**, at
-`tools/youtube/manifests/YYYY-MM-DD-artist-slug.tsv`. It is a plain TSV. Open it in
-whatever you like. Everything the tool guesses is a starting point you overwrite.
+The **manifest** carries state between every step, split into two files joined
+on the clip name (issue #251):
+
+- `tools/youtube/manifests/YYYY-MM-DD-artist-slug.tsv` — the **lean edit file**,
+  the only file you touch: `Clip | Decision | Set Artist | Song | Cover |
+  Skip Reason`, plus two read-only aids (`Candidates`, `Lyric Hint`) that
+  `--identify` maintains for you.
+- `…-artist-slug.machine.json` — everything the tools own (durations, video
+  IDs, upload status, confidence, positions). Never edit it; never delete it —
+  it holds the video IDs that make an interrupted upload resumable.
+
+A pre-split single-file manifest migrates automatically the first time any
+stage reads it. Everything the tool guesses is a starting point you overwrite.
 
 ---
 
@@ -72,11 +82,10 @@ fragment flags still work.
 
 ## 3. Fix the manifest  *(your pass)*
 
-Open the manifest. Columns split into three kinds:
-
-| Yours to edit | The tool's (rewritten each scan) | Filled later |
-|---|---|---|
-| `Decision`, `Song`, `Set Artist`, `Skip Reason`, `Cover` | `Clip`, `Capture Order`, `Capture Start`, `Duration`, `Size MB`, `Integrity`, `Set` | `Confidence`, `Evidence`, `Candidates`, `Lyric Hint`, `Setlist Pos`, `Video ID`, `Upload Status`, `Title Set` |
+Open the lean manifest TSV. Every column is either yours (`Decision`,
+`Set Artist`, `Song`, `Cover`, `Skip Reason`) or a read-only aid
+(`Candidates`, `Lyric Hint`) — the machine bookkeeping lives in the JSON
+sidecar and stays out of your way.
 
 The edits worth making before uploading:
 
@@ -140,26 +149,58 @@ the public channel more than once.
 Monetization on + Submit Rating, per video. No API surface exists for either — this
 stays a Studio visit regardless of how much else gets automated.
 
-## 6. Identify, correct, apply  *(designed, not built)*
+## 6. Identify, correct, apply  *(built)*
 
 ```bash
 python3 youtube_upload_show.py --identify
 ```
 
 Run this **after** YouTube has finished its Content ID scan — minutes to hours after
-upload, not immediately. It seeds `Song` with locked Content-ID matches, brackets the
-rest to candidates from the setlist, and pulls opening-lyric hints. It never overwrites
-a `Song` you typed.
+upload, not immediately. It fetches and caches the setlist(s) — `MULTI:` shows
+resolve every act via `data/setlists/<year>.json` — then works each act's clips:
 
-Then correct by lyric or by ear, and write it back:
+- **Evidence files** (both optional, next to the manifest): a
+  `.claims.tsv` holds Content-ID claim titles keyed by video ID (read them
+  out of Studio for now; a claims reader is a planned follow-up), and a
+  `.lyrics.tsv` records lyric-lookup outcomes as `matched` / `none` /
+  `error` — only `none` (a lookup that SUCCEEDED and found nothing) flags a
+  song as possibly unreleased; `error` asserts nothing.
+- **Bracketing** constrains each remaining clip to the setlist songs between
+  its confirmed neighbours, minus every song already confirmed anywhere. A
+  pool that collapses to one candidate is seeded (marked `bracket:collapsed`
+  — verify by ear); pools of a few land in the read-only `Candidates` column.
+  A setlist page warning "incomplete and out of order" disables bracketing —
+  the warning has proved accurate.
+- It never overwrites a `Song` you typed, even with `--reseed`.
+
+Then correct by lyric or by ear in the lean manifest, and write it back:
 
 ```bash
 python3 youtube_upload_show.py --apply --dry-run
-python3 youtube_upload_show.py --apply --publish
+python3 youtube_upload_show.py --apply             # titles + descriptions, still private
+python3 youtube_upload_show.py --apply --publish   # flip to public
 ```
 
-`--publish` will refuse to make a video public while its title still contains
-`#song-title`, so an unfinished clip cannot escape.
+Setting metadata and publishing are deliberately separate — there are nights
+where the titles are right but you want another listen before anything goes
+public.
+
+**The publish guard:** `--publish` hard-refuses the WHOLE show — reporting
+every offending clip and flipping nothing — while any title still contains
+`#song-title` or the legacy `???` notation. An unfinished clip cannot escape,
+and a partial publish cannot happen.
+
+**The escape hatch:** a track that genuinely cannot be identified
+(instrumental, non-English, rough audio even after processing) is marked by
+typing `unknown` in its Song column. It publishes as
+`ARTIST LIVE - Unknown Song #N (bootleg)` with a "can you name this song?"
+ask in the description — the crowdsourcing pattern that eventually named the
+Sona Jobarteh tracks — and it passes the guard, so one stubborn track never
+holds the whole night back.
+
+Clips whose `Set Artist` has no `@handle` in `artists.tsv` are flagged at
+apply time and ship without a mention — hydrate `artists.tsv` later and
+re-run `--apply` to add it.
 
 **Trust order when the tool and your memory disagree:** Content ID beats everything,
 then a lyric match, then the setlist, and the capture-order guess is last. Sets get

@@ -3,6 +3,11 @@
 Covers the YouTube utility scripts, the playlist issue workflow, venv setup,
 and credential configuration.
 
+The per-show pipeline (phone clips → uploaded → identified → titled → public
+→ playlist) is `youtube_upload_show.py`; its step-by-step operator guide is
+**OPERATOR_FLOW.md**, next to this file. This document is the reference for
+credentials, environment, the surrounding utility scripts, and conventions.
+
 ---
 
 ## Python Environment Setup
@@ -102,8 +107,13 @@ Run once to open the browser consent flow and cache `token.json`:
 
 ```bash
 source .venv/bin/activate
-python3 youtube_create_playlists.py --auth-only
+cd tools/youtube
+python3 youtube_upload_show.py --auth-only
 ```
+
+(`youtube_create_playlists.py --auth-only` still works and mints the same
+token; the upload script's version also prints WHICH channel the token sees,
+which catches the wrong-identity mistake immediately.)
 
 A browser window opens. This is the **consent** step, so it uses the **channel**
 identity, not the Cloud-project account: sign in with `dan2bit@gmail.com`, and when
@@ -122,7 +132,7 @@ the cached token is stale. Delete it and re-authenticate:
 
 ```bash
 rm token.json
-python3 youtube_create_playlists.py --auth-only
+python3 youtube_upload_show.py --auth-only
 ```
 
 In the browser consent flow: choose the **@dan2bit brand channel** identity (under
@@ -136,17 +146,46 @@ or the wrong identity was selected during a previous auth flow.
 
 ## YouTube Scripts
 
-### youtube_create_playlists.py
+### youtube_upload_show.py — the post-show pipeline
 
-**The primary script.** Creates playlists on the @dan2bit channel from
-`youtube_videos.tsv`, orders videos using setlist.fm, and optionally writes
-the playlist URL back to `live_shows_current.tsv` or `history/*.tsv`.
-
-**Typical post-show workflow:**
+**The primary post-show script.** Four stages against one durable per-show
+manifest — see OPERATOR_FLOW.md for the full walkthrough:
 
 ```bash
-# 1. Upload videos to YouTube Studio (private is fine).
-#    Videos must be uploaded before running the script.
+cd tools/youtube
+python3 youtube_upload_show.py --clips ~/Downloads/showfolder --scan
+python3 youtube_upload_show.py --upload --dry-run
+python3 youtube_upload_show.py --upload         # clips land PRIVATE
+# (Studio pass: monetization + Submit Rating — manual, see below)
+python3 youtube_upload_show.py --identify       # after Content ID settles
+# (correct Song in the lean manifest by lyric/ear)
+python3 youtube_upload_show.py --apply --dry-run
+python3 youtube_upload_show.py --apply          # titles/descriptions, still private
+python3 youtube_upload_show.py --apply --publish
+```
+
+`--publish` hard-refuses the whole show if any title still contains the
+`#song-title` placeholder or the legacy `???` notation. A genuinely
+unidentifiable track (instrumental, non-English, rough audio) is marked by
+typing `unknown` in its Song column: it publishes as “Unknown Song #N” with
+a crowdsourcing ask in the description, and does not hold the night hostage.
+
+**What stays manual, permanently: monetization and Submit Rating.** The
+API's monetization field is read-only and self-certification is a Studio
+questionnaire with no API surface or scope. Every show includes one Studio
+visit for those two clicks per video, no matter how much else is automated.
+
+### youtube_create_playlists.py
+
+Creates playlists on the @dan2bit channel from `youtube_videos.tsv`, orders
+videos using setlist.fm, and optionally writes the playlist URL back to
+`live_shows_current.tsv` or `history/*.tsv`.
+
+**Playlist assembly after the upload pipeline:**
+
+```bash
+# 1. Refresh the channel inventory (picks up the new uploads).
+python3 youtube_fetch.py
 
 # 2. Dry run to verify video matching and ordering.
 python3 youtube_create_playlists.py --new-show 2026-05-09 --dry-run
@@ -154,6 +193,9 @@ python3 youtube_create_playlists.py --new-show 2026-05-09 --dry-run
 # 3. Create playlist and write URL back to live_shows_current.tsv.
 python3 youtube_create_playlists.py --new-show 2026-05-09 --update-history
 ```
+
+Once videos carry exact setlist titles from `--apply`, this script's
+setlist matching is near-exact.
 
 **Backfill (multiple shows at once):**
 
@@ -308,9 +350,12 @@ python3 youtube_create_playlists.py --fix-descriptions \
 - In the browser auth flow, always select the **@dan2bit brand channel** identity
   (under `dan2bit@gmail.com`), not the gmail account itself — the brand channel owns
   the videos and playlists
-- Videos must be uploaded to YouTube Studio before running any script —
-  the script matches by upload date and video title
-- Private videos are fine; draft/unsubmitted videos will not appear
+- Upload happens script-side (`youtube_upload_show.py --upload`), so videos
+  are API-addressable from the moment they exist. If you ever upload by hand
+  in Studio instead: private videos are fine, but draft/unsubmitted videos
+  will not appear to the API
+- Monetization and Submit Rating are permanently manual in Studio — no API
+  surface exists for either
 - `youtube_videos.tsv`, `youtube_playlists.tsv`, `history_youtube_correlation.tsv`
   are all too large for MCP commits — always use GitHub Desktop for these
 - `logs/` is gitignored; `playlist_creation_log.tsv` stays local
