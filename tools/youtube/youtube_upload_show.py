@@ -12,8 +12,11 @@ playlist. Four stages against one durable per-show manifest.
   --upload     Resumable videos.insert. Clips land PRIVATE and addressable.
                Records each video ID in the manifest as it goes.
 
-  --identify   Seed song titles: Content-ID locks, setlist bracketing, lyric
-               hints, confidence scores. No writes to YouTube.
+  --identify   Seed song titles: Content-ID claim rows, lyric outcomes,
+               setlist bracketing, confidence scores. No writes to YouTube.
+               Optional evidence files sit next to the manifest:
+               <manifest>.claims.tsv and <manifest>.lyrics.tsv (formats in
+               yt_songid.py).
 
   --apply      Write the corrected titles and descriptions. With --publish,
                flip privacy to public.
@@ -93,7 +96,10 @@ import time
 from datetime import datetime, timezone
 
 import yt_clipscan
+import yt_manifest
+import yt_songid
 from yt_clipscan import human_duration
+from yt_setlist import load_setlist, resolve_setlist_urls
 from yt_common import (
     DATA_DIR,
     REPO_ROOT,
@@ -105,11 +111,10 @@ from yt_common import (
     script_path,
     slugify,
     venue_short,
-    write_tsv,
 )
 
 
-# ── constants ──────────────────────────────────────────────────────────────
+# ── constants ────────────────────────────────────────────────────────────────
 
 MANIFEST_DIR = script_path("manifests")
 
@@ -119,15 +124,6 @@ HISTORY_GLOB      = data_path("history", "*.tsv")
 LOG_TSV    = os.path.join(REPO_ROOT, "logs", "upload_log.tsv")
 LOG_FIELDS = ["Timestamp", "Show Date", "Clip", "Video ID", "Status",
               "Size MB", "Seconds", "Title"]
-
-MANIFEST_FIELDS = [
-    "Clip", "Capture Order", "Capture Start", "Duration", "Size MB", "Integrity",
-    "Set", "Set Artist",
-    "Decision", "Skip Reason",
-    "Song", "Confidence", "Evidence", "Candidates", "Lyric Hint",
-    "Setlist Pos", "Cover",
-    "Video ID", "Upload Status", "Title Set",
-]
 
 # Columns --scan recomputes on every run. Everything else is preserved.
 SCAN_OWNED = {"Clip", "Capture Order", "Capture Start", "Duration",
@@ -145,7 +141,7 @@ CATEGORY_MUSIC      = "10"
 UPLOAD_PRIVACY      = "private"
 
 
-# ── show lookup ────────────────────────────────────────────────────────────
+# ── show lookup ──────────────────────────────────────────────────────────────
 
 def _iter_show_rows():
     """Yield normalized show dicts from the current file, then the archives.
@@ -262,7 +258,7 @@ def support_acts(show: dict) -> list[str]:
     return [p for p in parts if p]
 
 
-# ── manifest ───────────────────────────────────────────────────────────────
+# ── manifest ─────────────────────────────────────────────────────────────────
 
 def manifest_path(show: dict) -> str:
     """Per-show manifest location, keyed on date and headliner."""
@@ -294,13 +290,18 @@ def read_sidecar(manifest: str) -> dict:
 
 
 def read_manifest(path: str) -> dict[str, dict]:
-    """Existing manifest rows keyed by clip filename. Missing file returns {}."""
-    return {row["Clip"]: row for row in read_tsv(path) if row.get("Clip")}
+    """Existing manifest rows keyed by clip filename. Missing file returns {}.
+
+    Reads the lean TSV + machine sidecar pair (migrating a legacy wide
+    manifest on first touch) and returns fully merged rows.
+    """
+    return {row["Clip"]: row for row in yt_manifest.load(path)
+            if row.get("Clip")}
 
 
 def blank_row() -> dict:
     """An empty manifest row with every column present."""
-    return {field: "" for field in MANIFEST_FIELDS}
+    return yt_manifest.blank_row()
 
 
 def seed_set_artist(clip, show: dict, segment_count: int) -> str:
@@ -333,7 +334,8 @@ def seed_rows(clips: list, show: dict, existing: dict[str, dict],
         row = blank_row()
 
         if previous:
-            row.update({k: v for k, v in previous.items() if k in MANIFEST_FIELDS})
+            row.update({k: v for k, v in previous.items()
+                        if k in yt_manifest.ALL_FIELDS})
 
         row["Clip"]          = clip.name
         row["Capture Order"] = str(clip.capture_order)
@@ -368,7 +370,7 @@ def carry_orphans(clips: list, existing: dict[str, dict]) -> list[dict]:
     return [row for name, row in sorted(existing.items()) if name not in present]
 
 
-# ── titles and descriptions ────────────────────────────────────────────────
+# ── titles and descriptions ──────────────────────────────────────────────────
 
 SONG_PLACEHOLDER = "#song-title"
 
@@ -437,7 +439,7 @@ def build_description(row: dict, show: dict) -> str:
     return " ".join(parts)
 
 
-# ── upload ─────────────────────────────────────────────────────────────────
+# ── upload ───────────────────────────────────────────────────────────────────
 
 def upload_clip(youtube, file_path: str, title: str, description: str,
                 privacy: str = UPLOAD_PRIVACY) -> str:
@@ -511,7 +513,7 @@ def pending_uploads(rows: list[dict]) -> list[dict]:
             and not (row.get("Video ID") or "").strip()]
 
 
-# ── stages ─────────────────────────────────────────────────────────────────
+# ── stages ───────────────────────────────────────────────────────────────────
 
 def resolve_clip_dir(args) -> str | None:
     """The folder of clips: explicit, else the working directory if it has video."""
@@ -576,9 +578,10 @@ def stage_scan(args) -> None:
         print(f"\n[DRY RUN] would write {len(rows)} rows to {path}")
         return
 
-    write_tsv(path, rows, MANIFEST_FIELDS)
+    yt_manifest.save(path, rows)
     write_sidecar(path, clip_dir)
     print(f"\nManifest written: {path}")
+    print(f"  machine sidecar: {yt_manifest.machine_path(path)}")
 
     if existing:
         print(f"  merged with {len(existing)} existing row(s); "
@@ -603,7 +606,7 @@ def stage_upload(args, show: dict, youtube) -> None:
     same command picks up exactly where it stopped.
     """
     path = args.manifest or manifest_path(show)
-    rows = read_tsv(path)
+    rows = yt_manifest.load(path)
     if not rows:
         sys.exit(f"No manifest at {path}. Run --scan first.")
 
@@ -695,7 +698,7 @@ def stage_upload(args, show: dict, youtube) -> None:
 def _persist(path: str, rows: list[dict], dry_run: bool) -> None:
     """Write the manifest back unless this is a rehearsal."""
     if not dry_run:
-        write_tsv(path, rows, MANIFEST_FIELDS)
+        yt_manifest.save(path, rows)
 
 
 def _log_row(show: dict, row: dict, video_id: str, status: str,
@@ -713,16 +716,70 @@ def _log_row(show: dict, row: dict, video_id: str, status: str,
     }
 
 
+def stage_identify(args, show: dict) -> None:
+    """Seed song titles: claims, lyric outcomes, setlist bracketing (#251).
+
+    Touches nothing on YouTube and needs no OAuth. Run it after the upload
+    settles — Content ID takes minutes to hours — and as many times as you
+    like: it refreshes only the columns it owns and never overwrites a Song
+    anyone typed.
+    """
+    path = args.manifest or manifest_path(show)
+    rows = yt_manifest.load(path)
+    if not rows:
+        sys.exit(f"No manifest at {path}. Run --scan first.")
+
+    print(f"\n{show['artist']} — {show['date']} — identify")
+
+    urls, url_status = resolve_setlist_urls(show)
+    print(f"  setlists: {url_status}")
+
+    setlists = {}
+    statuses = {}
+    for artist, url in urls.items():
+        setlist, status = load_setlist(
+            artist, url, cache_dir=MANIFEST_DIR,
+            refresh=getattr(args, "refresh_setlist", False))
+        setlists[artist] = setlist
+        statuses[artist] = status
+        print(f"    {artist}: {status}")
+
+    claims = yt_songid.read_claims(path)
+    lyrics = yt_songid.read_lyrics(path)
+    print(f"  evidence: {len(claims)} claim row(s), {len(lyrics)} lyric row(s)"
+          + ("" if claims or lyrics else
+             "  (optional — see yt_songid.py for the file formats)"))
+
+    uploaded = sum(1 for r in rows if (r.get("Video ID") or "").strip())
+    if claims and not uploaded:
+        print("  NOTE: claim rows bind by Video ID but nothing is uploaded "
+              "yet — they cannot attach.")
+
+    reports = yt_songid.identify_rows(rows, show, setlists, claims, lyrics,
+                                      reseed=args.reseed)
+    for report in reports:
+        report.setlist_status = statuses.get(report.artist, "")
+
+    print(yt_songid.format_reports(reports))
+
+    if args.dry_run:
+        print(f"\n[DRY RUN] nothing written to {path}")
+        return
+
+    yt_manifest.save(path, rows)
+    print(f"\nManifest updated: {path}")
+
+
 def stage_not_implemented(name: str) -> None:
     """Honest stop for a stage whose change has not landed yet."""
     sys.exit(
         f"--{name} is not implemented yet.\n"
-        "--scan and --upload have landed. The remaining stages ship in their "
-        "own changes so each can be reviewed on its own."
+        "--scan, --upload and --identify have landed. --apply ships in its "
+        "own change so each can be reviewed on its own."
     )
 
 
-# ── cli ────────────────────────────────────────────────────────────────────
+# ── cli ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -760,6 +817,9 @@ def main() -> None:
                              "cautious first upload.")
     parser.add_argument("--publish", action="store_true",
                         help="With --apply, flip privacy from private to public.")
+    parser.add_argument("--refresh-setlist", action="store_true",
+                        help="With --identify, refetch setlist.fm pages "
+                             "instead of using the cached copies.")
     parser.add_argument("--reseed", action="store_true",
                         help="Discard seeded Decision/Set Artist values and "
                              "recompute them. Typed Song values are still kept.")
@@ -805,7 +865,7 @@ def main() -> None:
         youtube = None if args.dry_run else get_authenticated_service()
         stage_upload(args, show, youtube)
     elif args.identify:
-        stage_not_implemented("identify")
+        stage_identify(args, show)
     elif args.apply:
         stage_not_implemented("apply")
 
