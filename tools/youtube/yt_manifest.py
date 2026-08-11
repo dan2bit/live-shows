@@ -220,5 +220,3 @@ def _migrate_legacy(manifest_path: str, rows: list[dict]) -> list[dict]:
           f"    {manifest_path}\n"
           f"    {machine_path(manifest_path)}")
     return merged
-""""""
-""""""
