@@ -3,7 +3,7 @@
 Tests for the --apply stage: the publish guard, the `unknown` crowdsourcing
 sentinel, and the title/description builders they hang off (issue #252).
 
-The guard's contract: a numbered `#song-title` placeholder or the legacy
+The guard's contract: a numbered song-title placeholder (any position) or the legacy
 `???` notation refuses the WHOLE publish; the deliberate `unknown` sentinel
 renders as "Unknown Song #N", asks for help in the description, and passes.
 
@@ -63,7 +63,8 @@ class TestUnknownSentinel(unittest.TestCase):
 
     def test_blank_song_still_gets_placeholder(self):
         title = build_title(row(song="", order="4"), SHOW)
-        self.assertIn(f"{SONG_PLACEHOLDER}-4", title)
+        self.assertIn("#4-song-title", title)
+        self.assertNotIn(SONG_PLACEHOLDER + "-4", title)  # old form gone
 
 
 class TestPublishGuard(unittest.TestCase):
@@ -84,6 +85,14 @@ class TestPublishGuard(unittest.TestCase):
     def test_named_song_passes(self):
         rows = [row(clip="a.mp4", song="Two of Hearts", video_id="v1")]
         self.assertEqual(publish_blockers(rows, SHOW), [])
+
+    def test_all_placeholder_forms_blocked(self):
+        # The guard matches the bareword "song-title" token, so the new
+        # #N-song-title form, the old #song-title-N form on a not-yet-retitled
+        # video, and the bare legacy #song-title are all refused.
+        for song_title in ("", "identified but title still #song-title-3",):
+            rows = [row(clip="a.mp4", song=song_title, video_id="v1")]
+            self.assertEqual(len(publish_blockers(rows, SHOW)), 1, song_title)
 
     def test_one_bad_row_reported_among_good(self):
         rows = [row(clip="a.mp4", song="Two of Hearts", video_id="v1"),
