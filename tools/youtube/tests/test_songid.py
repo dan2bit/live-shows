@@ -24,7 +24,7 @@ import yt_songid
 from yt_setlist import parse_setlist
 
 
-# ── fixtures ────────────────────────────────────────────────────────────────
+# ── fixtures ───────────────────────────────────────────────────────────────
 
 def song_li(title, info=""):
     info_html = f'<small class="fontSmall">{info}</small>' if info else \
@@ -80,7 +80,7 @@ def parsed_setlist(html=SETLIST_HTML):
     return setlist
 
 
-# ── setlist parser ───────────────────────────────────────────────────────────
+# ── setlist parser ─────────────────────────────────────────────────────────
 
 class TestSetlistParser(unittest.TestCase):
     def test_structure(self):
@@ -200,6 +200,25 @@ class TestIdentify(unittest.TestCase):
         self.assertEqual(rows[0]["Evidence"], "lyric-absence:unreleased?")
         self.assertNotIn("c2.mp4", reports[0].unreleased)
         self.assertEqual(rows[1]["Evidence"], "lyric-lookup:error")
+
+    def test_foreign_evidence_song_still_anchors(self):
+        # The Moss/McCalla regression: a Song carried in from a legacy
+        # manifest with Evidence "Content-ID" was excluded from pools but
+        # never anchored a position, so every bracket spanned the whole
+        # setlist and every Candidates hint was identical.
+        rows = manifest_rows([
+            ("c1.mp4", 1, "got", "", "v1"),
+            ("c2.mp4", 2, "got", "The River", "v2"),   # pos 3, foreign evidence
+            ("c3.mp4", 3, "got", "", "v3"),
+        ])
+        rows[1]["Evidence"] = "Content-ID"
+        self.identify(rows)
+        self.assertEqual(rows[1]["Setlist Pos"], "3")
+        # c1 (before the anchor) brackets to pos < 3; c3 (after) to pos > 3.
+        self.assertIn("Howl", rows[0]["Candidates"])
+        self.assertNotIn("Sparrows", rows[0]["Candidates"])
+        self.assertIn("Sparrows", rows[2]["Candidates"])
+        self.assertNotIn("Howl", rows[2]["Candidates"])
 
     def test_typed_song_never_overwritten(self):
         rows = manifest_rows([("c1.mp4", 1, "got", "My Pick", "v1")])
