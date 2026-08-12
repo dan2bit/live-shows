@@ -99,7 +99,7 @@ class TestLint(unittest.TestCase):
         self.assertTrue(any("duplicate Clip" in e for e in errors))
 
     def test_unpublishable_song_text(self):
-        for song in ("???", "#song-title-3"):
+        for song in ("???", "#song-title-3", "#3-song-title"):
             errors, _, _ = run_lint(tsv([{"Clip": "a.mp4", "Decision": "got",
                                           "Song": song}]))
             self.assertTrue(any("unpublishable" in e for e in errors), song)

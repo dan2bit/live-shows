@@ -391,9 +391,11 @@ SONG_PLACEHOLDER = "#song-title"
 # not hold a whole night hostage. The description asks viewers for help.
 UNKNOWN_SENTINELS = {"unknown", "unknown song", "?"}
 
-# Titles that must never go public: the numbered placeholder family, and the
-# pre-2026 "???" notation for the same condition (#249).
-UNPUBLISHABLE_MARKS = (SONG_PLACEHOLDER, "???")
+# Titles that must never go public: any placeholder carrying the bareword
+# "song-title" token (the new #N-song-title form, the older #song-title-N,
+# and the bare #song-title all contain it), and the pre-2026 "???" notation
+# for the same condition (#249).
+UNPUBLISHABLE_MARKS = ("song-title", "???")
 
 
 def is_unknown_song(row: dict) -> bool:
@@ -413,16 +415,19 @@ def build_title(row: dict, show: dict) -> str:
     an unidentified clip, and the date stays out of the title: the channel puts
     the date and venue in the description, not the title.
 
-    The placeholder is numbered so each clip's is unique and greppable. Bare
-    placeholders have reached the public channel more than once, so --apply
-    must refuse to publish a title that still contains one.
+    The placeholder leads with the number (#N-song-title) so it reads clearly
+    in Studio's truncated list view, where the song slot is what gets cut off.
+    Each clip's is unique and greppable. Bare placeholders have reached the
+    public channel more than once, so --apply must refuse to publish a title
+    that still contains one — the guard matches the "song-title" token in any
+    position.
     """
     artist = (row.get("Set Artist") or "").strip() or show["artist"]
     song   = (row.get("Song") or "").strip()
     if is_unknown_song(row):
         song = f"Unknown Song #{row.get('Capture Order', '?')}"
     elif not song:
-        song = f"{SONG_PLACEHOLDER}-{row.get('Capture Order', '?')}"
+        song = f"#{row.get('Capture Order', '?')}-song-title"
     return f"{artist} LIVE - {song} (bootleg)"
 
 
@@ -439,10 +444,14 @@ def build_description(row: dict, show: dict) -> str:
 
         from Wolf Trap (VA) on 07/18/26 @TromboneShorty
         Solomon Burke cover from Wolf Trap (VA) on 07/18/26 @TromboneShorty
+        unreleased from Jammin' Java (VA) on 08/08/26 @SabineMcCalla
 
-    A cover note leads, matching how the channel already annotates covers —
-    in the description rather than the title, where a parenthetical would
-    compete with the (bootleg) suffix.
+    The Desc Slug, if present, leads verbatim — whatever the operator typed,
+    with no injected word. It carries cover notes ("Solomon Burke cover"),
+    unreleased/one-off tags ("unreleased"), guest credits ("with Rose Droll"),
+    or anything else that belongs ahead of the location. It sits in the
+    description rather than the title, where a parenthetical would compete
+    with the (bootleg) suffix.
 
     Each piece degrades on its own: an unrecognized venue prints as written, a
     venue with no parseable state loses only the state, and an artist with no
@@ -453,9 +462,9 @@ def build_description(row: dict, show: dict) -> str:
     venue  = venue_short(show.get("venue", ""))
     parts  = []
 
-    cover = (row.get("Cover") or "").strip()
-    if cover:
-        parts.append(f"{cover} cover")
+    slug = (row.get("Desc Slug") or "").strip()
+    if slug:
+        parts.append(slug)
 
     parts.append(f"from {venue}" if venue else "from an unrecorded venue")
     parts.append(f"on {format_show_date(show['date'])}")
@@ -825,7 +834,7 @@ def stage_edit(args, show: dict) -> None:
 def publish_blockers(rows: list[dict], show: dict) -> list[tuple[str, str]]:
     """Every uploaded keeper whose title is not fit to go public.
 
-    A title still carrying the numbered placeholder, or the older "???"
+    A title still carrying a song-title placeholder, or the older "???"
     notation, must never reach the public channel — that has happened more
     than once (#249, #252). The deliberate escape hatch is the `unknown`
     sentinel, which renders as "Unknown Song #N" and passes.

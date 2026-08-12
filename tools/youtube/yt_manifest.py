@@ -50,14 +50,14 @@ from yt_common import read_tsv, write_tsv
 # clip better than the filename does, because the Studio UI shows durations
 # everywhere and PXL timestamps nowhere. Keep this under ten columns — the
 # whole point of the split is that a row fits in an eye-span.
-HUMAN_FIELDS = ["Clip", "Decision", "Set Artist", "Song", "Cover", "Skip Reason"]
+HUMAN_FIELDS = ["Clip", "Decision", "Set Artist", "Song", "Desc Slug", "Skip Reason"]
 AID_FIELDS   = ["Duration", "Candidates", "Lyric Hint"]
-LEAN_FIELDS  = ["Clip", "Duration", "Decision", "Set Artist", "Song", "Cover",
+LEAN_FIELDS  = ["Clip", "Duration", "Decision", "Set Artist", "Song", "Desc Slug",
                 "Skip Reason", "Candidates", "Lyric Hint"]
 
 # The previous lean layout (before Duration was promoted). Recognized on
 # read so an already-split manifest keeps working; the next save upgrades it.
-LEAN_FIELDS_V1 = ["Clip", "Decision", "Set Artist", "Song", "Cover",
+LEAN_FIELDS_V1 = ["Clip", "Decision", "Set Artist", "Song", "Desc Slug",
                   "Skip Reason", "Candidates", "Lyric Hint"]
 
 # The machine sidecar, keyed by clip name. Every field the tools own.

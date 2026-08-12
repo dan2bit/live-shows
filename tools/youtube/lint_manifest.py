@@ -43,7 +43,7 @@ WHAT GETS CHECKED
       index.html already compensates for
     - a Decision that is neither `got` nor `skip`
     - a duplicate Clip name
-    - a Song carrying `???` or a literal `#song-title` — unpublishable text
+    - a Song carrying `???` or the `song-title` placeholder token — unpublishable text
       typed where a real title belongs
     - duplicate Setlist Pos within one Set Artist (machine block present)
 
@@ -81,7 +81,7 @@ from yt_manifest import (
 
 
 VALID_DECISIONS = {"got", "skip"}
-UNPUBLISHABLE_IN_SONG = ("???", "#song-title")
+UNPUBLISHABLE_IN_SONG = ("???", "song-title")
 UNKNOWN_SENTINELS = {"unknown", "unknown song", "?"}
 
 SCOREBOARD_START = "<!-- manifest-scoreboard:start -->"

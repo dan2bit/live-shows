@@ -204,7 +204,7 @@ def identify_rows(rows: list[dict], show: dict, setlists: dict[str, "Setlist"],
         if setlist and setlist.titled_songs:
             _bracket(group, setlist, report)
 
-        _carry_covers(group, setlist)
+        _carry_slugs(group, setlist)
         reports.append(report)
 
     return reports
@@ -238,8 +238,8 @@ def _confirm(row: dict, song, confidence: str, evidence: str,
     if song is not None:
         row["Song"] = song.title
         row["Setlist Pos"] = str(song.position)
-        if song.cover_of and not (row.get("Cover") or "").strip():
-            row["Cover"] = song.cover_of
+        if song.info and not (row.get("Desc Slug") or "").strip():
+            row["Desc Slug"] = _slug_from_info(song.info)
     row["Confidence"] = confidence
     row["Evidence"] = evidence
 
@@ -328,8 +328,8 @@ def _honor_human_songs(group: list[dict], setlist, report: ArtistReport) -> None
         song = match_song(song_title, setlist) if setlist else None
         if song is not None:
             row["Setlist Pos"] = str(song.position)
-            if song.cover_of and not (row.get("Cover") or "").strip():
-                row["Cover"] = song.cover_of
+            if song.info and not (row.get("Desc Slug") or "").strip():
+                row["Desc Slug"] = _slug_from_info(song.info)
         report.confirmed.append((row["Clip"], song_title, "human"))
 
 
@@ -355,8 +355,8 @@ def _resolve_positions(group: list[dict], setlist) -> None:
         song = match_song(song_title, setlist)
         if song is not None:
             row["Setlist Pos"] = str(song.position)
-            if song.cover_of and not (row.get("Cover") or "").strip():
-                row["Cover"] = song.cover_of
+            if song.info and not (row.get("Desc Slug") or "").strip():
+                row["Desc Slug"] = _slug_from_info(song.info)
 
 
 def _bracket(group: list[dict], setlist, report: ArtistReport) -> None:
@@ -435,19 +435,30 @@ def _within(row: dict, ordered: list[dict], position: int) -> bool:
     return low < position < high
 
 
-def _carry_covers(group: list[dict], setlist) -> None:
-    """Cover parentheticals reach the Cover column for every titled row."""
+def _slug_from_info(info: str) -> str:
+    """The Desc Slug prefill: the setlist parenthetical minus its outer parens,
+    whitespace collapsed. "(Pete Seeger cover)" -> "Pete Seeger cover";
+    "(unreleased)" -> "unreleased"; "(with Rose Droll)" -> "with Rose Droll".
+    Whatever it returns is later prepended to the description verbatim."""
+    t = (info or "").strip()
+    if t.startswith("(") and t.endswith(")"):
+        t = t[1:-1]
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _carry_slugs(group: list[dict], setlist) -> None:
+    """Setlist parentheticals reach the Desc Slug column for every titled row."""
     if not setlist:
         return
     for row in group:
-        if (row.get("Cover") or "").strip():
+        if (row.get("Desc Slug") or "").strip():
             continue
         song_title = (row.get("Song") or "").strip()
         if not song_title:
             continue
         song = match_song(song_title, setlist)
-        if song and song.cover_of:
-            row["Cover"] = song.cover_of
+        if song and song.info:
+            row["Desc Slug"] = _slug_from_info(song.info)
 
 
 def _int(value) -> int:

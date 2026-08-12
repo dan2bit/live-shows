@@ -49,7 +49,7 @@ import yt_manifest
 DEFAULT_PORT = 8765
 
 # The only columns a save may touch. Clip is the join key, never edited.
-EDITABLE_FIELDS = ("Decision", "Set Artist", "Song", "Cover", "Skip Reason")
+EDITABLE_FIELDS = ("Decision", "Set Artist", "Song", "Desc Slug", "Skip Reason")
 
 
 # ── state assembly ─────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ def build_state(rows: list[dict], setlists: dict, show: dict) -> dict:
             "decision":   (row.get("Decision") or "").strip() or "got",
             "setArtist":  (row.get("Set Artist") or "").strip(),
             "song":       (row.get("Song") or "").strip(),
-            "cover":      (row.get("Cover") or "").strip(),
+            "descSlug":   (row.get("Desc Slug") or "").strip(),
             "skipReason": (row.get("Skip Reason") or "").strip(),
             "candidates": (row.get("Candidates") or "").strip(),
             "lyricHint":  (row.get("Lyric Hint") or "").strip(),
@@ -95,7 +95,7 @@ def build_state(rows: list[dict], setlists: dict, show: dict) -> dict:
             "songs": [{
                 "title":    s.title,
                 "position": s.position,
-                "cover":    s.cover_of,
+                "info":     s.info,
                 "section":  s.section,
                 "unknown":  s.unknown,
             } for s in getattr(setlist, "songs", [])],
@@ -133,7 +133,7 @@ def apply_edits(rows: list[dict], edits: list) -> tuple[int, list[str]]:
             continue
 
         mapping = {"Decision": "decision", "Set Artist": "setArtist",
-                   "Song": "song", "Cover": "cover",
+                   "Song": "song", "Desc Slug": "descSlug",
                    "Skip Reason": "skipReason"}
         touched = False
         for field, key in mapping.items():
@@ -205,7 +205,7 @@ PAGE_TEMPLATE = r"""<!DOCTYPE html>
            border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
            background: Field; color: FieldText; }
   select.song { min-width: 240px; }
-  input.cover { width: 130px; }
+  input.descslug { width: 150px; }
   .hint { font-size: 11px; opacity: .65; width: 100%; }
   .dirty { outline: 2px solid #2563eb55; }
 </style></head><body>
@@ -243,7 +243,7 @@ function songOptions(artist, row) {
     if (s.unknown) continue;
     let label = s.position + ". " + s.title;
     if (s.section) label += "  [" + s.section.replace(/:$/,"") + "]";
-    if (s.cover) label += "  (" + s.cover + " cover)";
+    if (s.info) label += "  (" + s.info + ")";
     opts.push({v: s.title, label, disabled: taken.has(s.title) && row.song !== s.title});
   }
   opts.push({v: UNKNOWN, label: "— unknown (crowdsource the title) —"});
@@ -251,11 +251,16 @@ function songOptions(artist, row) {
   return opts;
 }
 
-function coverFor(artist, title) {
+function slugFor(artist, title) {
   const sl = S.setlists[artist];
   if (!sl) return "";
   const hit = sl.songs.find(s => s.title === title);
-  return hit ? hit.cover : "";
+  if (!hit || !hit.info) return "";
+  // The setlist parenthetical minus its outer parens, whitespace collapsed —
+  // matches yt_songid._slug_from_info so editor and pipeline prefill agree.
+  let t = hit.info.trim();
+  if (t.startsWith("(") && t.endsWith(")")) t = t.slice(1, -1);
+  return t.replace(/\s+/g, " ").trim();
 }
 
 function render() {
@@ -294,7 +299,11 @@ function renderRow(r) {
     img.className = "thumb";
     img.src = "https://i.ytimg.com/vi/" + r.videoId + "/mqdefault.jpg";
     img.alt = "";
-    div.appendChild(img);
+    const watch = document.createElement("a");
+    watch.href = "https://youtu.be/" + r.videoId;
+    watch.target = "_blank"; watch.rel = "noopener";
+    watch.appendChild(img);
+    div.appendChild(watch);
   } else {
     const ph = document.createElement("div");
     ph.className = "thumb";
@@ -362,17 +371,17 @@ function renderRow(r) {
       } else {
         r.song = sel.value;
       }
-      if (r.song && r.song.toLowerCase() !== UNKNOWN && !r.cover)
-        r.cover = coverFor(r.setArtist, r.song);
+      if (r.song && r.song.toLowerCase() !== UNKNOWN && !r.descSlug)
+        r.descSlug = slugFor(r.setArtist, r.song);
       markDirty(); render();
     };
     pick.appendChild(sel);
 
-    const cov = document.createElement("input");
-    cov.type = "text"; cov.className = "cover";
-    cov.placeholder = "cover of…"; cov.value = r.cover;
-    cov.onchange = () => { r.cover = cov.value.trim(); markDirty(); };
-    pick.appendChild(cov);
+    const slug = document.createElement("input");
+    slug.type = "text"; slug.className = "descslug";
+    slug.placeholder = "desc slug…"; slug.value = r.descSlug;
+    slug.onchange = () => { r.descSlug = slug.value.trim(); markDirty(); };
+    pick.appendChild(slug);
 
     if (r.candidates || r.lyricHint) {
       const hint = document.createElement("div");
@@ -413,7 +422,7 @@ async function post(path, body) {
 document.getElementById("save").onclick = async () => {
   const out = await post("/save", {rows: rows.map(r => ({
     clip: r.clip, decision: r.decision, setArtist: r.setArtist,
-    song: r.song, cover: r.cover, skipReason: r.skipReason}))});
+    song: r.song, descSlug: r.descSlug, skipReason: r.skipReason}))});
   if (out.errors && out.errors.length) {
     setStatus("save had problems: " + out.errors.join("; "));
   } else {
