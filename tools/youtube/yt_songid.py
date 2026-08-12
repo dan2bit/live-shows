@@ -71,13 +71,15 @@ CONFIDENCE_MEDIUM = "medium"
 CONFIDENCE_LOW    = "low"
 
 # Above this many candidates, a pool is reported as a count rather than
-# spelled out — a list of nine possibles helps nobody pick.
-CANDIDATE_LIST_MAX = 4
+# spelled out. Set high enough that a typical club set lists in full — a
+# truncated "+4 more" proved worse than useless once the visible names were
+# assigned and only the hidden ones remained.
+CANDIDATE_LIST_MAX = 12
 
 EVIDENCE_HUMAN_MARKERS = ("", "human")
 
 
-# ── evidence files ───────────────────────────────────────────────────────────
+# ── evidence files ─────────────────────────────────────────────────────────
 
 def claims_path(manifest_path: str) -> str:
     return manifest_path[:-4] + ".claims.tsv"
@@ -124,7 +126,7 @@ def read_lyrics(manifest_path: str) -> dict[str, dict]:
     return outcomes
 
 
-# ── title normalization ─────────────────────────────────────────────────────
+# ── title normalization ────────────────────────────────────────────────────
 
 def normalize_title(value: str) -> str:
     """Fold a song title to a match key: ASCII, lowercase, bare words."""
@@ -155,7 +157,7 @@ def match_song(title: str, setlist: Setlist):
     return None
 
 
-# ── the per-artist identification pass ───────────────────────────────────────
+# ── the per-artist identification pass ─────────────────────────────────────
 
 @dataclass
 class ArtistReport:
@@ -197,6 +199,7 @@ def identify_rows(rows: list[dict], show: dict, setlists: dict[str, "Setlist"],
         _apply_claims(group, setlist, claims, report)
         _apply_lyrics(group, setlist, lyrics, report)
         _honor_human_songs(group, setlist, report)
+        _resolve_positions(group, setlist)
 
         if setlist and setlist.titled_songs:
             _bracket(group, setlist, report)
@@ -330,6 +333,32 @@ def _honor_human_songs(group: list[dict], setlist, report: ArtistReport) -> None
         report.confirmed.append((row["Clip"], song_title, "human"))
 
 
+def _resolve_positions(group: list[dict], setlist) -> None:
+    """Any confirmed Song with an unknown position becomes a bracketing anchor.
+
+    Provenance does not matter here: a title that arrived via a claim row, a
+    legacy manifest (Evidence values like "Content-ID" predating this
+    pipeline), or a hand edit anchors bracketing equally well. Without this
+    pass, a confirmed song with foreign Evidence was excluded from candidate
+    pools but never anchored a position — so every bracket silently spanned
+    the whole setlist and every Candidates hint came out identical.
+    """
+    if not setlist:
+        return
+    for row in group:
+        song_title = (row.get("Song") or "").strip()
+        if not song_title or song_title.lower() in ("unknown",
+                                                    "unknown song", "?"):
+            continue
+        if (row.get("Setlist Pos") or "").strip():
+            continue
+        song = match_song(song_title, setlist)
+        if song is not None:
+            row["Setlist Pos"] = str(song.position)
+            if song.cover_of and not (row.get("Cover") or "").strip():
+                row["Cover"] = song.cover_of
+
+
 def _bracket(group: list[dict], setlist, report: ArtistReport) -> None:
     """Layer 3: anchored bracketing with global exclusion.
 
@@ -428,7 +457,7 @@ def _int(value) -> int:
         return 0
 
 
-# ── reporting ────────────────────────────────────────────────────────────────
+# ── reporting ──────────────────────────────────────────────────────────────
 
 def format_reports(reports: list[ArtistReport]) -> str:
     """Human-readable identification summary, one block per act."""
