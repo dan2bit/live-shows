@@ -394,6 +394,34 @@ def partition_videos(show_date, headliner, supporting_acts_str, all_date_videos)
     return headliner_vids, support_vids, unattributed
 
 # ── setlist.fm ordering ───────────────────────────────────────────────────────────────────────
+def resolve_setlist_url(setlist_url, artist):
+    """The per-act setlist URL a show row's Setlist.fm field points at.
+
+    A direct URL belongs to the headliner and is returned as-is (a support
+    act gets "" — the field never described their set). MULTI:YYYY-MM-DD
+    means every act's link lives in data/setlists/<year>.json under that
+    date; the entry for this artist is looked up by case-folded name. Any
+    miss returns "" and the caller's no-setlist fallback handles it — the
+    string MULTI:date must never reach requests.get, which raises a
+    connection-adapter error on it.
+    """
+    raw = (setlist_url or "").strip()
+    if not raw.upper().startswith("MULTI:"):
+        return raw
+    date_key = raw.split(":", 1)[1].strip()
+    path = os.path.join(DATA_DIR, "setlists", f"{date_key[:4]}.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            entries = json.load(f)
+    except (OSError, ValueError):
+        return ""
+    entry = entries.get(date_key) or {}
+    wanted = (artist or "").strip().casefold()
+    for item in entry.get("setlists", []):
+        if (item.get("artist") or "").strip().casefold() == wanted:
+            return (item.get("url") or "").strip()
+    return ""
+
 def fetch_setlist_songs(setlist_url):
     if not setlist_url:
         return [], "no setlist URL"
@@ -508,11 +536,45 @@ def create_playlist(youtube, title, description=""):
     ).execute()
     return resp["id"], f"https://www.youtube.com/playlist?list={resp['id']}"
 
+# playlistItems.insert flakes transiently — 409/SERVICE_UNAVAILABLE is a
+# known burst failure right after playlist creation, and it once stranded a
+# freshly created playlist with zero videos on the first insert. Retry with
+# backoff; only a persistent failure propagates.
+ADD_RETRIABLE_STATUSES = {409, 500, 502, 503, 504}
+ADD_MAX_RETRIES = 5
+
 def add_video_to_playlist(youtube, playlist_id, video_id, position):
-    youtube.playlistItems().insert(
-        part="snippet",
-        body={"snippet": {"playlistId": playlist_id, "resourceId": {"kind": "youtube#video", "videoId": video_id}, "position": position}}
-    ).execute()
+    from googleapiclient.errors import HttpError
+    for attempt in range(ADD_MAX_RETRIES + 1):
+        try:
+            youtube.playlistItems().insert(
+                part="snippet",
+                body={"snippet": {"playlistId": playlist_id, "resourceId": {"kind": "youtube#video", "videoId": video_id}, "position": position}}
+            ).execute()
+            return
+        except HttpError as error:
+            status = getattr(getattr(error, "resp", None), "status", None)
+            if status not in ADD_RETRIABLE_STATUSES or attempt == ADD_MAX_RETRIES:
+                raise
+            delay = min(2 ** (attempt + 1), 30)
+            print(f"    HTTP {status} adding {video_id} — retry "
+                  f"{attempt + 1}/{ADD_MAX_RETRIES} in {delay}s")
+            time.sleep(delay)
+
+def fetch_playlist_video_ids(youtube, playlist_id):
+    """Video IDs already in a playlist — what makes a re-run resumable."""
+    ids = set()
+    page_token = None
+    while True:
+        kwargs = dict(part="snippet", playlistId=playlist_id, maxResults=50)
+        if page_token:
+            kwargs["pageToken"] = page_token
+        resp = youtube.playlistItems().list(**kwargs).execute()
+        for item in resp.get("items", []):
+            ids.add(item["snippet"]["resourceId"].get("videoId", ""))
+        page_token = resp.get("nextPageToken")
+        if not page_token:
+            return ids
 
 def fetch_all_channel_playlists(youtube):
     playlists = []
@@ -656,16 +718,24 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
     print(f"  Headliner: {len(headliner_vids)} | Support: {sum(len(v) for v in support_vids.values())} | Unattributed: {len(unattributed)}")
     headliner_vids += unattributed
 
-    setlist_songs, setlist_status = fetch_setlist_songs(setlist_url)
-    print(f"  Setlist.fm ({setlist_url or 'none'}): {setlist_status}")
+    headliner_url = resolve_setlist_url(setlist_url, headliner)
+    setlist_songs, setlist_status = fetch_setlist_songs(headliner_url)
+    print(f"  Setlist.fm ({headliner_url or setlist_url or 'none'}): {setlist_status}")
     headliner_vids = order_by_setlist(headliner_vids, setlist_songs)
 
     ordered_support = []
     for act, act_vids in support_vids.items():
         if act_vids:
-            act_sorted = sorted(act_vids, key=lambda v: v.get("published", ""))
+            act_url = resolve_setlist_url(setlist_url, act)
+            act_songs, act_status = fetch_setlist_songs(act_url)
+            if act_songs:
+                act_sorted = order_by_setlist(act_vids, act_songs)
+                note = f"setlist order — {act_status}"
+            else:
+                act_sorted = sorted(act_vids, key=lambda v: v.get("published", ""))
+                note = f"upload order — {act_status}"
             ordered_support.extend(act_sorted)
-            print(f"  Supporting act '{act}': {len(act_vids)} video(s) (upload order)")
+            print(f"  Supporting act '{act}': {len(act_vids)} video(s) ({note})")
 
     final_order = headliner_vids + ordered_support
 
@@ -676,13 +746,33 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
 
     playlist_url = "[dry run — no playlist created]"
     if not dry_run:
-        print("  Creating playlist...")
-        playlist_id, playlist_url = create_playlist(youtube, playlist_title)
-        print(f"  Playlist created: {playlist_url}")
+        # A crashed earlier run may have left this playlist already created
+        # (possibly empty, possibly partial). Reuse it and add only what is
+        # missing, so a re-run resumes instead of minting a duplicate.
+        playlist_id = None
+        existing_ids = set()
+        for pl in fetch_all_channel_playlists(youtube):
+            if pl["title"] == playlist_title:
+                playlist_id = pl["playlist_id"]
+                playlist_url = f"https://www.youtube.com/playlist?list={playlist_id}"
+                existing_ids = fetch_playlist_video_ids(youtube, playlist_id)
+                print(f"  Reusing existing playlist ({len(existing_ids)} "
+                      f"video(s) already in it): {playlist_url}")
+                break
+        if playlist_id is None:
+            print("  Creating playlist...")
+            playlist_id, playlist_url = create_playlist(youtube, playlist_title)
+            print(f"  Playlist created: {playlist_url}")
+        added = 0
         for pos, v in enumerate(final_order):
+            if v["video_id"] in existing_ids:
+                continue
             add_video_to_playlist(youtube, playlist_id, v["video_id"], pos)
+            added += 1
             time.sleep(0.3)
-        print(f"  Added {len(final_order)} videos")
+        print(f"  Added {added} video(s)"
+              + (f" ({len(existing_ids)} were already present)"
+                 if existing_ids else ""))
         if update_history:
             update_history_playlist_url(date_str, headliner, playlist_url, show_row=show)
 
