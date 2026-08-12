@@ -252,11 +252,15 @@ class TestIdentify(unittest.TestCase):
         self.assertEqual(rows[1]["Song"], "")
         self.assertIn("The River", rows[1]["Candidates"])
 
-    def test_cover_carried_to_cover_column(self):
+    def test_parenthetical_carried_to_desc_slug(self):
+        # The full setlist parenthetical (verbatim, minus outer parens) seeds
+        # Desc Slug — not just the cover attribution. "(Big Joe Williams cover)"
+        # becomes the slug "Big Joe Williams cover", which build_description
+        # prepends verbatim with no injected word.
         rows = manifest_rows([("c1.mp4", 1, "got", "", "v1")])
         self.identify(rows, claims={"v1": {"title": "Sparrows", "artist": "",
                                            "start": ""}})
-        self.assertEqual(rows[0]["Cover"], "Big Joe Williams")
+        self.assertEqual(rows[0]["Desc Slug"], "Big Joe Williams cover")
 
     def test_skip_rows_ignored(self):
         rows = manifest_rows([("c1.mp4", 1, "skip", "", "")])
