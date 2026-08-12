@@ -652,11 +652,15 @@ def _write_playlist_url_to_file(filepath, date_str, artist, playlist_url,
             updated = True
             break
     if updated:
-        with open(filepath, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter="\t",
-                                    extrasaction="ignore")
-            writer.writeheader()
-            writer.writerows(rows)
+        # Plain tab-joined lines, LF endings, no quoting — the repo's TSVs
+        # are never csv-quoted. csv.DictWriter's defaults (QUOTE_MINIMAL +
+        # CRLF lineterminator) once rewrote the whole current file with CRLF
+        # endings and quote-wrapped the two Notes fields that legitimately
+        # contain double quotes, corrupting rows the update never touched.
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write("\t".join(fieldnames) + "\n")
+            for r in rows:
+                f.write("\t".join(r.get(k) or "" for k in fieldnames) + "\n")
         print(f"  Updated {filepath} with playlist URL")
     else:
         print(f"  WARNING: could not find {date_str} / {artist} in {filepath}")

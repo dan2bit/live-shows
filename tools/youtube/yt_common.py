@@ -173,11 +173,15 @@ def write_tsv(path: str, rows: list[dict], fieldnames: list[str] | None = None) 
     if parent:
         os.makedirs(parent, exist_ok=True)
 
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter="\t",
-                                extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(rows)
+    # Plain tab-joined lines, LF endings, no quoting. csv.DictWriter's
+    # defaults (QUOTE_MINIMAL + CRLF lineterminator) violate the repo's TSV
+    # convention the moment a field contains a double quote — real song
+    # titles and notes do — and quietly give every file CRLF endings.
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\t".join(fieldnames) + "\n")
+        for row in rows:
+            f.write("\t".join(str(row.get(k) or "") for k in fieldnames)
+                    + "\n")
 
 
 def append_log(path: str, fieldnames: list[str], rows: list[dict]) -> None:
