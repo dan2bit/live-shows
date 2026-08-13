@@ -1,8 +1,8 @@
 {
   "generated": "2026-08-13",
   "counts": {
-    "records": 285,
-    "variants": 313
+    "records": 286,
+    "variants": 314
   },
   "records": [
     {
@@ -3146,6 +3146,16 @@
     },
     {
       "id": 266,
+      "canonical": "Venna",
+      "status": "potential",
+      "decision": "Choose",
+      "tier": "Low",
+      "sources": [
+        "potential"
+      ]
+    },
+    {
+      "id": 267,
       "canonical": "Victor Wooten",
       "status": "seen",
       "times_seen": "1",
@@ -3157,7 +3167,7 @@
       ]
     },
     {
-      "id": 267,
+      "id": 268,
       "canonical": "Victor Wooten & The Wooten Brothers",
       "status": "potential",
       "decision": "Pass",
@@ -3167,7 +3177,7 @@
       ]
     },
     {
-      "id": 268,
+      "id": 269,
       "canonical": "Vienna Teng",
       "status": "potential",
       "decision": "Pass",
@@ -3177,7 +3187,7 @@
       ]
     },
     {
-      "id": 269,
+      "id": 270,
       "canonical": "Violent Femmes",
       "status": "seen",
       "times_seen": "1",
@@ -3189,7 +3199,7 @@
       ]
     },
     {
-      "id": 270,
+      "id": 271,
       "canonical": "The Wailin' Jennys",
       "status": "potential",
       "decision": "Pass",
@@ -3199,7 +3209,7 @@
       ]
     },
     {
-      "id": 271,
+      "id": 272,
       "canonical": "Walter Trout",
       "status": "seen",
       "tier": "Strong",
@@ -3213,7 +3223,7 @@
       ]
     },
     {
-      "id": 272,
+      "id": 273,
       "canonical": "The War and Treaty",
       "status": "seen",
       "decision": "Pass",
@@ -3230,7 +3240,7 @@
       ]
     },
     {
-      "id": 273,
+      "id": 274,
       "canonical": "Warren Haynes",
       "status": "follow",
       "tier": "Medium",
@@ -3239,7 +3249,7 @@
       ]
     },
     {
-      "id": 274,
+      "id": 275,
       "canonical": "Waxahatchee",
       "status": "follow",
       "tier": "Medium",
@@ -3248,7 +3258,7 @@
       ]
     },
     {
-      "id": 275,
+      "id": 276,
       "canonical": "Whitney Mongé",
       "status": "follow",
       "tier": "Medium",
@@ -3257,7 +3267,7 @@
       ]
     },
     {
-      "id": 276,
+      "id": 277,
       "canonical": "The Wildmans",
       "status": "follow",
       "tier": "Medium",
@@ -3266,7 +3276,7 @@
       ]
     },
     {
-      "id": 277,
+      "id": 278,
       "canonical": "Willie Nelson",
       "status": "seen",
       "times_seen": "1",
@@ -3278,7 +3288,7 @@
       ]
     },
     {
-      "id": 278,
+      "id": 279,
       "canonical": "The Wood Brothers",
       "status": "seen",
       "decision": "Buy",
@@ -3295,7 +3305,7 @@
       ]
     },
     {
-      "id": 279,
+      "id": 280,
       "canonical": "Yasmin Williams",
       "status": "seen",
       "tier": "Strong",
@@ -3309,7 +3319,7 @@
       ]
     },
     {
-      "id": 280,
+      "id": 281,
       "canonical": "Young Dubliners",
       "status": "seen",
       "tier": "Strong",
@@ -3323,7 +3333,7 @@
       ]
     },
     {
-      "id": 281,
+      "id": 282,
       "canonical": "Zara Larsson",
       "status": "potential",
       "decision": "Pass",
@@ -3332,7 +3342,7 @@
       ]
     },
     {
-      "id": 282,
+      "id": 283,
       "canonical": "Zara Phillips",
       "status": "potential",
       "decision": "Pass",
@@ -3341,7 +3351,7 @@
       ]
     },
     {
-      "id": 283,
+      "id": 284,
       "canonical": "ZZ Top",
       "status": "seen",
       "times_seen": "1",
@@ -3353,7 +3363,7 @@
       ]
     },
     {
-      "id": 284,
+      "id": 285,
       "canonical": "ZZ Ward",
       "status": "seen",
       "tier": "Strong",
@@ -3661,26 +3671,27 @@
     "tyler ramsey": 263,
     "valerie june": 264,
     "vanessa collier": 265,
-    "victor wooten": 266,
-    "victor wooten the wooten brothers": 266,
-    "vienna teng": 268,
-    "violent femmes": 269,
-    "wailin jennys": 270,
-    "walter trout": 271,
-    "war and treaty": 272,
-    "war and treaty the": 272,
-    "warren haynes": 273,
-    "waxahatchee": 274,
-    "whitney monge": 275,
-    "wildmans": 276,
-    "willie nelson": 277,
-    "wood brothers": 278,
-    "wood brothers the": 278,
-    "yasmin williams": 279,
-    "young dubliners": 280,
-    "zara larsson": 281,
-    "zara phillips": 282,
-    "zz top": 283,
-    "zz ward": 284
+    "venna": 266,
+    "victor wooten": 267,
+    "victor wooten the wooten brothers": 267,
+    "vienna teng": 269,
+    "violent femmes": 270,
+    "wailin jennys": 271,
+    "walter trout": 272,
+    "war and treaty": 273,
+    "war and treaty the": 273,
+    "warren haynes": 274,
+    "waxahatchee": 275,
+    "whitney monge": 276,
+    "wildmans": 277,
+    "willie nelson": 278,
+    "wood brothers": 279,
+    "wood brothers the": 279,
+    "yasmin williams": 280,
+    "young dubliners": 281,
+    "zara larsson": 282,
+    "zara phillips": 283,
+    "zz top": 284,
+    "zz ward": 285
   }
 }
