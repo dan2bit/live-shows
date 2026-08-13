@@ -21,10 +21,18 @@ fails, stop immediately — do not proceed.**
 
 ### 0a — Time calibration
 
-Call `time:get_current_time` (timezone: `America/New_York`) and record the result.
-Use this date for all date pruning decisions, activity log subjects, calendar availability
-checks, and "days until / since" calculations. Never rely on the model's internal
-knowledge of the current date.
+**The `time:get_current_time` MCP tool is no longer supported — do not call it, and do
+not treat its absence as a session-availability problem to route around.** Establish
+today's date via the **`current-date` skill**
+(`/mnt/skills/user/current-date/SKILL.md`): read a real clock (shell
+`TZ=America/New_York date '+%Y-%m-%d %A %H:%M %Z'`, or the skill's Python/JavaScript
+equivalents) rather than trusting context or memory. If no clock is reachable in the
+session, the skill's fallback is to ask Dan directly for today's date — never guess and
+never fall back to a date implied by conversation context. Never rely on the model's
+internal knowledge of the current date.
+
+Use the resulting date for all date pruning decisions, activity log subjects, calendar
+availability checks, and "days until / since" calculations.
 
 ### 0b — Fetch live context
 
@@ -33,8 +41,9 @@ Fetch both files and hold them in context for the full session:
 1. `data/live_shows_current.tsv` — extract all upcoming rows: artist, date, venue
 2. `data/live_shows_potential.tsv` — extract all rows: artist, date, decision
 
-**If `time:get_current_time` fails, or if either file fetch fails, stop immediately.**
-These two files drive duplicate suppression (Routines 3–5) and date pruning (Routine 3).
+**If Step 0a's clock reading fails (per the skill's fallback), or if either file fetch
+fails, stop immediately.** These two files drive duplicate suppression (Routines 3–5)
+and date pruning (Routine 3).
 
 ---
 
