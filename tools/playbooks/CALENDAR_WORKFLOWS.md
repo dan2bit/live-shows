@@ -15,9 +15,13 @@ There are exactly three event types on the Dan Concert Calendar:
 ## Common Rules (all event types)
 
 - **Calendar:** always `redhat.bootlegs@gmail.com` ("Dan Concert Calendar"). Never use `primary`.
-- **Time first.** Call `time:get_current_time` (`America/New_York`) before any date-relative
-  calendar action — availability checks, on-sale timing, "days until" math. The time MCP is the
-  sole authority on the current date.
+- **Time first.** The `time:get_current_time` MCP tool is no longer supported — do not call it.
+  Establish today's date via the **`current-date` skill**
+  (`/mnt/skills/user/current-date/SKILL.md`) before any date-relative calendar action —
+  availability checks, on-sale timing, "days until" math. The skill reads a real clock
+  (shell/Python/JS, in that preference order) and falls back to asking Dan directly if no
+  clock is reachable in the session; either way, that result is the sole authority on the
+  current date — never the model's internal knowledge or a date implied by conversation context.
 - **Search fallback.** If a calendar `q` search returns nothing, fall back to a date-bounded listing.
 - **Never edit past events.** Calendar edits apply only to upcoming or same-day events. Past
   events are read-only.
