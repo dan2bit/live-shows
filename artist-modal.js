@@ -10,7 +10,6 @@
 // Globals from app.js: esc, featureOn, SITE_CONFIG, _assetUrl, currentRows,
 // potentialRows. Own name-normalizer so it never depends on recommend.js.
 // The issue history behind these designs is logged in docs/ISSUE_LOG.md.
-
 var AM_INDEX_PATH='data/artist_modal_index.json';
 var amIndexCache=null,amSlugMap=null,amRouting=false;
 // Explicit favorite — PUBLIC data (data/artist_favorites.tsv in this repo; a
@@ -34,7 +33,6 @@ var amStatusCache=null;   // {amNorm(Artist): row}
 // merges rows or alters any times_seen count (person-level view, act-level storage).
 var AM_RELATED_PATH='data/related_acts.tsv';
 var amRelatedCache=null;   // {amNorm(Artist): [{other:amNorm, rel, selfIsA}]} - bidirectional adjacency
-
 // Mirrors build_artist_index.py norm(): de-invert "Lone Bellow, The", de-accent,
 // drop one leading article, punctuation -> space, collapse whitespace.
 function amNorm(s){
@@ -47,10 +45,9 @@ function amNorm(s){
   return s;
 }
 function amSlugify(k){return amNorm(k).replace(/ /g,'-');}
-
 async function amLoadIndex(){
   if(amIndexCache)return amIndexCache;
-  var res=await fetch(AM_INDEX_PATH);           // relative -> Pages CDN, no API rate limit
+  var res=await fetch(AM_INDEX_PATH+'?t='+Date.now(),{cache:'no-store'});   // relative -> Pages CDN, no API rate limit; cache-busted (issue #286)
   if(!res.ok)throw new Error('HTTP '+res.status);
   var data=await res.json();
   amIndexCache=data;
@@ -59,14 +56,12 @@ async function amLoadIndex(){
   for(k in arts){if(Object.prototype.hasOwnProperty.call(arts,k)){var sl=arts[k]&&arts[k].slug;if(sl)amSlugMap[sl]=k;}}
   return data;
 }
-
 // ── open / close / route ──
 function amBody(html){var b=document.getElementById('artistModalBody');if(b)b.innerHTML=html;}
 function amShow(){document.getElementById('artistModal').classList.add('open');}
 function amHide(){document.getElementById('artistModal').classList.remove('open');}
 function amErr(msg){return'<div class="am-loose"><p class="am-err">'+esc(msg)+'</p>'
   +'<div class="am-actions"><button class="btn" onclick="closeArtistModal()">Close</button></div></div>';}
-
 async function openArtistModal(name){
   amShow();
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
@@ -93,7 +88,6 @@ function amOpenRec(rec,displayName,key){
   amBody(amRender(rec,displayName,key));
   amSetHash(slug);
 }
-
 function amSetHash(slug){
   var want='#artist/'+slug;
   if((location.hash||'')===want)return;
@@ -112,7 +106,6 @@ function amOnHashChange(){
   if(m)openArtistBySlug(decodeURIComponent(m[1]));
   else if(document.getElementById('artistModal').classList.contains('open'))amHide();
 }
-
 // ── helpers ──
 function amHatImg(cls){
   var bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';
@@ -129,7 +122,6 @@ function amCap(s){s=s||'';return s.charAt(0).toUpperCase()+s.slice(1);}
 // Delegate to app.js's shared venue resolution (aliases + Short Name);
 // fall back to plain truncation if app.js isn't loaded.
 function amVenueShort(v){return typeof shortVenueName==='function'?shortVenueName(v):String(v||'').split(',')[0].trim();}
-
 // Row-local context from the already-loaded show arrays.
 function amRowContext(key){
   var up=null,con=null;
@@ -139,7 +131,6 @@ function amRowContext(key){
   }catch(e){}
   return{upcoming:up,considering:con};
 }
-
 // ── Explicit favorite (gauge is the CTA; floor = the affinity gate) ──
 // Design intent: no hard band floor —
 // the control rides the gauge, which only renders when affinity is non-null, so
@@ -165,7 +156,7 @@ async function amLoadStatus(){
   if(amStatusCache)return amStatusCache;
   amStatusCache={};
   try{
-    var res=await fetch(AM_STATUS_PATH);
+    var res=await fetch(AM_STATUS_PATH+'?t='+Date.now(),{cache:'no-store'});
     if(res.ok)parseTsv(await res.text()).forEach(function(r){var k=amNorm(r['Artist']||'');if(k)amStatusCache[k]=r;});
   }catch(e){console.warn('artist status load skipped:',e.message);}
   return amStatusCache;
@@ -179,7 +170,7 @@ async function amLoadRelated(){
   if(amRelatedCache)return amRelatedCache;
   amRelatedCache={};
   try{
-    var res=await fetch(AM_RELATED_PATH);
+    var res=await fetch(AM_RELATED_PATH+'?t='+Date.now(),{cache:'no-store'});
     if(res.ok){
       parseTsv(await res.text()).forEach(function(r){
         var a=amNorm(r['Artist A']||''),b=amNorm(r['Artist B']||''),rel=(r['Relation']||'').trim();
@@ -267,7 +258,6 @@ async function amFavSave(message){
     {method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!res.ok){var t=await res.text();alert('Favorite save failed: '+t);throw new Error(t);}
 }
-
 // ── render ──
 function amRender(rec,displayName,key){
   if(!rec)return amUnknown(displayName,key);
@@ -293,7 +283,6 @@ function amRender(rec,displayName,key){
   h+=amYou(rec,key);
   return h+'</div>';
 }
-
 function amUnknown(displayName,key){
   return'<div class="am-card"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
     +'<div class="am-head"><div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>'
@@ -310,7 +299,6 @@ function amRowOnly(key){
   if(r.considering)h+='<div class="am-next-inline">\ud83d\udc40 Considering \u2014 '+esc(r.considering.date||'TBD')+(r.considering.venue?' \u00b7 '+esc(r.considering.venue):'')+'</div>';
   return h+'</div>';
 }
-
 // One muted line under the artist name for an artist who is no longer active:
 // "d." plus the year for deceased, "disbanded"/"retired" plus the year for an act
 // that has stopped. Deliberately not a badge — the wording alone separates the
@@ -329,7 +317,6 @@ function amStatusLine(name){
   var note=(r['Note']||'').trim();
   return'<div class="am-status am-status-'+esc(st)+'"'+(note?' title="'+esc(note)+'"':'')+'>'+esc(txt)+'</div>';
 }
-
 // 5-bar listener meter (emerging<niche<mid<popular<major). Null -> omit.
 var AM_TRANCHES=['emerging','niche','mid','popular','major'];
 function amListenerMeter(l){
@@ -350,7 +337,6 @@ function amTierMeter(t){
     +'<span class="am-bars">'+bars+'</span>'
     +'<span class="am-meter-lbl">'+esc(t.label||'')+'</span></span>';
 }
-
 function amRelease(lr){
   if(!lr||!lr.name)return'';
   var art=lr.image_url
@@ -363,7 +349,6 @@ function amRelease(lr){
     +'<div class="am-rel-body"><div class="am-rel-name">'+esc(lr.name)+'</div>'
     +'<div class="am-rel-meta"><span>'+esc(meta)+'</span>'+play+'</div></div></div></div>';
 }
-
 function amSimilar(sim){
   sim=sim||[];if(!sim.length)return'';
   var chips=sim.slice(0,8).map(function(s){
@@ -372,7 +357,6 @@ function amSimilar(sim){
   }).join('');
   return'<div class="am-sec"><div class="am-sec-h">Similar</div><div class="am-simrow">'+chips+'</div></div>';  return'<div class="am-sec"><div class="am-sec-h">Similar <span class="am-sec-note">\u00b7 \u25cf tracked artist</span></div><div class="am-simrow">'+chips+'</div></div>';
 }
-
 // Related acts (kinship from related_acts.tsv). Sits beside "Similar" as an
 // identity fact about the act — NOT in the personal footer, since kinship isn't
 // about @owner's relationship to them. Each chip opens the related act; when that
@@ -390,7 +374,6 @@ function amRelated(key){
   }).join('');
   return'<div class="am-sec"><div class="am-sec-h">Related acts</div><div class="am-simrow">'+chips+'</div></div>';
 }
-
 function amLinks(L,spotify){
   L=L||{};var items=[];
   function add(url,label){if(url)items.push('<a class="am-link" href="'+esc(url)+'" target="_blank">'+label+'</a>');}
@@ -406,7 +389,6 @@ function amLinks(L,spotify){
   return'<div class="am-sec"><div class="am-sec-h">Artist links</div><div class="am-links">'+items.join('')+'</div></div>';
 }
 function amYouTubeUrl(y){return/^https?:/.test(y)?y:('https://www.youtube.com/'+(y.charAt(0)==='@'?y:('@'+y)));}
-
 // ── "@owner & this artist" bezelled footer ──
 function amYou(rec,key){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0;
@@ -423,7 +405,6 @@ function amYou(rec,key){
   var gauge=rec.affinity?amGauge(rec.affinity,rec,key):'';
   return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div></div>';
 }
-
 // Personal-footer badge strip: seen count, hat/book/VIP/photo, next-show countdown, fast-track.
 function amYouBadges(rec,rows,hatEligible){
   var b=rec.badges||{},s=rec.seen||{},n=s.count||0,out=[];
@@ -452,7 +433,6 @@ function amYouBadges(rec,rows,hatEligible){
   if(n===0&&!rec.fast_track&&!rows.considering)out.push('<span class="am-never">never seen</span>');
   return'<div class="am-you-badges">'+out.join('')+'</div>';
 }
-
 // History block — renders one of: combined-bill note, considering card, or the seen timeline.
 function amYouHistory(rec,rows){
   var s=rec.seen||{},n=s.count||0,log=s.show_log||[];
@@ -494,7 +474,6 @@ function amYouHistory(rec,rows){
   }
   return'';
 }
-
 // Brand-hat favorite gauge — conic fill by affinity.score.
 // An explicit favorite pins the fill to 1.0 (favorite.pin_to_full) with a
 // star marker, so earned-max (~0.98) and starred (1.0) stay visually distinct;
@@ -517,7 +496,6 @@ function amGauge(a,rec,key){
     +'<img class="am-gauge-fill" src="'+hat+'" alt="">'
     +(fav?'<span class="am-gauge-star">\u2605</span>':'')+'</div>';
 }
-
 // ── init ──
 function amInit(){
   var bd=document.getElementById('artistModal');
