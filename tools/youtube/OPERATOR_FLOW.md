@@ -19,7 +19,7 @@ export from Photos  →  scan  →  read the table  →  upload  →  (wait)
 ```
 
 The **manifest** carries state between every step, split into two files joined
-on the clip name (issue #251):
+on the clip name:
 
 - `tools/youtube/manifests/YYYY-MM-DD-artist-slug.tsv` — the **lean edit file**,
   the only file you touch: `Clip | Duration | Decision | Set Artist | Song |
@@ -186,12 +186,13 @@ sit in the tab next to Studio. Each keeper clip gets a dropdown of its Set
 Artist's setlist songs in setlist order; a song picked on one clip vanishes
 from every other clip's options, so duplicate titles are impossible by
 construction. Rows link straight to their video's Studio edit page, show the
-duration and thumbnail, and carry the `Candidates`/`Lyric Hint` aids. Free
-text and the `unknown` sentinel are one click away. Save rewrites only the
-lean TSV — the machine sidecar is never touched, nothing talks to YouTube,
-and the page dies with the process. Run `--identify` first (even `--dry-run`)
-so the setlists are cached; without a cached setlist an artist's rows
-degrade to free-text entry.
+duration and thumbnail (the thumbnail is a second link, straight to the watch
+page, so a needs-verification clip plays in one click), and carry the
+`Candidates`/`Lyric Hint` aids. Free text and the `unknown` sentinel are one
+click away. Save rewrites only the lean TSV — the machine sidecar is never
+touched, nothing talks to YouTube, and the page dies with the process. Run
+`--identify` first (even `--dry-run`) so the setlists are cached; without a
+cached setlist an artist's rows degrade to free-text entry.
 
 Either way, write it back:
 
@@ -276,14 +277,14 @@ flags, and set structure — a title-less skeleton you name by ear.
 ## The invariants the pipeline guarantees
 
 These rules used to live as the regression suite under `tools/youtube/tests/`; the
-suite was removed (#270) once captured here in prose, because it was never wired into
-CI and an untriggered suite silently rots. They are the hard-won, hard-to-re-derive
-findings behind the song-ID work (#245 / #251), the publish guard (#252), and the
-manifest split and linter (#251 / #247). **Preserve them** when touching `yt_songid.py`,
-`yt_setlist.py`, `youtube_upload_show.py`, `yt_manifest.py`, `yt_edit.py`, or
-`lint_manifest.py`.
+suite was removed once captured here in prose, because it was never wired into CI and
+an untriggered suite silently rots. They are the hard-won, hard-to-re-derive findings
+behind the song-ID work, the publish guard, and the manifest split and linter (their
+origin issues are recorded in `docs/ISSUE_LOG.md`). **Preserve them** when touching
+`yt_songid.py`, `yt_setlist.py`, `youtube_upload_show.py`, `yt_manifest.py`,
+`yt_edit.py`, or `lint_manifest.py`.
 
-### Song identification (the #245 / #251 findings — the most load-bearing)
+### Song identification (the most load-bearing)
 
 - **Evidence order is fixed, and identity evidence outranks position.** Trust order:
   Content-ID claim → lyric match → setlist bracketing → the capture-order guess, which
@@ -320,7 +321,7 @@ manifest split and linter (#251 / #247). **Preserve them** when touching `yt_son
 - **Skip rows never participate** in identification.
 - **The full setlist parenthetical seeds `Desc Slug` verbatim** (minus the outer parens):
   `(Big Joe Williams cover)` → `Big Joe Williams cover`, prepended to the description
-  as-is. The tool never injects the word "cover" (or anything else) on its own — #269.
+  as-is. The tool never injects the word "cover" (or anything else) on its own.
 - **The setlist parser** skips ad rows, keeps "(Unknown)" placeholder rows (they hold a
   real position an unnamed clip may fill), attaches the most recent set-marker (`Encore:`,
   `Set 2:`, …) to each following song as its section, reads `(X cover)` into a cover
@@ -328,7 +329,7 @@ manifest split and linter (#251 / #247). **Preserve them** when touching `yt_son
   setlist.fm's `li.setlistParts.song` / `a.songLabel` / `span.unknownSong` / `infoPart` /
   `p.info` markup; a markup change breaks parsing loudly rather than silently.
 
-### The publish guard (#252)
+### The publish guard
 
 - **`--apply --publish` refuses the WHOLE show** — reporting every offending clip and
   flipping nothing — if any keeper's title still carries a `song-title` placeholder in
@@ -343,7 +344,7 @@ manifest split and linter (#251 / #247). **Preserve them** when touching `yt_son
   (blank Video ID) are never blockers, and only the offending clips are reported so a
   single bad row is easy to find among good ones.
 
-### Manifest integrity (#251) and the linter (#247)
+### Manifest integrity and the linter
 
 - **The manifest is a lean TSV + a machine JSON sidecar, joined on clip name.** The lean
   file holds only human columns (`Clip | Duration | Decision | Set Artist | Song |
