@@ -77,6 +77,13 @@ The system prompt (Claude Instructions, pinned to the Project) carries the stand
 
 Triggered by: forwarded ticket receipts, post-show note emails, newsletter emails, resale sale notifications
 
+These sessions are launched by the `live-shows-inbox` Claude Skill
+(`tools/playbooks/skills/live-shows-inbox/SKILL.md`) - it establishes the
+current date, fetches live current/potential state, runs a read-only triage
+snapshot across all six routine queues (depth, staleness, missing show-notes
+and ticket-receipt nudges), and reports a recommended run order before any
+routine actually executes.
+
 Each routine follows a strict pre-flight + execute + label + log pattern defined in `tools/playbooks/EMAIL_WORKFLOWS.md`.
 
 ### Routine 1 — Ticket receipt
