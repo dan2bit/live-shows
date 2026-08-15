@@ -20,11 +20,15 @@ jobs:
     # Only run when:
     # 1. The comment is on an issue (not a PR)
     # 2. The issue title starts with "Photo:"
-    # 3. The comment contains a Google Photos share link
+    # 3. The comment carries a Google Photos share link OR a photos.app.goo.gl
+    #    short link (the Share -> Create Link output). The short link cannot be
+    #    consumed directly, but firing on it lets the job ask for the resolved
+    #    form instead of silently doing nothing.
     if: |
       github.event.issue.pull_request == null &&
       startsWith(github.event.issue.title, 'Photo:') &&
-      contains(github.event.comment.body, 'photos.google.com/share')
+      (contains(github.event.comment.body, 'photos.google.com/share') ||
+       contains(github.event.comment.body, 'photos.app.goo.gl/'))
 
     runs-on: ubuntu-latest
     permissions:
@@ -51,21 +55,41 @@ jobs:
           import re, os, sys
 
           comment = os.environ["COMMENT_BODY"]
+          out = os.environ["GITHUB_OUTPUT"]
 
-          # First Google Photos share link in the comment; trim trailing punctuation.
+          # A resolved long link is what the appender needs. If only a
+          # photos.app.goo.gl short link is present (the Share -> Create Link
+          # output), ask for the resolved form rather than silently doing
+          # nothing: that host matches neither this extractor nor the
+          # album-scoped URL the script keys on.
           m = re.search(r'https?://photos\.google\.com/share/\S+', comment)
-          if not m:
+          if m:
+              link = m.group(0).rstrip('.,)>]')
+              with open(out, "a") as f:
+                  f.write("mode=ok\n")
+                  f.write(f"share_link={link}\n")
+              print(f"share_link={link}")
+          elif re.search(r'https?://photos\.app\.goo\.gl/\S+', comment):
+              with open(out, "a") as f:
+                  f.write("mode=shortlink\n")
+              print("photos.app.goo.gl short link found — asking for the resolved long form")
+          else:
               print("ERROR: no Google Photos share link found in comment", file=sys.stderr)
               sys.exit(1)
-          link = m.group(0).rstrip('.,)>]')
-
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"share_link={link}\n")
-          print(f"share_link={link}")
           PYEOF
+
+      - name: Ask for the resolved share link
+        if: steps.extract.outputs.mode == 'shortlink'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --body 'That looks like a `photos.app.goo.gl` short link, which the photo automation cannot read (it matches neither the trigger nor the extractor). Open it once and copy where it lands - the `https://photos.google.com/share/...?key=...` URL - then paste that here and it will close the issue.'
 
       - name: Append row to artist-photos.tsv + mirror Photo URL to show row
         id: append
+        if: steps.extract.outputs.mode == 'ok'
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           SHARE_LINK: ${{ steps.extract.outputs.share_link }}
@@ -73,6 +97,7 @@ jobs:
           python scripts/close_photo_issue.py "$ISSUE_TITLE" "$SHARE_LINK"
 
       - name: Commit updated TSVs to staging
+        if: steps.extract.outputs.mode == 'ok'
         run: |
           git add data/show_goals/artist-photos.tsv data/live_shows_current.tsv
           if git diff --cached --quiet; then
@@ -94,6 +119,7 @@ jobs:
           fi
 
       - name: Close the issue
+        if: steps.extract.outputs.mode == 'ok'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ALBUM_NOTE: ${{ steps.append.outputs.album_note }}
