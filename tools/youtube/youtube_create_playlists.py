@@ -103,6 +103,7 @@ import glob
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -678,6 +679,35 @@ def write_log_row(log_rows):
         for row in log_rows:
             writer.writerow(row)
 
+
+# ── metadata refresh ───────────────────────────────────────────────────────────────────────
+def refresh_metadata_tsvs():
+    """Refresh youtube_videos.tsv / youtube_playlists.tsv by running
+    youtube_fetch once, so a freshly created playlist and the now-titled
+    videos are captured without a manual second pass.
+
+    A single fetch after creation captures both — the videos already carry
+    their applied titles and the new playlist now exists — so no separate
+    before/after fetch is needed. Best-effort by design: youtube_fetch owns
+    its own API key, runs with --since auto (cheap and idempotent), and any
+    failure here is reported but never undoes the playlist just created.
+    """
+    fetch = os.path.join(SCRIPT_DIR, "youtube_fetch.py")
+    if not os.path.exists(fetch):
+        print(f"\nSkipping metadata refresh — {fetch} not found; "
+              "run youtube_fetch.py manually.")
+        return
+    print("\nRefreshing YouTube metadata (youtube_fetch.py --since auto)...")
+    try:
+        result = subprocess.run([sys.executable, fetch, "--since", "auto"],
+                                cwd=SCRIPT_DIR)
+        if result.returncode != 0:
+            print(f"  WARNING: youtube_fetch.py exited {result.returncode} — "
+                  "run it manually to refresh the metadata TSVs.")
+    except Exception as e:
+        print(f"  WARNING: could not run youtube_fetch.py ({e}) — "
+              "run it manually to refresh the metadata TSVs.")
+
 # ── core per-show processing ────────────────────────────────────────────────────────────────
 def process_show(youtube, date_str, headliner, title_override, videos, history_index,
                  dry_run=False, update_history=False, use_channel_uploads=False):
@@ -748,7 +778,7 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
     # deliberately do not — see youtube_upload_show.build_description). Built
     # here so the CREATE path writes it; historically only the separate
     # --fix-descriptions backfill ever set descriptions, so every new playlist
-    # shipped blank (found via the 2026-08-12 Southern Avenue playlist).
+    # shipped blank until this was added.
     playlist_desc = (DEFAULT_DESCRIPTION_TEMPLATE.format(
         setlist_url=headliner_url, venue=venue_str)
         if headliner_url else "")
@@ -974,6 +1004,8 @@ def main():
             print(f"\nLog written to: {LOG_TSV}")
             if args.update_history and not args.dry_run:
                 print("Source files updated with playlist URLs")
+            if not args.dry_run and any(url for _, _, url in results):
+                refresh_metadata_tsvs()
             return
 
         date_str = new_show_arg
@@ -1001,6 +1033,8 @@ def main():
             use_channel_uploads=True,
         )
         print(f"\nResult: {url or 'skipped'}")
+        if not args.dry_run and url:
+            refresh_metadata_tsvs()
         return
 
     if args.worklist:

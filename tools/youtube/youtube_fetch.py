@@ -445,7 +445,7 @@ def main():
     else:
         print("No playlists in fetch window — youtube_playlists.tsv unchanged.")
 
-    print("\nDone! Next step: run youtube_correlate.py --merge to update show history.")
+    print("\nDone. youtube_videos.tsv and youtube_playlists.tsv are up to date.")
 
 
 if __name__ == "__main__":
