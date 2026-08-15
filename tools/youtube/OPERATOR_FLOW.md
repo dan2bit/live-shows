@@ -19,11 +19,11 @@ export from Photos  →  scan  →  read the table  →  upload  →  (wait)
 ```
 
 The **manifest** carries state between every step, split into two files joined
-on the clip name (issue #251):
+on the clip name:
 
 - `tools/youtube/manifests/YYYY-MM-DD-artist-slug.tsv` — the **lean edit file**,
   the only file you touch: `Clip | Duration | Decision | Set Artist | Song |
-  Cover | Skip Reason`, plus two read-only aids (`Candidates`, `Lyric Hint`)
+  Desc Slug | Skip Reason`, plus two read-only aids (`Candidates`, `Lyric Hint`)
   that `--identify` maintains for you. `Duration` is read-only too — it's
   there because the Studio UI shows durations everywhere and clip filenames
   nowhere, so it's the fastest way to be sure which row is which video.
@@ -85,7 +85,7 @@ fragment flags still work.
 ## 3. Fix the manifest  *(your pass)*
 
 Open the lean manifest TSV. Every column is either yours (`Decision`,
-`Set Artist`, `Song`, `Cover`, `Skip Reason`) or a read-only aid
+`Set Artist`, `Song`, `Desc Slug`, `Skip Reason`) or a read-only aid
 (`Duration`, `Candidates`, `Lyric Hint`) — the machine bookkeeping lives in
 the JSON sidecar and stays out of your way.
 
@@ -186,12 +186,13 @@ sit in the tab next to Studio. Each keeper clip gets a dropdown of its Set
 Artist's setlist songs in setlist order; a song picked on one clip vanishes
 from every other clip's options, so duplicate titles are impossible by
 construction. Rows link straight to their video's Studio edit page, show the
-duration and thumbnail, and carry the `Candidates`/`Lyric Hint` aids. Free
-text and the `unknown` sentinel are one click away. Save rewrites only the
-lean TSV — the machine sidecar is never touched, nothing talks to YouTube,
-and the page dies with the process. Run `--identify` first (even `--dry-run`)
-so the setlists are cached; without a cached setlist an artist's rows
-degrade to free-text entry.
+duration and thumbnail (the thumbnail is a second link, straight to the watch
+page, so a needs-verification clip plays in one click), and carry the
+`Candidates`/`Lyric Hint` aids. Free text and the `unknown` sentinel are one
+click away. Save rewrites only the lean TSV — the machine sidecar is never
+touched, nothing talks to YouTube, and the page dies with the process. Run
+`--identify` first (even `--dry-run`) so the setlists are cached; without a
+cached setlist an artist's rows degrade to free-text entry.
 
 Either way, write it back:
 
@@ -270,3 +271,105 @@ manifest holds the video IDs that let an interrupted upload resume.
 
 **No setlist on the show row.** Not fatal. You still get correct ordering, fragment
 flags, and set structure — a title-less skeleton you name by ear.
+
+---
+
+## The invariants the pipeline guarantees
+
+These rules used to live as the regression suite under `tools/youtube/tests/`; the
+suite was removed once captured here in prose, because it was never wired into CI and
+an untriggered suite silently rots. They are the hard-won, hard-to-re-derive findings
+behind the song-ID work, the publish guard, and the manifest split and linter (their
+origin issues are recorded in `docs/ISSUE_LOG.md`). **Preserve them** when touching
+`yt_songid.py`, `yt_setlist.py`, `youtube_upload_show.py`, `yt_manifest.py`,
+`yt_edit.py`, or `lint_manifest.py`.
+
+### Song identification (the most load-bearing)
+
+- **Evidence order is fixed, and identity evidence outranks position.** Trust order:
+  Content-ID claim → lyric match → setlist bracketing → the capture-order guess, which
+  is last. Position is only ever a hint — sets get filmed out of order, and a matched
+  lyric sets both the `Song` and its true `Setlist Pos` even when capture order says
+  otherwise (the Family Crest show: capture order alone would have shipped ~4–5 wrong
+  titles). Lyric and Content-ID evidence override the positional guess, never the
+  reverse.
+- **A claim binds to its clip by Video ID**, seeds the `Song` at high confidence, and
+  resolves the setlist position. A claim naming a song the setlist page never listed is
+  still seeded verbatim, marked "not on setlist" — a claim can be righter than the
+  crowd-sourced setlist.
+- **Foreign-evidence Songs must anchor a position, not merely be pool-excluded.** A
+  `Song` carried in from a legacy manifest (Evidence like `Content-ID`), a claim, or a
+  hand edit anchors bracketing exactly like a native identification. The Moss/McCalla
+  regression was precisely this: such a Song was excluded from other clips' pools but
+  never anchored a position, so every bracket spanned the whole setlist and every
+  `Candidates` hint came out identical.
+- **Bracketing is anchored and globally exclusive.** Each unconfirmed clip's candidate
+  pool is the setlist songs strictly between its confirmed neighbours, minus every song
+  confirmed anywhere in the set. A pool that collapses to exactly one song is seeded at
+  *medium* confidence (`bracket:collapsed` — verify by ear); larger pools populate the
+  read-only `Candidates` column.
+- **An "incomplete / out of order" setlist page disables bracketing entirely.** Clips
+  stay open pools rather than collapsing — the page's own warning has proved accurate,
+  not stale, so position stops being usable at all.
+- **Lyric absence is a signal; a lyric error is not.** A lyric lookup that SUCCEEDED and
+  found nothing (`none`) flags the clip as possibly unreleased (`lyric-absence:unreleased?`).
+  A lookup that FAILED (`error`) asserts nothing (`lyric-lookup:error`) — a failed lookup
+  must never be read as "unreleased."
+- **A human-typed `Song` is never overwritten** — not by a claim, not by anything — and
+  its Evidence becomes `human`. `--reseed` discards only machine-seeded Songs (recognisable
+  by their machine Evidence) and keeps every typed one.
+- **Skip rows never participate** in identification.
+- **The full setlist parenthetical seeds `Desc Slug` verbatim** (minus the outer parens):
+  `(Big Joe Williams cover)` → `Big Joe Williams cover`, prepended to the description
+  as-is. The tool never injects the word "cover" (or anything else) on its own.
+- **The setlist parser** skips ad rows, keeps "(Unknown)" placeholder rows (they hold a
+  real position an unnamed clip may fill), attaches the most recent set-marker (`Encore:`,
+  `Set 2:`, …) to each following song as its section, reads `(X cover)` into a cover
+  attribution, and detects the page's incomplete/out-of-order warning. It is pinned to
+  setlist.fm's `li.setlistParts.song` / `a.songLabel` / `span.unknownSong` / `infoPart` /
+  `p.info` markup; a markup change breaks parsing loudly rather than silently.
+
+### The publish guard
+
+- **`--apply --publish` refuses the WHOLE show** — reporting every offending clip and
+  flipping nothing — if any keeper's title still carries a `song-title` placeholder in
+  *any* form (the current `#N-song-title`, the older `#song-title-N`, the bare legacy
+  `#song-title`) or the legacy `???` notation. A partial publish cannot happen.
+- **The `unknown` sentinel is publishable.** `unknown` / `Unknown` / `unknown song` / `?`
+  in the `Song` column renders as `ARTIST LIVE - Unknown Song #N (bootleg)` with a "can you
+  name this song?" ask in the description (the crowdsourcing pattern that eventually named
+  the Sona Jobarteh tracks), and passes the guard — one stubborn track never holds the
+  night hostage. A named song's description carries no such ask.
+- **The guard ignores rows it shouldn't judge:** `skip` rows and not-yet-uploaded rows
+  (blank Video ID) are never blockers, and only the offending clips are reported so a
+  single bad row is easy to find among good ones.
+
+### Manifest integrity and the linter
+
+- **The manifest is a lean TSV + a machine JSON sidecar, joined on clip name.** The lean
+  file holds only human columns (`Clip | Duration | Decision | Set Artist | Song |
+  Desc Slug | Skip Reason`) plus the read-only aids (`Candidates`, `Lyric Hint`); the
+  sidecar owns everything the tools write (Video IDs, upload status, confidence, positions,
+  title/desc/privacy state). `save` writes both and never puts a Video ID in the lean
+  header; `load` merges them back.
+- **A pre-split single-file (legacy 20-column) manifest migrates in place** the first time
+  any stage loads it: the TSV is rewritten lean, the sidecar is created, and a second load
+  returns the same merged rows.
+- **The sidecar is authoritative for uploads and must never be deleted.** A clip whose lean
+  row was hand-deleted still resurfaces from the sidecar on load — it may hold the only
+  record that the clip was uploaded (its Video ID). Remove a dead row deliberately, never
+  by editing the TSV out from under the sidecar.
+- **`Duration` lives in the lean file** (the Studio UI shows durations everywhere and clip
+  filenames nowhere). A sidecar written before that move still supplies Duration on read,
+  and the next save moves it lean-side.
+- **The editor (`--edit`) only ever writes the human columns of known clips.** Saves leave
+  the sidecar and its Video IDs untouched, reject an unknown clip as an error (never create
+  a new row), reject a decision that isn't `got`/`skip`, and don't count unchanged rows.
+- **The linter behind the playlist-issue CI refuses:** an unrecognised header; a duplicate
+  `Clip`; a decision that isn't `got`/`skip`; unpublishable `Song` text (`???`,
+  `#song-title-N`, `#N-song-title`); and two clips of the same Set Artist claiming the same
+  `Setlist Pos`. It *warns* (not errors) on a legacy or pre-Duration header (still parsed), a
+  `skip` row carrying a `Song`, and a Video ID on a skip row. It pads a short row (GitHub
+  comments and the MCP strip trailing tabs) but flags a genuinely over-long/shifted row, and
+  the `unknown` sentinel is never an error. Its scoreboard counts uploaded / applied /
+  published against the keeper total and rewrites the issue body between its markers.
