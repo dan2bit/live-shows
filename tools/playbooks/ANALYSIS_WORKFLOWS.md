@@ -6,7 +6,7 @@ Five standing workflows for periodic show discovery, artist research, and data m
 
 ## Workflow 1 — Monthly Web-Src Diff + BIT/Seated Roster Refresh
 
-**Frequency:** Monthly, first weekend of the month. Run passes A and B below together in one session, and fold in the quarterly research run (Workflow 2) when the schedules coincide.
+**Frequency:** Monthly, first weekend of the month. Run passes A, B and C below together in one session, and fold in the quarterly research run (Workflow 2) when the schedules coincide.
 
 ### Purpose
 
@@ -17,6 +17,8 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 **B — BIT/Seated roster refresh.** Compare the current BIT/Seated follow roster against `tools/research/follows/follows_master.tsv` to catch:
 - Artists added to BIT/Seated who are not yet in `follows_master.tsv`
 - Artists in `follows_master.tsv` marked as BIT/Seated follows who are missing from the actual roster
+
+**C — Terminal-state rollover (#277).** Migrate attended rows that have reached terminal state (setlist + playlist present, no open playlist/photo issue) from `live_shows_current.tsv` to `history/<year>.tsv`, with their private twins archived to `history_private/<year>.tsv` in the private repo.
 
 ### Steps
 
@@ -39,6 +41,12 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
    - For each artist missing from the export but marked Y in follows_master: investigate (unfollowed? account issue?)
    - **Seated exception:** artists flagged `NOT ON SEATED` in follows_master notes are expected gaps — do not surface them as actionable.
 7. **Update `tools/research/follows/follows_master.tsv`** as needed and commit.
+
+**C — Terminal-state rollover**
+
+8. From the local public repo clone: `python3 scripts/rollover.py --terminal --dry-run` — review the selection. The "not yet terminal" skip report doubles as the month's curation-debt list (missing setlist/playlist URLs, shows blocked by open playlist/photo issues).
+9. `python3 scripts/rollover.py --terminal` — the private repo resolves automatically from config.yaml (`site.private_repo` as a sibling clone); explicit `--private-repo` overrides, and `features.private_data: false` forks run public-only with no flags.
+10. **Commit and push BOTH repos**: public → `staging` (auto-promotes to `main`), private → its `main`. This pass is deliberately manual and can never be CI-scheduled — it writes to two repos, and the public repo's Actions hold no private-repo credential by design. Nothing else to update afterward: the site's Attended tab renders the union of current + `history/<year>`, and `history_years` self-extends each January.
 
 ---
 
