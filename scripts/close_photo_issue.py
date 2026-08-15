@@ -29,8 +29,10 @@ never a code change. An existing different link is never clobbered; no-match is
 a warning, not a failure. History-year shows are out of scope (legacy/backfill
 only).
 
-Idempotent: if the share link's /photo/<ID> is already present, the append is
-skipped but the show-row mirror still runs (heals a half-applied state).
+Idempotent: if the share link's presence key is already in the file, the append
+is skipped but the show-row mirror still runs (heals a half-applied state). The
+key is the per-photo id (/photo/<id>) when present, else the album/share id
+(/share/<id>) for an album-scoped link that has no /photo/ segment.
 
 Album-needed check: after appending, the artist's photographed-show count is
 recomputed from the BUILT artist index (data/artist_modal_index.json — whose universe
@@ -67,6 +69,24 @@ TITLE_RE = re.compile(
     r"^Photo:\s*(?P<artist>.+?)\s*[—-]\s*(?P<date>\d{4}-\d{2}-\d{2})\s*\((?P<venue>.+)\)\s*$"
 )
 PHOTO_ID_RE = re.compile(r"/photo/([A-Za-z0-9_-]+)")
+ALBUM_ID_RE = re.compile(r"/share/([A-Za-z0-9_-]+)")
+
+
+def presence_key(link):
+    """A stable identifier for dedup. Prefer the per-photo id; fall back to the
+    album/share id for an album-scoped link — Google's current "Share -> Create
+    Link" form is /share/<album id>?key= with no /photo/ segment. The album's
+    ?key= share token can rotate when the album is re-shared, so the album id is
+    a steadier presence key than the whole URL, and it matches the
+    one-album-per-show convention (a show's photos live in one album, linked
+    once). Returns "" for a link that is neither, which never dedups."""
+    m = PHOTO_ID_RE.search(link)
+    if m:
+        return m.group(1)
+    m = ALBUM_ID_RE.search(link)
+    if m:
+        return m.group(1)
+    return ""
 
 
 def load_aliases():
@@ -222,8 +242,8 @@ def main() -> int:
     # written back verbatim; artist-photos.tsv is BOM-headed by design.
     raw = PHOTOS_PATH.read_text(encoding="utf-8")
 
-    pid = PHOTO_ID_RE.search(link)
-    if pid and pid.group(1) in raw:
+    key = presence_key(link)
+    if key and key in raw:
         print("Photo already present (share-link id found in file); no change.")
         print(update_current_row(artist, iso, link))
         return 0
