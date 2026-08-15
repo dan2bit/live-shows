@@ -45,12 +45,18 @@ Privacy-split architecture:
   already holds it once a show moves to 'attended'. The full private row (cost columns
   included) is archived as-is purely because it's the cheapest lossless thing to keep.
 
-  A REAL run requires --private-repo (or the explicit --public-only escape
-  hatch, for forks that keep no private repo). A public-only migration removes
-  the row from current while its private twin stays behind — and because
-  selection is driven by current, no later run can ever find that show again
-  to archive the twin: a permanent orphan requiring manual repair. --dry-run
-  may omit --private-repo freely (preview only, nothing is written).
+  A REAL run requires the private repo. When --private-repo is not given, it
+  is resolved from config.yaml: site.private_repo names the repo, and a
+  sibling clone (<public repo root>/../<name>/ containing current_private.tsv)
+  is used automatically. features.private_data: false in config.yaml means
+  this fork keeps no private repo at all, which implies --public-only. A
+  public-only migration on a repo that DOES keep private data removes the row
+  from current while its private twin stays behind — and because selection is
+  driven by current, no later run can ever find that show again to archive
+  the twin: a permanent orphan requiring manual repair. So when config
+  promises a private repo and no clone can be found, the run refuses.
+  --private-repo and --public-only both override the config resolution;
+  --dry-run runs with whatever was resolved (preview only, nothing written).
 
 TSV handling:
   Reads and writes are plain tab-split / tab-join with LF line endings — never the
@@ -280,6 +286,51 @@ def terminal_gaps(row: dict) -> list:
     if is_blank(row.get("Playlist URL")):
         gaps.append("Playlist URL")
     return gaps
+
+
+def config_private_repo() -> tuple:
+    """(private_repo_name, private_data_enabled) from config.yaml, best effort.
+
+    Naive line-parse on purpose — the two keys are flat scalars and this keeps
+    the script dependency-free. Returns ("", None) when config.yaml is absent
+    or the keys are missing, and the caller falls back to requiring the flag.
+    """
+    cfg = Path(__file__).parent.parent / "config.yaml"
+    name, enabled = "", None
+    try:
+        for line in cfg.read_text(encoding="utf-8").splitlines():
+            bare = line.split("#")[0].rstrip()
+            m = re.match(r"\s*private_repo:\s*(\S+)", bare)
+            if m:
+                name = m.group(1).strip().strip("\"'")
+            m = re.match(r"\s*private_data:\s*(\S+)", bare)
+            if m:
+                enabled = m.group(1).strip().lower() == "true"
+    except OSError:
+        pass
+    return name, enabled
+
+
+def resolve_private_repo_default() -> tuple:
+    """(private_repo_path_or_None, public_only_bool, note) from config.yaml.
+
+    The sibling-clone convention: the private repo is cloned next to the
+    public one. Only a directory that actually contains current_private.tsv
+    qualifies — a name match alone proves nothing.
+    """
+    name, enabled = config_private_repo()
+    if enabled is False:
+        return None, True, ("config.yaml features.private_data is false — "
+                            "running public-only (this fork keeps no private repo).")
+    if name:
+        sibling = (Path(__file__).parent.parent.parent / name).resolve()
+        if (sibling / "current_private.tsv").exists():
+            return str(sibling), False, (f"using private repo {sibling} "
+                                         "(from config.yaml site.private_repo; "
+                                         "--private-repo overrides)")
+        return None, False, (f"config.yaml names private repo '{name}' but no "
+                             f"sibling clone found at {sibling}")
+    return None, False, ""
 
 
 # ---------------------------------------------------------------------------
@@ -690,16 +741,17 @@ def main() -> None:
         type=str,
         default=None,
         metavar="PATH",
-        help="Path to the live-shows-private repo clone. When given, archives each "
-             "migrated show's private row to history_private/<year>.tsv and prunes it "
-             "from current_private.tsv. When omitted, the private repo is left untouched.",
+        help="Path to the live-shows-private repo clone. Default: resolved from "
+             "config.yaml site.private_repo as a sibling clone of this repo. "
+             "When given, archives each migrated show's private row to "
+             "history_private/<year>.tsv and prunes it from current_private.tsv.",
     )
     parser.add_argument(
         "--public-only",
         action="store_true",
         help="Allow a REAL run without --private-repo. Only for forks that "
              "keep no private repo — on this repo it permanently orphans "
-             "private rows.",
+             "private rows. Implied by config.yaml features.private_data: false.",
     )
     parser.add_argument(
         "--skip-issue-check",
@@ -734,8 +786,19 @@ def main() -> None:
     else:
         mode, mode_arg = "year", args.year
 
+    # Explicit flags win; otherwise config.yaml decides. A fork with
+    # private_data: false runs public-only with no flags at all; this repo
+    # picks up the sibling clone named by site.private_repo.
+    private_repo, public_only = args.private_repo, args.public_only
+    if private_repo is None and not public_only:
+        detected, cfg_public_only, note = resolve_private_repo_default()
+        if note:
+            print(note)
+        private_repo = detected
+        public_only = cfg_public_only
+
     sys.exit(run(mode, mode_arg, args.dry_run, args.force,
-                 args.private_repo, args.skip_issue_check, args.public_only))
+                 private_repo, args.skip_issue_check, public_only))
 
 
 if __name__ == "__main__":
