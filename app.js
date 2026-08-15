@@ -73,9 +73,15 @@ function applyConfig(cfg){
   // above covers this repo's archive. Seed fetch slots for any added years.
   if(Array.isArray(cfg.history_years)&&cfg.history_years.length){
     HISTORY_YEARS=cfg.history_years.slice().sort();
-    HISTORY_YEARS.forEach(function(yr){if(!(yr in historyData))historyData[yr]=null;});
-    if(!(ATTENDED_YEAR in historyData))historyData[ATTENDED_YEAR]=null;
   }
+  // Auto-extend through last year: terminal rollover creates history/<year>.tsv
+  // mid-year, so every year between the configured list and ATTENDED_YEAR has a
+  // file by the time it stops being the attended year. On Jan 1 the previous
+  // attended year slides into the History panel with no config edit —
+  // history_years stays meaningful as the start anchor and fork override.
+  for(var _hy=Math.max.apply(null,HISTORY_YEARS)+1;_hy<ATTENDED_YEAR;_hy++)HISTORY_YEARS.push(_hy);
+  HISTORY_YEARS.forEach(function(yr){if(!(yr in historyData))historyData[yr]=null;});
+  if(!(ATTENDED_YEAR in historyData))historyData[ATTENDED_YEAR]=null;
   // Branding/identity. Relative asset paths are expanded to absolute
   // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
   // this project-pages setup; s.pages_base overrides the derived base for custom domains.
