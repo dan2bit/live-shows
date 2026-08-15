@@ -680,17 +680,17 @@ def write_log_row(log_rows):
             writer.writerow(row)
 
 
-# ── metadata refresh (issue #278 item 3) ──────────────────────────────────────────────────
+# ── metadata refresh ───────────────────────────────────────────────────────────────────────
 def refresh_metadata_tsvs():
     """Refresh youtube_videos.tsv / youtube_playlists.tsv by running
     youtube_fetch once, so a freshly created playlist and the now-titled
-    videos are captured without a manual second pass (#278 item 3).
+    videos are captured without a manual second pass.
 
     A single fetch after creation captures both — the videos already carry
-    their applied titles and the new playlist now exists — replacing the
-    old run-fetch-before-and-after chore. Best-effort by design: youtube_fetch
-    owns its own API key, runs with --since auto (cheap and idempotent), and
-    any failure here is reported but never undoes the playlist just created.
+    their applied titles and the new playlist now exists — so no separate
+    before/after fetch is needed. Best-effort by design: youtube_fetch owns
+    its own API key, runs with --since auto (cheap and idempotent), and any
+    failure here is reported but never undoes the playlist just created.
     """
     fetch = os.path.join(SCRIPT_DIR, "youtube_fetch.py")
     if not os.path.exists(fetch):
@@ -778,7 +778,7 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
     # deliberately do not — see youtube_upload_show.build_description). Built
     # here so the CREATE path writes it; historically only the separate
     # --fix-descriptions backfill ever set descriptions, so every new playlist
-    # shipped blank (found via the 2026-08-12 Southern Avenue playlist).
+    # shipped blank until this was added.
     playlist_desc = (DEFAULT_DESCRIPTION_TEMPLATE.format(
         setlist_url=headliner_url, venue=venue_str)
         if headliner_url else "")
