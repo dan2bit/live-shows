@@ -85,6 +85,7 @@ import argparse
 import json
 import os
 import re
+import ssl
 import subprocess
 import sys
 import urllib.request
@@ -304,6 +305,23 @@ def detect_repo_slug() -> str:
     return ""
 
 
+def _tls_context() -> ssl.SSLContext:
+    """A TLS context that also works on python.org macOS builds.
+
+    Those Python builds do not read the system keychain, so the stdlib's
+    default context fails certificate verification out of the box. certifi
+    (bundled with requests, so usually already installed in this repo's venv)
+    supplies a CA bundle; fall back to the default context elsewhere. If both
+    fail, either `pip install certifi` or run macOS Python's
+    "Install Certificates.command" once.
+    """
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
 def open_issue_dates(repo_slug: str) -> dict:
     """{iso_date: [issue descriptions]} for open playlist/photo issues.
 
@@ -318,7 +336,8 @@ def open_issue_dates(repo_slug: str) -> dict:
         request = urllib.request.Request(
             url, headers={"Accept": "application/vnd.github+json",
                           "User-Agent": "live-shows-rollover"})
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with urllib.request.urlopen(request, timeout=20,
+                                    context=_tls_context()) as response:
             payload = json.load(response)
         for issue in payload:
             title = issue.get("title", "")
@@ -384,6 +403,10 @@ def run(mode: str, mode_arg, dry_run: bool, force: bool,
         except Exception as error:
             print(f"ERROR: open-issue check against {repo_slug} failed: {error}",
                   file=sys.stderr)
+            if "CERTIFICATE_VERIFY_FAILED" in str(error):
+                print("       (macOS python.org builds need a CA bundle: "
+                      "`pip install certifi`, or run the bundled "
+                      "\"Install Certificates.command\" once.)", file=sys.stderr)
             print("       Pass --skip-issue-check to proceed without it.",
                   file=sys.stderr)
             return 1
@@ -516,9 +539,16 @@ def run(mode: str, mode_arg, dry_run: bool, force: bool,
             for (d, a) in priv_missing:
                 print(f"         {d}  {a}")
     else:
+        # Reachable only in a dry run or under --public-only — the guard above
+        # refuses any other real run without --private-repo.
         print()
-        print("  --private-repo not given: current_private.tsv left untouched "
-              "(orphan rows will remain).")
+        if public_only:
+            print("  --public-only: current_private.tsv left untouched "
+                  "(orphan rows WILL remain).")
+        else:
+            print("  --private-repo not given: private-side preview "
+                  "unavailable (the real run will require it, or "
+                  "--public-only).")
 
     if skipped_not_terminal:
         print()
