@@ -139,6 +139,30 @@ Key carry-overs:
 Extract: artist, supporting act(s), show date/times, venue, seat info, ticket access
 method, ticket quantity, face value, fees, total cost, purchase date, order numbers.
 
+**Ticket quantity rule (Ticketmaster and similar).** Ticketmaster confirmation
+emails state only the order total - no quantity, no per-ticket price (that
+breakdown sits behind the "View Details" link). Quantity must never be defaulted
+to 1. Derive it when the email allows (a seat range like "Seats 112-113" = 2;
+total divided by a known per-ticket price), and otherwise: **if the order total
+is at or above `merch.event_cap` in config.yaml, stop and ask Dan to paste the
+receipt's order-detail data or confirm the order was a single ticket.** Below the
+cap a single ticket is a safe default for this channel; at or above it,
+multi-ticket and package orders are common and a wrong quantity corrupts the
+Group flag, the budget split, and the per-ticket face value (the 2026-10-16
+Allison Russell order was recorded as 1 ticket at $433.50 face; the receipt
+showed 3 at $136.00). Record in the log how the quantity was determined whenever
+it was not explicit in the email.
+
+**Quantity/Group coupling.** Ticket Quantity >= 2 in the private row requires
+`Group=Y` on the public row (the ticket-count chip only renders for Group rows);
+when writing either field, verify the other agrees.
+
+**Insurance and separately-billed add-ons.** A charge the email says is "billed
+separately" (e.g. Allianz Event Ticket Insurance) is NOT inside the platform's
+stated total - never derive face value by subtracting it. Total Cost in the
+private row includes such add-ons on top of the platform total, itemized in
+Private Notes.
+
 **Step 1b — Provenance check: was this purchase already recorded in-page? (#152)**
 
 Using Step 0b data, check `live_shows_current.tsv` for an upcoming row matching the
@@ -268,6 +292,11 @@ is a fresh read-back.
 
 Include explicit confirmation in the log body that the calendar event was verified
 present (Step 8), not just "created."
+
+Include a `Qty: N` line for every receipt, noting how the quantity was determined
+when the email did not state it (derived from seat range, receipt data pasted by
+Dan, single-ticket confirmation). A log with no quantity line is what allowed a
+wrong default to pass review unnoticed.
 
 **Final:** Apply `processed` label.
 
