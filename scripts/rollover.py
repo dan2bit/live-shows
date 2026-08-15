@@ -539,9 +539,16 @@ def run(mode: str, mode_arg, dry_run: bool, force: bool,
             for (d, a) in priv_missing:
                 print(f"         {d}  {a}")
     else:
+        # Reachable only in a dry run or under --public-only — the guard above
+        # refuses any other real run without --private-repo.
         print()
-        print("  --private-repo not given: current_private.tsv left untouched "
-              "(orphan rows will remain).")
+        if public_only:
+            print("  --public-only: current_private.tsv left untouched "
+                  "(orphan rows WILL remain).")
+        else:
+            print("  --private-repo not given: private-side preview "
+                  "unavailable (the real run will require it, or "
+                  "--public-only).")
 
     if skipped_not_terminal:
         print()
