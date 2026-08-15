@@ -153,6 +153,15 @@ Allison Russell order was recorded as 1 ticket at $433.50 face; the receipt
 showed 3 at $136.00). Record in the log how the quantity was determined whenever
 it was not explicit in the email.
 
+**Pasted order-detail block.** A forwarded Ticketmaster receipt may include an
+order-detail block pasted from the account receipt page (quantity, per-ticket
+price, fees). It can appear ANYWHERE in the message - above the forwarded "You
+Got Tickets" body, below it, or between forward headers - so scan the whole
+message for it, not just the tail. When present, take quantity, per-ticket
+price, and fees directly from the block and skip the `merch.event_cap` prompt:
+the block IS the receipt data that prompt would otherwise ask for. Note
+`Qty: N (pasted order detail)` in the log.
+
 **Quantity/Group coupling.** Ticket Quantity >= 2 in the private row requires
 `Group=Y` on the public row (the ticket-count chip only renders for Group rows);
 when writing either field, verify the other agrees.
