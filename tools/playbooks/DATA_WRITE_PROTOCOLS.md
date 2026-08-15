@@ -203,6 +203,36 @@ Memories, and Photo URL. All financial and seat detail lives in the private side
 
 ---
 
+## `history/<year>.tsv` + `history_private/<year>.tsv` write pattern (#277)
+
+Attended rows migrate out of `live_shows_current.tsv` **per show, once terminal**
+(setlist + playlist present, no open playlist/photo issue) via
+`scripts/rollover.py --terminal` — a LOCAL two-repo operation run monthly
+(ANALYSIS_WORKFLOWS Workflow 1 pass C). Never CI: the public repo's Actions
+deliberately hold no private-repo credential.
+
+- **Public half:** rows convert to the 10-col history schema (`Show Date | Artist |
+  Supporting Acts | Venue | Setlist.fm URL | Playlist URL | Photo URL | Match Type |
+  YT Title | Notes / Memories`) and append to `data/history/<year>.tsv` → commit to
+  `staging`.
+- **Private half:** the twin rows move from `dan2bit/live-shows-private →
+  current_private.tsv` to `dan2bit/live-shows-private → history_private/<year>.tsv`
+  (same repo, same 12-col schema, keyed `Show Date` + `Artist`) → commit to the
+  private repo's `main`.
+- **The two halves are one operation.** A public-only migration permanently orphans
+  the private twin — selection is driven by current, so no later run can find the
+  show again to archive it. rollover.py therefore refuses real runs without the
+  private repo unless config.yaml declares `features.private_data: false`.
+- **Post-migration routing:** notes on migrated rows edit in-page via the
+  `history:<year>` fileKey; private columns merge from `history_private/<year>.tsv`
+  (the third join in `mergePrivateData()`). The Attended tab renders the union of
+  current attended rows + `history/<ATTENDED_YEAR>.tsv`, and `history_years`
+  self-extends each January — there is no year-end config or code edit.
+- **Manual appends** to either history file follow the house TSV rules: plain
+  tab-joined lines, LF endings, never the csv module, fresh SHA before every write.
+
+---
+
 ## Purchase sequence (#152) — who writes what
 
 A ticket purchase enters the system two ways — the site's 🎟 bought modal or Routine 1
