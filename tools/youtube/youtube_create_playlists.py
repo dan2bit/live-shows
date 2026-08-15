@@ -744,7 +744,16 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
     final_order = headliner_vids + ordered_support
 
     playlist_title = title_override or make_playlist_title(headliner, venue_str, date_str)
+    # The playlist description carries the setlist link (video descriptions
+    # deliberately do not — see youtube_upload_show.build_description). Built
+    # here so the CREATE path writes it; historically only the separate
+    # --fix-descriptions backfill ever set descriptions, so every new playlist
+    # shipped blank (found via the 2026-08-12 Southern Avenue playlist).
+    playlist_desc = (DEFAULT_DESCRIPTION_TEMPLATE.format(
+        setlist_url=headliner_url, venue=venue_str)
+        if headliner_url else "")
     print(f"  Playlist title: {playlist_title}")
+    print(f"  Playlist description: {playlist_desc or '[none - no setlist URL]'}")
     for i, v in enumerate(final_order, 1):
         print(f"    {i:2}. {v['title'][:80]}")
 
@@ -762,10 +771,15 @@ def process_show(youtube, date_str, headliner, title_override, videos, history_i
                 existing_ids = fetch_playlist_video_ids(youtube, playlist_id)
                 print(f"  Reusing existing playlist ({len(existing_ids)} "
                       f"video(s) already in it): {playlist_url}")
+                if playlist_desc and not pl["description"].strip():
+                    update_playlist_description(
+                        youtube, playlist_id, pl["title"], playlist_desc)
+                    print("  Backfilled blank playlist description")
                 break
         if playlist_id is None:
             print("  Creating playlist...")
-            playlist_id, playlist_url = create_playlist(youtube, playlist_title)
+            playlist_id, playlist_url = create_playlist(
+                youtube, playlist_title, playlist_desc)
             print(f"  Playlist created: {playlist_url}")
         added = 0
         for pos, v in enumerate(final_order):
