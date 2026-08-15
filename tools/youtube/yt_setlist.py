@@ -75,6 +75,28 @@ SETLISTS_JSON_GLOB = ("setlists", "{year}.json")
 _COVER_RE = re.compile(r"\(([^()]+?)\s+cover\)", re.IGNORECASE)
 
 
+# setlist.fm serves typographic punctuation (curly quotes, en/em dashes,
+# ellipses) verbatim, but the manifest and every comparison downstream use
+# plain ASCII. Fold just that punctuation at parse time — accented letters are
+# left intact — so a title like "We're Gonna Make It" matches the ASCII Song an
+# operator picks, the editor's exact-match dropdown stops mislabelling it
+# off-setlist, and the Desc Slug prefill lands. Same mapping as
+# scripts/check_ascii_punctuation.py.
+_PUNCT_MAP = {
+    "‘": "'", "’": "'",
+    "“": '"', "”": '"',
+    "–": "-", "—": "-",
+    "…": "...",
+    "×": "x",
+}
+_PUNCT_RE = re.compile("|".join(map(re.escape, _PUNCT_MAP)))
+
+
+def _ascii_punct(value: str) -> str:
+    """Fold typographic punctuation to ASCII, leaving letters untouched."""
+    return _PUNCT_RE.sub(lambda m: _PUNCT_MAP[m.group(0)], value or "")
+
+
 # ── model ──────────────────────────────────────────────────────────────────
 
 @dataclass
@@ -230,7 +252,7 @@ def parse_setlist(html: str, artist: str, url: str) -> tuple[Setlist, str]:
 
         if "song" not in classes:
             # A set-marker row: "Encore:", "Set 2:", "Acoustic:" …
-            text = li.get_text(" ", strip=True)
+            text = _ascii_punct(li.get_text(" ", strip=True))
             if text:
                 section = text
             continue
@@ -238,12 +260,12 @@ def parse_setlist(html: str, artist: str, url: str) -> tuple[Setlist, str]:
         label = li.find(class_="songLabel")
         unknown = li.find(class_="unknownSong")
         info_part = li.find(class_="infoPart")
-        info = info_part.get_text(" ", strip=True) if info_part else ""
+        info = _ascii_punct(info_part.get_text(" ", strip=True)) if info_part else ""
 
         position += 1
         song = SetlistSong(
             position=position,
-            title=label.get_text(" ", strip=True) if label else "",
+            title=_ascii_punct(label.get_text(" ", strip=True)) if label else "",
             unknown=unknown is not None and label is None,
             section=section,
             info=info,

@@ -912,8 +912,14 @@ def main():
                             help="Find playlists with blank descriptions and fill in setlist.fm link. Always use --dry-run first or --date to limit scope.")
     mode_group.add_argument("--worklist",         action="store_true",
                             help="Process shows in WORKLIST using youtube_videos.tsv (backfill mode).")
-    mode_group.add_argument("--date",             nargs="+", metavar="DATE",
-                            help="Process show(s) by date from youtube_videos.tsv.")
+
+    # --date is not in the mode group: alone it selects process-by-date mode;
+    # with --fix-descriptions it scopes that pass to the given dates (the
+    # documented cautious path). Combining it with --new-show / --worklist is
+    # rejected in main().
+    parser.add_argument("--date",                 nargs="+", metavar="DATE",
+                        help="Process show(s) by date from youtube_videos.tsv, or "
+                             "scope --fix-descriptions to these dates.")
 
     parser.add_argument("--headliner",            metavar="NAME",
                         help="Override headliner name (single-date --new-show only).")
@@ -933,14 +939,25 @@ def main():
 
     args = parser.parse_args()
 
+    if args.date and (args.new_show or args.worklist):
+        parser.error("--date cannot be combined with --new-show or --worklist. "
+                     "Use --date alone to process by date, or "
+                     "--fix-descriptions --date to scope a description fix.")
+
+    # --auth-only mints/refreshes the token and exits, whatever else is passed:
+    # there is no meaningful dry run of minting a token, so it authenticates
+    # regardless of --dry-run rather than sitting behind the gate below.
+    if args.auth_only:
+        print("Authenticating with YouTube...")
+        get_authenticated_service()
+        print("Auth complete. token.json saved.")
+        return
+
     youtube = None
     if not args.dry_run or args.fix_descriptions:
         print("Authenticating with YouTube...")
         youtube = get_authenticated_service()
         print("Authenticated.")
-        if args.auth_only:
-            print("Auth complete. token.json saved.")
-            return
 
     videos = load_videos()
     history_rows, history_index = load_history()
