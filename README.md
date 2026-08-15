@@ -56,4 +56,4 @@ Includes an optional [d3 forceSimulation graph visualization](https://dan2bit.gi
 
 ### Agentic Playbooks
 
-In `tools/playbooks` - a handful of bespoke, *ymmv* automation workflow playbooks for site data management, inbox monitoring, calendar management and artist discovery. Architecture reference: [`docs/AGENTIC_WORKFLOWS.md`](docs/AGENTIC_WORKFLOWS.md).
+In `tools/playbooks` - a handful of bespoke, *ymmv* automation workflow playbooks and skills for site data management, inbox monitoring, calendar management and artist discovery. Architecture reference: [`docs/AGENTIC_WORKFLOWS.md`](docs/AGENTIC_WORKFLOWS.md).
