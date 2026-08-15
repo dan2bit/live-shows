@@ -45,8 +45,12 @@ Privacy-split architecture:
   already holds it once a show moves to 'attended'. The full private row (cost columns
   included) is archived as-is purely because it's the cheapest lossless thing to keep.
 
-  If --private-repo is omitted, the private repo is left completely untouched and the
-  script prints a reminder that current_private.tsv will retain orphan rows.
+  A REAL run requires --private-repo (or the explicit --public-only escape
+  hatch, for forks that keep no private repo). A public-only migration removes
+  the row from current while its private twin stays behind — and because
+  selection is driven by current, no later run can ever find that show again
+  to archive the twin: a permanent orphan requiring manual repair. --dry-run
+  may omit --private-repo freely (preview only, nothing is written).
 
 TSV handling:
   Reads and writes are plain tab-split / tab-join with LF line endings — never the
@@ -72,6 +76,7 @@ Edge cases handled:
   - --force → suppresses the confirmation prompt
   - --private-repo given but current_private.tsv missing → aborts before any writes
     (prevents a public-only migration that silently skips the private side)
+  - real run without --private-repo → aborts unless --public-only is passed
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
@@ -329,7 +334,8 @@ def open_issue_dates(repo_slug: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def run(mode: str, mode_arg, dry_run: bool, force: bool,
-        private_repo: str = None, skip_issue_check: bool = False) -> int:
+        private_repo: str = None, skip_issue_check: bool = False,
+        public_only: bool = False) -> int:
     """Execute the rollover. Returns 0 on success, 1 on error.
 
     mode is 'year' (mode_arg: int year), 'terminal' (mode_arg unused), or
@@ -348,6 +354,18 @@ def run(mode: str, mode_arg, dry_run: bool, force: bool,
         print(f"ERROR: --private-repo given but {private_current_path} not found.",
               file=sys.stderr)
         print("       Check the path; no files were modified.", file=sys.stderr)
+        return 1
+
+    # A real run must handle both repos, or say out loud that it never will:
+    # the public row's removal is what makes the private twin unreachable, so
+    # skipping the private side is not a smaller run — it is a desync.
+    if not dry_run and not private_repo and not public_only:
+        print("ERROR: a real run without --private-repo permanently orphans the "
+              "migrated shows' private rows", file=sys.stderr)
+        print("       (selection is driven by current, so no later run can find "
+              "them to archive).", file=sys.stderr)
+        print("       Pass --private-repo PATH, or --public-only if this fork "
+              "keeps no private repo.", file=sys.stderr)
         return 1
 
     # Terminal mode consults the open playlist/photo issues before selecting.
@@ -647,6 +665,13 @@ def main() -> None:
              "from current_private.tsv. When omitted, the private repo is left untouched.",
     )
     parser.add_argument(
+        "--public-only",
+        action="store_true",
+        help="Allow a REAL run without --private-repo. Only for forks that "
+             "keep no private repo — on this repo it permanently orphans "
+             "private rows.",
+    )
+    parser.add_argument(
         "--skip-issue-check",
         action="store_true",
         help="Terminal mode only: skip the open playlist/photo issue check "
@@ -680,7 +705,7 @@ def main() -> None:
         mode, mode_arg = "year", args.year
 
     sys.exit(run(mode, mode_arg, args.dry_run, args.force,
-                 args.private_repo, args.skip_issue_check))
+                 args.private_repo, args.skip_issue_check, args.public_only))
 
 
 if __name__ == "__main__":
