@@ -6,8 +6,19 @@ const CUR_PRIVATE_FIELDS=['Seat Info / GA','Ticket Quantity','Face Value (per ti
 let HISTORY_YEARS=[2021,2022,2023,2024,2025];   // default; override with a top-level history_years list in config.yaml
 const PAT_KEY='ghpat_liveshows';
 let currentRows=[],potentialRows=[],authed=false;
+// The year whose attended shows render on the Shows panel. Terminal-state rollover
+// (scripts/rollover.py --terminal) migrates current-year rows into history/<year>.tsv
+// mid-year, so the Attended tab unions current.tsv attended rows with this year's
+// history file. HISTORY_YEARS deliberately excludes this year until the January
+// year-flip — a History-panel year tab for it would just duplicate the Attended tab.
+var ATTENDED_YEAR=(new Date()).getFullYear();
 var historyData={};
 HISTORY_YEARS.forEach(function(yr){historyData[yr]=null;});
+if(!(ATTENDED_YEAR in historyData))historyData[ATTENDED_YEAR]=null;
+// Every year that can hold attended rows: the configured history years plus the
+// attended year's mid-migration file. Search and On-This-Day iterate this, so
+// migrated current-year rows never vanish from either.
+function _showYears(){return HISTORY_YEARS.indexOf(ATTENDED_YEAR)>=0?HISTORY_YEARS:HISTORY_YEARS.concat([ATTENDED_YEAR]);}
 var _now=new Date();
 var _todayMmDd=String(_now.getMonth()+1).padStart(2,'0')+'-'+String(_now.getDate()).padStart(2,'0');
 var _srchTimer=null;
@@ -63,6 +74,7 @@ function applyConfig(cfg){
   if(Array.isArray(cfg.history_years)&&cfg.history_years.length){
     HISTORY_YEARS=cfg.history_years.slice().sort();
     HISTORY_YEARS.forEach(function(yr){if(!(yr in historyData))historyData[yr]=null;});
+    if(!(ATTENDED_YEAR in historyData))historyData[ATTENDED_YEAR]=null;
   }
   // Branding/identity. Relative asset paths are expanded to absolute
   // https://<owner>.github.io/<repo>/<path> URLs because relative asset URLs 404 on
@@ -263,6 +275,19 @@ async function mergePrivateData(){
     Object.keys(cmap).forEach(function(k){if(!cseen[k])console.warn('current_private row matched no public show:',cmap[k]['Artist'],cmap[k]['Show Date']);});
   }catch(e){console.warn('private current merge skipped:',e.message);}
   try{
+    // Migrated attended rows live in history/<ATTENDED_YEAR>.tsv with their private
+    // twins in the private repo's history_private/<year>.tsv — same join, second
+    // source, so the Attended tab's cost cells survive terminal-state rollover.
+    await loadAttendedYearHistory();
+    var hrows=historyData[ATTENDED_YEAR]||[];
+    if(hrows.length){
+      var hp=await ghFetch('history_private/'+ATTENDED_YEAR+'.tsv',{},OWNER_PRIVATE,REPO_PRIVATE),hmap={},hseen={};
+      parseTsv(_decodeB64(hp.content)).forEach(function(r){hmap[_pk(r['Artist'],r['Show Date'])]=r;});
+      hrows.forEach(function(r){var k=_pk(r['Artist'],r['Show Date']),p=hmap[k];if(p){hseen[k]=1;CUR_PRIVATE_FIELDS.forEach(function(f){if(p[f]!==undefined)r[f]=p[f];});}});
+      Object.keys(hmap).forEach(function(k){if(!hseen[k])console.warn('history_private row matched no history show:',hmap[k]['Artist'],hmap[k]['Show Date']);});
+    }
+  }catch(e){console.warn('private history merge skipped:',e.message);}
+  try{
     var pp=await ghFetch(POTENTIAL_PRIVATE_PATH,{},OWNER_PRIVATE,REPO_PRIVATE),pmap={},pseen={};
     parseTsv(_decodeB64(pp.content)).forEach(function(r){pmap[_pk(r['Artist'],r['Date'])]=r;});
     potentialRows.forEach(function(r){var k=_pk(r['Artist'],r['Date']),p=pmap[k];if(p){pseen[k]=1;if(p['Private Notes']!==undefined)r['Private Notes']=p['Private Notes'];}});
@@ -365,7 +390,7 @@ function otdStep(delta){var n=_otdMatches.length;if(!n)return;_otdIndex=(_otdInd
 function renderOnThisDay(){
   var el=document.getElementById('otdItems');if(!el)return;
   var matches=[];
-  HISTORY_YEARS.forEach(function(yr){(historyData[yr]||[]).forEach(function(r){if((r['Show Date']||'').trim().endsWith(_todayMmDd))matches.push(r);});});
+  _showYears().forEach(function(yr){(historyData[yr]||[]).forEach(function(r){if((r['Show Date']||'').trim().endsWith(_todayMmDd))matches.push(r);});});
   matches.sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
   var strip=document.querySelector('.on-this-day');if(strip)strip.style.display='';
   var cnt=document.getElementById('otdCount');if(cnt)cnt.textContent=matches.length>1?' ('+matches.length+')':'';
@@ -634,6 +659,7 @@ function cancelEdit(cellId,fileKey,rowIdx,field){
   else if(fileKey==='fasttrack'){renderTourHere();}
   else if(fileKey.startsWith('history:')){
     var yr=parseInt(fileKey.split(':')[1]);
+    if(yr===ATTENDED_YEAR)renderShows();
     var panel=document.getElementById('inner-hist-'+yr);
     if(panel){panel.innerHTML=renderHistoryYear(yr);requestAnimationFrame(revealToggles);}
   }
@@ -761,13 +787,13 @@ function renderAttendedRowSearch(row,idx){
     +(n.photo?'<a class="icon-link" href="'+esc(n.photo)+'" target="_blank" title="Artist photo">📷</a>':'')+'</td>'
     +'<td class="cell-notes">'+nh+'</td></tr>';
 }
-function renderAttendedRowAuthed(row,idx,origIdx){
+function renderAttendedRowAuthed(row,idx,origIdx,fileKey){
   var n=normalizeRow(row),isOtd=isOtdMatch(n.showDate);
   var otdB=isOtd?' <span class="badge badge-otd">📅 On this day</span>':'';
   var fn=n.pvtNotes&&n.pvtNotes!=='-'?n.notes+(n.notes?' · ':'')+n.pvtNotes:n.notes,fne=esc(fn);
   var cellId='cell-at-'+idx;
   var nh=fne?'<div class="notes-text collapsible" id="n-at-'+idx+'" onclick="toggleNote(this,\'nt-at-'+idx+'\')">'+''+fne+'</div><span class="notes-toggle" id="nt-at-'+idx+'" onclick="toggleNote(document.getElementById(\'n-at-'+idx+'\'),this)">more</span>':'';
-  var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
+  var editBtn=makeEditBtn(cellId,fileKey||'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   var cost=totalSpend(row);
   return'<tr class="'+(isOtd?'row-otd':'')+'"><td class="cell-date">'+formatShowDate(n.showDate)+otdB+'</td>'
     +'<td><div class="cell-artist">'+artistLink(n.artist)+'</div>'+rowGoalBadges(n.artist,n.showDate,false)+(n.support?'<div class="cell-support">w/ '+supportGoalNames(n.support,n.showDate,false)+'</div>':'')
@@ -809,6 +835,15 @@ function renderHistoryYear(yr){
 function hatLoadingHtml(){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img" src="'+_assetUrl(_bi)+'" alt=""><div class="loading loading-dots" style="animation:none">Loading</div></div>';}
 // Error twin of hatLoadingHtml — same centered layout, static hat (no pulse), red message.
 function hatErrorHtml(msg){var _bi=(SITE_CONFIG.site&&SITE_CONFIG.site.brand_icon)||'static/brand-hat.png';return'<div class="hat-loading"><img class="hat-loading-img hat-static" src="'+_assetUrl(_bi)+'" alt=""><div class="error-msg" style="padding:0;text-align:center">'+esc(msg)+'</div></div>';}
+// Eager, quiet loader for the attended-year history file: the Attended tab needs it
+// at boot, unlike the lazy History-panel years. A 404 is the normal state before the
+// first terminal-state rollover creates the file, so it degrades to [] silently
+// (no spinner delay, no console error).
+async function loadAttendedYearHistory(){
+  if(historyData[ATTENDED_YEAR]!==null&&historyData[ATTENDED_YEAR]!==undefined)return;
+  try{var r=await ghFetch('data/history/'+ATTENDED_YEAR+'.tsv');historyData[ATTENDED_YEAR]=parseTsv(_decodeB64(r.content));}
+  catch(e){historyData[ATTENDED_YEAR]=[];}
+}
 async function loadHistoryYear(yr){
   if(historyData[yr]!==null)return;
   try{
@@ -888,7 +923,7 @@ function _historyLoadedDom(){
 }
 function allAttendedRows(){
   var rows=[];
-  HISTORY_YEARS.forEach(function(yr){if(historyData[yr])rows=rows.concat(historyData[yr]);});
+  _showYears().forEach(function(yr){if(historyData[yr])rows=rows.concat(historyData[yr]);});
   currentRows.filter(function(r){return r['Status']==='attended';}).forEach(function(r){rows.push(r);});
   rows.sort(function(a,b){
     var da=a['Show Date']||a['Date']||'',db=b['Show Date']||b['Date']||'';
@@ -1236,7 +1271,15 @@ function recommendCtaHtml(label){
 // ── Shows rendering ───────────────────────────────────
 function renderShows(){
   var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
-  var attended=currentRows.filter(function(r){return r['Status']==='attended';}).sort(function(a,b){return(b['Show Date']||'').localeCompare(a['Show Date']||'');});
+  // Attended = current.tsv attended rows + this year's already-migrated history rows
+  // (terminal-state rollover moves rows out mid-year). On a Date+Artist collision the
+  // current row wins — a row mid-migration is still the one receiving writes.
+  var _histY=historyData[ATTENDED_YEAR]||[];
+  var _curAtt=currentRows.filter(function(r){return r['Status']==='attended';});
+  var _curKeys={};_curAtt.forEach(function(r){_curKeys[_goalNorm(r['Artist']||'')+'\u241f'+(r['Show Date']||'').trim()]=1;});
+  var attended=_curAtt.map(function(r){return{row:r,fileKey:'current',origIdx:currentRows.indexOf(r)};})
+    .concat(_histY.filter(function(r){return!_curKeys[_goalNorm(r['Artist']||'')+'\u241f'+(r['Show Date']||'').trim()];}).map(function(r){return{row:r,fileKey:'history:'+ATTENDED_YEAR,origIdx:_histY.indexOf(r)};}))
+    .sort(function(a,b){return((b.row['Show Date'])||'').localeCompare((a.row['Show Date'])||'');});
   var sellRows=featureOn('for_sale')?potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';}):[];
   var bannerCta=sellRows.length
     ?'<button class="forsale-cta" onclick="openForSaleModal('+potentialRows.indexOf(sellRows[0])+')"><span style="opacity:.7;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px">For Sale</span>&#127991; '+esc(sellRows[0]['Artist']||'')+(sellRows.length>1?' + '+(sellRows.length-1)+' more':'')+'</button>'
@@ -1244,14 +1287,13 @@ function renderShows(){
   var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history.</span>'+bannerCta+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
-  var atOrigIdx=attended.map(function(r){return currentRows.indexOf(r);});
   var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i,upOrigIdx[i]);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
-  var aTbody=authed?attended.map(function(r,i){return renderAttendedRowAuthed(r,i,atOrigIdx[i]);}).join(''):attended.map(function(r,i){return renderAttendedRowBystander(r,i);}).join('');
+  var aTbody=authed?attended.map(function(e,i){return renderAttendedRowAuthed(e.row,i,e.origIdx,e.fileKey);}).join(''):attended.map(function(e,i){return renderAttendedRowBystander(e.row,i);}).join('');
   var uTable='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>'+uTbody+'</tbody></table>';
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
-  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended (2026)<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
+  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended ('+ATTENDED_YEAR+')<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
   var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>';
   document.getElementById('showsContent').innerHTML=banner+itr+ip;
   requestAnimationFrame(revealToggles);
@@ -1513,6 +1555,7 @@ async function loadData(){
     var results=await Promise.all([ghFetch(CURRENT_PATH),ghFetch(POTENTIAL_PATH)]);
     currentRows=parseTsv(_decodeB64(results[0].content));
     potentialRows=parseTsv(_decodeB64(results[1].content));
+    await loadAttendedYearHistory();
     await mergePrivateData();
     await loadGoalData();
     await loadVenueIdentity();
