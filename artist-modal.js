@@ -47,7 +47,7 @@ function amNorm(s){
 function amSlugify(k){return amNorm(k).replace(/ /g,'-');}
 async function amLoadIndex(){
   if(amIndexCache)return amIndexCache;
-  var res=await fetch(AM_INDEX_PATH+'?t='+Date.now(),{cache:'no-store'});   // relative -> Pages CDN, no API rate limit; cache-busted (issue #286)
+  var res=await fetch(AM_INDEX_PATH+'?t='+Date.now(),{cache:'no-store'});   // relative -> Pages CDN, no API rate limit; cache-busted
   if(!res.ok)throw new Error('HTTP '+res.status);
   var data=await res.json();
   amIndexCache=data;

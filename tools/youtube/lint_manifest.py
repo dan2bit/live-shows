@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-lint_manifest.py — Validate a pasted show manifest and report progress (#247)
+lint_manifest.py — Validate a pasted show manifest and report progress
 
 The validator behind the playlist-issue CI, and a local pre-flight check.
 Given a manifest — pasted into a GitHub issue comment or read from disk — it
 reports exactly the mistakes that otherwise surface as a wrong title on a
 public video, plus a phone-readable progress scoreboard.
 
-WHAT THIS IS, AND IS NOT (#247)
+WHAT THIS IS, AND IS NOT
 
   A validator and a scoreboard. NOT a state machine: an issue makes a good
   log and checklist and a poor control plane, so nothing here acts on
