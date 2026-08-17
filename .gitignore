@@ -42,6 +42,11 @@ logs/*.tsv
 # IDs that let an interrupted upload resume.
 tools/youtube/manifests/
 
+# MCP change-sets: proposed-but-not-yet-applied channel edits, one JSON per
+# proposal. Local working files with a one-day expiry; the audit trail worth
+# keeping is the applied result on the channel itself.
+tools/youtube/.changesets/
+
 # Editor
 .vscode/
 .idea/
