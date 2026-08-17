@@ -64,7 +64,13 @@ CFG = yt_config.load_config()
 CHANGESET_DIR = os.path.join(_SCRIPT_DIR, CFG["mcp"]["changeset_dir"])
 EXPIRY_SECONDS = int(CFG["mcp"]["changeset_expiry_hours"]) * 3600
 APPLY_CAP_DEFAULT = int(CFG["mcp"]["apply_cap_default"])
-WRITE_SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+# Any one of these grants the update/insert calls the apply tier makes. The
+# upload pipeline mints its token with the first; the token's OWN scopes are
+# authoritative — overriding them at load time poisons the refresh request.
+WRITE_CAPABLE_SCOPES = {
+    "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+}
 
 
 # ── data access ────────────────────────────────────────────────────────────
@@ -154,7 +160,11 @@ def _oauth_client():
             "flow first (consent as the brand channel)")
     from google.oauth2.credentials import Credentials
     from googleapiclient.discovery import build
-    creds = Credentials.from_authorized_user_file(TOKEN_PATH, WRITE_SCOPES)
+    creds = Credentials.from_authorized_user_file(TOKEN_PATH)
+    if not (set(creds.scopes or []) & WRITE_CAPABLE_SCOPES):
+        raise RuntimeError(
+            "token.json lacks a write-capable scope - re-mint it via the "
+            "upload pipeline's auth flow (consent as the brand channel)")
     if not creds.valid and creds.refresh_token:
         from google.auth.transport.requests import Request
         creds.refresh(Request())
@@ -585,7 +595,7 @@ def _handle(msg):
         return {"jsonrpc": "2.0", "id": msg_id, "result": {
             "protocolVersion": proto,
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "yt-mcp", "version": "0.1.0"}}}
+            "serverInfo": {"name": "yt-mcp", "version": "0.1.1"}}}
     if method.startswith("notifications/"):
         return None
     if method == "ping":
