@@ -357,26 +357,61 @@ def tool_comments_pending(filter="unknown_song", max_videos=10, since=None):
 
 # ── propose tier ───────────────────────────────────────────────────────────
 
+def _live_snapshots(video_ids, playlist_ids):
+    """Raw live title/description per id, via API-key reads (batched).
+
+    Proposals anchor to the LIVE value, not the cache: the cache flattens
+    newlines for searchability, so a description with real line breaks can
+    never byte-match it and the apply tier's drift check would refuse every
+    edit. The cache stays the discovery layer; the diff the human reviews and
+    the value the drift check compares are both reality."""
+    yt = _api_key_client()
+    snaps = {}
+    vids = list(dict.fromkeys(video_ids))
+    for i in range(0, len(vids), 50):
+        resp = yt.videos().list(part="snippet", id=",".join(vids[i:i + 50])).execute()
+        for item in resp.get("items", []):
+            sn = item.get("snippet", {})
+            snaps[("video", item["id"])] = {
+                "title": sn.get("title", ""),
+                "description": sn.get("description", "")}
+    for pid in dict.fromkeys(playlist_ids):
+        resp = yt.playlists().list(part="snippet", id=pid).execute()
+        for item in resp.get("items", []):
+            sn = item.get("snippet", {})
+            snaps[("playlist", item["id"])] = {
+                "title": sn.get("title", ""),
+                "description": sn.get("description", "")}
+    return snaps
+
+
 def tool_propose_edits(edits):
     if not edits:
         raise RuntimeError("no edits given")
     vids = {r.get("video_id"): r for r in _videos()}
     pls = {r.get("playlist_id"): r for r in _playlists()}
+    for e in edits:
+        it = e.get("item_type", "video")
+        if it not in ("video", "playlist"):
+            raise RuntimeError("item_type must be video or playlist")
+        if (vids if it == "video" else pls).get(e.get("item_id", "")) is None:
+            raise RuntimeError(it + " not in cache: " + str(e.get("item_id")) +
+                               " (refresh the fetch TSVs first)")
+    snaps = _live_snapshots(
+        [e["item_id"] for e in edits if e.get("item_type", "video") == "video"],
+        [e["item_id"] for e in edits if e.get("item_type") == "playlist"])
     items, diffs = [], []
     for e in edits:
         item_type = e.get("item_type", "video")
         item_id = e.get("item_id", "")
         field = e.get("field", "")
         new = e.get("new", "")
-        if item_type not in ("video", "playlist"):
-            raise RuntimeError("item_type must be video or playlist")
         if field not in ("title", "description"):
             raise RuntimeError("field must be title or description")
-        row = (vids if item_type == "video" else pls).get(item_id)
-        if row is None:
-            raise RuntimeError(item_type + " not in cache: " + str(item_id) +
-                               " (refresh the fetch TSVs first)")
-        old = row.get(field, "")
+        snap = snaps.get((item_type, item_id))
+        if snap is None:
+            raise RuntimeError(item_type + " not found live: " + str(item_id))
+        old = snap[field]
         if field == "title" and item_type == "video":
             parsed = yt_config.parse_title(old, CFG)
             new_parsed = yt_config.parse_title(new, CFG)
@@ -389,7 +424,8 @@ def tool_propose_edits(edits):
         diffs.append({"item": item_type + ":" + item_id + "/" + field,
                       "old": old, "new": new})
     if not items:
-        return {"change_set_id": None, "note": "nothing to change - all values already match"}
+        return {"change_set_id": None,
+                "note": "nothing to change - all live values already match"}
     cs_id = _save_changeset({"kind": "edits", "items": items})
     return {"change_set_id": cs_id, "diffs": diffs, "item_count": len(items),
             "note": "review the diffs, then apply_change_set to write"}
@@ -556,8 +592,8 @@ TOOLS = [
      _schema({"filter": _S, "max_videos": _I, "since": _S}, []),
      tool_comments_pending),
     ("propose_edits", "Dry-run: build a reviewable change-set of title or "
-     "description edits (old fetched from cache; video-title proposals "
-     "carry operator trailing text forward). Writes nothing.",
+     "description edits (old snapshotted from the LIVE channel; video-title "
+     "proposals carry operator trailing text forward). Writes nothing.",
      _schema({"edits": {"type": "array", "items": _schema({
          "item_type": _S, "item_id": _S, "field": _S, "new": _S},
          ["item_id", "field", "new"])}}, ["edits"]),
@@ -595,7 +631,7 @@ def _handle(msg):
         return {"jsonrpc": "2.0", "id": msg_id, "result": {
             "protocolVersion": proto,
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "yt-mcp", "version": "0.1.1"}}}
+            "serverInfo": {"name": "yt-mcp", "version": "0.1.2"}}}
     if method.startswith("notifications/"):
         return None
     if method == "ping":
