@@ -84,6 +84,16 @@ PLAYLIST_FIELDS = ["published", "title", "item_count", "url", "description", "pl
 
 # -- TSV helpers ---------------------------------------------------------------
 
+def _flatten(text: str) -> str:
+    """Description text made TSV-safe: newlines, carriage returns, and tabs
+    become spaces. Stored in full — no truncation. The cache exists so other
+    tools (correlation date-matching, channel audits) can read descriptions
+    without burning API quota; a capped copy defeats both, and a lead slug
+    longer than the cap silently broke date-in-description matching."""
+    return text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+
+
 def read_tsv(path: str) -> list[dict]:
     if not os.path.exists(path):
         return []
@@ -294,7 +304,7 @@ def fetch_new_videos(youtube, uploads_playlist_id: str,
                 "title":       v["title"],
                 "published":   v["published"],
                 "url":         v["url"],
-                "description": snippet.get("description", "").replace("\n", " ")[:200],
+                "description": _flatten(snippet.get("description", "")),
                 "duration":    parse_duration(content.get("duration", "")),
             })
 
@@ -343,7 +353,7 @@ def fetch_new_playlists(youtube, channel_id: str,
                 "playlist_id": playlist_id,
                 "title":       snippet.get("title", ""),
                 "published":   pub[:10],
-                "description": snippet.get("description", "").replace("\n", " ")[:200],
+                "description": _flatten(snippet.get("description", "")),
                 "item_count":  item["contentDetails"]["itemCount"],
                 "url":         f"https://www.youtube.com/playlist?list={playlist_id}",
             })
