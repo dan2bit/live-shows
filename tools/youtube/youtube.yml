@@ -1,0 +1,44 @@
+# youtube.yml — shared conventions for the YouTube toolset (uploader, playlist
+# builder, linter, and the channel-management MCP server).
+#
+# One file, two audiences: the scripts that EMIT titles/descriptions and the
+# tools that PARSE them read the same values, so the emitter and the auditor
+# can never drift apart. A forker who changes a template here gets a working
+# auditor automatically.
+#
+# Every value below defaults, in code, to the convention this channel already
+# uses — deleting this file (or any key) changes nothing.
+#
+# The issue history behind these designs is logged in docs/ISSUE_LOG.md.
+
+titles:
+  # {artist} and {song} are required fields; the marker is the parse anchor.
+  video: "{artist} LIVE - {song} (bootleg)"
+  unknown_song: "Unknown Song #{n}"
+  playlist_show: "{headliner} LIVE @ {venue_short} {date}"
+  playlist_topical: "{artist} - {topic} (bootlegs)"
+  # Everything AFTER this marker in a video title is operator-owned trailing
+  # text: parsers ignore it, writers preserve it, audits never flag it.
+  bootleg_marker: "(bootleg)"
+
+descriptions:
+  # Optional segments sit in [brackets]: a group renders only when every
+  # {field} inside it is non-empty, and joining words live inside the group.
+  # Articles belong to the data ("the rail", not "rail").
+  video: "[{slug} ]from [{vantage} at ]{venue_short} on {date}[ {handle}][\n\n{note}]"
+  crowdsource_line: "- can you name this song? Leave a comment!"
+  playlist: "Select tracks from {setlist_url}"
+  date_format: "mm/dd/yy"
+
+sentinels:
+  # Typed where a real song title belongs; the publish guard refuses these.
+  song_placeholder: "#song-title"
+  # Deliberate unknown-song values; publish as a numbered crowdsourcing title.
+  unknown: ["unknown", "unknown song", "?"]
+
+mcp:
+  # Server-enforced ceiling on writes per apply call; the model cannot raise it
+  # above what the operator passes, and never writes without a change-set.
+  apply_cap_default: 10
+  changeset_dir: ".changesets"
+  changeset_expiry_hours: 24
