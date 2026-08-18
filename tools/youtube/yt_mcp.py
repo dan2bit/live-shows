@@ -456,49 +456,81 @@ def _apply_edits(payload, path, cap):
     yt = _oauth_client()
     done_keys = {tuple(d) for d in payload.get("applied_items", [])}
     results, written = [], 0
+
+    # Group same-item edits so each video or playlist gets exactly ONE
+    # update() call carrying all of its changed fields. Field-at-a-time
+    # updates are unsafe here: every update() writes the full snippet back,
+    # so a later field's read-modify-write can fetch a snapshot that predates
+    # an earlier field's write on the same item and silently revert it. One
+    # read, a per-field drift check, and one write per item close that
+    # window. A group is never split across the cap boundary for the same
+    # reason, and once a group defers, all later groups defer too so replay
+    # order stays deterministic.
+    groups, order = {}, []
     for item in payload["items"]:
-        key = (item["item_type"], item["item_id"], item["field"])
-        if list(key) in payload.get("applied_items", []) or key in done_keys:
-            results.append({"item": key, "status": "already-applied"})
+        gkey = (item["item_type"], item["item_id"])
+        if gkey not in groups:
+            groups[gkey] = []
+            order.append(gkey)
+        groups[gkey].append(item)
+
+    capped = False
+    for gkey in order:
+        pending = []
+        for item in groups[gkey]:
+            key = (item["item_type"], item["item_id"], item["field"])
+            if key in done_keys:
+                results.append({"item": key, "status": "already-applied"})
+            else:
+                pending.append(item)
+        if not pending:
             continue
-        if written >= cap:
-            results.append({"item": key, "status": "over-cap (re-run to continue)"})
+        keys = [(i["item_type"], i["item_id"], i["field"]) for i in pending]
+        if capped or written + len(pending) > cap:
+            capped = True
+            for key in keys:
+                results.append({"item": key, "status": "over-cap (re-run to continue)"})
             continue
         try:
-            if item["item_type"] == "video":
-                resp = yt.videos().list(part="snippet", id=item["item_id"]).execute()
-                objs = resp.get("items", [])
-                if not objs:
-                    results.append({"item": key, "status": "missing on channel"})
-                    continue
-                snippet = objs[0]["snippet"]
-                if snippet.get(item["field"], "") != item["old"]:
-                    results.append({"item": key, "status": "drifted - live value "
-                                    "changed since proposal; re-propose"})
-                    continue
-                snippet[item["field"]] = item["new"]
-                yt.videos().update(part="snippet", body={
-                    "id": item["item_id"], "snippet": snippet}).execute()
+            item_type, item_id = gkey
+            if item_type == "video":
+                resp = yt.videos().list(part="snippet", id=item_id).execute()
             else:
-                resp = yt.playlists().list(part="snippet", id=item["item_id"]).execute()
-                objs = resp.get("items", [])
-                if not objs:
+                resp = yt.playlists().list(part="snippet", id=item_id).execute()
+            objs = resp.get("items", [])
+            if not objs:
+                for key in keys:
                     results.append({"item": key, "status": "missing on channel"})
-                    continue
-                snippet = objs[0]["snippet"]
-                if snippet.get(item["field"], "") != item["old"]:
+                continue
+            snippet = objs[0]["snippet"]
+            drifted = [i["field"] for i in pending
+                       if snippet.get(i["field"], "") != i["old"]]
+            if drifted:
+                # Refuse the whole item, not just the drifted field: the
+                # reviewed diff described this item as a unit, and a partial
+                # write would leave it in a state no one reviewed.
+                for key in keys:
                     results.append({"item": key, "status": "drifted - live value "
-                                    "changed since proposal; re-propose"})
-                    continue
-                snippet[item["field"]] = item["new"]
+                                    "changed since proposal (" + ", ".join(drifted)
+                                    + "); re-propose"})
+                continue
+            for i in pending:
+                snippet[i["field"]] = i["new"]
+            if item_type == "video":
+                yt.videos().update(part="snippet", body={
+                    "id": item_id, "snippet": snippet}).execute()
+            else:
                 yt.playlists().update(part="snippet", body={
-                    "id": item["item_id"], "snippet": snippet}).execute()
-            written += 1
-            payload.setdefault("applied_items", []).append(list(key))
+                    "id": item_id, "snippet": snippet}).execute()
+            for key in keys:
+                written += 1
+                done_keys.add(key)
+                payload.setdefault("applied_items", []).append(list(key))
+                results.append({"item": key, "status": "written"})
             _update_changeset(path, payload)
-            results.append({"item": key, "status": "written"})
         except Exception as err:
-            results.append({"item": key, "status": "error: " + str(err)[:200]})
+            for key in keys:
+                results.append({"item": key, "status": "error: " + str(err)[:200]})
     return {"results": [{"item": list(r["item"]) if isinstance(r["item"], tuple)
                          else r["item"], "status": r["status"]} for r in results],
             "written": written, "cap": cap,
@@ -631,7 +663,7 @@ def _handle(msg):
         return {"jsonrpc": "2.0", "id": msg_id, "result": {
             "protocolVersion": proto,
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "yt-mcp", "version": "0.1.2"}}}
+            "serverInfo": {"name": "yt-mcp", "version": "0.1.3"}}}
     if method.startswith("notifications/"):
         return None
     if method == "ping":
