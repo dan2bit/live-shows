@@ -84,6 +84,10 @@ explicitly surfaced, not assumed.
 - **If there is no photo URL, prompt for one** ("got a photo link for it?").
   Accept "none yet" - leave photo_ref blank and add `photo TBD` to notes so a
   later "here's the photo link" update has a hook.
+- **Duplicate-URL check:** if the supplied photo URL already appears on a row
+  for a DIFFERENT item, flag it as a probable paste error and re-confirm
+  before proceeding. A shared URL is correct only within one physical item's
+  signer group.
 - Multi-signer items: one row per signer, shared photo_ref, `same item as
   seq N` in notes.
 
