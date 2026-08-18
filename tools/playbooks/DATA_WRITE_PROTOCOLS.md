@@ -107,8 +107,8 @@ to the required status checks — a deliberate redesign, not a flag flip.
 | Public TSVs (`live_shows_current.tsv`, `live_shows_potential.tsv`, `fast_track.tsv`, `artists.tsv`, etc.) | `staging` | `dan2bit/live-shows` |
 | Private sidecar TSVs (`current_private.tsv`, `potential_private.tsv`, `fast_track_caps.tsv`, `spending.tsv`) | `main` | `dan2bit/live-shows-private` |
 | `index.html` | `staging` | `dan2bit/live-shows` |
-| `app.js`, `recommend.js`, `styles.css` | `staging` (small fixes) or PR branch (logic changes) | `dan2bit/live-shows` |
-| Python / shell scripts | PR branch | `dan2bit/live-shows` |
+| `app.js`, `recommend.js`, `styles.css` | `staging` (small fixes) or PR branch based on `staging` (logic changes) | `dan2bit/live-shows` |
+| Python / shell scripts | PR branch based on `staging`, merged back to `staging` | `dan2bit/live-shows` |
 
 `auto-promote.yml` fires on every push to `staging`, re-runs the private-data guard,
 and fast-forwards `main` if clean. Nothing is pushed to `main` directly.
@@ -163,14 +163,21 @@ point there. This applies at WRITE time to every new comment a session adds. A
 warn-only CI check (#204) backstops drift. `tools/` playbooks (including this
 file) and the private repo are exempt — issue refs there are working shorthand.
 
-**Direct-to-main merges leave `staging` behind — fast-forward it IMMEDIATELY
-(2026-08-17).** When a PR merges to `main` (tool PRs, hotfixes), the damage is
-deferred and silent: nothing errors at merge time, but the NEXT data commit
+**PR branches base on `staging` and merge back into `staging` — never `main`
+(2026-08-17).** Squash+merge then lands on the guarded branch: the push fires
+auto-promote, the private-data guard re-runs over the merged tree, and `main`
+fast-forwards if clean. Under this flow every PR passes through the guard on
+its way to `main`, and `staging` is only ever ephemerally behind `main` (the
+seconds a promote is in flight) — the discarded-commit failure mode below
+cannot open at all.
+
+**If a merge does land directly on `main` anyway** (hotfix, habit), the damage
+is deferred and silent: nothing errors at merge time, but the NEXT data commit
 pushed to the now-stale `staging` diverges it, auto-promote's fast-forward
 fails, and the reset-on-failure handler force-resets `staging` back to `main`
 — **silently discarding the just-pushed commit** (exercised 2026-08-17 with a
 fetch-TSV refresh commit; recovered only because the local clone still held
-it, and the content was regenerable). The post-merge reflex, every time, same
+it, and the content was regenerable). The recovery reflex, every time, same
 sitting as the merge:
 
 ```
@@ -179,8 +186,6 @@ git fetch origin && git push origin origin/main:staging
 
 Sessions should also verify `staging` is not behind `main` before any staging
 write (the API is authoritative — a sandbox `git fetch` can serve stale refs).
-When there is no urgency, basing tool PRs on `staging` avoids opening the gap
-at all.
 
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
