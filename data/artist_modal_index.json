@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-08-21T00:33:18Z",
+"generated_at":"2026-08-21T00:34:08Z",
 "aliases":{
 "billy f gibbons":"billy gibbons",
 "trombone shorty":"trombone shorty orleans avenue",
@@ -36888,7 +36888,10 @@
 "tranche":"mid",
 "raw":122787
 },
-"tier":null,
+"tier":{
+"label":"Medium",
+"rank":2
+},
 "seen":{
 "count":0,
 "first":null,
@@ -36896,7 +36899,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.158,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"absent",
