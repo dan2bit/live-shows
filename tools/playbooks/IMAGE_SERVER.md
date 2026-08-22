@@ -10,8 +10,8 @@ Operational runbook for the still-photo **image server** — the Immich instance
 - **DNS:** Cloudflare (free plan).
 - **Registrar:** Cloudflare Registrar. Registered 2026-08-19 through **2027-08-20**, auto-renew **ON**. Billing alerts → `redhat.bootlegs@gmail.com`.
 - **Records:**
-  - `www` / apex → GitHub Pages (the live-shows site). Keep these **DNS-only (grey cloud)** so Pages can provision its own HTTPS cert without Cloudflare intercepting the ACME challenge.
-  - `photos.redhat-bootlegs.net` → the Immich pod. **Planned, not yet wired** — Immich is currently reached at its default PikaPods URL (below). When wired, CNAME to the pod (proxied is fine for a managed pod).
+  - `www` / apex → GitHub Pages (the live-shows site). **Not yet wired** — the site still serves at the default `dan2bit.github.io` Pages URL. When wired, keep these **DNS-only (grey cloud)** so Pages can provision its own HTTPS cert without Cloudflare intercepting the ACME challenge.
+  - `photos.redhat-bootlegs.net` → the Immich pod. **Live** (2026-08-22): CNAME to `natural-dodo.pikapod.net`, **DNS-only (grey cloud)**, registered as a custom domain in the PikaPods pod settings (PikaPods issues the Let's Encrypt cert). Grey cloud is required — PikaPods' domain verification and cert issuance need the CNAME visible in DNS and traffic hitting the pod directly; a proxied (orange) record masks the CNAME and breaks both. Add the Cloudflare record **first**, then add the domain in PikaPods (it verifies the CNAME at add-time).
 
 ## Hosting — PikaPods
 
@@ -24,11 +24,13 @@ Operational runbook for the still-photo **image server** — the Immich instance
 ## Immich
 
 - **Version:** v3.1.0 (as of 2026-08-22)
-- **Server base URL (API/CLI):** `https://natural-dodo.pikapod.net` — base only, **no** `/photos` and **no** `/api` suffix (the tools append `/api` themselves; a browser redirects `/` → `/photos`, which is normal).
+- **Public URL (canonical, for image links):** `https://photos.redhat-bootlegs.net`
+- **Server base URL (API/CLI):** the custom domain or `https://natural-dodo.pikapod.net` both work — base only, **no** `/photos` and **no** `/api` suffix (tools append `/api` themselves; a browser redirects `/` → `/auth/login` when signed out, or `/photos` when signed in — both normal). Prefer the custom domain as the canonical host so links written into the show library sit on the stable hostname.
 - **Admin user:** `dan2bit@gmail.com`
 - **Admin password:** password manager (not stored here).
 - **Storage template:** enabled — `{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}` (date-keyed on capture time; albums and tags live in the database, never in the file path, so multi-homing a photo across albums/tags is unaffected).
 - **Mobile capture:** the Immich app on the Pixel runs **alongside** Google Photos (non-destructive, reads the same `DCIM/Camera` storage), scoped to the show-stills device album. It uploads the on-device original, so keep originals on the phone (don't let Google "free up space" purge them before backup).
+- **Server Storage widget:** the TiB figure reflects the shared PikaPods **host disk**, not your data or quota — ignore it. Real per-user usage is under Administration → Server Stats; your capacity limit is the pod's storage allocation in the PikaPods dashboard.
 
 ## API key (for immich-go / automation)
 
@@ -60,7 +62,7 @@ Operational runbook for the still-photo **image server** — the Immich instance
   ```
   export IMMICH_API_KEY='...'      # never commit
   immich-go upload from-google-photos \
-    --server=https://natural-dodo.pikapod.net \
+    --server=https://photos.redhat-bootlegs.net \
     --api-key="$IMMICH_API_KEY" \
     --include-type=IMAGE \
     --include-partner=false --include-trashed=false \
@@ -69,6 +71,15 @@ Operational runbook for the still-photo **image server** — the Immich instance
 
 - `--include-type=IMAGE` keeps bootleg videos out (those live on YouTube). Captions and Google album membership are carried across from the `*.supplemental-metadata.json` sidecars.
 - **Log file:** `~/Library/Caches/immich-go/immich-go_<timestamp>.log`
+
+## Post-import: drain the Jobs queue
+
+immich-go pauses Thumbnail Generation, Metadata Extraction, Face Detection, and Smart Search during the import and resumes them at the end. On a small pod they backlog and drain slowly — expect "Error Loading Image" grid tiles and wrong aspect ratios until they finish (the originals still open; only the derived thumbnails/metadata lag).
+
+- Watch progress at Administration → **Jobs**. Let Thumbnail Generation and Metadata Extraction drain to 0 waiting.
+- Don't hit **Clear** (wipes the queue) or **Pause**, and don't queue **All** on top of a running backlog.
+- Once those two are clean, run **Face Detection** then **Smart Search** (they enable search and the artist/portrait face-clustering).
+- A *failed* count (vs. a backlog) signals the pod is underpowered — consider a memory bump.
 
 ## Secrets — do not commit
 
