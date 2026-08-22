@@ -7,7 +7,8 @@ Operational runbook for the still-photo **image server** — the Immich instance
 ## Domain & DNS
 
 - **Registered domain:** `redhat-bootlegs.net`
-- **DNS:** Cloudflare (free plan). Registrar: Cloudflare Registrar per the setup plan — confirm the registrar of record.
+- **DNS:** Cloudflare (free plan).
+- **Registrar:** Cloudflare Registrar. Registered 2026-08-19 through **2027-08-20**, auto-renew **ON**. Billing alerts → `redhat.bootlegs@gmail.com`.
 - **Records:**
   - `www` / apex → GitHub Pages (the live-shows site). Keep these **DNS-only (grey cloud)** so Pages can provision its own HTTPS cert without Cloudflare intercepting the ACME challenge.
   - `photos.redhat-bootlegs.net` → the Immich pod. **Planned, not yet wired** — Immich is currently reached at its default PikaPods URL (below). When wired, CNAME to the pod (proxied is fine for a managed pod).
@@ -17,8 +18,8 @@ Operational runbook for the still-photo **image server** — the Immich instance
 - **Provider:** PikaPods (managed open-source app hosting — no Docker/tunnel to run ourselves; a public HTTPS URL comes with the pod).
 - **App:** Immich
 - **Pod URL:** `https://natural-dodo.pikapod.net`
-- **Account / billing email:** see password manager.
-- **Billing:** resource-based, ~$5.50/mo base at photos-only scale (storage is trivial for this library). Charges are tracked in the private repo → `hosting_costs.tsv`.
+- **Account / billing email:** see password manager. Billing alerts → `dan2bit@gmail.com`.
+- **Billing:** resource-based, ~$5.50/mo base at photos-only scale (storage is trivial for this library), drawn down from a **prepaid balance with no auto top-off** — the balance can run dry silently, so watch the low-balance alerts. Charges are tracked in the private repo → `hosting_costs.tsv`.
 
 ## Immich
 
@@ -33,16 +34,23 @@ Operational runbook for the still-photo **image server** — the Immich instance
 
 - **The value is not stored here or in any committed file — by design.** It lives only in the operator's environment as `IMMICH_API_KEY` (exported in the shell for a run). Recover from the password manager if lost, or rotate (below).
 - **Key label:** `immich-go import`
-- **Scopes granted** (least-privilege for the import job):
-  - `asset.upload`, `asset.read`, `asset.update`
+- **Scopes granted** — the verified full set a *default* `immich-go upload from-google-photos` run needs:
+  - `asset.upload`, `asset.read`, `asset.update`, `asset.copy`
   - `album.create`, `album.read`, `album.update`
   - `albumAsset.create`
+  - `tag.create`, `tag.asset`
+  - `stack.create`
   - `job.create`
   - `server.about`, `user.read`
-  - (`asset.update` is required — immich-go PUTs the sidecar caption/date onto each asset after upload; without it the run 403s and stops.)
+- **Why the non-obvious ones** (each caused a 403 that halted the run until granted):
+  - `asset.update` — immich-go PUTs the sidecar caption/date onto each asset after upload.
+  - `asset.copy` — edited-version / duplicate handling (replaces the deprecated `replaceAsset`).
+  - `tag.create` + `tag.asset` — the default `--takeout-tag` / `--people-tag` behavior tags assets on import.
+  - `stack.create` — stacks burst and `-edited` pairs (default `--manage-*` behavior).
+  - `job.create` — pauses/resumes server jobs around the import.
 - **Where to manage it:** Immich → avatar (top-right) → **Account Settings** → **API Keys** (or `/user-settings`). This is a *personal* setting, not the Administration panel.
 - **Rotation:** editing a key's scopes in place does **not** change the token; deleting and recreating **does**. To rotate, delete the key, create a new one with the same scopes, and update `IMMICH_API_KEY` in the local environment.
-- **Future automation key:** when the `photos` module / Immich MCP is built (#294), mint a **separate** key scoped to `tag.*` + `sharedLink.create`, keeping this import key import-only.
+- **Future automation key:** when the `photos` module / Immich MCP is built (#294), mint a **separate** key scoped to `sharedLink.create` (plus `tag.*` if it re-tags), keeping this import key import-only.
 
 ## Seed migration (Google Photos → Immich)
 
