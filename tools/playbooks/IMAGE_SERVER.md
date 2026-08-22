@@ -29,8 +29,24 @@ Operational runbook for the still-photo **image server** — the Immich instance
 - **Admin user:** `dan2bit@gmail.com`
 - **Admin password:** password manager (not stored here).
 - **Storage template:** enabled — `{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}` (date-keyed on capture time; albums and tags live in the database, never in the file path, so multi-homing a photo across albums/tags is unaffected).
-- **Mobile capture:** the Immich app on the Pixel runs **alongside** Google Photos (non-destructive, reads the same `DCIM/Camera` storage), scoped to the show-stills device album. It uploads the on-device original, so keep originals on the phone (don't let Google "free up space" purge them before backup).
 - **Server Storage widget:** the TiB figure reflects the shared PikaPods **host disk**, not your data or quota — ignore it. Real per-user usage is under Administration → Server Stats; your capacity limit is the pod's storage allocation in the PikaPods dashboard.
+
+## Mobile capture — manual upload
+
+The Immich app on the Pixel runs **alongside** Google Photos (non-destructive; both read the same on-device storage). We deliberately do **not** use auto-backup, because:
+
+- Immich has **no photos-only option** — auto-backup is per device *album* and uploads videos too, and concert video belongs on YouTube, not here.
+- The app sees **on-device folders** (Camera, Screenshots), **not** Google Photos cloud albums (e.g. "Player Portraits"), so there's no clean way to auto-select just the curated stills.
+
+Instead, upload curated stills **manually, per show**:
+
+1. App → **Library → "On this device"** → open the local album (Camera).
+2. Select just the keeper stills for that show.
+3. Tap **Upload** in the bottom menu.
+
+Notes: grant Android **"Allow all"** photos/videos permission (not "Selected"), or the app can't see the roll. Immich uploads the **on-device original**, so keep originals on the phone — don't let Google "free up space" purge them first. This manual step will fold into the **photo-reminder workflow rewrite** (#294): the per-show reminder will prompt the upload and then capture the resulting Immich link into the show library.
+
+_Ref: Immich mobile app docs — <https://docs.immich.app/features/mobile-app/>_
 
 ## API key (for immich-go / automation)
 
