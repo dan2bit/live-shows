@@ -68,7 +68,39 @@ _Ref: Immich mobile app docs — <https://docs.immich.app/features/mobile-app/>_
   - `job.create` — pauses/resumes server jobs around the import.
 - **Where to manage it:** Immich → avatar (top-right) → **Account Settings** → **API Keys** (or `/user-settings`). This is a *personal* setting, not the Administration panel.
 - **Rotation:** editing a key's scopes in place does **not** change the token; deleting and recreating **does**. To rotate, delete the key, create a new one with the same scopes, and update `IMMICH_API_KEY` in the local environment.
-- **Future automation key:** when the `photos` module / Immich MCP is built (#294), mint a **separate** key scoped to `sharedLink.create` (plus `tag.*` if it re-tags), keeping this import key import-only.
+- **Automation key:** the `photos` module uses a **separate least-privilege key** — see the next section. This import key stays import-only.
+
+## Automation key + `photos` module
+
+The repo's Immich tooling is `tools/photos/immich.py` — a stdlib-only REST wrapper + CLI (mirrors the `tools/youtube` pattern). It reads `IMMICH_API_KEY` (and optionally `IMMICH_URL`) from the environment or `tools/photos/.env` (gitignored via the global `.env` rule). The canonical public host is the built-in default URL.
+
+### Key scopes (label: `photos automation`)
+
+Read/search core: `asset.read` (metadata search, asset detail, OCR read), `asset.view` (thumbnail bytes for visual ID), `server.about` (verify smoke-test).
+Tags: `tag.create`, `tag.read`, `tag.asset`, plus `tag.update`/`tag.delete` for taxonomy cleanup (droppable for a tighter key).
+Albums: `album.create`, `album.read`, `albumAsset.create`, plus optional `album.update`.
+Shared links: `sharedLink.create`, `sharedLink.read` (list-before-mint keeps re-runs from duplicating links).
+People/faces: `person.read`; add `face.read` only if person-asset reads 403 without it.
+
+**Deliberately excluded:** `asset.upload`, `asset.update`, `asset.copy`, `asset.delete`, `stack.create`, `job.create`, `sharedLink.update`/`delete`, and all admin scopes — this key can classify, collect, and link but can never modify or destroy a photo. Server job runs (OCR/faces backfill) go through the Admin → Jobs UI, not this key.
+
+### Module quick reference
+
+```
+export IMMICH_API_KEY='...'                       # never commit
+python3 tools/photos/immich.py verify              # version + key smoke-test
+python3 tools/photos/immich.py tags --bootstrap    # seed kind/, memorabilia/, signed
+python3 tools/photos/immich.py search --taken-after 2026-03-11T00:00:00.000Z --taken-before 2026-03-11T23:59:59.999Z
+python3 tools/photos/immich.py thumb <asset-id> --out /tmp/peek.jpg
+python3 tools/photos/immich.py ocr <asset-id>
+python3 tools/photos/immich.py tag artist/sue-foley <asset-id> ...
+python3 tools/photos/immich.py link --assets <id> [<id> ...]
+python3 tools/photos/immich.py seed-crosswalk      # backfill working file
+```
+
+- **Shared-link defaults:** `allowDownload=true`, `showMetadata=false`, no expiry — viewers can save photos, but capture time/device/location EXIF stays private (parity with the old Google Photos shares).
+- **Taxonomy:** `tags --bootstrap` creates the standard facets — `kind/{with-artist,performance,memorabilia,selfie,crowd}`, `memorabilia/{setlist,cd,vinyl,poster,pick,ticket,autograph-book,photo-print,hat,other}`, and flat `signed`. Hat detail is a memorabilia subtype, not a kind. `show/<year>/<date>`, `artist/<slug>`, and `venue/<slug>` tags are created on demand via `tag`/`--ensure` (slugs must match the show-library slug rules).
+- **Crosswalk seeding:** `seed-crosswalk` enumerates every Google Photos link across `data/show_goals/artist-photos.tsv`, `data/live_shows_current.tsv`, `data/history/*.tsv`, and `data/show_goals/item_log.tsv` into `tools/photos/backfill_crosswalk.tsv` — one row per distinct link (shared links merge their sources), existing rows always preserved so confirmed matches are never re-litigated. `--no-immich` seeds offline; with the key set it also prefills same-day capture-date candidates.
 
 ## Seed migration (Google Photos → Immich)
 
@@ -94,7 +126,7 @@ immich-go pauses Thumbnail Generation, Metadata Extraction, Face Detection, and 
 
 - Watch progress at Administration → **Jobs**. Let Thumbnail Generation and Metadata Extraction drain to 0 waiting.
 - Don't hit **Clear** (wipes the queue) or **Pause**, and don't queue **All** on top of a running backlog.
-- Once those two are clean, run **Face Detection** then **Smart Search** (they enable search and the artist/portrait face-clustering).
+- Once those two are clean, run **Face Detection** then **Smart Search** (they enable search and the artist/portrait face-clustering). Then run **OCR** with **Missing** — auto-OCR only covers new uploads, so the imported batch needs this one-time pass before OCR search/read returns anything for it.
 - A *failed* count (vs. a backlog) signals the pod is underpowered — consider a memory bump.
 
 ## Secrets — do not commit
