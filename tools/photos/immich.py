@@ -78,10 +78,12 @@ FLAT_TAGS = ["signed"]
 
 def _load_env_file():
     """Tiny KEY=VALUE reader for tools/photos/.env (gitignored). No dependency
-    on python-dotenv; values already in the environment win."""
+    on python-dotenv; values already in the environment win. Returns the
+    file's values so callers can detect shadowing."""
     path = os.path.join(_SCRIPT_DIR, ".env")
+    file_vals = {}
     if not os.path.exists(path):
-        return
+        return file_vals
     with open(path, encoding="utf-8") as f:
         for ln in f:
             ln = ln.strip()
@@ -89,11 +91,18 @@ def _load_env_file():
                 continue
             key, _, val = ln.partition("=")
             key, val = key.strip(), val.strip().strip("'\"")
+            file_vals[key] = val
             os.environ.setdefault(key, val)
+    return file_vals
+
+
+KEY_SOURCE = "unset"
 
 
 def _config():
-    _load_env_file()
+    global KEY_SOURCE
+    from_shell = bool(os.environ.get("IMMICH_API_KEY"))
+    file_vals = _load_env_file()
     url = os.environ.get("IMMICH_URL", DEFAULT_URL).rstrip("/")
     key = os.environ.get("IMMICH_API_KEY", "")
     if not key:
@@ -101,6 +110,13 @@ def _config():
             "IMMICH_API_KEY is not set (environment or tools/photos/.env). "
             "The key lives in the password manager; see "
             "tools/playbooks/IMAGE_SERVER.md")
+    if from_shell:
+        KEY_SOURCE = "shell environment"
+        file_key = file_vals.get("IMMICH_API_KEY", "")
+        if file_key and file_key != key:
+            KEY_SOURCE += " (SHADOWING a different key in tools/photos/.env - unset IMMICH_API_KEY to use the file)"
+    else:
+        KEY_SOURCE = "tools/photos/.env"
     return url, key
 
 
@@ -471,6 +487,7 @@ def main():
         named = people()
         _print({"server": info.get("version", info),
                 "reachable": True,
+                "key_source": KEY_SOURCE,
                 "named_people": len(named),
                 "albums": len(albums()),
                 "tags": len(tags())})
