@@ -37,6 +37,7 @@ the csv module (default quoting corrupts fields containing literal quotes).
 import argparse
 import json
 import os
+import ssl
 import sys
 import urllib.error
 import urllib.parse
@@ -105,7 +106,24 @@ def _config():
 
 # ── HTTP ───────────────────────────────────────────────────────────────────
 
+def _ssl_context():
+    """macOS pythons often lack a system CA store for urllib; prefer certifi's
+    bundle when it is importable (it rides in with the youtube tooling's
+    dependencies), else fall back to the platform default."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
+_SSL_CTX = None
+
+
 def _req(method, path, body=None, raw=False, query=None):
+    global _SSL_CTX
+    if _SSL_CTX is None:
+        _SSL_CTX = _ssl_context()
     url_base, key = _config()
     url = url_base + "/api" + path
     if query:
@@ -117,7 +135,7 @@ def _req(method, path, body=None, raw=False, query=None):
         headers["Content-Type"] = "application/json"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=60, context=_SSL_CTX) as resp:
             payload = resp.read()
     except urllib.error.HTTPError as err:
         detail = err.read().decode("utf-8", "replace")[:400]
@@ -126,7 +144,11 @@ def _req(method, path, body=None, raw=False, query=None):
             "(403 usually means the automation key lacks a permission - "
             "see the scope list in tools/playbooks/IMAGE_SERVER.md)")
     except urllib.error.URLError as err:
-        raise SystemExit(f"cannot reach the image server at {url_base}: {err.reason}")
+        hint = ""
+        if "CERTIFICATE_VERIFY_FAILED" in str(err.reason):
+            hint = ("\n(no usable CA store - pip install certifi into this "
+                    "environment, or export SSL_CERT_FILE=$(python3 -m certifi))")
+        raise SystemExit(f"cannot reach the image server at {url_base}: {err.reason}{hint}")
     if raw:
         return payload
     if not payload:
