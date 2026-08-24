@@ -74,6 +74,8 @@ _Ref: Immich mobile app docs — <https://docs.immich.app/features/mobile-app/>_
 
 The repo's Immich tooling is `tools/photos/immich.py` — a stdlib-only REST wrapper + CLI (mirrors the `tools/youtube` pattern). It reads `IMMICH_API_KEY` (and optionally `IMMICH_URL`) from the environment or `tools/photos/.env` (gitignored via the global `.env` rule). The canonical public host is the built-in default URL.
 
+> **Key precedence gotcha:** a value already exported in the shell **wins over `tools/photos/.env`** — a stale `export IMMICH_API_KEY` from an immich-go session silently answers with the import key's scopes. `verify` reports `key_source` and flags shadowing explicitly; `unset IMMICH_API_KEY` to fall back to the file.
+
 ### Key scopes (label: `photos automation`)
 
 Read/search core: `asset.read` (metadata search, asset detail, OCR read), `asset.view` (thumbnail bytes for visual ID), `server.about` (verify smoke-test).
@@ -127,6 +129,7 @@ immich-go pauses Thumbnail Generation, Metadata Extraction, Face Detection, and 
 - Watch progress at Administration → **Jobs**. Let Thumbnail Generation and Metadata Extraction drain to 0 waiting.
 - Don't hit **Clear** (wipes the queue) or **Pause**, and don't queue **All** on top of a running backlog.
 - Once those two are clean, run **Face Detection** then **Smart Search** (they enable search and the artist/portrait face-clustering). Then run **OCR** with **Missing** — auto-OCR only covers new uploads, so the imported batch needs this one-time pass before OCR search/read returns anything for it.
+- **Two "minimum faces" settings exist and BOTH matter** (field-found): Administration → Machine Learning → Facial Recognition → *Minimum recognized faces* governs **clustering** (which person records get created), while the per-user **Account Settings → Features → People → Minimum Faces** (default 3) governs which people the People page and `GET /people` **display**. Singleton artist clusters — a face seen in only one photo, common for one-shot artist photos — need **both set to 1**. With only the admin setting lowered, single-face people exist (visible in each photo's info panel, counted in the API's `total`) but vanish from every listing. When re-clustering after a threshold change, run Facial Recognition with **All** (Missing skips already-processed faces); never **Reset** on Face Detection — it wipes face data including named people.
 - A *failed* count (vs. a backlog) signals the pod is underpowered — consider a memory bump.
 
 ## Secrets — do not commit
