@@ -71,7 +71,7 @@ Goal eligibility files (`hat_eligibility.tsv`, `autograph_books_eligibility.tsv`
 
 `main` requires the `guard` CI status check. **Do not push directly to `main` via MCP — it will be rejected.** All MCP data commits go to `staging`; `auto-promote.yml` fast-forwards `main` after the guard passes.
 
-**`push_files` quirk:** `push_files` (multi-file Git Data API) does **not** fire the `push` trigger on `staging` and therefore does **not** auto-promote. After a `push_files` call, follow up with a single-file `create_or_update_file` nudge commit to `staging` to trigger promotion — or use sequential `create_or_update_file` calls instead.
+**`push_files` promotes normally:** the multi-file Git Data API fires the `push` trigger on `staging` like any other push — batches auto-promote with no follow-up commit (verified 2026-08-24).
 
 ### File-type rules
 
