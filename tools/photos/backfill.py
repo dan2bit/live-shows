@@ -369,6 +369,31 @@ def cmd_enrich(args):
             if tag not in signals:
                 signals.append(tag)
 
+        # OCR candidate discovery (memorabilia): a row with no candidates has
+        # nothing to examine - the batch-import EXIF blocked date seeding and
+        # object photos carry no faces, so no other signal can propose assets.
+        # The signer's name is usually printed or signed on the item itself,
+        # so a server-side OCR text search proposes the candidate set; the
+        # song-title match below then confirms and dates it.
+        if is_item and not candidates and not args.no_ocr and artists:
+            queries = []
+            for artist in artists:
+                queries.append(artist)
+                surname = artist.split()[-1]
+                if len(surname) > 3 and surname != artist:
+                    queries.append(surname)
+            for q in queries:
+                try:
+                    hits = immich.ocr_search(q)
+                except SystemExit:
+                    break
+                ids = [h.get("id") for h in hits if h.get("id")]
+                if ids:
+                    candidates = ids[:12]
+                    if "ocr-name" not in signals:
+                        signals.append("ocr-name")
+                    break
+
         # OCR signal (memorabilia): song titles recover the show
         if is_item and candidates and songs and not args.no_ocr:
             for cand in candidates[:4]:
