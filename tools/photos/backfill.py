@@ -259,6 +259,46 @@ def _ocr_text(asset_id):
     return str(payload or "")
 
 
+# The server has no OCR search endpoint (POST /search/ocr 404s on this
+# version), so memorabilia candidate discovery sweeps the landed album(s)
+# with per-asset ocr() calls instead. The sweep result is cached locally -
+# the corpus is stable (the batch import is done) and re-fetching a hundred
+# OCR payloads per run would be pure waste. Delete the cache file to force
+# a re-sweep after new uploads or an OCR job re-run.
+_OCR_CACHE = os.path.join(_SCRIPT_DIR, ".ocr_cache.json")
+_MEMORABILIA_ALBUM_HINTS = ("memorabilia", "hat detail")
+
+
+def _memorabilia_ocr_corpus():
+    """asset_id -> normalized OCR text for every asset in the memorabilia
+    landed album(s), cached in .ocr_cache.json (gitignored)."""
+    cache = {}
+    if os.path.exists(_OCR_CACHE):
+        with open(_OCR_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    album_ids = [a["id"] for a in immich.albums()
+                 if any(h in (a.get("albumName") or "").lower()
+                        for h in _MEMORABILIA_ALBUM_HINTS)]
+    if not album_ids:
+        print("warning: no memorabilia album found on the server - "
+              "OCR candidate discovery disabled", file=sys.stderr)
+        return cache
+    fetched = 0
+    for aid in album_ids:
+        for asset in immich.search_metadata(album_id=aid):
+            asset_id = asset["id"]
+            if asset_id in cache:
+                continue
+            cache[asset_id] = _norm_text(_ocr_text(asset_id))
+            fetched += 1
+    if fetched:
+        with open(_OCR_CACHE, "w", encoding="utf-8") as f:
+            json.dump(cache, f)
+        print(f"note: OCR'd {fetched} memorabilia asset(s) into the local "
+              "cache", file=sys.stderr)
+    return cache
+
+
 def _item_log_index():
     """seq -> (signer, show_date) from the item log, so an item_log crosswalk
     row (whose source carries only the seq) still yields artist and date."""
@@ -324,6 +364,7 @@ def cmd_enrich(args):
 
     songs = {} if args.no_ocr else _catalog_songs_by_artist()
     item_index = _item_log_index()
+    corpus = None  # built lazily on the first candidate-less item row
 
     lifted = kept = 0
     for row in rows:
@@ -373,31 +414,31 @@ def cmd_enrich(args):
         # nothing to examine - the batch-import EXIF blocked date seeding and
         # object photos carry no faces, so no other signal can propose assets.
         # The signer's name is usually printed or signed on the item itself,
-        # so a server-side OCR text search proposes the candidate set; the
-        # song-title match below then confirms and dates it.
+        # so scan the memorabilia OCR corpus for it; the song-title match
+        # below then confirms and dates the proposal.
         if is_item and not candidates and not args.no_ocr and artists:
-            queries = []
+            if corpus is None:
+                corpus = _memorabilia_ocr_corpus()
+            terms = []
             for artist in artists:
-                queries.append(artist)
+                terms.append(_norm_text(artist))
                 surname = artist.split()[-1]
                 if len(surname) > 3 and surname != artist:
-                    queries.append(surname)
-            for q in queries:
-                try:
-                    hits = immich.ocr_search(q)
-                except SystemExit:
-                    break
-                ids = [h.get("id") for h in hits if h.get("id")]
-                if ids:
-                    candidates = ids[:12]
-                    if "ocr-name" not in signals:
-                        signals.append("ocr-name")
-                    break
+                    terms.append(_norm_text(surname))
+            hits = [aid for aid, text in (corpus or {}).items()
+                    if text and any(t and t in text for t in terms)]
+            if hits:
+                candidates = hits[:12]
+                if "ocr-name" not in signals:
+                    signals.append("ocr-name")
 
         # OCR signal (memorabilia): song titles recover the show
         if is_item and candidates and songs and not args.no_ocr:
             for cand in candidates[:4]:
-                text = _norm_text(_ocr_text(cand))
+                if corpus and cand in corpus:
+                    text = corpus[cand]
+                else:
+                    text = _norm_text(_ocr_text(cand))
                 if len(text) < 12:
                     continue
                 for artist in artists:
