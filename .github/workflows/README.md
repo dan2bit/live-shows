@@ -18,8 +18,6 @@ auto-promote is *wanted*. Each bot's output file is excluded from its own
 trigger paths, so promotion back to `main` does not retrigger it.
 
 Writing via MCP: push to `staging` and let `auto-promote` carry it to `main`.
-A multi-file Git Data API commit (`push_files`) does not fire the `push`
-trigger; use a single-file `create_or_update_file` commit to nudge promotion.
 
 The issue numbers and incident history behind these designs are logged in
 [`docs/ISSUE_LOG.md`](../../docs/ISSUE_LOG.md).
