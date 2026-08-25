@@ -49,7 +49,7 @@ Commit rules (for any file writes in this session):
 - Private sidecar TSVs → dan2bit/live-shows-private main directly
 - Scripts and code → PR branch; Dan merges
 - `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
-- Auto-promote trigger: the **Contents API** (`create_or_update_file`) fires the `push` event and promotes staging to main. The **Git Data API** (`push_files`, or a manual blobs → tree → commit → ref sequence) does not. After any Git Data batch, follow up with a single-file Contents write — ideally a real change rather than a synthetic nudge.
+- Auto-promote trigger: both the **Contents API** (`create_or_update_file`) and the **Git Data API** (`push_files`) fire the `push` event on staging — single writes and batches promote to main with no follow-up commit (verified 2026-08-24).
 - **ASCII punctuation only in every TSV value** (#204): `-` not an en/em dash, straight quotes not curly, `...` not an ellipsis. Curly punctuation silently orphans sidecar keys, goal-badge matches, and alias lookups. Accented letters are fine — this is a punctuation rule, not an ASCII-only rule.
 
 Active strategic threads:
