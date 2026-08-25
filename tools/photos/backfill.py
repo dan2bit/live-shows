@@ -193,39 +193,47 @@ def cmd_drift(args):
 
 # ── enrich ─────────────────────────────────────────────────────────────────
 
+# Channel video-title grammar: `<Artist> LIVE - <Song> (bootleg)[ trailer]`
+# (legacy `(bootleg - qualifier)` variants share the same anchor). The catalog
+# TSV has no artist column - both artist and song live inside the title.
+_CATALOG_TITLE_RE = re.compile(
+    r"^(?P<artist>.+?)\s+LIVE\s*-\s*(?P<song>.+?)\s*\(bootleg", re.I)
+_DESC_ISO_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_DESC_US_DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2})\b")
+
+
 def _catalog_songs_by_artist():
-    """Song titles from the bootleg catalog TSV, keyed by canonical artist.
-    Column names are detected from the header so a schema tweak upstream
-    degrades to a warning, not a crash. Song = title text before the
-    `(bootleg)` marker, per the channel title grammar."""
+    """(song, show_date) pairs from the bootleg catalog TSV, keyed by
+    normalized artist. Artist and song are parsed from the video title per
+    the channel grammar; the show date comes from the description slug
+    (ISO or M/D/YY), falling back to blank - never the upload date, which
+    can trail the show by days."""
     rows = _read_rows("tools/youtube/youtube_videos.tsv")
-    if not rows:
-        return {}
-    header = list(rows[0].keys())
-
-    def find(*needles):
-        for col in header:
-            low = col.lower()
-            if any(n in low for n in needles):
-                return col
-        return None
-
-    title_col = find("title")
-    artist_col = find("artist")
-    date_col = find("show date", "date")
-    if not (title_col and artist_col):
-        print("warning: could not locate title/artist columns in "
-              "youtube_videos.tsv - OCR song matching disabled", file=sys.stderr)
-        return {}
-
-    out = {}
+    out, unparsed = {}, 0
     for row in rows:
-        title = (row.get(title_col) or "")
-        song = title.split("(bootleg)")[0].strip()
-        artist = (row.get(artist_col) or "").strip()
-        date = (row.get(date_col) or "").strip()[:10] if date_col else ""
-        if song and artist:
-            out.setdefault(goal_norm(artist), []).append((song, date))
+        m = _CATALOG_TITLE_RE.match(row.get("title") or "")
+        if not m:
+            unparsed += 1
+            continue
+        desc = row.get("description") or ""
+        date = ""
+        iso = _DESC_ISO_DATE_RE.search(desc)
+        if iso:
+            date = iso.group(1)
+        else:
+            us = _DESC_US_DATE_RE.search(desc)
+            if us:
+                mo, dy, yr = (int(us.group(1)), int(us.group(2)),
+                              2000 + int(us.group(3)))
+                date = f"{yr:04d}-{mo:02d}-{dy:02d}"
+        out.setdefault(goal_norm(m.group("artist")), []).append(
+            (m.group("song").strip(), date))
+    if rows and not out:
+        print("warning: no youtube_videos.tsv title matched the channel "
+              "grammar - OCR song matching disabled", file=sys.stderr)
+    elif unparsed:
+        print(f"note: {unparsed} catalog title(s) did not match the channel "
+              "grammar (legacy or non-song uploads) - skipped", file=sys.stderr)
     return out
 
 
@@ -314,7 +322,7 @@ def cmd_enrich(args):
         if resolved:
             person_by_artist.setdefault(goal_norm(resolved), []).append(person["id"])
 
-    songs = _catalog_songs_by_artist()
+    songs = {} if args.no_ocr else _catalog_songs_by_artist()
     item_index = _item_log_index()
 
     lifted = kept = 0
