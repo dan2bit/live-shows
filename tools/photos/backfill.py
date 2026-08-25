@@ -81,12 +81,23 @@ def _read_rows(relpath):
 
 
 def _canonical_artists():
-    """Canonical artist names from artists.tsv, keyed by goal_norm."""
-    out = {}
-    for row in _read_rows("data/artists.tsv"):
-        name = (row.get("Artist") or "").strip()
-        if name:
-            out[goal_norm(name)] = name
+    """Canonical artist names from artists.tsv, keyed by every automatic
+    spelling variant — not just the literal row spelling. The variant rules
+    (drop trailing " Band", de-invert "X, The") only expand a name they see,
+    so a person named "Ally Venable" can never generate "Ally Venable Band";
+    the expansion has to happen on the canonical side too, or the resolver
+    only works in one direction. Primary keys win on collision so a variant
+    of one artist can never shadow another artist's own spelling."""
+    rows = [(row.get("Artist") or "").strip()
+            for row in _read_rows("data/artists.tsv")]
+    primary = {goal_norm(name): name for name in rows if name}
+    out = dict(primary)
+    for name in rows:
+        if not name:
+            continue
+        for vk in variant_keys(name):
+            if vk not in primary:
+                out.setdefault(vk, name)
     return out
 
 
@@ -112,7 +123,9 @@ def _resolve_artist(name, canon, aliases):
     (canonical_name, how) or (None, None)."""
     key = goal_norm(name)
     if key in canon:
-        return canon[key], "exact"
+        resolved = canon[key]
+        how = "exact" if goal_norm(resolved) == key else "variant"
+        return resolved, how
     if key in aliases:
         target = goal_norm(aliases[key])
         if target in canon:
