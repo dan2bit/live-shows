@@ -47,6 +47,12 @@ tools/youtube/manifests/
 # keeping is the applied result on the channel itself.
 tools/youtube/.changesets/
 
+# Memorabilia OCR corpus cache for the photo backfill. Local working file —
+# the server has no OCR search endpoint, so backfill.py sweeps the landed
+# album once and caches the recognized text here. Delete to force a re-sweep
+# after new uploads or an OCR job re-run.
+tools/photos/.ocr_cache.json
+
 # Editor
 .vscode/
 .idea/
