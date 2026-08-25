@@ -370,8 +370,7 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 - `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
 
 **Commit `live_shows_current.tsv` and `artists.tsv` together in one `push_files` call**
-(plus any of the `show_goals` files above touched this run), then follow with a
-single-file `create_or_update_file` nudge commit to trigger promotion — per
+(plus any of the `show_goals` files above touched this run) — per
 `DATA_WRITE_PROTOCOLS.md` → "Multi-file same-show commits." Do **not** commit
 `live_shows_current.tsv` and `artists.tsv` as two separate sequential
 `create_or_update_file` calls: on 2026-07-19 that sequencing let the `artists.tsv`

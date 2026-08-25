@@ -29,10 +29,8 @@ Workflow files (`.github/workflows/*.yml`):
 - Correct handoff: patch the file locally, verify with the relevant checkers, present the **full file** for check-in, and give Dan the exact commit command. Never present a fragment or a diff alone for a workflow file.
 
 Auto-promote trigger — which API fires the `push` event:
-- **Contents API** (`create_or_update_file`, `PUT /repos/.../contents/...`) fires `push` → auto-promote runs → main fast-forwards. This is the reliable path for a single-file data write.
-- **Git Data API** (`push_files`, and any manual blobs → tree → commit → ref-update sequence) does **not** fire `push`, so a batch committed this way sits on staging unpromoted.
-- A real `git push` from a local clone fires it normally.
-- So: after any Git Data batch, follow up with a single-file Contents write to trigger promotion — ideally a genuine change rather than a synthetic nudge. Or use sequential `create_or_update_file` calls instead of a batch for data writes.
+- The **Contents API** (`create_or_update_file`, `PUT /repos/.../contents/...`), the **Git Data API** (`push_files` and manual blobs → tree → commit → ref-update sequences), and a real `git push` from a local clone all fire `push` → auto-promote runs → main fast-forwards (verified 2026-08-24).
+- Batches therefore promote on their own — no follow-up commit needed.
 
 Dan's local clone (`~/github/hm/live-shows`):
 - Before advising any local git operation, check `git rev-list --left-right --count staging...origin/staging` and `git status --porcelain`.

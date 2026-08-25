@@ -266,8 +266,8 @@ The operational versions live in the playbooks; the ones a new setup trips over:
 
 - Data commits target `staging`; the private sidecar's `main` has no pipeline —
   commit to it directly.
-- Batch multi-file changes into one commit (a multi-file Git Data push may not
-  fire the staging trigger — follow with a single-file nudge commit).
+- Batch multi-file changes into one commit (a multi-file Git Data push fires the
+  staging trigger and promotes like any other push).
 - PRs based on `staging` don't auto-close their linked issues (the closes
   keyword only fires on default-branch merges) — close manually.
 - PR previews: `site.preview_data_branch` in config, or `?dataref=<branch>` on
