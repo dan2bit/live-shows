@@ -170,10 +170,9 @@ rejected by branch protection**. The correct flow for all commits:
    fast-forwards `main` via the `PROMOTE_DEPLOY_KEY` deploy key if clean
 3. A commit that fails the guard is reset off `staging` and never reaches `main`
 
-**`push_files` quirk:** The multi-file Git Data API (`push_files`) does **not** fire
-the `push` trigger on `staging` and therefore does **not** auto-promote. After any
-`push_files` call, follow up with a single-file `create_or_update_file` nudge commit
-to trigger promotion — or use sequential `create_or_update_file` calls instead.
+**`push_files` promotes normally:** the multi-file Git Data API fires the `push`
+trigger on `staging` like any other push — batches auto-promote with no follow-up
+commit (verified 2026-08-24).
 
 **In-page UI writes also ride `staging`:** the authenticated browser editor
 (decision changes, notes edits, revokes, config saves) reads `site.data_branch`
