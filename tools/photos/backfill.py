@@ -1,0 +1,481 @@
+#!/usr/bin/env python3
+"""
+backfill.py — Phase-1 machinery for the Google Photos → Immich backfill.
+
+Companion to immich.py (the REST wrapper); this file holds the backfill
+workflow itself, in three subcommands run in this order:
+
+  drift     Sanity-check Immich person names against the show library's
+            canonical artist names before the face signal is trusted.
+            Buckets: exact canonical match, alias-resolvable, placeholder
+            (`played with <frontman> (role)` — intentional, never drift),
+            sideman roster (real people with no artists.tsv row — expected),
+            and true drift (near-miss spellings needing a rename or alias).
+
+  enrich    Lift crosswalk rows from confidence 0/1 toward 2 by gathering
+            agreeing signals per candidate asset: capture date, face match
+            (named person resolved through the same rules as drift), landed
+            album, caption text, and — for memorabilia — OCR text matched
+            against the bootleg catalog's song titles to recover a show date
+            the EXIF can't supply. Confirmed rows (confidence >= 2) are never
+            touched, so nothing is re-litigated.
+
+  rewrite   Apply confirmed (confidence 3) rows to the library TSVs by
+            replacing each Google Photos link with its Immich share link.
+            The replacement is a raw text substitution on the file — headers,
+            BOMs, comment blocks, and column padding all pass through
+            byte-identical. Idempotent: once rewritten, the Google link no
+            longer exists to match. Dry-run by default; --apply writes.
+
+Confidence scale (crosswalk `confidence` column):
+  0 unmatched · 1 weak (single signal) · 2 strong (>= 2 agreeing signals,
+  machine) · 3 confirmed (human-verified, Immich link minted). Only level-3
+  rows are ever written to the library TSVs, and only by `rewrite`.
+
+Face-signal conventions honored here (see docs and the private runbook):
+  - `played with <frontman> (role)` people are placeholders: never artist
+    matches, never drift — but they DO carry show-locator value, so enrich
+    may use them as a date/show signal for the frontman's shows.
+  - Hidden people never appear in the named-people listing; nothing here
+    consumes them.
+
+House TSV rules apply: plain tab-joined lines, LF endings, never the csv
+module. Requires the same environment as immich.py (IMMICH_API_KEY) for the
+server-facing paths; `drift --people-json` and `rewrite` run offline.
+"""
+
+import argparse
+import difflib
+import json
+import os
+import re
+import sys
+
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", ".."))
+sys.path.insert(0, _SCRIPT_DIR)
+sys.path.insert(0, os.path.join(_ROOT, "scripts"))
+
+import immich  # noqa: E402  (sibling module; provides the REST surface)
+from name_forms import goal_norm, variant_keys  # noqa: E402
+
+CROSSWALK = os.path.join(_SCRIPT_DIR, "backfill_crosswalk.tsv")
+
+PLACEHOLDER_RE = re.compile(r"^played with\s+.+\(.+\)\s*$", re.I)
+
+# The library files that carry Google Photos links, with the column that
+# holds them. `rewrite` uses this only for reporting — the substitution
+# itself is textual — and `enrich` uses the source prefix to classify rows.
+LINK_SOURCES = [
+    ("data/show_goals/artist-photos.tsv", "Share Link"),
+    ("data/live_shows_current.tsv", "Photo URL"),
+    ("data/show_goals/item_log.tsv", "photo_ref"),
+]
+HISTORY_DIR = "data/history"
+
+
+# ── shared loaders ─────────────────────────────────────────────────────────
+
+def _read_rows(relpath):
+    return immich._read_tsv_rows(relpath)
+
+
+def _canonical_artists():
+    """Canonical artist names from artists.tsv, keyed by goal_norm."""
+    out = {}
+    for row in _read_rows("data/artists.tsv"):
+        name = (row.get("Artist") or "").strip()
+        if name:
+            out[goal_norm(name)] = name
+    return out
+
+
+def _alias_map():
+    """recommend_aliases.tsv alias -> canonical, keyed by goal_norm(alias)."""
+    out = {}
+    path = os.path.join(_ROOT, "data", "recommend_aliases.tsv")
+    if not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8-sig") as f:
+        lines = [ln.rstrip("\n") for ln in f
+                 if ln.strip() and not ln.startswith("#")]
+    for ln in lines[1:]:
+        parts = ln.split("\t")
+        if len(parts) >= 2 and parts[0].strip() and parts[1].strip():
+            out[goal_norm(parts[0])] = parts[1].strip()
+    return out
+
+
+def _resolve_artist(name, canon, aliases):
+    """Resolve a free-form artist string to a canonical artists.tsv name,
+    via exact match, alias row, or automatic spelling variants. Returns
+    (canonical_name, how) or (None, None)."""
+    key = goal_norm(name)
+    if key in canon:
+        return canon[key], "exact"
+    if key in aliases:
+        target = goal_norm(aliases[key])
+        if target in canon:
+            return canon[target], "alias"
+    for vk in variant_keys(name):
+        if vk in canon:
+            return canon[vk], "variant"
+        if vk in aliases:
+            target = goal_norm(aliases[vk])
+            if target in canon:
+                return canon[target], "alias"
+    return None, None
+
+
+# ── drift ──────────────────────────────────────────────────────────────────
+
+def cmd_drift(args):
+    if args.people_json:
+        with open(args.people_json, encoding="utf-8") as f:
+            payload = json.load(f)
+        everyone = payload.get("people", payload if isinstance(payload, list) else [])
+        named = [p for p in everyone if p.get("name")]
+    else:
+        named = immich.people(named_only=True)
+
+    canon = _canonical_artists()
+    aliases = _alias_map()
+
+    buckets = {"exact": [], "alias": [], "variant": [],
+               "placeholder": [], "sideman": [], "drift": []}
+
+    for person in sorted(named, key=lambda p: (p.get("name") or "").lower()):
+        name = (person.get("name") or "").strip()
+        if PLACEHOLDER_RE.match(name):
+            buckets["placeholder"].append({"person": name})
+            continue
+        resolved, how = _resolve_artist(name, canon, aliases)
+        if resolved:
+            entry = {"person": name, "canonical": resolved}
+            buckets[how].append(entry)
+            if how != "exact" or resolved != name:
+                # spelled differently from the canonical row — flag near-miss
+                if resolved != name:
+                    entry["note"] = "resolves, but spelling differs from artists.tsv"
+            continue
+        near = difflib.get_close_matches(name, canon.values(), n=2, cutoff=0.82)
+        if near:
+            buckets["drift"].append({"person": name, "near": near})
+        else:
+            buckets["sideman"].append({"person": name})
+
+    report = {k: v for k, v in buckets.items() if v}
+    report["summary"] = {k: len(v) for k, v in buckets.items()}
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+
+    if buckets["drift"]:
+        print(f"\n{len(buckets['drift'])} name(s) look like drift - rename the "
+              "Immich person or add a recommend_aliases.tsv row.",
+              file=sys.stderr)
+        return 1
+    print("\nno drift: every named person is canonical, alias-resolvable, "
+          "a placeholder, or an expected sideman.", file=sys.stderr)
+    return 0
+
+
+# ── enrich ─────────────────────────────────────────────────────────────────
+
+def _catalog_songs_by_artist():
+    """Song titles from the bootleg catalog TSV, keyed by canonical artist.
+    Column names are detected from the header so a schema tweak upstream
+    degrades to a warning, not a crash. Song = title text before the
+    `(bootleg)` marker, per the channel title grammar."""
+    rows = _read_rows("tools/youtube/youtube_videos.tsv")
+    if not rows:
+        return {}
+    header = list(rows[0].keys())
+
+    def find(*needles):
+        for col in header:
+            low = col.lower()
+            if any(n in low for n in needles):
+                return col
+        return None
+
+    title_col = find("title")
+    artist_col = find("artist")
+    date_col = find("show date", "date")
+    if not (title_col and artist_col):
+        print("warning: could not locate title/artist columns in "
+              "youtube_videos.tsv - OCR song matching disabled", file=sys.stderr)
+        return {}
+
+    out = {}
+    for row in rows:
+        title = (row.get(title_col) or "")
+        song = title.split("(bootleg)")[0].strip()
+        artist = (row.get(artist_col) or "").strip()
+        date = (row.get(date_col) or "").strip()[:10] if date_col else ""
+        if song and artist:
+            out.setdefault(goal_norm(artist), []).append((song, date))
+    return out
+
+
+def _norm_text(s):
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", (s or "").lower())).strip()
+
+
+def _ocr_text(asset_id):
+    try:
+        payload = immich.ocr(asset_id)
+    except SystemExit:
+        return ""
+    if isinstance(payload, dict):
+        parts = payload.get("blocks") or payload.get("results") or []
+        if isinstance(parts, list):
+            texts = [p.get("text", "") if isinstance(p, dict) else str(p)
+                     for p in parts]
+            return " ".join(t for t in texts if t)
+        return str(payload.get("text", ""))
+    if isinstance(payload, list):
+        return " ".join(p.get("text", "") if isinstance(p, dict) else str(p)
+                        for p in payload)
+    return str(payload or "")
+
+
+def _item_log_index():
+    """seq -> (signer, show_date) from the item log, so an item_log crosswalk
+    row (whose source carries only the seq) still yields artist and date."""
+    out = {}
+    for row in _read_rows("data/show_goals/item_log.tsv"):
+        seq = (row.get("seq") or "").strip()
+        if seq:
+            out[seq] = ((row.get("signer") or "").strip(),
+                        (row.get("show_date") or "").strip())
+    return out
+
+
+def _row_artists(row, item_index=None):
+    """Best-effort artist strings from a crosswalk row's sources + descs."""
+    names = []
+    for source in (row.get("source_row") or "").split(" ; "):
+        source = source.strip()
+        m = re.match(r"(?:current|history/[^:]+):\d{4}-\d{2}-\d{2}\s+(..*)$", source)
+        if m:
+            names.append(m.group(1).strip())
+        m = re.match(r"item_log\.tsv:(\d+)$", source)
+        if m and item_index:
+            signer, _ = item_index.get(m.group(1), ("", ""))
+            if signer:
+                names.append(signer)
+    for desc in (row.get("google_desc") or "").split(" / "):
+        m = re.match(r"(.+?)\s+at\s+.+$", desc.strip())
+        if m:
+            names.append(m.group(1).strip())
+    seen, out = set(), []
+    for n in names:
+        k = goal_norm(n)
+        if n and k and k not in seen:
+            seen.add(k)
+            out.append(n)
+    return out
+
+
+def cmd_enrich(args):
+    rows = _read_rows(os.path.relpath(args.crosswalk, _ROOT))
+    if not rows:
+        raise SystemExit(f"no crosswalk rows at {args.crosswalk} - run "
+                         "immich.py seed-crosswalk first")
+
+    canon = _canonical_artists()
+    aliases = _alias_map()
+
+    named = immich.people(named_only=True)
+    person_by_artist = {}
+    placeholder_by_frontman = {}
+    for person in named:
+        name = (person.get("name") or "").strip()
+        m = re.match(r"^played with\s+(.+?)\s*\(.+\)\s*$", name, re.I)
+        if m:
+            resolved, _ = _resolve_artist(m.group(1), canon, aliases)
+            if resolved:
+                placeholder_by_frontman.setdefault(
+                    goal_norm(resolved), []).append(person["id"])
+            continue
+        resolved, _ = _resolve_artist(name, canon, aliases)
+        if resolved:
+            person_by_artist.setdefault(goal_norm(resolved), []).append(person["id"])
+
+    songs = _catalog_songs_by_artist()
+    item_index = _item_log_index()
+
+    lifted = kept = 0
+    for row in rows:
+        conf = (row.get("confidence") or "0").strip()
+        if conf in ("2", "3"):
+            kept += 1
+            continue
+
+        signals = [s for s in (row.get("signals") or "").split("|") if s]
+        candidates = [c for c in (row.get("immich_candidates") or "").split(";") if c]
+        dates = set(re.findall(r"\d{4}-\d{2}-\d{2}", row.get("source_row", "")))
+        is_item = (row.get("source_row") or "").startswith("item_log")
+        if is_item:
+            for source in (row.get("source_row") or "").split(" ; "):
+                m = re.match(r"item_log\.tsv:(\d+)$", source.strip())
+                if m:
+                    _, show_date = item_index.get(m.group(1), ("", ""))
+                    if show_date:
+                        dates.add(show_date)
+        dates = sorted(dates)
+        artists = _row_artists(row, item_index)
+
+        # face signal: person hits intersected with the date window
+        face_hits = set()
+        for artist in artists:
+            resolved, _ = _resolve_artist(artist, canon, aliases)
+            if not resolved:
+                continue
+            key = goal_norm(resolved)
+            pids = person_by_artist.get(key, []) + placeholder_by_frontman.get(key, [])
+            for pid in pids:
+                kwargs = {"person_id": pid}
+                if len(dates) == 1:
+                    kwargs["taken_after"] = f"{dates[0]}T00:00:00.000Z"
+                    kwargs["taken_before"] = f"{dates[0]}T23:59:59.999Z"
+                for hit in immich.search_metadata(**kwargs):
+                    face_hits.add(hit["id"])
+        if face_hits:
+            narrowed = [c for c in candidates if c in face_hits] or sorted(face_hits)
+            if narrowed != candidates:
+                candidates = narrowed[:12]
+            tag = "face" + (":date" if len(dates) == 1 else "")
+            if tag not in signals:
+                signals.append(tag)
+
+        # OCR signal (memorabilia): song titles recover the show
+        if is_item and candidates and songs and not args.no_ocr:
+            for cand in candidates[:4]:
+                text = _norm_text(_ocr_text(cand))
+                if len(text) < 12:
+                    continue
+                for artist in artists:
+                    resolved, _ = _resolve_artist(artist, canon, aliases)
+                    if not resolved:
+                        continue
+                    matched = [(s, d) for s, d in songs.get(goal_norm(resolved), [])
+                               if len(s) > 6 and _norm_text(s) in text]
+                    if len(matched) >= args.ocr_min_songs:
+                        show_dates = sorted({d for _, d in matched if d})
+                        sig = "ocr:" + (show_dates[0] if len(show_dates) == 1
+                                        else f"{len(matched)}songs")
+                        if sig not in signals:
+                            signals.append(sig)
+                        if cand != candidates[0]:
+                            candidates.remove(cand)
+                            candidates.insert(0, cand)
+                        break
+
+        strong = len({s.split(":")[0] for s in signals}) >= 2
+        new_conf = "2" if strong and len(candidates) == 1 else \
+                   ("2" if strong and conf != "2" and len(candidates) <= 3 else
+                    ("1" if signals else conf))
+        if new_conf != conf or ";".join(candidates) != row.get("immich_candidates", ""):
+            lifted += 1
+        row["immich_candidates"] = ";".join(candidates)
+        row["signals"] = "|".join(signals)
+        row["confidence"] = new_conf
+
+    with open(args.crosswalk, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\t".join(immich.CROSSWALK_HEADER) + "\n")
+        for row in rows:
+            f.write("\t".join(row.get(c, "") for c in immich.CROSSWALK_HEADER) + "\n")
+    print(json.dumps({"rows": len(rows), "updated": lifted,
+                      "confirmed_untouched": kept}, indent=2))
+
+
+# ── rewrite ────────────────────────────────────────────────────────────────
+
+def _rewrite_targets():
+    targets = [rel for rel, _ in LINK_SOURCES]
+    hist = os.path.join(_ROOT, HISTORY_DIR)
+    if os.path.isdir(hist):
+        targets.extend(f"{HISTORY_DIR}/{f}" for f in sorted(os.listdir(hist))
+                       if f.endswith(".tsv"))
+    return targets
+
+
+def cmd_rewrite(args):
+    rows = _read_rows(os.path.relpath(args.crosswalk, _ROOT))
+    ready, skipped = [], 0
+    for row in rows:
+        if (row.get("confidence") or "").strip() != "3":
+            continue
+        link = (row.get("immich_link") or "").strip()
+        gp = (row.get("google_link") or "").strip()
+        if link and gp:
+            ready.append((gp, link))
+        else:
+            skipped += 1
+
+    if skipped:
+        print(f"warning: {skipped} confidence-3 row(s) missing google_link or "
+              "immich_link - not applied", file=sys.stderr)
+    if not ready:
+        print("no confidence-3 rows with links to apply.")
+        return
+
+    report = []
+    for rel in _rewrite_targets():
+        path = os.path.join(_ROOT, rel)
+        if not os.path.exists(path):
+            continue
+        with open(path, encoding="utf-8", newline="") as f:
+            text = f.read()
+        replaced = []
+        for gp, link in ready:
+            if gp in text:
+                text = text.replace(gp, link)
+                replaced.append(gp)
+        if replaced:
+            report.append({"file": rel, "links_replaced": len(replaced)})
+            if args.apply:
+                with open(path, "w", encoding="utf-8", newline="") as f:
+                    f.write(text)
+
+    mode = "APPLIED" if args.apply else "DRY RUN - rerun with --apply to write"
+    print(json.dumps({"mode": mode, "confirmed_rows": len(ready),
+                      "files": report}, indent=2, ensure_ascii=False))
+    if not report:
+        print("(no target file contains any of the confirmed Google links - "
+              "already rewritten?)", file=sys.stderr)
+
+
+# ── CLI ────────────────────────────────────────────────────────────────────
+
+def main():
+    ap = argparse.ArgumentParser(prog="backfill.py",
+                                 description=__doc__.splitlines()[1])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    p = sub.add_parser("drift", help="person-name drift check")
+    p.add_argument("--people-json", help="offline: a saved GET /people payload")
+
+    p = sub.add_parser("enrich", help="lift crosswalk confidence via signals")
+    p.add_argument("--crosswalk", default=CROSSWALK)
+    p.add_argument("--no-ocr", action="store_true",
+                   help="skip the per-asset OCR fetches (faster)")
+    p.add_argument("--ocr-min-songs", type=int, default=2,
+                   help="song-title matches required for the OCR signal")
+
+    p = sub.add_parser("rewrite", help="apply confidence-3 rows to the TSVs")
+    p.add_argument("--crosswalk", default=CROSSWALK)
+    p.add_argument("--apply", action="store_true",
+                   help="write the files (default is a dry run)")
+
+    args = ap.parse_args()
+    if args.cmd == "drift":
+        sys.exit(cmd_drift(args))
+    elif args.cmd == "enrich":
+        cmd_enrich(args)
+    elif args.cmd == "rewrite":
+        cmd_rewrite(args)
+
+
+if __name__ == "__main__":
+    main()
