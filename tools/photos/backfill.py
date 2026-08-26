@@ -299,6 +299,47 @@ def _memorabilia_ocr_corpus():
     return cache
 
 
+# Browser-harvested Google Photos captions (gp_scrape.tsv). The GP API is
+# dead and share URLs are opaque, but the share pages still server-render
+# the caption - and the captions carry the show identity (artist, venue,
+# date) in prose. Harvested via authenticated same-origin fetch in the
+# browser; the key is the unique photo/share id substring of the link.
+_CAP_ISO = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_CAP_US = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
+_CAP_ARTIST = re.compile(r"^(.{3,60}?)\s+(?:@|at)\s+", re.I)
+
+
+def _gp_scrape():
+    """link_key -> caption from the harvested scrape file."""
+    out = {}
+    for row in _read_rows("tools/photos/gp_scrape.tsv"):
+        key = (row.get("link_key") or "").strip()
+        caption = (row.get("caption") or "").strip()
+        if key and caption:
+            out[key] = caption
+    return out
+
+
+def _caption_for(link, scrape):
+    for key, caption in scrape.items():
+        if key in link:
+            return caption
+    return None
+
+
+def _caption_date(caption):
+    m = _CAP_ISO.search(caption)
+    if m:
+        return m.group(1)
+    m = _CAP_US.search(caption)
+    if m:
+        mo, dy, yr = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if yr < 100:
+            yr += 2000
+        return f"{yr:04d}-{mo:02d}-{dy:02d}"
+    return None
+
+
 def _item_log_index():
     """seq -> (signer, show_date) from the item log, so an item_log crosswalk
     row (whose source carries only the seq) still yields artist and date."""
@@ -364,6 +405,7 @@ def cmd_enrich(args):
 
     songs = {} if args.no_ocr else _catalog_songs_by_artist()
     item_index = _item_log_index()
+    scrape = _gp_scrape()
     corpus = None  # built lazily on the first candidate-less item row
 
     lifted = kept = 0
@@ -386,6 +428,28 @@ def cmd_enrich(args):
                         dates.add(show_date)
         dates = sorted(dates)
         artists = _row_artists(row, item_index)
+
+        # caption signal: the harvested GP caption names the show directly.
+        # Its date joins the date set (driving the face window below) and,
+        # for a row with no candidates yet, a capture-date search proposes
+        # them - for artist photos the capture date IS the show date.
+        caption = _caption_for(row.get("google_link", ""), scrape)
+        if caption:
+            m = _CAP_ARTIST.match(caption)
+            if m and goal_norm(m.group(1)) not in {goal_norm(a) for a in artists}:
+                artists.append(m.group(1).strip())
+            cdate = _caption_date(caption)
+            if cdate:
+                if cdate not in dates:
+                    dates = sorted(set(dates) | {cdate})
+                sig = f"caption:{cdate}"
+                if sig not in signals:
+                    signals.append(sig)
+                if not candidates:
+                    hits = immich.search_metadata(
+                        taken_after=f"{cdate}T00:00:00.000Z",
+                        taken_before=f"{cdate}T23:59:59.999Z")
+                    candidates = [h["id"] for h in hits[:12]]
 
         # face signal: person hits intersected with the date window
         face_hits = set()
