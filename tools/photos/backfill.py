@@ -20,6 +20,17 @@ workflow itself, in three subcommands run in this order:
             the EXIF can't supply. Confirmed rows (confidence >= 2) are never
             touched, so nothing is re-litigated.
 
+  winnow    Serve the crosswalk as a local page where each row shows the
+            Google Photos image beside its Immich candidates, and a click
+            confirms the match to level 3. Writes only the decision
+            columns; see photo_winnow.py.
+
+  mint      Turn confirmed rows into Immich share links: every confidence-3
+            row with a match_id and no immich_link gets one. Separate from
+            the confirming pass on purpose - a mis-click stays a one-cell
+            undo instead of an orphaned link on the server. Dry-run by
+            default; --apply mints.
+
   rewrite   Apply confirmed (confidence 3) rows to the library TSVs by
             replacing each Google Photos link with its Immich share link.
             The replacement is a raw text substitution on the file — headers,
@@ -559,6 +570,57 @@ def cmd_enrich(args):
                       "confirmed_untouched": kept}, indent=2))
 
 
+# ── winnow ─────────────────────────────────────────────────────────────────
+
+def _write_crosswalk(path, rows):
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\t".join(immich.CROSSWALK_HEADER) + "\n")
+        for row in rows:
+            f.write("\t".join(row.get(c, "")
+                              for c in immich.CROSSWALK_HEADER) + "\n")
+
+
+def cmd_winnow(args):
+    """Hand the crosswalk to the local review page. Imported here rather
+    than at module scope so the other subcommands never pay for the HTTP
+    server machinery."""
+    import photo_winnow
+    photo_winnow.serve(args.crosswalk, port=args.port,
+                       open_browser=not args.no_browser)
+
+
+def cmd_mint(args):
+    rows = _read_rows(os.path.relpath(args.crosswalk, _ROOT))
+    todo = [r for r in rows
+            if (r.get("confidence") or "").strip() == "3"
+            and (r.get("match_id") or "").strip()
+            and not (r.get("immich_link") or "").strip()]
+    if not todo:
+        print("no confirmed rows awaiting a share link.")
+        return
+    if not args.apply:
+        print(json.dumps({"mode": "DRY RUN - rerun with --apply to mint",
+                          "rows_awaiting_link": len(todo)}, indent=2))
+        return
+
+    minted = failed = 0
+    for row in todo:
+        asset_id = row["match_id"].strip()
+        link = immich.create_link(asset_ids=[asset_id],
+                                  description=(row.get("source_row") or "")[:120])
+        url = immich.link_url(link or {})
+        if not link or url.rstrip("/").endswith("/share"):
+            print(f"warning: no share key returned for {asset_id[:8]}... - "
+                  "left unlinked", file=sys.stderr)
+            failed += 1
+            continue
+        row["immich_link"] = url
+        minted += 1
+
+    _write_crosswalk(args.crosswalk, rows)
+    print(json.dumps({"minted": minted, "failed": failed}, indent=2))
+
+
 # ── rewrite ────────────────────────────────────────────────────────────────
 
 def _rewrite_targets():
@@ -633,6 +695,17 @@ def main():
     p.add_argument("--ocr-min-songs", type=int, default=2,
                    help="song-title matches required for the OCR signal")
 
+    p = sub.add_parser("winnow", help="local page to confirm matches")
+    p.add_argument("--crosswalk", default=CROSSWALK)
+    p.add_argument("--port", type=int, default=8766)
+    p.add_argument("--no-browser", action="store_true",
+                   help="print the URL instead of opening a tab")
+
+    p = sub.add_parser("mint", help="share links for confirmed rows")
+    p.add_argument("--crosswalk", default=CROSSWALK)
+    p.add_argument("--apply", action="store_true",
+                   help="mint the links (default is a dry run)")
+
     p = sub.add_parser("rewrite", help="apply confidence-3 rows to the TSVs")
     p.add_argument("--crosswalk", default=CROSSWALK)
     p.add_argument("--apply", action="store_true",
@@ -643,6 +716,10 @@ def main():
         sys.exit(cmd_drift(args))
     elif args.cmd == "enrich":
         cmd_enrich(args)
+    elif args.cmd == "winnow":
+        cmd_winnow(args)
+    elif args.cmd == "mint":
+        cmd_mint(args)
     elif args.cmd == "rewrite":
         cmd_rewrite(args)
 
