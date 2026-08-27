@@ -241,6 +241,18 @@ def _norm_text(s):
     return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", (s or "").lower())).strip()
 
 
+def _name_in_text(term, text):
+    """Whole-word containment of a normalized name in normalized OCR text.
+    A bare substring test lets a short surname match inside a longer word -
+    "Fish" inside "Kingfish" - which silently attaches one artist's
+    memorabilia to another artist's row. Both sides are already lowercase,
+    alphanumeric and single-spaced, so padding with spaces is a sufficient
+    boundary test, and it treats a multi-word name as one phrase."""
+    if not term or not text:
+        return False
+    return f" {term} " in f" {text} "
+
+
 def _ocr_text(asset_id):
     try:
         payload = immich.ocr(asset_id)
@@ -307,6 +319,11 @@ def _memorabilia_ocr_corpus():
 _CAP_ISO = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
 _CAP_US = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
 _CAP_ARTIST = re.compile(r"^(.{3,60}?)\s+(?:@|at)\s+", re.I)
+# Google Photos renders a tagged-person mention as a literal "(tagged)" in
+# the harvested caption, so the leading phrase is sometimes a placeholder
+# rather than a name. Those rows take their artist from the crosswalk
+# source context instead of from the caption.
+_CAP_TAGGED = re.compile(r"\(tagged\)", re.I)
 
 
 def _gp_scrape():
@@ -436,8 +453,10 @@ def cmd_enrich(args):
         caption = _caption_for(row.get("google_link", ""), scrape)
         if caption:
             m = _CAP_ARTIST.match(caption)
-            if m and goal_norm(m.group(1)) not in {goal_norm(a) for a in artists}:
-                artists.append(m.group(1).strip())
+            cap_artist = m.group(1).strip() if m else ""
+            if (cap_artist and not _CAP_TAGGED.search(cap_artist)
+                    and goal_norm(cap_artist) not in {goal_norm(a) for a in artists}):
+                artists.append(cap_artist)
             cdate = _caption_date(caption)
             if cdate:
                 if cdate not in dates:
@@ -490,7 +509,7 @@ def cmd_enrich(args):
                 if len(surname) > 3 and surname != artist:
                     terms.append(_norm_text(surname))
             hits = [aid for aid, text in (corpus or {}).items()
-                    if text and any(t and t in text for t in terms)]
+                    if any(_name_in_text(t, text) for t in terms)]
             if hits:
                 candidates = hits[:12]
                 if "ocr-name" not in signals:
