@@ -53,6 +53,11 @@ tools/youtube/.changesets/
 # after new uploads or an OCR job re-run.
 tools/photos/.ocr_cache.json
 
+# Immich thumbnails pulled by the winnowing page. Local image cache keyed by
+# asset id — re-fetchable at any time, so it is churn rather than history.
+# Delete the directory to force fresh thumbnails.
+tools/photos/.thumb_cache/
+
 # Editor
 .vscode/
 .idea/
