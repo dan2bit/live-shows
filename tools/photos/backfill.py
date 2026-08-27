@@ -193,44 +193,64 @@ def cmd_drift(args):
 
 # ── enrich ─────────────────────────────────────────────────────────────────
 
+# Channel video-title grammar: `<Artist> LIVE - <Song> (bootleg)[ trailer]`
+# (legacy `(bootleg - qualifier)` variants share the same anchor). The catalog
+# TSV has no artist column - both artist and song live inside the title.
+_CATALOG_TITLE_RE = re.compile(
+    r"^(?P<artist>.+?)\s+LIVE\s*-\s*(?P<song>.+?)\s*\(bootleg", re.I)
+_DESC_ISO_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_DESC_US_DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2})\b")
+
+
 def _catalog_songs_by_artist():
-    """Song titles from the bootleg catalog TSV, keyed by canonical artist.
-    Column names are detected from the header so a schema tweak upstream
-    degrades to a warning, not a crash. Song = title text before the
-    `(bootleg)` marker, per the channel title grammar."""
+    """(song, show_date) pairs from the bootleg catalog TSV, keyed by
+    normalized artist. Artist and song are parsed from the video title per
+    the channel grammar; the show date comes from the description slug
+    (ISO or M/D/YY), falling back to blank - never the upload date, which
+    can trail the show by days."""
     rows = _read_rows("tools/youtube/youtube_videos.tsv")
-    if not rows:
-        return {}
-    header = list(rows[0].keys())
-
-    def find(*needles):
-        for col in header:
-            low = col.lower()
-            if any(n in low for n in needles):
-                return col
-        return None
-
-    title_col = find("title")
-    artist_col = find("artist")
-    date_col = find("show date", "date")
-    if not (title_col and artist_col):
-        print("warning: could not locate title/artist columns in "
-              "youtube_videos.tsv - OCR song matching disabled", file=sys.stderr)
-        return {}
-
-    out = {}
+    out, unparsed = {}, 0
     for row in rows:
-        title = (row.get(title_col) or "")
-        song = title.split("(bootleg)")[0].strip()
-        artist = (row.get(artist_col) or "").strip()
-        date = (row.get(date_col) or "").strip()[:10] if date_col else ""
-        if song and artist:
-            out.setdefault(goal_norm(artist), []).append((song, date))
+        m = _CATALOG_TITLE_RE.match(row.get("title") or "")
+        if not m:
+            unparsed += 1
+            continue
+        desc = row.get("description") or ""
+        date = ""
+        iso = _DESC_ISO_DATE_RE.search(desc)
+        if iso:
+            date = iso.group(1)
+        else:
+            us = _DESC_US_DATE_RE.search(desc)
+            if us:
+                mo, dy, yr = (int(us.group(1)), int(us.group(2)),
+                              2000 + int(us.group(3)))
+                date = f"{yr:04d}-{mo:02d}-{dy:02d}"
+        out.setdefault(goal_norm(m.group("artist")), []).append(
+            (m.group("song").strip(), date))
+    if rows and not out:
+        print("warning: no youtube_videos.tsv title matched the channel "
+              "grammar - OCR song matching disabled", file=sys.stderr)
+    elif unparsed:
+        print(f"note: {unparsed} catalog title(s) did not match the channel "
+              "grammar (legacy or non-song uploads) - skipped", file=sys.stderr)
     return out
 
 
 def _norm_text(s):
     return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", (s or "").lower())).strip()
+
+
+def _name_in_text(term, text):
+    """Whole-word containment of a normalized name in normalized OCR text.
+    A bare substring test lets a short surname match inside a longer word -
+    "Fish" inside "Kingfish" - which silently attaches one artist's
+    memorabilia to another artist's row. Both sides are already lowercase,
+    alphanumeric and single-spaced, so padding with spaces is a sufficient
+    boundary test, and it treats a multi-word name as one phrase."""
+    if not term or not text:
+        return False
+    return f" {term} " in f" {text} "
 
 
 def _ocr_text(asset_id):
@@ -249,6 +269,92 @@ def _ocr_text(asset_id):
         return " ".join(p.get("text", "") if isinstance(p, dict) else str(p)
                         for p in payload)
     return str(payload or "")
+
+
+# The server has no OCR search endpoint (POST /search/ocr 404s on this
+# version), so memorabilia candidate discovery sweeps the landed album(s)
+# with per-asset ocr() calls instead. The sweep result is cached locally -
+# the corpus is stable (the batch import is done) and re-fetching a hundred
+# OCR payloads per run would be pure waste. Delete the cache file to force
+# a re-sweep after new uploads or an OCR job re-run.
+_OCR_CACHE = os.path.join(_SCRIPT_DIR, ".ocr_cache.json")
+_MEMORABILIA_ALBUM_HINTS = ("memorabilia", "hat detail")
+
+
+def _memorabilia_ocr_corpus():
+    """asset_id -> normalized OCR text for every asset in the memorabilia
+    landed album(s), cached in .ocr_cache.json (gitignored)."""
+    cache = {}
+    if os.path.exists(_OCR_CACHE):
+        with open(_OCR_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    album_ids = [a["id"] for a in immich.albums()
+                 if any(h in (a.get("albumName") or "").lower()
+                        for h in _MEMORABILIA_ALBUM_HINTS)]
+    if not album_ids:
+        print("warning: no memorabilia album found on the server - "
+              "OCR candidate discovery disabled", file=sys.stderr)
+        return cache
+    fetched = 0
+    for aid in album_ids:
+        for asset in immich.search_metadata(album_id=aid):
+            asset_id = asset["id"]
+            if asset_id in cache:
+                continue
+            cache[asset_id] = _norm_text(_ocr_text(asset_id))
+            fetched += 1
+    if fetched:
+        with open(_OCR_CACHE, "w", encoding="utf-8") as f:
+            json.dump(cache, f)
+        print(f"note: OCR'd {fetched} memorabilia asset(s) into the local "
+              "cache", file=sys.stderr)
+    return cache
+
+
+# Browser-harvested Google Photos captions (gp_scrape.tsv). The GP API is
+# dead and share URLs are opaque, but the share pages still server-render
+# the caption - and the captions carry the show identity (artist, venue,
+# date) in prose. Harvested via authenticated same-origin fetch in the
+# browser; the key is the unique photo/share id substring of the link.
+_CAP_ISO = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_CAP_US = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
+_CAP_ARTIST = re.compile(r"^(.{3,60}?)\s+(?:@|at)\s+", re.I)
+# Google Photos renders a tagged-person mention as a literal "(tagged)" in
+# the harvested caption, so the leading phrase is sometimes a placeholder
+# rather than a name. Those rows take their artist from the crosswalk
+# source context instead of from the caption.
+_CAP_TAGGED = re.compile(r"\(tagged\)", re.I)
+
+
+def _gp_scrape():
+    """link_key -> caption from the harvested scrape file."""
+    out = {}
+    for row in _read_rows("tools/photos/gp_scrape.tsv"):
+        key = (row.get("link_key") or "").strip()
+        caption = (row.get("caption") or "").strip()
+        if key and caption:
+            out[key] = caption
+    return out
+
+
+def _caption_for(link, scrape):
+    for key, caption in scrape.items():
+        if key in link:
+            return caption
+    return None
+
+
+def _caption_date(caption):
+    m = _CAP_ISO.search(caption)
+    if m:
+        return m.group(1)
+    m = _CAP_US.search(caption)
+    if m:
+        mo, dy, yr = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if yr < 100:
+            yr += 2000
+        return f"{yr:04d}-{mo:02d}-{dy:02d}"
+    return None
 
 
 def _item_log_index():
@@ -314,8 +420,10 @@ def cmd_enrich(args):
         if resolved:
             person_by_artist.setdefault(goal_norm(resolved), []).append(person["id"])
 
-    songs = _catalog_songs_by_artist()
+    songs = {} if args.no_ocr else _catalog_songs_by_artist()
     item_index = _item_log_index()
+    scrape = _gp_scrape()
+    corpus = None  # built lazily on the first candidate-less item row
 
     lifted = kept = 0
     for row in rows:
@@ -337,6 +445,30 @@ def cmd_enrich(args):
                         dates.add(show_date)
         dates = sorted(dates)
         artists = _row_artists(row, item_index)
+
+        # caption signal: the harvested GP caption names the show directly.
+        # Its date joins the date set (driving the face window below) and,
+        # for a row with no candidates yet, a capture-date search proposes
+        # them - for artist photos the capture date IS the show date.
+        caption = _caption_for(row.get("google_link", ""), scrape)
+        if caption:
+            m = _CAP_ARTIST.match(caption)
+            cap_artist = m.group(1).strip() if m else ""
+            if (cap_artist and not _CAP_TAGGED.search(cap_artist)
+                    and goal_norm(cap_artist) not in {goal_norm(a) for a in artists}):
+                artists.append(cap_artist)
+            cdate = _caption_date(caption)
+            if cdate:
+                if cdate not in dates:
+                    dates = sorted(set(dates) | {cdate})
+                sig = f"caption:{cdate}"
+                if sig not in signals:
+                    signals.append(sig)
+                if not candidates:
+                    hits = immich.search_metadata(
+                        taken_after=f"{cdate}T00:00:00.000Z",
+                        taken_before=f"{cdate}T23:59:59.999Z")
+                    candidates = [h["id"] for h in hits[:12]]
 
         # face signal: person hits intersected with the date window
         face_hits = set()
@@ -361,10 +493,35 @@ def cmd_enrich(args):
             if tag not in signals:
                 signals.append(tag)
 
+        # OCR candidate discovery (memorabilia): a row with no candidates has
+        # nothing to examine - the batch-import EXIF blocked date seeding and
+        # object photos carry no faces, so no other signal can propose assets.
+        # The signer's name is usually printed or signed on the item itself,
+        # so scan the memorabilia OCR corpus for it; the song-title match
+        # below then confirms and dates the proposal.
+        if is_item and not candidates and not args.no_ocr and artists:
+            if corpus is None:
+                corpus = _memorabilia_ocr_corpus()
+            terms = []
+            for artist in artists:
+                terms.append(_norm_text(artist))
+                surname = artist.split()[-1]
+                if len(surname) > 3 and surname != artist:
+                    terms.append(_norm_text(surname))
+            hits = [aid for aid, text in (corpus or {}).items()
+                    if any(_name_in_text(t, text) for t in terms)]
+            if hits:
+                candidates = hits[:12]
+                if "ocr-name" not in signals:
+                    signals.append("ocr-name")
+
         # OCR signal (memorabilia): song titles recover the show
         if is_item and candidates and songs and not args.no_ocr:
             for cand in candidates[:4]:
-                text = _norm_text(_ocr_text(cand))
+                if corpus and cand in corpus:
+                    text = corpus[cand]
+                else:
+                    text = _norm_text(_ocr_text(cand))
                 if len(text) < 12:
                     continue
                 for artist in artists:
