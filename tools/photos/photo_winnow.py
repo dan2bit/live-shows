@@ -273,6 +273,9 @@ _PAGE = """<!doctype html>
  .cand img { width: 132px; height: 132px; object-fit: cover;
              border-radius: 4px; display: block; background: #8882; }
  .cand.sel { border-color: #2b7; }
+ .brokenthumb { width: 132px; height: 132px; border: 1px dashed #c66;
+                border-radius: 4px; display: grid; place-items: center;
+                color: #c66; font-size: 11px; text-align: center; padding: 6px; }
  .cand .dupe { position: absolute; left: 2px; right: 2px; bottom: 2px;
                background: #c60d; color: #fff; font-size: 10px;
                text-align: center; border-radius: 0 0 4px 4px; }
@@ -310,7 +313,7 @@ function card(c) {
   const cands = c.candidates.map(id =>
     '<div class="cand' + (id === c.matchId ? ' sel' : '') + '" data-id="' + id +
     '" onclick="pick(' + c.i + ',\\'' + id + '\\')">' +
-    '<img loading="lazy" src="/thumb/' + id + '?t=' + T + '">' +
+    '<img loading="lazy" src="/thumb/' + id + '?t=' + T + '" onerror="thumbFail(this)">' +
     (S.claimed[id] ? '<div class="dupe">also on another row</div>' : '') +
     '</div>').join('');
   return '<div class="card" id="c' + c.i + '" data-done="' +
@@ -334,7 +337,31 @@ function card(c) {
 function esc(s) { const d = document.createElement('div');
   d.textContent = s || ''; return d.innerHTML; }
 function byIndex(i) { return S.cards.find(c => c.i === i); }
-function render() { counts(); el.innerHTML = S.cards.map(card).join(''); }
+
+// A failed /thumb fetch otherwise renders as a browser broken-image icon,
+// which reads exactly like "this is the wrong photo" when it actually means
+// the asset could not be fetched. Say which it is.
+function thumbFail(img) {
+  const d = document.createElement('div');
+  d.className = 'brokenthumb';
+  d.textContent = 'thumbnail failed';
+  img.replaceWith(d);
+}
+
+// With one candidate the click carries no information - there is nothing
+// else to choose - so preselect it and let the row be a straight confirm or
+// reject. Multi-candidate rows still require an explicit pick, which is
+// where the ambiguity actually lives. This only sets the page's selection;
+// nothing reaches the crosswalk until Confirm is pressed.
+function preselect() {
+  S.cards.forEach(c => {
+    if (!c.matchId && c.conf !== '3' && c.candidates.length === 1) {
+      c.matchId = c.candidates[0];
+    }
+  });
+}
+
+function render() { preselect(); counts(); el.innerHTML = S.cards.map(card).join(''); }
 
 function pick(i, id) {
   const c = byIndex(i); c.matchId = (c.matchId === id ? '' : id);
@@ -367,8 +394,10 @@ async function widen(i) {
   m.textContent = 'searching...';
   const res = await post('/widen', { i: i });
   if (!res.ok) { m.textContent = res.msg; return; }
-  byIndex(i).candidates = res.candidates;
-  document.getElementById('c' + i).outerHTML = card(byIndex(i));
+  const c = byIndex(i);
+  c.candidates = res.candidates;
+  c.matchId = (res.candidates.length === 1 ? res.candidates[0] : '');
+  document.getElementById('c' + i).outerHTML = card(c);
   document.getElementById('m' + i).textContent =
     res.candidates.length + ' candidate(s)';
 }
