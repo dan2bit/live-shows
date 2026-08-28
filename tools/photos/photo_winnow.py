@@ -117,10 +117,15 @@ def _queue_rank(row):
     return 4 if n else 5
 
 
-def build_state(rows):
+def build_state(rows, include_confirmed=False):
     """Everything the page needs, JSON-serializable. Index is the row's
     position in the file, which is what a save addresses - the queue only
-    reorders the cards."""
+    reorders the cards, and hiding a card never shifts anyone's index.
+
+    Confirmed rows are left out by default. They are decided, they cannot
+    be improved by looking at them again, and on a second or third pass
+    they are most of the file. Counts are still computed over every row
+    so the header does not lie about what is in the crosswalk."""
     index = _scrape_index()
     claimed = {}
     for n, row in enumerate(rows):
@@ -128,8 +133,15 @@ def build_state(rows):
         if mid:
             claimed.setdefault(mid, []).append(n)
 
+    counts = {}
+    for row in rows:
+        c = (row.get("confidence") or "0").strip()
+        counts[c] = counts.get(c, 0) + 1
+
     cards = []
     for n, row in enumerate(rows):
+        if not include_confirmed and (row.get("confidence") or "").strip() == "3":
+            continue
         caption, thumb = _scrape_for(row.get("google_link", ""), index)
         cards.append({
             "i": n,
@@ -149,10 +161,8 @@ def build_state(rows):
         })
     cards.sort(key=lambda c: (c["rank"], c["dates"], c["i"]))
 
-    counts = {}
-    for c in cards:
-        counts[c["conf"]] = counts.get(c["conf"], 0) + 1
-    return {"cards": cards, "counts": counts, "total": len(cards),
+    return {"cards": cards, "counts": counts, "total": len(rows),
+            "shown": len(cards), "hidden": len(rows) - len(cards),
             "claimed": {k: v for k, v in claimed.items() if len(v) > 1}}
 
 
@@ -314,6 +324,98 @@ def _widen_by_artist(row):
     return out[:24], tried
 
 
+def _claimed_ids(rows, skip_index=None):
+    """Every asset already confirmed on some row, so a widen never offers
+    one twice. Excludes the row being widened, which may legitimately be
+    re-picking its own current match."""
+    out = set()
+    for n, row in enumerate(rows):
+        if skip_index is not None and n == skip_index:
+            continue
+        mid = (row.get("match_id") or "").strip()
+        if mid:
+            out.add(mid)
+    return out
+
+
+_ALBUM_CACHE = {}
+
+# Which albums a row's candidates may come from, by row class.
+#
+# Memorabilia rows draw from the object albums. Hat detail is out because
+# nothing in the library references it yet - including it would pad every
+# card with photos that cannot be the answer.
+#
+# Photo rows draw from everything else. That pool is large, but it is the
+# only route for a row whose subject is a band member: Immich knows the
+# face, the library files the photo under the band, and nothing connects
+# the two. Assets already confirmed elsewhere are filtered out, so the
+# pool shrinks as the pass proceeds.
+#
+# Deliberately not backfill's OCR-sweep hint list. That decides which
+# assets get their text read; this decides which are offered as
+# candidates, and the two need not be the same set.
+_MEMORABILIA_HINTS = ("memorabilia",)
+_NOT_PHOTO_HINTS = ("memorabilia", "hat detail")
+
+WIDEN_ALBUM_CAP = 200
+
+
+def _album_ids(memorabilia):
+    """Album ids for one row class, cached per run."""
+    key = "mem" if memorabilia else "photo"
+    if key not in _ALBUM_CACHE:
+        ids = []
+        for a in immich.albums():
+            name = (a.get("albumName") or "").lower()
+            hit = any(h in name for h in _MEMORABILIA_HINTS)
+            skip = any(h in name for h in _NOT_PHOTO_HINTS)
+            if (memorabilia and hit) or (not memorabilia and not skip):
+                ids.append(a["id"])
+        _ALBUM_CACHE[key] = ids
+    return _ALBUM_CACHE[key]
+
+
+def _widen_by_album(row, rows, index):
+    """Every unclaimed asset in the albums appropriate to this row.
+
+    Setlists and posters carry no face and usually no readable capture
+    date, so neither the artist nor the date lookup can reach them. Band
+    members have the opposite problem: Immich knows the face, but the row
+    is filed under the band, so the artist lookup finds nothing. Album
+    membership is what both cases still have."""
+    memorabilia = (row.get("source_row") or "").startswith("item_log")
+    album_ids = _album_ids(memorabilia)
+    if not album_ids:
+        return [], "no matching album on the server"
+    claimed = _claimed_ids(rows, index)
+    # Round-robin across albums rather than concatenating them. Straight
+    # concatenation means the cap truncates by album order, so a large
+    # first album hides the smaller ones entirely; interleaving makes any
+    # truncation proportional and keeps every album represented.
+    per_album, seen = [], set()
+    for aid in album_ids:
+        album = []
+        for hit in immich.search_metadata(album_id=aid):
+            if hit["id"] not in claimed and hit["id"] not in seen:
+                seen.add(hit["id"])
+                album.append(hit["id"])
+        if album:
+            per_album.append(album)
+
+    out = []
+    for n in range(max((len(a) for a in per_album), default=0)):
+        for album in per_album:
+            if n < len(album):
+                out.append(album[n])
+
+    where = "memorabilia" if memorabilia else "photo albums"
+    note = f"{len(out)} unclaimed in {where}"
+    if len(out) > WIDEN_ALBUM_CAP:
+        note += f" (showing first {WIDEN_ALBUM_CAP})"
+    return out[:WIDEN_ALBUM_CAP], note
+
+
 # ── page ───────────────────────────────────────────────────────────────────
 
 _PAGE = """<!doctype html>
@@ -367,10 +469,13 @@ const S = STATE_JSON, T = "TOKEN";
 const el = document.getElementById('cards');
 
 function counts() {
-  const c = {}; S.cards.forEach(x => c[x.conf] = (c[x.conf]||0)+1);
+  const c = S.counts;
+  const left = S.cards.filter(x => x.conf !== '3').length;
   document.getElementById('counts').innerHTML =
     S.total + ' rows &middot; ' + [0,1,2,3].map(n =>
-      'conf ' + n + ': <b>' + (c[n]||0) + '</b>').join(' &middot; ');
+      'conf ' + n + ': <b>' + (c[n]||0) + '</b>').join(' &middot; ') +
+    (S.hidden ? ' &middot; <i>' + S.hidden + ' confirmed hidden</i>' : '') +
+    ' &middot; ' + left + ' left on this page';
 }
 
 function card(c) {
@@ -400,6 +505,7 @@ function card(c) {
       '<button onclick="act(' + c.i + ',\\'absent\\')">Not in Immich</button>' +
       '<button onclick="widen(' + c.i + ',\\'date\\')">Widen by date</button>' +
       '<button onclick="widen(' + c.i + ',\\'artist\\')">Widen by artist</button>' +
+      '<button onclick="widen(' + c.i + ',\\'album\\')">Widen by album</button>' +
       '<span class="msg" id="m' + c.i + '"></span>' +
     '</div></div></div>';
 }
@@ -453,7 +559,10 @@ async function act(i, action) {
   }
   const res = await post('/save', { i: i, action: action, matchId: c.matchId });
   if (!res.ok) { document.getElementById('m' + i).textContent = res.msg; return; }
+  const prev = c.conf;
   c.conf = res.conf; c.matchId = res.matchId; c.candidates = res.candidates;
+  S.counts[prev] = Math.max(0, (S.counts[prev] || 0) - 1);
+  S.counts[c.conf] = (S.counts[c.conf] || 0) + 1;
   document.getElementById('c' + i).dataset.done = (c.conf === '3' ? 1 : 0);
   document.getElementById('m' + i).textContent = 'saved';
   counts();
@@ -490,7 +599,8 @@ def render_page(state, token):
 
 # ── server ─────────────────────────────────────────────────────────────────
 
-def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
+def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True,
+          include_confirmed=False):
     """Serve the winnowing page until Done or Ctrl-C. Blocks."""
     token = secrets.token_urlsafe(16)
     lock = threading.Lock()
@@ -527,7 +637,7 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
             if parsed.path == "/":
                 with lock:
                     rows = immich._read_tsv_rows(rel)
-                    page = render_page(build_state(rows), token)
+                    page = render_page(build_state(rows, include_confirmed), token)
                 return self._send(200, "text/html; charset=utf-8",
                                   page.encode("utf-8"))
             m = re.match(r"^/thumb/([0-9a-fA-F-]{32,40})$", parsed.path)
@@ -577,6 +687,8 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
                     if mode == "artist":
                         found, tried = _widen_by_artist(rows[i])
                         note = ", ".join(tried) or "no artist on this row"
+                    elif mode == "album":
+                        found, note = _widen_by_album(rows[i], rows, i)
                     else:
                         dates = _row_dates(rows[i])
                         if not dates:
@@ -586,8 +698,13 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
                     if not found:
                         return self._json({"ok": False,
                                            "msg": f"nothing found ({note})"})
-                    rows[i]["immich_candidates"] = ";".join(found)
-                    write_crosswalk(crosswalk_path, rows)
+                    # Deliberately NOT written to the crosswalk. A widen
+                    # result is a pool to look through, not a decision; an
+                    # album widen can run to hundreds of assets, and
+                    # persisting that would put a multi-kilobyte cell in a
+                    # data file for something no later step reads. The page
+                    # holds it for this view only. Confirming writes the one
+                    # id that matters; rejecting clears the row.
                     return self._json({"ok": True, "candidates": found,
                                        "note": note})
 
