@@ -231,10 +231,15 @@ def _cached_thumb(asset_id, size="thumbnail"):
     return data or b""
 
 
-def _widen(dates):
+def _widen_by_date(dates):
     """Assets captured on the row's date(s). The enricher discards
     alternates when the face signal narrows a candidate list, so this is
-    how a card gets them back without a full re-run."""
+    how a card gets them back without a full re-run.
+
+    Only works where the asset kept its capture date. The batch import
+    stripped EXIF from much of the library, leaving those assets stamped
+    with the upload time instead, so for a large share of rows this
+    correctly returns nothing and the artist lookup below is the way in."""
     out = []
     for date in dates[:2]:
         for hit in immich.search_metadata(
@@ -243,6 +248,70 @@ def _widen(dates):
             if hit["id"] not in out:
                 out.append(hit["id"])
     return out[:24]
+
+
+_ARTIST_INDEX = {}
+
+
+def _person_index():
+    """Name key -> Immich person id(s), built once per run.
+
+    Keyed two ways on purpose. Canonical artist names come through
+    backfill's resolver, so a person spelled differently from the
+    artists.tsv row still matches, exactly as enrich does. But only a
+    minority of named people ARE artists - most are sidemen with no
+    artists.tsv row, and they are precisely who the descriptive captions
+    name ("Ori Naftaly of Southern Avenue"). So the person's own name is
+    indexed too, or those rows have no way in."""
+    if _ARTIST_INDEX:
+        return _ARTIST_INDEX
+    import backfill
+    canon = backfill._canonical_artists()
+    aliases = backfill._alias_map()
+    for person in immich.people(named_only=True):
+        name = (person.get("name") or "").strip()
+        if not name or backfill.PLACEHOLDER_RE.match(name):
+            continue
+        _ARTIST_INDEX.setdefault(backfill.goal_norm(name), []).append(
+            person["id"])
+        resolved, _ = backfill._resolve_artist(name, canon, aliases)
+        if resolved:
+            key = backfill.goal_norm(resolved)
+            ids = _ARTIST_INDEX.setdefault(key, [])
+            if person["id"] not in ids:
+                ids.append(person["id"])
+    return _ARTIST_INDEX
+
+
+def _widen_by_artist(row):
+    """Assets showing anyone the row names, with no date filter at all.
+
+    This is the answer for the imported half of the library: the capture
+    date is gone but the face is not, and a person typically has only a
+    handful of assets, which is a small enough set to judge by eye.
+    Returns (ids, tried) so a row whose names have no person can say so
+    rather than looking like an empty result."""
+    import backfill
+    canon = backfill._canonical_artists()
+    aliases = backfill._alias_map()
+    index = _person_index()
+
+    out, tried = [], []
+    for name in backfill._row_artists(row, backfill._item_log_index()):
+        pids = index.get(backfill.goal_norm(name), [])
+        if not pids:
+            resolved, _ = backfill._resolve_artist(name, canon, aliases)
+            if resolved:
+                pids = index.get(backfill.goal_norm(resolved), [])
+        if not pids:
+            tried.append(f"{name} (no Immich person)")
+            continue
+        tried.append(name)
+        for pid in pids:
+            for hit in immich.search_metadata(person_id=pid):
+                if hit["id"] not in out:
+                    out.append(hit["id"])
+    return out[:24], tried
 
 
 # ── page ───────────────────────────────────────────────────────────────────
@@ -329,7 +398,8 @@ function card(c) {
       '<button class="go" onclick="act(' + c.i + ',\\'confirm\\')">Confirm</button>' +
       '<button onclick="act(' + c.i + ',\\'reject\\')">Reject all</button>' +
       '<button onclick="act(' + c.i + ',\\'absent\\')">Not in Immich</button>' +
-      '<button onclick="widen(' + c.i + ')">Widen by date</button>' +
+      '<button onclick="widen(' + c.i + ',\\'date\\')">Widen by date</button>' +
+      '<button onclick="widen(' + c.i + ',\\'artist\\')">Widen by artist</button>' +
       '<span class="msg" id="m' + c.i + '"></span>' +
     '</div></div></div>';
 }
@@ -389,17 +459,18 @@ async function act(i, action) {
   counts();
 }
 
-async function widen(i) {
+async function widen(i, mode) {
   const m = document.getElementById('m' + i);
   m.textContent = 'searching...';
-  const res = await post('/widen', { i: i });
+  const res = await post('/widen', { i: i, mode: mode });
   if (!res.ok) { m.textContent = res.msg; return; }
   const c = byIndex(i);
   c.candidates = res.candidates;
   c.matchId = (res.candidates.length === 1 ? res.candidates[0] : '');
   document.getElementById('c' + i).outerHTML = card(c);
   document.getElementById('m' + i).textContent =
-    res.candidates.length + ' candidate(s)';
+    res.candidates.length + ' candidate(s) via ' + mode +
+    (res.note ? ' - ' + res.note : '');
 }
 
 async function quit() {
@@ -502,14 +573,23 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
                     i = int(payload.get("i", -1))
                     if not 0 <= i < len(rows):
                         return self._json({"ok": False, "msg": "bad row"})
-                    dates = _row_dates(rows[i])
-                    if not dates:
+                    mode = payload.get("mode", "date")
+                    if mode == "artist":
+                        found, tried = _widen_by_artist(rows[i])
+                        note = ", ".join(tried) or "no artist on this row"
+                    else:
+                        dates = _row_dates(rows[i])
+                        if not dates:
+                            return self._json({"ok": False,
+                                               "msg": "row has no date"})
+                        found, note = _widen_by_date(dates), ", ".join(dates)
+                    if not found:
                         return self._json({"ok": False,
-                                           "msg": "row has no date"})
-                    found = _widen(dates)
+                                           "msg": f"nothing found ({note})"})
                     rows[i]["immich_candidates"] = ";".join(found)
                     write_crosswalk(crosswalk_path, rows)
-                    return self._json({"ok": True, "candidates": found})
+                    return self._json({"ok": True, "candidates": found,
+                                       "note": note})
 
             return self._send(404, "text/plain", b"no such endpoint")
 

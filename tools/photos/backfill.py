@@ -380,6 +380,29 @@ def _item_log_index():
     return out
 
 
+# Caption shapes seen in artist-photos.tsv. Most are "<name> @ <venue> <date>"
+# or the same with "at"; the rest lead with the name and then qualify it
+# ("Ori Naftaly of Southern Avenue", "Tikyra Jackson, drummer for ...",
+# "Sonny Landreth - Hamilton Live"). The qualifier form usually names a
+# sideman rather than the billed artist, which is still worth extracting -
+# sidemen have faces in the photo library even without an artists.tsv row.
+_LEAD_AT = re.compile(r"^(.{3,60}?)\s+(?:@|at)\s+", re.I)
+_LEAD_NAME = re.compile(
+    r"^([A-Z][\w.'\u2019-]+(?:\s+[A-Z][\w.'\u2019-]+){0,3})\s*(?:,|\s-\s|\sof\s)")
+
+
+def _lead_artist(text):
+    """The person a caption leads with, or None."""
+    text = (text or "").strip()
+    m = _LEAD_AT.match(text)
+    if m:
+        return m.group(1).strip()
+    m = _LEAD_NAME.match(text)
+    if m:
+        return m.group(1).strip()
+    return None
+
+
 def _row_artists(row, item_index=None):
     """Best-effort artist strings from a crosswalk row's sources + descs."""
     names = []
@@ -393,10 +416,15 @@ def _row_artists(row, item_index=None):
             signer, _ = item_index.get(m.group(1), ("", ""))
             if signer:
                 names.append(signer)
-    for desc in (row.get("google_desc") or "").split(" / "):
-        m = re.match(r"(.+?)\s+at\s+.+$", desc.strip())
+        m = re.match(r"artist-photos\.tsv:(.+)$", source)
         if m:
-            names.append(m.group(1).strip())
+            lead = _lead_artist(m.group(1))
+            if lead:
+                names.append(lead)
+    for desc in (row.get("google_desc") or "").split(" / "):
+        lead = _lead_artist(desc)
+        if lead:
+            names.append(lead)
     seen, out = set(), []
     for n in names:
         k = goal_norm(n)
