@@ -117,10 +117,15 @@ def _queue_rank(row):
     return 4 if n else 5
 
 
-def build_state(rows):
+def build_state(rows, include_confirmed=False):
     """Everything the page needs, JSON-serializable. Index is the row's
     position in the file, which is what a save addresses - the queue only
-    reorders the cards."""
+    reorders the cards, and hiding a card never shifts anyone's index.
+
+    Confirmed rows are left out by default. They are decided, they cannot
+    be improved by looking at them again, and on a second or third pass
+    they are most of the file. Counts are still computed over every row
+    so the header does not lie about what is in the crosswalk."""
     index = _scrape_index()
     claimed = {}
     for n, row in enumerate(rows):
@@ -128,8 +133,15 @@ def build_state(rows):
         if mid:
             claimed.setdefault(mid, []).append(n)
 
+    counts = {}
+    for row in rows:
+        c = (row.get("confidence") or "0").strip()
+        counts[c] = counts.get(c, 0) + 1
+
     cards = []
     for n, row in enumerate(rows):
+        if not include_confirmed and (row.get("confidence") or "").strip() == "3":
+            continue
         caption, thumb = _scrape_for(row.get("google_link", ""), index)
         cards.append({
             "i": n,
@@ -149,10 +161,8 @@ def build_state(rows):
         })
     cards.sort(key=lambda c: (c["rank"], c["dates"], c["i"]))
 
-    counts = {}
-    for c in cards:
-        counts[c["conf"]] = counts.get(c["conf"], 0) + 1
-    return {"cards": cards, "counts": counts, "total": len(cards),
+    return {"cards": cards, "counts": counts, "total": len(rows),
+            "shown": len(cards), "hidden": len(rows) - len(cards),
             "claimed": {k: v for k, v in claimed.items() if len(v) > 1}}
 
 
@@ -231,10 +241,15 @@ def _cached_thumb(asset_id, size="thumbnail"):
     return data or b""
 
 
-def _widen(dates):
+def _widen_by_date(dates):
     """Assets captured on the row's date(s). The enricher discards
     alternates when the face signal narrows a candidate list, so this is
-    how a card gets them back without a full re-run."""
+    how a card gets them back without a full re-run.
+
+    Only works where the asset kept its capture date. The batch import
+    stripped EXIF from much of the library, leaving those assets stamped
+    with the upload time instead, so for a large share of rows this
+    correctly returns nothing and the artist lookup below is the way in."""
     out = []
     for date in dates[:2]:
         for hit in immich.search_metadata(
@@ -243,6 +258,129 @@ def _widen(dates):
             if hit["id"] not in out:
                 out.append(hit["id"])
     return out[:24]
+
+
+_ARTIST_INDEX = {}
+
+
+def _person_index():
+    """Name key -> Immich person id(s), built once per run.
+
+    Keyed two ways on purpose. Canonical artist names come through
+    backfill's resolver, so a person spelled differently from the
+    artists.tsv row still matches, exactly as enrich does. But only a
+    minority of named people ARE artists - most are sidemen with no
+    artists.tsv row, and they are precisely who the descriptive captions
+    name ("Ori Naftaly of Southern Avenue"). So the person's own name is
+    indexed too, or those rows have no way in."""
+    if _ARTIST_INDEX:
+        return _ARTIST_INDEX
+    import backfill
+    canon = backfill._canonical_artists()
+    aliases = backfill._alias_map()
+    for person in immich.people(named_only=True):
+        name = (person.get("name") or "").strip()
+        if not name or backfill.PLACEHOLDER_RE.match(name):
+            continue
+        _ARTIST_INDEX.setdefault(backfill.goal_norm(name), []).append(
+            person["id"])
+        resolved, _ = backfill._resolve_artist(name, canon, aliases)
+        if resolved:
+            key = backfill.goal_norm(resolved)
+            ids = _ARTIST_INDEX.setdefault(key, [])
+            if person["id"] not in ids:
+                ids.append(person["id"])
+    return _ARTIST_INDEX
+
+
+def _widen_by_artist(row):
+    """Assets showing anyone the row names, with no date filter at all.
+
+    This is the answer for the imported half of the library: the capture
+    date is gone but the face is not, and a person typically has only a
+    handful of assets, which is a small enough set to judge by eye.
+    Returns (ids, tried) so a row whose names have no person can say so
+    rather than looking like an empty result."""
+    import backfill
+    canon = backfill._canonical_artists()
+    aliases = backfill._alias_map()
+    index = _person_index()
+
+    out, tried = [], []
+    for name in backfill._row_artists(row, backfill._item_log_index()):
+        pids = index.get(backfill.goal_norm(name), [])
+        if not pids:
+            resolved, _ = backfill._resolve_artist(name, canon, aliases)
+            if resolved:
+                pids = index.get(backfill.goal_norm(resolved), [])
+        if not pids:
+            tried.append(f"{name} (no Immich person)")
+            continue
+        tried.append(name)
+        for pid in pids:
+            for hit in immich.search_metadata(person_id=pid):
+                if hit["id"] not in out:
+                    out.append(hit["id"])
+    return out[:24], tried
+
+
+def _claimed_ids(rows, skip_index=None):
+    """Every asset already confirmed on some row, so a widen never offers
+    one twice. Excludes the row being widened, which may legitimately be
+    re-picking its own current match."""
+    out = set()
+    for n, row in enumerate(rows):
+        if skip_index is not None and n == skip_index:
+            continue
+        mid = (row.get("match_id") or "").strip()
+        if mid:
+            out.add(mid)
+    return out
+
+
+_ALBUM_CACHE = []
+
+# Deliberately not backfill's OCR-sweep hint list. That one decides which
+# assets get their text read; this one decides which assets are offered as
+# candidates, and the two need not be the same set. Hat detail is out
+# because nothing in the library references it yet - including it would
+# pad every memorabilia card with photos that cannot be the answer.
+_WIDEN_ALBUM_HINTS = ("memorabilia",)
+
+
+def _memorabilia_album_ids():
+    """The landed album(s) holding objects rather than people."""
+    if not _ALBUM_CACHE:
+        for a in immich.albums():
+            if any(h in (a.get("albumName") or "").lower()
+                   for h in _WIDEN_ALBUM_HINTS):
+                _ALBUM_CACHE.append(a["id"])
+    return _ALBUM_CACHE
+
+
+def _widen_by_album(row, rows, index):
+    """Every unclaimed asset in the memorabilia album(s).
+
+    Setlists, posters and picks carry no face and usually no readable
+    capture date, so neither the artist nor the date lookup can reach
+    them. What they do have is album membership, and that album is small
+    enough to scan whole. Assets confirmed on other rows are filtered
+    out, so the pool shrinks as the pass proceeds.
+
+    Scoped to memorabilia rows on purpose: the equivalent pool for an
+    artist photo is most of the library, which is not a card."""
+    if not (row.get("source_row") or "").startswith("item_log"):
+        return [], "album widen is for memorabilia rows - use Widen by artist"
+    album_ids = _memorabilia_album_ids()
+    if not album_ids:
+        return [], "no memorabilia album on the server"
+    claimed = _claimed_ids(rows, index)
+    out = []
+    for aid in album_ids:
+        for hit in immich.search_metadata(album_id=aid):
+            if hit["id"] not in claimed and hit["id"] not in out:
+                out.append(hit["id"])
+    return out[:60], f"{len(out)} unclaimed in memorabilia"
 
 
 # ── page ───────────────────────────────────────────────────────────────────
@@ -273,6 +411,9 @@ _PAGE = """<!doctype html>
  .cand img { width: 132px; height: 132px; object-fit: cover;
              border-radius: 4px; display: block; background: #8882; }
  .cand.sel { border-color: #2b7; }
+ .brokenthumb { width: 132px; height: 132px; border: 1px dashed #c66;
+                border-radius: 4px; display: grid; place-items: center;
+                color: #c66; font-size: 11px; text-align: center; padding: 6px; }
  .cand .dupe { position: absolute; left: 2px; right: 2px; bottom: 2px;
                background: #c60d; color: #fff; font-size: 10px;
                text-align: center; border-radius: 0 0 4px 4px; }
@@ -295,10 +436,13 @@ const S = STATE_JSON, T = "TOKEN";
 const el = document.getElementById('cards');
 
 function counts() {
-  const c = {}; S.cards.forEach(x => c[x.conf] = (c[x.conf]||0)+1);
+  const c = S.counts;
+  const left = S.cards.filter(x => x.conf !== '3').length;
   document.getElementById('counts').innerHTML =
     S.total + ' rows &middot; ' + [0,1,2,3].map(n =>
-      'conf ' + n + ': <b>' + (c[n]||0) + '</b>').join(' &middot; ');
+      'conf ' + n + ': <b>' + (c[n]||0) + '</b>').join(' &middot; ') +
+    (S.hidden ? ' &middot; <i>' + S.hidden + ' confirmed hidden</i>' : '') +
+    ' &middot; ' + left + ' left on this page';
 }
 
 function card(c) {
@@ -310,7 +454,7 @@ function card(c) {
   const cands = c.candidates.map(id =>
     '<div class="cand' + (id === c.matchId ? ' sel' : '') + '" data-id="' + id +
     '" onclick="pick(' + c.i + ',\\'' + id + '\\')">' +
-    '<img loading="lazy" src="/thumb/' + id + '?t=' + T + '">' +
+    '<img loading="lazy" src="/thumb/' + id + '?t=' + T + '" onerror="thumbFail(this)">' +
     (S.claimed[id] ? '<div class="dupe">also on another row</div>' : '') +
     '</div>').join('');
   return '<div class="card" id="c' + c.i + '" data-done="' +
@@ -326,7 +470,9 @@ function card(c) {
       '<button class="go" onclick="act(' + c.i + ',\\'confirm\\')">Confirm</button>' +
       '<button onclick="act(' + c.i + ',\\'reject\\')">Reject all</button>' +
       '<button onclick="act(' + c.i + ',\\'absent\\')">Not in Immich</button>' +
-      '<button onclick="widen(' + c.i + ')">Widen by date</button>' +
+      '<button onclick="widen(' + c.i + ',\\'date\\')">Widen by date</button>' +
+      '<button onclick="widen(' + c.i + ',\\'artist\\')">Widen by artist</button>' +
+      '<button onclick="widen(' + c.i + ',\\'album\\')">Widen by album</button>' +
       '<span class="msg" id="m' + c.i + '"></span>' +
     '</div></div></div>';
 }
@@ -334,7 +480,31 @@ function card(c) {
 function esc(s) { const d = document.createElement('div');
   d.textContent = s || ''; return d.innerHTML; }
 function byIndex(i) { return S.cards.find(c => c.i === i); }
-function render() { counts(); el.innerHTML = S.cards.map(card).join(''); }
+
+// A failed /thumb fetch otherwise renders as a browser broken-image icon,
+// which reads exactly like "this is the wrong photo" when it actually means
+// the asset could not be fetched. Say which it is.
+function thumbFail(img) {
+  const d = document.createElement('div');
+  d.className = 'brokenthumb';
+  d.textContent = 'thumbnail failed';
+  img.replaceWith(d);
+}
+
+// With one candidate the click carries no information - there is nothing
+// else to choose - so preselect it and let the row be a straight confirm or
+// reject. Multi-candidate rows still require an explicit pick, which is
+// where the ambiguity actually lives. This only sets the page's selection;
+// nothing reaches the crosswalk until Confirm is pressed.
+function preselect() {
+  S.cards.forEach(c => {
+    if (!c.matchId && c.conf !== '3' && c.candidates.length === 1) {
+      c.matchId = c.candidates[0];
+    }
+  });
+}
+
+function render() { preselect(); counts(); el.innerHTML = S.cards.map(card).join(''); }
 
 function pick(i, id) {
   const c = byIndex(i); c.matchId = (c.matchId === id ? '' : id);
@@ -356,21 +526,27 @@ async function act(i, action) {
   }
   const res = await post('/save', { i: i, action: action, matchId: c.matchId });
   if (!res.ok) { document.getElementById('m' + i).textContent = res.msg; return; }
+  const prev = c.conf;
   c.conf = res.conf; c.matchId = res.matchId; c.candidates = res.candidates;
+  S.counts[prev] = Math.max(0, (S.counts[prev] || 0) - 1);
+  S.counts[c.conf] = (S.counts[c.conf] || 0) + 1;
   document.getElementById('c' + i).dataset.done = (c.conf === '3' ? 1 : 0);
   document.getElementById('m' + i).textContent = 'saved';
   counts();
 }
 
-async function widen(i) {
+async function widen(i, mode) {
   const m = document.getElementById('m' + i);
   m.textContent = 'searching...';
-  const res = await post('/widen', { i: i });
+  const res = await post('/widen', { i: i, mode: mode });
   if (!res.ok) { m.textContent = res.msg; return; }
-  byIndex(i).candidates = res.candidates;
-  document.getElementById('c' + i).outerHTML = card(byIndex(i));
+  const c = byIndex(i);
+  c.candidates = res.candidates;
+  c.matchId = (res.candidates.length === 1 ? res.candidates[0] : '');
+  document.getElementById('c' + i).outerHTML = card(c);
   document.getElementById('m' + i).textContent =
-    res.candidates.length + ' candidate(s)';
+    res.candidates.length + ' candidate(s) via ' + mode +
+    (res.note ? ' - ' + res.note : '');
 }
 
 async function quit() {
@@ -390,7 +566,8 @@ def render_page(state, token):
 
 # ── server ─────────────────────────────────────────────────────────────────
 
-def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
+def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True,
+          include_confirmed=False):
     """Serve the winnowing page until Done or Ctrl-C. Blocks."""
     token = secrets.token_urlsafe(16)
     lock = threading.Lock()
@@ -427,7 +604,7 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
             if parsed.path == "/":
                 with lock:
                     rows = immich._read_tsv_rows(rel)
-                    page = render_page(build_state(rows), token)
+                    page = render_page(build_state(rows, include_confirmed), token)
                 return self._send(200, "text/html; charset=utf-8",
                                   page.encode("utf-8"))
             m = re.match(r"^/thumb/([0-9a-fA-F-]{32,40})$", parsed.path)
@@ -473,14 +650,25 @@ def serve(crosswalk_path, port=DEFAULT_PORT, open_browser=True):
                     i = int(payload.get("i", -1))
                     if not 0 <= i < len(rows):
                         return self._json({"ok": False, "msg": "bad row"})
-                    dates = _row_dates(rows[i])
-                    if not dates:
+                    mode = payload.get("mode", "date")
+                    if mode == "artist":
+                        found, tried = _widen_by_artist(rows[i])
+                        note = ", ".join(tried) or "no artist on this row"
+                    elif mode == "album":
+                        found, note = _widen_by_album(rows[i], rows, i)
+                    else:
+                        dates = _row_dates(rows[i])
+                        if not dates:
+                            return self._json({"ok": False,
+                                               "msg": "row has no date"})
+                        found, note = _widen_by_date(dates), ", ".join(dates)
+                    if not found:
                         return self._json({"ok": False,
-                                           "msg": "row has no date"})
-                    found = _widen(dates)
+                                           "msg": f"nothing found ({note})"})
                     rows[i]["immich_candidates"] = ";".join(found)
                     write_crosswalk(crosswalk_path, rows)
-                    return self._json({"ok": True, "candidates": found})
+                    return self._json({"ok": True, "candidates": found,
+                                       "note": note})
 
             return self._send(404, "text/plain", b"no such endpoint")
 
