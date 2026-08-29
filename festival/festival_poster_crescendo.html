@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red House Revival — The Crescendo Bill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE0C2;
+    --paper-deep:#E3D2AB;
+    --ink:#221A12;
+    --indigo:#2E4A6B;
+    --juke-red:#A63D2F;
+    --harvest:#8A6A1F;
+    --gold:#C9962E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#1A140E;
+    font-family:'Oswald',sans-serif;
+    color:var(--ink);
+    display:flex;justify-content:center;
+    padding:24px 8px;
+  }
+  .poster{
+    width:100%;max-width:760px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.25), transparent 60%),
+      repeating-linear-gradient(2deg, transparent 0 3px, rgba(90,70,40,.035) 3px 4px),
+      var(--paper);
+    border:3px solid var(--ink);
+    outline:1px solid var(--paper);
+    outline-offset:-9px;
+    padding:38px 34px 30px;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);
+  }
+  .masthead{text-align:center;border-bottom:3px double var(--ink);padding-bottom:22px;}
+  .hat{width:84px;filter:sepia(.3) contrast(1.05);margin-bottom:6px;}
+  .eyebrow{
+    font-family:'Special Elite',monospace;font-size:13px;letter-spacing:.28em;
+    text-transform:uppercase;margin-bottom:8px;
+  }
+  h1{
+    font-family:'Alfa Slab One',serif;
+    font-size:clamp(44px,9vw,74px);
+    line-height:.95;
+    color:var(--juke-red);
+    text-shadow:2px 2px 0 var(--ink);
+    text-transform:uppercase;
+  }
+  h1 .rev{color:var(--indigo);}
+  .sub{
+    font-family:'Oswald';font-weight:600;font-size:14px;letter-spacing:.3em;
+    text-transform:uppercase;margin-top:12px;
+  }
+  .day{
+    margin-top:30px;text-align:center;
+    border:2px solid var(--ink);background:var(--paper-deep);
+    padding:18px 20px 22px;position:relative;
+  }
+  .day::before{
+    content:"";position:absolute;inset:5px;border:1px dashed rgba(34,26,18,.4);pointer-events:none;
+  }
+  .day-name{
+    font-family:'Alfa Slab One',serif;font-size:22px;text-transform:uppercase;
+    display:inline-block;border-bottom:2px solid var(--ink);
+    padding:0 14px 6px;margin-bottom:6px;
+  }
+  .d1 .day-name{color:var(--indigo);}
+  .d2 .day-name{color:var(--harvest);}
+  .d3 .day-name{color:var(--juke-red);}
+  .riser{
+    font-family:'Special Elite',monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:rgba(34,26,18,.65);margin-bottom:10px;
+  }
+  /* the crescendo: names flow in strict running order, growing as the day goes on */
+  .bill{line-height:1.5;text-transform:uppercase;}
+  .bill{max-width:100%;}
+  .bill span{display:inline-block;white-space:normal;max-width:100%;}
+  .bill .sep{color:var(--gold);padding:0 .3em;font-family:'Alfa Slab One',serif;}
+  /* size steps by hour block */
+  .h12{font-size:14px;font-weight:400;letter-spacing:.04em;}
+  .h1x{font-size:15px;font-weight:400;letter-spacing:.04em;}
+  .h2x{font-size:16px;font-weight:500;letter-spacing:.04em;}
+  .h3x{font-size:18px;font-weight:500;letter-spacing:.03em;}
+  .h4x{font-size:20px;font-weight:500;letter-spacing:.03em;}
+  .h5x{font-size:22px;font-weight:600;letter-spacing:.02em;}
+  .h6x{font-size:clamp(19px,4.2vw,25px);font-weight:600;letter-spacing:.02em;}
+  .h7x{font-size:clamp(20px,4.6vw,28px);font-weight:700;letter-spacing:.01em;}
+  .h8x{font-family:'Alfa Slab One',serif;font-size:clamp(21px,5vw,31px);font-weight:400;}
+  .h9x{font-family:'Alfa Slab One',serif;font-size:clamp(24px,6vw,38px);font-weight:400;line-height:1.25;}
+  /* stage inks: main = black ink, second stage = the day's color */
+  .d1 .s2{color:var(--indigo);}
+  .d2 .s2{color:var(--harvest);}
+  .d3 .s2{color:var(--juke-red);}
+  .h9x.s2, .h8x.s2{text-shadow:1px 1px 0 rgba(34,26,18,.55);}
+  .foot{
+    margin-top:28px;text-align:center;border-top:3px double var(--ink);padding-top:14px;
+    font-family:'Special Elite',monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;line-height:2;
+  }
+  .foot .k1{color:var(--ink);font-weight:700;}
+  .foot .k2{color:var(--juke-red);}
+  @media(max-width:560px){
+    .poster{padding:26px 16px 22px;}
+  }
+  @media print{
+    body{background:#fff;padding:0;}
+    .poster{box-shadow:none;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <header class="masthead">
+    <img class="hat" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt="" onerror="this.style.display='none'">
+    <div class="eyebrow">Dan2bit Presents &mdash; One Weekend Only</div>
+    <h1>Red House <span class="rev">Revival</span></h1>
+    <div class="sub">Three Days &bull; Two Stages &bull; The Running Order</div>
+  </header>
+
+  <!-- DAY 1 : 1:00 -> 9:30, alternating Main / Second -->
+  <section class="day d1">
+    <div class="day-name">Friday</div>
+    <div class="riser">first note 1 PM - headliner at 9:30 PM</div>
+    <div class="bill"><span class="h1x s2">Toronzo Cannon</span><span class="sep">&middot;</span>
+      <span class="h1x s1">Buffalo Nichols</span><span class="sep">&middot;</span><span class="h2x s2">Ghalia Volt</span><span class="sep">&middot;</span><span class="h2x s1">Taj Farrant</span><span class="sep">&middot;</span><span class="h3x s2">Nikki Hill</span><span class="sep">&middot;</span><span class="h3x s1">Matteo Mancuso</span><span class="sep">&middot;</span><span class="h4x s2">Eric Johanson</span><span class="sep">&middot;</span><span class="h4x s1">Selwyn Birchwood</span><span class="sep">&middot;</span><span class="h5x s2">Mike Zito</span><span class="sep">&middot;</span><span class="h5x s1">Sonny Landreth</span><span class="sep">&middot;</span><span class="h6x s2">D.K. Harrell</span><span class="sep">&middot;</span><span class="h6x s1">Albert Castiglia</span><span class="sep">&middot;</span><span class="h7x s2">Angelique Francis</span>
+      <span class="sep">&middot;</span><span class="h7x s1">Robert Jon &amp; The Wreck</span><br><span class="h8x s2">Keb&rsquo; Mo&rsquo;</span>
+      <span class="sep">&middot;</span>
+      <span class="h8x s1">Ally Venable</span><br><span class="h9x s2">Eric Gales</span>
+    <span class="sep">&middot;</span>
+      <span class="h9x s1">Kingfish Ingram</span></div>
+  </section>
+
+  <!-- DAY 2 : 12:00 -> 9:30 -->
+  <section class="day d2">
+    <div class="day-name">Saturday</div>
+    <div class="riser">first note noon - headliner at 9:30 PM</div>
+    <div class="bill"><span class="h12 s2">Sabine McCalla</span><span class="sep">&middot;</span>
+      <span class="h12 s1">Jake Xerxes Fussell</span><span class="sep">&middot;</span><span class="h1x s2">Kashus Culpepper</span><span class="sep">&middot;</span><span class="h1x s1">Miko Marks</span><span class="sep">&middot;</span><span class="h2x s2">Caitlin Krisko &amp; The Broadcast</span><span class="sep">&middot;</span><span class="h2x s1">Shovels &amp; Rope</span><span class="sep">&middot;</span><span class="h3x s2">Kingsley Flood</span><span class="sep">&middot;</span><span class="h3x s1">Whitney Mong&eacute;</span><span class="sep">&middot;</span><span class="h4x s2">Ariel Posen</span><span class="sep">&middot;</span><span class="h4x s1">The War and Treaty</span><span class="sep">&middot;</span><span class="h5x s2">The Bros. Landreth</span><span class="sep">&middot;</span><span class="h5x s1">The Avett Brothers</span><span class="sep">&middot;</span><span class="h6x s2">Galactic</span><span class="sep">&middot;</span><span class="h6x s1">Daniel Donato&rsquo;s Cosmic Country</span><span class="sep">&middot;</span><span class="h7x s2">St. Paul &amp; The Broken Bones</span>
+      <span class="sep">&middot;</span><span class="h7x s1">The Wood Brothers</span><br><span class="h8x s2">JJ Grey &amp; Mofro</span>
+      <span class="sep">&middot;</span>
+      <span class="h8x s1">The Lone Bellow</span><br><span class="h9x s2">Trombone Shorty</span>
+    <span class="sep">&middot;</span>
+      <span class="h9x s1">Jon Batiste</span></div>
+  </section>
+
+  <!-- DAY 3 : 1:00 -> 9:30 -->
+  <section class="day d3">
+    <div class="day-name">Sunday</div>
+    <div class="riser">first note 1 PM - headliner at 9:30 PM</div>
+    <div class="bill"><span class="h1x s2">Amythyst Kiah</span><span class="sep">&middot;</span>
+      <span class="h1x s1">Carly Harvey</span><span class="sep">&middot;</span><span class="h2x s2">Danielle Ponder</span><span class="sep">&middot;</span><span class="h2x s1">Grace Bowers</span><span class="sep">&middot;</span><span class="h3x s2">Judith Hill</span><span class="sep">&middot;</span><span class="h3x s1">Danielle Nicole</span><span class="sep">&middot;</span><span class="h4x s2">Lake Street Dive</span><span class="sep">&middot;</span><span class="h4x s1">Sue Foley</span><span class="sep">&middot;</span><span class="h5x s2">ZZ Ward</span><span class="sep">&middot;</span><span class="h5x s1">Southern Avenue</span><span class="sep">&middot;</span><span class="h6x s2">Joanne Shaw Taylor</span><span class="sep">&middot;</span><span class="h6x s1">Samantha Fish</span><span class="sep">&middot;</span><span class="h7x s2">Ana Popovi&#263;</span>
+      <span class="sep">&middot;</span><span class="h7x s1">Beth Hart</span><br><span class="h8x s2">Jackie Venson</span>
+      <span class="sep">&middot;</span>
+      <span class="h8x s1">Vanessa Collier</span><br><span class="h9x s2">Allison Russell</span>
+    <span class="sep">&middot;</span>
+      <span class="h9x s1">Larkin Poe</span></div>
+  </section>
+
+  <footer class="foot">
+    running order, earliest to latest &mdash; type grows as the day does<br>second stage on the hour &bull; main stage on the half<br>
+    <span class="k1">black ink = main stage</span> &nbsp;&bull;&nbsp; <span class="k2">color ink = second stage</span><br>
+    45-minute sets &bull; no act plays twice &bull; 56 acts &bull; est. 2026
+  </footer>
+
+</div>
+</body>
+</html>

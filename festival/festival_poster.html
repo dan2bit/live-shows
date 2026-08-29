@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red House Revival — Three Days, Two Stages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE0C2;
+    --paper-deep:#E3D2AB;
+    --ink:#221A12;
+    --indigo:#2E4A6B;
+    --juke-red:#A63D2F;
+    --harvest:#8A6A1F;
+    --gold:#C9962E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#1A140E;
+    font-family:'Oswald',sans-serif;
+    color:var(--ink);
+    display:flex;justify-content:center;
+    padding:24px 8px;
+  }
+  .poster{
+    width:100%;max-width:760px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.25), transparent 60%),
+      repeating-linear-gradient(2deg, transparent 0 3px, rgba(90,70,40,.035) 3px 4px),
+      var(--paper);
+    border:3px solid var(--ink);
+    outline:1px solid var(--paper);
+    outline-offset:-9px;
+    padding:38px 34px 30px;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);
+  }
+  .masthead{text-align:center;border-bottom:3px double var(--ink);padding-bottom:22px;}
+  .hat{width:84px;filter:sepia(.3) contrast(1.05);margin-bottom:6px;}
+  .eyebrow{
+    font-family:'Special Elite',monospace;font-size:13px;letter-spacing:.28em;
+    text-transform:uppercase;margin-bottom:8px;
+  }
+  h1{
+    font-family:'Alfa Slab One',serif;
+    font-size:clamp(44px,9vw,74px);
+    line-height:.95;letter-spacing:.01em;
+    color:var(--juke-red);
+    text-shadow:2px 2px 0 var(--ink);
+    text-transform:uppercase;
+  }
+  h1 .rev{color:var(--indigo);}
+  .sub{
+    font-family:'Oswald';font-weight:600;font-size:15px;letter-spacing:.34em;
+    text-transform:uppercase;margin-top:12px;
+  }
+  .day{
+    margin-top:26px;
+    border:2px solid var(--ink);
+    background:var(--paper-deep);
+    padding:20px 22px 18px;
+    position:relative;
+  }
+  .day::before{
+    content:"";position:absolute;inset:5px;border:1px dashed rgba(34,26,18,.4);pointer-events:none;
+  }
+  .day-band{
+    display:flex;align-items:baseline;justify-content:center;
+    border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px;
+  }
+  .day-name{
+    font-family:'Alfa Slab One',serif;font-size:24px;text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  .d1 .day-name{color:var(--indigo);}
+  .d2 .day-name{color:var(--harvest);}
+  .d3 .day-name{color:var(--juke-red);}
+  .closer{
+    font-family:'Alfa Slab One',serif;
+    text-transform:uppercase;text-align:center;line-height:1.05;
+    font-size:clamp(26px,5.4vw,40px);
+    margin:6px 0 2px;
+  }
+  .d1 .closer{color:var(--indigo);text-shadow:1.5px 1.5px 0 rgba(34,26,18,.85);}
+  .d2 .closer{color:var(--harvest);text-shadow:1.5px 1.5px 0 rgba(34,26,18,.85);}
+  .d3 .closer{color:var(--juke-red);text-shadow:1.5px 1.5px 0 rgba(34,26,18,.85);}
+  .co{
+    font-family:'Alfa Slab One',serif;text-transform:uppercase;text-align:center;
+    font-size:clamp(16px,3.2vw,22px);color:var(--ink);line-height:1.25;
+    margin-bottom:14px;
+  }
+  .co .dot{color:var(--gold);padding:0 6px;}
+  .stages{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;}
+  .stage h3{
+    font-family:'Oswald';font-weight:600;font-size:12px;letter-spacing:.3em;
+    text-transform:uppercase;text-align:center;
+    border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+    padding:4px 0;margin-bottom:8px;
+  }
+  .stage ul{list-style:none;}
+  .stage li{
+    display:flex;justify-content:space-between;gap:10px;
+    font-size:15px;font-weight:500;letter-spacing:.02em;
+    text-transform:uppercase;
+    padding:2.5px 0;border-bottom:1px dotted rgba(34,26,18,.3);
+  }
+  .stage li:last-child{border-bottom:none;}
+  .stage .t{
+    font-family:'Special Elite',monospace;font-size:12px;color:rgba(34,26,18,.75);
+    white-space:nowrap;padding-top:2px;
+  }
+  .stage li.fav{font-weight:600;}
+  .d1 .stage li.fav{color:var(--indigo);}
+  .d2 .stage li.fav{color:var(--harvest);}
+  .d3 .stage li.fav{color:var(--juke-red);}
+  .foot{
+    margin-top:26px;text-align:center;border-top:3px double var(--ink);padding-top:14px;
+    font-family:'Special Elite',monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;line-height:2;
+  }
+  @media(max-width:560px){
+    .stages{grid-template-columns:1fr;gap:14px;}
+    .poster{padding:26px 18px 22px;}
+  }
+  @media print{
+    body{background:#fff;padding:0;}
+    .poster{box-shadow:none;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <header class="masthead">
+    <img class="hat" src="https://dan2bit.github.io/live-shows/static/brand-hat.png" alt="" onerror="this.style.display='none'">
+    <div class="eyebrow">Dan2bit Presents &mdash; One Weekend Only</div>
+    <h1>Red House <span class="rev">Revival</span></h1>
+    <div class="sub">Three Days &bull; Two Stages</div>
+  </header>
+
+  <!-- ================= DAY 1 ================= -->
+  <section class="day d1">
+    <div class="day-band"><span class="day-name">Friday</span></div>
+    <div class="closer">Christone &ldquo;Kingfish&rdquo; Ingram</div>
+    <div class="co">Ally Venable <span class="dot">&#9733;</span> Eric Gales <span class="dot">&#9733;</span> Keb&rsquo; Mo&rsquo;</div>
+    <div class="stages">
+      <div class="stage">
+        <h3>Main Stage</h3>
+        <ul>
+          <li><span>Buffalo Nichols</span><span class="t">1:30</span></li>
+          <li><span>Taj Farrant</span><span class="t">2:30</span></li>
+          <li><span>Matteo Mancuso</span><span class="t">3:30</span></li>
+          <li><span>Selwyn Birchwood</span><span class="t">4:30</span></li>
+          <li><span>Sonny Landreth</span><span class="t">5:30</span></li>
+          <li><span>Albert Castiglia</span><span class="t">6:30</span></li>
+          <li><span>Robert Jon &amp; The Wreck</span><span class="t">7:30</span></li>
+          <li class="fav"><span>Ally Venable</span><span class="t">8:30</span></li>
+          <li class="fav"><span>Kingfish Ingram</span><span class="t">9:30</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h3>Second Stage</h3>
+        <ul>
+          <li><span>Toronzo Cannon</span><span class="t">1:00</span></li>
+          <li><span>Ghalia Volt</span><span class="t">2:00</span></li>
+          <li><span>Nikki Hill</span><span class="t">3:00</span></li>
+          <li><span>Eric Johanson</span><span class="t">4:00</span></li>
+          <li><span>Mike Zito</span><span class="t">5:00</span></li>
+          <li><span>D.K. Harrell</span><span class="t">6:00</span></li>
+          <li><span>Angelique Francis</span><span class="t">7:00</span></li>
+          <li class="fav"><span>Keb&rsquo; Mo&rsquo;</span><span class="t">8:00</span></li>
+          <li class="fav"><span>Eric Gales</span><span class="t">9:00</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DAY 2 ================= -->
+  <section class="day d2">
+    <div class="day-band"><span class="day-name">Saturday</span></div>
+    <div class="closer">Jon Batiste</div>
+    <div class="co">The Lone Bellow <span class="dot">&#9733;</span> Trombone Shorty &amp; Orleans Avenue <span class="dot">&#9733;</span> JJ Grey &amp; Mofro</div>
+    <div class="stages">
+      <div class="stage">
+        <h3>Main Stage</h3>
+        <ul>
+          <li><span>Jake Xerxes Fussell</span><span class="t">12:30</span></li>
+          <li><span>Miko Marks</span><span class="t">1:30</span></li>
+          <li><span>Shovels &amp; Rope</span><span class="t">2:30</span></li>
+          <li><span>Whitney Mong&eacute;</span><span class="t">3:30</span></li>
+          <li><span>The War and Treaty</span><span class="t">4:30</span></li>
+          <li><span>The Avett Brothers</span><span class="t">5:30</span></li>
+          <li><span>Daniel Donato&rsquo;s Cosmic Country</span><span class="t">6:30</span></li>
+          <li><span>The Wood Brothers</span><span class="t">7:30</span></li>
+          <li class="fav"><span>The Lone Bellow</span><span class="t">8:30</span></li>
+          <li class="fav"><span>Jon Batiste</span><span class="t">9:30</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h3>Second Stage</h3>
+        <ul>
+          <li><span>Sabine McCalla</span><span class="t">12:00</span></li>
+          <li><span>Kashus Culpepper</span><span class="t">1:00</span></li>
+          <li><span>Caitlin Krisko &amp; The Broadcast</span><span class="t">2:00</span></li>
+          <li><span>Kingsley Flood</span><span class="t">3:00</span></li>
+          <li><span>Ariel Posen</span><span class="t">4:00</span></li>
+          <li><span>The Bros. Landreth</span><span class="t">5:00</span></li>
+          <li><span>Galactic</span><span class="t">6:00</span></li>
+          <li><span>St. Paul &amp; The Broken Bones</span><span class="t">7:00</span></li>
+          <li class="fav"><span>JJ Grey &amp; Mofro</span><span class="t">8:00</span></li>
+          <li class="fav"><span>Trombone Shorty &amp; Orleans Ave.</span><span class="t">9:00</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DAY 3 ================= -->
+  <section class="day d3">
+    <div class="day-band"><span class="day-name">Sunday</span></div>
+    <div class="closer">Larkin Poe</div>
+    <div class="co">Vanessa Collier <span class="dot">&#9733;</span> Allison Russell <span class="dot">&#9733;</span> Jackie Venson</div>
+    <div class="stages">
+      <div class="stage">
+        <h3>Main Stage</h3>
+        <ul>
+          <li><span>Carly Harvey</span><span class="t">1:30</span></li>
+          <li><span>Grace Bowers</span><span class="t">2:30</span></li>
+          <li><span>Danielle Nicole</span><span class="t">3:30</span></li>
+          <li><span>Sue Foley</span><span class="t">4:30</span></li>
+          <li><span>Southern Avenue</span><span class="t">5:30</span></li>
+          <li><span>Samantha Fish</span><span class="t">6:30</span></li>
+          <li><span>Beth Hart</span><span class="t">7:30</span></li>
+          <li class="fav"><span>Vanessa Collier</span><span class="t">8:30</span></li>
+          <li class="fav"><span>Larkin Poe</span><span class="t">9:30</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h3>Second Stage</h3>
+        <ul>
+          <li><span>Amythyst Kiah</span><span class="t">1:00</span></li>
+          <li><span>Danielle Ponder</span><span class="t">2:00</span></li>
+          <li><span>Judith Hill</span><span class="t">3:00</span></li>
+          <li><span>Lake Street Dive</span><span class="t">4:00</span></li>
+          <li><span>ZZ Ward</span><span class="t">5:00</span></li>
+          <li><span>Joanne Shaw Taylor</span><span class="t">6:00</span></li>
+          <li><span>Ana Popovi&#263;</span><span class="t">7:00</span></li>
+          <li class="fav"><span>Jackie Venson</span><span class="t">8:00</span></li>
+          <li class="fav"><span>Allison Russell</span><span class="t">9:00</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    45-minute sets &bull; second stage on the hour, main on the half &bull; no act plays twice<br>
+    curated from the live-shows archive &mdash; 56 acts &bull; est. 2026
+  </footer>
+
+</div>
+</body>
+</html>

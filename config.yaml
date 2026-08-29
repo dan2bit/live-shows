@@ -52,7 +52,8 @@ site:
         label: "🎵 music links on Linktree"
       - url: https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing
         label: "🎩 hat autographs"
-      - url: https://photos.app.goo.gl/TMHL8xwJbAtcp33v9
+      # Mirrored in index.html as an .about-link <li>. Update both.
+      - url: https://photos.redhat-bootlegs.net/s/musicians
         label: "📷 album: Guitar Gods & Goddesses"
 
   about_footer: "Life is short. Buy the tickets."
