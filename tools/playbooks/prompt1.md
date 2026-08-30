@@ -16,7 +16,7 @@ Start every session by:
 
 Available routines:
 - Routine 1: ticket receipts (label:ticket-receipt) — public fields (artist, date, venue, seat type, VIP/Group flags) to data/live_shows_current.tsv; private fields (cost, seat info, ticket qty, purchasing/fee notes) to **dan2bit/live-shows-private → current_private.tsv**, keyed on Show Date + Artist. Two separate commits to two separate repos, never one.
-- Routine 2: post-show notes (label:show-notes) — always updates **dan2bit/live-shows-private → spending.tsv** (private repo) and data/artists.tsv, and potentially data/show_goals/book_signatures.tsv (book) / data/show_goals/hat_signatures.tsv (hat)
+- Routine 2: post-show notes (label:show-notes) — always updates **dan2bit/live-shows-private → spending.tsv** (private repo) and data/artists.tsv, and potentially data/show_goals/book_signatures.tsv (book) / data/show_goals/hat_signatures.tsv (hat). Also files a `playlist`-labeled issue (and a `photo`-labeled issue if a photo was taken) — see the template-fetch rule below.
 - Routine 3: ticket-alert newsletters (label:ticket-alert -label:processed) — requires a clear date on the calendar and explicit confirmation before any potentials write
 - Routine 4: artist mail (label:artist-mail -label:processed)
 - Routine 5: artist follow / signup (label:artist-follow -label:processed)
@@ -39,3 +39,4 @@ Key rules in effect:
 - TSVs and data files commit to **staging** (not main); private sidecar TSVs commit to dan2bit/live-shows-private main; JS/Python scripts go to PR branch
 - `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
 - Auto-promote trigger: both the **Contents API** (`create_or_update_file`) and the **Git Data API** (`push_files`) fire the `push` event on staging — single writes and batches promote to main with no follow-up commit (verified 2026-08-24).
+- **Issue-template fetch rule (2026-08-30):** `github:issue_write` has no template-selection parameter — unlike the "New Issue" button in the GitHub web UI, it cannot read `.github/ISSUE_TEMPLATE/` for you. Any issue that has a template file (currently `playlist.md`, `photo.md`) must be built by fetching that template live via `github:get_file_contents` and filling in every `{{PLACEHOLDER}}` from data already in hand — never reconstructed from memory, habit, or a prior issue's body. This rule exists because four open `playlist`-labeled issues (#296, #297, #300, #308) were found using stale or paraphrased task lists instead of the real template; full procedure is in `tools/playbooks/EMAIL_WORKFLOWS.md` → Routine 2 Step 6.
