@@ -414,12 +414,65 @@ build + manual compare.
 
 **Step 6 — Open a GitHub issue for YouTube playlist creation; update setlists JSON if MULTI**
 
-**Single-setlist shows:** Open one issue by default. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `playlist`. Body includes only the setlist.fm link and the artist's YouTube channel handle (sourced per the handle rule below) — the two pieces of data actually needed to build the playlist. **Handle sourcing rule:** look up each bill artist in `data/artists.tsv` first and use the `YouTube Channel` value verbatim when present; only search YouTube when the artist has no row or the column is blank. Tag provenance next to each handle in the issue body — `(from artists.tsv)` or `(web lookup — verify)` — so a guessed handle is never mistaken for a curated one. **Do not include cost/spending data** (parking, food & bev, merch, ticket cost, or any other dollar figure) in this issue — this is a public repo issue and that data belongs in `spending.tsv` / `current_private.tsv` only (2026-07-19 correction; earlier issues in this repo predate the rule and were not retroactively edited). Non-cost show notes (artist interaction, banter, etc.) are optional context and may be included, but are not required. This step is opt-out, not opt-in — create the issue unless the show notes email explicitly states no footage was taken (e.g. "didn't record," "no video this time," "phone died," "left early, no recording"). The mere absence of a video/YouTube mention in the notes is NOT grounds to skip it — that absence is the default case, and the default is to open the issue. If genuinely uncertain whether footage exists, open the issue anyway and note the uncertainty in the body; a closed-out issue costs nothing, a missing one loses the reminder entirely.
+**The issue body MUST be built from the live template file, never reconstructed from
+memory or from a prior issue's body (2026-08-30 correction — see below for why this
+is now explicit).** Before drafting the issue:
+
+1. Fetch `.github/ISSUE_TEMPLATE/playlist.md` live via `github:get_file_contents` —
+   every time, even if the pipeline "hasn't changed recently." The template is the
+   only source of truth for the current Task List; it has changed before (most
+   recently 2026-08-15, moving from a manual runbook to the scripted
+   `youtube_upload_show.py` / `youtube_create_playlists.py` pipeline) without every
+   downstream habit catching up.
+2. Fill in every `{{PLACEHOLDER}}` token from data already in hand this routine —
+   `{{HEADLINER}}` / `{{SUPPORT}}` from the show's bill, `{{SETLIST_FM_*}}` from the
+   setlist.fm link(s) parsed this routine, `{{*_HANDLE}}` per the handle sourcing rule
+   below, `{{DATE_ISO}}` from the show date, `{{VENUE}}` short form, `{{SHOW_NOTE}}`
+   from the show's public Notes. No placeholder should remain in the posted body.
+3. `github:issue_write` has no template-selection parameter — it is not aware of
+   `.github/ISSUE_TEMPLATE/` at all, unlike the "New Issue" picker in the GitHub web
+   UI. Fetch-then-fill (steps 1–2) is the only way to get a template-correct body
+   through this tool; there is no shortcut that lets the tool do it for you.
+
+**Why this is spelled out:** on 2026-08-28, four open `playlist`-labeled issues
+(#296, #297, #300, #308) were found to carry either the pre-2026-08-06 manual runbook
+or a paraphrased, compressed version of the post-2026-08-15 template — never the
+literal file. Nothing in this step previously said to fetch the template, and this
+step's own prior wording ("Body includes only the setlist.fm link and the artist's
+YouTube channel handle — the two pieces of data actually needed to build the
+playlist") was itself stale advice from before the scripted pipeline existed, and
+actively encouraged reconstructing a minimal body from memory instead of using the
+real template. All four issues were corrected in place; this step is rewritten so the
+same drift can't recur silently.
+
+**Single-setlist shows:** Open one issue by default following the fetch-then-fill
+procedure above. Title: `Playlist: [Artist] — [YYYY-MM-DD] ([Venue short name])`.
+Label: `playlist`. **Handle sourcing rule:** look up each bill artist in
+`data/artists.tsv` first and use the `YouTube Channel` value verbatim when present;
+only search YouTube when the artist has no row or the column is blank. Tag provenance
+next to each handle in the issue body — `(from artists.tsv)` or `(web lookup —
+verify)` — so a guessed handle is never mistaken for a curated one. **Do not include
+cost/spending data** (parking, food & bev, merch, ticket cost, or any other dollar
+figure) in this issue — this is a public repo issue and that data belongs in
+`spending.tsv` / `current_private.tsv` only (2026-07-19 correction; earlier issues in
+this repo predate the rule and were not retroactively edited). Non-cost show notes
+(artist interaction, banter, etc.) belong in the template's Show note section. This
+step is opt-out, not opt-in — create the issue unless the show notes email explicitly
+states no footage was taken (e.g. "didn't record," "no video this time," "phone
+died," "left early, no recording"). The mere absence of a video/YouTube mention in the
+notes is NOT grounds to skip it — that absence is the default case, and the default is
+to open the issue. If genuinely uncertain whether footage exists, open the issue
+anyway and note the uncertainty in the Show note section; a closed-out issue costs
+nothing, a missing one loses the reminder entirely.
 
 **MULTI shows (two or more setlist.fm links provided):**
 
 1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
-2. Open **one combined playlist issue** — title as above; include all setlist.fm links plus each artist's YouTube channel handle in the body (support acts first, headliner last), each handle sourced and provenance-tagged per the handle sourcing rule above. Same cost-data exclusion and opt-out default as above apply.
+2. Open **one combined playlist issue** via the same fetch-then-fill procedure —
+   title as above; include all setlist.fm links plus each artist's YouTube channel
+   handle (support acts first, headliner last), each handle sourced and
+   provenance-tagged per the handle sourcing rule above. Same cost-data exclusion and
+   opt-out default as above apply.
 3. Update `data/setlists/<year>.json` by appending an entry keyed on `YYYY-MM-DD`:
 
 ```json
@@ -441,6 +494,10 @@ When the notes indicate Dan got a photo with an artist (`Artist Interaction` is 
 > **Getting the parseable link:** in Google Photos, Share the photo and copy the `photos.app.goo.gl` shortlink — then open that shortlink in a new tab and copy the **landing URL** (`https://photos.google.com/share/…/photo/…?key=…`). Paste the landing URL as the comment here. (Alternative: open the album through its existing share link, navigate to the photo, and copy the address bar.) This mirrors the `playlist` reminder in Step 6 — the Google Photos share link is later posted as a comment on the issue, which triggers `close-photo-issue.yml` (#131 item 4) to append the row to `data/show_goals/artist-photos.tsv` (`Date | Share Link | Caption`, header BOM preserved) and close the issue automatically. If the workflow is ever unavailable, append the row by hand. Do **not** touch `artists.tsv` — the `Photo` column is removed (#131); `artist-photos.tsv` is the sole photo record.
 
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
+
+Include explicit confirmation in the log body that the Step 6 playlist issue (and Step
+6b photo issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
+file, not reconstructed from memory.
 
 **Final:** Apply `processed` label.
 
@@ -667,4 +724,8 @@ in April 2026. New artists are followed on BIT and Seated only. See
 `tools/research/follows/follows_master.tsv` for current coverage per service.
 
 **YouTube pipeline is separate.** Tracked via GitHub issues (`playlist` label).
-Scripts run manually after videos are uploaded to YouTube Studio.
+Scripts run manually after videos are uploaded to YouTube Studio. **`issue_write` has
+no template-selection parameter — it cannot read `.github/ISSUE_TEMPLATE/` the way the
+GitHub web UI's "New Issue" picker does.** Any workflow that creates a `playlist`- or
+`photo`-labeled issue must fetch the relevant template file live and fill it in by
+hand (see Routine 2 Step 6 / Step 6b) — there is no tool-level shortcut.
