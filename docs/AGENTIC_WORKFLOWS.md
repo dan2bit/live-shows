@@ -69,6 +69,16 @@ Claude sessions operate via MCP tools:
 - **Google Calendar MCP** — create/update events, check availability
 - **bash** — fetch files, run scripts, diff content
 
+**A tool operating on a resource is not the same as that tool understanding the
+resource's conventions.** `github:issue_write`, for instance, can create or update
+any issue, but it has no notion of `.github/ISSUE_TEMPLATE/` — unlike the GitHub
+web UI's "New Issue" picker, it will not offer or apply a template. Any Claude
+workflow that produces a templated artifact (an issue, a file with a fixed schema,
+etc.) is responsible for fetching the template/schema live and filling it in itself;
+the MCP tool layer does not do this for you. See the playlist-issue template-fetch
+rule under Routine 2 below for the concrete instance that motivated writing this
+down.
+
 The system prompt (Claude Instructions, pinned to the Project) carries the standing rules, defaults, and schema knowledge so each session starts with full context. The memory system carries the dynamic facts that accumulate over time.
 
 ---
@@ -95,8 +105,8 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 ### Routine 2 — Post-show notes
 
 **Trigger:** Dan sends post-show email to rhbl
-**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `data/show_goals/book_signatures.tsv` (book) / `data/show_goals/hat_signatures.tsv` (hat)
-**Key rules:** spending.tsv write is mandatory even if all zeros
+**Data written:** `dan2bit/live-shows-private → spending.tsv`, `data/live_shows_current.tsv` (→ `staging`), `artists.tsv` (→ `staging`), optionally `data/show_goals/book_signatures.tsv` (book) / `data/show_goals/hat_signatures.tsv` (hat), and a `playlist`-labeled issue (+ `photo`-labeled issue if applicable)
+**Key rules:** spending.tsv write is mandatory even if all zeros. The `playlist`/`photo` issue bodies must be built from a **live fetch of the matching `.github/ISSUE_TEMPLATE/*.md` file**, never reconstructed from memory or a prior issue — see `EMAIL_WORKFLOWS.md` → Routine 2 Step 6 for the full procedure and the incident (#296/#297/#300/#308) that made this explicit.
 
 ### Routine 3 — Ticket alert newsletter
 
@@ -197,6 +207,14 @@ The full, current catalog — triggers, behavior, and conventions — lives in
 | Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
 | Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
 | Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos` |
+
+`close-playlist-issue` and `close-photo-issue` both parse the issue body/comment
+against the structure their respective `.github/ISSUE_TEMPLATE/*.md` file defines
+(e.g. the `Playlist: <url>` line the closer looks for in the body). An issue whose
+body drifted from the current template — see the Routine 2 note above — doesn't
+just look wrong to Dan; it risks not matching what these bots expect either, on
+top of missing pipeline steps. Both failure modes trace to the same root cause
+(the issue wasn't built from a live template fetch) and the same fix.
 
 Bot commits do **not** use `[skip ci]` — auto-promote is wanted; retrigger loops
 are prevented by excluding each bot's output file from its own trigger paths.
