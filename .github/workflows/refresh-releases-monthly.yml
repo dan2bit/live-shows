@@ -1,17 +1,24 @@
-name: Monthly release refresh (spotify_cache)
+name: Daily release refresh (spotify_cache)
 
-# Scheduled `--refresh-releases` burst, late in the month — one run per day
-# on the 26th-29th, each spending a voluntary --limit budget and exiting 0
-# when it's spent (BudgetExhausted). The next day's run resumes from the
-# checkpoint. A real Spotify 429 while the budget is unspent still exits 1 and
-# surfaces as a genuine failure.
+# Daily `--refresh-releases` trickle. Was a four-day month-end burst at
+# --limit 90; that concentrated all capacity into a window where one dropped
+# cron cost 90 requests, which is exactly what happened on 2026-08-29 and left
+# 100 entries stale. Daily at --limit 25 gives ~750 requests/month against a
+# ~475-entry roster needing roughly 1.2 refreshes each, so a dropped run costs
+# 25 and the next day absorbs it. February is no longer a special case: a
+# month-end window gives only three days there regardless of how wide it is.
 #
 # --stale-days 25 is EXPLICIT AND REQUIRED: the auto-inferrer is tuned for
-# short retry gaps, not the ~27-31-day monthly gap; 25 keeps this burst's own
-# commits skipped while reliably reopening last month's batch.
+# short retry gaps and daily runs change what its "recent-band structure"
+# heuristic sees. Under a daily cadence it also means most days are a cheap
+# no-op — nothing is re-pulled inside 25 days, so the run does nothing until
+# entries age past the threshold.
 #
-# A budgeted --heal-only portrait step rides the same run: the only
-# non-cosmetic portrait maintenance, at rounding-error request cost.
+# The --heal-only portrait step runs on the 1st only, NOT daily. Its set is
+# entries never stamped by a successful pull, and null-preserve means an
+# artist Spotify has no portrait for never leaves it. That set is currently 9
+# and structurally stuck, so a daily heal would burn ~270 requests/month for
+# nothing.
 #
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote. data/artist_spotify.json promoting to main cascade-triggers
@@ -19,14 +26,28 @@ name: Monthly release refresh (spotify_cache)
 
 on:
   schedule:
-    - cron: "47 6 26-29 * *"
+    - cron: "47 6 * * *"
   workflow_dispatch:
+    inputs:
+      limit:
+        description: "Request budget for this run"
+        required: false
+        default: "25"
+      stale_days:
+        description: "Skip entries checked within this many days"
+        required: false
+        default: "25"
+      heal:
+        description: "Also run the portrait heal step"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
 
 concurrency:
-  group: refresh-releases-monthly
+  group: refresh-releases
   cancel-in-progress: false
 
 jobs:
@@ -41,20 +62,31 @@ jobs:
           python-version: "3.12"
       - name: Install deps
         run: pip install requests python-dotenv
+
       - name: Refresh releases (budgeted)
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: python3 scripts/spotify_cache.py --refresh-releases --stale-days 25 --limit 90
-      - name: Heal unstamped portraits (budgeted)
-        # The empty-at-resolve heal set: entries never stamped by a successful
-        # portrait pull. Typically single-digit sized, so 15 is generous — a
-        # separate process gets a fresh --limit budget even when the releases
-        # step above exits via BudgetExhausted. History: docs/ISSUE_LOG.md.
+          LIMIT: ${{ github.event.inputs.limit || '25' }}
+          STALE_DAYS: ${{ github.event.inputs.stale_days || '25' }}
+        run: |
+          python3 scripts/spotify_cache.py --refresh-releases \
+            --stale-days "$STALE_DAYS" --limit "$LIMIT"
+
+      - name: Heal unstamped portraits (1st of the month, or on request)
+        # Guarded in shell rather than in `if:` — Actions expressions have no
+        # access to the current date. Dispatch can force it with heal=true.
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
+          FORCE_HEAL: ${{ github.event.inputs.heal || 'false' }}
+        run: |
+          if [ "$(date -u +%d)" != "01" ] && [ "$FORCE_HEAL" != "true" ]; then
+            echo "Not the 1st and heal not requested - skipping portrait heal."
+            exit 0
+          fi
+          python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
+
       - name: Commit to staging if changed
         run: |
           git add data/artist_spotify.json
@@ -70,7 +102,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
-            git commit -m "ci: monthly --refresh-releases sweep (spotify_cache)"
+            git commit -m "ci: daily --refresh-releases sweep (spotify_cache)"
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
