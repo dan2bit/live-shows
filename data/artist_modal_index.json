@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-08-31T15:14:32Z",
+"generated_at":"2026-08-31T21:41:48Z",
 "aliases":{
 "billy f gibbons":"billy gibbons",
 "trombone shorty":"trombone shorty orleans avenue",
@@ -2511,24 +2511,13 @@
 },
 "tier":null,
 "seen":{
-"count":1,
-"first":"2024-07-18",
+"count":0,
+"first":null,
 "recent":null,
-"show_log":[
-{
-"date":"2024-07-18",
-"venue":"The Birchmere, Alexandria, VA, USA",
-"via":"Tab Benoit & Anders Osborne",
-"photo_url":"https://photos.redhat-bootlegs.net/share/vs27vG71Uy279SFv7pBRK78AlQ4Qu2p0zRqxOdlkAeG56DL0hpJEBu4T945rgx-q0EU",
-"goals":[]
-}
-]
+"show_log":[]
 },
 "fast_track":false,
-"affinity":{
-"score":0.282,
-"band":"low"
-},
+"affinity":null,
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -2544,7 +2533,7 @@
 }
 },
 "vip":0,
-"photo":1,
+"photo":0,
 "photo_album":null
 },
 "latest_release":{
@@ -3346,14 +3335,22 @@
 "rank":2
 },
 "seen":{
-"count":0,
-"first":null,
+"count":1,
+"first":"2026-08-28",
 "recent":null,
-"show_log":[]
+"show_log":[
+{
+"date":"2026-08-28",
+"venue":"Hamilton Live",
+"via":null,
+"photo_url":null,
+"goals":[]
+}
+]
 },
 "fast_track":false,
 "affinity":{
-"score":0.158,
+"score":0.289,
 "band":"low"
 },
 "badges":{
@@ -3383,7 +3380,7 @@
 },
 "links":{
 "spotify":"https://open.spotify.com/artist/2eiy8nxhJQnnBYMMXR6u5y",
-"youtube":null,
+"youtube":"@ArielPosen",
 "lastfm":"https://www.last.fm/music/Ariel+Posen",
 "musicbrainz":"https://musicbrainz.org/artist/c10dec3d-f648-47a4-bf5b-211788421b04",
 "bandsintown":"https://www.bandsintown.com/Ariel%20Posen",
@@ -20898,8 +20895,8 @@
 },
 {
 "name":"Zach Person",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"zach-person"
 },
 {
 "name":"Fortune Child",
@@ -50728,6 +50725,66 @@
 "slug":null
 }
 ]
+},
+"zach person":{
+"name":"Zach Person",
+"slug":"zach-person",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":1,
+"first":"2026-08-28",
+"recent":null,
+"show_log":[
+{
+"date":"2026-08-28",
+"venue":"Hamilton Live",
+"via":"Ariel Posen",
+"photo_url":null,
+"goals":[]
+}
+]
+},
+"fast_track":false,
+"affinity":{
+"score":0.132,
+"band":"low"
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0,
+"photo_album":null
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":"@zachpersonofficial (web lookup - verify)",
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/Zach%20Person",
+"seated":null,
+"qobuz":"https://www.qobuz.com/us-en/interpreter/zach-person/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=Zach+Person"
+},
+"similar":[]
 },
 "zara larsson":{
 "name":"Zara Larsson",
