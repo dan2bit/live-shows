@@ -88,6 +88,12 @@ jobs:
           python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
 
       - name: Commit to staging if changed
+        # always(): a real 429 exits the refresh step non-zero, and without
+        # this the runner is destroyed with the flushed checkpoint still on it
+        # — the 2026-08-29 run completed 10 refreshes and lost all of them
+        # because this step was skipped. The job still reports failure; the
+        # work just survives it.
+        if: always()
         run: |
           git add data/artist_spotify.json
           if git diff --cached --quiet; then
