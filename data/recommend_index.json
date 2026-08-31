@@ -1,8 +1,8 @@
 {
   "generated": "2026-08-31",
   "counts": {
-    "records": 292,
-    "variants": 324
+    "records": 293,
+    "variants": 325
   },
   "records": [
     {
@@ -258,9 +258,14 @@
     {
       "id": 21,
       "canonical": "Ariel Posen",
-      "status": "follow",
+      "status": "seen",
       "tier": "Medium",
+      "times_seen": "1",
+      "first_seen": "2026-08-28",
+      "most_recent_seen": "2026-08-28",
+      "youtube": "https://www.youtube.com/@ArielPosen",
       "sources": [
+        "seen",
         "follow"
       ]
     },
@@ -3417,6 +3422,18 @@
     },
     {
       "id": 288,
+      "canonical": "Zach Person",
+      "status": "seen",
+      "times_seen": "1",
+      "first_seen": "2026-08-28",
+      "most_recent_seen": "2026-08-28",
+      "youtube": "https://www.youtube.com/@zachpersonofficial (web lookup - verify)",
+      "sources": [
+        "seen"
+      ]
+    },
+    {
+      "id": 289,
       "canonical": "Zara Larsson",
       "status": "potential",
       "decision": "Pass",
@@ -3425,7 +3442,7 @@
       ]
     },
     {
-      "id": 289,
+      "id": 290,
       "canonical": "Zara Phillips",
       "status": "potential",
       "decision": "Pass",
@@ -3434,7 +3451,7 @@
       ]
     },
     {
-      "id": 290,
+      "id": 291,
       "canonical": "ZZ Top",
       "status": "seen",
       "times_seen": "1",
@@ -3446,7 +3463,7 @@
       ]
     },
     {
-      "id": 291,
+      "id": 292,
       "canonical": "ZZ Ward",
       "status": "seen",
       "tier": "Strong",
@@ -3782,9 +3799,10 @@
     "wood brothers the": 285,
     "yasmin williams": 286,
     "young dubliners": 287,
-    "zara larsson": 288,
-    "zara phillips": 289,
-    "zz top": 290,
-    "zz ward": 291
+    "zach person": 288,
+    "zara larsson": 289,
+    "zara phillips": 290,
+    "zz top": 291,
+    "zz ward": 292
   }
 }
