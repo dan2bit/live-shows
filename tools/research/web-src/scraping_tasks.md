@@ -16,6 +16,35 @@ Dates must always include the year (e.g. "Jul 04, 2026")
 4. Save the file in `/tools/research/web-src`
 5. Have Claude Desktop diff the file against the previous month
 
+_Faster path: the pagination endpoint (verified 2026-09-01)_
+
+The DOM route is fragile here. "View All" is a bare `div` (not a button) inside a
+`react-infinite-scroll` component, and scrolling stalls around 72 rows, so a DOM
+scrape silently yields a partial file. The component pages through a JSON endpoint
+that can be fetched directly from the page context with `credentials: 'include'`:
+
+```
+https://www.bandsintown.com/all-dates/fetch-next/upcomingEvents
+  ?came_from=278&utm_medium=web&utm_source=city_page
+  &utm_campaign=recommended_event&recommended_artists_filter=Recommended
+  &longitude=-77.03637&latitude=38.89511&page_type=cityPage&page=N
+```
+
+Page N starts at 1 and returns 36 events per page under `events`; loop until the
+array comes back empty (Sep 2026: pages 1-6 full, page 7 empty, 194 unique events).
+Dedupe on `id`. Field mapping to the schema above:
+
+- Artist -> `artistName`
+- Venue/Event -> `title` if present, else `venueName` (BIT shows the tour/festival
+  name in place of the venue when `title` is set - about a quarter of rows)
+- Date / Time -> `startsAt`, a naive local string like `2026-09-18T19:30:00`; parse
+  the string directly, do NOT construct a Date object or the container's UTC clock
+  will shift evening shows to the next day
+- Tracking -> `rsvpCountInt`
+
+Sanity gate: compare the row count against the prior month before saving. A result
+near 36 or 72 means the pagination loop did not run and the file is partial.
+
 *Here for the Bands shows list MONTHLY*
 
 1. open https://www.hereforthebands.com/shows.php and choose dc
