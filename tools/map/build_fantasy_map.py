@@ -309,6 +309,13 @@ def tag_region(canon):
 CURATED_REGIONS = {"slide_foothills"}
 
 FORCED_REGION = {
+    "Angelique Francis": "river_port",
+    "Beth Hart": "amplified_range",
+    "Miko Marks": "delta_coast",
+    "Beck": "amplified_range",
+    "Taj Mahal": "delta_coast",
+    "TajMo: The Taj Mahal & Keb' Mo' Band": "delta_coast",
+    "Taj Farrant": "amplified_range",
     "Buffalo Nichols": "delta_coast",
     "Southern Avenue": "delta_coast",
     "Ruthie Foster": "delta_coast",
@@ -371,7 +378,17 @@ for reg in REGIONS:
         for c in rest:
             district_of[c] = outs
 
+
 # ---------------------------------------------------------------- settlements
+LEGENDS = {
+    "John Hiatt", "Cowboy Junkies", "Willie Nelson",          # of the Heartland
+    "Mavis Staples",                                          # of Second Line
+    "Bonnie Raitt",                                           # of the Woods
+    "Keb' Mo'",                                               # of the Delta
+    "Walter Trout", "Steve Miller Band",                      # of the Amplified Range
+    "Tommy Castro & the Painkillers", "Jimmie Vaughan", "Robert Cray Band",
+}
+
 TIER_SCORE = {"Strong": 3, "Medium-Strong": 2, "Medium": 1, "Lower": 0.5, "Legacy": 2}
 def score(c):
     m = seen_meta.get(c, {})
@@ -676,12 +693,35 @@ def relax(rounds):
             break
 tidy(); relax(24); tidy(); relax(18); tidy()
 
-# Dan's pins are law: name -> [x, y], applied verbatim, never clamped
-pins_path = SCRIPT_DIR / "pins.json"
-if pins_path.exists():
-    for nm, p_ in json.loads(pins_path.read_text()).items():
-        if nm in xy:
-            xy[nm] = (float(p_[0]), float(p_[1]))
+def refresh_isle_islands():
+    """Island geometry follows the members - rerun after any hand pins."""
+    for did, dd in districts.items():
+        if dd["region"] != "outer_isles":
+            continue
+        pts = [xy[m] for m in dd["members"] if m in xy and region_of[m] == "outer_isles"]
+        if not pts:
+            continue
+        cxp = sum(p[0] for p in pts) / len(pts)
+        cyp = sum(p[1] for p in pts) / len(pts)
+        spread = max((math.hypot(p[0] - cxp, p[1] - cyp) for p in pts), default=6)
+        dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
+        dd["island_r"] = round(min(max(spread + 7, 10), 22), 1)
+
+
+
+    """Island geometry follows the members - rerun after any hand pins."""
+    for did, dd in districts.items():
+        if dd["region"] != "outer_isles":
+            continue
+        pts = [xy[m] for m in dd["members"] if m in xy and region_of[m] == "outer_isles"]
+        if not pts:
+            continue
+        cxp = sum(p[0] for p in pts) / len(pts)
+        cyp = sum(p[1] for p in pts) / len(pts)
+        spread = max((math.hypot(p[0] - cxp, p[1] - cyp) for p in pts), default=6)
+        dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
+        dd["island_r"] = round(min(max(spread + 7, 10), 22), 1)
+
 
 # The pegs: each Outer Isles district is its own island flanking the headstock.
 AXIS_G = math.radians(-38); HEEL_G = (645, 325)
@@ -707,6 +747,88 @@ for pi, did in enumerate(isle_ds):
         rr = ring * math.sqrt((j + 0.5) / max(n, 1))
         xy[m] = (cxp + rr * math.cos(ang), cyp + rr * math.sin(ang))
 
+# ---- arrivals: discovered settlements and fast-track towns, staged for hand placement ----
+SIZE_OVERRIDE = {}
+UNPLACED = set()
+def staging_ring(members, sx_, sy_):
+    for j, m in enumerate(members):
+        ang = j * 2.399963
+        rr = (4 + 1.15 * math.sqrt(len(members))) * math.sqrt((j + 0.5) / len(members))
+        xy[m] = (sx_ + rr * math.cos(ang), sy_ + rr * math.sin(ang))
+
+disc_path = SCRIPT_DIR / "discovered_adds.json"
+if disc_path.exists():
+    adds = json.loads(disc_path.read_text())
+    next_id = max(r["id"] for r in records.values()) + 1
+    by_reg = defaultdict(list)
+    for a_ in adds:
+        nm, reg_, sz = a_["name"], a_["region"], a_["size"]
+        if nm in records:
+            continue
+        records[nm] = {"id": next_id, "canonical": nm, "status": "seen-support",
+                       "tier": None, "sources": ["seen-support"]}
+        next_id += 1
+        seen_meta[nm] = {"times_seen": 1}
+        region_of[nm] = reg_
+        SIZE_OVERRIDE[nm] = sz
+        UNPLACED.add(nm)
+        by_reg[reg_].append(nm)
+    # islanders arrive on their own anchorage; mainlanders stage inside their region
+    if by_reg.get("outer_isles"):
+        did = "outer_isles:arrivals"
+        mem = sorted(by_reg.pop("outer_isles"))
+        districts[did] = {"region": "outer_isles", "members": mem,
+                          "seat": mem[0], "suggested_name": "Arrivals Anchorage"}
+        for m in mem:
+            district_of[m] = did
+        staging_ring(mem, 925, 95)
+    for reg_, mem in by_reg.items():
+        spec_ = REGIONS[reg_]
+        sx_, sy_ = clamp_to_land(spec_["anchor"][0] + spec_["rx"] * 0.45,
+                                 spec_["anchor"][1] - spec_["ry"] * 0.45, spec_["anchor"])
+        staging_ring(sorted(mem), sx_, sy_)
+        for m in mem:
+            district_of[m] = f"{reg_}:arrivals"
+
+# every fast-track artist holds an unvisited town, staged with the arrivals
+for c in list(records):
+    if "fast_track" in records[c].get("sources", []) and not seen_meta.get(c, {}).get("times_seen"):
+        SIZE_OVERRIDE[c] = "town"
+        UNPLACED.add(c)
+        reg_ = region_of[c]
+        spec_ = REGIONS[reg_]
+        sx_, sy_ = clamp_to_land(spec_["anchor"][0] + spec_["rx"] * 0.45,
+                                 spec_["anchor"][1] - spec_["ry"] * 0.45, spec_["anchor"])
+        jr2 = random.Random(f"{RNG_SEED}:ft:{c}")
+        xy[c] = (sx_ + (jr2.random() - 0.5) * 26, sy_ + (jr2.random() - 0.5) * 20)
+
+# Dan's pins are law: name -> [x, y], applied verbatim, never clamped
+pins_path = SCRIPT_DIR / "pins.json"
+if pins_path.exists():
+    for nm, p_ in json.loads(pins_path.read_text()).items():
+        if nm in xy:
+            xy[nm] = (float(p_[0]), float(p_[1]))
+    # a pinned islander joins the crew whose island he actually stands on
+    isle_crews = [d_ for d_, dd in districts.items()
+                  if dd["region"] == "outer_isles" and not d_.endswith(":outskirts")]
+    for nm in json.loads(pins_path.read_text()):
+        if region_of.get(nm) != "outer_isles" or nm not in xy:
+            continue
+        def crew_center(d_, excl):
+            pts = [xy[m] for m in districts[d_]["members"] if m in xy and m != excl]
+            return (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)) if pts else None
+        best = min((d_ for d_ in isle_crews if crew_center(d_, nm)),
+                   key=lambda d_: math.hypot(xy[nm][0] - crew_center(d_, nm)[0],
+                                             xy[nm][1] - crew_center(d_, nm)[1]))
+        cur = district_of.get(nm)
+        if best != cur:
+            if cur in districts and nm in districts[cur]["members"]:
+                districts[cur]["members"].remove(nm)
+            districts[best]["members"].append(nm)
+            districts[best]["members"].sort()
+            district_of[nm] = best
+    refresh_isle_islands()
+
 settlements = []
 reg_max = {reg: max((score(c) for c in records if region_of[c] == reg), default=0)
            for reg in REGIONS}
@@ -719,13 +841,15 @@ for c in sorted(records):
     settlements.append({
         "id": records[c]["id"], "name": c,
         "region": reg, "district": district_of.get(c),
-        "size": size_tier(c, s, reg_max[reg]), "score": round(s, 1),
+        "size": SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg]), "score": round(s, 1),
         "xy": [round(x, 1), round(y, 1)],
         "region_uv": [round((x - (spec["anchor"][0]-spec["rx"])) / (2*spec["rx"]), 4),
                       round((y - (spec["anchor"][1]-spec["ry"])) / (2*spec["ry"]), 4)],
         "flags": {k: v for k, v in {
             "faded": faded(c),
-            "legacy": records[c].get("tier") == "Legacy",
+            "legacy": records[c].get("tier") == "Legacy" or c in LEGENDS,
+            "unvisited": not seen_meta.get(c, {}).get("times_seen"),
+            "unplaced": c in UNPLACED,
             "unvisited": m.get("times_seen", 0) == 0,
         }.items() if v},
         "times_seen": m.get("times_seen", 0), "vip": m.get("vip", 0),

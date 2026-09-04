@@ -40,9 +40,10 @@
   .stl circle{stroke:var(--ink);vector-effect:non-scaling-stroke;}
   .stl .dot{fill:var(--tint,#4a3a26);}
   .stl.capital .ring{fill:none;stroke-width:1.2;}
-  .stl.waystation .dot{fill:none;stroke-dasharray:1 1.2;opacity:.75;}
+  .stl.unvisited .dot{fill:none;stroke-dasharray:1 1.2;opacity:.78;}
   .stl.faded .dot{fill:none;opacity:.6;}
   .stl.legacy .dot{fill:var(--gold);}
+  .stl.unplaced .halo{fill:none;stroke:var(--gold);stroke-width:1.1;stroke-dasharray:2.5 2;vector-effect:non-scaling-stroke;}
   .stl text{font-family:'Oswald';font-weight:500;fill:var(--ink);
     paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2.4px;pointer-events:none;}
   .stl:hover .dot{stroke-width:1.6;}
@@ -90,10 +91,10 @@
   <h1 id="plateGrip">Red House Revival</h1>
   <div id="readout" class="idle"><div class="name">Hover a settlement to read the plate.</div></div>
   <div id="legend">
-    <label><input type="checkbox" data-t="trail" checked> trails</label>
-    <label><input type="checkbox" data-t="road" checked> roads</label>
-    <label><input type="checkbox" data-t="river" checked> bills</label>
-    <label><input type="checkbox" data-t="cross" checked> crossings</label>
+    <label><input type="checkbox" data-t="trail"> trails</label>
+    <label><input type="checkbox" data-t="road"> roads</label>
+    <label><input type="checkbox" data-t="river"> bills</label>
+    <label><input type="checkbox" data-t="cross"> crossings</label>
     <label><input type="checkbox" data-t="regions" checked> regions</label>
     <label><input type="checkbox" data-t="waystation" checked> unvisited</label>
     <label><input type="checkbox" data-t="labels" checked> names</label>
@@ -187,6 +188,11 @@
     const dot=document.createElementNS(NS,'circle');
     dot.setAttribute('class','dot');dot.setAttribute('r',r);dot.setAttribute('stroke-width',.8);
     g.appendChild(dot);
+    if(s.flags&&s.flags.unplaced){
+      const halo=document.createElementNS(NS,'circle');
+      halo.setAttribute('class','halo');halo.setAttribute('r',r+3.4);
+      g.appendChild(halo);
+    }
     if(s.size==='capital'){
       const ring=document.createElementNS(NS,'circle');
       ring.setAttribute('class','ring');ring.setAttribute('r',r+2.4);
@@ -214,13 +220,16 @@
     cb.addEventListener('change',()=>{
       const t=cb.dataset.t,on=cb.checked;
       if(t==='labels')       show([...gStl.querySelectorAll('text')],on);
-      else if(t==='waystation') show([...gStl.querySelectorAll('.stl.waystation')],on);
+      else if(t==='waystation') show([...gStl.querySelectorAll('.stl.unvisited')],on);
       else if(t==='regions') gRegions.style.display=on?'':'none';
       else if(t==='cross')   show([...gRoutes.children].filter(p=>p.dataset.cross==='1'),on);
       else if(t==='road')    show([...gRoutes.children].filter(p=>p.dataset.cls==='road'||p.dataset.cls==='bridge'),on);
       else                   show([...gRoutes.children].filter(p=>p.dataset.cls===t),on);
     });
   });
+
+  // apply initial legend state (routes ship hidden until the thoroughfare pass)
+  document.querySelectorAll('#legend input[data-t]').forEach(cb=>cb.dispatchEvent(new Event('change')));
 
   // zoom: wheel-to-cursor, buttons, fit; drag to pan — one viewBox for all layers
   let vb={x:0,y:0,w:W,h:H};
