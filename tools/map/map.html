@@ -36,14 +36,22 @@
   .r-pass{stroke:#4a3a26;stroke-width:.8;stroke-dasharray:4 2;opacity:.6;}
   .r-highway{stroke:#4a3a26;stroke-width:1.1;opacity:.6;}
 
-  .stl{cursor:pointer;}
+  .stl{cursor:pointer;pointer-events:bounding-box;}
+  .stl circle{pointer-events:all;}
   .stl circle{stroke:var(--ink);vector-effect:non-scaling-stroke;}
   .stl .dot{fill:var(--tint,#4a3a26);}
   .stl.capital .ring{fill:none;stroke-width:1.2;}
-  .stl.unvisited .dot{fill:none;stroke-dasharray:1 1.2;opacity:.78;}
-  .stl.faded .dot{fill:none;opacity:.6;}
+  .stl.unvisited .dot{fill:rgba(237,224,194,.85);stroke-dasharray:1 1.2;}
+  .stl.faded .dot{fill-opacity:.35;}
   .stl.legacy .dot{fill:var(--gold);}
-  .stl.unplaced .halo{fill:none;stroke:var(--gold);stroke-width:1.1;stroke-dasharray:2.5 2;vector-effect:non-scaling-stroke;}
+  .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
+  .stl.ruin .dot{fill:none;stroke:#8a6a3a;stroke-dasharray:2 1.6;}
+  .stl.ruin text{opacity:.7;font-style:italic;}
+  .stl .anchor-mark{font-size:5.5px;fill:#1d4f6e;paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:1.6px;pointer-events:none;}
+  .stl.found .foundring{fill:none;stroke:#FFDD35;stroke-width:2.2;vector-effect:non-scaling-stroke;animation:pulse 1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{stroke-opacity:1;}50%{stroke-opacity:.25;}}
+  #finder{width:100%;font-family:'Oswald';font-size:13px;background:#f6eed9;border:1.5px solid var(--ink);padding:5px 7px;margin-top:9px;}
+  #findmsg{font-family:'Special Elite',monospace;font-size:10.5px;margin-top:3px;min-height:13px;}
   .stl text{font-family:'Oswald';font-weight:500;fill:var(--ink);
     paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2.4px;pointer-events:none;}
   .stl:hover .dot{stroke-width:1.6;}
@@ -90,6 +98,16 @@
 <div id="plate">
   <h1 id="plateGrip">Red House Revival</h1>
   <div id="readout" class="idle"><div class="name">Hover a settlement to read the plate.</div></div>
+  <input id="finder" type="search" placeholder="find a settlement&hellip;" autocomplete="off" spellcheck="false">
+  <div id="findmsg"></div>
+  <div id="editctl" style="display:none;border-top:1px solid rgba(34,26,18,.35);padding-top:7px;margin-top:2px;">
+    <div id="editwho" style="font-size:12.5px;font-weight:600;margin-bottom:4px;">select a settlement&hellip;</div>
+    <select id="ovRegion" style="width:54%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:3px;"></select>
+    <select id="ovSize" style="width:42%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:3px;">
+      <option>hamlet</option><option>waystation</option><option>village</option><option>town</option><option>city</option><option>capital</option>
+    </select>
+    <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export overrides (0)</button>
+  </div>
   <div id="legend">
     <label><input type="checkbox" data-t="trail"> trails</label>
     <label><input type="checkbox" data-t="road"> roads</label>
@@ -114,12 +132,12 @@
   const err=m=>{const e=document.getElementById('err');e.style.display='block';e.textContent=m;};
 
   let data;
-  try{ data=await (await fetch(DATA)).json(); }
+  try{ data=await (await fetch(DATA,{cache:'no-store'})).json(); }
   catch(e){ return err(`Could not load ${DATA} — serve over http (python3 -m http.server), not file://`); }
 
   const W=data.canvas.w,H=data.canvas.h;
   const bg=document.createElementNS(NS,'image');
-  bg.setAttribute('href',SVG_BG);
+  bg.setAttribute('href',SVG_BG+(SVG_BG.includes('?')?'&':'?')+'v='+Date.now());
   bg.setAttribute('x',0);bg.setAttribute('y',0);bg.setAttribute('width',W);bg.setAttribute('height',H);
   bg.addEventListener('error',()=>err(`Could not load ${SVG_BG} — pass ?svg=YourExport.svg`));
   map.appendChild(bg);
@@ -193,6 +211,11 @@
       halo.setAttribute('class','halo');halo.setAttribute('r',r+3.4);
       g.appendChild(halo);
     }
+    if(s.flags&&s.flags.harbormistress){
+      const am=document.createElementNS(NS,'text');
+      am.setAttribute('class','anchor-mark');am.setAttribute('x',-(r+6.5));am.setAttribute('y',3);
+      am.textContent='\u2693';g.appendChild(am);
+    }
     if(s.size==='capital'){
       const ring=document.createElementNS(NS,'circle');
       ring.setAttribute('class','ring');ring.setAttribute('r',r+2.4);
@@ -209,7 +232,7 @@
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
       readout.innerHTML=`<div class="name">${s.name}</div>
         <div class="where">${RLABEL[s.region]||s.region} \u2014 ${s.size}</div>
-        <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}</div>`;
+        <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}${s.src?`<br><span style="font-family:'Special Elite';font-size:10.5px;opacity:.8">${s.src}</span>`:''}</div>`;
     });
     gStl.appendChild(g);
   }
@@ -226,6 +249,38 @@
       else if(t==='road')    show([...gRoutes.children].filter(p=>p.dataset.cls==='road'||p.dataset.cls==='bridge'),on);
       else                   show([...gRoutes.children].filter(p=>p.dataset.cls===t),on);
     });
+  });
+
+  // finder: type-along lookup lights up and labels matches, recenters on the first
+  const finder=document.getElementById('finder'),findmsg=document.getElementById('findmsg');
+  const fold=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  let foundEls=[];
+  function clearFound(){
+    foundEls.forEach(g=>{g.classList.remove('found');
+      g.querySelectorAll('.foundring,.foundlabel').forEach(e=>e.remove());});
+    foundEls=[];
+  }
+  finder.addEventListener('input',()=>{
+    clearFound();
+    const q=fold(finder.value.trim());
+    if(q.length<2){findmsg.textContent='';return;}
+    const hits=[...gStl.querySelectorAll('.stl')].filter(g=>fold(g.dataset.name||'').includes(q));
+    findmsg.textContent=hits.length?`${hits.length} match${hits.length>1?'es':''}`:'no match';
+    hits.slice(0,12).forEach(g=>{
+      g.classList.add('found');foundEls.push(g);
+      const ring=document.createElementNS(NS,'circle');
+      ring.setAttribute('class','foundring');ring.setAttribute('r',9);
+      g.insertBefore(ring,g.firstChild);
+      if(!g.querySelector('text:not(.anchor-mark)')){
+        const t=document.createElementNS(NS,'text');
+        t.setAttribute('class','foundlabel');t.setAttribute('x',7);t.setAttribute('y',3);
+        t.setAttribute('font-size',7);t.textContent=g.dataset.name;g.appendChild(t);
+      }
+    });
+    if(hits.length){
+      const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(hits[0].getAttribute('transform'));
+      if(m){vb.x=+m[1]-vb.w/2;vb.y=+m[2]-vb.h/2;apply();}
+    }
   });
 
   // apply initial legend state (routes ship hidden until the thoroughfare pass)
@@ -247,15 +302,70 @@
   document.getElementById('zin').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,0.75);
   document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
-  let pan=null;
-  stage.addEventListener('pointerdown',e=>{pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');stage.setPointerCapture(e.pointerId);});
+  const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
+  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';});
+  expBtn.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
+  });
+  const overrides={}, editctl=document.getElementById('editctl'),
+        ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
+        exportOv=document.getElementById('exportOv'), editwho=document.getElementById('editwho');
+  ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
+  let selected=null;
+  function selectStl(g){
+    selected=g;
+    const st=S.get(g.dataset.name);
+    editwho.textContent=g.dataset.name;
+    ovRegion.value=(overrides[g.dataset.name]&&overrides[g.dataset.name].region)||st.region;
+    ovSize.value=(overrides[g.dataset.name]&&overrides[g.dataset.name].size)||st.size;
+  }
+  function markOv(name,key,val){
+    (overrides[name]??={})[key]=val;
+    exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
+  }
+  ovRegion.addEventListener('change',()=>{
+    if(!selected)return;
+    markOv(selected.dataset.name,'region',ovRegion.value);
+    selected.style.setProperty('--tint',TINT[ovRegion.value]||'var(--ink)');
+  });
+  ovSize.addEventListener('change',()=>{
+    if(!selected)return;
+    const name=selected.dataset.name, sz=ovSize.value;
+    markOv(name,'size',sz);
+    ['capital','city','town','village','hamlet','waystation'].forEach(c=>selected.classList.remove(c));
+    selected.classList.add(sz);
+    selected.querySelector('.dot').setAttribute('r',{capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7}[sz]||2);
+  });
+  exportOv.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(overrides,null,1)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
+  });
+  let pan=null, dragS=null;
+  const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
+    return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
+  stage.addEventListener('pointerdown',e=>{
+    const g=(window.editCb&&editCb.checked)?e.target.closest('.stl'):null;
+    stage.setPointerCapture(e.pointerId);
+    if(g){dragS={g,name:g.dataset.name};selectStl(g);e.preventDefault();return;}
+    pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
+  });
   stage.addEventListener('pointermove',e=>{
+    if(dragS){
+      const [mx,my]=toMap(e.clientX,e.clientY);
+      dragS.g.setAttribute('transform',`translate(${mx.toFixed(1)},${my.toFixed(1)})`);
+      if(dragS.name){pins[dragS.name]=[+mx.toFixed(1),+my.toFixed(1)];
+        expBtn.textContent=`export pins (${Object.keys(pins).length})`;}
+      return;
+    }
     if(!pan)return;
     const r=map.getBoundingClientRect();
     vb.x-=(e.clientX-pan.x)/r.width*vb.w;vb.y-=(e.clientY-pan.y)/r.height*vb.h;
     pan={x:e.clientX,y:e.clientY};apply();
   });
-  stage.addEventListener('pointerup',()=>{pan=null;stage.classList.remove('panning');});
+  stage.addEventListener('pointerup',()=>{pan=null;dragS=null;stage.classList.remove('panning');});
   apply();
 
   // the plate drags by its title bar
@@ -273,37 +383,6 @@
   });
   grip.addEventListener('pointerup',()=>{pd=null;});
 
-  // edit mode: drag settlements to hand-place them; export pins.json for the builder
-  const pins={}, editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
-  const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
-    return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
-  let dragS=null;
-  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';});
-  gStl.addEventListener('pointerdown',e=>{
-    if(!editCb.checked)return;
-    const g=e.target.closest('.stl'); if(!g)return;
-    e.stopPropagation();
-    const name=g.querySelector('text')?.textContent||[...S.values()].find(s=>{
-      const tr=g.getAttribute('transform');return tr===`translate(${s.xy[0]},${s.xy[1]})`;})?.name;
-    dragS={g,name:g.dataset.name};
-    g.setPointerCapture(e.pointerId);
-  },true);
-  // reliable name lookup: stamp it at build time
-  gStl.querySelectorAll('.stl').forEach((g,i)=>{});
-  window.addEventListener('pointermove',e=>{
-    if(!dragS||!editCb.checked)return;
-    const [mx,my]=toMap(e.clientX,e.clientY);
-    dragS.g.setAttribute('transform',`translate(${mx.toFixed(1)},${my.toFixed(1)})`);
-    if(dragS.name){pins[dragS.name]=[+mx.toFixed(1),+my.toFixed(1)];
-      expBtn.textContent=`export pins (${Object.keys(pins).length})`;}
-  });
-  window.addEventListener('pointerup',()=>{dragS=null;});
-  expBtn.addEventListener('click',()=>{
-    const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download='pins.json';a.click();
-    URL.revokeObjectURL(a.href);
-  });
 })();
 </script>
 </body>

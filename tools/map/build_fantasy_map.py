@@ -431,7 +431,7 @@ for pi2, (fam, mem) in enumerate(pegs, 1):
     for c in mem:
         district_of[c] = did
 
-CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe"}
+CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR"}
 
 def size_tier(c, s, regional_max):
     m = seen_meta.get(c, {})
@@ -790,6 +790,21 @@ if disc_path.exists():
         for m in mem:
             district_of[m] = f"{reg_}:arrivals"
 
+# every unpinned never-seen mainlander stages with the arrivals for hand placement
+_pins_now = json.loads((SCRIPT_DIR / "pins.json").read_text()) if (SCRIPT_DIR / "pins.json").exists() else {}
+_stage = defaultdict(list)
+for c in records:
+    if (seen_meta.get(c, {}).get("times_seen") or c in _pins_now or c in UNPLACED
+            or region_of[c] == "outer_isles" or c not in xy):
+        continue
+    UNPLACED.add(c)
+    _stage[region_of[c]].append(c)
+for reg_, mem in _stage.items():
+    spec_ = REGIONS[reg_]
+    sx_, sy_ = clamp_to_land(spec_["anchor"][0] - spec_["rx"] * 0.4,
+                             spec_["anchor"][1] + spec_["ry"] * 0.4, spec_["anchor"])
+    staging_ring(sorted(mem), sx_, sy_)
+
 # every fast-track artist holds an unvisited town, staged with the arrivals
 for c in list(records):
     if "fast_track" in records[c].get("sources", []) and not seen_meta.get(c, {}).get("times_seen"):
@@ -829,6 +844,146 @@ if pins_path.exists():
             district_of[nm] = best
     refresh_isle_islands()
 
+# ---- source references: a short "why on the map" line per non-seen settlement ----
+def _read_tsv(p):
+    import csv as _csv
+    try:
+        return list(_csv.DictReader(open(p), delimiter="\t"))
+    except FileNotFoundError:
+        return []
+_ft_why = {r["Artist"]: (r.get("Why Fast Track") or "").strip()
+           for r in _read_tsv(ROOT / "data" / "fast_track.tsv")}
+_fm_note = {r["Artist"]: (r.get("Notes") or "").strip()
+            for r in _read_tsv(SCRIPT_DIR / "follows_master_cache.tsv")}
+_pot = {}
+for r in _read_tsv(SCRIPT_DIR / "potential_cache.tsv"):
+    a_ = r.get("Artist", "").strip()
+    if a_ and a_ not in _pot:
+        _pot[a_] = f"potential: {r.get('Decision','?')} @ {r.get('Venue','?')} {r.get('Date','')}".strip()
+
+def _trim(t, n=70):
+    return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "\u2026"
+
+def source_ref(c):
+    srcs = records[c].get("sources", [])
+    if seen_meta.get(c, {}).get("times_seen") and "seen-support" not in srcs:
+        return ""
+    if "seen-support" in srcs or records[c].get("status") == "seen-support":
+        return "history pass: seen as support"
+    if "fast_track" in srcs:
+        why = _ft_why.get(c, "")
+        return _trim(("fast track: " + why) if why else "fast track list")
+    if "potential" in srcs and c in _pot:
+        return _trim(_pot[c])
+    if "potential" in srcs:
+        return "on the potentials list"
+    if "follow" in srcs:
+        note = _fm_note.get(c, "")
+        tier = records[c].get("tier") or "untier'd"
+        return _trim((f"follow ({tier})" + (": " + note if note else "")))
+    return ", ".join(srcs)
+
+# ---- curated adjustments: islands sorted, ruins fall, harbormistresses appointed ----
+MAP_RENAME = {"New York's Finest": "Every Breath You Take"}   # current performing name
+CURATED_SIZE = {
+    "George Clinton & Parliament-Funkadelic": "town",
+    "Hozier": "city", "Every Breath You Take": "town",
+    "Enter the Haggis": "town", "Kate Davis": "town",
+    "Glen Hansard": "town", "L\u012bve": "village",
+}
+RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
+HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
+                    "Jackie Venson", "Orianthi", "Queen Latifah"}
+CURATED_ISLES = {   # crew -> (seat, island name)
+    "outer_isles:p1": ("Young Dubliners", "Innis Craic"),
+    "outer_isles:p2": ("AJR", "AJR Rock"),
+    "outer_isles:p3": ("Every Breath You Take", "Cover Band Cay"),
+    "outer_isles:p4": ("The Roots", "Hip Hop Haven"),
+    "outer_isles:p5": ("Kate Davis", "Fempop Skree"),
+    "outer_isles:p6": ("Hozier", "Indiesoul Isle"),
+}
+
+def rename_settlement(old, new):
+    if old not in records:
+        return
+    records[new] = {**records.pop(old), "canonical": new}
+    for dmap in (seen_meta, SIZE_OVERRIDE):
+        if old in dmap: dmap[new] = dmap.pop(old)
+    for smap in (region_of, district_of):
+        if old in smap: smap[new] = smap.pop(old)
+    if old in xy: xy[new] = xy.pop(old)
+    if old in UNPLACED: UNPLACED.discard(old); UNPLACED.add(new)
+    for dd in districts.values():
+        dd["members"] = [new if m == old else m for m in dd["members"]]
+        if dd.get("seat") == old: dd["seat"] = new
+for _o, _n in MAP_RENAME.items():
+    rename_settlement(_o, _n)
+
+def move_to_region(nm, reg_, stage=True):
+    if nm not in records: return
+    old_d = district_of.get(nm)
+    if old_d in districts and nm in districts[old_d]["members"]:
+        districts[old_d]["members"].remove(nm)
+    region_of[nm] = reg_
+    district_of[nm] = f"{reg_}:arrivals"
+    if stage:
+        UNPLACED.add(nm)
+        spec_ = REGIONS[reg_]
+        jr3 = random.Random(f"{RNG_SEED}:cur:{nm}")
+        sx_, sy_ = clamp_to_land(spec_["anchor"][0] + spec_["rx"] * 0.45,
+                                 spec_["anchor"][1] - spec_["ry"] * 0.45, spec_["anchor"])
+        xy[nm] = (sx_ + (jr3.random() - 0.5) * 24, sy_ + (jr3.random() - 0.5) * 18)
+
+move_to_region("George Clinton & Parliament-Funkadelic", "river_port")
+move_to_region("DuPont Brass", "river_port")
+move_to_region("Queen Latifah", "river_port")
+move_to_region("L\u012bve", "amplified_range", stage=False)   # Dan's pin already mainlands him
+# AJR Rock is one-of-one: the rest of the old funk crew stages at the Anchorage
+_p2 = districts.get("outer_isles:p2")
+if _p2:
+    for m in [m for m in _p2["members"] if m != "AJR"]:
+        _p2["members"].remove(m)
+        districts["outer_isles:arrivals"]["members"].append(m)
+        district_of[m] = "outer_isles:arrivals"
+        UNPLACED.add(m)
+    districts["outer_isles:arrivals"]["members"].sort()
+# Brassie and Sadurn emigrate to Fempop Skree (final placement is Dan's)
+for m in ("Brassie", "Sadurn"):
+    if m in records:
+        old_d = district_of.get(m)
+        if old_d in districts and m in districts[old_d]["members"]:
+            districts[old_d]["members"].remove(m)
+        region_of[m] = "outer_isles"
+        district_of[m] = "outer_isles:p5"
+        districts["outer_isles:p5"]["members"].append(m)
+        ic5 = districts["outer_isles:p5"].get("island_center", [960, 240])
+        jr4 = random.Random(f"{RNG_SEED}:fp:{m}")
+        xy[m] = (ic5[0] + (jr4.random() - 0.5) * 10, ic5[1] + (jr4.random() - 0.5) * 8)
+        UNPLACED.add(m)
+districts["outer_isles:p5"]["members"].sort()
+for did, (seat_, iname_) in CURATED_ISLES.items():
+    if did in districts:
+        districts[did]["seat"] = seat_
+        districts[did]["suggested_name"] = iname_
+refresh_isle_islands()
+
+# Dan's viewer overrides (map_overrides.json): region and size, position untouched
+OVERRIDE_SIZE = {}
+ov_path = SCRIPT_DIR / "map_overrides.json"
+if ov_path.exists():
+    for nm, ov in json.loads(ov_path.read_text()).items():
+        if nm not in records:
+            continue
+        if ov.get("region") and ov["region"] in REGIONS and ov["region"] != region_of.get(nm):
+            old_d = district_of.get(nm)
+            if old_d in districts and nm in districts[old_d]["members"]:
+                districts[old_d]["members"].remove(nm)
+            region_of[nm] = ov["region"]
+            district_of[nm] = f"{ov['region']}:override"
+        if ov.get("size"):
+            OVERRIDE_SIZE[nm] = ov["size"]
+    refresh_isle_islands()
+
 settlements = []
 reg_max = {reg: max((score(c) for c in records if region_of[c] == reg), default=0)
            for reg in REGIONS}
@@ -841,17 +996,20 @@ for c in sorted(records):
     settlements.append({
         "id": records[c]["id"], "name": c,
         "region": reg, "district": district_of.get(c),
-        "size": SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg]), "score": round(s, 1),
+        "size": OVERRIDE_SIZE.get(c) or CURATED_SIZE.get(c) or SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg]),
+        "score": round(s, 1),
         "xy": [round(x, 1), round(y, 1)],
         "region_uv": [round((x - (spec["anchor"][0]-spec["rx"])) / (2*spec["rx"]), 4),
                       round((y - (spec["anchor"][1]-spec["ry"])) / (2*spec["ry"]), 4)],
         "flags": {k: v for k, v in {
             "faded": faded(c),
             "legacy": records[c].get("tier") == "Legacy" or c in LEGENDS,
-            "unvisited": not seen_meta.get(c, {}).get("times_seen"),
+            "unvisited": not m.get("times_seen"),
             "unplaced": c in UNPLACED,
-            "unvisited": m.get("times_seen", 0) == 0,
+            "ruin": c in RUINS,
+            "harbormistress": c in HARBORMISTRESSES,
         }.items() if v},
+        "src": source_ref(c),
         "times_seen": m.get("times_seen", 0), "vip": m.get("vip", 0),
         "tier": records[c].get("tier"),
     })

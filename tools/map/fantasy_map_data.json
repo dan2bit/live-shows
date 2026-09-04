@@ -15,7 +15,7 @@
  "regions": [
   {
    "id": "delta_coast",
-   "label": "The Delta Coast",
+   "label": "Delta Coast",
    "terrain": "coastal tidewater — estuary, levees, shotgun porches",
    "anchor": [
     308,
@@ -25,46 +25,38 @@
    "ry": 52,
    "hull": [
     [
-     161.4,
-     544.1
+     150.8,
+     612.9
     ],
     [
-     235.8,
-     522.2
+     162.1,
+     604.9
     ],
     [
-     410.9,
-     564.5
+     280.0,
+     528.2
     ],
     [
-     447.3,
-     591.0
+     416.1,
+     561.7
     ],
     [
-     456.4,
-     617.0
+     456.2,
+     601.5
     ],
     [
-     446.0,
-     623.3
+     447.8,
+     634.6
     ],
     [
-     316.7,
-     660.7
-    ],
-    [
-     260.6,
-     647.4
-    ],
-    [
-     161.8,
-     594.3
+     291.2,
+     677.3
     ]
    ]
   },
   {
    "id": "amplified_range",
-   "label": "The Amplified Range",
+   "label": "Amplified Range",
    "terrain": "high mountains — basalt cliffs, feedback storms",
    "anchor": [
     790,
@@ -74,54 +66,46 @@
    "ry": 125,
    "hull": [
     [
-     569.8,
-     335.2
+     585.4,
+     260.3
     ],
     [
-     572.0,
-     319.7
+     712.7,
+     157.3
     ],
     [
-     587.1,
-     279.6
+     748.6,
+     134.9
     ],
     [
-     600.5,
-     253.0
+     949.7,
+     64.6
     ],
     [
-     855.2,
-     10.2
+     932.2,
+     153.4
     ],
     [
-     890.8,
-     140.6
+     864.0,
+     253.4
     ],
     [
-     821.8,
-     284.6
+     829.9,
+     296.5
     ],
     [
-     792.0,
-     321.3
+     687.5,
+     424.8
     ],
     [
-     713.1,
-     402.1
-    ],
-    [
-     657.8,
-     394.8
-    ],
-    [
-     604.3,
-     372.2
+     606.6,
+     378.1
     ]
    ]
   },
   {
    "id": "slide_foothills",
-   "label": "The Steel Foothills",
+   "label": "Steel Foothills",
    "terrain": "foothills - slide scarps, steel terraces, bottleneck switchbacks",
    "anchor": [
     648,
@@ -131,42 +115,38 @@
    "ry": 118,
    "hull": [
     [
-     583.3,
-     411.5
+     564.6,
+     323.2
     ],
     [
-     586.8,
-     361.7
+     629.1,
+     270.6
     ],
     [
-     621.0,
-     325.3
+     649.1,
+     274.0
     ],
     [
-     678.2,
-     324.6
+     710.1,
+     455.9
     ],
     [
-     690.2,
-     326.8
+     678.3,
+     473.3
     ],
     [
-     708.0,
-     451.4
+     590.7,
+     482.9
     ],
     [
-     666.0,
-     480.9
-    ],
-    [
-     596.9,
-     471.9
+     564.2,
+     335.1
     ]
    ]
   },
   {
    "id": "heartland",
-   "label": "The Heartland",
+   "label": "Heartland",
    "terrain": "farmland plains — wheat, gravel roads, grain towers",
    "anchor": [
     420,
@@ -176,54 +156,42 @@
    "ry": 118,
    "hull": [
     [
-     235.7,
-     500.3
+     247.7,
+     492.6
     ],
     [
-     279.5,
-     401.4
+     276.3,
+     410.6
     ],
     [
-     367.1,
-     363.8
+     313.6,
+     340.6
     ],
     [
-     531.8,
-     385.5
+     351.5,
+     342.3
     ],
     [
-     572.8,
-     406.7
+     555.1,
+     427.7
     ],
     [
-     596.2,
-     439.8
+     491.6,
+     603.3
     ],
     [
-     605.9,
-     484.7
+     366.2,
+     589.1
     ],
     [
-     578.8,
-     543.9
-    ],
-    [
-     483.6,
-     607.2
-    ],
-    [
-     329.9,
-     585.6
-    ],
-    [
-     249.5,
-     526.6
+     277.4,
+     527.0
     ]
    ]
   },
   {
    "id": "river_port",
-   "label": "Second Line Riverlands",
+   "label": "Secondline Riverlands",
    "terrain": "riverside port — wharves, brass balconies, paddle steam",
    "anchor": [
     598,
@@ -233,58 +201,46 @@
    "ry": 78,
    "hull": [
     [
-     477.1,
-     524.3
+     471.0,
+     589.8
     ],
     [
-     477.7,
-     510.9
+     473.3,
+     520.4
     ],
     [
-     522.2,
-     478.2
+     480.2,
+     497.5
     ],
     [
-     536.3,
-     471.6
+     627.2,
+     437.9
     ],
     [
-     610.9,
-     451.4
+     731.3,
+     485.8
     ],
     [
-     623.8,
-     450.0
+     731.1,
+     500.9
     ],
     [
-     732.5,
-     474.4
+     725.4,
+     531.7
     ],
     [
-     737.8,
-     481.3
+     605.3,
+     635.4
     ],
     [
-     713.5,
-     582.7
-    ],
-    [
-     663.2,
-     624.9
-    ],
-    [
-     538.7,
-     606.3
-    ],
-    [
-     485.3,
-     573.9
+     588.4,
+     634.3
     ]
    ]
   },
   {
    "id": "quiet_woods",
-   "label": "The Quiet Woods",
+   "label": "Quiet Woods",
    "terrain": "forest and lakes — pine shade, cabin lights, still water",
    "anchor": [
     480,
@@ -294,54 +250,42 @@
    "ry": 112,
    "hull": [
     [
-     330.5,
-     372.0
+     341.9,
+     343.4
     ],
     [
-     341.8,
-     340.0
+     343.7,
+     303.7
     ],
     [
-     436.8,
-     254.7
+     479.2,
+     216.0
     ],
     [
-     552.1,
-     219.3
+     527.5,
+     200.9
     ],
     [
-     609.0,
-     241.1
+     622.5,
+     234.6
     ],
     [
-     638.9,
-     272.6
+     623.0,
+     304.2
     ],
     [
-     652.2,
-     305.1
+     594.9,
+     438.6
     ],
     [
-     657.7,
-     320.8
-    ],
-    [
-     669.7,
-     391.9
-    ],
-    [
-     583.4,
-     447.2
-    ],
-    [
-     394.6,
-     431.0
+     422.2,
+     440.0
     ]
    ]
   },
   {
    "id": "outer_isles",
-   "label": "The Outer Isles",
+   "label": "Outer Isles",
    "terrain": "offshore archipelago continuing the range's line north - ferry weather, distant genres",
    "anchor": [
     900,
@@ -351,56 +295,40 @@
    "ry": 48,
    "hull": [
     [
-     751.2,
-     76.3
+     741.0,
+     82.5
     ],
     [
-     754.4,
-     69.3
+     783.0,
+     19.5
     ],
     [
-     789.9,
-     25.6
+     850.8,
+     -3.5
     ],
     [
-     794.2,
-     23.3
+     866.5,
+     -7.0
     ],
     [
-     856.2,
-     0.5
+     999.5,
+     195.2
     ],
     [
-     944.7,
-     82.7
+     973.7,
+     255.0
     ],
     [
-     995.4,
-     203.9
+     966.4,
+     260.4
     ],
     [
-     979.1,
-     245.0
+     921.8,
+     279.4
     ],
     [
-     974.7,
-     254.1
-    ],
-    [
-     923.7,
-     278.8
-    ],
-    [
-     917.8,
-     277.3
-    ],
-    [
-     914.4,
-     274.2
-    ],
-    [
-     753.8,
-     83.9
+     915.8,
+     277.9
     ]
    ]
   }
@@ -780,7 +708,7 @@
     "Vanessa Collier"
    ],
    "seat": null,
-   "suggested_name": "The Amplified Range Outskirts"
+   "suggested_name": "Amplified Range Outskirts"
   },
   {
    "id": "delta_coast:d1",
@@ -863,7 +791,7 @@
     "Miko Marks"
    ],
    "seat": null,
-   "suggested_name": "The Delta Coast Outskirts"
+   "suggested_name": "Delta Coast Outskirts"
   },
   {
    "id": "heartland:d1",
@@ -978,73 +906,57 @@
     "The Secret Sisters"
    ],
    "seat": null,
-   "suggested_name": "The Heartland Outskirts"
+   "suggested_name": "Heartland Outskirts"
   },
   {
    "id": "outer_isles:arrivals",
    "region": "outer_isles",
    "members": [
-    "Bone Thugs-n-Harmony",
-    "Cassie & Maggie",
-    "Chelsea Cutler",
-    "DJ Jazzy Jeff",
-    "De La Soul",
-    "Gigi Perez",
-    "La Unica",
-    "Mystery Friends",
-    "Queen Latifah",
-    "The House You Grew Up In (THYGUI)",
-    "The Roots",
-    "The Side Cars Band",
-    "Valley",
-    "Wu-Tang Clan",
-    "Z-Trip",
-    "Zedicus & Abyssinia Roots"
+    "Allman Betts Family Revival: A Decade of Revival",
+    "Angélique Kidjo",
+    "Chris Jacobs & Friends",
+    "Dale Watson & His Lonestars"
    ],
    "seat": "Bone Thugs-n-Harmony",
    "suggested_name": "Arrivals Anchorage",
    "island_center": [
-    924.9,
-    94.8
+    915.7,
+    260.5
    ],
-   "island_r": 15.3
+   "island_r": 11.6
   },
   {
    "id": "outer_isles:p1",
    "region": "outer_isles",
    "members": [
+    "Cassie & Maggie",
     "Enter the Haggis",
     "Gaelic Storm",
     "Haggis X-1",
     "House of Hamill",
     "Young Dubliners"
    ],
-   "seat": "Enter the Haggis",
-   "suggested_name": "Haggis Skerry",
+   "seat": "Young Dubliners",
+   "suggested_name": "Innis Craic",
    "island_center": [
-    768.8,
-    83.7
+    768.0,
+    84.3
    ],
-   "island_r": 14.6
+   "island_r": 20.3
   },
   {
    "id": "outer_isles:p2",
    "region": "outer_isles",
    "members": [
-    "Allman Betts Family Revival: A Decade of Revival",
-    "Angélique Kidjo",
-    "Chris Jacobs & Friends",
-    "Dale Watson & His Lonestars",
-    "DuPont Brass",
-    "George Clinton & Parliament-Funkadelic"
+    "AJR"
    ],
-   "seat": "Allman Betts Family Revival: A Decade of Revival",
-   "suggested_name": "Revival Sound",
+   "seat": "AJR",
+   "suggested_name": "AJR Rock",
    "island_center": [
-    915.4,
-    259.6
+    905.5,
+    251.0
    ],
-   "island_r": 12.9
+   "island_r": 10
   },
   {
    "id": "outer_isles:p3",
@@ -1053,69 +965,83 @@
     "Honeyfunk",
     "Jessie's Girl",
     "Juliet Lloyd",
-    "LL Cool J",
-    "Līve",
-    "Nas"
+    "La Unica",
+    "Every Breath You Take",
+    "The Side Cars Band",
+    "Zedicus & Abyssinia Roots"
    ],
-   "seat": "Honeyfunk",
-   "suggested_name": "Honeyfunk Rock",
+   "seat": "Every Breath You Take",
+   "suggested_name": "Cover Band Cay",
    "island_center": [
-    802.9,
-    39.2
+    803.8,
+    36.3
    ],
-   "island_r": 10.8
+   "island_r": 19.0
   },
   {
    "id": "outer_isles:p4",
    "region": "outer_isles",
    "members": [
-    "New York's Finest",
+    "Bone Thugs-n-Harmony",
+    "DJ Jazzy Jeff",
+    "De La Soul",
+    "LL Cool J",
+    "Nas",
+    "Talia Segal",
+    "The Roots",
     "Victor Wooten & The Wooten Brothers",
+    "Wu-Tang Clan",
+    "Z-Trip",
     "Zara Phillips"
    ],
-   "seat": "New York's Finest",
-   "suggested_name": "Finest Isle",
+   "seat": "The Roots",
+   "suggested_name": "Hip Hop Haven",
    "island_center": [
-    859.8,
-    21.8
+    856.3,
+    21.2
    ],
-   "island_r": 12.8
+   "island_r": 22
   },
   {
    "id": "outer_isles:p5",
    "region": "outer_isles",
    "members": [
-    "AJR",
+    "Brassie",
     "Hayley Williams",
     "Kate Davis",
     "Marshall Crenshaw",
     "Muna",
+    "Mystery Friends",
     "P!nk",
-    "Talia Segal"
+    "Sadurn",
+    "The House You Grew Up In (THYGUI)"
    ],
    "seat": "Kate Davis",
-   "suggested_name": "Davis Skerry",
+   "suggested_name": "Fempop Skree",
    "island_center": [
-    961.7,
-    238.6
+    959.7,
+    241.3
    ],
-   "island_r": 15.1
+   "island_r": 13.4
   },
   {
    "id": "outer_isles:p6",
    "region": "outer_isles",
    "members": [
+    "Chelsea Cutler",
+    "Gigi Perez",
     "Hozier",
+    "Valley",
     "Zara Larsson",
     "kitchen"
    ],
-   "seat": "Zara Larsson",
-   "suggested_name": "Larsson Sound",
+   "seat": "Hozier",
+   "suggested_name": "Indiesoul Isle",
    "island_center": [
-    976.4,
-    198.2
+    975.4,
+    194.2
    ],
-   "island_r": 11.7
+   "island_r": 17.6
   },
   {
    "id": "quiet_woods:d1",
@@ -1204,7 +1130,6 @@
    "id": "quiet_woods:d8",
    "region": "quiet_woods",
    "members": [
-    "Sadurn",
     "Shakey Graves"
    ],
    "seat": "Shakey Graves",
@@ -1255,7 +1180,7 @@
     "Waxahatchee"
    ],
    "seat": null,
-   "suggested_name": "The Quiet Woods Outskirts"
+   "suggested_name": "Quiet Woods Outskirts"
   },
   {
    "id": "river_port:d1",
@@ -1340,7 +1265,7 @@
     "ZZ Ward"
    ],
    "seat": null,
-   "suggested_name": "Second Line Riverlands Outskirts"
+   "suggested_name": "Secondline Riverlands Outskirts"
   },
   {
    "id": "slide_foothills:d1",
@@ -1400,18 +1325,19 @@
    "id": 1,
    "name": "AJR",
    "region": "outer_isles",
-   "district": "outer_isles:p5",
-   "size": "town",
+   "district": "outer_isles:p2",
+   "size": "capital",
    "score": 6,
    "xy": [
-    963.0,
-    239.9
+    905.5,
+    251.0
    ],
    "region_uv": [
-    0.8579,
-    2.3535
+    0.5312,
+    2.4688
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -1424,16 +1350,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    655.8,
-    509.9
+    599.5,
+    596.6
    ],
    "region_uv": [
-    0.7314,
-    0.275
+    0.506,
+    0.8308
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1446,16 +1373,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    387.3,
-    574.6
+    401.3,
+    567.7
    ],
    "region_uv": [
-    0.7305,
-    0.275
+    0.7712,
+    0.2087
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1468,16 +1396,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    624.8,
-    351.0
+    721.3,
+    255.0
    ],
    "region_uv": [
-    0.0279,
-    1.0841
+    0.3037,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): seen + bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1490,16 +1420,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    507.0,
-    426.9
+    292.9,
+    443.5
    ],
    "region_uv": [
-    0.729,
-    0.275
+    0.1655,
+    0.3453
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1512,14 +1443,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    584.5,
-    328.9
+    685.5,
+    390.6
    ],
    "region_uv": [
-    -0.0871,
-    0.9956
+    0.2014,
+    1.2424
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -1532,16 +1464,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    870.2,
-    148.8
+    792.5,
+    301.6
    ],
    "region_uv": [
-    0.729,
-    0.275
+    0.5071,
+    0.8864
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1554,14 +1487,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    665.7,
-    367.9
+    734.9,
+    236.7
    ],
    "region_uv": [
-    0.1449,
-    1.1516
+    0.3426,
+    0.6269
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -1574,14 +1508,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    721.9,
-    305.8
+    723.4,
+    242.7
    ],
    "region_uv": [
-    0.3054,
-    0.9032
+    0.3098,
+    0.6509
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -1594,16 +1529,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    641.7,
-    321.7
+    412.5,
+    362.8
    ],
    "region_uv": [
-    0.9701,
-    0.5164
+    0.3037,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): override: seen once, arena artist worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1616,16 +1553,18 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    589.9,
-    484.0
+    345.4,
+    527.2
    ],
    "region_uv": [
-    0.947,
-    0.5168
+    0.3038,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Lower): country/bluegrass adjacency; keep",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1638,14 +1577,15 @@
    "size": "city",
    "score": 17,
    "xy": [
-    468.0,
-    263.5
+    493.1,
+    289.5
    ],
    "region_uv": [
-    0.4651,
-    0.2567
+    0.5381,
+    0.373
    ],
    "flags": {},
+   "src": "",
    "times_seen": 4,
    "vip": 1,
    "tier": "Strong"
@@ -1654,7 +1594,7 @@
    "id": 9,
    "name": "Allman Betts Family Revival: A Decade of Revival",
    "region": "outer_isles",
-   "district": "outer_isles:p2",
+   "district": "outer_isles:arrivals",
    "size": "waystation",
    "score": 3,
    "xy": [
@@ -1666,8 +1606,10 @@
     2.5625
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Choose @ Capital One Hall 2026-12-07 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1680,14 +1622,17 @@
    "size": "city",
    "score": 18,
    "xy": [
-    704.1,
-    292.6
+    751.6,
+    150.6
    ],
    "region_uv": [
-    0.2546,
-    0.8504
+    0.3903,
+    0.2824
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
+   "src": "",
    "times_seen": 5,
    "vip": 0,
    "tier": "Strong"
@@ -1700,16 +1645,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    867.0,
-    150.4
+    721.8,
+    170.4
    ],
    "region_uv": [
-    0.7199,
-    0.2816
+    0.3051,
+    0.3616
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1722,16 +1668,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    734.6,
-    224.9
+    718.3,
+    256.5
    ],
    "region_uv": [
-    0.3418,
-    0.5795
+    0.2953,
+    0.7061
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Similar-to GA-20 (Last.fm); densely-connected in DMV…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1744,16 +1692,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    503.6,
-    428.7
+    341.5,
+    406.7
    ],
    "region_uv": [
-    0.7199,
-    0.2825
+    0.2934,
+    0.1894
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1766,14 +1715,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    282.6,
-    565.7
+    238,
+    596
    ],
    "region_uv": [
-    0.4262,
-    0.1894
+    0.2965,
+    0.4808
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -1786,14 +1736,15 @@
    "size": "capital",
    "score": 15,
    "xy": [
-    250.1,
-    587.2
+    296.0,
+    662.0
    ],
    "region_uv": [
-    0.3317,
-    0.3962
+    0.4651,
+    1.1154
    ],
    "flags": {},
+   "src": "",
    "times_seen": 4,
    "vip": 0,
    "tier": "Strong"
@@ -1806,14 +1757,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    584.2,
-    550.9
+    500.6,
+    521.3
    ],
    "region_uv": [
-    0.4448,
-    0.5378
+    0.1104,
+    0.3482
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1837,6 +1789,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: Rising blues-rock guitarist; BMA nominee; critically…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1845,7 +1798,7 @@
    "id": 16,
    "name": "Angélique Kidjo",
    "region": "outer_isles",
-   "district": "outer_isles:p2",
+   "district": "outer_isles:arrivals",
    "size": "waystation",
    "score": 0.5,
    "xy": [
@@ -1857,8 +1810,10 @@
     2.585
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Buy @ GMU Center for the Arts 2027-04-25 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1879,6 +1834,7 @@
     0.8169
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -1891,16 +1847,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    293.9,
-    408.3
+    342.2,
+    528.9
    ],
    "region_uv": [
-    0.1682,
-    0.196
+    0.2951,
+    0.7072
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Americana singer-songwriter; Keb' Mo' opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1913,16 +1871,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    272.7,
-    636.9
+    256.1,
+    614.2
    ],
    "region_uv": [
-    0.3974,
-    0.8739
+    0.3493,
+    0.6555
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): blues/roots trio; Tab Benoit opener 2023-07-20",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1935,16 +1895,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    426.2,
-    341.9
+    409.6,
+    364.3
    ],
    "region_uv": [
-    0.3437,
-    0.6065
+    0.2952,
+    0.7067
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Birchmere 2026-10-12 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1957,16 +1919,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    629.3,
-    457.4
+    627.0,
+    445.2
    ],
    "region_uv": [
-    0.3388,
-    0.7516
+    0.3192,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; Hamilton Live presale Aug 2026",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1979,16 +1943,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    746.9,
-    291.5
+    720.3,
+    252.1
    ],
    "region_uv": [
-    0.3768,
-    0.8462
+    0.3007,
+    0.6884
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Brazilian blues-rock guitarist; Eric Gales opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2001,16 +1967,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    869.0,
-    145.6
+    811.3,
+    260.1
    ],
    "region_uv": [
-    0.7258,
-    0.2625
+    0.5609,
+    0.7204
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2023,16 +1990,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    759.3,
-    223.6
+    722.1,
+    257.7
    ],
    "region_uv": [
-    0.4122,
-    0.5743
+    0.306,
+    0.7109
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Theater at MGM National Harbor 2026-11-10 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2045,14 +2014,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    805.8,
-    284.0
+    703,
+    204
    ],
    "region_uv": [
-    0.5451,
-    0.816
+    0.2514,
+    0.496
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2065,16 +2035,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    652.2,
-    511.8
+    693.4,
+    485.5
    ],
    "region_uv": [
-    0.7168,
-    0.287
+    0.8816,
+    0.1186
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2087,14 +2058,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    808.6,
-    171.7
+    848.2,
+    250.6
    ],
    "region_uv": [
-    0.5531,
-    0.3666
+    0.6663,
+    0.6824
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -2107,16 +2079,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    558.9,
-    267.6
+    419.6,
+    354.2
    ],
    "region_uv": [
-    0.7294,
-    0.275
+    0.3244,
+    0.6616
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2129,16 +2102,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    871.0,
-    151.7
+    699.4,
+    204.2
    ],
    "region_uv": [
-    0.7315,
-    0.2868
+    0.2411,
+    0.4968
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2162,6 +2136,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: Powerhouse blues-rock vocalist; frequent Joe Bonamassa…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -2174,16 +2149,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    654.6,
-    506.3
+    646.1,
+    479.0
    ],
    "region_uv": [
-    0.7262,
-    0.2522
+    0.6924,
+    0.0769
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2196,16 +2172,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    437.7,
-    582.0
+    344.3,
+    524.0
    ],
    "region_uv": [
-    0.5466,
-    0.9321
+    0.3007,
+    0.6864
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Hank Dietle's Tavern 2026-09-13 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2218,16 +2196,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    675.9,
-    344.9
+    577.0,
+    333.3
    ],
    "region_uv": [
-    0.7401,
-    0.275
+    -0.1121,
+    0.2258
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2240,14 +2219,15 @@
    "size": "town",
    "score": 8,
    "xy": [
-    788.6,
-    182.7
+    677.9,
+    267.6
    ],
    "region_uv": [
-    0.496,
-    0.4108
+    0.1796,
+    0.7502
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 1,
    "tier": "Strong"
@@ -2260,16 +2240,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    710.9,
-    245.2
+    723.6,
+    252.7
    ],
    "region_uv": [
-    0.2741,
-    0.6609
+    0.3104,
+    0.6908
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Bass virtuoso (Mr. Big, Talas, David Lee Roth solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2282,16 +2264,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    388.9,
-    547.7
+    346.3,
+    530.2
    ],
    "region_uv": [
-    0.4183,
-    0.7868
+    0.3061,
+    0.7129
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): bandcamp + 3 sources; bluegrass circuit adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -2304,16 +2288,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    641.6,
-    289.7
+    718.8,
+    259.5
    ],
    "region_uv": [
-    0.076,
-    0.8388
+    0.2965,
+    0.7181
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Southern rock / cosmic-country adjacent -…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2326,16 +2312,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    671.9,
-    347.0
+    623.7,
+    380.4
    ],
    "region_uv": [
-    0.7057,
-    0.2837
+    0.2905,
+    0.4254
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2348,16 +2335,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    555.5,
-    269.4
+    608.8,
+    242.8
    ],
    "region_uv": [
-    0.7194,
-    0.2828
+    0.8744,
+    0.1643
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2370,16 +2358,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    448.7,
-    300.8
+    411.5,
+    359.9
    ],
    "region_uv": [
-    0.409,
-    0.4234
+    0.3007,
+    0.6872
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong)",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -2392,16 +2382,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    656.8,
-    513.3
+    602.6,
+    611.9
    ],
    "region_uv": [
-    0.7353,
-    0.2965
+    0.5184,
+    0.9288
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2414,17 +2405,19 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    529.0,
-    492.8
+    546.1,
+    577.9
    ],
    "region_uv": [
-    0.224,
-    0.1654
+    0.2924,
+    0.7111
    ],
    "flags": {
     "legacy": true,
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Legacy): seen 2x; age 92; still touring 2026; 12 BMA wins;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -2433,20 +2426,21 @@
    "id": 367,
    "name": "Bone Thugs-n-Harmony",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
-    926.5,
-    95.0
+    851.0,
+    32.7
    ],
    "region_uv": [
-    0.6507,
-    0.8438
+    0.2216,
+    0.1948
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2459,16 +2453,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    542.9,
-    552.4
+    548.3,
+    572.9
    ],
    "region_uv": [
-    0.2796,
-    0.5473
+    0.3012,
+    0.6789
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -2481,16 +2477,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    424.7,
-    330.4
+    492.7,
+    417.5
    ],
    "region_uv": [
-    0.3392,
-    0.5554
+    0.5369,
+    0.9444
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -2503,16 +2500,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    470.0,
-    270.0
+    413.3,
+    365.5
    ],
    "region_uv": [
-    0.4709,
-    0.2857
+    0.306,
+    0.712
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -2525,16 +2524,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    383.0,
-    576.8
+    314.8,
+    594.9
    ],
    "region_uv": [
-    0.718,
-    0.2962
+    0.5198,
+    0.4702
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2542,21 +2542,22 @@
   {
    "id": 351,
    "name": "Brassie",
-   "region": "quiet_woods",
-   "district": "quiet_woods:arrivals",
+   "region": "outer_isles",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    557.7,
-    264.3
+    961.2,
+    239.3
    ],
    "region_uv": [
-    0.7259,
-    0.2601
+    0.848,
+    2.3467
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2569,16 +2570,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    565.3,
-    245.5
+    407.4,
+    362.1
    ],
    "region_uv": [
-    0.7481,
-    0.1764
+    0.289,
+    0.697
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Portland dark folk/Americana; Devil Makes Three…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2591,14 +2594,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    618.5,
-    498.5
+    686.3,
+    501.3
    ],
    "region_uv": [
-    0.582,
-    0.2019
+    0.8532,
+    0.2196
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -2611,14 +2615,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    355.8,
-    550.1
+    377.1,
+    559.6
    ],
    "region_uv": [
-    0.331,
-    0.7972
+    0.3871,
+    0.8373
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": null
@@ -2641,6 +2646,7 @@
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2653,16 +2659,17 @@
    "size": "town",
    "score": 8,
    "xy": [
-    801.8,
-    170.1
+    817.4,
+    169.5
    ],
    "region_uv": [
-    0.5337,
-    0.3604
+    0.5783,
+    0.358
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Legacy"
@@ -2675,14 +2682,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    176.7,
-    548.9
+    395.3,
+    636.7
    ],
    "region_uv": [
-    0.1183,
-    0.0279
+    0.7537,
+    0.8717
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -2695,14 +2703,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    615.8,
-    361.0
+    685.0,
+    255.1
    ],
    "region_uv": [
-    0.0023,
-    1.124
+    0.1999,
+    0.7002
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -2715,16 +2724,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    659.0,
-    366.3
+    717.7,
+    250.5
    ],
    "region_uv": [
-    0.1256,
-    1.1451
+    0.2934,
+    0.6822
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): override medium: alt-rock, occasional crossover",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2737,16 +2748,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    864.6,
-    148.0
+    795.7,
+    198.3
    ],
    "region_uv": [
-    0.7132,
-    0.2721
+    0.5163,
+    0.4732
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2759,14 +2771,15 @@
    "size": "town",
    "score": 10,
    "xy": [
-    248.0,
-    532.6
+    298.5,
+    648.6
    ],
    "region_uv": [
-    0.3256,
-    -0.1288
+    0.4724,
+    0.9867
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Medium"
@@ -2775,20 +2788,21 @@
    "id": 368,
    "name": "Cassie & Maggie",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p1",
    "size": "village",
    "score": 3,
    "xy": [
-    923.1,
-    96.8
+    767.2,
+    92.3
    ],
    "region_uv": [
-    0.631,
-    0.8623
+    -0.2545,
+    0.8156
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2801,16 +2815,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    872.7,
-    146.3
+    805.1,
+    292.9
    ],
    "region_uv": [
-    0.7362,
-    0.265
+    0.5431,
+    0.8516
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2823,16 +2838,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    559.8,
-    270.7
+    412.8,
+    389.7
    ],
    "region_uv": [
-    0.732,
-    0.2891
+    0.3047,
+    0.8201
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2845,16 +2861,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    430.4,
-    608.8
+    252.4,
+    616.1
    ],
    "region_uv": [
-    0.8558,
-    0.6035
+    0.3385,
+    0.6738
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; Hill Country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2867,16 +2885,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    505.8,
-    423.5
+    308.5,
+    432.4
    ],
    "region_uv": [
-    0.7258,
-    0.2607
+    0.2066,
+    0.2983
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2889,16 +2908,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    507.9,
-    430.1
+    318.3,
+    387.5
    ],
    "region_uv": [
-    0.7314,
-    0.2885
+    0.2324,
+    0.1081
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2907,20 +2927,21 @@
    "id": 370,
    "name": "Chelsea Cutler",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p6",
    "size": "village",
    "score": 3,
    "xy": [
-    925.3,
-    91.6
+    984.7,
+    189.1
    ],
    "region_uv": [
-    0.6437,
-    0.8085
+    0.9813,
+    1.824
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2933,16 +2954,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    501.0,
-    426.1
+    315.7,
+    380.9
    ],
    "region_uv": [
-    0.7132,
-    0.2716
+    0.2255,
+    0.0801
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -2955,16 +2977,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    249.8,
-    595.1
+    254.8,
+    610.5
    ],
    "region_uv": [
-    0.3308,
-    0.4722
+    0.3455,
+    0.6206
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): traditional blues guitarist; Alligator…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -2973,7 +2997,7 @@
    "id": 50,
    "name": "Chris Jacobs & Friends",
    "region": "outer_isles",
-   "district": "outer_isles:p2",
+   "district": "outer_isles:arrivals",
    "size": "waystation",
    "score": 0,
    "xy": [
@@ -2985,8 +3009,10 @@
     2.5196
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -2999,16 +3025,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    440.1,
-    323.7
+    414.8,
+    360.5
    ],
    "region_uv": [
-    0.3839,
-    0.5255
+    0.3104,
+    0.6898
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Choose @ Hamilton Live 2026-09-18 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3021,14 +3049,15 @@
    "size": "capital",
    "score": 27,
    "xy": [
-    656.4,
-    329.5
+    707.6,
+    327.2
    ],
    "region_uv": [
-    0.1183,
-    0.998
+    0.2647,
+    0.9889
    ],
    "flags": {},
+   "src": "",
    "times_seen": 8,
    "vip": 0,
    "tier": "Strong"
@@ -3041,16 +3070,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    510.9,
-    398.6
+    410.0,
+    367.3
    ],
    "region_uv": [
-    0.5899,
-    0.8599
+    0.2965,
+    0.72
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -3063,16 +3094,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    388.4,
-    578.6
+    286.7,
+    542.7
    ],
    "region_uv": [
-    0.7338,
-    0.313
+    0.4381,
+    -0.0317
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3085,16 +3117,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    456.5,
-    428.1
+    458.0,
+    439.8
    ],
    "region_uv": [
-    0.5961,
-    0.2801
+    0.6,
+    0.3298
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3107,14 +3140,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    237.7,
-    558.6
+    249.2,
+    605.7
    ],
    "region_uv": [
-    0.2956,
-    0.1212
+    0.3291,
+    0.5737
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -3123,20 +3157,21 @@
    "id": 371,
    "name": "DJ Jazzy Jeff",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
-    927.4,
-    98.2
+    867.1,
+    32.2
    ],
    "region_uv": [
-    0.656,
-    0.877
+    0.3131,
+    0.1896
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3145,7 +3180,7 @@
    "id": 56,
    "name": "Dale Watson & His Lonestars",
    "region": "outer_isles",
-   "district": "outer_isles:p2",
+   "district": "outer_isles:arrivals",
    "size": "waystation",
    "score": 1,
    "xy": [
@@ -3157,8 +3192,10 @@
     2.6029
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-19 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3171,14 +3208,15 @@
    "size": "capital",
    "score": 24,
    "xy": [
-    377.4,
-    540.7
+    367.6,
+    559.0
    ],
    "region_uv": [
-    0.3879,
-    0.7572
+    0.3621,
+    0.8349
    ],
    "flags": {},
+   "src": "",
    "times_seen": 7,
    "vip": 0,
    "tier": "Strong"
@@ -3191,16 +3229,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    406.6,
-    554.2
+    339.7,
+    526.4
    ],
    "region_uv": [
-    0.4646,
-    0.8142
+    0.2888,
+    0.6968
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Jefferson Theater 2026-10-15 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3213,14 +3253,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    298.8,
-    599.6
+    298.6,
+    600.7
    ],
    "region_uv": [
-    0.4733,
-    0.5154
+    0.4727,
+    0.526
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -3244,6 +3285,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: NPR Tiny Desk; soul-blues vocalist; seen once in a Wolf…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3256,16 +3298,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    655.2,
-    385.2
+    408.9,
+    358.4
    ],
    "region_uv": [
-    1.0093,
-    0.8001
+    0.2933,
+    0.6803
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3278,14 +3322,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    570.9,
-    268.4
+    570.8,
+    264.2
    ],
    "region_uv": [
-    0.7642,
-    0.2785
+    0.764,
+    0.2598
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3298,16 +3343,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    740.9,
-    247.0
+    725.0,
+    256.8
    ],
    "region_uv": [
-    0.3598,
-    0.6679
+    0.3144,
+    0.7073
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-15 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3316,20 +3363,21 @@
    "id": 382,
    "name": "De La Soul",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
-    920.5,
-    94.2
+    854.8,
+    12.0
    ],
    "region_uv": [
-    0.6165,
-    0.8355
+    0.2432,
+    -0.0208
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3342,16 +3390,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    674.4,
-    341.0
+    647.4,
+    383.9
    ],
    "region_uv": [
-    0.728,
-    0.2584
+    0.4948,
+    0.4403
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3364,16 +3413,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    676.9,
-    348.6
+    621.4,
+    403.1
    ],
    "region_uv": [
-    0.7494,
-    0.2906
+    0.2707,
+    0.5216
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3386,16 +3436,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    649.5,
-    509.1
+    532.1,
+    503.6
    ],
    "region_uv": [
-    0.7061,
-    0.2696
+    0.2364,
+    0.2346
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3408,16 +3459,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    658.7,
-    507.1
+    605.0,
+    619.4
    ],
    "region_uv": [
-    0.7429,
-    0.2568
+    0.528,
+    0.9769
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3430,16 +3482,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    586.1,
-    474.2
+    543.6,
+    575.4
    ],
    "region_uv": [
-    0.4525,
-    0.0463
+    0.2825,
+    0.695
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Buy @ Bethesda Blues & Jazz 2026-09-16 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3447,19 +3501,22 @@
   {
    "id": 69,
    "name": "DuPont Brass",
-   "region": "outer_isles",
-   "district": "outer_isles:p2",
+   "region": "river_port",
+   "district": "river_port:arrivals",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    909.5,
-    259.0
+    647.2,
+    505.7
    ],
    "region_uv": [
-    0.5542,
-    2.5524
+    0.6968,
+    0.2479
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3472,16 +3529,18 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    532.9,
-    555.5
+    552.1,
+    573.6
    ],
    "region_uv": [
-    0.2395,
-    0.5671
+    0.3166,
+    0.6831
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Lower): New Orleans funk; worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -3494,16 +3553,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    689.6,
-    316.0
+    714.8,
+    257.2
    ],
    "region_uv": [
-    0.2132,
-    0.9441
+    0.2851,
+    0.7086
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): seen 2x as support 2025 (Experience Hendrix…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3516,16 +3577,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    695.9,
-    275.5
+    722.5,
+    249.6
    ],
    "region_uv": [
-    0.2312,
-    0.7822
+    0.3072,
+    0.6784
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; rising blues-soul",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3538,16 +3601,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    553.0,
-    266.8
+    562.9,
+    334.3
    ],
    "region_uv": [
-    0.7121,
-    0.2715
+    0.741,
+    0.5728
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3560,14 +3624,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    459.7,
-    288.3
+    522.9,
+    216.2
    ],
    "region_uv": [
-    0.4411,
-    0.3673
+    0.6247,
+    0.0455
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3580,16 +3645,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    509.8,
-    424.2
+    352.9,
+    358.2
    ],
    "region_uv": [
-    0.7362,
-    0.2635
+    0.3234,
+    -0.0161
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3599,17 +3665,20 @@
    "name": "Enter the Haggis",
    "region": "outer_isles",
    "district": "outer_isles:p1",
-   "size": "city",
+   "size": "town",
    "score": 12,
    "xy": [
-    768.0,
-    91.3
+    770.1,
+    73.5
    ],
    "region_uv": [
-    -0.25,
-    0.8052
+    -0.2381,
+    0.6198
    ],
-   "flags": {},
+   "flags": {
+    "ruin": true
+   },
+   "src": "",
    "times_seen": 4,
    "vip": 0,
    "tier": null
@@ -3622,16 +3691,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    408.7,
-    407.5
+    416.2,
+    364.6
    ],
    "region_uv": [
-    0.2927,
-    0.8994
+    0.3145,
+    0.7081
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; folk-blues legend",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3644,17 +3715,19 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    771.3,
-    188.0
+    721.9,
+    260.9
    ],
    "region_uv": [
-    0.4465,
-    0.4322
+    0.3053,
+    0.7238
    ],
    "flags": {
     "legacy": true,
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Legacy): age 81; 2026 tour Europe + 6 US dates (Sep, arenas);…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -3667,14 +3740,15 @@
    "size": "city",
    "score": 15,
    "xy": [
-    742.4,
-    266.2
+    733.0,
+    249.3
    ],
    "region_uv": [
-    0.364,
-    0.7448
+    0.3371,
+    0.6772
    ],
    "flags": {},
+   "src": "",
    "times_seen": 4,
    "vip": 0,
    "tier": "Strong"
@@ -3687,14 +3761,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    711.3,
-    386.2
+    693.8,
+    410.1
    ],
    "region_uv": [
-    0.2751,
-    1.2248
+    0.2251,
+    1.3204
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -3707,16 +3782,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    668.9,
-    344.0
+    577.8,
+    343.6
    ],
    "region_uv": [
-    0.6803,
-    0.2711
+    -0.1052,
+    0.2695
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3729,16 +3805,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    795.8,
-    231.2
+    714.4,
+    251.7
    ],
    "region_uv": [
-    0.5166,
-    0.6047
+    0.284,
+    0.687
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Recher 2026-10-16 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3751,16 +3829,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    624.7,
-    279.9
+    406.0,
+    364.9
    ],
    "region_uv": [
-    0.9206,
-    0.3298
+    0.285,
+    0.7095
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -3784,9 +3864,31 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: No. 1 Roots Music Report; AMA Top Albums; Baker Artist…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
+  },
+  {
+   "id": 192,
+   "name": "Every Breath You Take",
+   "region": "outer_isles",
+   "district": "outer_isles:p3",
+   "size": "town",
+   "score": 15,
+   "xy": [
+    797.9,
+    45.1
+   ],
+   "region_uv": [
+    -0.0801,
+    0.324
+   ],
+   "flags": {},
+   "src": "",
+   "times_seen": 5,
+   "vip": 0,
+   "tier": null
   },
   {
    "id": 386,
@@ -3796,16 +3898,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    504.1,
-    432.2
+    299.9,
+    455.3
    ],
    "region_uv": [
-    0.7213,
-    0.2974
+    0.1839,
+    0.3953
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3818,16 +3921,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    867.4,
-    153.6
+    826.0,
+    252.5
    ],
    "region_uv": [
-    0.7212,
-    0.2945
+    0.6029,
+    0.69
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3840,16 +3944,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    866.2,
-    143.9
+    760.8,
+    283.3
    ],
    "region_uv": [
-    0.7178,
-    0.2557
+    0.4166,
+    0.8132
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3862,16 +3967,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    444.0,
-    307.2
+    413.7,
+    357.5
    ],
    "region_uv": [
-    0.3953,
-    0.4519
+    0.3073,
+    0.6762
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Portland roots/folk-rock; bluegrass/country-rock…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3884,16 +3991,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    673.6,
-    257.0
+    726.6,
+    253.6
    ],
    "region_uv": [
-    0.1674,
-    0.7082
+    0.3188,
+    0.6942
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; traditional blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3906,14 +4015,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    637.7,
-    352.7
+    786.4,
+    250.8
    ],
    "region_uv": [
-    0.0649,
-    1.0908
+    0.4896,
+    0.6834
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3926,14 +4036,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    765.1,
-    84.3
+    755.6,
+    89.1
    ],
    "region_uv": [
-    -0.2666,
-    0.7323
+    -0.3205,
+    0.7823
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -3946,14 +4057,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    563.0,
-    536.2
+    493.4,
+    511.8
    ],
    "region_uv": [
-    0.36,
-    0.4436
+    0.0816,
+    0.2874
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -3977,6 +4089,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: 25yo BC Indigenous blues-rock; Tom Hambridge-produced;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3997,6 +4110,7 @@
     0.9897
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -4009,16 +4123,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    657.1,
-    350.3
+    719.1,
+    247.8
    ],
    "region_uv": [
-    0.1203,
-    1.0812
+    0.2973,
+    0.6713
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): blues-rock guitarist; hard rock origins (Heavy…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4026,19 +4142,22 @@
   {
    "id": 91,
    "name": "George Clinton & Parliament-Funkadelic",
-   "region": "outer_isles",
-   "district": "outer_isles:p2",
-   "size": "hamlet",
+   "region": "river_port",
+   "district": "river_port:arrivals",
+   "size": "town",
    "score": 3,
    "xy": [
-    920.2,
-    256.7
+    655.2,
+    508.8
    ],
    "region_uv": [
-    0.6146,
-    2.5282
+    0.7287,
+    0.268
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4051,14 +4170,15 @@
    "size": "town",
    "score": 7,
    "xy": [
-    695.9,
-    441.0
+    698.7,
+    444.7
    ],
    "region_uv": [
-    0.9129,
-    0.6822
+    0.937,
+    0.698
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Medium"
@@ -4067,20 +4187,21 @@
    "id": 372,
    "name": "Gigi Perez",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p6",
    "size": "village",
    "score": 3,
    "xy": [
-    929.3,
-    92.3
+    965.7,
+    197.8
    ],
    "region_uv": [
-    0.6662,
-    0.8156
+    0.8733,
+    1.9146
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4093,16 +4214,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    439.7,
-    449.6
+    348.0,
+    524.6
    ],
    "region_uv": [
-    0.5518,
-    0.3713
+    0.3106,
+    0.6891
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Americana canon, duo w/ David Rawlings; buy at…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4115,16 +4238,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    451.1,
-    419.0
+    342.6,
+    532.2
    ],
    "region_uv": [
-    0.5818,
-    0.2416
+    0.2964,
+    0.7213
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Warner Theatre 2026-10-18 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4134,7 +4259,7 @@
    "name": "Glen Hansard",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
-   "size": "hamlet",
+   "size": "town",
    "score": 3,
    "xy": [
     545.6,
@@ -4144,7 +4269,10 @@
     0.6908,
     0.9075
    ],
-   "flags": {},
+   "flags": {
+    "ruin": true
+   },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4157,16 +4285,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    561.6,
-    264.9
+    507.0,
+    258.0
    ],
    "region_uv": [
-    0.7372,
-    0.2631
+    0.5785,
+    0.2321
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4179,16 +4308,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    556.0,
-    272.8
+    447.8,
+    353.8
    ],
    "region_uv": [
-    0.7209,
-    0.2983
+    0.4064,
+    0.6598
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4201,16 +4331,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    632.1,
-    293.9
+    725.7,
+    259.8
    ],
    "region_uv": [
-    0.0487,
-    0.8555
+    0.3163,
+    0.7192
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): seen; Warren Haynes — now followed on Seated",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4234,6 +4366,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: 2024 Americana Music Association Instrumentalist of the…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4246,14 +4379,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    380.5,
-    523.9
+    381.5,
+    526.9
    ],
    "region_uv": [
-    0.3961,
-    0.686
+    0.3986,
+    0.6988
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -4276,6 +4410,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "follow (Strong): Enter the Haggis successor project; NOT ON SEATED or…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4288,16 +4423,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    554.7,
-    262.4
+    520.4,
+    268.6
    ],
    "region_uv": [
-    0.7172,
-    0.252
+    0.6174,
+    0.2795
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4310,16 +4446,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    502.8,
-    421.7
+    347.6,
+    385.6
    ],
    "region_uv": [
-    0.7179,
-    0.2529
+    0.3095,
+    0.1
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4342,6 +4479,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -4354,14 +4492,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    803.8,
-    39.4
+    814.4,
+    41.8
    ],
    "region_uv": [
-    -0.0466,
-    0.265
+    0.0136,
+    0.2896
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4384,6 +4523,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "follow (Medium): Enter the Haggis successor project",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4393,17 +4533,18 @@
    "name": "Hozier",
    "region": "outer_isles",
    "district": "outer_isles:p6",
-   "size": "town",
+   "size": "city",
    "score": 6,
    "xy": [
-    973.9,
-    197.0
+    971.0,
+    193.2
    ],
    "region_uv": [
-    0.9199,
-    1.9062
+    0.9034,
+    1.8667
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4416,16 +4557,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    438.7,
-    333.9
+    413.0,
+    368.7
    ],
    "region_uv": [
-    0.3801,
-    0.5709
+    0.3054,
+    0.7262
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Sara Watkins / Sarah Jarosz / Aoife O'Donovan trio;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4438,16 +4581,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    520.4,
-    396.7
+    341.4,
+    522.2
    ],
    "region_uv": [
-    0.7643,
-    0.1472
+    0.2932,
+    0.6789
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -4460,14 +4605,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    403.5,
-    340.8
+    359.7,
+    304.5
    ],
    "region_uv": [
-    0.2776,
-    0.6018
+    0.1503,
+    0.4397
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4480,16 +4626,18 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    539.2,
-    540.2
+    546.6,
+    581.4
    ],
    "region_uv": [
-    0.2646,
-    0.4693
+    0.2945,
+    0.733
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The 8x10 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -4502,16 +4650,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    874.2,
-    150.7
+    786.4,
+    288.8
    ],
    "region_uv": [
-    0.7405,
-    0.2829
+    0.4897,
+    0.8352
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4524,14 +4673,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    607.3,
-    467.0
+    656.3,
+    485.0
    ],
    "region_uv": [
-    0.5372,
-    0.0
+    0.7333,
+    0.1152
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4544,14 +4694,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    694.1,
-    378.8
+    636.0,
+    279.6
    ],
    "region_uv": [
-    0.226,
-    1.1952
+    0.06,
+    0.7985
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -4564,14 +4715,17 @@
    "size": "city",
    "score": 12,
    "xy": [
-    645.5,
-    238.3
+    917.9,
+    160.6
    ],
    "region_uv": [
-    0.0871,
-    0.6332
+    0.8654,
+    0.3224
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -4584,16 +4738,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    652.8,
-    515.5
+    596.8,
+    589.1
    ],
    "region_uv": [
-    0.719,
-    0.3107
+    0.4952,
+    0.7827
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4606,16 +4761,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    510.2,
-    255.2
+    405.6,
+    359.6
    ],
    "region_uv": [
-    0.5879,
-    0.2196
+    0.2838,
+    0.6856
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4628,14 +4785,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    448.8,
-    450.8
+    539.4,
+    430.9
    ],
    "region_uv": [
-    0.5758,
-    0.3763
+    0.8141,
+    0.2921
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4648,14 +4806,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    559.4,
-    274.9
+    590.4,
+    240.2
    ],
    "region_uv": [
-    0.7308,
-    0.3076
+    0.8209,
+    0.1527
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -4668,16 +4827,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    835.7,
-    159.5
+    725.6,
+    249.4
    ],
    "region_uv": [
-    0.6304,
-    0.3178
+    0.316,
+    0.6777
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; blues-rock",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4690,14 +4851,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    583.1,
-    271.9
+    607.0,
+    305.1
    ],
    "region_uv": [
-    0.7997,
-    0.2942
+    0.8691,
+    0.4425
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4710,16 +4872,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    251.6,
-    498.5
+    349.6,
+    529.2
    ],
    "region_uv": [
-    0.0569,
-    0.5784
+    0.3147,
+    0.7087
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Texas country/rockabilly; Buddy Guy opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4732,16 +4896,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    563.2,
-    269.7
+    447.5,
+    276.9
    ],
    "region_uv": [
-    0.7419,
-    0.2845
+    0.4055,
+    0.3165
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4754,14 +4919,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    801.1,
-    40.8
+    811.8,
+    35.6
    ],
    "region_uv": [
-    -0.0621,
-    0.2796
+    -0.0011,
+    0.225
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4774,16 +4940,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    704.2,
-    276.5
+    742.1,
+    281.7
    ],
    "region_uv": [
-    0.2549,
-    0.786
+    0.363,
+    0.8067
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4796,14 +4963,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    797.0,
-    257.9
+    757.2,
+    257.6
    ],
    "region_uv": [
-    0.52,
-    0.7116
+    0.4063,
+    0.7103
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4816,16 +4984,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    677.1,
-    281.3
+    719.6,
+    263.1
    ],
    "region_uv": [
-    0.1775,
-    0.8053
+    0.2989,
+    0.7324
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): Chicago slide-guitar legend; Kingston Mines…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4838,14 +5008,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    722.9,
-    318.5
+    675.6,
+    245.7
    ],
    "region_uv": [
-    0.3083,
-    0.954
+    0.1731,
+    0.6628
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -4858,16 +5029,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    511.4,
-    429.1
+    305.8,
+    467.7
    ],
    "region_uv": [
-    0.7405,
-    0.2841
+    0.1995,
+    0.4479
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4880,14 +5052,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    690.5,
-    283.8
+    668.4,
+    305.7
    ],
    "region_uv": [
-    0.2157,
-    0.8152
+    0.1526,
+    0.9028
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4900,14 +5073,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    806.7,
-    188.9
+    651.8,
+    357.4
    ],
    "region_uv": [
-    0.5477,
-    0.4356
+    0.1052,
+    1.1097
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -4920,16 +5094,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    681.0,
-    339.9
+    622.0,
+    447.8
    ],
    "region_uv": [
-    0.7841,
-    0.254
+    0.2755,
+    0.711
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): former Bros. Landreth member; solo artist; Canadian…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4942,16 +5118,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    431.6,
-    522.1
+    480.3,
+    449.2
    ],
    "region_uv": [
-    0.5305,
-    0.6784
+    0.6586,
+    0.3694
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -4964,16 +5141,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    317.8,
-    644.7
+    249.7,
+    613.3
    ],
    "region_uv": [
-    0.5284,
-    0.9491
+    0.3305,
+    0.6473
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Grammy-nominated soul-blues vocalist and…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4986,14 +5165,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    290.2,
-    566.6
+    432.2,
+    630.9
    ],
    "region_uv": [
-    0.4483,
-    0.1981
+    0.8609,
+    0.8166
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5006,14 +5186,15 @@
    "size": "city",
    "score": 14,
    "xy": [
-    614.1,
-    554.0
+    590,
+    572
    ],
    "region_uv": [
-    0.5644,
-    0.5577
+    0.468,
+    0.6731
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 1,
    "tier": "Strong"
@@ -5026,16 +5207,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    651.4,
-    504.4
+    523.5,
+    518.6
    ],
    "region_uv": [
-    0.7136,
-    0.2398
+    0.202,
+    0.3308
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5048,16 +5230,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    863.1,
-    151.1
+    751.8,
+    313.0
    ],
    "region_uv": [
-    0.7088,
-    0.2843
+    0.3909,
+    0.932
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5070,16 +5253,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    346.1,
-    368.6
+    417.7,
+    361.4
    ],
    "region_uv": [
-    0.1107,
-    0.7258
+    0.319,
+    0.6936
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Americana/folk singer-songwriter; Birchmere Oct 25…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5092,16 +5277,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    475.5,
-    277.8
+    407.2,
+    368.5
    ],
    "region_uv": [
-    0.4869,
-    0.3206
+    0.2884,
+    0.7253
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Choose @ Howard Theatre 2026-11-13 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5114,14 +5301,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    629.5,
-    522.0
+    715.7,
+    505.2
    ],
    "region_uv": [
-    0.626,
-    0.3526
+    0.9708,
+    0.2446
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -5134,16 +5322,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    632.7,
-    333.6
+    410.3,
+    355.7
    ],
    "region_uv": [
-    0.9438,
-    0.5697
+    0.2973,
+    0.6683
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -5166,6 +5356,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "potential: Choose @ Concerts at The Sevareid House 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5178,16 +5369,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    485.5,
-    279.1
+    416.8,
+    367.6
    ],
    "region_uv": [
-    0.5159,
-    0.3265
+    0.3164,
+    0.7212
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5200,16 +5393,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    551.4,
-    270.1
+    472.0,
+    285.5
    ],
    "region_uv": [
-    0.7074,
-    0.2861
+    0.4767,
+    0.3549
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5233,6 +5427,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: 2026 BMA Soul Blues Female nominee (multiple career…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5242,17 +5437,18 @@
    "name": "Kate Davis",
    "region": "outer_isles",
    "district": "outer_isles:p5",
-   "size": "city",
+   "size": "town",
    "score": 12,
    "xy": [
-    954.2,
-    235.5
+    962.0,
+    237.3
    ],
    "region_uv": [
-    0.808,
-    2.3073
+    0.8524,
+    2.3256
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -5265,16 +5461,17 @@
    "size": "city",
    "score": 12,
    "xy": [
-    177.8,
-    594.3
+    440.2,
+    601.7
    ],
    "region_uv": [
-    0.1215,
-    0.4644
+    0.8842,
+    0.5356
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -5287,16 +5484,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    679.0,
-    341.8
+    635.5,
+    297.3
    ],
    "region_uv": [
-    0.7674,
-    0.2618
+    0.3922,
+    0.0733
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5309,14 +5507,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    712.9,
-    312.9
+    714.8,
+    294.0
    ],
    "region_uv": [
-    0.2796,
-    0.9316
+    0.2851,
+    0.856
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -5329,16 +5528,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    264.7,
-    627.6
+    253.0,
+    619.8
    ],
    "region_uv": [
-    0.3741,
-    0.7844
+    0.3401,
+    0.71
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): Fabulous Thunderbirds frontman; age 74;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -5351,16 +5552,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    548.6,
-    481.9
+    545.4,
+    571.1
    ],
    "region_uv": [
-    0.3022,
-    0.0958
+    0.2894,
+    0.6674
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): NYC Harlem blues guitarist; Jimmie Vaughan opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5373,14 +5576,15 @@
    "size": "city",
    "score": 18,
    "xy": [
-    529.7,
-    246.8
+    452.1,
+    298.9
    ],
    "region_uv": [
-    0.6445,
-    0.1821
+    0.4189,
+    0.4148
    ],
    "flags": {},
+   "src": "",
    "times_seen": 5,
    "vip": 0,
    "tier": "Strong"
@@ -5393,16 +5597,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    747.7,
-    301.8
+    714.7,
+    248.6
    ],
    "region_uv": [
-    0.379,
-    0.8871
+    0.2848,
+    0.6745
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): blues guitarist; Bonamassa circle; occasional solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5411,18 +5617,19 @@
    "id": 160,
    "name": "LL Cool J",
    "region": "outer_isles",
-   "district": "outer_isles:p3",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    804.5,
-    42.0
+    840.4,
+    26.9
    ],
    "region_uv": [
-    -0.0424,
-    0.2913
+    0.1614,
+    0.1344
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5431,20 +5638,21 @@
    "id": 373,
    "name": "La Unica",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    923.6,
-    100.3
+    793.2,
+    31.9
    ],
    "region_uv": [
-    0.634,
-    0.8989
+    -0.1068,
+    0.1865
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5457,14 +5665,15 @@
    "size": "village",
    "score": 4,
    "xy": [
-    499.7,
-    566.9
+    709.4,
+    532.3
    ],
    "region_uv": [
-    0.1068,
-    0.6404
+    0.9454,
+    0.4188
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Medium"
@@ -5477,16 +5686,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    701.8,
-    517.9
+    553.7,
+    578.3
    ],
    "region_uv": [
-    0.9154,
-    0.3261
+    0.3229,
+    0.7134
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Birchmere 2026-10-08 Thu & 2026-10-09 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5499,14 +5710,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    372.2,
-    485.4
+    380.5,
+    486.9
    ],
    "region_uv": [
-    0.3742,
-    0.5229
+    0.3961,
+    0.5292
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -5519,14 +5731,15 @@
    "size": "capital",
    "score": 27,
    "xy": [
-    600.5,
-    369.9
+    593.3,
+    357.9
    ],
    "region_uv": [
-    0.0905,
-    0.3809
+    0.0284,
+    0.3301
    ],
    "flags": {},
+   "src": "",
    "times_seen": 6,
    "vip": 3,
    "tier": "Strong"
@@ -5539,16 +5752,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    730.4,
-    285.7
+    728.4,
+    256.1
    ],
    "region_uv": [
-    0.3298,
-    0.8226
+    0.3241,
+    0.7045
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -5561,16 +5776,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    564.3,
-    537.0
+    338.2,
+    529.6
    ],
    "region_uv": [
-    0.8797,
-    0.7415
+    0.2847,
+    0.7102
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Rams Head On Stage 2027-01-01 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5583,16 +5800,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    520.1,
-    381.3
+    403.6,
+    363.1
    ],
    "region_uv": [
-    0.6166,
-    0.7825
+    0.2779,
+    0.7014
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): bandcamp; sister of Sabine McCalla",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5605,16 +5824,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    560.3,
-    261.4
+    570.4,
+    245.4
    ],
    "region_uv": [
-    0.7335,
-    0.2472
+    0.7628,
+    0.1759
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5627,16 +5847,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    721.9,
-    231.2
+    712.9,
+    260.0
    ],
    "region_uv": [
-    0.3054,
-    0.6049
+    0.2796,
+    0.7199
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Mississippi one-man-band; Hill Country blues; Tab…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5649,16 +5871,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    647.9,
-    312.8
+    722.0,
+    246.3
    ],
    "region_uv": [
-    0.0941,
-    0.9313
+    0.3056,
+    0.6653
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Elkton Music Hall 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5671,16 +5895,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    461.3,
-    417.8
+    416.7,
+    357.3
    ],
    "region_uv": [
-    0.4456,
-    0.9457
+    0.3161,
+    0.6754
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -5693,14 +5919,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    406.6,
-    547.5
+    415.6,
+    510.8
    ],
    "region_uv": [
-    0.4647,
-    0.786
+    0.4884,
+    0.6305
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": null
@@ -5713,14 +5940,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    423.5,
-    317.3
+    423.8,
+    315.3
    ],
    "region_uv": [
-    0.3358,
-    0.4969
+    0.3366,
+    0.4879
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5733,14 +5961,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    457.5,
-    459.1
+    458.0,
+    460.8
    ],
    "region_uv": [
-    0.5987,
-    0.4114
+    0.6,
+    0.4185
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5753,16 +5982,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    375.6,
-    377.4
+    346.8,
+    521.2
    ],
    "region_uv": [
-    0.3831,
-    0.0654
+    0.3074,
+    0.6746
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Choose @ The Recher 2026-10-07 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5775,16 +6006,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    468.7,
-    462.4
+    346.1,
+    533.8
    ],
    "region_uv": [
-    0.6281,
-    0.4255
+    0.3055,
+    0.728
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ 9:30 Club 2026-09-30 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5797,16 +6030,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    459.3,
-    288.8
+    410.8,
+    370.8
    ],
    "region_uv": [
-    0.4397,
-    0.3695
+    0.2989,
+    0.7358
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): indiefolk duo Jess Wolfe & Holly Laessig; first seen…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5819,14 +6054,15 @@
    "size": "village",
    "score": 5,
    "xy": [
-    722.4,
-    485.5
+    518.9,
+    521.5
    ],
    "region_uv": [
-    0.9976,
-    0.1186
+    0.1838,
+    0.3497
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 1,
    "tier": null
@@ -5839,16 +6075,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    442.3,
-    391.7
+    405.9,
+    356.5
    ],
    "region_uv": [
-    0.3903,
-    0.8289
+    0.2847,
+    0.6718
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): override medium: indie singer-songwriter",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5861,14 +6099,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    265.0,
-    522.5
+    474.0,
+    425.8
    ],
    "region_uv": [
-    0.0921,
-    0.6801
+    0.6421,
+    0.2705
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -5881,16 +6120,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    314.0,
-    438.4
+    337.7,
+    523.6
    ],
    "region_uv": [
-    0.2212,
-    0.3236
+    0.2835,
+    0.6846
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "seen",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -5898,19 +6139,20 @@
   {
    "id": 158,
    "name": "Līve",
-   "region": "outer_isles",
-   "district": "outer_isles:p3",
-   "size": "hamlet",
+   "region": "amplified_range",
+   "district": "amplified_range:arrivals",
+   "size": "village",
    "score": 3,
    "xy": [
-    799.0,
-    38.8
+    823.7,
+    277.8
    ],
    "region_uv": [
-    -0.0736,
-    0.2584
+    0.5963,
+    0.7912
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5923,16 +6165,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    598.3,
-    253.0
+    419.5,
+    363.9
    ],
    "region_uv": [
-    0.844,
-    0.2099
+    0.3243,
+    0.705
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -5945,14 +6189,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    387.9,
-    568.8
+    400.5,
+    556.5
    ],
    "region_uv": [
-    0.4155,
-    0.8763
+    0.4487,
+    0.8242
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -5975,6 +6220,7 @@
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -5987,16 +6233,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    439.2,
-    314.6
+    404.1,
+    367.7
    ],
    "region_uv": [
-    0.3813,
-    0.4846
+    0.2794,
+    0.722
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Louisiana soul-blues singer-songwriter; active…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6009,14 +6257,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    615.9,
-    257.2
+    601.3,
+    258.2
    ],
    "region_uv": [
-    0.0026,
-    0.7088
+    -0.0391,
+    0.7128
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6029,16 +6278,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    559.6,
-    274.5
+    481.7,
+    231.8
    ],
    "region_uv": [
-    0.7313,
-    0.3056
+    0.5049,
+    0.1152
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6051,16 +6301,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    401.3,
-    534.4
+    351.3,
+    525.6
    ],
    "region_uv": [
-    0.4507,
-    0.7304
+    0.3193,
+    0.6932
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Birchmere 2026-09-09 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6073,16 +6325,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    759.8,
-    194.3
+    724.5,
+    262.9
    ],
    "region_uv": [
-    0.4138,
-    0.4573
+    0.3129,
+    0.7315
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): override strong: Dire Straits legend; solo artist,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6105,6 +6359,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "potential: Pass @ The Birchmere 2026-11-22 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6117,16 +6372,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    341.2,
-    574.3
+    339.5,
+    533.6
    ],
    "region_uv": [
-    0.2927,
-    0.8994
+    0.2882,
+    0.727
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Birchmere 2026-11-12 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6139,16 +6396,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    257.5,
-    609.3
+    251.6,
+    608.6
    ],
    "region_uv": [
-    0.3533,
-    0.609
+    0.3361,
+    0.6016
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Kingfish protégé; local DC blues/R&B guitarist",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6161,14 +6420,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    617.7,
-    464.8
+    627.3,
+    475.7
    ],
    "region_uv": [
-    0.5788,
-    -0.0141
+    0.6173,
+    0.0555
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6181,16 +6441,17 @@
    "size": "town",
    "score": 9,
    "xy": [
-    654.4,
-    611.5
+    716.4,
+    491.7
    ],
    "region_uv": [
-    0.7256,
-    0.9263
+    0.9737,
+    0.158
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -6203,14 +6464,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    577.0,
-    432.5
+    585.0,
+    426.1
    ],
    "region_uv": [
-    0.782,
-    1.0112
+    0.8052,
+    0.9827
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6223,16 +6485,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    809.3,
-    201.6
+    711.2,
+    252.2
    ],
    "region_uv": [
-    0.5551,
-    0.4862
+    0.2748,
+    0.6887
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Warner Theatre 2026-09-22 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -6245,14 +6509,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    648.2,
-    375.1
+    653.3,
+    378.3
    ],
    "region_uv": [
-    0.5017,
-    0.403
+    0.5457,
+    0.4165
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -6276,6 +6541,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: NPR Best Roots Music 2022; Grand Ole Opry debut 2022;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6288,16 +6554,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    871.5,
-    142.9
+    793.3,
+    208.8
    ],
    "region_uv": [
-    0.7328,
-    0.2517
+    0.5094,
+    0.5152
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6310,16 +6577,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    479.8,
-    271.4
+    413.1,
+    354.2
    ],
    "region_uv": [
-    0.4995,
-    0.2918
+    0.3056,
+    0.6616
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -6332,16 +6601,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    870.8,
-    155.2
+    818.4,
+    285.4
    ],
    "region_uv": [
-    0.7308,
-    0.3007
+    0.5811,
+    0.8216
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6354,14 +6624,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    493.6,
-    512.2
+    516.8,
+    495.5
    ],
    "region_uv": [
-    0.0824,
-    0.2897
+    0.1751,
+    0.183
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6374,14 +6645,15 @@
    "size": "village",
    "score": 3.5,
    "xy": [
-    374.7,
-    569.9
+    363.7,
+    529.1
    ],
    "region_uv": [
-    0.3808,
-    0.8809
+    0.3518,
+    0.7081
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Lower"
@@ -6394,16 +6666,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    660.4,
-    512.2
+    589.9,
+    607.7
    ],
    "region_uv": [
-    0.7498,
-    0.2895
+    0.4676,
+    0.9019
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6416,16 +6689,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    862.7,
-    145.2
+    785.0,
+    280.9
    ],
    "region_uv": [
-    0.7077,
-    0.2609
+    0.4857,
+    0.8036
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6438,14 +6712,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    348.2,
-    602.2
+    411.7,
+    617.3
    ],
    "region_uv": [
-    0.6169,
-    0.5404
+    0.8014,
+    0.6858
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6468,6 +6743,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -6476,20 +6752,21 @@
    "id": 375,
    "name": "Mystery Friends",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    922.3,
-    89.8
+    957.3,
+    247.2
    ],
    "region_uv": [
-    0.6266,
-    0.7893
+    0.8256,
+    2.4292
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6498,18 +6775,19 @@
    "id": 190,
    "name": "Nas",
    "region": "outer_isles",
-   "district": "outer_isles:p3",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    806.0,
-    37.3
+    860.8,
+    11.4
    ],
    "region_uv": [
-    -0.0343,
-    0.2427
+    0.2773,
+    -0.0271
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6522,39 +6800,21 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    420.5,
-    610.8
+    248.0,
+    616.9
    ],
    "region_uv": [
-    0.8271,
-    0.6234
+    0.3254,
+    0.6815
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): new_artist_research; acoustic country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
-  },
-  {
-   "id": 192,
-   "name": "New York's Finest",
-   "region": "outer_isles",
-   "district": "outer_isles:p4",
-   "size": "capital",
-   "score": 15,
-   "xy": [
-    860.0,
-    22.0
-   ],
-   "region_uv": [
-    0.2726,
-    0.0828
-   ],
-   "flags": {},
-   "times_seen": 5,
-   "vip": 0,
-   "tier": null
   },
   {
    "id": 358,
@@ -6564,16 +6824,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    672.5,
-    351.0
+    645.8,
+    289.7
    ],
    "region_uv": [
-    0.7108,
-    0.3009
+    0.481,
+    0.0411
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6586,16 +6847,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    533.8,
-    363.1
+    415.7,
+    370.6
    ],
    "region_uv": [
-    0.6563,
-    0.7015
+    0.313,
+    0.7348
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Rams Head On Stage 2026-11-28 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6619,6 +6882,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: BMA nominee; Alligator Records artist; blues-soul…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6631,14 +6895,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    598.7,
-    407.2
+    649.4,
+    369.0
    ],
    "region_uv": [
-    0.075,
-    0.539
+    0.5122,
+    0.377
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -6651,14 +6916,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    547.5,
-    592.9
+    683.5,
+    492.0
    ],
    "region_uv": [
-    0.298,
-    0.8071
+    0.842,
+    0.1603
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -6671,14 +6937,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    407.4,
-    421.4
+    430,
+    426
    ],
    "region_uv": [
-    0.289,
-    0.9616
+    0.3547,
+    0.9821
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -6691,14 +6958,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    689.9,
-    243.6
+    624.0,
+    245.9
    ],
    "region_uv": [
-    0.2139,
-    0.6546
+    0.0257,
+    0.6636
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -6721,6 +6991,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "follow (Medium): override medium: pop crossover; seen-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6733,16 +7004,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    499.4,
-    429.4
+    340.1,
+    359.5
    ],
    "region_uv": [
-    0.7089,
-    0.2857
+    0.2897,
+    -0.0106
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6755,16 +7027,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    671.0,
-    338.9
+    628.9,
+    286.6
    ],
    "region_uv": [
-    0.698,
-    0.2494
+    0.3353,
+    0.028
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6777,16 +7050,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    603.1,
-    339.3
+    728.6,
+    251.0
    ],
    "region_uv": [
-    -0.0339,
-    1.037
+    0.3245,
+    0.6841
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): override strong: legendary artist still actively…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6799,16 +7074,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    875.9,
-    147.2
+    847.6,
+    240.9
    ],
    "region_uv": [
-    0.7453,
-    0.2687
+    0.6646,
+    0.6436
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6821,16 +7097,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    300.6,
-    637.2
+    257.7,
+    607.4
    ],
    "region_uv": [
-    0.4786,
-    0.8774
+    0.3537,
+    0.5904
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): promoted from NAR 2026-07-03; 2024 IBC Band winner +…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6843,14 +7121,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    794.4,
-    269.5
+    825.2,
+    210.3
    ],
    "region_uv": [
-    0.5126,
-    0.758
+    0.6005,
+    0.5214
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6863,16 +7142,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    636.5,
-    308.1
+    402.5,
+    360.0
    ],
    "region_uv": [
-    0.9551,
-    0.4558
+    0.2746,
+    0.6876
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Atlantis 2026-09-23 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6885,14 +7166,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    663.5,
-    229.7
+    700.4,
+    247.8
    ],
    "region_uv": [
-    0.1386,
-    0.5988
+    0.244,
+    0.6714
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6905,16 +7187,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    369.1,
-    545.0
+    343.0,
+    519.2
    ],
    "region_uv": [
-    0.366,
-    0.7753
+    0.2973,
+    0.6662
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Warner Theatre 2026-11-06 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6922,21 +7206,23 @@
   {
    "id": 376,
    "name": "Queen Latifah",
-   "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "region": "river_port",
+   "district": "river_port:arrivals",
    "size": "town",
    "score": 3,
    "xy": [
-    930.9,
-    97.2
+    662.5,
+    503.8
    ],
    "region_uv": [
-    0.6755,
-    0.8661
+    0.7579,
+    0.2362
    ],
    "flags": {
-    "unplaced": true
+    "unplaced": true,
+    "harbormistress": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -6949,16 +7235,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    573.6,
-    476.5
+    550.9,
+    570.1
    ],
    "region_uv": [
-    0.4022,
-    0.0607
+    0.3115,
+    0.6606
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Rams Head On Stage 2026-12-10 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6971,16 +7259,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    456.7,
-    311.0
+    419.7,
+    358.9
    ],
    "region_uv": [
-    0.4324,
-    0.4689
+    0.3247,
+    0.6825
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -6993,16 +7283,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    508.5,
-    420.6
+    319.0,
+    457.5
    ],
    "region_uv": [
-    0.7328,
-    0.2483
+    0.2342,
+    0.4047
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7015,16 +7306,18 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    509.6,
-    516.3
+    550.1,
+    583.0
    ],
    "region_uv": [
-    0.1465,
-    0.3159
+    0.3085,
+    0.7434
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The 8x10 2026-12-11 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -7037,14 +7330,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    440.2,
-    493.0
+    520.8,
+    440.0
    ],
    "region_uv": [
-    0.5532,
-    0.5551
+    0.7652,
+    0.3304
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -7057,16 +7351,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    550.9,
-    263.8
+    553.1,
+    396.8
    ],
    "region_uv": [
-    0.7061,
-    0.2582
+    0.7125,
+    0.8518
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7079,16 +7374,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    514.1,
-    416.3
+    407.5,
+    371.6
    ],
    "region_uv": [
-    0.599,
-    0.939
+    0.2893,
+    0.7392
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Elkton Music Hall 2026-11-20 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -7101,14 +7398,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    773.8,
-    277.0
+    618.6,
+    367.5
    ],
    "region_uv": [
-    0.4537,
-    0.788
+    0.0102,
+    1.15
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7121,16 +7419,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    753.5,
-    283.7
+    716.3,
+    263.9
    ],
    "region_uv": [
-    0.3958,
-    0.8149
+    0.2894,
+    0.7355
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): jazz-blues guitar legend; age 75; associated…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7143,16 +7443,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    738.3,
-    310.6
+    744.2,
+    267.2
    ],
    "region_uv": [
-    0.3523,
-    0.9224
+    0.3691,
+    0.7488
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7165,14 +7466,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    675.7,
-    350.7
+    679.5,
+    353.6
    ],
    "region_uv": [
-    0.1734,
-    1.0828
+    0.1843,
+    1.0944
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7185,14 +7487,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    631.1,
-    369.6
+    645.6,
+    381.9
    ],
    "region_uv": [
-    0.3543,
-    0.3797
+    0.479,
+    0.4319
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -7205,16 +7508,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    732.9,
-    275.7
+    716.7,
+    245.8
    ],
    "region_uv": [
-    0.3368,
-    0.7828
+    0.2905,
+    0.6631
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Birchmere 2026-09-24 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7227,14 +7532,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    806.3,
-    180.2
+    807.4,
+    201.0
    ],
    "region_uv": [
-    0.5466,
-    0.4008
+    0.5497,
+    0.484
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7247,16 +7553,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    542.5,
-    246.8
+    407.9,
+    353.7
    ],
    "region_uv": [
-    0.6818,
-    0.1822
+    0.2905,
+    0.6593
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Birchmere 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7269,14 +7577,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    223.5,
-    542.1
+    419.9,
+    596.5
    ],
    "region_uv": [
-    0.2544,
-    -0.0375
+    0.8253,
+    0.4858
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7289,14 +7598,15 @@
    "size": "village",
    "score": 4,
    "xy": [
-    529.5,
-    401.9
+    527.6,
+    402.4
    ],
    "region_uv": [
-    0.6439,
-    0.8745
+    0.6384,
+    0.8768
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Medium"
@@ -7309,14 +7619,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    273.6,
-    601.7
+    297.0,
+    561.8
    ],
    "region_uv": [
-    0.4,
-    0.5356
+    0.4679,
+    0.152
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7324,19 +7635,22 @@
   {
    "id": 224,
    "name": "Sadurn",
-   "region": "quiet_woods",
-   "district": "quiet_woods:d8",
+   "region": "outer_isles",
+   "district": "outer_isles:p5",
    "size": "town",
    "score": 7,
    "xy": [
-    523.7,
-    368.0
+    955.5,
+    245.0
    ],
    "region_uv": [
-    0.627,
-    0.7232
+    0.8152,
+    2.4066
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Medium"
@@ -7349,16 +7663,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    565.0,
-    265.9
+    581.8,
+    236.2
    ],
    "region_uv": [
-    0.7471,
-    0.2675
+    0.7959,
+    0.1348
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7371,14 +7686,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    714.1,
-    332.9
+    679.5,
+    328.5
    ],
    "region_uv": [
-    0.2831,
-    1.0116
+    0.1842,
+    0.9941
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -7391,14 +7707,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    726.8,
-    336.2
+    696.9,
+    298.7
    ],
    "region_uv": [
-    0.3194,
-    1.0248
+    0.2341,
+    0.8749
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": null
@@ -7411,16 +7728,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    580.6,
-    443.5
+    350.4,
+    532.6
    ],
    "region_uv": [
-    0.9227,
-    0.3455
+    0.3167,
+    0.7227
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -7433,14 +7752,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    449.4,
-    264.5
+    490.3,
+    269.9
    ],
    "region_uv": [
-    0.411,
-    0.2612
+    0.53,
+    0.2853
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7453,16 +7773,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    864.4,
-    154.9
+    653.5,
+    257.9
    ],
    "region_uv": [
-    0.7126,
-    0.2997
+    0.11,
+    0.7116
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7475,14 +7796,15 @@
    "size": "city",
    "score": 15,
    "xy": [
-    607.4,
-    425.3
+    612.0,
+    393.1
    ],
    "region_uv": [
-    0.15,
-    0.6157
+    0.1894,
+    0.4793
    ],
    "flags": {},
+   "src": "",
    "times_seen": 4,
    "vip": 0,
    "tier": "Strong"
@@ -7495,14 +7817,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    550.0,
-    379.2
+    446.6,
+    314.6
    ],
    "region_uv": [
-    0.7035,
-    0.7732
+    0.4028,
+    0.485
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7515,14 +7838,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    697.0,
-    331.8
+    688.1,
+    307.0
    ],
    "region_uv": [
-    0.2343,
-    1.0072
+    0.2089,
+    0.908
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7535,14 +7859,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    558.2,
-    241.2
+    557.2,
+    238.8
    ],
    "region_uv": [
-    0.7273,
-    0.1571
+    0.7244,
+    0.1464
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7555,16 +7880,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    770.1,
-    227.2
+    728.8,
+    259.6
    ],
    "region_uv": [
-    0.443,
-    0.5887
+    0.3252,
+    0.7186
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): Texas/OK blues-rock guitarist; Albert…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7577,14 +7904,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    430.4,
-    619.7
+    372.1,
+    603.2
    ],
    "region_uv": [
-    0.8557,
-    0.709
+    0.6863,
+    0.55
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7597,14 +7925,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    292.1,
-    518.1
+    290.5,
+    517.8
    ],
    "region_uv": [
-    0.1634,
-    0.6614
+    0.1592,
+    0.6602
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -7617,16 +7946,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    425.7,
-    537.5
+    335.5,
+    527.6
    ],
    "region_uv": [
-    0.5151,
-    0.7436
+    0.2775,
+    0.7015
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): 5x Grammy-nominated bluegrass mandolinist;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7639,16 +7970,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    867.7,
-    141.0
+    833.1,
+    241.9
    ],
    "region_uv": [
-    0.7221,
-    0.244
+    0.6231,
+    0.6476
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7661,16 +7993,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    390.7,
-    571.2
+    392.1,
+    573.5
    ],
    "region_uv": [
-    0.7403,
-    0.2428
+    0.7445,
+    0.2644
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7683,14 +8016,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    646.0,
-    341.3
+    671.4,
+    290.6
    ],
    "region_uv": [
-    0.0886,
-    1.0452
+    0.161,
+    0.8424
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7703,14 +8037,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    493.1,
-    523.8
+    489.2,
+    522.4
    ],
    "region_uv": [
-    0.0804,
-    0.3641
+    0.0648,
+    0.3549
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7723,14 +8058,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    661.8,
-    465.5
+    671.0,
+    459.1
    ],
    "region_uv": [
-    0.619,
-    0.786
+    0.6984,
+    0.759
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -7743,14 +8079,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    699.3,
-    575.3
+    645.8,
+    481.2
    ],
    "region_uv": [
-    0.9052,
-    0.6942
+    0.6912,
+    0.0909
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7763,16 +8100,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    874.9,
-    153.9
+    692.4,
+    299.1
    ],
    "region_uv": [
-    0.7426,
-    0.2958
+    0.2211,
+    0.8764
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7785,14 +8123,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    256.2,
-    603.3
+    281.1,
+    569.4
    ],
    "region_uv": [
-    0.3494,
-    0.551
+    0.4218,
+    0.2253
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -7805,14 +8144,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    477.7,
-    398.8
+    442.1,
+    387.3
    ],
    "region_uv": [
-    0.4933,
-    0.8607
+    0.3898,
+    0.8094
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7825,16 +8165,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    552.8,
-    274.2
+    471.4,
+    381.5
    ],
    "region_uv": [
-    0.7115,
-    0.3045
+    0.475,
+    0.7835
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7847,16 +8188,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    507.7,
-    433.9
+    263.3,
+    489.1
    ],
    "region_uv": [
-    0.7307,
-    0.3045
+    0.0876,
+    0.5386
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7869,14 +8211,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    485.5,
-    466.8
+    369.8,
+    464.0
    ],
    "region_uv": [
-    0.6723,
-    0.4441
+    0.3679,
+    0.4322
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7889,16 +8232,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    628.8,
-    274.9
+    691.4,
+    339.4
    ],
    "region_uv": [
-    0.0394,
-    0.7796
+    0.2182,
+    1.0376
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7911,14 +8255,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    800.9,
-    186.2
+    663.1,
+    356.1
    ],
    "region_uv": [
-    0.5311,
-    0.4248
+    0.1374,
+    1.1044
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -7931,14 +8276,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    603.1,
-    279.7
+    824.8,
+    174.6
    ],
    "region_uv": [
-    -0.034,
-    0.7988
+    0.5995,
+    0.3782
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -7951,14 +8297,17 @@
    "size": "city",
    "score": 15,
    "xy": [
-    587.3,
-    314.9
+    714.3,
+    377.1
    ],
    "region_uv": [
-    -0.0791,
-    0.9396
+    0.2837,
+    1.1884
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
+   "src": "",
    "times_seen": 4,
    "vip": 0,
    "tier": "Strong"
@@ -7971,16 +8320,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    860.5,
-    149.1
+    814.4,
+    246.3
    ],
    "region_uv": [
-    0.7013,
-    0.2764
+    0.5697,
+    0.6652
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8004,6 +8354,7 @@
     "unvisited": true,
     "unplaced": true
    },
+   "src": "fast track: Grammy-nominated; 2x BB King Entertainer of the Year;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -8016,16 +8367,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    556.3,
-    259.3
+    457.1,
+    385.6
    ],
    "region_uv": [
-    0.7219,
-    0.238
+    0.4334,
+    0.8018
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8038,14 +8390,15 @@
    "size": "city",
    "score": 16,
    "xy": [
-    357.8,
-    339.0
+    357.6,
+    340.1
    ],
    "region_uv": [
-    0.1448,
-    0.5938
+    0.1442,
+    0.5987
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 2,
    "tier": "Strong"
@@ -8058,16 +8411,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    874.8,
-    142.7
+    748.8,
+    302.4
    ],
    "region_uv": [
-    0.7423,
-    0.2509
+    0.3823,
+    0.8896
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8080,14 +8434,15 @@
    "size": "city",
    "score": 18,
    "xy": [
-    692.3,
-    350.0
+    747.2,
+    228.9
    ],
    "region_uv": [
-    0.2209,
-    1.08
+    0.3778,
+    0.5955
    ],
    "flags": {},
+   "src": "",
    "times_seen": 5,
    "vip": 0,
    "tier": "Strong"
@@ -8100,14 +8455,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    847.2,
-    24.0
+    938.1,
+    75.6
    ],
    "region_uv": [
-    0.6634,
-    -0.224
+    0.9231,
+    -0.0176
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -8120,14 +8476,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    431.3,
-    591.5
+    166.8,
+    611.9
    ],
    "region_uv": [
-    0.8583,
-    0.4377
+    0.0895,
+    0.6337
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -8140,14 +8497,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    440.6,
-    614.4
+    178.1,
+    604.7
    ],
    "region_uv": [
-    0.8855,
-    0.6581
+    0.1224,
+    0.5644
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8160,16 +8518,18 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    536.0,
-    486.3
+    541.6,
+    572.5
    ],
    "region_uv": [
-    0.252,
-    0.124
+    0.2744,
+    0.6762
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Lower): sit-in doesn't count; follow for headline shows",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -8178,18 +8538,21 @@
    "id": 258,
    "name": "Talia Segal",
    "region": "outer_isles",
-   "district": "outer_isles:p5",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    967.4,
-    234.1
+    854.3,
+    24.9
    ],
    "region_uv": [
-    0.883,
-    2.2927
+    0.2401,
+    0.1135
    ],
-   "flags": {},
+   "flags": {
+    "ruin": true
+   },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8202,16 +8565,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    680.9,
-    347.4
+    628.2,
+    414.3
    ],
    "region_uv": [
-    0.7836,
-    0.2855
+    0.3293,
+    0.5691
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8224,16 +8588,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    533.2,
-    376.1
+    419.9,
+    367.4
    ],
    "region_uv": [
-    0.6545,
-    0.7595
+    0.3254,
+    0.7205
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8246,14 +8612,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    605.1,
-    458.1
+    595.9,
+    467.8
    ],
    "region_uv": [
-    0.1302,
-    0.7547
+    0.0511,
+    0.7959
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -8266,14 +8633,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    752.4,
-    256.9
+    755.3,
+    262.7
    ],
    "region_uv": [
-    0.3926,
-    0.7076
+    0.4009,
+    0.7308
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8286,14 +8654,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    548.9,
-    432.6
+    350.7,
+    527.4
    ],
    "region_uv": [
-    0.8392,
-    0.2992
+    0.3177,
+    0.7008
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -8306,16 +8675,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    564.0,
-    273.1
+    534.0,
+    236.9
    ],
    "region_uv": [
-    0.7441,
-    0.2998
+    0.657,
+    0.1379
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8328,16 +8698,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    672.2,
-    344.9
+    625.2,
+    440.2
    ],
    "region_uv": [
-    0.7085,
-    0.2749
+    0.3038,
+    0.679
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Jammin' Java 2026-09-26 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8350,16 +8722,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    868.3,
-    157.5
+    680.4,
+    305.3
    ],
    "region_uv": [
-    0.7238,
-    0.31
+    0.1869,
+    0.9012
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8372,14 +8745,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    478.3,
-    592.1
+    424.2,
+    567.4
    ],
    "region_uv": [
-    0.6534,
-    0.975
+    0.5111,
+    0.8703
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -8392,14 +8766,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    679.9,
-    485.5
+    485.8,
+    583.8
    ],
    "region_uv": [
-    0.8276,
-    0.1186
+    0.0512,
+    0.7487
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8412,16 +8787,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    509.5,
-    526.9
+    555.5,
+    574.5
    ],
    "region_uv": [
-    0.1458,
-    0.3838
+    0.33,
+    0.6894
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): NOLA brass legends; Tab Benoit opener 2022-11-17",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8434,16 +8811,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    756.3,
-    295.5
+    710.2,
+    257.6
    ],
    "region_uv": [
-    0.4037,
-    0.862
+    0.272,
+    0.7103
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): Kim Wilson's band; follow alongside Kim…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -8456,14 +8835,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    549.1,
-    235.0
+    465.3,
+    304.0
    ],
    "region_uv": [
-    0.7009,
-    0.1295
+    0.4572,
+    0.4373
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8476,14 +8856,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    757.1,
-    306.7
+    798.3,
+    216.5
    ],
    "region_uv": [
-    0.406,
-    0.9068
+    0.5237,
+    0.5458
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -8496,16 +8877,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    498.9,
-    423.1
+    409.5,
+    556.0
    ],
    "region_uv": [
-    0.7077,
-    0.2589
+    0.4724,
+    0.822
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8514,20 +8896,21 @@
    "id": 377,
    "name": "The House You Grew Up In (THYGUI)",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    918.9,
-    97.5
+    954.3,
+    242.0
    ],
    "region_uv": [
-    0.6072,
-    0.8701
+    0.8085,
+    2.375
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8540,16 +8923,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    685.8,
-    275.6
+    725.6,
+    246.3
    ],
    "region_uv": [
-    0.2024,
-    0.7824
+    0.3159,
+    0.6653
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): NOLA roots rock/Tex-Mex; Sonny Landreth opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8562,16 +8947,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    688.7,
-    529.5
+    543.4,
+    582.7
    ],
    "region_uv": [
-    0.863,
-    0.4008
+    0.2817,
+    0.7418
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): British soul/R&B sextet; Bonnie Raitt opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8584,16 +8971,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    647.8,
-    512.6
+    542.3,
+    568.7
    ],
    "region_uv": [
-    0.6993,
-    0.292
+    0.2772,
+    0.6519
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8606,14 +8994,15 @@
    "size": "capital",
    "score": 24,
    "xy": [
-    567.7,
-    362.4
+    568.5,
+    379.0
    ],
    "region_uv": [
-    0.7549,
-    0.6982
+    0.7573,
+    0.7723
    ],
    "flags": {},
+   "src": "",
    "times_seen": 5,
    "vip": 3,
    "tier": "Strong"
@@ -8626,16 +9015,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    657.4,
-    503.3
+    495.5,
+    502.3
    ],
    "region_uv": [
-    0.7374,
-    0.2325
+    0.09,
+    0.2263
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8648,14 +9038,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    717.3,
-    479.5
+    695.1,
+    509.2
    ],
    "region_uv": [
-    0.9772,
-    0.0801
+    0.8885,
+    0.2705
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -8668,16 +9059,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    383.6,
-    581.2
+    318.2,
+    553.7
    ],
    "region_uv": [
-    0.7199,
-    0.338
+    0.5297,
+    0.074
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8690,16 +9082,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    648.1,
-    282.0
+    721.8,
+    265.3
    ],
    "region_uv": [
-    0.0947,
-    0.8082
+    0.3051,
+    0.7413
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): LA blues-rock trio (raw slide guitar, upright bass,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8708,20 +9102,21 @@
    "id": 378,
    "name": "The Roots",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "town",
    "score": 3,
    "xy": [
-    928.0,
-    88.7
+    856.5,
+    24.2
    ],
    "region_uv": [
-    0.6588,
-    0.778
+    0.2528,
+    0.1062
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8734,14 +9129,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    471.6,
-    490.9
+    480.6,
+    591.7
    ],
    "region_uv": [
-    0.6358,
-    0.5462
+    0.6594,
+    0.9732
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8750,20 +9146,21 @@
    "id": 390,
    "name": "The Side Cars Band",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    927.2,
-    102.0
+    806.8,
+    31.9
    ],
    "region_uv": [
-    0.6544,
-    0.9162
+    -0.0295,
+    0.1865
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8776,16 +9173,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    583.8,
-    530.7
+    546.9,
+    568.0
    ],
    "region_uv": [
-    0.4432,
-    0.4085
+    0.2958,
+    0.6476
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): NOLA brass/hip-hop hybrid; Trombone Shorty opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8798,14 +9197,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    663.2,
-    379.7
+    680.7,
+    368.8
    ],
    "region_uv": [
-    0.1377,
-    1.1988
+    0.1877,
+    1.1552
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8818,16 +9218,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    533.2,
-    411.8
+    350.2,
+    521.0
    ],
    "region_uv": [
-    0.7978,
-    0.2112
+    0.3164,
+    0.6737
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): blues-soul; strong live rep; add all services",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8840,16 +9242,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    429.6,
-    333.3
+    401.5,
+    365.4
    ],
    "region_uv": [
-    0.3534,
-    0.5681
+    0.2718,
+    0.7114
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ The Birchmere 2026-09-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -8862,14 +9266,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    465.8,
-    531.6
+    467.7,
+    531.3
    ],
    "region_uv": [
-    0.6205,
-    0.7186
+    0.6255,
+    0.7174
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -8882,16 +9287,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    374.4,
-    536.0
+    343.6,
+    536.2
    ],
    "region_uv": [
-    0.3799,
-    0.7373
+    0.2989,
+    0.7382
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): Nashville folk/country duo; Wood Brothers opener…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8904,14 +9311,15 @@
    "size": "city",
    "score": 12,
    "xy": [
-    374.4,
-    453.7
+    422,
+    452
    ],
    "region_uv": [
-    0.38,
-    0.3886
+    0.5053,
+    0.3814
    ],
    "flags": {},
+   "src": "",
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
@@ -8924,14 +9332,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    777.4,
-    314.8
+    865.6,
+    179.9
    ],
    "region_uv": [
-    0.464,
-    0.9392
+    0.7159,
+    0.3995
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "-"
@@ -8944,16 +9353,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    513.2,
-    425.2
+    319.4,
+    355.5
    ],
    "region_uv": [
-    0.7453,
-    0.2678
+    0.2353,
+    -0.0275
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -8966,16 +9376,18 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    729.0,
-    253.0
+    711.6,
+    248.5
    ],
    "region_uv": [
-    0.3258,
-    0.692
+    0.276,
+    0.674
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium-Strong): 8x lastfm similar graph (2026-07 run); annual…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -8988,16 +9400,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    675.4,
-    300.9
+    684.2,
+    296.9
    ],
    "region_uv": [
-    0.1726,
-    0.8836
+    0.1977,
+    0.8676
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9010,14 +9423,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    679.5,
-    213.5
+    742.4,
+    215.6
    ],
    "region_uv": [
-    0.1843,
-    0.534
+    0.3641,
+    0.5426
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -9030,16 +9444,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    500.8,
-    433.6
+    387.1,
+    501.8
    ],
    "region_uv": [
-    0.7126,
-    0.3034
+    0.4134,
+    0.5924
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9052,14 +9467,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    376.6,
-    341.9
+    375.7,
+    341.5
    ],
    "region_uv": [
-    0.1994,
-    0.6067
+    0.1968,
+    0.6049
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9072,16 +9488,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    434.5,
-    322.8
+    416.7,
+    354.2
    ],
    "region_uv": [
-    0.3677,
-    0.5216
+    0.316,
+    0.6617
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): override medium: rare performer but legendary",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9094,14 +9512,15 @@
    "size": "capital",
    "score": 21,
    "xy": [
-    639.6,
-    545.0
+    639.8,
+    545.8
    ],
    "region_uv": [
-    0.6664,
-    0.5
+    0.6672,
+    0.5051
    ],
    "flags": {},
+   "src": "",
    "times_seen": 6,
    "vip": 0,
    "tier": "Strong"
@@ -9114,16 +9533,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    528.2,
-    527.1
+    554.5,
+    581.7
    ],
    "region_uv": [
-    0.2208,
-    0.3852
+    0.326,
+    0.7351
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Rams Head On Stage 2026-09-07 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9136,14 +9557,15 @@
    "size": "town",
    "score": 9,
    "xy": [
-    520.5,
-    407.1
+    501.3,
+    426.5
    ],
    "region_uv": [
-    0.7645,
-    0.1911
+    0.714,
+    0.2732
    ],
    "flags": {},
+   "src": "",
    "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
@@ -9152,20 +9574,21 @@
    "id": 379,
    "name": "Valley",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p6",
    "size": "village",
    "score": 3,
    "xy": [
-    918.4,
-    91.2
+    975.7,
+    187.8
    ],
    "region_uv": [
-    0.6047,
-    0.804
+    0.9301,
+    1.8104
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9178,14 +9601,17 @@
    "size": "city",
    "score": 24,
    "xy": [
-    672.1,
-    247.6
+    862.3,
+    214.6
    ],
    "region_uv": [
-    0.1631,
-    0.6704
+    0.7066,
+    0.5384
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
+   "src": "",
    "times_seen": 7,
    "vip": 0,
    "tier": "Strong"
@@ -9198,16 +9624,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    598.3,
-    478.9
+    539.3,
+    576.6
    ],
    "region_uv": [
-    0.5011,
-    0.0764
+    0.265,
+    0.7023
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Howard Theatre 2026-12-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Low"
@@ -9220,16 +9648,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    656.5,
-    517.2
+    623.5,
+    453.5
    ],
    "region_uv": [
-    0.7342,
-    0.3219
+    0.602,
+    -0.0865
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9242,14 +9671,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    495.8,
-    529.2
+    498.6,
+    532.0
    ],
    "region_uv": [
-    0.0912,
-    0.3987
+    0.1022,
+    0.4164
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9272,6 +9702,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "potential: Pass @ Hamilton Live 2026-09-13 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9284,16 +9715,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    475.5,
-    287.8
+    413.0,
+    373.0
    ],
    "region_uv": [
-    0.4869,
-    0.3653
+    0.3051,
+    0.7456
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "potential: Pass @ Hamilton Live 2026-11-21 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9306,14 +9739,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    807.9,
-    266.1
+    812.1,
+    217.0
    ],
    "region_uv": [
-    0.5511,
-    0.7444
+    0.5631,
+    0.548
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9326,16 +9760,17 @@
    "size": "town",
    "score": 6,
    "xy": [
-    728.4,
-    268.0
+    724.5,
+    220.5
    ],
    "region_uv": [
-    0.324,
-    0.752
+    0.3127,
+    0.5622
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -9348,16 +9783,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    625.7,
-    340.6
+    628.4,
+    449.9
    ],
    "region_uv": [
-    0.3079,
-    0.2569
+    0.3309,
+    0.7198
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): in books; Gov't Mule",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9370,16 +9807,18 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    427.7,
-    412.9
+    402.9,
+    356.4
    ],
    "region_uv": [
-    0.348,
-    0.9235
+    0.2758,
+    0.6713
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Medium): override medium: Americana-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9392,16 +9831,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    863.0,
-    141.9
+    829.6,
+    226.9
    ],
    "region_uv": [
-    0.7086,
-    0.2474
+    0.6131,
+    0.5876
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9414,14 +9854,15 @@
    "size": "village",
    "score": 4,
    "xy": [
-    558.6,
-    414.1
+    288.2,
+    450.4
    ],
    "region_uv": [
-    0.8647,
-    0.2208
+    0.1532,
+    0.3746
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Medium"
@@ -9434,16 +9875,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    406.3,
-    444.9
+    365.7,
+    573.1
    ],
    "region_uv": [
-    0.4639,
-    0.3513
+    0.3571,
+    0.8943
    ],
    "flags": {
     "legacy": true
    },
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9452,20 +9894,21 @@
    "id": 392,
    "name": "Wu-Tang Clan",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "town",
    "score": 3,
    "xy": [
-    932.7,
-    93.3
+    845.7,
+    16.9
    ],
    "region_uv": [
-    0.6859,
-    0.8261
+    0.1915,
+    0.0302
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9478,14 +9921,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    538.3,
-    395.7
+    567.5,
+    257.0
    ],
    "region_uv": [
-    0.6695,
-    0.8469
+    0.7544,
+    0.2275
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -9498,14 +9942,15 @@
    "size": "town",
    "score": 6,
    "xy": [
-    772.6,
-    78.8
+    776.7,
+    86.6
    ],
    "region_uv": [
-    -0.2238,
-    0.6755
+    -0.2006,
+    0.7562
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
@@ -9518,16 +9963,17 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    877.9,
-    150.0
+    702.1,
+    303.2
    ],
    "region_uv": [
-    0.7511,
-    0.2799
+    0.2489,
+    0.8928
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9536,20 +9982,21 @@
    "id": 380,
    "name": "Z-Trip",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    920.3,
-    101.7
+    868.9,
+    8.8
    ],
    "region_uv": [
-    0.6153,
-    0.9135
+    0.3233,
+    -0.0542
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9562,14 +10009,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    779.4,
-    180.5
+    664.2,
+    252.5
    ],
    "region_uv": [
-    0.4697,
-    0.402
+    0.1406,
+    0.6901
    ],
    "flags": {},
+   "src": "",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9582,14 +10030,15 @@
    "size": "city",
    "score": 19,
    "xy": [
-    513.5,
-    559.4
+    505.2,
+    503.8
    ],
    "region_uv": [
-    0.162,
-    0.5923
+    0.1287,
+    0.236
    ],
    "flags": {},
+   "src": "",
    "times_seen": 4,
    "vip": 2,
    "tier": "Strong"
@@ -9602,16 +10051,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    504.4,
-    418.5
+    289.7,
+    419.3
    ],
    "region_uv": [
-    0.7221,
-    0.2394
+    0.1571,
+    0.2428
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9624,16 +10074,18 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    595.5,
-    311.5
+    421.8,
+    361.9
    ],
    "region_uv": [
-    0.8356,
-    0.4711
+    0.3309,
+    0.6961
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "seen",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -9646,16 +10098,17 @@
    "size": "village",
    "score": 3,
    "xy": [
-    861.0,
-    154.1
+    764.3,
+    249.3
    ],
    "region_uv": [
-    0.7029,
-    0.2965
+    0.4266,
+    0.6772
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9678,6 +10131,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -9700,6 +10154,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -9708,20 +10163,21 @@
    "id": 381,
    "name": "Zedicus & Abyssinia Roots",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    923.9,
-    86.6
+    799.4,
+    31.2
    ],
    "region_uv": [
-    0.6359,
-    0.7563
+    -0.0716,
+    0.1792
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9734,16 +10190,17 @@
    "size": "town",
    "score": 3,
    "xy": [
-    647.3,
-    505.9
+    590.8,
+    618.5
    ],
    "region_uv": [
-    0.6974,
-    0.2493
+    0.4712,
+    0.9712
    ],
    "flags": {
     "unplaced": true
    },
+   "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
    "tier": null
@@ -9756,16 +10213,18 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    429.2,
-    398.3
+    403.8,
+    370.7
    ],
    "region_uv": [
-    0.3524,
-    0.8583
+    0.2786,
+    0.7355
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
+   "src": "follow (Strong): override: indie supergroup worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -9788,6 +10247,7 @@
    "flags": {
     "unvisited": true
    },
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": null
@@ -13267,8 +13727,18 @@
    "a": "Sadurn",
    "b": "Shakey Graves",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     844.8,
+     95.6
+    ],
+    [
+     598.0,
+     246.1
+    ]
+   ]
   },
   {
    "a": "Samantha Fish",
