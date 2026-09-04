@@ -235,6 +235,36 @@ for r in tsv_rows(DATA / "artists.tsv"):
             "most_recent": r.get("Most Recent Seen") or r.get("First Seen") or "",
         }
 
+# history TSVs credit seen-time to indexed artists that artists.tsv never rowed
+# (support slots, co-headline cells); artists.tsv remains authoritative when present.
+def _hist_tokens(cell):
+    for tok in re.split(r"[;/]", cell or ""):
+        tok = tok.strip()
+        if not tok or tok == "-":
+            continue
+        if resolve(tok):
+            yield tok; continue
+        parts = [p.strip() for p in re.split(r"\s+&\s+|\s+and\s+", tok) if p.strip()]
+        if len(parts) > 1 and all(resolve(p) for p in parts):
+            yield from parts
+        else:
+            yield tok
+
+_hist_seen = defaultdict(lambda: {"n": 0, "last": ""})
+for _hp in sorted((DATA / "history").glob("*.tsv")):
+    for _hr in tsv_rows(_hp):
+        _hd = (_hr.get("Show Date") or "")[:10]
+        for _cell in (_hr.get("Artist"), _hr.get("Supporting Acts")):
+            for _tok in _hist_tokens(_cell):
+                _c = resolve(_tok)
+                if _c:
+                    _hist_seen[_c]["n"] += 1
+                    _hist_seen[_c]["last"] = max(_hist_seen[_c]["last"], _hd)
+for _c, _hv in _hist_seen.items():
+    if _c not in seen_meta:
+        seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,
+                         "most_recent": _hv["last"], "via_history": True}
+
 # ---------------------------------------------------------------- edges
 edges = {}  # frozenset({a,b}) -> class (strongest wins: road/river > bridge > trail)
 RANK = {"road": 3, "river": 3, "bridge": 2, "trail": 1}
@@ -866,10 +896,14 @@ def _trim(t, n=70):
 
 def source_ref(c):
     srcs = records[c].get("sources", [])
+    if seen_meta.get(c, {}).get("via_history"):
+        return "seen as support (history TSVs; no artists.tsv row)"
     if seen_meta.get(c, {}).get("times_seen") and "seen-support" not in srcs:
         return ""
     if "seen-support" in srcs or records[c].get("status") == "seen-support":
         return "history pass: seen as support"
+    if seen_meta.get(c, {}).get("via_history"):
+        return "seen as support (history TSVs; no artists.tsv row)"
     if "fast_track" in srcs:
         why = _ft_why.get(c, "")
         return _trim(("fast track: " + why) if why else "fast track list")
@@ -884,6 +918,8 @@ def source_ref(c):
     return ", ".join(srcs)
 
 # ---- curated adjustments: islands sorted, ruins fall, harbormistresses appointed ----
+_pins_law = (json.loads((SCRIPT_DIR / "pins.json").read_text())
+             if (SCRIPT_DIR / "pins.json").exists() else {})
 MAP_RENAME = {"New York's Finest": "Every Breath You Take"}   # current performing name
 CURATED_SIZE = {
     "George Clinton & Parliament-Funkadelic": "town",
@@ -926,7 +962,7 @@ def move_to_region(nm, reg_, stage=True):
         districts[old_d]["members"].remove(nm)
     region_of[nm] = reg_
     district_of[nm] = f"{reg_}:arrivals"
-    if stage:
+    if stage and nm not in _pins_law:
         UNPLACED.add(nm)
         spec_ = REGIONS[reg_]
         jr3 = random.Random(f"{RNG_SEED}:cur:{nm}")
@@ -945,7 +981,8 @@ if _p2:
         _p2["members"].remove(m)
         districts["outer_isles:arrivals"]["members"].append(m)
         district_of[m] = "outer_isles:arrivals"
-        UNPLACED.add(m)
+        if m not in _pins_law:
+            UNPLACED.add(m)
     districts["outer_isles:arrivals"]["members"].sort()
 # Brassie and Sadurn emigrate to Fempop Skree (final placement is Dan's)
 for m in ("Brassie", "Sadurn"):
@@ -956,10 +993,11 @@ for m in ("Brassie", "Sadurn"):
         region_of[m] = "outer_isles"
         district_of[m] = "outer_isles:p5"
         districts["outer_isles:p5"]["members"].append(m)
-        ic5 = districts["outer_isles:p5"].get("island_center", [960, 240])
-        jr4 = random.Random(f"{RNG_SEED}:fp:{m}")
-        xy[m] = (ic5[0] + (jr4.random() - 0.5) * 10, ic5[1] + (jr4.random() - 0.5) * 8)
-        UNPLACED.add(m)
+        if m not in _pins_law:
+            ic5 = districts["outer_isles:p5"].get("island_center", [960, 240])
+            jr4 = random.Random(f"{RNG_SEED}:fp:{m}")
+            xy[m] = (ic5[0] + (jr4.random() - 0.5) * 10, ic5[1] + (jr4.random() - 0.5) * 8)
+            UNPLACED.add(m)
 districts["outer_isles:p5"]["members"].sort()
 for did, (seat_, iname_) in CURATED_ISLES.items():
     if did in districts:
@@ -980,6 +1018,15 @@ if ov_path.exists():
                 districts[old_d]["members"].remove(nm)
             region_of[nm] = ov["region"]
             district_of[nm] = f"{ov['region']}:override"
+            spec_o = REGIONS[ov["region"]]
+            ex_ = (xy[nm][0] - spec_o["anchor"][0]) / spec_o["rx"]
+            ey_ = (xy[nm][1] - spec_o["anchor"][1]) / spec_o["ry"]
+            if ex_ * ex_ + ey_ * ey_ > 1.1:   # far outside: restage near the new home
+                jr5 = random.Random(f"{RNG_SEED}:ov:{nm}")
+                sx_, sy_ = clamp_to_land(spec_o["anchor"][0] + spec_o["rx"] * 0.45,
+                                         spec_o["anchor"][1] - spec_o["ry"] * 0.45, spec_o["anchor"])
+                xy[nm] = (sx_ + (jr5.random() - 0.5) * 24, sy_ + (jr5.random() - 0.5) * 18)
+                UNPLACED.add(nm)
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
     refresh_isle_islands()

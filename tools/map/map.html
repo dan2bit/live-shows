@@ -302,14 +302,19 @@
   document.getElementById('zin').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,0.75);
   document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
+  // exports are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
+  try{ Object.assign(pins, await (await fetch('pins.json',{cache:'no-store'})).json());
+       expBtn.textContent=`export pins (${Object.keys(pins).length})`; }catch(e){}
   editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';});
   expBtn.addEventListener('click',()=>{
     const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
   });
-  const overrides={}, editctl=document.getElementById('editctl'),
+  const overrides={};
+  try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
+  const editctl=document.getElementById('editctl'),
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
         exportOv=document.getElementById('exportOv'), editwho=document.getElementById('editwho');
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
@@ -325,6 +330,7 @@
     (overrides[name]??={})[key]=val;
     exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
   }
+  exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
   ovRegion.addEventListener('change',()=>{
     if(!selected)return;
     markOv(selected.dataset.name,'region',ovRegion.value);

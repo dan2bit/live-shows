@@ -268,6 +268,11 @@ for _ in range(2):   # uninhabited skerries off the headstock tip
                     6 + 5 * isl_rng.random(), 5 + 4 * isl_rng.random()))
 islands.append((655, 612, 12, 9))   # the harbor island, inside the bay
 islands.append((72, 84, 34, 24))    # the undiscovered northwest island
+covered = lambda x_, y_: any(((x_-a_)/b_)**2 + ((y_-c_)/d_)**2 < 0.5
+                             for a_, c_, b_, d_ in islands)
+for st in d["settlements"]:
+    if st["region"] == "outer_isles" and not covered(*st["xy"]):
+        islands.append((st["xy"][0], st["xy"][1], 8, 6))
 for px, py, rxi, ryi in islands:
     isl = bump(px, py, rxi, ryi, 1.3)
     lift = np.where(isl > 0.04, SEA_T + 0.02 + isl * (0.13 + 0.09 * isl_rng.random()), 0.0)
