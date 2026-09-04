@@ -23,19 +23,24 @@ is intended as sea. Regenerating after any data change, from anywhere:
 
 ## Geography checklist against the data model
 
-Landmask-first: a keep-land field from every settlement position (plus river corridor
-and range core) guarantees inhabited ground stays dry; noise and directional sea biases
-own the coastline. Check for: the massif's north end as a promontory - the northeast sea
-closing in from north and east, a channel biting behind the cape, the Outer Isles (one
-island per isles district plus skerries) trailing the range's line offshore; the central
-north coast making inroads around a short coastal range (the Chain) whose north face is
-the shore of the Chainwater Sound; a fjord coast on the west with fingers cut on the
-SW->NE diagonal toward the forest lake; the northwest corner as open sea holding one
-largish undiscovered island; the east shore slanting southwest toward the bay with
-irregular bites; the ragged southwest with its barrier lagoon; and the single river
-system - forest lake, Slowhand Creek, confluence, Big Muddy past the Steel Foothills -
-emptying into the round sheltered harbor between two spits, small harbor island inside.
-If FMG's conversion shifts any of this, fix the emitter rather than hand-editing.
+The landmass carries the ghost of a guitar, neck to the northeast - plausible geology
+first, silhouette second. Check for: the massif as the neck (fretboard ridge down its
+length), the Outer Isles as peg islands flanking a tapered headstock three-a-side, asymmetric in size and spacing, each detached from the mainland AND from its neighbors (each island is a genre crew from the data - Haggis Skerry holds the Celtic bands); a headstock summit crowning the ridge (~96 vs ~82-88 along the rest of the neck); the Steel Foothills at the heel; the seam coast east of the bay collapsed into bites and diagonal fjords rather than a promontory; the southwest islet cluster channel-cut into an asymmetric chain;
+an upper bout (Quiet Woods, with the shoulder ridge on its north side and the forest
+lake at the neck-pickup position), a waist hinted on the northwest side where the fjord
+fingers cut, and a big lower bout (Heartland) carrying two small knob lakes; the Big
+Muddy rising at the heel (short torrents drain the high neck to both flanking coasts -
+a neck-length river lost to physics, measured in the first 40K import) and running the
+body's southeast seam into the bay that bites the bottom curve, harbor island inside; tidewater and barrier-lagoon islets along the bottom-curve
+Delta Coast; the undiscovered island alone in the northwest sea. Land fraction ~36% -
+this is an island continent now, not a slab.
+
+**FMG settings that matter: set Options -> points to ~40000 BEFORE the import** (the
+default 10k welds the peg-island channels shut - measured, not guessed), then Image
+converter -> auto-assign by luminosity -> Complete. After conversion, verify the pegs
+came through as separate islands and that the biggest river runs from the neck to the
+bay. If either fails, export the .map and hand it back for a measured diff rather than
+hand-editing.
 
 ## Hand-finishing
 

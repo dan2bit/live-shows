@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red House Revival — Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE0C2; --ink:#221A12; --gold:#C9962E;
+    --coast:#2E4A6B; --range:#8a5a2a; --foothills:#7a6db0; --heart:#8A6A1F;
+    --port:#A63D2F; --woods:#3d6b45; --isles:#5b8bb0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{background:#14100E;overflow:hidden;font-family:'Oswald',sans-serif;}
+  #stage{position:absolute;inset:0;cursor:grab;}
+  #stage.panning{cursor:grabbing;}
+  svg{display:block;width:100%;height:100%;}
+
+  /* regions: soft hulls and ghost labels */
+  .region-hull{fill:var(--tint);fill-opacity:.05;stroke:var(--tint);stroke-opacity:.5;
+    stroke-width:.8;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;pointer-events:none;}
+  .region-label{font-family:'Special Elite',monospace;fill:var(--tint);fill-opacity:.55;
+    text-anchor:middle;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;}
+
+  /* routes: styled by render, toggled by provenance */
+  .route{fill:none;pointer-events:none;stroke-linecap:round;}
+  .r-road{stroke:#4a3a26;stroke-width:.9;opacity:.75;}
+  .r-river{stroke:#3a5a44;stroke-width:.9;opacity:.7;}
+  .r-bridge{stroke:#7a2f22;stroke-width:1.1;opacity:.9;}
+  .r-trail{stroke:#5a4a33;stroke-width:.45;stroke-dasharray:1.6 2.4;opacity:.4;}
+  .r-ferry{stroke:#2E4A6B;stroke-width:.8;stroke-dasharray:.5 3;opacity:.8;}
+  .r-pass{stroke:#4a3a26;stroke-width:.8;stroke-dasharray:4 2;opacity:.6;}
+  .r-highway{stroke:#4a3a26;stroke-width:1.1;opacity:.6;}
+
+  .stl{cursor:pointer;}
+  .stl circle{stroke:var(--ink);vector-effect:non-scaling-stroke;}
+  .stl .dot{fill:var(--tint,#4a3a26);}
+  .stl.capital .ring{fill:none;stroke-width:1.2;}
+  .stl.waystation .dot{fill:none;stroke-dasharray:1 1.2;opacity:.75;}
+  .stl.faded .dot{fill:none;opacity:.6;}
+  .stl.legacy .dot{fill:var(--gold);}
+  .stl text{font-family:'Oswald';font-weight:500;fill:var(--ink);
+    paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2.4px;pointer-events:none;}
+  .stl:hover .dot{stroke-width:1.6;}
+
+  #plate{
+    position:absolute;left:18px;top:50%;transform:translateY(-50%);width:262px;
+    background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 55%),var(--paper);
+    border:2px solid var(--ink);outline:1px solid var(--paper);outline-offset:-6px;
+    padding:0 16px 12px;box-shadow:0 8px 28px rgba(0,0,0,.55);color:var(--ink);
+    touch-action:none;
+  }
+  #plate h1{
+    font-family:'Special Elite',monospace;font-size:15px;letter-spacing:.14em;
+    text-transform:uppercase;border-bottom:2px solid var(--ink);
+    padding:13px 0 7px;cursor:move;user-select:none;
+  }
+  #readout{min-height:74px;padding:9px 0 7px;border-bottom:1px solid rgba(34,26,18,.35);}
+  #readout .name{font-size:18px;font-weight:600;line-height:1.15;}
+  #readout .where{font-family:'Special Elite',monospace;font-size:11.5px;letter-spacing:.06em;margin-top:2px;}
+  #readout .stats{font-size:12.5px;margin-top:5px;line-height:1.5;}
+  #readout.idle .name{opacity:.55;font-weight:400;font-size:14px;}
+  #legend{padding-top:8px;font-size:12px;line-height:1.95;}
+  #legend label{display:inline-flex;align-items:center;gap:5px;margin-right:9px;cursor:pointer;}
+  #legend input{accent-color:var(--ink);}
+
+  #zoomer{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:6px;}
+  #zoomer button{
+    width:34px;height:34px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    font-family:'Special Elite',monospace;font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.4);
+  }
+  #zoomer button:hover{background:#f5ecd6;}
+  #err{position:absolute;top:16px;left:16px;right:64px;color:var(--paper);
+    font-family:'Special Elite',monospace;font-size:14px;line-height:1.7;display:none;}
+</style>
+</head>
+<body>
+<div id="stage"><svg id="map" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"></svg></div>
+<div id="err"></div>
+<div id="zoomer">
+  <button id="zin" title="Zoom in">+</button>
+  <button id="zout" title="Zoom out">&minus;</button>
+  <button id="zfit" title="Fit map">&#8962;</button>
+</div>
+<div id="plate">
+  <h1 id="plateGrip">Red House Revival</h1>
+  <div id="readout" class="idle"><div class="name">Hover a settlement to read the plate.</div></div>
+  <div id="legend">
+    <label><input type="checkbox" data-t="trail" checked> trails</label>
+    <label><input type="checkbox" data-t="road" checked> roads</label>
+    <label><input type="checkbox" data-t="river" checked> bills</label>
+    <label><input type="checkbox" data-t="cross" checked> crossings</label>
+    <label><input type="checkbox" data-t="regions" checked> regions</label>
+    <label><input type="checkbox" data-t="waystation" checked> unvisited</label>
+    <label><input type="checkbox" data-t="labels" checked> names</label>
+    <label><input type="checkbox" id="editMode"> edit</label>
+    <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
+      font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
+      export pins (0)</button>
+  </div>
+</div>
+<script>
+(async function(){
+  const NS='http://www.w3.org/2000/svg';
+  const qs=new URLSearchParams(location.search);
+  const SVG_BG=qs.get('svg')||'map.svg';
+  const DATA=qs.get('data')||'fantasy_map_data.json';
+  const map=document.getElementById('map');
+  const err=m=>{const e=document.getElementById('err');e.style.display='block';e.textContent=m;};
+
+  let data;
+  try{ data=await (await fetch(DATA)).json(); }
+  catch(e){ return err(`Could not load ${DATA} — serve over http (python3 -m http.server), not file://`); }
+
+  const W=data.canvas.w,H=data.canvas.h;
+  const bg=document.createElementNS(NS,'image');
+  bg.setAttribute('href',SVG_BG);
+  bg.setAttribute('x',0);bg.setAttribute('y',0);bg.setAttribute('width',W);bg.setAttribute('height',H);
+  bg.addEventListener('error',()=>err(`Could not load ${SVG_BG} — pass ?svg=YourExport.svg`));
+  map.appendChild(bg);
+
+  const gRegions=document.createElementNS(NS,'g');
+  const gRoutes=document.createElementNS(NS,'g');
+  const gStl=document.createElementNS(NS,'g');
+  map.append(gRegions,gRoutes,gStl);
+
+  const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
+              heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
+  const S=new Map(data.settlements.map(s=>[s.name,s]));
+  const RLABEL=Object.fromEntries(data.regions.map(r=>[r.id,r.label]));
+
+  // regions: padded hulls + ghost labels
+  for(const r of data.regions){
+    if(!r.hull)continue;
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d','M'+r.hull.map(pt=>pt.join(',')).join(' L')+' Z');
+    p.setAttribute('class','region-hull');
+    p.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
+    gRegions.appendChild(p);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',r.anchor[0]); t.setAttribute('y',r.anchor[1]);
+    t.setAttribute('class','region-label');
+    t.setAttribute('font-size',Math.max(13,Math.min(22,r.rx/9)));
+    t.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
+    t.textContent=r.label;
+    gRegions.appendChild(t);
+  }
+
+  // routes flow through their gateway waypoints (smooth Catmull-Rom curve)
+  function smoothPath(pts){
+    if(pts.length===2)return `M${pts[0]} L${pts[1]}`;
+    let d=`M${pts[0]}`;
+    for(let i=0;i<pts.length-1;i++){
+      const p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+      const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+      const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+      d+=` C${c1} ${c2} ${p2}`;
+    }
+    return d;
+  }
+  for(const r of data.routes){
+    const a=S.get(r.a),b=S.get(r.b); if(!a||!b)continue;
+    const pts=[a.xy,...(r.via||[]),b.xy];
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',smoothPath(pts));
+    p.setAttribute('class',`route r-${r.render}`);
+    p.dataset.cls=r.cls; p.dataset.cross=r.crossRegion?'1':'0';
+    gRoutes.appendChild(p);
+  }
+
+  // settlements, small first so capitals sit on top
+  const order=['waystation','hamlet','village','town','city','capital'];
+  const R={capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7};
+  const readout=document.getElementById('readout');
+  for(const s of [...data.settlements].sort((x,y)=>order.indexOf(x.size)-order.indexOf(y.size))){
+    const g=document.createElementNS(NS,'g');
+    const flags=Object.keys(s.flags||{}).join(' ');
+    g.setAttribute('class',`stl ${s.size} ${flags}`);
+    g.dataset.name=s.name;
+    g.setAttribute('transform',`translate(${s.xy[0]},${s.xy[1]})`);
+    g.style.setProperty('--tint',TINT[s.region]||'var(--ink)');
+    const r=R[s.size]||2;
+    const dot=document.createElementNS(NS,'circle');
+    dot.setAttribute('class','dot');dot.setAttribute('r',r);dot.setAttribute('stroke-width',.8);
+    g.appendChild(dot);
+    if(s.size==='capital'){
+      const ring=document.createElementNS(NS,'circle');
+      ring.setAttribute('class','ring');ring.setAttribute('r',r+2.4);
+      g.appendChild(ring);
+    }
+    if(s.size==='capital'||s.size==='city'){
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('x',r+3);t.setAttribute('y',3);
+      t.setAttribute('font-size',s.size==='capital'?9:7);
+      t.textContent=s.name;g.appendChild(t);
+    }
+    g.addEventListener('mouseenter',()=>{
+      readout.classList.remove('idle');
+      const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
+      readout.innerHTML=`<div class="name">${s.name}</div>
+        <div class="where">${RLABEL[s.region]||s.region} \u2014 ${s.size}</div>
+        <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}</div>`;
+    });
+    gStl.appendChild(g);
+  }
+
+  // toggles: provenance-based, plus crossings / regions / unvisited / names
+  const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
+  document.querySelectorAll('#legend input').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const t=cb.dataset.t,on=cb.checked;
+      if(t==='labels')       show([...gStl.querySelectorAll('text')],on);
+      else if(t==='waystation') show([...gStl.querySelectorAll('.stl.waystation')],on);
+      else if(t==='regions') gRegions.style.display=on?'':'none';
+      else if(t==='cross')   show([...gRoutes.children].filter(p=>p.dataset.cross==='1'),on);
+      else if(t==='road')    show([...gRoutes.children].filter(p=>p.dataset.cls==='road'||p.dataset.cls==='bridge'),on);
+      else                   show([...gRoutes.children].filter(p=>p.dataset.cls===t),on);
+    });
+  });
+
+  // zoom: wheel-to-cursor, buttons, fit; drag to pan — one viewBox for all layers
+  let vb={x:0,y:0,w:W,h:H};
+  const apply=()=>map.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  function zoomAt(px,py,k){
+    vb={x:px-(px-vb.x)*k,y:py-(py-vb.y)*k,w:vb.w*k,h:vb.h*k};apply();
+  }
+  const stage=document.getElementById('stage');
+  stage.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const r=map.getBoundingClientRect();
+    zoomAt(vb.x+(e.clientX-r.left)/r.width*vb.w, vb.y+(e.clientY-r.top)/r.height*vb.h,
+           e.deltaY<0?0.85:1/0.85);
+  },{passive:false});
+  document.getElementById('zin').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,0.75);
+  document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
+  document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
+  let pan=null;
+  stage.addEventListener('pointerdown',e=>{pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');stage.setPointerCapture(e.pointerId);});
+  stage.addEventListener('pointermove',e=>{
+    if(!pan)return;
+    const r=map.getBoundingClientRect();
+    vb.x-=(e.clientX-pan.x)/r.width*vb.w;vb.y-=(e.clientY-pan.y)/r.height*vb.h;
+    pan={x:e.clientX,y:e.clientY};apply();
+  });
+  stage.addEventListener('pointerup',()=>{pan=null;stage.classList.remove('panning');});
+  apply();
+
+  // the plate drags by its title bar
+  const plate=document.getElementById('plate'),grip=document.getElementById('plateGrip');
+  let pd=null;
+  grip.addEventListener('pointerdown',e=>{
+    const b=plate.getBoundingClientRect();
+    plate.style.top=b.top+'px';plate.style.left=b.left+'px';plate.style.transform='none';
+    pd={dx:e.clientX-b.left,dy:e.clientY-b.top};grip.setPointerCapture(e.pointerId);e.preventDefault();
+  });
+  grip.addEventListener('pointermove',e=>{
+    if(!pd)return;
+    plate.style.left=Math.max(4,Math.min(innerWidth-plate.offsetWidth-4,e.clientX-pd.dx))+'px';
+    plate.style.top=Math.max(4,Math.min(innerHeight-plate.offsetHeight-4,e.clientY-pd.dy))+'px';
+  });
+  grip.addEventListener('pointerup',()=>{pd=null;});
+
+  // edit mode: drag settlements to hand-place them; export pins.json for the builder
+  const pins={}, editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
+  const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
+    return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
+  let dragS=null;
+  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';});
+  gStl.addEventListener('pointerdown',e=>{
+    if(!editCb.checked)return;
+    const g=e.target.closest('.stl'); if(!g)return;
+    e.stopPropagation();
+    const name=g.querySelector('text')?.textContent||[...S.values()].find(s=>{
+      const tr=g.getAttribute('transform');return tr===`translate(${s.xy[0]},${s.xy[1]})`;})?.name;
+    dragS={g,name:g.dataset.name};
+    g.setPointerCapture(e.pointerId);
+  },true);
+  // reliable name lookup: stamp it at build time
+  gStl.querySelectorAll('.stl').forEach((g,i)=>{});
+  window.addEventListener('pointermove',e=>{
+    if(!dragS||!editCb.checked)return;
+    const [mx,my]=toMap(e.clientX,e.clientY);
+    dragS.g.setAttribute('transform',`translate(${mx.toFixed(1)},${my.toFixed(1)})`);
+    if(dragS.name){pins[dragS.name]=[+mx.toFixed(1),+my.toFixed(1)];
+      expBtn.textContent=`export pins (${Object.keys(pins).length})`;}
+  });
+  window.addEventListener('pointerup',()=>{dragS=null;});
+  expBtn.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='pins.json';a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>

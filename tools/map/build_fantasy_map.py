@@ -61,7 +61,7 @@ REGIONS = {
     "delta_coast": {
         "label": "The Delta Coast",
         "terrain": "coastal tidewater — estuary, levees, shotgun porches",
-        "anchor": (300, 560), "rx": 245, "ry": 92,
+        "anchor": (308, 598), "rx": 172, "ry": 52,
         "toponym_suffixes": ["Haven", "Quay", "Levee", "Landing", "Shoals"],
         "toponym_prefixes": ["Port "],
     },
@@ -75,28 +75,28 @@ REGIONS = {
     "slide_foothills": {
         "label": "The Steel Foothills",
         "terrain": "foothills - slide scarps, steel terraces, bottleneck switchbacks",
-        "anchor": (650, 292), "rx": 102, "ry": 74,
+        "anchor": (648, 398), "rx": 58, "ry": 118,
         "toponym_suffixes": ["Scarp", "Terrace", "Rise", "Switchback", "Bend"],
         "toponym_prefixes": ["Steel "],
     },
     "heartland": {
         "label": "The Heartland",
         "terrain": "farmland plains — wheat, gravel roads, grain towers",
-        "anchor": (515, 375), "rx": 235, "ry": 115,
+        "anchor": (420, 480), "rx": 190, "ry": 118,
         "toponym_suffixes": ["Hollow", "Fields", "Prairie", "Crossing", "Silo"],
         "toponym_prefixes": [],
     },
     "river_port": {
         "label": "Second Line Riverlands",
         "terrain": "riverside port — wharves, brass balconies, paddle steam",
-        "anchor": (668, 555), "rx": 150, "ry": 82,
+        "anchor": (598, 545), "rx": 125, "ry": 78,
         "toponym_suffixes": ["Wharf", "Landing", "Parade", "Bend", "Ward"],
         "toponym_prefixes": [],
     },
     "quiet_woods": {
         "label": "The Quiet Woods",
         "terrain": "forest and lakes — pine shade, cabin lights, still water",
-        "anchor": (230, 200), "rx": 195, "ry": 125,
+        "anchor": (480, 318), "rx": 172, "ry": 112,
         "toponym_suffixes": ["Glen", "Hollow", "Lake", "Grove", "Vale"],
         "toponym_prefixes": [],
     },
@@ -113,26 +113,35 @@ REGIONS = {
 # routes reference these only thematically.
 WATERWAYS = [
     {"id": "the_bigmuddy", "label": "The Big Muddy",
-     "points": [(838, 128), (762, 248), (662, 328), (582, 428), (602, 518), (642, 588), (656, 648)],
-     "note": "rises where the massif meets the north coast, runs the range's southwest slope past the Steel Foothills, and spills into the sheltered bay"},
+     "points": [(672, 306), (640, 348), (618, 422), (612, 478), (628, 546), (642, 606)],
+     "note": "rises at the heel where the massif's short torrents gather below the Steel Foothills, then runs the body's southeast seam to the bay that bites the bottom curve"},
     {"id": "slowhand_creek", "label": "Slowhand Creek",
-     "points": [(246, 256), (322, 332), (422, 402), (512, 438), (582, 428)],
-     "note": "rises from a forest lake in the Quiet Woods and joins the Big Muddy above the foothill reach"},
+     "points": [(585, 372), (600, 424), (612, 470)],
+     "note": "short run out of the forest lake on the upper bout, joining the Big Muddy at the seam"},
+    {"id": "the_forest_lake", "label": "The Forest Lake",
+     "points": [(585, 372)],
+     "note": "lake in the Quiet Woods at the creek's source; sits where a neck pickup would"},
+    {"id": "the_shoulder_lakes", "label": "The Shoulder Lakes",
+     "points": [(430, 246), (358, 318)],
+     "note": "the two big lakes on the upper bout's shoulder; each carries a sizable Quiet Woods settlement on its shore"},
+    {"id": "the_parade", "label": "The Parade",
+     "points": [(505, 560), (562, 584), (614, 600)],
+     "note": "the second river into the bay, draining the knob-lake country along the lower bout; Second Line's twin waterfront with the Big Muddy"},
+    {"id": "the_knob_lakes", "label": "The Knob Lakes",
+     "points": [(468, 540), (505, 560)],
+     "note": "two small lakes on the lower bout, roughly where the knobs would sit"},
     {"id": "the_sound", "label": "The Wide Water",
-     "points": [(0, 690), (240, 665), (520, 672), (1000, 680)],
-     "note": "the southern sea; the sheltered bay opens off it at the Big Muddy mouth"},
+     "points": [(0, 690), (320, 678), (640, 685), (1000, 682)],
+     "note": "the southern sea below the body's bottom curve; the bay opens off it"},
     {"id": "the_north_reach", "label": "The North Reach",
-     "points": [(0, 30), (400, 42), (760, 36), (1000, 48)],
-     "note": "the northern sea; the massif runs to its shore and the Outer Isles continue the range line offshore"},
-    {"id": "the_central_sound", "label": "The Chainwater Sound",
-     "points": [(300, 70), (452, 58), (610, 72)],
-     "note": "the north sea's central inroad; a short coastal range (the Chain) holds its south shore"},
+     "points": [(0, 60), (400, 90), (700, 60), (1000, 40)],
+     "note": "the northern sea flanking the neck; the Outer Isles are the pegs off the headstock"},
     {"id": "the_west_water", "label": "The West Water",
-     "points": [(30, 60), (34, 240), (28, 420), (40, 600)],
-     "note": "fjord coast off the Quiet Woods; ragged fingers, no settlements"},
+     "points": [(60, 120), (70, 300), (55, 480), (75, 620)],
+     "note": "open sea west of the body; fjord fingers cut the waist on the northwest side"},
     {"id": "the_east_shore", "label": "The East Shore",
-     "points": [(965, 150), (952, 340), (958, 520), (948, 640)],
-     "note": "eastern shore below the massif's cape; the range is a coastal cordillera"},
+     "points": [(940, 200), (880, 360), (800, 480), (740, 570)],
+     "note": "the sea southeast of the neck; its cut toward the bay defines the body's seam side"},
 ]
 
 # tag keyword -> (region, weight). Substring match on lowercased tags.
@@ -300,6 +309,9 @@ def tag_region(canon):
 CURATED_REGIONS = {"slide_foothills"}
 
 FORCED_REGION = {
+    "Buffalo Nichols": "delta_coast",
+    "Southern Avenue": "delta_coast",
+    "Ruthie Foster": "delta_coast",
     # The Steel Foothills: slide, lap steel, and sacred steel players.
     "Larkin Poe": "slide_foothills",
     "Ghalia Volt": "slide_foothills",
@@ -368,6 +380,40 @@ def score(c):
             + 2 * m.get("vip", 0)
             + TIER_SCORE.get(r.get("tier"), 0))
 
+# The Outer Isles regroup: the taste graph barely connects the outliers, so
+# districts there are rebuilt as peg crews - genre-family buckets chunked small.
+def isle_family(c):
+    tags = [t.lower() for t in lastfm(spot.get(c, {})).get("tags", [])]
+    joined = " ".join(tags)
+    for kws, fam in ((("celtic", "irish", "scottish"), "celtic"),
+                     (("tribute", "cover"), "tribute"),
+                     (("metal", "djent", "progressive"), "metal"),
+                     (("pop", "indie"), "pop")):
+        if any(k in joined for k in kws):
+            return fam
+    return "far"
+
+isle_members_all = sorted(c for c in records if region_of[c] == "outer_isles")
+for did in [d_ for d_ in list(districts) if districts[d_]["region"] == "outer_isles"]:
+    del districts[did]
+fams = defaultdict(list)
+for c in isle_members_all:
+    fams[isle_family(c)].append(c)
+pegs = []
+for fam in sorted(fams):
+    mem = fams[fam]
+    for j in range(0, len(mem), 6):
+        pegs.append((fam, mem[j:j + 6]))
+for pi2, (fam, mem) in enumerate(pegs, 1):
+    did = f"outer_isles:p{pi2}"
+    seat = max(mem, key=lambda c: score(c))
+    seatword = re.sub(r"[^A-Za-z]", "", seat.split()[-1]) or "Peg"
+    sfx = REGIONS["outer_isles"]["toponym_suffixes"][pi2 % len(REGIONS["outer_isles"]["toponym_suffixes"])]
+    districts[did] = {"region": "outer_isles", "members": mem, "seat": seat,
+                      "suggested_name": f"{seatword} {sfx}"}
+    for c in mem:
+        district_of[c] = did
+
 CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe"}
 
 def size_tier(c, s, regional_max):
@@ -403,15 +449,263 @@ def ellipse_fit(pos, anchor, rx, ry, pad=0.88):
         out[n] = (anchor[0] + u*rx*pad, anchor[1] + v*ry*pad)
     return out
 
+# analytic land test mirroring emit_heightmap's silhouette - keep the two in sync
+SIL_AXIS = math.radians(-38); SIL_HEEL = (645, 325)
+_su, _sv = (math.cos(SIL_AXIS), math.sin(SIL_AXIS)), (-math.sin(SIL_AXIS), math.cos(SIL_AXIS))
+def _on_axis(t, off=0.0):
+    return (SIL_HEEL[0] + _su[0] * t + _sv[0] * off, SIL_HEEL[1] + _su[1] * t + _sv[1] * off)
+def _seg_dist(p, a, b):
+    ax, ay = a; bx, by = b; px, py = p
+    vx, vy = bx - ax, by - ay; L2 = vx * vx + vy * vy or 1e-9
+    t = max(0, min(1, ((px - ax) * vx + (py - ay) * vy) / L2))
+    return math.hypot(px - (ax + t * vx), py - (ay + t * vy))
+_SIL_DISCS = [(_on_axis(-105), 168), (_on_axis(-205), 126), (_on_axis(-318), 196), ((598, 492), 138)]
+def land_field(x, y):
+    v = 0.0
+    v = max(v, min(1, (1 - _seg_dist((x, y), SIL_HEEL, _on_axis(175)) / 88) * 4.0))
+    v = max(v, min(1, (1 - _seg_dist((x, y), _on_axis(120), _on_axis(292)) / 58) * 4.0))
+    for (cx_, cy_), r_ in _SIL_DISCS:
+        v = max(v, min(1, (1 - math.hypot(x - cx_, y - cy_) / r_) * 5.5))
+    return max(v, 0.0)
+def clamp_to_land(x, y, toward, thresh=0.78):
+    if land_field(x, y) >= thresh:
+        return (x, y)
+    tx, ty = toward
+    lo, hi = 0.0, 1.0
+    for _ in range(22):
+        mid = (lo + hi) / 2
+        mx, my = x + (tx - x) * mid, y + (ty - y) * mid
+        if land_field(mx, my) >= thresh: hi = mid
+        else: lo = mid
+    return (x + (tx - x) * hi, y + (ty - y) * hi)
+
+# per-region layout temperament: heartland spreads loose, others cluster
+REGION_SPREAD = {"heartland": 2.1, "delta_coast": 1.3}
+OUTSKIRT_ARC = {"delta_coast": (math.radians(25), math.radians(155)),
+                "river_port": (math.radians(195), math.radians(345))}
+
 xy = {}
 for reg, spec in REGIONS.items():
     members = [c for c in records if region_of[c] == reg]
     if not members:
         continue
-    sub = G.subgraph(members)
-    pos = nx.spring_layout(sub, weight="weight", seed=RNG_SEED,
-                           k=1.6 / max(math.sqrt(len(members)), 1))
-    xy.update(ellipse_fit(pos, spec["anchor"], spec["rx"], spec["ry"]))
+    if reg == "outer_isles":
+        continue  # placed below, one island per district along the headstock
+    # quotient layout: springs position the districts, members ring their district
+    dids = sorted({district_of[m] for m in members})
+    Q = nx.Graph(); Q.add_nodes_from(dids)
+    for u, v, dat in G.subgraph(members).edges(data=True):
+        du, dv = district_of[u], district_of[v]
+        if du != dv:
+            w = Q[du][dv]["weight"] + dat["weight"] if Q.has_edge(du, dv) else dat["weight"]
+            Q.add_edge(du, dv, weight=w)
+    dpos = nx.spring_layout(Q, weight="weight", seed=RNG_SEED,
+                            k=1.4 / max(math.sqrt(len(dids)), 1))
+    if reg == "amplified_range":
+        # districts string along the ridge: ordered by their spring x, seated on
+        # alternating flanks of the axis at varied shoulder heights
+        ordered = sorted((d_ for d_ in dids if not d_.endswith(":outskirts")),
+                         key=lambda d_: dpos[d_][0])
+        centers = {}
+        for oi, d_ in enumerate(ordered):
+            t_ = -42 + (250 / max(len(ordered) - 1, 1)) * oi
+            side_ = 1 if oi % 2 else -1
+            off_ = side_ * (17 + 8 * (oi % 3))
+            centers[d_] = _on_axis(t_, off_)
+        for d_ in dids:
+            if d_.endswith(":outskirts"):
+                centers[d_] = _on_axis(100)
+    else:
+        centers = ellipse_fit(dpos, spec["anchor"], spec["rx"] * 0.82, spec["ry"] * 0.8)
+    for d_ in dids:
+        mem = sorted(m for m in members if district_of[m] == d_)
+        cxd, cyd = centers[d_]
+        if d_.endswith(":outskirts") and reg == "amplified_range":
+            # ridge frontier: cabins strung up the neck with cross-axis jitter
+            jr = random.Random(f"{RNG_SEED}:ridge")
+            for j, m in enumerate(mem):
+                t_ = -50 + ((j * 0.61803) % 1.0) * 320
+                off_ = (jr.random() - 0.5) * 56
+                xy[m] = clamp_to_land(*_on_axis(t_, off_), toward=_on_axis(t_ * 0.6))
+            continue
+        if d_.endswith(":outskirts"):
+            # frontier scatter along the region rim (arc-limited where the sea presses)
+            a0, a1 = OUTSKIRT_ARC.get(reg, (0, 2 * math.pi))
+            for j, m in enumerate(mem):
+                ang = a0 + ((j * 0.61803) % 1.0) * (a1 - a0)
+                px_ = spec["anchor"][0] + math.cos(ang) * spec["rx"] * 0.9
+                py_ = spec["anchor"][1] + math.sin(ang) * spec["ry"] * 0.9
+                xy[m] = clamp_to_land(px_, py_, spec["anchor"])
+            continue
+        spread = REGION_SPREAD.get(reg, 1.0)
+        ring = (6 + 3.4 * math.sqrt(len(mem))) * spread
+        jrng = random.Random(f"{RNG_SEED}:{d_}")
+        for j, m in enumerate(mem):
+            ang = j * 2.399963
+            rr = ring * math.sqrt((j + 0.5) / len(mem)) * (0.8 + 0.4 * jrng.random())
+            xy[m] = clamp_to_land(cxd + rr * math.cos(ang), cyd + rr * math.sin(ang), (cxd, cyd))
+    continue
+
+# ---- canonical pins and Dan's hand pins (tools/map/pins.json wins last) ----
+CANON_PINS = {                                # first pin moves the whole district
+    "Larkin Poe": (608, 373),                 # east shore of the source lake
+    "The Lone Bellow": (562, 366),            # west shore of the source lake
+    "Ana Popović": (296, 662),           # delta capital on the measured coast
+}
+INDIV_PINS = {                                # hand seats, moved alone, never clamped
+    "Trombone Shorty & Orleans Avenue": (654, 556),   # Big Muddy's east bank
+    "Jon Batiste": (590, 572),                # the Parade's east bank
+    "Amythyst Kiah": (238, 596),              # southwest along the tidewater
+    "The Wood Brothers": (422, 452),          # heartland side of the woods border
+    "Oliver Wood": (430, 426),                # woods side, within sight of the band
+    "Alabama Shakes": (631, 318),             # range heel, toward the Foothills
+    "Sue Foley": (615, 334),                  # likewise
+    "Barenaked Ladies": (703, 204),           # the neck's northwest shore
+}
+LAKESIDE = [(430, 246), (358, 318)]           # each shoulder lake gets a district
+
+_shifted = set()
+def shift_district(name, target):
+    """First pin in a district moves the whole crew; later pins move only the name."""
+    if name not in xy:
+        return
+    did = district_of.get(name)
+    if did in _shifted or did not in districts:
+        xy[name] = target
+        return
+    dx_, dy_ = target[0] - xy[name][0], target[1] - xy[name][1]
+    for m in districts[did]["members"]:
+        if m in xy:
+            xy[m] = (xy[m][0] + dx_, xy[m][1] + dy_)
+    _shifted.add(did)
+
+for nm, tgt in CANON_PINS.items():
+    shift_district(nm, tgt)
+for nm, tgt in INDIV_PINS.items():
+    if nm in xy:
+        xy[nm] = tgt
+
+WATERFRONT = set(CANON_PINS) | set(INDIV_PINS)
+
+# the two largest non-capital Quiet Woods districts take the shoulder-lake shores
+woods_ds = sorted((d_ for d_, dd in districts.items()
+                   if dd["region"] == "quiet_woods" and not d_.endswith(":outskirts")
+                   and "The Lone Bellow" not in dd["members"]),
+                  key=lambda d_: -len(districts[d_]["members"]))[:2]
+for d_, (lx_, ly_) in zip(woods_ds, LAKESIDE):
+    seat_ = districts[d_]["seat"]
+    shift_district(seat_, (lx_ + 40, ly_ + 24))
+    WATERFRONT.add(seat_)
+
+
+# final land pass: district shifts may have carried mates seaward
+for c in records:
+    if region_of[c] == "outer_isles" or c not in xy or c in WATERFRONT:
+        continue
+    tw = REGIONS[region_of[c]]["anchor"]
+    xy[c] = clamp_to_land(xy[c][0], xy[c][1], tw)
+
+# hazard pass: keep everyone off the carved water (rivers, harbor, lakes)
+_ww = {w["id"]: w for w in WATERWAYS}
+_riv_segs = []
+for wid, ext in (("the_bigmuddy", (648, 665)), ("the_parade", (636, 618)), ("slowhand_creek", None)):
+    pts = [tuple(p) for p in _ww[wid]["points"]] + ([ext] if ext else [])
+    _riv_segs += list(zip(pts, pts[1:]))
+_lakes = ([(tuple(_ww["the_forest_lake"]["points"][0]), 20)]
+          + [(tuple(p), 14) for p in _ww["the_knob_lakes"]["points"]]
+          + [(tuple(p), 34) for p in _ww["the_shoulder_lakes"]["points"]])
+_HARBOR = ((642, 592), 62)
+
+def hazard_push(x, y):
+    best_d, push = 1e9, None
+    for a_, b_ in _riv_segs:
+        d_ = _seg_dist((x, y), a_, b_)
+        if d_ < best_d:
+            vx_, vy_ = b_[0] - a_[0], b_[1] - a_[1]; L2 = vx_ * vx_ + vy_ * vy_ or 1e-9
+            t_ = max(0, min(1, ((x - a_[0]) * vx_ + (y - a_[1]) * vy_) / L2))
+            nx_, ny_ = x - (a_[0] + t_ * vx_), y - (a_[1] + t_ * vy_)
+            best_d, push = d_, (nx_, ny_, 15)
+    for (lc, lr) in _lakes + [_HARBOR]:
+        d_ = math.hypot(x - lc[0], y - lc[1])
+        if d_ - lr < best_d:
+            best_d, push = d_ - lr, (x - lc[0], y - lc[1], lr + 12)
+    if push is None or best_d >= 13:
+        return (x, y)
+    nx_, ny_, want = push
+    n_ = math.hypot(nx_, ny_) or 1
+    return (x + nx_ / n_ * (want - best_d), y + ny_ / n_ * (want - best_d))
+
+for c in records:
+    if region_of[c] == "outer_isles" or c not in xy or c in WATERFRONT:
+        continue
+    hx, hy = hazard_push(*xy[c])
+    if (hx, hy) != xy[c]:
+        xy[c] = clamp_to_land(hx, hy, REGIONS[region_of[c]]["anchor"])
+
+# breathing space: relax overlapping settlement marks apart
+IMMOVABLE = WATERFRONT | {"Tedeschi Trucks Band", "Sonny Landreth"}
+def mark_r(c):
+    return min(2.6 + score(c) / 5.5, 6.5)
+mainland = [c for c in records if region_of[c] != "outer_isles" and c in xy]
+def tidy():
+    for c in mainland:
+        if c in IMMOVABLE:
+            continue
+        hx, hy = hazard_push(*clamp_to_land(xy[c][0], xy[c][1], REGIONS[region_of[c]]["anchor"]))
+        xy[c] = (hx, hy)
+def relax(rounds):
+    for _pass in range(rounds):
+        moved = False
+        for i in range(len(mainland)):
+            a_ = mainland[i]; ax_, ay_ = xy[a_]
+            for j in range(i + 1, len(mainland)):
+                b_ = mainland[j]
+                d_ = math.hypot(xy[b_][0] - ax_, xy[b_][1] - ay_)
+                need = mark_r(a_) + mark_r(b_) + 4.5
+                if d_ >= need or d_ == 0:
+                    continue
+                push = (need - d_) / 2
+                nx_, ny_ = (xy[b_][0] - ax_) / d_, (xy[b_][1] - ay_) / d_
+                if a_ not in IMMOVABLE:
+                    xy[a_] = (xy[a_][0] - nx_ * push, xy[a_][1] - ny_ * push)
+                    ax_, ay_ = xy[a_]
+                if b_ not in IMMOVABLE:
+                    xy[b_] = (xy[b_][0] + nx_ * push, xy[b_][1] + ny_ * push)
+                moved = True
+        if not moved:
+            break
+tidy(); relax(24); tidy(); relax(18); tidy()
+
+# Dan's pins are law: name -> [x, y], applied verbatim, never clamped
+pins_path = SCRIPT_DIR / "pins.json"
+if pins_path.exists():
+    for nm, p_ in json.loads(pins_path.read_text()).items():
+        if nm in xy:
+            xy[nm] = (float(p_[0]), float(p_[1]))
+
+# The pegs: each Outer Isles district is its own island flanking the headstock.
+AXIS_G = math.radians(-38); HEEL_G = (645, 325)
+ug = (math.cos(AXIS_G), math.sin(AXIS_G)); vg = (-math.sin(AXIS_G), math.cos(AXIS_G))
+isle_ds = sorted((did for did, dd in districts.items() if dd["region"] == "outer_isles"),
+                 key=lambda did: -len(districts[did]["members"]))
+for pi, did in enumerate(isle_ds):
+    dd = districts[did]
+    k = pi // 2
+    side = 1 if pi % 2 else -1
+    t = 246 + ((0, 54, 108) if side < 0 else (6, 56, 100))[k]
+    off = side * (116 + (0, 12, -8)[k])
+    cxp = HEEL_G[0] + ug[0] * t + vg[0] * off
+    cyp = HEEL_G[1] + ug[1] * t + vg[1] * off
+    cxp = min(max(cxp, 20), 978); cyp = min(max(cyp, 18), 260)
+    n = len(dd["members"])
+    r_isl = min(7.5 + 2.0 * math.sqrt(n), 14) * (1.0, 0.82, 1.14)[k]
+    dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
+    dd["island_r"] = round(r_isl, 1)
+    ring = max(3.0, r_isl - 6)
+    for j, m in enumerate(sorted(dd["members"])):
+        ang = j * 2.399963  # golden angle
+        rr = ring * math.sqrt((j + 0.5) / max(n, 1))
+        xy[m] = (cxp + rr * math.cos(ang), cyp + rr * math.sin(ang))
 
 settlements = []
 reg_max = {reg: max((score(c) for c in records if region_of[c] == reg), default=0)
@@ -448,6 +742,54 @@ for did, d in districts.items():
         d["seat"] = cap
         d["suggested_name"] = f"{word} {sfx}"
 
+# convex hull per region (padded) for the boundary layer
+def hull_of(pts, pad=16):
+    pts = sorted(set((round(x, 1), round(y, 1)) for x, y in pts))
+    if len(pts) < 3:
+        return None
+    def cross(o, a, b): return (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0])
+    lo, up = [], []
+    for p in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0: lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(up) >= 2 and cross(up[-2], up[-1], p) <= 0: up.pop()
+        up.append(p)
+    hull = lo[:-1] + up[:-1]
+    cx_ = sum(p[0] for p in hull) / len(hull); cy_ = sum(p[1] for p in hull) / len(hull)
+    out = []
+    for x, y in hull:
+        dx, dy = x - cx_, y - cy_
+        d = math.hypot(dx, dy) or 1
+        out.append([round(x + dx / d * pad, 1), round(y + dy / d * pad, 1)])
+    return out
+
+region_hulls = {}
+for reg in REGIONS:
+    pts = [xy[c] for c in records if region_of[c] == reg]
+    hl = hull_of(pts)
+    if hl:
+        region_hulls[reg] = hl
+
+# gateways: each ordered region pair gets one crossing point per side, so
+# cross-region routes bundle into shared corridors instead of great circles
+def edge_point(reg, toward):
+    ax, ay = REGIONS[reg]["anchor"]; rx_, ry_ = REGIONS[reg]["rx"], REGIONS[reg]["ry"]
+    dx, dy = toward[0] - ax, toward[1] - ay
+    d = math.hypot(dx, dy) or 1; ux_, uy_ = dx / d, dy / d
+    er = (rx_ * ry_) / math.hypot(ry_ * ux_, rx_ * uy_)
+    return (ax + ux_ * er * 0.94, ay + uy_ * er * 0.94)
+
+gates = {}
+def gate_pair(ra, rb):
+    key = (ra, rb) if ra < rb else (rb, ra)
+    if key not in gates:
+        pa = edge_point(key[0], REGIONS[key[1]]["anchor"])
+        pb = edge_point(key[1], REGIONS[key[0]]["anchor"])
+        gates[key] = (pa, pb)
+    pa, pb = gates[key]
+    return (pa, pb) if (ra, rb) == key else (pb, pa)
+
 routes = []
 for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
     a, b = sorted(key)
@@ -462,7 +804,11 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
             render = "pass"
         else:
             render = "highway"
-    routes.append({"a": a, "b": b, "cls": cls, "crossRegion": cross, "render": render})
+    entry = {"a": a, "b": b, "cls": cls, "crossRegion": cross, "render": render}
+    if cross:
+        ga, gb = gate_pair(region_of[a], region_of[b])
+        entry["via"] = [[round(ga[0], 1), round(ga[1], 1)], [round(gb[0], 1), round(gb[1], 1)]]
+    routes.append(entry)
 
 out = {
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
@@ -471,7 +817,8 @@ out = {
     "canvas": CANVAS,
     "regions": [{"id": rid, **{k: v for k, v in spec.items()
                                if k not in ("toponym_suffixes", "toponym_prefixes")},
-                 "anchor": list(spec["anchor"])} for rid, spec in REGIONS.items()],
+                 "anchor": list(spec["anchor"]),
+                 "hull": region_hulls.get(rid)} for rid, spec in REGIONS.items()],
     "waterways": [{**w, "points": [list(p) for p in w["points"]]} for w in WATERWAYS],
     "districts": [{"id": did, **d} for did, d in sorted(districts.items())],
     "settlements": settlements,

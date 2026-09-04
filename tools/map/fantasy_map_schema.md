@@ -36,8 +36,12 @@ if the painted map puts the mountains elsewhere, re-anchor using `region_uv` (be
 ids referenced nowhere else; they exist so the background painter and the data layer can agree
 on where water is. Redraw freely.
 
-**districts[]** — `id` (`region:dN` or `region:outskirts`), `region`, `members` (canonical
-artist names), `seat`, `suggested_name`. Districts are the neighborhood layer: label them on
+**districts[]** — `id` (`region:dN`, `region:outskirts`, or `outer_isles:pN`), `region`,
+`members` (canonical artist names), `seat`, `suggested_name`. Outer Isles districts are
+"peg crews" — genre-family buckets (celtic, tribute, metal, pop, far) chunked to island
+size, since the taste graph barely connects the outliers — and carry two extra fields:
+`island_center` [x,y] and `island_r`, the island each crew stands on. The overlay can
+draw peg islands from these directly; the heightmap emitter already does. Districts are the neighborhood layer: label them on
 hover, draw soft hulls around their members, or ignore them entirely at low zoom.
 
 **settlements[]** — one per artist:

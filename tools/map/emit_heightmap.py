@@ -104,7 +104,7 @@ for st in d["settlements"]:
     if st["region"] == "outer_isles":
         continue          # isle settlements stand on islands drawn from their districts
     x, y = st["xy"]
-    r = 34 if st["size"] in ("capital", "city") else 25
+    r = {"capital": 34, "city": 34, "town": 24, "village": 20}.get(st["size"], 15)
     dist = np.hypot(kx - x, ky - y)
     keep_low = np.maximum(keep_low, np.clip(1 - dist / r, 0, 1))
 keep = np.asarray(Image.fromarray((keep_low * 255).astype(np.uint8))
@@ -113,79 +113,89 @@ keep = np.asarray(Image.fromarray((keep * 255).astype(np.uint8))
                   .filter(ImageFilter.GaussianBlur(4 * SCALE))).astype(np.float64) / 255
 
 # river corridor is land, except the mouth zone where the bay may flood
-big_path = meander([tuple(p) for p in ww["the_bigmuddy"]["points"]] + [(660, 700)], rkey=0)
+big_path = meander([tuple(p) for p in ww["the_bigmuddy"]["points"]] + [(648, 665)], rkey=0)
 creek_path = meander([tuple(p) for p in ww["slowhand_creek"]["points"]], wobble=10, rkey=1)
+parade = meander([tuple(p) for p in ww["the_parade"]["points"]] + [(636, 618)], wobble=8, rkey=2)
 big_d = dist_to_polyline(big_path)
 creek_d = dist_to_polyline(creek_path)
-river_keep = np.clip(1 - np.minimum(big_d, creek_d) / 40, 0, 1)
-mouth_zone = bump(656, 628, 96, 86, 1.15)
+parade_d0 = dist_to_polyline(parade)
+river_keep = np.clip(1 - np.minimum(np.minimum(big_d, creek_d), parade_d0) / 40, 0, 1)
+mouth_zone = bump(648, 600, 92, 84, 1.15)
 keep = np.maximum(keep, river_keep * (1 - np.clip(mouth_zone * 1.8, 0, 1)))
 
 # ---------------------------------------------------------------- sea potential
 rngL = np.random.default_rng(SEED + 3)
-coast_noise = fbm((H, W), (3, 4), 5, rngL) - 0.5           # continental wander
+coast_noise = fbm((H, W), (3, 4), 5, rngL) - 0.5
 fjord_noise = fbm((H, W), (17, 4), 5, np.random.default_rng(SEED + 11)) - 0.5
-# shear the fjord field so its fingers run SW->NE, toward the forest lake
 shift = ((-0.85 * xx) % H).astype(int)
 rows = (np.arange(H)[:, None] + shift) % H
 fjord_diag = fjord_noise[rows, np.arange(W)[None, :]]
 
-# the central-north coastal range: a short chain whose north face is the coast
-ridge_n = fbm((H, W), (14, 20), 5, np.random.default_rng(SEED + 14), gain=0.55)
-ridge_n = (1 - abs(2 * ridge_n - 1)) ** 1.5
-coast_chain = np.clip(bump(365, 96, 62, 27, 1.2, rot=0.08)
-                      + bump(455, 84, 64, 26, 1.2, rot=-0.05)
-                      + bump(538, 94, 58, 25, 1.2, rot=0.1), 0, 1)
+# the guitar silhouette: a soft landness field the coastline noise then roughens.
+AXIS = np.deg2rad(-38)
+ua, va = np.cos(AXIS), np.sin(AXIS)          # along-axis unit (toward headstock)
+HEEL = (645, 325)
+def circ(cx, cy, r):
+    # plateau disc: solid land to ~80% radius, soft shoulder to the edge
+    rr = np.hypot(ux - cx, uy - cy) / r
+    return np.clip((1 - rr) * 5.5, 0, 1)
+def on_axis(t, off=0.0):
+    return (HEEL[0] + ua * t - va * off, HEEL[1] + va * t + ua * off)
 
-sea = np.zeros((H, W))
-smoothg = np.clip((ux - 770) / 150, 0, 1); smoothg = smoothg * smoothg * (3 - 2 * smoothg)
-sea += np.clip((46 + 100 * smoothg - uy) / 26, 0, 4) * 0.9   # north reach + NE gulf
-sea += np.clip((uy - 622) / 26, 0, 4) * 0.9                  # southern sound
-sea += np.clip((66 - ux) / 30, 0, 4) * 0.7                   # west water base
-sea += (np.clip((250 - ux) / 250, 0, 1) ** 0.8
-        * np.clip((uy - 100) / 220, 0, 1)
-        * np.clip(fjord_diag * 4.2, 0, 3.4))                  # SW->NE fjord fingers
-sea += bump(55, 65, 160, 140, 1.15) * 1.5                     # the northwest sea
-# the central sound: the north sea reaches down to the chain's north face
-sea += bump(452, 52, 200, 66, 1.1) * 1.35
-# inroads flanking the chain's ends
-inroad_noise = np.clip((fbm((H, W), (8, 12), 4, np.random.default_rng(SEED + 15)) - 0.35) * 3.0, 0, 2)
-sea += (bump(295, 138, 82, 78, 1.2) + bump(612, 132, 84, 74, 1.2)) * inroad_noise * 1.6
-sea -= coast_chain * 2.6                                      # the chain holds the coast
-# northeast: the sea wraps the massif's north end into a promontory
-sea += bump(1005, 155, 165, 195, 1.1) * 2.0                  # pressing from the east
-sea += np.clip((ux - (918 - np.clip(uy - 40, 0, 260) * 0.22)) / 28, 0, 3) * 0.9
-# east coast cut: the shore slants southwest toward the bay, with bites
-sea += np.clip((ux - (952 - np.clip(uy - 280, 0, 340) * 0.45)) / 34, 0, 3) * 0.75
-sea += mouth_zone * 1.9                                       # invite the bay in
-sea += coast_noise * 2.3                                      # ragged everything
-# the sparse southwest: extra bites between delta settlements
-sea += bump(190, 592, 160, 95, 1.3) * np.clip((fbm((H, W), (10, 14), 4,
-        np.random.default_rng(SEED + 12)) - 0.42) * 3.0, 0, 2) * 0.9
+nx1, ny1 = on_axis(80); nxm, nym = on_axis(175); nx2, ny2 = on_axis(292)
+neck_lo = np.clip((1 - dist_to_polyline([(HEEL[0], HEEL[1]), (nx1, ny1), (nxm, nym)]) / 88) * 4.0, 0, 1)
+neck_hi = np.clip((1 - dist_to_polyline([(on_axis(120)), (nxm, nym), (nx2, ny2)]) / 58) * 4.0, 0, 1)
+neck = np.maximum(neck_lo, neck_hi)
+c_up = on_axis(-105); c_wa = on_axis(-205); c_lo = on_axis(-318)
+land_f = np.maximum.reduce([
+    neck,
+    circ(*c_up, 168),          # upper bout
+    circ(*c_wa, 126),          # the waist
+    circ(*c_lo, 196),          # lower bout
+    circ(598, 492, 138),       # heel-to-bout seam lobe (the bay bites into this)
+])
+sea = np.clip(0.55 - land_f, -1, 1) * 3.4          # outside the silhouette: sea
+sea += coast_noise * 1.7                            # ragged everything
+# fjord fingers cut the waist from the northwest
+sea += (np.clip((c_wa[0] + 130 - ux) / 300, 0, 1) ** 0.8
+        * np.clip((uy - 160) / 220, 0, 1)
+        * np.clip(fjord_diag * 4.4, 0, 3.4))
+sea += mouth_zone * 1.9                             # the bay bites the bottom curve
+# east of the bay: the seam coast collapses into deep diagonal fjords, no promontory
+sea += bump(800, 548, 66, 80, 1.2) * 1.30
+sea += (np.clip((ux - 655) / 170, 0, 1) * np.clip((uy - 420) / 160, 0, 1)
+        * np.clip((820 - ux) / 60, 0, 1) * np.clip(fjord_diag * 3.4, 0, 2.8))
+# channel cuts through the southwest islet cluster (asymmetric triplet, not one mass)
+sea += bump(181, 613, 8, 34, 1.3, rot=0.85) * 2.6
+sea += bump(208, 634, 7, 26, 1.3, rot=0.95) * 2.6
+# barrier-lagoon bites along the bottom-curve tidewater
+sea += bump(300, 616, 150, 70, 1.3) * np.clip((fbm((H, W), (10, 14), 4,
+        np.random.default_rng(SEED + 12)) - 0.42) * 3.0, 0, 2) * 0.8
 
 sea -= keep * 4.0                                           # inhabited ground wins
 water = sea > 0.55
 
 # spit ridges flanking the mouth shape the flood into a sheltered bay
-spit_w = bump(568, 602, 58, 14, 1.5, rot=0.62) * 0.20
-spit_e = bump(748, 596, 58, 14, 1.5, rot=-0.55) * 0.20
-# one deterministic assist: the harbor floods properly between the spits
-harbor = (bump(654, 622, 64, 50, 1.05) + 0.14 * (fbm((H, W), (12, 16), 3,
+spit_w = bump(590, 598, 52, 13, 1.5, rot=0.52) * 0.10
+spit_e = np.zeros_like(spit_w)   # the seam coast itself is the bay's east shore
+# one deterministic assist: the harbor floods properly behind the arm
+harbor = (bump(642, 592, 58, 48, 1.05) + 0.14 * (fbm((H, W), (12, 16), 3,
           np.random.default_rng(SEED + 13)) - 0.5)) > 0.30
-water |= harbor & (uy > 584)
-water &= ~((spit_w > 0.10) | (spit_e > 0.10))
+water |= harbor & (uy > 556)
+water &= ~(spit_w > 0.055)
 
 # ---------------------------------------------------------------- elevation
 elev = np.full((H, W), 0.30)
 elev += 0.09 * (fbm((H, W), (6, 8), 5, np.random.default_rng(SEED)) - 0.5)
 
-AXIS = np.deg2rad(-38)
 ridge = fbm((H, W), (14, 20), 6, np.random.default_rng(SEED + 1), gain=0.55)
 ridge = (1 - abs(2 * ridge - 1)) ** 1.5
-spine = np.clip(bump(700, 300, 150, 85, 1.2, AXIS)
-                + bump(790, 205, 150, 85, 1.15, AXIS)
-                + bump(870, 110, 140, 80, 1.1, AXIS), 0, 1.15)
-elev += spine * (0.26 + 0.46 * ridge)
+spine = np.clip(0.88 * bump(695, 290, 140, 72, 1.2, AXIS)
+                + bump(788, 205, 145, 70, 1.15, AXIS)
+                + bump(866, 118, 135, 68, 1.1, AXIS), 0, 1.15)
+elev += spine * (0.20 + 0.35 * ridge)
+sx2, sy2 = on_axis(258)
+elev += bump(sx2, sy2, 56, 38, 1.5, AXIS) * (0.10 + 0.08 * ridge)   # the headstock summit
 
 cx, cy, rx, ry = R("slide_foothills")
 base = bump(cx, cy, rx * 1.25, ry * 1.3, 1.1)
@@ -193,6 +203,11 @@ tn = fbm((H, W), (16, 22), 4, np.random.default_rng(SEED + 8))
 shelf = np.round((base + 0.35 * (tn - 0.5)) * 5) / 5 * 0.16 * (base > 0.05)
 elev += np.clip(shelf, 0, None) + base * 0.07 * ridge
 
+# the shoulder ridge: a short chain on the upper bout's north shoulder
+ridge_n = fbm((H, W), (14, 20), 5, np.random.default_rng(SEED + 14), gain=0.55)
+ridge_n = (1 - abs(2 * ridge_n - 1)) ** 1.5
+coast_chain = np.clip(bump(468, 232, 60, 24, 1.2, rot=0.30)
+                      + bump(552, 208, 60, 24, 1.2, rot=0.34), 0, 1)
 elev_chain = coast_chain * (0.10 + 0.16 * ridge_n)
 
 cx, cy, rx, ry = R("quiet_woods")
@@ -208,13 +223,23 @@ for rid in ("delta_coast", "river_port"):
 elev += spit_w + spit_e + elev_chain
 
 # river valleys
-for path, wmax, depth in ((big_path, 26, 0.13), (creek_path, 15, 0.09)):
-    dist = big_d if path is big_path else creek_d
+parade_d = parade_d0
+for path, wmax, depth in ((big_path, 30, 0.17), (creek_path, 15, 0.09), (parade, 13, 0.10)):
+    dist = big_d if path is big_path else (creek_d if path is creek_path else parade_d)
     prog = np.clip((uy - path[0][1]) / max(path[-1][1] - path[0][1], 1), 0, 1)
-    elev -= np.clip(1 - dist / (8 + wmax * prog), 0, 1) ** 1.7 * depth
+    grad = 0.55 + 0.45 * prog          # valley floor drops downstream
+    elev -= np.clip(1 - dist / (8 + wmax * prog), 0, 1) ** 1.7 * depth * grad
 
-# forest lake at the creek source
-lake = bump(246, 256, 17, 12, 1.3) > 0.25
+# a low divide west of the confluence, so drainage cannot escape across the plains
+elev += bump(500, 430, 85, 100, 1.4) * 0.04
+
+# lakes: the forest (pickup) lake at the creek's source, and the knob pair
+lx, ly = ww["the_forest_lake"]["points"][0]
+lake = bump(lx, ly, 17, 12, 1.3) > 0.25
+for kx2, ky2 in ww["the_knob_lakes"]["points"]:
+    lake |= bump(kx2, ky2, 11, 9, 1.3) > 0.3
+for sx3, sy3 in ww["the_shoulder_lakes"]["points"]:
+    lake |= bump(sx3, sy3, 30, 20, 1.3) > 0.3
 
 # keep carved valleys above sea level away from the coast
 shore_d = np.asarray(Image.fromarray((~water).astype(np.uint8) * 255)
@@ -232,21 +257,17 @@ elev = np.where(water | lake, np.minimum(soft, SEA_T - 0.04), np.maximum(soft, S
 
 # the Outer Isles: a fuller chain continuing the range line through the NE gulf
 isl_rng = np.random.default_rng(SEED + 4)
-S_by_name = {st["name"]: st for st in d["settlements"]}
 isle_districts = [dd for dd in d["districts"] if dd["region"] == "outer_isles"]
 islands = []
 for dd in isle_districts:
-    pts = [S_by_name[m]["xy"] for m in dd["members"] if m in S_by_name]
-    if not pts:
-        continue
-    px = sum(p[0] for p in pts) / len(pts)
-    py = max(sum(p[1] for p in pts) / len(pts), 14)
-    spread = max(max(abs(p[0] - px) for p in pts), max(abs(p[1] - py) for p in pts), 8)
-    islands.append((px, py, min(spread + 14, 46), min(spread * 0.8 + 11, 34)))
+    ic = dd.get("island_center")
+    if ic:
+        islands.append((ic[0], ic[1], dd.get("island_r", 12) + 6, dd.get("island_r", 12) + 4))
+for _ in range(2):   # uninhabited skerries off the headstock tip
+    islands.append((915 + isl_rng.random() * 60, 30 + isl_rng.random() * 55,
+                    6 + 5 * isl_rng.random(), 5 + 4 * isl_rng.random()))
+islands.append((655, 612, 12, 9))   # the harbor island, inside the bay
 islands.append((72, 84, 34, 24))    # the undiscovered northwest island
-for _ in range(3):   # uninhabited skerries continuing the line
-    islands.append((848 + isl_rng.random() * 140, 16 + isl_rng.random() * 110,
-                    7 + 6 * isl_rng.random(), 5 + 5 * isl_rng.random()))
 for px, py, rxi, ryi in islands:
     isl = bump(px, py, rxi, ryi, 1.3)
     lift = np.where(isl > 0.04, SEA_T + 0.02 + isl * (0.13 + 0.09 * isl_rng.random()), 0.0)

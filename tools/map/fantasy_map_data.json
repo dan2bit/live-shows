@@ -18,11 +18,49 @@
    "label": "The Delta Coast",
    "terrain": "coastal tidewater — estuary, levees, shotgun porches",
    "anchor": [
-    300,
-    560
+    308,
+    598
    ],
-   "rx": 245,
-   "ry": 92
+   "rx": 172,
+   "ry": 52,
+   "hull": [
+    [
+     222.3,
+     592.7
+    ],
+    [
+     238.2,
+     553.9
+    ],
+    [
+     244.2,
+     541.1
+    ],
+    [
+     450.2,
+     607.5
+    ],
+    [
+     448.0,
+     627.9
+    ],
+    [
+     410.6,
+     641.4
+    ],
+    [
+     290.1,
+     676.9
+    ],
+    [
+     258.8,
+     644.9
+    ],
+    [
+     250.5,
+     634.0
+    ]
+   ]
   },
   {
    "id": "amplified_range",
@@ -33,51 +71,281 @@
     205
    ],
    "rx": 175,
-   "ry": 125
+   "ry": 125,
+   "hull": [
+    [
+     586.8,
+     328.6
+    ],
+    [
+     603.6,
+     289.4
+    ],
+    [
+     611.3,
+     272.5
+    ],
+    [
+     706.3,
+     188.3
+    ],
+    [
+     847.8,
+     149.0
+    ],
+    [
+     879.3,
+     171.6
+    ],
+    [
+     753.6,
+     318.0
+    ],
+    [
+     662.0,
+     383.3
+    ],
+    [
+     651.0,
+     388.9
+    ],
+    [
+     608.2,
+     378.9
+    ],
+    [
+     589.1,
+     346.9
+    ]
+   ]
   },
   {
    "id": "slide_foothills",
    "label": "The Steel Foothills",
    "terrain": "foothills - slide scarps, steel terraces, bottleneck switchbacks",
    "anchor": [
-    650,
-    292
+    648,
+    398
    ],
-   "rx": 102,
-   "ry": 74
+   "rx": 58,
+   "ry": 118,
+   "hull": [
+    [
+     586.2,
+     480.6
+    ],
+    [
+     593.7,
+     365.8
+    ],
+    [
+     620.7,
+     323.3
+    ],
+    [
+     676.4,
+     324.5
+    ],
+    [
+     695.2,
+     328.2
+    ],
+    [
+     709.7,
+     456.3
+    ],
+    [
+     675.7,
+     474.4
+    ]
+   ]
   },
   {
    "id": "heartland",
    "label": "The Heartland",
    "terrain": "farmland plains — wheat, gravel roads, grain towers",
    "anchor": [
-    515,
-    375
+    420,
+    480
    ],
-   "rx": 235,
-   "ry": 115
+   "rx": 190,
+   "ry": 118,
+   "hull": [
+    [
+     235.9,
+     501.3
+    ],
+    [
+     246.1,
+     437.0
+    ],
+    [
+     279.2,
+     402.0
+    ],
+    [
+     366.6,
+     364.2
+    ],
+    [
+     477.8,
+     364.2
+    ],
+    [
+     536.8,
+     386.1
+    ],
+    [
+     596.4,
+     441.1
+    ],
+    [
+     605.8,
+     485.8
+    ],
+    [
+     578.4,
+     544.5
+    ],
+    [
+     486.5,
+     606.6
+    ],
+    [
+     331.0,
+     586.6
+    ]
+   ]
   },
   {
    "id": "river_port",
    "label": "Second Line Riverlands",
    "terrain": "riverside port — wharves, brass balconies, paddle steam",
    "anchor": [
-    668,
-    555
+    598,
+    545
    ],
-   "rx": 150,
-   "ry": 82
+   "rx": 125,
+   "ry": 78,
+   "hull": [
+    [
+     473.4,
+     525.1
+    ],
+    [
+     477.4,
+     512.9
+    ],
+    [
+     501.0,
+     493.2
+    ],
+    [
+     511.3,
+     486.7
+    ],
+    [
+     521.1,
+     480.6
+    ],
+    [
+     535.1,
+     473.4
+    ],
+    [
+     567.2,
+     461.8
+    ],
+    [
+     586.0,
+     458.2
+    ],
+    [
+     710.8,
+     461.8
+    ],
+    [
+     732.3,
+     490.0
+    ],
+    [
+     731.7,
+     505.2
+    ],
+    [
+     725.0,
+     535.7
+    ],
+    [
+     505.9,
+     651.0
+    ]
+   ]
   },
   {
    "id": "quiet_woods",
    "label": "The Quiet Woods",
    "terrain": "forest and lakes — pine shade, cabin lights, still water",
    "anchor": [
-    230,
-    200
+    480,
+    318
    ],
-   "rx": 195,
-   "ry": 125
+   "rx": 172,
+   "ry": 112,
+   "hull": [
+    [
+     330.7,
+     373.0
+    ],
+    [
+     455.8,
+     262.6
+    ],
+    [
+     501.2,
+     242.0
+    ],
+    [
+     527.1,
+     233.4
+    ],
+    [
+     541.1,
+     230.9
+    ],
+    [
+     569.4,
+     230.0
+    ],
+    [
+     608.8,
+     240.9
+    ],
+    [
+     631.6,
+     272.8
+    ],
+    [
+     651.6,
+     307.0
+    ],
+    [
+     657.8,
+     322.9
+    ],
+    [
+     663.2,
+     400.2
+    ],
+    [
+     589.9,
+     441.3
+    ],
+    [
+     418.6,
+     437.2
+    ]
+   ]
   },
   {
    "id": "outer_isles",
@@ -88,7 +356,45 @@
     62
    ],
    "rx": 88,
-   "ry": 48
+   "ry": 48,
+   "hull": [
+    [
+     748.5,
+     72.6
+    ],
+    [
+     790.0,
+     25.6
+    ],
+    [
+     794.2,
+     23.3
+    ],
+    [
+     855.6,
+     0.8
+    ],
+    [
+     995.7,
+     203.1
+    ],
+    [
+     974.9,
+     253.9
+    ],
+    [
+     923.5,
+     278.9
+    ],
+    [
+     917.5,
+     277.4
+    ],
+    [
+     914.1,
+     274.3
+    ]
+   ]
   }
  ],
  "waterways": [
@@ -97,62 +403,110 @@
    "label": "The Big Muddy",
    "points": [
     [
-     838,
-     128
+     672,
+     306
     ],
     [
-     762,
-     248
+     640,
+     348
     ],
     [
-     662,
-     328
+     618,
+     422
     ],
     [
-     582,
-     428
+     612,
+     478
     ],
     [
-     602,
-     518
+     628,
+     546
     ],
     [
      642,
-     588
-    ],
-    [
-     656,
-     648
+     606
     ]
    ],
-   "note": "rises where the massif meets the north coast, runs the range's southwest slope past the Steel Foothills, and spills into the sheltered bay"
+   "note": "rises at the heel where the massif's short torrents gather below the Steel Foothills, then runs the body's southeast seam to the bay that bites the bottom curve"
   },
   {
    "id": "slowhand_creek",
    "label": "Slowhand Creek",
    "points": [
     [
-     246,
-     256
+     585,
+     372
     ],
     [
-     322,
-     332
+     600,
+     424
     ],
     [
-     422,
-     402
-    ],
-    [
-     512,
-     438
-    ],
-    [
-     582,
-     428
+     612,
+     470
     ]
    ],
-   "note": "rises from a forest lake in the Quiet Woods and joins the Big Muddy above the foothill reach"
+   "note": "short run out of the forest lake on the upper bout, joining the Big Muddy at the seam"
+  },
+  {
+   "id": "the_forest_lake",
+   "label": "The Forest Lake",
+   "points": [
+    [
+     585,
+     372
+    ]
+   ],
+   "note": "lake in the Quiet Woods at the creek's source; sits where a neck pickup would"
+  },
+  {
+   "id": "the_shoulder_lakes",
+   "label": "The Shoulder Lakes",
+   "points": [
+    [
+     430,
+     246
+    ],
+    [
+     358,
+     318
+    ]
+   ],
+   "note": "the two big lakes on the upper bout's shoulder; each carries a sizable Quiet Woods settlement on its shore"
+  },
+  {
+   "id": "the_parade",
+   "label": "The Parade",
+   "points": [
+    [
+     505,
+     560
+    ],
+    [
+     562,
+     584
+    ],
+    [
+     614,
+     600
+    ]
+   ],
+   "note": "the second river into the bay, draining the knob-lake country along the lower bout; Second Line's twin waterfront with the Big Muddy"
+  },
+  {
+   "id": "the_knob_lakes",
+   "label": "The Knob Lakes",
+   "points": [
+    [
+     468,
+     540
+    ],
+    [
+     505,
+     560
+    ]
+   ],
+   "note": "two small lakes on the lower bout, roughly where the knobs would sit"
   },
   {
    "id": "the_sound",
@@ -163,19 +517,19 @@
      690
     ],
     [
-     240,
-     665
+     320,
+     678
     ],
     [
-     520,
-     672
+     640,
+     685
     ],
     [
      1000,
-     680
+     682
     ]
    ],
-   "note": "the southern sea; the sheltered bay opens off it at the Big Muddy mouth"
+   "note": "the southern sea below the body's bottom curve; the bay opens off it"
   },
   {
    "id": "the_north_reach",
@@ -183,87 +537,68 @@
    "points": [
     [
      0,
-     30
+     60
     ],
     [
      400,
-     42
+     90
     ],
     [
-     760,
-     36
+     700,
+     60
     ],
     [
      1000,
-     48
+     40
     ]
    ],
-   "note": "the northern sea; the massif runs to its shore and the Outer Isles continue the range line offshore"
-  },
-  {
-   "id": "the_central_sound",
-   "label": "The Chainwater Sound",
-   "points": [
-    [
-     300,
-     70
-    ],
-    [
-     452,
-     58
-    ],
-    [
-     610,
-     72
-    ]
-   ],
-   "note": "the north sea's central inroad; a short coastal range (the Chain) holds its south shore"
+   "note": "the northern sea flanking the neck; the Outer Isles are the pegs off the headstock"
   },
   {
    "id": "the_west_water",
    "label": "The West Water",
    "points": [
     [
-     30,
-     60
+     60,
+     120
     ],
     [
-     34,
-     240
+     70,
+     300
     ],
     [
-     28,
-     420
+     55,
+     480
     ],
     [
-     40,
-     600
+     75,
+     620
     ]
    ],
-   "note": "fjord coast off the Quiet Woods; ragged fingers, no settlements"
+   "note": "open sea west of the body; fjord fingers cut the waist on the northwest side"
   },
   {
    "id": "the_east_shore",
    "label": "The East Shore",
    "points": [
     [
-     965,
-     150
+     940,
+     200
     ],
     [
-     952,
-     340
+     880,
+     360
     ],
     [
-     958,
-     520
+     800,
+     480
     ],
     [
-     948,
-     640
+     740,
+     570
     ]
    ],
-   "note": "eastern shore below the massif's cape; the range is a coastal cordillera"
+   "note": "the sea southeast of the neck; its cut toward the bay defines the body's seam side"
   }
  ],
  "districts": [
@@ -272,73 +607,59 @@
    "region": "amplified_range",
    "members": [
     "Alabama Shakes",
-    "Ally Venable Band",
     "Buddy Guy",
-    "Christone 'Kingfish' Ingram",
-    "Dylan Triplett",
     "Eric Johanson",
     "Gary Clark Jr.",
-    "Jackie Venson",
-    "Kenny Wayne Shepherd",
-    "Samantha Fish",
+    "Grace Bowers",
+    "Orianthi",
     "Samantha Fish & Jesse Dayton",
-    "Steve Miller Band"
+    "Steve Miller Band",
+    "Taj Mahal",
+    "TajMo: The Taj Mahal & Keb' Mo' Band"
    ],
-   "seat": "Christone 'Kingfish' Ingram",
-   "suggested_name": "Ingram Pass"
+   "seat": "Gary Clark Jr.",
+   "suggested_name": "Jr Pass"
   },
   {
    "id": "amplified_range:d10",
-   "region": "amplified_range",
-   "members": [
-    "Peter Gabriel",
-    "Roger Waters"
-   ],
-   "seat": "Peter Gabriel",
-   "suggested_name": "Gabriel Crag"
-  },
-  {
-   "id": "amplified_range:d11",
-   "region": "amplified_range",
-   "members": [
-    "Gabe Stillman",
-    "Tommy Castro & the Painkillers"
-   ],
-   "seat": "Gabe Stillman",
-   "suggested_name": "Stillman Pass"
-  },
-  {
-   "id": "amplified_range:d12",
    "region": "amplified_range",
    "members": [
     "Eric Clapton",
     "Mark Knopfler"
    ],
    "seat": "Eric Clapton",
-   "suggested_name": "Clapton Summit"
+   "suggested_name": "Clapton Crag"
   },
   {
-   "id": "amplified_range:d13",
-   "region": "amplified_range",
-   "members": [
-    "Sadia Bangura",
-    "Southern Avenue"
-   ],
-   "seat": "Southern Avenue",
-   "suggested_name": "Avenue Overdrive"
-  },
-  {
-   "id": "amplified_range:d14",
+   "id": "amplified_range:d11",
    "region": "amplified_range",
    "members": [
     "Pixies",
     "Violent Femmes"
    ],
    "seat": "Violent Femmes",
-   "suggested_name": "Femmes Ridge"
+   "suggested_name": "Femmes Pass"
   },
   {
    "id": "amplified_range:d2",
+   "region": "amplified_range",
+   "members": [
+    "Ally Venable Band",
+    "Christone 'Kingfish' Ingram",
+    "Dylan Triplett",
+    "GA-20",
+    "Jackie Venson",
+    "Joanna Connor",
+    "Joanne Shaw Taylor",
+    "Kenny Wayne Shepherd",
+    "Samantha Fish",
+    "Sue Foley"
+   ],
+   "seat": "Joanne Shaw Taylor",
+   "suggested_name": "Taylor Summit"
+  },
+  {
+   "id": "amplified_range:d3",
    "region": "amplified_range",
    "members": [
     "Artur Menezes",
@@ -352,24 +673,7 @@
     "The Fabulous Thunderbirds"
    ],
    "seat": "Eric Gales",
-   "suggested_name": "Gales Summit"
-  },
-  {
-   "id": "amplified_range:d3",
-   "region": "amplified_range",
-   "members": [
-    "Billy Gibbons",
-    "Bywater Call",
-    "Eddie 9V",
-    "GA-20",
-    "Joanna Connor",
-    "Joanne Shaw Taylor",
-    "Joe Bonamassa",
-    "Sue Foley",
-    "ZZ Top"
-   ],
-   "seat": "Joanne Shaw Taylor",
-   "suggested_name": "Taylor Overdrive"
+   "suggested_name": "Gales Overdrive"
   },
   {
    "id": "amplified_range:d4",
@@ -406,12 +710,15 @@
    "id": "amplified_range:d6",
    "region": "amplified_range",
    "members": [
-    "Adia Victoria",
-    "Buffalo Nichols",
-    "Marcus King"
+    "Billy Gibbons",
+    "Bywater Call",
+    "Eddie 9V",
+    "Joe Bonamassa",
+    "Marcus King",
+    "ZZ Top"
    ],
-   "seat": "Marcus King",
-   "suggested_name": "King Pass"
+   "seat": "Joe Bonamassa",
+   "suggested_name": "Bonamassa Pass"
   },
   {
    "id": "amplified_range:d7",
@@ -428,26 +735,27 @@
    "id": "amplified_range:d8",
    "region": "amplified_range",
    "members": [
-    "Taj Mahal",
-    "TajMo: The Taj Mahal & Keb' Mo' Band"
+    "Peter Gabriel",
+    "Roger Waters"
    ],
-   "seat": "Taj Mahal",
-   "suggested_name": "Mahal Overdrive"
+   "seat": "Peter Gabriel",
+   "suggested_name": "Gabriel Overdrive"
   },
   {
    "id": "amplified_range:d9",
    "region": "amplified_range",
    "members": [
-    "Grace Bowers",
-    "Orianthi"
+    "Gabe Stillman",
+    "Tommy Castro & the Painkillers"
    ],
-   "seat": "Grace Bowers",
-   "suggested_name": "Bowers Ridge"
+   "seat": "Gabe Stillman",
+   "suggested_name": "Stillman Ridge"
   },
   {
    "id": "amplified_range:outskirts",
    "region": "amplified_range",
    "members": [
+    "Adia Victoria",
     "BEAT (Belew/Vai/Levin/Bozzio)",
     "Barenaked Ladies",
     "Billy Sheehan",
@@ -477,16 +785,30 @@
    "id": "delta_coast:d1",
    "region": "delta_coast",
    "members": [
+    "Cedric Burnside",
+    "Keb' Mo'",
+    "Muireann Bradley",
+    "Nat Myers",
+    "Ruthie Foster",
+    "Shemekia Copeland"
+   ],
+   "seat": "Shemekia Copeland",
+   "suggested_name": "Copeland Quay"
+  },
+  {
+   "id": "delta_coast:d2",
+   "region": "delta_coast",
+   "members": [
     "Ana Popović",
     "Carly Harvey",
     "Danielle Nicole",
     "Piper & The Hard Times"
    ],
    "seat": "Ana Popović",
-   "suggested_name": "Popovi Quay"
+   "suggested_name": "Popovi Levee"
   },
   {
-   "id": "delta_coast:d2",
+   "id": "delta_coast:d3",
    "region": "delta_coast",
    "members": [
     "Chris Cain",
@@ -494,38 +816,27 @@
     "Mathias Lattin"
    ],
    "seat": "D.K. Harrell",
-   "suggested_name": "Harrell Levee"
-  },
-  {
-   "id": "delta_coast:d3",
-   "region": "delta_coast",
-   "members": [
-    "Cedric Burnside",
-    "Muireann Bradley",
-    "Shemekia Copeland"
-   ],
-   "seat": "Shemekia Copeland",
-   "suggested_name": "Copeland Landing"
+   "suggested_name": "Harrell Landing"
   },
   {
    "id": "delta_coast:d4",
-   "region": "delta_coast",
-   "members": [
-    "Keb' Mo'",
-    "Nat Myers"
-   ],
-   "seat": "Nat Myers",
-   "suggested_name": "Myers Shoals"
-  },
-  {
-   "id": "delta_coast:d5",
    "region": "delta_coast",
    "members": [
     "Kat Riggins",
     "Sugaray Rayford"
    ],
    "seat": "Kat Riggins",
-   "suggested_name": "Riggins Haven"
+   "suggested_name": "Riggins Shoals"
+  },
+  {
+   "id": "delta_coast:d5",
+   "region": "delta_coast",
+   "members": [
+    "Sadia Bangura",
+    "Southern Avenue"
+   ],
+   "seat": "Southern Avenue",
+   "suggested_name": "Avenue Haven"
   },
   {
    "id": "delta_coast:outskirts",
@@ -533,6 +844,7 @@
    "members": [
     "Amythyst Kiah",
     "Anthony Rosano and The Conqueroos",
+    "Buffalo Nichols",
     "Evan Nicole Bell",
     "John Nemeth",
     "John Primer",
@@ -658,59 +970,113 @@
    "suggested_name": "The Heartland Outskirts"
   },
   {
-   "id": "outer_isles:d1",
+   "id": "outer_isles:p1",
    "region": "outer_isles",
    "members": [
     "Enter the Haggis",
-    "Haggis X-1",
-    "House of Hamill"
-   ],
-   "seat": "Enter the Haggis",
-   "suggested_name": "Haggis Skerry"
-  },
-  {
-   "id": "outer_isles:d2",
-   "region": "outer_isles",
-   "members": [
     "Gaelic Storm",
+    "Haggis X-1",
+    "House of Hamill",
+    "Hozier",
     "Young Dubliners"
    ],
-   "seat": "Gaelic Storm",
-   "suggested_name": "Storm Sound"
+   "seat": "Enter the Haggis",
+   "suggested_name": "Haggis Skerry",
+   "island_center": [
+    767.4,
+    82.1
+   ],
+   "island_r": 12.4
   },
   {
-   "id": "outer_isles:outskirts",
+   "id": "outer_isles:p2",
    "region": "outer_isles",
    "members": [
-    "AJR",
     "Allman Betts Family Revival: A Decade of Revival",
     "Angélique Kidjo",
     "Chris Jacobs & Friends",
     "Dale Watson & His Lonestars",
     "DuPont Brass",
-    "George Clinton & Parliament-Funkadelic",
-    "Hayley Williams",
+    "George Clinton & Parliament-Funkadelic"
+   ],
+   "seat": "Allman Betts Family Revival: A Decade of Revival",
+   "suggested_name": "Revival Sound",
+   "island_center": [
+    915.0,
+    260
+   ],
+   "island_r": 12.4
+  },
+  {
+   "id": "outer_isles:p3",
+   "region": "outer_isles",
+   "members": [
     "Honeyfunk",
-    "Hozier",
     "Jessie's Girl",
     "Juliet Lloyd",
-    "Kate Davis",
     "LL Cool J",
     "Līve",
-    "Marshall Crenshaw",
-    "Muna",
-    "Nas",
+    "Nas"
+   ],
+   "seat": "Honeyfunk",
+   "suggested_name": "Honeyfunk Rock",
+   "island_center": [
+    802.6,
+    39.4
+   ],
+   "island_r": 10.2
+  },
+  {
+   "id": "outer_isles:p4",
+   "region": "outer_isles",
+   "members": [
     "New York's Finest",
-    "P!nk",
     "Taj Farrant",
     "Talia Segal",
     "Victor Wooten & The Wooten Brothers",
-    "Zara Larsson",
-    "Zara Phillips",
-    "kitchen"
+    "Zara Phillips"
    ],
    "seat": "New York's Finest",
-   "suggested_name": "Finest Isle"
+   "suggested_name": "Finest Isle",
+   "island_center": [
+    857.5,
+    22.0
+   ],
+   "island_r": 13.6
+  },
+  {
+   "id": "outer_isles:p5",
+   "region": "outer_isles",
+   "members": [
+    "AJR",
+    "Hayley Williams",
+    "Kate Davis",
+    "Marshall Crenshaw",
+    "Muna",
+    "P!nk"
+   ],
+   "seat": "Kate Davis",
+   "suggested_name": "Davis Skerry",
+   "island_center": [
+    961.8,
+    239.9
+   ],
+   "island_r": 10.2
+  },
+  {
+   "id": "outer_isles:p6",
+   "region": "outer_isles",
+   "members": [
+    "Zara Larsson",
+    "kitchen"
+   ],
+   "seat": "Zara Larsson",
+   "suggested_name": "Larsson Sound",
+   "island_center": [
+    978,
+    197.1
+   ],
+   "island_r": 11.8
   },
   {
    "id": "quiet_woods:d1",
@@ -854,7 +1220,6 @@
     "Rainbow Kitten Surprise",
     "Richard Thompson",
     "Rufus Wainwright",
-    "Ruthie Foster",
     "Shawn James",
     "Sparkbird",
     "The Family Crest",
@@ -1006,16 +1371,16 @@
    "id": 1,
    "name": "AJR",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "town",
    "score": 6,
    "xy": [
-    841.9,
-    89.9
+    963.0,
+    239.9
    ],
    "region_uv": [
-    0.17,
-    0.791
+    0.8579,
+    2.3535
    ],
    "flags": {},
    "times_seen": 1,
@@ -1026,16 +1391,16 @@
    "id": 0,
    "name": "Adia Victoria",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:outskirts",
    "size": "waystation",
    "score": 3,
    "xy": [
-    832.5,
-    189.3
+    621.9,
+    356.2
    ],
    "region_uv": [
-    0.6214,
-    0.4373
+    0.0197,
+    1.1049
    ],
    "flags": {
     "unvisited": true
@@ -1052,12 +1417,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    783.6,
-    247.0
+    631,
+    318
    ],
    "region_uv": [
-    0.4816,
-    0.6681
+    0.0457,
+    0.952
    ],
    "flags": {},
    "times_seen": 1,
@@ -1072,12 +1437,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    784.9,
-    242.4
+    735.3,
+    300.6
    ],
    "region_uv": [
-    0.4855,
-    0.6495
+    0.3437,
+    0.8825
    ],
    "flags": {},
    "times_seen": 2,
@@ -1092,12 +1457,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    784.9,
-    228.5
+    723.9,
+    306.8
    ],
    "region_uv": [
-    0.4855,
-    0.5942
+    0.3111,
+    0.9073
    ],
    "flags": {},
    "times_seen": 2,
@@ -1112,12 +1477,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    363.2,
-    268.3
+    641.9,
+    321.1
    ],
    "region_uv": [
-    0.8415,
-    0.773
+    0.9707,
+    0.5137
    ],
    "flags": {
     "unvisited": true
@@ -1134,12 +1499,12 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    333.4,
-    348.3
+    589.9,
+    484.0
    ],
    "region_uv": [
-    0.1136,
-    0.3839
+    0.947,
+    0.5168
    ],
    "flags": {
     "unvisited": true
@@ -1156,12 +1521,12 @@
    "size": "city",
    "score": 17,
    "xy": [
-    138.0,
-    138.3
+    494.8,
+    270.2
    ],
    "region_uv": [
-    0.264,
-    0.2532
+    0.5431,
+    0.2865
    ],
    "flags": {},
    "times_seen": 4,
@@ -1172,16 +1537,16 @@
    "id": 9,
    "name": "Allman Betts Family Revival: A Decade of Revival",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "waystation",
    "score": 3,
    "xy": [
-    872.5,
-    101.5
+    916.8,
+    260.0
    ],
    "region_uv": [
-    0.3439,
-    0.9114
+    0.5957,
+    2.5625
    ],
    "flags": {
     "unvisited": true
@@ -1194,16 +1559,16 @@
    "id": 10,
    "name": "Ally Venable Band",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "city",
    "score": 18,
    "xy": [
-    802.8,
-    225.1
+    694.7,
+    318.2
    ],
    "region_uv": [
-    0.5364,
-    0.5802
+    0.2278,
+    0.9529
    ],
    "flags": {},
    "times_seen": 5,
@@ -1218,12 +1583,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    783.9,
-    233.8
+    732.4,
+    289.5
    ],
    "region_uv": [
-    0.4825,
-    0.6151
+    0.3355,
+    0.8379
    ],
    "flags": {
     "unvisited": true
@@ -1240,12 +1605,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    165.6,
-    609.8
+    238,
+    596
    ],
    "region_uv": [
-    0.2256,
-    0.7708
+    0.2965,
+    0.4808
    ],
    "flags": {},
    "times_seen": 2,
@@ -1256,16 +1621,16 @@
    "id": 13,
    "name": "Ana Popović",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "capital",
    "score": 15,
    "xy": [
-    414.9,
-    511.6
+    296.0,
+    662.0
    ],
    "region_uv": [
-    0.7345,
-    0.2368
+    0.4651,
+    1.1154
    ],
    "flags": {},
    "times_seen": 4,
@@ -1280,12 +1645,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    765.8,
-    520.9
+    500.6,
+    521.3
    ],
    "region_uv": [
-    0.8259,
-    0.2921
+    0.1104,
+    0.3482
    ],
    "flags": {},
    "times_seen": 1,
@@ -1300,12 +1665,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    796.9,
-    539.4
+    635.2,
+    479.3
    ],
    "region_uv": [
-    0.9296,
-    0.4047
+    0.6487,
+    0.0787
    ],
    "flags": {
     "unvisited": true
@@ -1318,16 +1683,16 @@
    "id": 16,
    "name": "Angélique Kidjo",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    916.3,
-    103.3
+    912.6,
+    262.2
    ],
    "region_uv": [
-    0.5925,
-    0.9302
+    0.5718,
+    2.585
    ],
    "flags": {
     "unvisited": true
@@ -1344,12 +1709,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    295.6,
-    127.1
+    382.3,
+    360.5
    ],
    "region_uv": [
-    0.6682,
-    0.2085
+    0.216,
+    0.6896
    ],
    "flags": {},
    "times_seen": 1,
@@ -1364,12 +1729,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    656.3,
-    307.2
+    293.9,
+    408.3
    ],
    "region_uv": [
-    0.8006,
-    0.205
+    0.1682,
+    0.196
    ],
    "flags": {
     "unvisited": true
@@ -1386,12 +1751,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    494.7,
-    525.2
+    272.7,
+    636.9
    ],
    "region_uv": [
-    0.8973,
-    0.3109
+    0.3974,
+    0.8739
    ],
    "flags": {
     "unvisited": true
@@ -1408,12 +1773,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    82.8,
-    174.8
+    425.1,
+    349.7
    ],
    "region_uv": [
-    0.1226,
-    0.3992
+    0.3405,
+    0.6416
    ],
    "flags": {
     "unvisited": true
@@ -1430,12 +1795,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    654.5,
-    330.3
+    629.3,
+    457.4
    ],
    "region_uv": [
-    0.5222,
-    0.7587
+    0.3388,
+    0.7516
    ],
    "flags": {
     "unvisited": true
@@ -1448,16 +1813,16 @@
    "id": 22,
    "name": "Artur Menezes",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 1,
    "xy": [
-    828.5,
-    206.6
+    724.3,
+    244.8
    ],
    "region_uv": [
-    0.6099,
-    0.5064
+    0.3124,
+    0.6592
    ],
    "flags": {
     "unvisited": true
@@ -1474,12 +1839,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    864.9,
-    108.9
+    754.2,
+    224.8
    ],
    "region_uv": [
-    0.7141,
-    0.1156
+    0.3978,
+    0.5792
    ],
    "flags": {
     "unvisited": true
@@ -1496,12 +1861,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    873.5,
-    297.4
+    703,
+    204
    ],
    "region_uv": [
-    0.7387,
-    0.8696
+    0.2514,
+    0.496
    ],
    "flags": {},
    "times_seen": 1,
@@ -1516,12 +1881,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    198.2,
-    95.5
+    456.0,
+    302.0
    ],
    "region_uv": [
-    0.4185,
-    0.0819
+    0.4302,
+    0.4286
    ],
    "flags": {},
    "times_seen": 1,
@@ -1536,12 +1901,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    233.6,
-    300.0
+    438.9,
+    315.0
    ],
    "region_uv": [
-    0.5092,
-    0.8999
+    0.3805,
+    0.4867
    ],
    "flags": {
     "unvisited": true
@@ -1558,12 +1923,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    672.1,
-    309.2
+    435.0,
+    585.8
    ],
    "region_uv": [
-    0.8342,
-    0.2139
+    0.5394,
+    0.9483
    ],
    "flags": {
     "unvisited": true
@@ -1576,16 +1941,16 @@
    "id": 30,
    "name": "Billy Gibbons",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d6",
    "size": "town",
    "score": 8,
    "xy": [
-    783.7,
-    206.6
+    676.7,
+    267.3
    ],
    "region_uv": [
-    0.482,
-    0.5065
+    0.1764,
+    0.7491
    ],
    "flags": {},
    "times_seen": 1,
@@ -1600,12 +1965,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    641.8,
-    234.8
+    808.6,
+    171.7
    ],
    "region_uv": [
-    0.0765,
-    0.6193
+    0.5531,
+    0.3666
    ],
    "flags": {
     "unvisited": true
@@ -1622,12 +1987,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    651.1,
-    333.7
+    388.8,
+    547.9
    ],
    "region_uv": [
-    0.7896,
-    0.3202
+    0.4178,
+    0.7878
    ],
    "flags": {
     "unvisited": true
@@ -1644,12 +2009,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    731.1,
-    245.8
+    652.8,
+    355.9
    ],
    "region_uv": [
-    0.3318,
-    0.6631
+    0.1081,
+    1.1036
    ],
    "flags": {
     "unvisited": true
@@ -1666,12 +2031,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    167.6,
-    97.5
+    492.9,
+    417.7
    ],
    "region_uv": [
-    0.34,
-    0.0901
+    0.5374,
+    0.9452
    ],
    "flags": {
     "unvisited": true
@@ -1688,12 +2053,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    765.0,
-    506.1
+    526.8,
+    490.6
    ],
    "region_uv": [
-    0.8234,
-    0.2016
+    0.2151,
+    0.1511
    ],
    "flags": {
     "legacy": true,
@@ -1711,12 +2076,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    611.6,
-    540.7
+    542.9,
+    552.4
    ],
    "region_uv": [
-    0.3121,
-    0.4129
+    0.2796,
+    0.5473
    ],
    "flags": {
     "unvisited": true
@@ -1733,12 +2098,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    59.1,
-    189.7
+    565.3,
+    245.5
    ],
    "region_uv": [
-    0.0619,
-    0.4589
+    0.7481,
+    0.1764
    ],
    "flags": {},
    "times_seen": 1,
@@ -1753,12 +2118,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    120.2,
-    143.5
+    470.0,
+    270.0
    ],
    "region_uv": [
-    0.2185,
-    0.274
+    0.4709,
+    0.2857
    ],
    "flags": {
     "unvisited": true
@@ -1775,12 +2140,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    187.5,
-    306.6
+    438.2,
+    324.2
    ],
    "region_uv": [
-    0.391,
-    0.9263
+    0.3786,
+    0.5279
    ],
    "flags": {
     "unvisited": true
@@ -1797,12 +2162,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    769.8,
-    542.8
+    686.3,
+    501.3
    ],
    "region_uv": [
-    0.8394,
-    0.4256
+    0.8532,
+    0.2196
    ],
    "flags": {},
    "times_seen": 1,
@@ -1817,12 +2182,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    432.5,
-    326.7
+    356.5,
+    550.6
    ],
    "region_uv": [
-    0.3245,
-    0.2901
+    0.3328,
+    0.7992
    ],
    "flags": {},
    "times_seen": 2,
@@ -1837,12 +2202,12 @@
    "size": "town",
    "score": 8,
    "xy": [
-    817.8,
-    241.9
+    626.6,
+    298.9
    ],
    "region_uv": [
-    0.5794,
-    0.6475
+    0.0332,
+    0.8756
    ],
    "flags": {
     "legacy": true
@@ -1854,17 +2219,17 @@
   {
    "id": 44,
    "name": "Buffalo Nichols",
-   "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "region": "delta_coast",
+   "district": "delta_coast:outskirts",
    "size": "city",
    "score": 12,
    "xy": [
-    821.7,
-    204.3
+    395.3,
+    636.7
    ],
    "region_uv": [
-    0.5907,
-    0.4972
+    0.7537,
+    0.8717
    ],
    "flags": {},
    "times_seen": 3,
@@ -1875,16 +2240,16 @@
    "id": 45,
    "name": "Bywater Call",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d6",
    "size": "town",
    "score": 9,
    "xy": [
-    776.4,
-    231.0
+    668.7,
+    277.2
    ],
    "region_uv": [
-    0.4611,
-    0.6039
+    0.1534,
+    0.7889
    ],
    "flags": {},
    "times_seen": 2,
@@ -1899,12 +2264,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    662.9,
-    267.1
+    704.2,
+    237.3
    ],
    "region_uv": [
-    0.1369,
-    0.7485
+    0.2549,
+    0.6293
    ],
    "flags": {
     "unvisited": true
@@ -1917,16 +2282,16 @@
    "id": 47,
    "name": "Carly Harvey",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "town",
    "score": 10,
    "xy": [
-    426.1,
-    520.7
+    285.1,
+    648.6
    ],
    "region_uv": [
-    0.7573,
-    0.2863
+    0.4334,
+    0.9867
    ],
    "flags": {},
    "times_seen": 3,
@@ -1937,16 +2302,16 @@
    "id": 48,
    "name": "Cedric Burnside",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "waystation",
    "score": 1,
    "xy": [
-    338.1,
-    480.3
+    249.0,
+    605.3
    ],
    "region_uv": [
-    0.5778,
-    0.0669
+    0.3285,
+    0.5704
    ],
    "flags": {
     "unvisited": true
@@ -1959,16 +2324,16 @@
    "id": 49,
    "name": "Chris Cain",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "waystation",
    "score": 2,
    "xy": [
-    382.8,
-    634.8
+    339.9,
+    633.9
    ],
    "region_uv": [
-    0.669,
-    0.9063
+    0.5928,
+    0.8451
    ],
    "flags": {
     "unvisited": true
@@ -1981,16 +2346,16 @@
    "id": 50,
    "name": "Chris Jacobs & Friends",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "waystation",
    "score": 0,
    "xy": [
-    975.2,
-    72.1
+    915.4,
+    255.9
    ],
    "region_uv": [
-    0.9273,
-    0.6051
+    0.5873,
+    2.5196
    ],
    "flags": {
     "unvisited": true
@@ -2007,12 +2372,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    386.1,
-    203.6
+    650.6,
+    390.4
    ],
    "region_uv": [
-    0.9003,
-    0.5145
+    0.9959,
+    0.8232
    ],
    "flags": {
     "unvisited": true
@@ -2025,16 +2390,16 @@
    "id": 52,
    "name": "Christone 'Kingfish' Ingram",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "capital",
    "score": 27,
    "xy": [
-    805.4,
-    229.1
+    671.1,
+    332.0
    ],
    "region_uv": [
-    0.544,
-    0.5965
+    0.1602,
+    1.0078
    ],
    "flags": {},
    "times_seen": 8,
@@ -2049,12 +2414,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    295.1,
-    115.7
+    371.2,
+    367.7
    ],
    "region_uv": [
-    0.6668,
-    0.1628
+    0.1837,
+    0.7218
    ],
    "flags": {
     "unvisited": true
@@ -2071,12 +2436,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    483.1,
-    454.0
+    458.0,
+    439.8
    ],
    "region_uv": [
-    0.4321,
-    0.8435
+    0.6,
+    0.3298
    ],
    "flags": {},
    "times_seen": 1,
@@ -2087,16 +2452,16 @@
    "id": 55,
    "name": "D.K. Harrell",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "town",
    "score": 6,
    "xy": [
-    353.8,
-    635.6
+    326.0,
+    640.2
    ],
    "region_uv": [
-    0.6097,
-    0.9107
+    0.5524,
+    0.906
    ],
    "flags": {},
    "times_seen": 1,
@@ -2107,16 +2472,16 @@
    "id": 56,
    "name": "Dale Watson & His Lonestars",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "waystation",
    "score": 1,
    "xy": [
-    931.4,
-    98.8
+    918.0,
+    263.9
    ],
    "region_uv": [
-    0.6782,
-    0.8836
+    0.6021,
+    2.6029
    ],
    "flags": {
     "unvisited": true
@@ -2133,12 +2498,12 @@
    "size": "capital",
    "score": 24,
    "xy": [
-    687.3,
-    336.9
+    367.4,
+    560.4
    ],
    "region_uv": [
-    0.8666,
-    0.3342
+    0.3617,
+    0.8407
    ],
    "flags": {},
    "times_seen": 7,
@@ -2153,12 +2518,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    694.2,
-    349.9
+    406.6,
+    554.2
    ],
    "region_uv": [
-    0.8812,
-    0.3909
+    0.4646,
+    0.8142
    ],
    "flags": {
     "unvisited": true
@@ -2171,16 +2536,16 @@
    "id": 59,
    "name": "Danielle Nicole",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "city",
    "score": 12,
    "xy": [
-    441.0,
-    499.7
+    296.3,
+    644.0
    ],
    "region_uv": [
-    0.7877,
-    0.1723
+    0.4661,
+    0.9424
    ],
    "flags": {},
    "times_seen": 3,
@@ -2195,12 +2560,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    642.6,
-    557.8
+    542.3,
+    499.5
    ],
    "region_uv": [
-    0.4152,
-    0.517
+    0.2771,
+    0.2085
    ],
    "flags": {
     "unvisited": true
@@ -2217,12 +2582,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    299.6,
-    289.4
+    463.8,
+    284.3
    ],
    "region_uv": [
-    0.6784,
-    0.8578
+    0.4529,
+    0.3496
    ],
    "flags": {
     "unvisited": true
@@ -2239,12 +2604,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    259.5,
-    138.4
+    458.6,
+    395.1
    ],
    "region_uv": [
-    0.5757,
-    0.2537
+    0.4378,
+    0.8443
    ],
    "flags": {},
    "times_seen": 1,
@@ -2259,12 +2624,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    814.8,
-    233.0
+    738.8,
+    312.0
    ],
    "region_uv": [
-    0.5708,
-    0.6118
+    0.3537,
+    0.9279
    ],
    "flags": {
     "unvisited": true
@@ -2281,12 +2646,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    701.8,
-    485.2
+    586.1,
+    474.2
    ],
    "region_uv": [
-    0.6127,
-    0.0747
+    0.4525,
+    0.0463
    ],
    "flags": {
     "unvisited": true
@@ -2299,16 +2664,16 @@
    "id": 69,
    "name": "DuPont Brass",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    827.9,
-    66.3
+    909.5,
+    259.0
    ],
    "region_uv": [
-    0.0902,
-    0.5448
+    0.5542,
+    2.5524
    ],
    "flags": {},
    "times_seen": 1,
@@ -2323,12 +2688,12 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    632.0,
-    544.3
+    532.9,
+    555.5
    ],
    "region_uv": [
-    0.38,
-    0.4345
+    0.2395,
+    0.5671
    ],
    "flags": {
     "unvisited": true
@@ -2341,16 +2706,16 @@
    "id": 70,
    "name": "Dylan Triplett",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "waystation",
    "score": 2,
    "xy": [
-    802.8,
-    216.0
+    686.9,
+    307.6
    ],
    "region_uv": [
-    0.5365,
-    0.5441
+    0.2055,
+    0.9103
    ],
    "flags": {
     "unvisited": true
@@ -2363,16 +2728,16 @@
    "id": 71,
    "name": "Eddie 9V",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d6",
    "size": "waystation",
    "score": 1,
    "xy": [
-    801.0,
-    230.8
+    675.8,
+    256.0
    ],
    "region_uv": [
-    0.5313,
-    0.6031
+    0.1738,
+    0.7039
    ],
    "flags": {
     "unvisited": true
@@ -2389,12 +2754,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    322.9,
-    287.8
+    408.7,
+    407.5
    ],
    "region_uv": [
-    0.7381,
-    0.8513
+    0.2927,
+    0.8994
    ],
    "flags": {},
    "times_seen": 1,
@@ -2405,16 +2770,16 @@
    "id": 73,
    "name": "Enter the Haggis",
    "region": "outer_isles",
-   "district": "outer_isles:d1",
+   "district": "outer_isles:p1",
    "size": "city",
    "score": 12,
    "xy": [
-    923.5,
-    45.2
+    769.3,
+    82.1
    ],
    "region_uv": [
-    0.6333,
-    0.3248
+    -0.2427,
+    0.7098
    ],
    "flags": {},
    "times_seen": 4,
@@ -2429,12 +2794,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    98.8,
-    270.9
+    617.0,
+    279.4
    ],
    "region_uv": [
-    0.1636,
-    0.7836
+    0.8983,
+    0.3279
    ],
    "flags": {
     "unvisited": true
@@ -2447,16 +2812,16 @@
    "id": 75,
    "name": "Eric Clapton",
    "region": "amplified_range",
-   "district": "amplified_range:d12",
+   "district": "amplified_range:d10",
    "size": "waystation",
    "score": 2,
    "xy": [
-    646.8,
-    205.3
+    799.3,
+    177.2
    ],
    "region_uv": [
-    0.0908,
-    0.5011
+    0.5266,
+    0.389
    ],
    "flags": {
     "legacy": true,
@@ -2470,16 +2835,16 @@
    "id": 76,
    "name": "Eric Gales",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "city",
    "score": 15,
    "xy": [
-    812.3,
-    208.5
+    713.9,
+    254.2
    ],
    "region_uv": [
-    0.5637,
-    0.5141
+    0.2827,
+    0.6966
    ],
    "flags": {},
    "times_seen": 4,
@@ -2494,12 +2859,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    838.5,
-    239.9
+    632.3,
+    286.8
    ],
    "region_uv": [
-    0.6385,
-    0.6395
+    0.0493,
+    0.8272
    ],
    "flags": {},
    "times_seen": 2,
@@ -2514,12 +2879,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    799.4,
-    101.0
+    661.8,
+    357.5
    ],
    "region_uv": [
-    0.5267,
-    0.0838
+    0.1337,
+    1.1101
    ],
    "flags": {
     "unvisited": true
@@ -2536,12 +2901,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    361.3,
-    129.2
+    449.1,
+    300.4
    ],
    "region_uv": [
-    0.8366,
-    0.2167
+    0.41,
+    0.4213
    ],
    "flags": {
     "unvisited": true
@@ -2558,12 +2923,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    197.1,
-    631.2
+    259.1,
+    620.7
    ],
    "region_uv": [
-    0.2901,
-    0.8867
+    0.3578,
+    0.7182
    ],
    "flags": {
     "unvisited": true
@@ -2580,12 +2945,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    345.6,
-    280.8
+    545.6,
+    409.3
    ],
    "region_uv": [
-    0.7963,
-    0.823
+    0.6908,
+    0.9075
    ],
    "flags": {
     "unvisited": true
@@ -2598,16 +2963,16 @@
    "id": 84,
    "name": "GA-20",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d2",
    "size": "waystation",
    "score": 1,
    "xy": [
-    760.9,
-    221.7
+    691.2,
+    330.9
    ],
    "region_uv": [
-    0.4168,
-    0.5666
+    0.2178,
+    1.0036
    ],
    "flags": {
     "unvisited": true
@@ -2620,16 +2985,16 @@
    "id": 85,
    "name": "Gabe Stillman",
    "region": "amplified_range",
-   "district": "amplified_range:d11",
+   "district": "amplified_range:d9",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    834.1,
-    101.8
+    602.9,
+    338.7
    ],
    "region_uv": [
-    0.6259,
-    0.0873
+    -0.0346,
+    1.0346
    ],
    "flags": {},
    "times_seen": 1,
@@ -2640,16 +3005,16 @@
    "id": 86,
    "name": "Gaelic Storm",
    "region": "outer_isles",
-   "district": "outer_isles:d2",
+   "district": "outer_isles:p1",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    935.6,
-    43.8
+    765.1,
+    84.3
    ],
    "region_uv": [
-    0.7022,
-    0.3101
+    -0.2666,
+    0.7323
    ],
    "flags": {},
    "times_seen": 1,
@@ -2664,12 +3029,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    668.2,
-    627.2
+    493.4,
+    511.8
    ],
    "region_uv": [
-    0.5007,
-    0.94
+    0.0816,
+    0.2874
    ],
    "flags": {},
    "times_seen": 1,
@@ -2684,12 +3049,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    905.3,
-    265.5
+    797.9,
+    230.5
    ],
    "region_uv": [
-    0.8296,
-    0.7421
+    0.5226,
+    0.6019
    ],
    "flags": {
     "unvisited": true
@@ -2706,12 +3071,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    800.8,
-    238.5
+    640.5,
+    296.8
    ],
    "region_uv": [
-    0.5309,
-    0.634
+    0.0729,
+    0.8673
    ],
    "flags": {},
    "times_seen": 2,
@@ -2726,12 +3091,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    928.9,
-    193.0
+    754.4,
+    201.7
    ],
    "region_uv": [
-    0.8969,
-    0.452
+    0.3982,
+    0.4869
    ],
    "flags": {
     "unvisited": true
@@ -2744,16 +3109,16 @@
    "id": 91,
    "name": "George Clinton & Parliament-Funkadelic",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p2",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    872.9,
-    27.7
+    920.2,
+    256.7
    ],
    "region_uv": [
-    0.346,
-    0.1427
+    0.6146,
+    2.5282
    ],
    "flags": {},
    "times_seen": 1,
@@ -2768,12 +3133,12 @@
    "size": "town",
    "score": 7,
    "xy": [
-    668.8,
-    228.3
+    698.7,
+    444.7
    ],
    "region_uv": [
-    0.5921,
-    0.0698
+    0.937,
+    0.698
    ],
    "flags": {},
    "times_seen": 2,
@@ -2788,12 +3153,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    499.3,
-    474.9
+    439.7,
+    449.6
    ],
    "region_uv": [
-    0.4666,
-    0.9342
+    0.5518,
+    0.3713
    ],
    "flags": {
     "unvisited": true
@@ -2810,12 +3175,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    485.2,
-    473.1
+    449.3,
+    419.2
    ],
    "region_uv": [
-    0.4366,
-    0.9265
+    0.5771,
+    0.2425
    ],
    "flags": {
     "unvisited": true
@@ -2832,12 +3197,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    279.4,
-    102.4
+    510.2,
+    255.2
    ],
    "region_uv": [
-    0.6267,
-    0.1095
+    0.5879,
+    0.2196
    ],
    "flags": {},
    "times_seen": 1,
@@ -2852,12 +3217,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    757.8,
-    248.0
+    651.5,
+    358.9
    ],
    "region_uv": [
-    0.4081,
-    0.6719
+    0.1042,
+    1.1155
    ],
    "flags": {
     "unvisited": true
@@ -2870,16 +3235,16 @@
    "id": 97,
    "name": "Grace Bowers",
    "region": "amplified_range",
-   "district": "amplified_range:d9",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "score": 3,
    "xy": [
-    826.6,
-    256.5
+    619.6,
+    289.5
    ],
    "region_uv": [
-    0.6045,
-    0.7059
+    0.0132,
+    0.8381
    ],
    "flags": {
     "unvisited": true
@@ -2896,12 +3261,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    674.7,
-    339.1
+    381.3,
+    527.1
    ],
    "region_uv": [
-    0.8399,
-    0.3441
+    0.3981,
+    0.6997
    ],
    "flags": {},
    "times_seen": 2,
@@ -2912,16 +3277,16 @@
    "id": 99,
    "name": "Haggis X-1",
    "region": "outer_isles",
-   "district": "outer_isles:d1",
+   "district": "outer_isles:p1",
    "size": "waystation",
    "score": 3,
    "xy": [
-    917.5,
-    42.4
+    767.8,
+    78.0
    ],
    "region_uv": [
-    0.5997,
-    0.2962
+    -0.2512,
+    0.6669
    ],
    "flags": {
     "unvisited": true
@@ -2934,16 +3299,16 @@
    "id": 100,
    "name": "Hayley Williams",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 0,
    "xy": [
-    916.4,
-    24.8
+    960.2,
+    241.3
    ],
    "region_uv": [
-    0.5929,
-    0.113
+    0.8423,
+    2.3682
    ],
    "flags": {
     "unvisited": true
@@ -2956,16 +3321,16 @@
    "id": 102,
    "name": "Honeyfunk",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    951.1,
-    33.2
+    803.8,
+    39.4
    ],
    "region_uv": [
-    0.7906,
-    0.1998
+    -0.0466,
+    0.265
    ],
    "flags": {},
    "times_seen": 1,
@@ -2976,16 +3341,16 @@
    "id": 103,
    "name": "House of Hamill",
    "region": "outer_isles",
-   "district": "outer_isles:d1",
+   "district": "outer_isles:p1",
    "size": "waystation",
    "score": 1,
    "xy": [
-    920.6,
-    48.9
+    770.4,
+    86.0
    ],
    "region_uv": [
-    0.6173,
-    0.364
+    -0.2363,
+    0.7502
    ],
    "flags": {
     "unvisited": true
@@ -2998,16 +3363,16 @@
    "id": 104,
    "name": "Hozier",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p1",
    "size": "town",
    "score": 6,
    "xy": [
-    828.6,
-    47.4
+    762.0,
+    81.2
    ],
    "region_uv": [
-    0.0942,
-    0.3481
+    -0.2842,
+    0.6997
    ],
    "flags": {},
    "times_seen": 1,
@@ -3022,12 +3387,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    67.0,
-    174.2
+    392.2,
+    355.4
    ],
    "region_uv": [
-    0.0821,
-    0.3967
+    0.2447,
+    0.6672
    ],
    "flags": {
     "unvisited": true
@@ -3044,12 +3409,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    309.3,
-    367.8
+    524.0,
+    395.7
    ],
    "region_uv": [
-    0.0623,
-    0.4688
+    0.7738,
+    0.1429
    ],
    "flags": {
     "unvisited": true
@@ -3066,12 +3431,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    114.8,
-    157.9
+    398.0,
+    342.0
    ],
    "region_uv": [
-    0.2046,
-    0.3317
+    0.2616,
+    0.6071
    ],
    "flags": {},
    "times_seen": 1,
@@ -3086,12 +3451,12 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    624.4,
-    537.5
+    539.2,
+    540.2
    ],
    "region_uv": [
-    0.3548,
-    0.3932
+    0.2646,
+    0.4693
    ],
    "flags": {
     "unvisited": true
@@ -3108,12 +3473,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    622.4,
-    487.3
+    656.3,
+    485.0
    ],
    "region_uv": [
-    0.348,
-    0.0871
+    0.7333,
+    0.1152
    ],
    "flags": {},
    "times_seen": 1,
@@ -3128,12 +3493,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    766.0,
-    261.4
+    659.2,
+    347.5
    ],
    "region_uv": [
-    0.4314,
-    0.7256
+    0.1264,
+    1.0701
    ],
    "flags": {},
    "times_seen": 2,
@@ -3144,16 +3509,16 @@
    "id": 111,
    "name": "Jackie Venson",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "city",
    "score": 12,
    "xy": [
-    793.8,
-    224.2
+    679.1,
+    318.5
    ],
    "region_uv": [
-    0.511,
-    0.5768
+    0.1831,
+    0.9542
    ],
    "flags": {},
    "times_seen": 3,
@@ -3168,12 +3533,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    81.9,
-    158.8
+    346.1,
+    368.6
    ],
    "region_uv": [
-    0.1202,
-    0.3352
+    0.1107,
+    0.7258
    ],
    "flags": {
     "unvisited": true
@@ -3190,12 +3555,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    717.0,
-    396.8
+    539.4,
+    430.9
    ],
    "region_uv": [
-    0.9297,
-    0.5947
+    0.8141,
+    0.2921
    ],
    "flags": {},
    "times_seen": 1,
@@ -3210,12 +3575,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    265.0,
-    144.7
+    447.1,
+    401.7
    ],
    "region_uv": [
-    0.5898,
-    0.2787
+    0.4044,
+    0.8735
    ],
    "flags": {},
    "times_seen": 2,
@@ -3230,12 +3595,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    769.0,
-    102.9
+    694.5,
+    294.3
    ],
    "region_uv": [
-    0.44,
-    0.0917
+    0.2272,
+    0.8572
    ],
    "flags": {
     "unvisited": true
@@ -3252,12 +3617,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    383.4,
-    150.7
+    584.4,
+    271.1
    ],
    "region_uv": [
-    0.8933,
-    0.3027
+    0.8034,
+    0.2906
    ],
    "flags": {},
    "times_seen": 1,
@@ -3272,12 +3637,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    548.9,
-    474.8
+    251.6,
+    498.5
    ],
    "region_uv": [
-    0.5722,
-    0.934
+    0.0569,
+    0.5784
    ],
    "flags": {
     "unvisited": true
@@ -3290,16 +3655,16 @@
    "id": 119,
    "name": "Jessie's Girl",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    973.9,
-    61.2
+    801.1,
+    40.8
    ],
    "region_uv": [
-    0.9198,
-    0.492
+    -0.0621,
+    0.2796
    ],
    "flags": {},
    "times_seen": 1,
@@ -3310,16 +3675,16 @@
    "id": 120,
    "name": "Jimmie Vaughan",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "town",
    "score": 6,
    "xy": [
-    736.6,
-    161.9
+    721.5,
+    233.5
    ],
    "region_uv": [
-    0.3474,
-    0.3277
+    0.3044,
+    0.6141
    ],
    "flags": {},
    "times_seen": 1,
@@ -3334,12 +3699,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    755.9,
-    97.7
+    835.7,
+    159.5
    ],
    "region_uv": [
-    0.4025,
-    0.0709
+    0.6304,
+    0.3178
    ],
    "flags": {},
    "times_seen": 1,
@@ -3350,16 +3715,16 @@
    "id": 123,
    "name": "Joanna Connor",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d2",
    "size": "waystation",
    "score": 3,
    "xy": [
-    773.0,
-    207.8
+    694.1,
+    304.7
    ],
    "region_uv": [
-    0.4516,
-    0.5113
+    0.2259,
+    0.8989
    ],
    "flags": {
     "unvisited": true
@@ -3372,16 +3737,16 @@
    "id": 124,
    "name": "Joanne Shaw Taylor",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d2",
    "size": "town",
    "score": 9,
    "xy": [
-    782.8,
-    222.2
+    679.7,
+    332.1
    ],
    "region_uv": [
-    0.4793,
-    0.569
+    0.1849,
+    1.0084
    ],
    "flags": {},
    "times_seen": 2,
@@ -3392,16 +3757,16 @@
    "id": 125,
    "name": "Joe Bonamassa",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d6",
    "size": "town",
    "score": 6,
    "xy": [
-    787.9,
-    212.0
+    680.7,
+    280.6
    ],
    "region_uv": [
-    0.4939,
-    0.5281
+    0.1877,
+    0.8025
    ],
    "flags": {},
    "times_seen": 1,
@@ -3416,12 +3781,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    941.8,
-    187.0
+    742.9,
+    207.5
    ],
    "region_uv": [
-    0.9336,
-    0.4279
+    0.3655,
+    0.5099
    ],
    "flags": {},
    "times_seen": 1,
@@ -3436,12 +3801,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    569.3,
-    263.4
+    686.4,
+    341.5
    ],
    "region_uv": [
-    0.1046,
-    0.3069
+    0.8311,
+    0.2605
    ],
    "flags": {
     "unvisited": true
@@ -3458,12 +3823,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    575.0,
-    453.6
+    480.3,
+    449.2
    ],
    "region_uv": [
-    0.6276,
-    0.8416
+    0.6586,
+    0.3694
    ],
    "flags": {},
    "times_seen": 1,
@@ -3478,12 +3843,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    103.4,
-    548.8
+    316.4,
+    645.5
    ],
    "region_uv": [
-    0.0988,
-    0.4389
+    0.5244,
+    0.9563
    ],
    "flags": {
     "unvisited": true
@@ -3500,12 +3865,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    136.8,
-    507.1
+    432.1,
+    626.0
    ],
    "region_uv": [
-    0.167,
-    0.2124
+    0.8607,
+    0.7691
    ],
    "flags": {},
    "times_seen": 1,
@@ -3520,12 +3885,12 @@
    "size": "city",
    "score": 14,
    "xy": [
-    638.2,
-    551.8
+    590,
+    572
    ],
    "region_uv": [
-    0.4005,
-    0.4807
+    0.468,
+    0.6731
    ],
    "flags": {},
    "times_seen": 3,
@@ -3540,12 +3905,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    384.3,
-    211.0
+    634.5,
+    331.3
    ],
    "region_uv": [
-    0.8956,
-    0.5438
+    0.9491,
+    0.5592
    ],
    "flags": {
     "unvisited": true
@@ -3562,12 +3927,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    139.5,
-    148.5
+    468.8,
+    288.9
    ],
    "region_uv": [
-    0.2679,
-    0.2939
+    0.4673,
+    0.37
    ],
    "flags": {
     "unvisited": true
@@ -3584,12 +3949,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    674.6,
-    533.4
+    715.7,
+    505.2
    ],
    "region_uv": [
-    0.5219,
-    0.368
+    0.9708,
+    0.2446
    ],
    "flags": {},
    "times_seen": 3,
@@ -3604,12 +3969,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    399.3,
-    182.2
+    454.1,
+    294.3
    ],
    "region_uv": [
-    0.9342,
-    0.4289
+    0.4248,
+    0.3941
    ],
    "flags": {
     "unvisited": true
@@ -3622,16 +3987,16 @@
    "id": 136,
    "name": "Juliet Lloyd",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "waystation",
    "score": 1,
    "xy": [
-    971.1,
-    45.2
+    802.8,
+    36.8
    ],
    "region_uv": [
-    0.9039,
-    0.3254
+    -0.0521,
+    0.237
    ],
    "flags": {
     "unvisited": true
@@ -3648,12 +4013,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    129.2,
-    123.9
+    485.3,
+    282.8
    ],
    "region_uv": [
-    0.2414,
-    0.1957
+    0.5154,
+    0.3428
    ],
    "flags": {
     "unvisited": true
@@ -3666,16 +4031,16 @@
    "id": 138,
    "name": "Kat Riggins",
    "region": "delta_coast",
-   "district": "delta_coast:d5",
+   "district": "delta_coast:d4",
    "size": "waystation",
    "score": 3,
    "xy": [
-    466.5,
-    603.6
+    249.9,
+    596.8
    ],
    "region_uv": [
-    0.8398,
-    0.7367
+    0.331,
+    0.4886
    ],
    "flags": {
     "unvisited": true
@@ -3688,16 +4053,16 @@
    "id": 139,
    "name": "Kate Davis",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "city",
    "score": 12,
    "xy": [
-    834.4,
-    82.2
+    962.0,
+    237.3
    ],
    "region_uv": [
-    0.1273,
-    0.7107
+    0.8524,
+    2.3256
    ],
    "flags": {},
    "times_seen": 3,
@@ -3708,16 +4073,16 @@
    "id": 140,
    "name": "Keb' Mo'",
    "region": "delta_coast",
-   "district": "delta_coast:d4",
+   "district": "delta_coast:d1",
    "size": "city",
    "score": 12,
    "xy": [
-    126.5,
-    574.8
+    255.5,
+    552.4
    ],
    "region_uv": [
-    0.146,
-    0.5805
+    0.3474,
+    0.0612
    ],
    "flags": {},
    "times_seen": 3,
@@ -3728,16 +4093,16 @@
    "id": 141,
    "name": "Kenny Wayne Shepherd",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "town",
    "score": 9,
    "xy": [
-    799.6,
-    219.4
+    682.9,
+    295.2
    ],
    "region_uv": [
-    0.5274,
-    0.5577
+    0.194,
+    0.8608
    ],
    "flags": {},
    "times_seen": 2,
@@ -3752,12 +4117,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    515.6,
-    561.7
+    265.7,
+    628.9
    ],
    "region_uv": [
-    0.9399,
-    0.5093
+    0.377,
+    0.7971
    ],
    "flags": {
     "unvisited": true
@@ -3774,12 +4139,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    751.3,
-    609.8
+    548.6,
+    481.9
    ],
    "region_uv": [
-    0.7777,
-    0.8342
+    0.3022,
+    0.0958
    ],
    "flags": {
     "unvisited": true
@@ -3796,12 +4161,12 @@
    "size": "city",
    "score": 18,
    "xy": [
-    59.3,
-    210.9
+    462.7,
+    417.3
    ],
    "region_uv": [
-    0.0622,
-    0.5438
+    0.4497,
+    0.9435
    ],
    "flags": {},
    "times_seen": 5,
@@ -3812,16 +4177,16 @@
    "id": 145,
    "name": "Kirk Fletcher",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 1,
    "xy": [
-    790.0,
-    201.8
+    726.4,
+    255.9
    ],
    "region_uv": [
-    0.5,
-    0.4872
+    0.3184,
+    0.7037
    ],
    "flags": {
     "unvisited": true
@@ -3834,16 +4199,16 @@
    "id": 160,
    "name": "LL Cool J",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    824.3,
-    57.0
+    804.5,
+    42.0
    ],
    "region_uv": [
-    0.0698,
-    0.4481
+    -0.0424,
+    0.2913
    ],
    "flags": {},
    "times_seen": 1,
@@ -3858,12 +4223,12 @@
    "size": "village",
    "score": 4,
    "xy": [
-    596.6,
-    590.1
+    709.4,
+    532.3
    ],
    "region_uv": [
-    0.2619,
-    0.7138
+    0.9454,
+    0.4188
    ],
    "flags": {},
    "times_seen": 1,
@@ -3878,12 +4243,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    574.2,
-    504.2
+    701.8,
+    517.9
    ],
    "region_uv": [
-    0.1872,
-    0.1905
+    0.9154,
+    0.3261
    ],
    "flags": {
     "unvisited": true
@@ -3900,12 +4265,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    469.3,
-    338.1
+    337.7,
+    561.0
    ],
    "region_uv": [
-    0.4029,
-    0.3395
+    0.2834,
+    0.8431
    ],
    "flags": {},
    "times_seen": 1,
@@ -3920,12 +4285,12 @@
    "size": "capital",
    "score": 27,
    "xy": [
-    567.3,
-    317.2
+    608.0,
+    373.0
    ],
    "region_uv": [
-    0.0944,
-    0.6705
+    0.1552,
+    0.3941
    ],
    "flags": {},
    "times_seen": 6,
@@ -3936,16 +4301,16 @@
    "id": 151,
    "name": "Larry McCray",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 2,
    "xy": [
-    837.9,
-    208.8
+    713.6,
+    241.4
    ],
    "region_uv": [
-    0.637,
-    0.5153
+    0.2818,
+    0.6455
    ],
    "flags": {
     "unvisited": true
@@ -3962,12 +4327,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    431.4,
-    467.6
+    564.3,
+    537.0
    ],
    "region_uv": [
-    0.3221,
-    0.9025
+    0.8797,
+    0.7415
    ],
    "flags": {
     "unvisited": true
@@ -3984,12 +4349,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    319.6,
-    113.4
+    397.3,
+    387.7
    ],
    "region_uv": [
-    0.7297,
-    0.1536
+    0.2597,
+    0.811
    ],
    "flags": {
     "unvisited": true
@@ -4006,12 +4371,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    727.9,
-    218.5
+    719.6,
+    296.1
    ],
    "region_uv": [
-    0.3225,
-    0.5538
+    0.2989,
+    0.8645
    ],
    "flags": {
     "unvisited": true
@@ -4028,12 +4393,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    891.9,
-    122.5
+    757.2,
+    257.6
    ],
    "region_uv": [
-    0.7912,
-    0.1702
+    0.4063,
+    0.7103
    ],
    "flags": {
     "unvisited": true
@@ -4050,12 +4415,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    236.5,
-    309.9
+    443.7,
+    307.6
    ],
    "region_uv": [
-    0.5167,
-    0.9397
+    0.3946,
+    0.4534
    ],
    "flags": {
     "unvisited": true
@@ -4072,12 +4437,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    606.6,
-    327.4
+    381.7,
+    556.8
    ],
    "region_uv": [
-    0.6949,
-    0.2933
+    0.3992,
+    0.8254
    ],
    "flags": {},
    "times_seen": 2,
@@ -4092,12 +4457,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    167.7,
-    168.9
+    470.0,
+    309.5
    ],
    "region_uv": [
-    0.3402,
-    0.3754
+    0.4708,
+    0.4619
    ],
    "flags": {},
    "times_seen": 1,
@@ -4112,12 +4477,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    599.5,
-    461.3
+    458.0,
+    460.8
    ],
    "region_uv": [
-    0.6798,
-    0.8754
+    0.6,
+    0.4185
    ],
    "flags": {},
    "times_seen": 1,
@@ -4132,12 +4497,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    608.2,
-    465.3
+    375.1,
+    377.8
    ],
    "region_uv": [
-    0.6983,
-    0.8928
+    0.3817,
+    0.0671
    ],
    "flags": {
     "unvisited": true
@@ -4154,12 +4519,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    504.7,
-    461.5
+    468.7,
+    462.4
    ],
    "region_uv": [
-    0.4782,
-    0.876
+    0.6281,
+    0.4255
    ],
    "flags": {
     "unvisited": true
@@ -4176,12 +4541,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    102.7,
-    133.8
+    478.4,
+    293.0
    ],
    "region_uv": [
-    0.1735,
-    0.235
+    0.4952,
+    0.3882
    ],
    "flags": {
     "unvisited": true
@@ -4198,12 +4563,12 @@
    "size": "village",
    "score": 5,
    "xy": [
-    660.1,
-    561.1
+    518.9,
+    521.5
    ],
    "region_uv": [
-    0.4737,
-    0.5374
+    0.1838,
+    0.3497
    ],
    "flags": {},
    "times_seen": 1,
@@ -4218,12 +4583,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    383.0,
-    201.4
+    531.3,
+    248.8
    ],
    "region_uv": [
-    0.8924,
-    0.5057
+    0.649,
+    0.1913
    ],
    "flags": {
     "unvisited": true
@@ -4240,12 +4605,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    560.7,
-    458.2
+    474.4,
+    426.1
    ],
    "region_uv": [
-    0.5972,
-    0.8618
+    0.6431,
+    0.2717
    ],
    "flags": {},
    "times_seen": 2,
@@ -4260,12 +4625,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    377.6,
-    444.3
+    314.0,
+    438.4
    ],
    "region_uv": [
-    0.2076,
-    0.8014
+    0.2212,
+    0.3236
    ],
    "flags": {
     "unvisited": true
@@ -4278,16 +4643,16 @@
    "id": 158,
    "name": "Līve",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    833.9,
-    40.0
+    799.0,
+    38.8
    ],
    "region_uv": [
-    0.1246,
-    0.2705
+    -0.0736,
+    0.2584
    ],
    "flags": {},
    "times_seen": 1,
@@ -4302,12 +4667,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    246.0,
-    92.9
+    598.3,
+    253.0
    ],
    "region_uv": [
-    0.5411,
-    0.0718
+    0.844,
+    0.2099
    ],
    "flags": {
     "unvisited": true
@@ -4324,12 +4689,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    657.8,
-    392.7
+    387.9,
+    567.0
    ],
    "region_uv": [
-    0.8038,
-    0.5769
+    0.4154,
+    0.8685
    ],
    "flags": {},
    "times_seen": 1,
@@ -4344,12 +4709,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    349.8,
-    121.2
+    447.4,
+    320.2
    ],
    "region_uv": [
-    0.8072,
-    0.1849
+    0.4053,
+    0.5097
    ],
    "flags": {
     "unvisited": true
@@ -4366,12 +4731,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    814.6,
-    222.7
+    662.2,
+    266.2
    ],
    "region_uv": [
-    0.5704,
-    0.5708
+    0.1347,
+    0.7446
    ],
    "flags": {},
    "times_seen": 1,
@@ -4386,12 +4751,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    670.5,
-    376.9
+    401.3,
+    534.4
    ],
    "region_uv": [
-    0.8308,
-    0.5081
+    0.4507,
+    0.7304
    ],
    "flags": {
     "unvisited": true
@@ -4404,16 +4769,16 @@
    "id": 175,
    "name": "Mark Knopfler",
    "region": "amplified_range",
-   "district": "amplified_range:d12",
+   "district": "amplified_range:d10",
    "size": "waystation",
    "score": 3,
    "xy": [
-    643.2,
-    211.4
+    786.2,
+    183.9
    ],
    "region_uv": [
-    0.0807,
-    0.5256
+    0.4893,
+    0.4156
    ],
    "flags": {
     "unvisited": true
@@ -4426,16 +4791,16 @@
    "id": 176,
    "name": "Marshall Crenshaw",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 1,
    "xy": [
-    948.3,
-    95.0
+    963.7,
+    242.5
    ],
    "region_uv": [
-    0.7746,
-    0.8438
+    0.862,
+    2.3798
    ],
    "flags": {
     "unvisited": true
@@ -4452,12 +4817,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    379.8,
-    304.2
+    341.2,
+    574.3
    ],
    "region_uv": [
-    0.2122,
-    0.1923
+    0.2927,
+    0.8994
    ],
    "flags": {
     "unvisited": true
@@ -4470,16 +4835,16 @@
    "id": 178,
    "name": "Mathias Lattin",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "waystation",
    "score": 1,
    "xy": [
-    321.9,
-    640.5
+    333.7,
+    619.2
    ],
    "region_uv": [
-    0.5447,
-    0.9377
+    0.5746,
+    0.7037
    ],
    "flags": {
     "unvisited": true
@@ -4496,12 +4861,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    542.8,
-    548.0
+    627.3,
+    475.7
    ],
    "region_uv": [
-    0.0826,
-    0.4574
+    0.6173,
+    0.0555
    ],
    "flags": {},
    "times_seen": 1,
@@ -4516,12 +4881,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    660.1,
-    540.8
+    716.4,
+    491.7
    ],
    "region_uv": [
-    0.4735,
-    0.4132
+    0.9737,
+    0.158
    ],
    "flags": {},
    "times_seen": 2,
@@ -4536,12 +4901,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    393.2,
-    234.1
+    585.0,
+    426.1
    ],
    "region_uv": [
-    0.9183,
-    0.6364
+    0.8052,
+    0.9827
    ],
    "flags": {},
    "times_seen": 1,
@@ -4556,12 +4921,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    862.7,
-    110.4
+    648.2,
+    312.5
    ],
    "region_uv": [
-    0.7076,
-    0.1215
+    0.0948,
+    0.93
    ],
    "flags": {
     "unvisited": true
@@ -4578,12 +4943,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    736.9,
-    300.2
+    641.7,
+    395.0
    ],
    "region_uv": [
-    0.9261,
-    0.5554
+    0.4456,
+    0.4871
    ],
    "flags": {},
    "times_seen": 2,
@@ -4598,12 +4963,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    452.1,
-    278.6
+    580.6,
+    443.5
    ],
    "region_uv": [
-    0.3662,
-    0.0808
+    0.9227,
+    0.3455
    ],
    "flags": {
     "unvisited": true
@@ -4620,12 +4985,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    209.7,
-    307.9
+    480.7,
+    274.0
    ],
    "region_uv": [
-    0.4479,
-    0.9318
+    0.502,
+    0.3038
    ],
    "flags": {
     "unvisited": true
@@ -4642,12 +5007,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    705.5,
-    619.0
+    516.8,
+    495.5
    ],
    "region_uv": [
-    0.6251,
-    0.8903
+    0.1751,
+    0.183
    ],
    "flags": {},
    "times_seen": 1,
@@ -4662,12 +5027,12 @@
    "size": "village",
    "score": 3.5,
    "xy": [
-    672.2,
-    355.5
+    412.1,
+    570.6
    ],
    "region_uv": [
-    0.8345,
-    0.415
+    0.4793,
+    0.8838
    ],
    "flags": {},
    "times_seen": 1,
@@ -4678,16 +5043,16 @@
    "id": 188,
    "name": "Muireann Bradley",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "town",
    "score": 6,
    "xy": [
-    271.3,
-    488.8
+    258.5,
+    608.6
    ],
    "region_uv": [
-    0.4414,
-    0.113
+    0.3562,
+    0.6018
    ],
    "flags": {},
    "times_seen": 1,
@@ -4698,16 +5063,16 @@
    "id": 189,
    "name": "Muna",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 0,
    "xy": [
-    825.5,
-    73.5
+    958.2,
+    239.3
    ],
    "region_uv": [
-    0.0766,
-    0.6197
+    0.8309,
+    2.3469
    ],
    "flags": {
     "unvisited": true
@@ -4720,16 +5085,16 @@
    "id": 190,
    "name": "Nas",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    966.7,
-    81.0
+    806.0,
+    37.3
    ],
    "region_uv": [
-    0.8791,
-    0.6981
+    -0.0343,
+    0.2427
    ],
    "flags": {},
    "times_seen": 1,
@@ -4740,16 +5105,16 @@
    "id": 191,
    "name": "Nat Myers",
    "region": "delta_coast",
-   "district": "delta_coast:d4",
+   "district": "delta_coast:d1",
    "size": "waystation",
    "score": 1,
    "xy": [
-    90.0,
-    578.4
+    251.0,
+    563.5
    ],
    "region_uv": [
-    0.0715,
-    0.5999
+    0.3344,
+    0.1683
    ],
    "flags": {
     "unvisited": true
@@ -4762,16 +5127,16 @@
    "id": 192,
    "name": "New York's Finest",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p4",
    "size": "capital",
    "score": 15,
    "xy": [
-    884.2,
-    20.6
+    859.9,
+    22.0
    ],
    "region_uv": [
-    0.4102,
-    0.0693
+    0.2721,
+    0.0828
    ],
    "flags": {},
    "times_seen": 5,
@@ -4786,12 +5151,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    264.0,
-    285.5
+    535.4,
+    401.5
    ],
    "region_uv": [
-    0.5872,
-    0.842
+    0.661,
+    0.8726
    ],
    "flags": {
     "unvisited": true
@@ -4808,12 +5173,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    614.6,
-    621.0
+    676.9,
+    494.9
    ],
    "region_uv": [
-    0.322,
-    0.9024
+    0.8155,
+    0.179
    ],
    "flags": {
     "unvisited": true
@@ -4830,12 +5195,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    721.6,
-    268.4
+    645.4,
+    382.3
    ],
    "region_uv": [
-    0.8508,
-    0.3409
+    0.478,
+    0.4335
    ],
    "flags": {},
    "times_seen": 2,
@@ -4850,12 +5215,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    584.7,
-    598.7
+    513.6,
+    637.0
    ],
    "region_uv": [
-    0.2224,
-    0.7664
+    0.1626,
+    1.0895
    ],
    "flags": {},
    "times_seen": 3,
@@ -4870,12 +5235,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    145.4,
-    295.7
+    430,
+    426
    ],
    "region_uv": [
-    0.283,
-    0.8828
+    0.3547,
+    0.9821
    ],
    "flags": {},
    "times_seen": 3,
@@ -4886,16 +5251,16 @@
    "id": 198,
    "name": "Orianthi",
    "region": "amplified_range",
-   "district": "amplified_range:d9",
+   "district": "amplified_range:d1",
    "size": "town",
    "score": 6,
    "xy": [
-    824.0,
-    271.9
+    646.2,
+    285.8
    ],
    "region_uv": [
-    0.5972,
-    0.7675
+    0.0893,
+    0.8232
    ],
    "flags": {},
    "times_seen": 1,
@@ -4906,16 +5271,16 @@
    "id": 199,
    "name": "P!nk",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 1,
    "xy": [
-    855.0,
-    96.4
+    965.2,
+    237.8
    ],
    "region_uv": [
-    0.2446,
-    0.8583
+    0.8702,
+    2.3312
    ],
    "flags": {
     "unvisited": true
@@ -4928,16 +5293,16 @@
    "id": 200,
    "name": "Peter Gabriel",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d8",
    "size": "waystation",
    "score": 3,
    "xy": [
-    655.6,
-    151.2
+    807.1,
+    224.8
    ],
    "region_uv": [
-    0.1161,
-    0.2849
+    0.5488,
+    0.5791
    ],
    "flags": {
     "unvisited": true
@@ -4950,16 +5315,16 @@
    "id": 202,
    "name": "Piper & The Hard Times",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "waystation",
    "score": 1,
    "xy": [
-    378.2,
-    511.1
+    306.6,
+    655.1
    ],
    "region_uv": [
-    0.6595,
-    0.2341
+    0.4958,
+    1.0492
    ],
    "flags": {
     "unvisited": true
@@ -4972,16 +5337,16 @@
    "id": 203,
    "name": "Pixies",
    "region": "amplified_range",
-   "district": "amplified_range:d14",
+   "district": "amplified_range:d11",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    734.6,
-    130.0
+    771.2,
+    262.8
    ],
    "region_uv": [
-    0.3416,
-    0.1999
+    0.4463,
+    0.7313
    ],
    "flags": {},
    "times_seen": 1,
@@ -4996,12 +5361,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    89.5,
-    259.1
+    635.6,
+    307.6
    ],
    "region_uv": [
-    0.1398,
-    0.7364
+    0.9523,
+    0.4538
    ],
    "flags": {
     "unvisited": true
@@ -5018,12 +5383,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    905.3,
-    135.8
+    809.3,
+    201.6
    ],
    "region_uv": [
-    0.8294,
-    0.223
+    0.5551,
+    0.4862
    ],
    "flags": {},
    "times_seen": 1,
@@ -5038,12 +5403,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    656.9,
-    322.3
+    369.4,
+    546.4
    ],
    "region_uv": [
-    0.8019,
-    0.2707
+    0.3668,
+    0.7813
    ],
    "flags": {
     "unvisited": true
@@ -5060,12 +5425,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    657.1,
-    489.1
+    573.6,
+    476.5
    ],
    "region_uv": [
-    0.4637,
-    0.0981
+    0.4022,
+    0.0607
    ],
    "flags": {
     "unvisited": true
@@ -5082,12 +5447,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    124.2,
-    286.6
+    449.3,
+    310.5
    ],
    "region_uv": [
-    0.2288,
-    0.8465
+    0.4108,
+    0.4664
    ],
    "flags": {
     "unvisited": true
@@ -5104,12 +5469,12 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    663.4,
-    568.5
+    509.6,
+    516.3
    ],
    "region_uv": [
-    0.4846,
-    0.5823
+    0.1465,
+    0.3159
    ],
    "flags": {
     "unvisited": true
@@ -5126,12 +5491,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    695.8,
-    389.6
+    520.8,
+    440.0
    ],
    "region_uv": [
-    0.8848,
-    0.5635
+    0.7652,
+    0.3304
    ],
    "flags": {},
    "times_seen": 2,
@@ -5146,12 +5511,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    66.2,
-    232.7
+    514.1,
+    416.3
    ],
    "region_uv": [
-    0.0799,
-    0.6309
+    0.599,
+    0.939
    ],
    "flags": {
     "unvisited": true
@@ -5168,12 +5533,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    675.9,
-    131.1
+    695.9,
+    255.0
    ],
    "region_uv": [
-    0.1741,
-    0.2044
+    0.2313,
+    0.7
    ],
    "flags": {},
    "times_seen": 1,
@@ -5184,16 +5549,16 @@
    "id": 214,
    "name": "Robben Ford",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 2,
    "xy": [
-    775.9,
-    191.0
+    731.9,
+    237.6
    ],
    "region_uv": [
-    0.4596,
-    0.4439
+    0.3341,
+    0.6303
    ],
    "flags": {
     "unvisited": true
@@ -5206,16 +5571,16 @@
    "id": 215,
    "name": "Robert Cray Band",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "town",
    "score": 6,
    "xy": [
-    755.8,
-    174.0
+    716.3,
+    267.5
    ],
    "region_uv": [
-    0.4023,
-    0.3761
+    0.2894,
+    0.7499
    ],
    "flags": {},
    "times_seen": 1,
@@ -5230,12 +5595,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    752.5,
-    238.3
+    665.8,
+    367.8
    ],
    "region_uv": [
-    0.3927,
-    0.6331
+    0.1451,
+    1.151
    ],
    "flags": {},
    "times_seen": 1,
@@ -5250,12 +5615,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    698.2,
-    264.1
+    649.2,
+    369.8
    ],
    "region_uv": [
-    0.7362,
-    0.3117
+    0.51,
+    0.3807
    ],
    "flags": {},
    "times_seen": 3,
@@ -5266,16 +5631,16 @@
    "id": 218,
    "name": "Robin Trower",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 1,
    "xy": [
-    706.3,
-    153.5
+    711.2,
+    229.7
    ],
    "region_uv": [
-    0.261,
-    0.294
+    0.2748,
+    0.5988
    ],
    "flags": {
     "unvisited": true
@@ -5288,16 +5653,16 @@
    "id": 219,
    "name": "Roger Waters",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d8",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    659.0,
-    147.1
+    788.0,
+    234.7
    ],
    "region_uv": [
-    0.1258,
-    0.2685
+    0.4943,
+    0.6188
    ],
    "flags": {},
    "times_seen": 1,
@@ -5312,12 +5677,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    167.2,
-    302.4
+    542.5,
+    246.8
    ],
    "region_uv": [
-    0.339,
-    0.9095
+    0.6818,
+    0.1822
    ],
    "flags": {
     "unvisited": true
@@ -5329,17 +5694,17 @@
   {
    "id": 221,
    "name": "Ruthie Foster",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "region": "delta_coast",
+   "district": "delta_coast:d1",
    "size": "town",
    "score": 6,
    "xy": [
-    310.9,
-    103.0
+    242.6,
+    584.6
    ],
    "region_uv": [
-    0.7073,
-    0.1119
+    0.3098,
+    0.3715
    ],
    "flags": {},
    "times_seen": 1,
@@ -5354,12 +5719,12 @@
    "size": "village",
    "score": 4,
    "xy": [
-    309.1,
-    120.6
+    383.9,
+    371.3
    ],
    "region_uv": [
-    0.7029,
-    0.1826
+    0.2206,
+    0.7381
    ],
    "flags": {},
    "times_seen": 1,
@@ -5369,17 +5734,17 @@
   {
    "id": 223,
    "name": "Sadia Bangura",
-   "region": "amplified_range",
-   "district": "amplified_range:d13",
+   "region": "delta_coast",
+   "district": "delta_coast:d5",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    844.3,
-    191.1
+    434.2,
+    608.1
    ],
    "region_uv": [
-    0.6553,
-    0.4443
+    0.8669,
+    0.5975
    ],
    "flags": {},
    "times_seen": 1,
@@ -5394,12 +5759,12 @@
    "size": "town",
    "score": 7,
    "xy": [
-    374.4,
-    251.6
+    530.1,
+    374.6
    ],
    "region_uv": [
-    0.8701,
-    0.7063
+    0.6457,
+    0.7526
    ],
    "flags": {},
    "times_seen": 2,
@@ -5410,16 +5775,16 @@
    "id": 225,
    "name": "Samantha Fish",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "town",
    "score": 9,
    "xy": [
-    805.9,
-    213.4
+    704.5,
+    329.1
    ],
    "region_uv": [
-    0.5454,
-    0.5338
+    0.2556,
+    0.9964
    ],
    "flags": {},
    "times_seen": 2,
@@ -5434,12 +5799,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    822.9,
-    235.4
+    622.0,
+    310.2
    ],
    "region_uv": [
-    0.594,
-    0.6217
+    0.02,
+    0.921
    ],
    "flags": {},
    "times_seen": 2,
@@ -5454,12 +5819,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    354.4,
-    438.7
+    261.9,
+    439.5
    ],
    "region_uv": [
-    0.1582,
-    0.7771
+    0.084,
+    0.3284
    ],
    "flags": {
     "unvisited": true
@@ -5476,12 +5841,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    150.3,
-    145.0
+    482.5,
+    269.6
    ],
    "region_uv": [
-    0.2958,
-    0.2801
+    0.5072,
+    0.2837
    ],
    "flags": {},
    "times_seen": 1,
@@ -5496,12 +5861,12 @@
    "size": "city",
    "score": 15,
    "xy": [
-    726.6,
-    286.3
+    612.0,
+    393.1
    ],
    "region_uv": [
-    0.8755,
-    0.4616
+    0.1894,
+    0.4793
    ],
    "flags": {},
    "times_seen": 4,
@@ -5516,12 +5881,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    365.1,
-    248.2
+    540.2,
+    381.2
    ],
    "region_uv": [
-    0.8465,
-    0.6928
+    0.6751,
+    0.782
    ],
    "flags": {},
    "times_seen": 1,
@@ -5536,12 +5901,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    739.3,
-    252.7
+    620.3,
+    346.7
    ],
    "region_uv": [
-    0.3551,
-    0.6908
+    0.0152,
+    1.0669
    ],
    "flags": {},
    "times_seen": 1,
@@ -5556,12 +5921,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    87.6,
-    241.4
+    432.0,
+    327.8
    ],
    "region_uv": [
-    0.135,
-    0.6658
+    0.3606,
+    0.5436
    ],
    "flags": {},
    "times_seen": 1,
@@ -5576,12 +5941,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    919.3,
-    145.3
+    618.7,
+    366.8
    ],
    "region_uv": [
-    0.8694,
-    0.261
+    0.0107,
+    1.1474
    ],
    "flags": {
     "unvisited": true
@@ -5594,16 +5959,16 @@
    "id": 235,
    "name": "Shemekia Copeland",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "town",
    "score": 6,
    "xy": [
-    303.0,
-    482.4
+    247.0,
+    573.6
    ],
    "region_uv": [
-    0.5061,
-    0.078
+    0.3226,
+    0.2655
    ],
    "flags": {},
    "times_seen": 1,
@@ -5618,12 +5983,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    529.9,
-    322.5
+    355.5,
+    570.8
    ],
    "region_uv": [
-    0.5317,
-    0.2719
+    0.3303,
+    0.8848
    ],
    "flags": {},
    "times_seen": 3,
@@ -5638,12 +6003,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    642.9,
-    337.1
+    425.7,
+    537.5
    ],
    "region_uv": [
-    0.7722,
-    0.3354
+    0.5151,
+    0.7436
    ],
    "flags": {
     "unvisited": true
@@ -5660,12 +6025,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    644.2,
-    169.6
+    770.1,
+    227.2
    ],
    "region_uv": [
-    0.0834,
-    0.3584
+    0.443,
+    0.5887
    ],
    "flags": {},
    "times_seen": 1,
@@ -5680,12 +6045,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    773.5,
-    589.1
+    489.2,
+    522.4
    ],
    "region_uv": [
-    0.8516,
-    0.7082
+    0.0648,
+    0.3549
    ],
    "flags": {},
    "times_seen": 1,
@@ -5700,12 +6065,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    622.4,
-    354.0
+    671.0,
+    459.1
    ],
    "region_uv": [
-    0.3647,
-    0.9187
+    0.6984,
+    0.759
    ],
    "flags": {},
    "times_seen": 2,
@@ -5720,12 +6085,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    537.4,
-    565.5
+    645.8,
+    481.2
    ],
    "region_uv": [
-    0.0647,
-    0.5643
+    0.6912,
+    0.0909
    ],
    "flags": {},
    "times_seen": 1,
@@ -5735,17 +6100,17 @@
   {
    "id": 243,
    "name": "Southern Avenue",
-   "region": "amplified_range",
-   "district": "amplified_range:d13",
+   "region": "delta_coast",
+   "district": "delta_coast:d5",
    "size": "town",
    "score": 9,
    "xy": [
-    830.8,
-    198.1
+    417.5,
+    617.0
    ],
    "region_uv": [
-    0.6167,
-    0.4724
+    0.8184,
+    0.6831
    ],
    "flags": {},
    "times_seen": 2,
@@ -5760,12 +6125,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    279.2,
-    305.4
+    632.1,
+    350.1
    ],
    "region_uv": [
-    0.6262,
-    0.9215
+    0.9423,
+    0.6431
    ],
    "flags": {},
    "times_seen": 1,
@@ -5780,12 +6145,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    541.1,
-    453.8
+    485.5,
+    466.8
    ],
    "region_uv": [
-    0.5555,
-    0.8425
+    0.6723,
+    0.4441
    ],
    "flags": {},
    "times_seen": 1,
@@ -5800,12 +6165,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    809.8,
-    238.7
+    626.9,
+    276.2
    ],
    "region_uv": [
-    0.5567,
-    0.6349
+    0.034,
+    0.7848
    ],
    "flags": {},
    "times_seen": 1,
@@ -5820,12 +6185,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    928.5,
-    184.1
+    750.2,
+    190.4
    ],
    "region_uv": [
-    0.8958,
-    0.4163
+    0.3862,
+    0.4417
    ],
    "flags": {},
    "times_seen": 1,
@@ -5840,12 +6205,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    931.2,
-    248.9
+    672.5,
+    289.4
    ],
    "region_uv": [
-    0.9034,
-    0.6757
+    0.1644,
+    0.8376
    ],
    "flags": {},
    "times_seen": 1,
@@ -5856,16 +6221,16 @@
    "id": 250,
    "name": "Sue Foley",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d2",
    "size": "city",
    "score": 15,
    "xy": [
-    786.5,
-    201.3
+    615,
+    334
    ],
    "region_uv": [
-    0.4901,
-    0.4851
+    0.0,
+    1.016
    ],
    "flags": {},
    "times_seen": 4,
@@ -5876,16 +6241,16 @@
    "id": 251,
    "name": "Sugaray Rayford",
    "region": "delta_coast",
-   "district": "delta_coast:d5",
+   "district": "delta_coast:d4",
    "size": "waystation",
    "score": 3,
    "xy": [
-    431.1,
-    595.6
+    254.2,
+    613.8
    ],
    "region_uv": [
-    0.7677,
-    0.6934
+    0.3437,
+    0.6516
    ],
    "flags": {
     "unvisited": true
@@ -5902,12 +6267,12 @@
    "size": "city",
    "score": 16,
    "xy": [
-    182.6,
-    163.3
+    460.0,
+    318.1
    ],
    "region_uv": [
-    0.3784,
-    0.3534
+    0.442,
+    0.5005
    ],
    "flags": {},
    "times_seen": 3,
@@ -5922,12 +6287,12 @@
    "size": "city",
    "score": 18,
    "xy": [
-    743.0,
-    217.5
+    745.6,
+    289.8
    ],
    "region_uv": [
-    0.3657,
-    0.5502
+    0.373,
+    0.8393
    ],
    "flags": {},
    "times_seen": 5,
@@ -5938,16 +6303,16 @@
    "id": 254,
    "name": "Taj Farrant",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p4",
    "size": "town",
    "score": 6,
    "xy": [
-    952.9,
-    87.1
+    854.4,
+    24.8
    ],
    "region_uv": [
-    0.8008,
-    0.7617
+    0.2408,
+    0.1123
    ],
    "flags": {},
    "times_seen": 1,
@@ -5958,16 +6323,16 @@
    "id": 255,
    "name": "Taj Mahal",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d1",
    "size": "town",
    "score": 9,
    "xy": [
-    838.8,
-    258.0
+    652.6,
+    301.5
    ],
    "region_uv": [
-    0.6395,
-    0.712
+    0.1074,
+    0.8862
    ],
    "flags": {},
    "times_seen": 2,
@@ -5978,16 +6343,16 @@
    "id": 256,
    "name": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d1",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    849.3,
-    266.5
+    614.9,
+    300.3
    ],
    "region_uv": [
-    0.6695,
-    0.7459
+    -0.0004,
+    0.8814
    ],
    "flags": {},
    "times_seen": 1,
@@ -6002,12 +6367,12 @@
    "size": "waystation",
    "score": 0.5,
    "xy": [
-    545.5,
-    528.2
+    536.0,
+    486.3
    ],
    "region_uv": [
-    0.0916,
-    0.3363
+    0.252,
+    0.124
    ],
    "flags": {
     "unvisited": true
@@ -6020,16 +6385,16 @@
    "id": 258,
    "name": "Talia Segal",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    898.6,
-    103.9
+    857.9,
+    16.6
    ],
    "region_uv": [
-    0.4921,
-    0.937
+    0.261,
+    0.0267
    ],
    "flags": {},
    "times_seen": 1,
@@ -6044,12 +6409,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    256.8,
-    270.5
+    536.4,
+    391.5
    ],
    "region_uv": [
-    0.5687,
-    0.782
+    0.6639,
+    0.8279
    ],
    "flags": {
     "unvisited": true
@@ -6066,12 +6431,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    660.6,
-    342.4
+    595.9,
+    467.8
    ],
    "region_uv": [
-    0.5521,
-    0.8404
+    0.0511,
+    0.7959
    ],
    "flags": {},
    "times_seen": 2,
@@ -6086,12 +6451,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    685.8,
-    124.0
+    824.8,
+    174.6
    ],
    "region_uv": [
-    0.2023,
-    0.176
+    0.5995,
+    0.3782
    ],
    "flags": {},
    "times_seen": 1,
@@ -6106,12 +6471,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    483.1,
-    326.6
+    350.7,
+    527.4
    ],
    "region_uv": [
-    0.432,
-    0.2895
+    0.3177,
+    0.7008
    ],
    "flags": {},
    "times_seen": 3,
@@ -6126,12 +6491,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    574.9,
-    256.3
+    671.0,
+    339.6
    ],
    "region_uv": [
-    0.1321,
-    0.2586
+    0.6979,
+    0.2526
    ],
    "flags": {
     "unvisited": true
@@ -6148,12 +6513,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    312.1,
-    394.5
+    480.6,
+    591.7
    ],
    "region_uv": [
-    0.0682,
-    0.5848
+    0.6594,
+    0.9732
    ],
    "flags": {},
    "times_seen": 1,
@@ -6168,12 +6533,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    584.8,
-    593.5
+    695.7,
+    467.1
    ],
    "region_uv": [
-    0.2227,
-    0.7351
+    0.8908,
+    0.0004
    ],
    "flags": {},
    "times_seen": 1,
@@ -6188,12 +6553,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    676.8,
-    581.1
+    509.5,
+    526.9
    ],
    "region_uv": [
-    0.5292,
-    0.6592
+    0.1458,
+    0.3838
    ],
    "flags": {
     "unvisited": true
@@ -6206,16 +6571,16 @@
    "id": 81,
    "name": "The Fabulous Thunderbirds",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "waystation",
    "score": 2,
    "xy": [
-    719.5,
-    154.3
+    733.8,
+    248.8
    ],
    "region_uv": [
-    0.2985,
-    0.2974
+    0.3394,
+    0.6752
    ],
    "flags": {
     "unvisited": true
@@ -6232,12 +6597,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    393.4,
-    166.4
+    458.6,
+    291.0
    ],
    "region_uv": [
-    0.9189,
-    0.3655
+    0.4377,
+    0.3794
    ],
    "flags": {},
    "times_seen": 1,
@@ -6252,12 +6617,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    835.2,
-    310.2
+    746.6,
+    273.1
    ],
    "region_uv": [
-    0.6292,
-    0.9206
+    0.3759,
+    0.7724
    ],
    "flags": {},
    "times_seen": 1,
@@ -6272,12 +6637,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    941.8,
-    223.6
+    671.9,
+    357.5
    ],
    "region_uv": [
-    0.9337,
-    0.5742
+    0.1625,
+    1.1098
    ],
    "flags": {
     "unvisited": true
@@ -6294,12 +6659,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    660.1,
-    529.7
+    688.7,
+    529.5
    ],
    "region_uv": [
-    0.4737,
-    0.3455
+    0.863,
+    0.4008
    ],
    "flags": {
     "unvisited": true
@@ -6316,12 +6681,12 @@
    "size": "capital",
    "score": 24,
    "xy": [
-    260.4,
-    277.6
+    562.0,
+    366.0
    ],
    "region_uv": [
-    0.5779,
-    0.8106
+    0.7384,
+    0.7143
    ],
    "flags": {},
    "times_seen": 5,
@@ -6336,12 +6701,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    783.5,
-    558.9
+    695.1,
+    509.2
    ],
    "region_uv": [
-    0.8849,
-    0.5241
+    0.8885,
+    0.2705
    ],
    "flags": {},
    "times_seen": 1,
@@ -6356,12 +6721,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    784.6,
-    255.9
+    666.6,
+    348.7
    ],
    "region_uv": [
-    0.4844,
-    0.7036
+    0.1475,
+    1.0748
    ],
    "flags": {
     "unvisited": true
@@ -6378,12 +6743,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    335.5,
-    324.8
+    471.1,
+    378.7
    ],
    "region_uv": [
-    0.118,
-    0.2816
+    0.6346,
+    0.0706
    ],
    "flags": {},
    "times_seen": 1,
@@ -6398,12 +6763,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    663.3,
-    550.6
+    583.8,
+    530.7
    ],
    "region_uv": [
-    0.4844,
-    0.473
+    0.4432,
+    0.4085
    ],
    "flags": {
     "unvisited": true
@@ -6420,12 +6785,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    740.9,
-    244.4
+    656.2,
+    373.8
    ],
    "region_uv": [
-    0.3596,
-    0.6574
+    0.1177,
+    1.1753
    ],
    "flags": {},
    "times_seen": 1,
@@ -6440,12 +6805,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    596.5,
-    352.9
+    532.2,
+    411.0
    ],
    "region_uv": [
-    0.6735,
-    0.404
+    0.7952,
+    0.2077
    ],
    "flags": {
     "unvisited": true
@@ -6462,12 +6827,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    110.3,
-    173.4
+    405.3,
+    361.3
    ],
    "region_uv": [
-    0.193,
-    0.3938
+    0.2827,
+    0.6933
    ],
    "flags": {
     "unvisited": true
@@ -6484,12 +6849,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    624.7,
-    367.2
+    544.6,
+    449.2
    ],
    "region_uv": [
-    0.7333,
-    0.466
+    0.828,
+    0.3694
    ],
    "flags": {},
    "times_seen": 2,
@@ -6504,12 +6869,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    562.0,
-    311.1
+    373.9,
+    537.0
    ],
    "region_uv": [
-    0.6001,
-    0.222
+    0.3787,
+    0.7414
    ],
    "flags": {
     "unvisited": true
@@ -6526,12 +6891,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    566.7,
-    321.8
+    422,
+    452
    ],
    "region_uv": [
-    0.6099,
-    0.2689
+    0.5053,
+    0.3814
    ],
    "flags": {},
    "times_seen": 3,
@@ -6546,12 +6911,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    790.4,
-    315.0
+    798.3,
+    216.5
    ],
    "region_uv": [
-    0.5011,
-    0.94
+    0.5237,
+    0.5458
    ],
    "flags": {},
    "times_seen": 1,
@@ -6566,12 +6931,12 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    772.5,
-    216.3
+    726.9,
+    318.1
    ],
    "region_uv": [
-    0.4499,
-    0.5453
+    0.3198,
+    0.9525
    ],
    "flags": {
     "unvisited": true
@@ -6584,16 +6949,16 @@
    "id": 264,
    "name": "Tommy Castro & the Painkillers",
    "region": "amplified_range",
-   "district": "amplified_range:d11",
+   "district": "amplified_range:d9",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    830.4,
-    112.4
+    601.7,
+    322.8
    ],
    "region_uv": [
-    0.6154,
-    0.1297
+    -0.038,
+    0.971
    ],
    "flags": {},
    "times_seen": 1,
@@ -6608,12 +6973,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    712.2,
-    299.9
+    689.2,
+    272.3
    ],
    "region_uv": [
-    0.2777,
-    0.8797
+    0.212,
+    0.7693
    ],
    "flags": {},
    "times_seen": 1,
@@ -6628,12 +6993,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    166.9,
-    157.7
+    466.9,
+    299.1
    ],
    "region_uv": [
-    0.3383,
-    0.3309
+    0.4621,
+    0.4156
    ],
    "flags": {},
    "times_seen": 1,
@@ -6648,12 +7013,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    129.8,
-    152.1
+    427.1,
+    339.5
    ],
    "region_uv": [
-    0.243,
-    0.3085
+    0.3463,
+    0.5959
    ],
    "flags": {
     "unvisited": true
@@ -6670,12 +7035,12 @@
    "size": "capital",
    "score": 21,
    "xy": [
-    650.7,
-    551.8
+    654,
+    556
    ],
    "region_uv": [
-    0.4425,
-    0.4807
+    0.724,
+    0.5705
    ],
    "flags": {},
    "times_seen": 6,
@@ -6690,12 +7055,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    685.4,
-    590.6
+    528.2,
+    527.1
    ],
    "region_uv": [
-    0.5579,
-    0.7168
+    0.2208,
+    0.3852
    ],
    "flags": {
     "unvisited": true
@@ -6712,12 +7077,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    657.8,
-    379.1
+    501.1,
+    426.3
    ],
    "region_uv": [
-    0.8039,
-    0.5179
+    0.7135,
+    0.2724
    ],
    "flags": {},
    "times_seen": 2,
@@ -6732,12 +7097,12 @@
    "size": "city",
    "score": 24,
    "xy": [
-    718.4,
-    107.6
+    865.6,
+    179.9
    ],
    "region_uv": [
-    0.2953,
-    0.1105
+    0.7159,
+    0.3995
    ],
    "flags": {},
    "times_seen": 7,
@@ -6752,12 +7117,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    737.4,
-    500.3
+    598.3,
+    478.9
    ],
    "region_uv": [
-    0.7315,
-    0.1667
+    0.5011,
+    0.0764
    ],
    "flags": {
     "unvisited": true
@@ -6774,12 +7139,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    662.5,
-    575.7
+    498.6,
+    532.0
    ],
    "region_uv": [
-    0.4816,
-    0.6262
+    0.1022,
+    0.4164
    ],
    "flags": {},
    "times_seen": 1,
@@ -6790,16 +7155,16 @@
    "id": 274,
    "name": "Victor Wooten & The Wooten Brothers",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p4",
    "size": "waystation",
    "score": 1,
    "xy": [
-    882.4,
-    99.6
+    861.4,
+    27.0
    ],
    "region_uv": [
-    0.4002,
-    0.8917
+    0.2804,
+    0.1357
    ],
    "flags": {
     "unvisited": true
@@ -6816,12 +7181,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    158.0,
-    132.7
+    472.4,
+    279.5
    ],
    "region_uv": [
-    0.3155,
-    0.2308
+    0.478,
+    0.3282
    ],
    "flags": {
     "unvisited": true
@@ -6834,16 +7199,16 @@
    "id": 276,
    "name": "Violent Femmes",
    "region": "amplified_range",
-   "district": "amplified_range:d14",
+   "district": "amplified_range:d11",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    738.8,
-    124.1
+    757.5,
+    270.0
    ],
    "region_uv": [
-    0.3537,
-    0.1763
+    0.407,
+    0.7599
    ],
    "flags": {},
    "times_seen": 1,
@@ -6858,12 +7223,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    795.2,
-    222.0
+    722.2,
+    285.5
    ],
    "region_uv": [
-    0.5149,
-    0.5679
+    0.3063,
+    0.8218
    ],
    "flags": {},
    "times_seen": 1,
@@ -6878,12 +7243,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    729.2,
-    261.4
+    627.0,
+    338.0
    ],
    "region_uv": [
-    0.8885,
-    0.2934
+    0.3192,
+    0.2459
    ],
    "flags": {
     "unvisited": true
@@ -6900,12 +7265,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    124.0,
-    273.4
+    427.7,
+    412.9
    ],
    "region_uv": [
-    0.2281,
-    0.7934
+    0.348,
+    0.9235
    ],
    "flags": {
     "unvisited": true
@@ -6922,12 +7287,12 @@
    "size": "village",
    "score": 4,
    "xy": [
-    380.6,
-    437.2
+    288.2,
+    450.4
    ],
    "region_uv": [
-    0.2141,
-    0.7704
+    0.1532,
+    0.3746
    ],
    "flags": {},
    "times_seen": 1,
@@ -6942,12 +7307,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    454.5,
-    327.2
+    367.5,
+    574.5
    ],
    "region_uv": [
-    0.3713,
-    0.292
+    0.3619,
+    0.9006
    ],
    "flags": {},
    "times_seen": 1,
@@ -6962,12 +7327,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    275.4,
-    151.1
+    455.2,
+    383.7
    ],
    "region_uv": [
-    0.6164,
-    0.3044
+    0.428,
+    0.7934
    ],
    "flags": {},
    "times_seen": 1,
@@ -6978,16 +7343,16 @@
    "id": 287,
    "name": "Young Dubliners",
    "region": "outer_isles",
-   "district": "outer_isles:d2",
+   "district": "outer_isles:p1",
    "size": "town",
    "score": 6,
    "xy": [
-    945.8,
-    42.9
+    772.6,
+    78.8
    ],
    "region_uv": [
-    0.76,
-    0.3005
+    -0.2238,
+    0.6755
    ],
    "flags": {},
    "times_seen": 1,
@@ -6998,16 +7363,16 @@
    "id": 291,
    "name": "ZZ Top",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d6",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    770.0,
-    192.9
+    686.8,
+    261.2
    ],
    "region_uv": [
-    0.4429,
-    0.4518
+    0.2051,
+    0.725
    ],
    "flags": {},
    "times_seen": 1,
@@ -7022,12 +7387,12 @@
    "size": "city",
    "score": 19,
    "xy": [
-    796.3,
-    572.0
+    505.2,
+    503.8
    ],
    "region_uv": [
-    0.9276,
-    0.6037
+    0.1287,
+    0.236
    ],
    "flags": {},
    "times_seen": 4,
@@ -7042,12 +7407,12 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    377.5,
-    154.1
+    573.8,
+    276.6
    ],
    "region_uv": [
-    0.8781,
-    0.3163
+    0.7726,
+    0.3151
    ],
    "flags": {
     "unvisited": true
@@ -7060,16 +7425,16 @@
    "id": 289,
    "name": "Zara Larsson",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p6",
    "size": "waystation",
    "score": 0,
    "xy": [
-    853.4,
-    28.3
+    980.9,
+    197.1
    ],
    "region_uv": [
-    0.2352,
-    0.1486
+    0.9596,
+    1.9071
    ],
    "flags": {
     "unvisited": true
@@ -7082,16 +7447,16 @@
    "id": 290,
    "name": "Zara Phillips",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p4",
    "size": "waystation",
    "score": 0,
    "xy": [
-    937.6,
-    25.1
+    850.3,
+    20.7
    ],
    "region_uv": [
-    0.7136,
-    0.1154
+    0.2177,
+    0.0697
    ],
    "flags": {
     "unvisited": true
@@ -7108,12 +7473,12 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    386.6,
-    214.4
+    522.9,
+    254.5
    ],
    "region_uv": [
-    0.9015,
-    0.5575
+    0.6246,
+    0.2163
    ],
    "flags": {
     "unvisited": true
@@ -7126,16 +7491,16 @@
    "id": 146,
    "name": "kitchen",
    "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "district": "outer_isles:p6",
    "size": "waystation",
    "score": 0,
    "xy": [
-    848.0,
-    32.3
+    974.3,
+    200.5
    ],
    "region_uv": [
-    0.2046,
-    0.1901
+    0.9222,
+    1.9423
    ],
    "flags": {
     "unvisited": true
@@ -7151,42 +7516,102 @@
    "b": "Amythyst Kiah",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Adia Victoria",
    "b": "Buffalo Nichols",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Adia Victoria",
    "b": "Larkin Poe",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Adia Victoria",
    "b": "Rhiannon Giddens",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     676.0,
+     289.7
+    ],
+    [
+     534.5,
+     394.9
+    ]
+   ]
   },
   {
    "a": "Adia Victoria",
    "b": "Valerie June",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     676.0,
+     289.7
+    ],
+    [
+     534.5,
+     394.9
+    ]
+   ]
   },
   {
    "a": "Alabama Shakes",
    "b": "Brittany Howard",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Alabama Shakes",
@@ -7214,14 +7639,34 @@
    "b": "Blood Brothers",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     643.5,
+     258.4
+    ],
+    [
+     621.1,
+     266.6
+    ]
+   ]
   },
   {
    "a": "Albert Castiglia",
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Albert Cummings",
@@ -7249,7 +7694,17 @@
    "b": "Amythyst Kiah",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     420.0,
+     415.8
+    ],
+    [
+     337.5,
+     549.9
+    ]
+   ]
   },
   {
    "a": "Allison Russell",
@@ -7277,14 +7732,34 @@
    "b": "Margo Price",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Allison Russell",
    "b": "Rhiannon Giddens",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Allison Russell",
@@ -7298,7 +7773,17 @@
    "b": "The Secret Sisters",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Ally Venable Band",
@@ -7326,7 +7811,17 @@
    "b": "Muireann Bradley",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Ally Venable Band",
@@ -7361,7 +7856,17 @@
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Altered Five Blues Band",
@@ -7375,21 +7880,51 @@
    "b": "Larkin Poe",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     381.9,
+     554.5
+    ],
+    [
+     595.6,
+     428.8
+    ]
+   ]
   },
   {
    "a": "Amythyst Kiah",
    "b": "Valerie June",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     352.6,
+     551.0
+    ],
+    [
+     329.3,
+     575.6
+    ]
+   ]
   },
   {
    "a": "Amythyst Kiah",
    "b": "Yasmin Williams",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     337.5,
+     549.9
+    ],
+    [
+     420.0,
+     415.8
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
@@ -7410,28 +7945,68 @@
    "b": "Davy Knowles",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Joanna Connor",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Joe Bonamassa",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
@@ -7445,98 +8020,238 @@
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Samantha Fish & Jesse Dayton",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Selwyn Birchwood",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     381.9,
+     554.5
+    ],
+    [
+     595.6,
+     428.8
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Ana Popović",
    "b": "Young Dubliners",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "ferry"
+   "render": "ferry",
+   "via": [
+    [
+     359.2,
+     551.6
+    ],
+    [
+     857.3,
+     100.6
+    ]
+   ]
   },
   {
    "a": "Anders Osborne",
    "b": "Gov't Mule",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     637.1,
+     475.8
+    ],
+    [
+     728.5,
+     314.0
+    ]
+   ]
   },
   {
    "a": "Anders Osborne",
    "b": "JJ Grey & Mofro",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     637.1,
+     475.8
+    ],
+    [
+     728.5,
+     314.0
+    ]
+   ]
   },
   {
    "a": "Anders Osborne",
    "b": "North Mississippi Allstars",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     622.4,
+     473.3
+    ],
+    [
+     617.0,
+     489.2
+    ]
+   ]
   },
   {
    "a": "Anders Osborne",
    "b": "Sonny Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     622.4,
+     473.3
+    ],
+    [
+     617.0,
+     489.2
+    ]
+   ]
   },
   {
    "a": "Anders Osborne",
    "b": "Tab Benoit",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     637.1,
+     475.8
+    ],
+    [
+     728.5,
+     314.0
+    ]
+   ]
   },
   {
    "a": "Angelique Francis",
    "b": "D.K. Harrell",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Angelique Francis",
    "b": "Evan Nicole Bell",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Angelique Francis",
    "b": "Kat Riggins",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Angelique Francis",
    "b": "Sugaray Rayford",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Anna Moss",
@@ -7557,14 +8272,34 @@
    "b": "Keb' Mo'",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     329.3,
+     575.6
+    ],
+    [
+     352.6,
+     551.0
+    ]
+   ]
   },
   {
    "a": "Anthony Rosano and The Conqueroos",
    "b": "Tab Benoit",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Aoife O'Donovan",
@@ -7585,14 +8320,34 @@
    "b": "Gary Clark Jr.",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Ariel Posen",
    "b": "Robben Ford",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Ariel Posen",
@@ -7613,21 +8368,51 @@
    "b": "Soul Coughing",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     531.8,
+     417.7
+    ],
+    [
+     561.7,
+     475.3
+    ]
+   ]
   },
   {
    "a": "Beth Hart",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Beth Hart",
    "b": "Joe Bonamassa",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Beth Hart",
@@ -7641,21 +8426,51 @@
    "b": "Orianthi",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Beth Hart",
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Beth Hart",
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Billy Gibbons",
@@ -7718,28 +8533,68 @@
    "b": "The Bros. Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Blood Brothers",
    "b": "Mike Zito",
    "cls": "road",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     610.5,
+     380.1
+    ],
+    [
+     594.9,
+     372.7
+    ]
+   ]
   },
   {
    "a": "Bobby Rush",
    "b": "Cedric Burnside",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Bobby Rush",
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     622.4,
+     473.3
+    ],
+    [
+     617.0,
+     489.2
+    ]
+   ]
   },
   {
    "a": "Bonerama",
@@ -7753,21 +8608,51 @@
    "b": "John Hiatt",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Bonnie Raitt",
    "b": "Taj Mahal",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Bonnie Raitt",
    "b": "The James Hunter Six",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     531.8,
+     417.7
+    ],
+    [
+     561.7,
+     475.3
+    ]
+   ]
   },
   {
    "a": "Brandi Carlile",
@@ -7795,21 +8680,51 @@
    "b": "The Secret Sisters",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Bridge City Sinners",
    "b": "The Devil Makes Three",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Brittney Spencer",
    "b": "Marcus King",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     534.5,
+     394.9
+    ],
+    [
+     676.0,
+     289.7
+    ]
+   ]
   },
   {
    "a": "Brittney Spencer",
@@ -7830,7 +8745,17 @@
    "b": "Eric Bibb",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     643.5,
+     258.4
+    ],
+    [
+     621.1,
+     266.6
+    ]
+   ]
   },
   {
    "a": "Buddy Guy",
@@ -7844,21 +8769,51 @@
    "b": "Judith Hill",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Buddy Guy",
    "b": "Keb' Mo'",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Buddy Guy",
    "b": "Robert Randolph",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Buddy Guy",
@@ -7885,15 +8840,35 @@
    "a": "Buffalo Nichols",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Buffalo Nichols",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Bywater Call",
@@ -7928,21 +8903,51 @@
    "b": "Selwyn Birchwood",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     381.9,
+     554.5
+    ],
+    [
+     595.6,
+     428.8
+    ]
+   ]
   },
   {
    "a": "Cedric Burnside",
    "b": "GA-20",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Cedric Burnside",
    "b": "Lightnin' Malcolm",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Cedric Burnside",
@@ -7956,7 +8961,17 @@
    "b": "Taj Mahal",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Chris Cain",
@@ -8012,7 +9027,17 @@
    "b": "Mathias Lattin",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Christone 'Kingfish' Ingram",
@@ -8033,7 +9058,17 @@
    "b": "Larry McCray",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "D.K. Harrell",
@@ -8068,28 +9103,68 @@
    "b": "Jackie Venson",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Danielle Nicole",
    "b": "Joanna Connor",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Danielle Nicole",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Danielle Nicole",
    "b": "Sue Foley",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Danielle Ponder",
@@ -8103,7 +9178,17 @@
    "b": "Steve Earle",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "David Moore",
@@ -8152,7 +9237,17 @@
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Enter the Haggis",
@@ -8180,28 +9275,68 @@
    "b": "Garret T. Willie",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Eric Bibb",
    "b": "Keb' Mo'",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     420.0,
+     415.8
+    ],
+    [
+     337.5,
+     549.9
+    ]
+   ]
   },
   {
    "a": "Eric Bibb",
    "b": "Nat Myers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     420.0,
+     415.8
+    ],
+    [
+     337.5,
+     549.9
+    ]
+   ]
   },
   {
    "a": "Eric Bibb",
    "b": "Taj Mahal",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Eric Clapton",
@@ -8236,7 +9371,17 @@
    "b": "Sonny Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Eric Gales",
@@ -8257,14 +9402,34 @@
    "b": "Jax Hollow",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     337.5,
+     549.9
+    ],
+    [
+     420.0,
+     415.8
+    ]
+   ]
   },
   {
    "a": "Fruition",
    "b": "Greensky Bluegrass",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "GA-20",
@@ -8278,7 +9443,17 @@
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gabe Stillman",
@@ -8299,7 +9474,17 @@
    "b": "Ghalia Volt",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gary Clark Jr.",
@@ -8341,7 +9526,17 @@
    "b": "Samantha Fish",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Gillian Welch",
@@ -8376,7 +9571,17 @@
    "b": "North Mississippi Allstars",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gov't Mule",
@@ -8390,7 +9595,17 @@
    "b": "Selwyn Birchwood",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gov't Mule",
@@ -8404,21 +9619,51 @@
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gov't Mule",
    "b": "The Bros. Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Gov't Mule",
    "b": "Warren Haynes",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Grace Bowers",
@@ -8439,21 +9684,51 @@
    "b": "Molly Tuttle",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "I'm With Her",
    "b": "Punch Brothers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Indigo Girls",
    "b": "Larkin Poe",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     610.5,
+     380.1
+    ],
+    [
+     594.9,
+     372.7
+    ]
+   ]
   },
   {
    "a": "Indigo Girls",
@@ -8474,21 +9749,51 @@
    "b": "Judith Hill",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "North Mississippi Allstars",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "Robert Randolph",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "JJ Grey & Mofro",
@@ -8502,7 +9807,17 @@
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Jackie Venson",
@@ -8523,14 +9838,34 @@
    "b": "Margo Price",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Jaime Wyatt",
    "b": "ZZ Ward",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     531.8,
+     417.7
+    ],
+    [
+     561.7,
+     475.3
+    ]
+   ]
   },
   {
    "a": "Jake Blount",
@@ -8558,14 +9893,34 @@
    "b": "Tab Benoit",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     534.5,
+     394.9
+    ],
+    [
+     676.0,
+     289.7
+    ]
+   ]
   },
   {
    "a": "Jimmie Vaughan",
    "b": "King Solomon Hicks",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Jimmie Vaughan",
@@ -8614,14 +9969,34 @@
    "b": "Larkin Poe",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Joanne Shaw Taylor",
@@ -8642,7 +10017,17 @@
    "b": "Selwyn Birchwood",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Joanne Shaw Taylor",
@@ -8705,7 +10090,17 @@
    "b": "Mike Campbell & The Dirty Knobs",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     534.5,
+     394.9
+    ],
+    [
+     676.0,
+     289.7
+    ]
+   ]
   },
   {
    "a": "John Hiatt",
@@ -8726,14 +10121,34 @@
    "b": "Langhorne Slim",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Josh Ritter",
    "b": "The Avett Brothers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Judith Hill",
@@ -8747,14 +10162,34 @@
    "b": "The Heavy Heavy",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     621.1,
+     266.6
+    ],
+    [
+     643.5,
+     258.4
+    ]
+   ]
   },
   {
    "a": "Kaia Kater",
    "b": "Rhiannon Giddens",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Kat Riggins",
@@ -8775,28 +10210,58 @@
    "b": "Robert Cray Band",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Keb' Mo'",
    "b": "Ruthie Foster",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway"
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Keb' Mo'",
    "b": "Taj Mahal",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Keb' Mo'",
    "b": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Kenny Wayne Shepherd",
@@ -8817,14 +10282,34 @@
    "b": "The Fabulous Thunderbirds",
    "cls": "road",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "King Solomon Hicks",
    "b": "Sugaray Rayford",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     485.2,
+     565.6
+    ],
+    [
+     446.4,
+     572.7
+    ]
+   ]
   },
   {
    "a": "Kirk Fletcher",
@@ -8859,14 +10344,34 @@
    "b": "Oliver Wood",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "Langhorne Slim",
    "b": "Sabine McCalla",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "Langhorne Slim",
@@ -8880,42 +10385,102 @@
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Larkin Poe",
    "b": "Slash",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Larkin Poe",
    "b": "Willie Nelson",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     594.3,
+     417.3
+    ],
+    [
+     574.6,
+     424.4
+    ]
+   ]
   },
   {
    "a": "Larkin Poe",
    "b": "ZZ Ward",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     617.0,
+     489.2
+    ],
+    [
+     622.4,
+     473.3
+    ]
+   ]
   },
   {
    "a": "Larry McCray",
    "b": "Robert Randolph",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Leyla McCalla",
    "b": "Rhiannon Giddens",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Leyla McCalla",
@@ -8929,7 +10494,17 @@
    "b": "Valerie June",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Lightnin' Malcolm",
@@ -8950,7 +10525,17 @@
    "b": "The Lone Bellow",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "Lindsay Lou",
@@ -8992,7 +10577,17 @@
    "b": "Muna",
    "cls": "trail",
    "crossRegion": true,
-   "render": "ferry"
+   "render": "ferry",
+   "via": [
+    [
+     598.0,
+     246.1
+    ],
+    [
+     844.8,
+     95.6
+    ]
+   ]
   },
   {
    "a": "Lucy Dacus",
@@ -9027,35 +10622,85 @@
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     610.5,
+     380.1
+    ],
+    [
+     594.9,
+     372.7
+    ]
+   ]
   },
   {
    "a": "Marc Broussard",
    "b": "The Teskey Brothers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Marc Broussard",
    "b": "The War and Treaty",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Marcus King",
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Marcus King",
    "b": "The Teskey Brothers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     676.0,
+     289.7
+    ],
+    [
+     534.5,
+     394.9
+    ]
+   ]
   },
   {
    "a": "Margo Price",
@@ -9083,7 +10728,17 @@
    "b": "Piper & The Hard Times",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     595.6,
+     428.8
+    ],
+    [
+     381.9,
+     554.5
+    ]
+   ]
   },
   {
    "a": "Mike Zito",
@@ -9097,21 +10752,51 @@
    "b": "Tab Benoit",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Mike Zito",
    "b": "Vanessa Collier",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Mike Zito",
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Molly Tuttle",
@@ -9132,7 +10817,17 @@
    "b": "Taj Mahal",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Nicole Atkins",
@@ -9160,7 +10855,17 @@
    "b": "Southern Avenue",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "highway",
+   "via": [
+    [
+     595.6,
+     428.8
+    ],
+    [
+     381.9,
+     554.5
+    ]
+   ]
   },
   {
    "a": "North Mississippi Allstars",
@@ -9181,7 +10886,17 @@
    "b": "The Wood Brothers",
    "cls": "road",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Peter Gabriel",
@@ -9195,7 +10910,17 @@
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     381.9,
+     554.5
+    ],
+    [
+     595.6,
+     428.8
+    ]
+   ]
   },
   {
    "a": "Pixies",
@@ -9251,7 +10976,17 @@
    "b": "Sonny Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Robert Jon & The Wreck",
@@ -9265,14 +11000,34 @@
    "b": "Slash",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Robert Randolph",
    "b": "Southern Avenue",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "highway",
+   "via": [
+    [
+     595.6,
+     428.8
+    ],
+    [
+     381.9,
+     554.5
+    ]
+   ]
   },
   {
    "a": "Robin Trower",
@@ -9285,8 +11040,8 @@
    "a": "Ruthie Foster",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway"
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Sadia Bangura",
@@ -9313,8 +11068,18 @@
    "a": "Samantha Fish",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     681.6,
+     293.4
+    ],
+    [
+     364.2,
+     552.2
+    ]
+   ]
   },
   {
    "a": "Samantha Fish",
@@ -9349,42 +11114,102 @@
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Selwyn Birchwood",
    "b": "Young Dubliners",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "ferry"
+   "render": "ferry",
+   "via": [
+    [
+     693.6,
+     337.2
+    ],
+    [
+     868.7,
+     103.8
+    ]
+   ]
   },
   {
    "a": "Shakey Graves",
    "b": "The Wood Brothers",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Shemekia Copeland",
    "b": "Sue Foley",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Shemekia Copeland",
    "b": "Vanessa Collier",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Shemekia Copeland",
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     364.2,
+     552.2
+    ],
+    [
+     681.6,
+     293.4
+    ]
+   ]
   },
   {
    "a": "Shovels & Rope",
@@ -9398,7 +11223,17 @@
    "b": "The Lone Bellow",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "Shovels & Rope",
@@ -9412,28 +11247,68 @@
    "b": "ZZ Ward",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Sonny Landreth",
    "b": "The Iguanas",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Sonny Landreth",
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Southern Avenue",
    "b": "The War and Treaty",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass"
+   "render": "highway",
+   "via": [
+    [
+     352.6,
+     551.0
+    ],
+    [
+     329.3,
+     575.6
+    ]
+   ]
   },
   {
    "a": "Suzanne Vega",
@@ -9447,7 +11322,17 @@
    "b": "The Dirty Dozen Brass Band",
    "cls": "river",
    "crossRegion": true,
-   "render": "pass"
+   "render": "pass",
+   "via": [
+    [
+     728.5,
+     314.0
+    ],
+    [
+     637.1,
+     475.8
+    ]
+   ]
   },
   {
    "a": "Tab Benoit",
@@ -9489,7 +11374,17 @@
    "b": "The Wailin' Jennys",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "The Soul Rebels",
@@ -9510,7 +11405,17 @@
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
    "crossRegion": true,
-   "render": "highway"
+   "render": "highway",
+   "via": [
+    [
+     574.0,
+     536.2
+    ],
+    [
+     496.6,
+     508.0
+    ]
+   ]
   },
   {
    "a": "The War and Treaty",
