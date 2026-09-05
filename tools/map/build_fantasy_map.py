@@ -101,7 +101,7 @@ REGIONS = {
     "quiet_woods": {
         "label": "Quiet Woods",
         "terrain": "forest and lakes — pine shade, cabin lights, still water",
-        "label_xy": (512, 312), "label_size": 17,
+        "label_xy": (495, 307), "label_size": 17,
         "anchor": (480, 318), "rx": 172, "ry": 112,
         "toponym_suffixes": ["Glen", "Hollow", "Lake", "Grove", "Vale"],
         "toponym_prefixes": [],
@@ -1282,11 +1282,15 @@ out = {
          if dd["region"] == "outer_isles" and dd.get("island_center")]
         + ([{"name": "Farrant Rock", "xy": [xy["Taj Farrant"][0], xy["Taj Farrant"][1] + 12]}]
            if "Taj Farrant" in xy else [])
-        + [{"name": "The Lonesome", "xy": [184, 538]},
-           {"name": "Reggae Isle", "xy": [653, 599]},
-           {"name": "Funk Atoll", "xy": [658, 627]},
-           {"name": "The Foremothers", "xy": [185, 606]},
-           {"name": "Kings' Rest", "xy": [216, 630]}]
+        + [
+           {"name": "The Lonesome", "xy": [183, 528]},
+           {"name": "Reggae Isle", "xy": [684, 616]},
+           {"name": "Funk Atoll", "xy": [681, 663]},
+           {"name": "The Foremothers", "xy": [163, 625]},
+           {"name": "Kings' Rest", "xy": [198, 649]}
+           ]  
+           
+           
         + ([{"name": "Legends Island",
              "xy": [(xy["Taj Mahal"][0] + xy["John Primer"][0]) / 2,
                     (xy["Taj Mahal"][1] + xy["John Primer"][1]) / 2 + 14]}]
