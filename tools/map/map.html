@@ -46,9 +46,11 @@
   .stl.legacy .dot{fill:var(--gold);}
   .stl .tick{stroke:var(--ink);stroke-width:.5;fill:var(--tint);}
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
-  .geo-island{font-family:'Special Elite',monospace;fill:#5b8bb0;opacity:.6;letter-spacing:.08em;}
-  .geo-water{fill:#2E4A6B;opacity:.66;font-style:italic;letter-spacing:.06em;}
+  .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
+  .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
   #rose{position:absolute;right:16px;bottom:16px;width:96px;height:96px;pointer-events:none;opacity:.92;}
+  .region-label,.geo-island,.geo-water{pointer-events:none;}
+  body.editing .region-label,body.editing .geo-island,body.editing .geo-water{pointer-events:all;cursor:move;}
   .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
   .stl.ruin .dot{fill:none;stroke:#7a5a33;stroke-width:1.5;stroke-dasharray:4.5 3.5;}
   .stl.ruin text{opacity:.7;font-style:italic;}
@@ -222,6 +224,7 @@
   for(const il of (data.island_labels||[])){
     const t=document.createElementNS(NS,'text');
     t.setAttribute('class','geo-island');t.setAttribute('font-size',7);
+    t.dataset.gname=il.name;t.dataset.gkind='island';
     t.setAttribute('text-anchor','middle');
     t.setAttribute('x',il.xy[0]);t.setAttribute('y',il.xy[1]-14);
     t.textContent=il.name;gGeo.appendChild(t);
@@ -229,6 +232,7 @@
   for(const wl of (data.water_labels||[])){
     const t=document.createElementNS(NS,'text');
     t.setAttribute('class','geo-water');t.setAttribute('font-size',6.5);
+    t.dataset.gname=wl.name;t.dataset.gkind='water';
     t.setAttribute('text-anchor','middle');
     t.setAttribute('x',wl.xy[0]);t.setAttribute('y',wl.xy[1]+1.5);
     t.textContent=wl.name;gGeo.appendChild(t);
@@ -367,7 +371,7 @@
        if(stalePins>8){const e=document.getElementById('err');e.style.display='block';
          e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
   }catch(e){}
-  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';});
+  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);});
   expBtn.addEventListener('click',()=>{
     const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
@@ -416,7 +420,7 @@
   let dragL=null, downAt=null;
   stage.addEventListener('pointerdown',e=>{
     downAt=[e.clientX,e.clientY];
-    const rl=(window.editCb&&editCb.checked)?e.target.closest('.region-label'):null;
+    const rl=(window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
     const g=(window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
     if(rl){dragL=rl;e.preventDefault();return;}
@@ -427,7 +431,12 @@
     if(dragL){
       const [mx,my]=toMap(e.clientX,e.clientY);
       dragL.setAttribute('x',mx.toFixed(0));dragL.setAttribute('y',my.toFixed(0));
-      readout.innerHTML=`<div class="nm">${dragL.dataset.rid}</div><div class="stats">"label_xy": (${mx.toFixed(0)}, ${my.toFixed(0)}),</div>`;
+      const X=mx.toFixed(0),Y=my.toFixed(0);
+      let line;
+      if(dragL.dataset.rid) line=`"label_xy": (${X}, ${Y}),`;
+      else if(dragL.dataset.gkind==='island') line=`{"name": "${dragL.dataset.gname}", "xy": [${X}, ${Y}]},`;
+      else line=`${dragL.dataset.gname} label at (${X}, ${Y})`;
+      readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">${line}</div>`;
       return;
     }
     if(dragS){

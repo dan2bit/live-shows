@@ -61,7 +61,7 @@ REGIONS = {
     "delta_coast": {
         "label": "Delta Coast",
         "terrain": "coastal tidewater — estuary, levees, shotgun porches",
-        "label_xy": (240, 640), "label_size": 15,
+        "label_xy": (327, 633), "label_size": 15,
         "anchor": (308, 598), "rx": 172, "ry": 52,
         "toponym_suffixes": ["Haven", "Quay", "Levee", "Landing", "Shoals"],
         "toponym_prefixes": ["Port "],
@@ -69,7 +69,7 @@ REGIONS = {
     "amplified_range": {
         "label": "Amplified Range",
         "terrain": "high mountains — basalt cliffs, feedback storms",
-        "label_xy": (795, 250), "label_size": 18,
+        "label_xy": (687, 206), "label_size": 18,
         "anchor": (790, 205), "rx": 175, "ry": 125,
         "toponym_suffixes": ["Crag", "Pass", "Summit", "Overdrive", "Ridge"],
         "toponym_prefixes": ["Mount "],
@@ -77,7 +77,7 @@ REGIONS = {
     "slide_foothills": {
         "label": "Steel Foothills",
         "terrain": "foothills - slide scarps, steel terraces, bottleneck switchbacks",
-        "label_xy": (672, 415), "label_size": 13,
+        "label_xy": (606, 323), "label_size": 13,
         "anchor": (648, 398), "rx": 58, "ry": 118,
         "toponym_suffixes": ["Scarp", "Terrace", "Rise", "Switchback", "Bend"],
         "toponym_prefixes": ["Steel "],
@@ -85,15 +85,15 @@ REGIONS = {
     "heartland": {
         "label": "Heartland",
         "terrain": "farmland plains — wheat, gravel roads, grain towers",
-        "label_xy": (380, 470), "label_size": 18,
+        "label_xy": (307, 483), "label_size": 18,
         "anchor": (420, 480), "rx": 190, "ry": 118,
         "toponym_suffixes": ["Hollow", "Fields", "Prairie", "Crossing", "Silo"],
         "toponym_prefixes": [],
     },
     "river_port": {
-        "label": "Secondline Riverlands",
+        "label": "Secondline<br/>Riverlands",
         "terrain": "riverside port — wharves, brass balconies, paddle steam",
-        "label_xy": (610, 630), "label_size": 15,
+        "label_xy": (594, 608), "label_size": 15,
         "anchor": (598, 545), "rx": 125, "ry": 78,
         "toponym_suffixes": ["Wharf", "Landing", "Parade", "Bend", "Ward"],
         "toponym_prefixes": [],
@@ -101,7 +101,7 @@ REGIONS = {
     "quiet_woods": {
         "label": "Quiet Woods",
         "terrain": "forest and lakes — pine shade, cabin lights, still water",
-        "label_xy": (430, 300), "label_size": 17,
+        "label_xy": (512, 312), "label_size": 17,
         "anchor": (480, 318), "rx": 172, "ry": 112,
         "toponym_suffixes": ["Glen", "Hollow", "Lake", "Grove", "Vale"],
         "toponym_prefixes": [],
@@ -109,7 +109,7 @@ REGIONS = {
     "outer_isles": {
         "label": "Outer Isles",
         "terrain": "offshore archipelago continuing the range's line north - ferry weather, distant genres",
-        "label_xy": (940, 130), "label_size": 15,
+        "label_xy": (872, 120), "label_size": 15,
         "anchor": (900, 62), "rx": 88, "ry": 48,
         "toponym_suffixes": ["Isle", "Skerry", "Sound", "Rock"],
         "toponym_prefixes": ["Isle of "],
