@@ -85,7 +85,7 @@ REGIONS = {
     "heartland": {
         "label": "Heartland",
         "terrain": "farmland plains — wheat, gravel roads, grain towers",
-        "label_xy": (280, 520), "label_size": 18,
+        "label_xy": (380, 470), "label_size": 18,
         "anchor": (420, 480), "rx": 190, "ry": 118,
         "toponym_suffixes": ["Hollow", "Fields", "Prairie", "Crossing", "Silo"],
         "toponym_prefixes": [],
@@ -101,7 +101,7 @@ REGIONS = {
     "quiet_woods": {
         "label": "Quiet Woods",
         "terrain": "forest and lakes — pine shade, cabin lights, still water",
-        "label_xy": (630, 300), "label_size": 17,
+        "label_xy": (430, 300), "label_size": 17,
         "anchor": (480, 318), "rx": 172, "ry": 112,
         "toponym_suffixes": ["Glen", "Hollow", "Lake", "Grove", "Vale"],
         "toponym_prefixes": [],
@@ -272,6 +272,36 @@ for _c, _hv in _hist_seen.items():
         seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,
                          "most_recent": _hv["last"], "via_history": True}
 
+# audit #318 dedupe: merges and co-bill suppressions, decided 2026-09-05
+MERGES = {   # absorbed -> survivor (survivor inherits seen history)
+    "Daniel Donato's Cosmic Country": "Daniel Donato",
+    "Gillian Welch & David Rawlings": "Gillian Welch",
+    "Victor Wooten & The Wooten Brothers": "Victor Wooten",
+    "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
+}
+SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
+    "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
+    "Blood Brothers": ["Mike Zito", "Albert Castiglia"],
+}
+def _fold_seen(dst, src_meta):
+    m_ = seen_meta.setdefault(dst, {"times_seen": 0, "vip": 0, "most_recent": ""})
+    m_["times_seen"] = m_.get("times_seen", 0) + src_meta.get("times_seen", 0)
+    m_["vip"] = m_.get("vip", 0) + src_meta.get("vip", 0)
+    m_["most_recent"] = max(m_.get("most_recent", ""), src_meta.get("most_recent", ""))
+for _gone, _keep in MERGES.items():
+    if _gone in records:
+        if _keep in records:
+            _fold_seen(_keep, seen_meta.get(_gone, {}))
+            records[_keep]["sources"] = sorted(set(records[_keep].get("sources", []))
+                                               | set(records[_gone].get("sources", [])))
+        records.pop(_gone); seen_meta.pop(_gone, None)
+for _gone, _kin in SUPPRESSED_CREDIT.items():
+    if _gone in records:
+        for _k in _kin:
+            if _k in records:
+                _fold_seen(_k, seen_meta.get(_gone, {}))
+        records.pop(_gone); seen_meta.pop(_gone, None)
+
 # ---------------------------------------------------------------- edges
 edges = {}  # frozenset({a,b}) -> class (strongest wins: road/river > bridge > trail)
 RANK = {"road": 3, "river": 3, "bridge": 2, "trail": 1}
@@ -424,6 +454,11 @@ LEGENDS = {
     "Keb' Mo'",                                               # of the Delta
     "Walter Trout", "Steve Miller Band",                      # of the Amplified Range
     "Tommy Castro & the Painkillers", "Jimmie Vaughan", "Robert Cray Band",
+    "Taj Mahal", "John Primer", "Chris Smither",              # of the Delta (Legends Island)
+    "Lyle Lovett", "Los Lobos", "Emmylou Harris",             # of the Heartland
+    "George Clinton & Parliament-Funkadelic",                 # of Second Line
+    "Mitch Ryder", "Joan Jett & The Blackhearts",             # of the Amplified Range
+    "Billy Gibbons",                                          # the lineup, not the brand
 }
 
 TIER_SCORE = {"Strong": 3, "Medium-Strong": 2, "Medium": 1, "Lower": 0.5, "Legacy": 2}
@@ -934,6 +969,7 @@ CURATED_SIZE = {
     "Hozier": "city", "Every Breath You Take": "town",
     "Enter the Haggis": "town", "Kate Davis": "town",
     "Glen Hansard": "town", "L\u012bve": "village",
+    "Joan Jett & The Blackhearts": "village",
 }
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
