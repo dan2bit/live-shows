@@ -125,16 +125,16 @@ WATERWAYS = [
     {"id": "slowhand_creek", "label": "Slowhand Creek",
      "points": [(585, 372), (600, 424), (612, 470)],
      "note": "short run out of the forest lake on the upper bout, joining the Big Muddy at the seam"},
-    {"id": "the_forest_lake", "label": "The Forest Lake",
+    {"id": "the_forest_lake", "label": "The Source", "names": ["The Source"],
      "points": [(585, 372)],
      "note": "lake in the Quiet Woods at the creek's source; sits where a neck pickup would"},
-    {"id": "the_shoulder_lakes", "label": "The Shoulder Lakes",
+    {"id": "the_shoulder_lakes", "label": "The Shoulder Lakes", "names": ["Giddens Pool", "Lake Vega"],
      "points": [(430, 246), (358, 318)],
      "note": "the two big lakes on the upper bout's shoulder; each carries a sizable Quiet Woods settlement on its shore"},
     {"id": "the_parade", "label": "The Parade",
      "points": [(505, 560), (562, 584), (614, 600)],
      "note": "the second river into the bay, draining the knob-lake country along the lower bout; Second Line's twin waterfront with the Big Muddy"},
-    {"id": "the_knob_lakes", "label": "The Knob Lakes",
+    {"id": "the_knob_lakes", "label": "The Knob Lakes", "names": ["Volume", "Tone"],
      "points": [(468, 540), (505, 560)],
      "note": "two small lakes on the lower bout, roughly where the knobs would sit"},
     {"id": "the_sound", "label": "The Wide Water",
@@ -890,6 +890,14 @@ for c in list(records):
         jr2 = random.Random(f"{RNG_SEED}:ft:{c}")
         xy[c] = (sx_ + (jr2.random() - 0.5) * 26, sy_ + (jr2.random() - 0.5) * 20)
 
+# island decree: applied after pins by explicit instruction (supersedes)
+DECREE_MOVES = {
+    "Danielle Ponder": ("delta_coast", (190.0, 556.0)),   # joins Nichols on The Lonesome
+    "Ziggy Marley": ("river_port", (651.0, 611.0)),       # Reggae Isle (Mavis's old ground)
+    "Jah Works": ("river_port", (655.5, 617.5)),
+}
+DECREE_ASHORE = {"Mavis Staples": "river_port"}           # back to the mainland, staged
+
 # Dan's pins are law: name -> [x, y], applied verbatim, never clamped
 pins_path = SCRIPT_DIR / "pins.json"
 if pins_path.exists():
@@ -1126,6 +1134,21 @@ if ov_path.exists():
             OVERRIDE_SIZE[nm] = ov["size"]
     refresh_isle_islands()
 
+for nm, (reg_, pt_) in DECREE_MOVES.items():
+    if nm in records:
+        region_of[nm] = reg_
+        xy[nm] = pt_
+        UNPLACED.discard(nm)
+for nm, reg_ in DECREE_ASHORE.items():
+    if nm in records:
+        region_of[nm] = reg_
+        spec_ = REGIONS[reg_]
+        jr7 = random.Random(f"{RNG_SEED}:ashore:{nm}")
+        sx_, sy_ = clamp_to_land(spec_["anchor"][0] - spec_["rx"] * 0.3,
+                                 spec_["anchor"][1] - spec_["ry"] * 0.5, spec_["anchor"])
+        xy[nm] = (sx_ + (jr7.random() - 0.5) * 20, sy_ + (jr7.random() - 0.5) * 14)
+        UNPLACED.add(nm)
+
 for did in [d_ for d_, dd in districts.items()
             if dd["region"] == "outer_isles" and not dd["members"]]:
     del districts[did]
@@ -1239,6 +1262,32 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
     routes.append(entry)
 
 out = {
+    "water_labels": [
+        {"name": nm_, "xy": list(pt_)}
+        for w_ in WATERWAYS if w_.get("names")
+        for nm_, pt_ in zip(w_["names"], w_["points"])
+    ],
+    "canonical_islets": [
+        {"xy": [185, 617], "r": [10, 7]},    # Foremothers
+        {"xy": [216, 641], "r": [11, 7]},    # Kings' Rest
+        {"xy": [658, 636], "r": [11, 8]},    # Funk Atoll landing
+    ],
+    "island_labels": (
+        [{"name": dd["suggested_name"], "xy": dd["island_center"]}
+         for dd in districts.values()
+         if dd["region"] == "outer_isles" and dd.get("island_center")]
+        + ([{"name": "Farrant Rock", "xy": [xy["Taj Farrant"][0], xy["Taj Farrant"][1] + 12]}]
+           if "Taj Farrant" in xy else [])
+        + [{"name": "The Lonesome", "xy": [184, 538]},
+           {"name": "Reggae Isle", "xy": [653, 599]},
+           {"name": "Funk Atoll", "xy": [658, 627]},
+           {"name": "The Foremothers", "xy": [185, 606]},
+           {"name": "Kings' Rest", "xy": [216, 630]}]
+        + ([{"name": "Legends Island",
+             "xy": [(xy["Taj Mahal"][0] + xy["John Primer"][0]) / 2,
+                    (xy["Taj Mahal"][1] + xy["John Primer"][1]) / 2 + 14]}]
+           if "Taj Mahal" in xy and "John Primer" in xy else [])
+    ),
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "pins.json").exists() else None,

@@ -1,4 +1,166 @@
 {
+ "water_labels": [
+  {
+   "name": "The Source",
+   "xy": [
+    585,
+    372
+   ]
+  },
+  {
+   "name": "Giddens Pool",
+   "xy": [
+    430,
+    246
+   ]
+  },
+  {
+   "name": "Lake Vega",
+   "xy": [
+    358,
+    318
+   ]
+  },
+  {
+   "name": "Volume",
+   "xy": [
+    468,
+    540
+   ]
+  },
+  {
+   "name": "Tone",
+   "xy": [
+    505,
+    560
+   ]
+  }
+ ],
+ "canonical_islets": [
+  {
+   "xy": [
+    185,
+    617
+   ],
+   "r": [
+    10,
+    7
+   ]
+  },
+  {
+   "xy": [
+    216,
+    641
+   ],
+   "r": [
+    11,
+    7
+   ]
+  },
+  {
+   "xy": [
+    658,
+    636
+   ],
+   "r": [
+    11,
+    8
+   ]
+  }
+ ],
+ "island_labels": [
+  {
+   "name": "Innis Craic",
+   "xy": [
+    733.5,
+    131.6
+   ]
+  },
+  {
+   "name": "Pop Rock",
+   "xy": [
+    905.5,
+    251.0
+   ]
+  },
+  {
+   "name": "Cover Band Cay",
+   "xy": [
+    804.4,
+    38.3
+   ]
+  },
+  {
+   "name": "Hip Hop Haven",
+   "xy": [
+    856.8,
+    20.1
+   ]
+  },
+  {
+   "name": "Fempop Skree",
+   "xy": [
+    961.4,
+    239.5
+   ]
+  },
+  {
+   "name": "Indiesoul Isle",
+   "xy": [
+    975.4,
+    194.2
+   ]
+  },
+  {
+   "name": "Farrant Rock",
+   "xy": [
+    938.1,
+    87.6
+   ]
+  },
+  {
+   "name": "The Lonesome",
+   "xy": [
+    184,
+    538
+   ]
+  },
+  {
+   "name": "Reggae Isle",
+   "xy": [
+    653,
+    599
+   ]
+  },
+  {
+   "name": "Funk Atoll",
+   "xy": [
+    658,
+    627
+   ]
+  },
+  {
+   "name": "The Foremothers",
+   "xy": [
+    185,
+    606
+   ]
+  },
+  {
+   "name": "Kings' Rest",
+   "xy": [
+    216,
+    630
+   ]
+  },
+  {
+   "name": "Legends Island",
+   "xy": [
+    148.65,
+    595.9000000000001
+   ]
+  }
+ ],
  "meta": {
   "generated_from": "2026-09-01",
   "seed": 2026,
@@ -6,7 +168,7 @@
   "overrides_hash": "62ee2dbbd7",
   "counts": {
    "settlements": 388,
-   "routes": 333,
+   "routes": 332,
    "districts": 53
   }
  },
@@ -240,48 +402,44 @@
    "ry": 78,
    "hull": [
     [
-     462.0,
-     587.9
-    ],
-    [
      462.2,
-     522.9
+     588.6
     ],
     [
-     478.0,
-     497.7
+     462.0,
+     523.7
     ],
     [
-     622.0,
+     477.6,
+     498.5
+    ],
+    [
+     622.1,
      428.5
     ],
     [
-     706.7,
-     476.6
+     707.0,
+     477.1
     ],
     [
-     714.4,
-     483.6
+     714.7,
+     484.2
     ],
     [
-     717.9,
-     582.3
+     717.7,
+     583.1
     ],
     [
-     662.0,
-     624.9
+     665.7,
+     629.8
     ],
     [
-     607.3,
-     635.2
+     606.9,
+     635.3
     ],
     [
-     589.7,
-     634.5
-    ],
-    [
-     526.1,
-     614.7
+     526.6,
+     615.2
     ]
    ]
   },
@@ -447,7 +605,10 @@
   },
   {
    "id": "the_forest_lake",
-   "label": "The Forest Lake",
+   "label": "The Source",
+   "names": [
+    "The Source"
+   ],
    "points": [
     [
      585,
@@ -459,6 +620,10 @@
   {
    "id": "the_shoulder_lakes",
    "label": "The Shoulder Lakes",
+   "names": [
+    "Giddens Pool",
+    "Lake Vega"
+   ],
    "points": [
     [
      430,
@@ -493,6 +658,10 @@
   {
    "id": "the_knob_lakes",
    "label": "The Knob Lakes",
+   "names": [
+    "Volume",
+    "Tone"
+   ],
    "points": [
     [
      468,
@@ -1545,7 +1714,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override: seen once, arena artist worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1568,7 +1737,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Lower)",
+   "src": "follow (Lower): country/bluegrass adjacency; keep",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1656,7 +1825,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Similar-to GA-20 (Last.fm); densely-connected in DMV…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1786,7 +1955,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Buy @ GMU Center for the Arts 2027-04-25 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1872,7 +2041,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-10-12 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1883,7 +2052,7 @@
    "region": "slide_foothills",
    "district": "slide_foothills:d4",
    "size": "town",
-   "score": 4,
+   "score": 1,
    "xy": [
     606.2,
     427.5
@@ -1892,9 +2061,11 @@
     0.1397,
     0.625
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "follow (Medium): new_artist_research; Hamilton Live presale Aug 2026",
+   "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
   },
@@ -1958,7 +2129,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Theater at MGM National Harbor 2026-11-10 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2130,7 +2301,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Hank Dietle's Tavern 2026-09-13 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2197,7 +2368,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Bass virtuoso (Mr. Big, Talas, David Lee Roth solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2220,7 +2391,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): bandcamp + 3 sources; bluegrass circuit adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -2243,7 +2414,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Southern rock / cosmic-country adjacent -…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2330,7 +2501,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "follow (Legacy)",
+   "src": "follow (Legacy): seen 2x; age 92; still touring 2026; 12 BMA wins;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -2634,7 +2805,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: alt-rock, occasional crossover",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2762,7 +2933,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; Hill Country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2869,7 +3040,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): traditional blues guitarist; Alligator…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -2916,7 +3087,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Hamilton Live 2026-09-18 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3069,7 +3240,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-19 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3119,17 +3290,17 @@
   {
    "id": 60,
    "name": "Danielle Ponder",
-   "region": "river_port",
+   "region": "delta_coast",
    "district": "river_port:d2",
    "size": "village",
    "score": 5,
    "xy": [
-    574.5,
-    556.4
+    190.0,
+    556.0
    ],
    "region_uv": [
-    0.406,
-    0.5731
+    0.157,
+    0.0962
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3197,7 +3368,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-15 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3325,7 +3496,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Buy @ Bethesda Blues & Jazz 2026-09-16 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3411,7 +3582,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; rising blues-soul",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3522,7 +3693,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; folk-blues legend",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3546,7 +3717,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "follow (Legacy)",
+   "src": "follow (Legacy): age 81; 2026 tour Europe + 6 US dates (Sep, arenas);…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -3632,7 +3803,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Recher 2026-10-16 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3785,7 +3956,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Portland roots/folk-rock; bluegrass/country-rock…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3808,7 +3979,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; traditional blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3938,7 +4109,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues-rock guitarist; hard rock origins (Heavy…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4114,7 +4285,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): seen; Warren Haynes — now followed on Seated",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4181,7 +4352,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): Enter the Haggis successor project; NOT ON SEATED or…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4290,7 +4461,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Enter the Haggis successor project",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4399,7 +4570,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The 8x10 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -4498,12 +4669,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    596.8,
-    589.1
+    655.5,
+    617.5
    ],
    "region_uv": [
-    0.4952,
-    0.7827
+    0.73,
+    0.9647
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -4592,7 +4763,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; blues-rock",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4745,7 +4916,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): Chicago slide-guitar legend; Kingston Mines…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4852,7 +5023,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): former Bros. Landreth member; solo artist; Canadian…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4898,7 +5069,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Grammy-nominated soul-blues vocalist and…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5007,7 +5178,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Americana/folk singer-songwriter; Birchmere Oct 25…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5030,7 +5201,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Howard Theatre 2026-11-13 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5095,7 +5266,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Concerts at The Sevareid House 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5118,7 +5289,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5271,7 +5442,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Fabulous Thunderbirds frontman; age 74;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -5336,7 +5507,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues guitarist; Bonamassa circle; occasional solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5422,7 +5593,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-10-08 Thu & 2026-10-09 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5510,7 +5681,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2027-01-01 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5533,7 +5704,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): bandcamp; sister of Sabine McCalla",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5598,7 +5769,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5709,7 +5880,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ The Recher 2026-10-07 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5732,7 +5903,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ 9:30 Club 2026-09-30 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5797,7 +5968,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: indie singer-songwriter",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5831,7 +6002,7 @@
    "region": "heartland",
    "district": "heartland:d7",
    "size": "hamlet",
-   "score": 3,
+   "score": 0,
    "xy": [
     329.9,
     402.0
@@ -5840,9 +6011,11 @@
     0.2629,
     0.1695
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "seen",
+   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -5950,7 +6123,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Louisiana soul-blues singer-songwriter; active…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6036,7 +6209,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override strong: Dire Straits legend; solo artist,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6059,7 +6232,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-11-22 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6082,7 +6255,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-11-12 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6137,15 +6310,16 @@
    "size": "town",
    "score": 9,
    "xy": [
-    651.2,
-    613.1
+    551.4,
+    501.5
    ],
    "region_uv": [
-    0.7128,
-    0.9365
+    0.3135,
+    0.2213
    ],
    "flags": {
-    "legacy": true
+    "legacy": true,
+    "unplaced": true
    },
    "src": "",
    "times_seen": 2,
@@ -6191,7 +6365,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Warner Theatre 2026-09-22 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -6495,7 +6669,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; acoustic country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6669,7 +6843,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: pop crossover; seen-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6734,7 +6908,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override strong: legendary artist still actively…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6778,7 +6952,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): promoted from NAR 2026-07-03; 2024 IBC Band winner +…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6822,7 +6996,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Atlantis 2026-09-23 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6866,7 +7040,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Warner Theatre 2026-11-06 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6912,7 +7086,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2026-12-10 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7042,7 +7216,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-11-20 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -7086,7 +7260,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): jazz-blues guitar legend; age 75; associated…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7174,7 +7348,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-09-24 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7218,7 +7392,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7516,7 +7690,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Texas/OK blues-rock guitarist; Albert…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7581,7 +7755,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): 5x Grammy-nominated bluegrass mandolinist;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8137,7 +8311,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Lower)",
+   "src": "follow (Lower): sit-in doesn't count; follow for headline shows",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -8309,7 +8483,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Jammin' Java 2026-09-26 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8416,7 +8590,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Kim Wilson's band; follow alongside Kim…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -8670,7 +8844,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): LA blues-rock trio (raw slide guitar, upright bass,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8799,7 +8973,7 @@
     "unvisited": true,
     "unplaced": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues-soul; strong live rep; add all services",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8822,7 +8996,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-09-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -8950,7 +9124,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): 8x lastfm similar graph (2026-07 run); annual…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -9059,7 +9233,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: rare performer but legendary",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9103,7 +9277,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2026-09-07 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9191,7 +9365,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Howard Theatre 2026-12-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Low"
@@ -9256,7 +9430,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Hamilton Live 2026-11-21 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9323,7 +9497,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): in books; Gov't Mule",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9346,7 +9520,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: Americana-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9590,7 +9764,7 @@
    "region": "slide_foothills",
    "district": "slide_foothills:override",
    "size": "village",
-   "score": 3,
+   "score": 0,
    "xy": [
     612.2,
     418.2
@@ -9599,9 +9773,11 @@
     0.1914,
     0.5856
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "seen",
+   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -9701,12 +9877,12 @@
    "size": "town",
    "score": 3,
    "xy": [
-    590.8,
-    618.5
+    651.0,
+    611.0
    ],
    "region_uv": [
-    0.4712,
-    0.9712
+    0.712,
+    0.9231
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9732,7 +9908,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override: indie supergroup worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -10507,13 +10683,6 @@
    "render": "trail"
   },
   {
-   "a": "Ariel Posen",
-   "b": "Zach Person",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
    "a": "Artur Menezes",
    "b": "Eric Gales",
    "cls": "river",
@@ -11256,8 +11425,18 @@
    "a": "Danielle Ponder",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "highway",
+   "via": [
+    [
+     446.4,
+     572.7
+    ],
+    [
+     485.2,
+     565.6
+    ]
+   ]
   },
   {
    "a": "Danny Burns",

@@ -272,6 +272,8 @@ for _ in range(2):   # uninhabited skerries off the headstock tip
                     6 + 5 * isl_rng.random(), 5 + 4 * isl_rng.random()))
 islands.append((655, 612, 12, 9))   # the harbor island, inside the bay
 islands.append((72, 84, 34, 24))    # the undiscovered northwest island
+for ci in d.get("canonical_islets", []):
+    islands.append((ci["xy"][0], ci["xy"][1], ci["r"][0], ci["r"][1]))
 covered = lambda x_, y_: any(((x_-a_)/b_)**2 + ((y_-c_)/d_)**2 < 0.5
                              for a_, c_, b_, d_ in islands)
 for st in d["settlements"]:
