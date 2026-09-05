@@ -1,0 +1,52 @@
+name: Rebuild fantasy map data
+
+# Closes the loop that keeps breaking by hand: whenever the map's inputs change
+# (pins, overrides, discovered adds, or the builder itself), regenerate
+# fantasy_map_data.json and heightmap.png and commit them back. The builder is
+# deterministic (seed + pinned PYTHONHASHSEED), so this produces byte-stable
+# output for identical inputs and no-ops cleanly when nothing changed.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/map/pins.json"
+      - "tools/map/map_overrides.json"
+      - "tools/map/discovered_adds.json"
+      - "tools/map/build_fantasy_map.py"
+      - "tools/map/emit_heightmap.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install networkx numpy pillow
+
+      - name: Rebuild map data and heightmap
+        run: |
+          python3 tools/map/build_fantasy_map.py
+          python3 tools/map/emit_heightmap.py
+
+      - name: Commit regenerated artifacts
+        run: |
+          git config user.name "map-rebuild-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add tools/map/fantasy_map_data.json tools/map/heightmap.png
+          if git diff --cached --quiet; then
+            echo "map data already current - nothing to commit"
+          else
+            git pull --rebase
+            git commit -m "map: regenerate data + heightmap from updated inputs"
+            git push
+          fi
