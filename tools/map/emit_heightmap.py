@@ -240,6 +240,10 @@ for kx2, ky2 in ww["the_knob_lakes"]["points"]:
     lake |= bump(kx2, ky2, 11, 9, 1.3) > 0.3
 for sx3, sy3 in ww["the_shoulder_lakes"]["points"]:
     lake |= bump(sx3, sy3, 30, 20, 1.3) > 0.3
+# lakes yield to settlements: the shore retreats from anyone standing near it
+for st in d["settlements"]:
+    sx4, sy4 = st["xy"]
+    lake &= ~(bump(sx4, sy4, 9, 9, 1.0) > 0.12)
 
 # keep carved valleys above sea level away from the coast
 shore_d = np.asarray(Image.fromarray((~water).astype(np.uint8) * 255)
