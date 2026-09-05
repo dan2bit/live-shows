@@ -1,52 +1,79 @@
 name: Rebuild fantasy map data
 
-# Closes the loop that keeps breaking by hand: whenever the map's inputs change
-# (pins, overrides, discovered adds, or the builder itself), regenerate
-# fantasy_map_data.json and heightmap.png and commit them back. The builder is
-# deterministic (seed + pinned PYTHONHASHSEED), so this produces byte-stable
-# output for identical inputs and no-ops cleanly when nothing changed.
+# Closes the pins -> data loop: when the map's inputs change on main
+# (pins, overrides, discovered adds, or the two generator scripts),
+# regenerate fantasy_map_data.json and heightmap.png and commit them.
+#
+# main requires the `guard` status check, so this commits to `staging`
+# via the promote deploy key (which also makes the staging push trigger
+# auto-promote — GITHUB_TOKEN pushes would not). The generated files are
+# not watched paths, so promotion back to main does not retrigger this.
+# The builder is deterministic (seed 2026 + pinned PYTHONHASHSEED), so
+# identical inputs produce byte-identical output and the job no-ops.
 
 on:
   push:
     branches: [main]
     paths:
-      - "tools/map/pins.json"
-      - "tools/map/map_overrides.json"
-      - "tools/map/discovered_adds.json"
-      - "tools/map/build_fantasy_map.py"
-      - "tools/map/emit_heightmap.py"
+      - tools/map/pins.json
+      - tools/map/map_overrides.json
+      - tools/map/discovered_adds.json
+      - tools/map/build_fantasy_map.py
+      - tools/map/emit_heightmap.py
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: map-rebuild
+  cancel-in-progress: false
+
 jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install networkx numpy pillow
-
       - name: Rebuild map data and heightmap
         run: |
           python3 tools/map/build_fantasy_map.py
           python3 tools/map/emit_heightmap.py
-
-      - name: Commit regenerated artifacts
+      - name: Commit to staging if changed
         run: |
-          git config user.name "map-rebuild-bot"
-          git config user.email "actions@users.noreply.github.com"
           git add tools/map/fantasy_map_data.json tools/map/heightmap.png
           if git diff --cached --quiet; then
-            echo "map data already current - nothing to commit"
+            echo "map artifacts unchanged - nothing to commit."
           else
-            git pull --rebase
-            git commit -m "map: regenerate data + heightmap from updated inputs"
-            git push
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "ci: regenerate fantasy map data + heightmap"
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
           fi
