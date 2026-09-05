@@ -1,7 +1,7 @@
 name: Rebuild fantasy map data
 
 # Closes the pins -> data loop: when the map's inputs change on main
-# (pins, overrides, discovered adds, or the two generator scripts),
+# (pins, overrides, labels, discovered adds, or the two generator scripts),
 # regenerate fantasy_map_data.json and heightmap.png and commit them.
 #
 # main requires the `guard` status check, so this commits to `staging`
@@ -17,6 +17,7 @@ on:
     paths:
       - tools/map/pins.json
       - tools/map/map_overrides.json
+      - tools/map/labels.json
       - tools/map/discovered_adds.json
       - tools/map/build_fantasy_map.py
       - tools/map/emit_heightmap.py

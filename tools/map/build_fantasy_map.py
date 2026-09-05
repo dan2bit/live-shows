@@ -1134,14 +1134,19 @@ if ov_path.exists():
             OVERRIDE_SIZE[nm] = ov["size"]
     refresh_isle_islands()
 
+_decree_pins = (set(json.loads((SCRIPT_DIR / "pins.json").read_text()))
+                if (SCRIPT_DIR / "pins.json").exists() else set())
 for nm, (reg_, pt_) in DECREE_MOVES.items():
     if nm in records:
         region_of[nm] = reg_
-        xy[nm] = pt_
+        if nm not in _decree_pins:      # a fresh pin outranks the decree
+            xy[nm] = pt_
         UNPLACED.discard(nm)
 for nm, reg_ in DECREE_ASHORE.items():
     if nm in records:
         region_of[nm] = reg_
+        if nm in _decree_pins:
+            continue
         spec_ = REGIONS[reg_]
         jr7 = random.Random(f"{RNG_SEED}:ashore:{nm}")
         sx_, sy_ = clamp_to_land(spec_["anchor"][0] - spec_["rx"] * 0.3,
@@ -1261,41 +1266,22 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
         entry["via"] = [[round(ga[0], 1), round(ga[1], 1)], [round(gb[0], 1), round(gb[1], 1)]]
     routes.append(entry)
 
-ISLAND_LABEL_XY = { "Kings' Rest": [ 235, 650 ], "The Foremothers": [ 169, 630 ], "Funk Atoll": [ 673, 657 ], "Reggae Isle": [ 662, 626 ], "Innis Craic": [ 747, 63 ], "Farrant Rock": [ 934, 66 ], "Hip Hop Haven": [ 902, 36 ], "Indiesoul Isle": [ 966, 180 ], "Pop Rock": [ 914, 278 ], "Fempop Skree": [ 968, 257 ] }  # canon 2026-09-05
+# ---- labels.json is the single authority for every label placement ----
+# {"regions": {id: {xy, size, lines?}}, "islands": {name: xy}, "waters": {name: xy}}
+# Edit by hand, or drag labels in map.html edit mode and export the file.
+# Regions fall back to spec/anchor; islands and waters not in the file are not drawn.
+_labels_path = SCRIPT_DIR / "labels.json"
+LABELS = (json.loads(_labels_path.read_text())
+          if _labels_path.exists() else {"regions": {}, "islands": {}, "waters": {}})
+
 out = {
-    "water_labels": [
-        {"name": "Giddens Pool", "xy": [459, 253]},
-        {"name": "Lake Vega", "xy": [388, 323]},
-        {"name": "Volume", "xy": [469, 552]},
-        {"name": "Tone", "xy": [504, 550]},
-        {"name": "The Source", "xy": [576, 367]},
-    ],
+    "water_labels": [{"name": nm_, "xy": xy_} for nm_, xy_ in LABELS["waters"].items()],
     "canonical_islets": [
         {"xy": [185, 617], "r": [10, 7]},    # Foremothers
         {"xy": [216, 641], "r": [11, 7]},    # Kings' Rest
         {"xy": [658, 636], "r": [11, 8]},    # Funk Atoll landing
     ],
-    "island_labels": ([
-        {**il, "xy": ISLAND_LABEL_XY.get(il["name"], il["xy"])} for il in (
-        [{"name": dd["suggested_name"], "xy": dd["island_center"]}
-         for dd in districts.values()
-         if dd["region"] == "outer_isles" and dd.get("island_center")]
-        + ([{"name": "Farrant Rock", "xy": [xy["Taj Farrant"][0], xy["Taj Farrant"][1] + 12]}]
-           if "Taj Farrant" in xy else [])
-        + [
-           {"name": "The Lonesome", "xy": [183, 528]},
-           {"name": "Reggae Isle", "xy": [684, 616]},
-           {"name": "Funk Atoll", "xy": [681, 663]},
-           {"name": "The Foremothers", "xy": [163, 625]},
-           {"name": "Kings' Rest", "xy": [198, 649]}
-           ]  
-           
-           
-        + ([{"name": "Legends Island",
-             "xy": [(xy["Taj Mahal"][0] + xy["John Primer"][0]) / 2,
-                    (xy["Taj Mahal"][1] + xy["John Primer"][1]) / 2 + 14]}]
-           if "Taj Mahal" in xy and "John Primer" in xy else [])
-    )]),
+    "island_labels": [{"name": nm_, "xy": xy_} for nm_, xy_ in LABELS["islands"].items()],
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "pins.json").exists() else None,
@@ -1307,9 +1293,12 @@ out = {
     "regions": [{"id": rid, **{k: v for k, v in spec.items()
                                if k not in ("toponym_suffixes", "toponym_prefixes")},
                  "anchor": list(spec["anchor"]),
-                 "label_xy": list(spec.get("label_xy", spec["anchor"])),
-                 "label_lines": spec.get("label_lines"),
-                 "label_size": spec.get("label_size"),
+                 "label_xy": LABELS["regions"].get(rid, {}).get("xy",
+                              list(spec.get("label_xy", spec["anchor"]))),
+                 "label_lines": LABELS["regions"].get(rid, {}).get("lines",
+                              spec.get("label_lines")),
+                 "label_size": LABELS["regions"].get(rid, {}).get("size",
+                              spec.get("label_size")),
                  "hull": region_hulls.get(rid)} for rid, spec in REGIONS.items()],
     "waterways": [{**w, "points": [list(p) for p in w["points"]]} for w in WATERWAYS],
     "districts": [{"id": did, **d} for did, d in sorted(districts.items())],

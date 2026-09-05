@@ -116,6 +116,7 @@
       <option>hamlet</option><option>waystation</option><option>village</option><option>town</option><option>city</option><option>capital</option>
     </select>
     <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export overrides (0)</button>
+    <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export labels</button>
   </div>
   <div id="legend">
     <label><input type="checkbox" data-t="trail"> trails</label>
@@ -198,7 +199,7 @@
       });
     }
     t.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
-    t.textContent=r.label;
+    if(!(r.label_lines&&r.label_lines.length>1)) t.textContent=r.label;
     gRegions.appendChild(t);
   }
 
@@ -399,6 +400,8 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
   });
+  let LBL={regions:{},islands:{},waters:{}};
+  try{ LBL=await (await fetch('labels.json',{cache:'no-store'})).json(); }catch(e){}
   const overrides={};
   try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
   const editctl=document.getElementById('editctl'),
@@ -436,6 +439,13 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
   });
+  const lblBtn=document.getElementById('exportLbl')||document.createElement('button');
+  lblBtn.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(LBL,null,1)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='labels.json';a.click();URL.revokeObjectURL(a.href);
+    lblBtn.textContent='export labels';
+  });
   let pan=null, dragS=null;
   const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
@@ -453,12 +463,13 @@
     if(dragL){
       const [mx,my]=toMap(e.clientX,e.clientY);
       dragL.setAttribute('x',mx.toFixed(0));dragL.setAttribute('y',my.toFixed(0));
-      const X=mx.toFixed(0),Y=my.toFixed(0);
-      let line;
-      if(dragL.dataset.rid) line=`"label_xy": (${X}, ${Y}),`;
-      else if(dragL.dataset.gkind==='island') line=`{"name": "${dragL.dataset.gname}", "xy": [${X}, ${Y}]},`;
-      else line=`${dragL.dataset.gname} label at (${X}, ${Y})`;
-      readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">${line}</div>`;
+      dragL.querySelectorAll('tspan').forEach(ts=>ts.setAttribute('x',mx.toFixed(0)));
+      const X=+mx.toFixed(0),Y=+my.toFixed(0);
+      if(dragL.dataset.rid) (LBL.regions[dragL.dataset.rid]??={}).xy=[X,Y];
+      else if(dragL.dataset.gkind==='island') LBL.islands[dragL.dataset.gname]=[X,Y];
+      else LBL.waters[dragL.dataset.gname]=[X,Y];
+      lblBtn.textContent='export labels *';
+      readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">(${X}, ${Y}) \u2014 in labels.json</div>`;
       return;
     }
     if(dragS){
