@@ -3,7 +3,7 @@
   "generated_from": "2026-09-01",
   "seed": 2026,
   "pins_hash": "c26647c82f",
-  "overrides_hash": "95b768d6b6",
+  "overrides_hash": "62ee2dbbd7",
   "counts": {
    "settlements": 388,
    "routes": 333,
@@ -833,7 +833,6 @@
    "id": "delta_coast:outskirts",
    "region": "delta_coast",
    "members": [
-    "Amythyst Kiah",
     "Anthony Rosano and The Conqueroos",
     "Buffalo Nichols",
     "Evan Nicole Bell",
@@ -864,8 +863,6 @@
    "id": "heartland:d2",
    "region": "heartland",
    "members": [
-    "Jake Blount",
-    "Rhiannon Giddens",
     "The War and Treaty",
     "Valerie June"
    ],
@@ -1684,19 +1681,21 @@
   {
    "id": 12,
    "name": "Amythyst Kiah",
-   "region": "delta_coast",
-   "district": "delta_coast:outskirts",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "town",
    "score": 9,
    "xy": [
-    237.7,
-    539.7
+    546.6,
+    258.7
    ],
    "region_uv": [
-    0.2956,
-    -0.0606
+    0.6935,
+    0.2354
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "",
    "times_seen": 2,
    "vip": 0,
@@ -4534,19 +4533,21 @@
   {
    "id": 113,
    "name": "Jake Blount",
-   "region": "heartland",
-   "district": "heartland:d2",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "village",
    "score": 6,
    "xy": [
-    445.4,
-    522.3
+    552.8,
+    273.5
    ],
    "region_uv": [
-    0.5668,
-    0.6792
+    0.7116,
+    0.3015
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -6984,19 +6985,21 @@
   {
    "id": 211,
    "name": "Rhiannon Giddens",
-   "region": "heartland",
-   "district": "heartland:d2",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "town",
    "score": 9,
    "xy": [
-    442.0,
-    532.9
+    564.2,
+    266.6
    ],
    "region_uv": [
-    0.5579,
-    0.7242
+    0.7447,
+    0.2704
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "",
    "times_seen": 2,
    "vip": 0,
@@ -9765,18 +9768,8 @@
    "a": "Adia Victoria",
    "b": "Amythyst Kiah",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Adia Victoria",
@@ -9816,18 +9809,8 @@
    "a": "Adia Victoria",
    "b": "Rhiannon Giddens",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Adia Victoria",
@@ -9926,18 +9909,8 @@
    "a": "Allison Russell",
    "b": "Amythyst Kiah",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Allison Russell",
@@ -9981,18 +9954,8 @@
    "a": "Allison Russell",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Allison Russell",
@@ -10109,12 +10072,12 @@
    "render": "highway",
    "via": [
     [
-     381.9,
-     554.5
+     610.5,
+     380.1
     ],
     [
-     595.6,
-     428.8
+     594.9,
+     372.7
     ]
    ]
   },
@@ -10126,12 +10089,12 @@
    "render": "highway",
    "via": [
     [
-     352.6,
-     551.0
+     442.1,
+     420.3
     ],
     [
-     329.3,
-     575.6
+     460.0,
+     371.9
     ]
    ]
   },
@@ -10139,18 +10102,8 @@
    "a": "Amythyst Kiah",
    "b": "Yasmin Williams",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     337.5,
-     549.9
-    ],
-    [
-     420.0,
-     415.8
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Ana Popović",
@@ -12309,18 +12262,8 @@
    "a": "Kaia Kater",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Kat Riggins",
@@ -12580,18 +12523,8 @@
    "a": "Leyla McCalla",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Leyla McCalla",
@@ -13072,8 +13005,18 @@
    "a": "Rhiannon Giddens",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "highway",
+   "via": [
+    [
+     442.1,
+     420.3
+    ],
+    [
+     460.0,
+     371.9
+    ]
+   ]
   },
   {
    "a": "Robben Ford",
