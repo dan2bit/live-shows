@@ -860,6 +860,7 @@ if pins_path.exists():
     for nm, p_ in json.loads(pins_path.read_text()).items():
         if nm in xy:
             xy[nm] = (float(p_[0]), float(p_[1]))
+            UNPLACED.discard(nm)   # a pinned settlement is a placed settlement
     # a pinned islander joins the crew whose island he actually stands on
     isle_crews = [d_ for d_, dd in districts.items()
                   if dd["region"] == "outer_isles" and not d_.endswith(":outskirts")]
