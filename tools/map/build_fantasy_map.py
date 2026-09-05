@@ -376,6 +376,7 @@ def tag_region(canon):
 CURATED_REGIONS = {"slide_foothills"}
 
 FORCED_REGION = {
+    "Danny Burns": "outer_isles",
     "Angelique Francis": "river_port",
     "Beth Hart": "amplified_range",
     "Miko Marks": "delta_coast",
@@ -970,13 +971,32 @@ CURATED_SIZE = {
     "Enter the Haggis": "town", "Kate Davis": "town",
     "Glen Hansard": "town", "L\u012bve": "village",
     "Joan Jett & The Blackhearts": "village",
+    "Danny Burns": "town",
 }
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
                     "Jackie Venson", "Orianthi", "Queen Latifah"}
+PEG_CREW = {   # name -> crew; the eye-test canon of 2026-09-05
+    "Every Breath You Take": "p3", "Jessie's Girl": "p3", "Honeyfunk": "p3",
+    "La Unica": "p3", "The Side Cars Band": "p3", "Zedicus & Abyssinia Roots": "p3",
+    "Young Dubliners": "p1", "Cassie & Maggie": "p1", "Gaelic Storm": "p1",
+    "Haggis X-1": "p1", "House of Hamill": "p1", "Enter the Haggis": "p1",
+    "Danny Burns": "p1",
+    "The Roots": "p4", "Wu-Tang Clan": "p4", "Bone Thugs-n-Harmony": "p4",
+    "DJ Jazzy Jeff": "p4", "De La Soul": "p4", "LL Cool J": "p4",
+    "Nas": "p4", "Z-Trip": "p4",
+    "Hozier": "p6", "Chelsea Cutler": "p6", "Gigi Perez": "p6",
+    "Valley": "p6", "Zara Larsson": "p6", "kitchen": "p6",
+    "Kate Davis": "p5", "Sadurn": "p5", "Brassie": "p5",
+    "Mystery Friends": "p5", "The House You Grew Up In (THYGUI)": "p5",
+    "Talia Segal": "p5", "Chris Jacobs & Friends": "p5",
+    "Hayley Williams": "p5", "Muna": "p5", "Zara Phillips": "p5",
+    "AJR": "p2",
+}
+
 CURATED_ISLES = {   # crew -> (seat, island name)
     "outer_isles:p1": ("Young Dubliners", "Innis Craic"),
-    "outer_isles:p2": ("AJR", "AJR Rock"),
+    "outer_isles:p2": ("AJR", "Pop Rock"),
     "outer_isles:p3": ("Every Breath You Take", "Cover Band Cay"),
     "outer_isles:p4": ("The Roots", "Hip Hop Haven"),
     "outer_isles:p5": ("Kate Davis", "Fempop Skree"),
@@ -1043,10 +1063,41 @@ for m in ("Brassie", "Sadurn"):
             xy[m] = (ic5[0] + (jr4.random() - 0.5) * 10, ic5[1] + (jr4.random() - 0.5) * 8)
             UNPLACED.add(m)
 districts["outer_isles:p5"]["members"].sort()
+# PEG_CREW is law: explicit crew assignment overrides proximity drift
+for nm, crew in PEG_CREW.items():
+    did = f"outer_isles:{crew}"
+    if nm not in records or did not in districts:
+        continue
+    cur = district_of.get(nm)
+    if cur == did:
+        continue
+    if cur in districts and nm in districts[cur]["members"]:
+        districts[cur]["members"].remove(nm)
+    if region_of.get(nm) == "outer_isles":
+        districts[did]["members"].append(nm)
+        districts[did]["members"].sort()
+        district_of[nm] = did
+for did in [d_ for d_, dd in districts.items()
+            if dd["region"] == "outer_isles" and not dd["members"]]:
+    del districts[did]
 for did, (seat_, iname_) in CURATED_ISLES.items():
     if did in districts:
         districts[did]["seat"] = seat_
         districts[did]["suggested_name"] = iname_
+refresh_isle_islands()
+# crew emigrants without a pin land on their island's shore ring
+for nm, crew in PEG_CREW.items():
+    did = f"outer_isles:{crew}"
+    if (nm not in xy or nm in _pins_law or did not in districts
+            or district_of.get(nm) != did):
+        continue
+    ic_ = districts[did].get("island_center")
+    ir_ = districts[did].get("island_r", 12)
+    if ic_ and math.hypot(xy[nm][0] - ic_[0], xy[nm][1] - ic_[1]) > ir_:
+        jr6 = random.Random(f"{RNG_SEED}:crew:{nm}")
+        ang_ = jr6.random() * 6.28318
+        rr_ = max(ir_ - 5, 3) * jr6.random()
+        xy[nm] = (ic_[0] + rr_ * math.cos(ang_), ic_[1] + rr_ * math.sin(ang_))
 refresh_isle_islands()
 
 # Dan's viewer overrides (map_overrides.json): region and size, position untouched
@@ -1074,6 +1125,10 @@ if ov_path.exists():
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
     refresh_isle_islands()
+
+for did in [d_ for d_, dd in districts.items()
+            if dd["region"] == "outer_isles" and not dd["members"]]:
+    del districts[did]
 
 settlements = []
 reg_max = {reg: max((score(c) for c in records if region_of[c] == reg), default=0)

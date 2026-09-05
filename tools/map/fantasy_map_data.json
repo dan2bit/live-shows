@@ -2,12 +2,12 @@
  "meta": {
   "generated_from": "2026-09-01",
   "seed": 2026,
-  "pins_hash": "c26647c82f",
-  "overrides_hash": "95b768d6b6",
+  "pins_hash": "14a497aa9d",
+  "overrides_hash": "4ae6e1efeb",
   "counts": {
    "settlements": 388,
-   "routes": 333,
-   "districts": 54
+   "routes": 332,
+   "districts": 53
   }
  },
  "canvas": {
@@ -33,35 +33,31 @@
    "hull": [
     [
      124.5,
-     586.1
+     586.2
     ],
     [
-     229.2,
-     481.4
+     231.6,
+     480.0
     ],
     [
-     439.8,
-     562.7
+     417.2,
+     566.0
     ],
     [
-     438.6,
-     585.6
+     388.5,
+     606.6
     ],
     [
-     388.2,
-     607.5
+     366.1,
+     609.3
     ],
     [
-     365.4,
-     611.0
+     275.2,
+     621.3
     ],
     [
-     265.8,
-     617.0
-    ],
-    [
-     160.6,
-     607.7
+     160.7,
+     608.3
     ]
    ]
   },
@@ -110,8 +106,8 @@
      443.7
     ],
     [
-     607.4,
-     378.9
+     607.5,
+     378.4
     ]
    ]
   },
@@ -182,44 +178,48 @@
    "ry": 118,
    "hull": [
     [
-     236.1,
-     502.6
+     236.2,
+     502.8
     ],
     [
-     242.2,
-     420.0
+     241.8,
+     421.0
     ],
     [
-     261.9,
-     395.5
+     261.1,
+     396.7
     ],
     [
-     313.7,
-     340.5
+     312.4,
+     341.1
     ],
     [
-     351.5,
-     342.3
+     349.9,
+     342.5
     ],
     [
-     507.6,
-     457.5
+     495.1,
+     415.2
     ],
     [
-     481.5,
-     539.4
+     507.7,
+     458.0
     ],
     [
-     470.0,
-     547.1
+     480.8,
+     540.5
     ],
     [
-     417.1,
-     570.1
+     469.1,
+     548.2
     ],
     [
-     338.1,
-     579.9
+     415.4,
+     570.9
+    ],
+    [
+     336.7,
+     579.6
     ]
    ]
   },
@@ -241,22 +241,22 @@
    "hull": [
     [
      462.1,
-     588.5
+     588.4
     ],
     [
-     462.3,
-     522.3
+     468.1,
+     528.4
     ],
     [
      478.6,
-     496.6
+     496.5
     ],
     [
      481.8,
      494.0
     ],
     [
-     624.2,
+     624.1,
      429.1
     ],
     [
@@ -265,23 +265,23 @@
     ],
     [
      718.1,
-     581.7
+     581.6
     ],
     [
      663.5,
      623.3
     ],
     [
-     611.0,
+     610.9,
+     634.3
+    ],
+    [
+     593.7,
      634.2
     ],
     [
-     593.9,
-     634.2
-    ],
-    [
-     528.1,
-     616.5
+     527.9,
+     616.4
     ]
    ]
   },
@@ -360,40 +360,40 @@
    "ry": 48,
    "hull": [
     [
-     740.2,
-     84.9
+     741.0,
+     82.7
     ],
     [
-     781.7,
-     20.8
+     782.9,
+     19.6
     ],
     [
-     848.7,
-     -3.2
+     849.4,
+     -3.4
     ],
     [
-     866.1,
-     -6.9
+     866.4,
+     -7.0
     ],
     [
-     916.1,
-     43.5
+     999.4,
+     195.4
     ],
     [
-     998.0,
-     198.0
+     981.5,
+     252.1
     ],
     [
-     980.2,
-     253.2
+     974.8,
+     262.0
     ],
     [
-     973.6,
-     262.8
+     926.1,
+     283.1
     ],
     [
-     907.5,
-     266.9
+     907.7,
+     266.8
     ]
    ]
   }
@@ -958,7 +958,60 @@
    "suggested_name": "Heartland Outskirts"
   },
   {
-   "id": "outer_isles:arrivals",
+   "id": "outer_isles:p1",
+   "region": "outer_isles",
+   "members": [
+    "Cassie & Maggie",
+    "Danny Burns",
+    "Enter the Haggis",
+    "Gaelic Storm",
+    "Haggis X-1",
+    "House of Hamill",
+    "Young Dubliners"
+   ],
+   "seat": "Young Dubliners",
+   "suggested_name": "Innis Craic",
+   "island_center": [
+    775.9,
+    89.5
+   ],
+   "island_r": 22
+  },
+  {
+   "id": "outer_isles:p2",
+   "region": "outer_isles",
+   "members": [
+    "AJR"
+   ],
+   "seat": "AJR",
+   "suggested_name": "Pop Rock",
+   "island_center": [
+    905.5,
+    251.0
+   ],
+   "island_r": 10
+  },
+  {
+   "id": "outer_isles:p3",
+   "region": "outer_isles",
+   "members": [
+    "Every Breath You Take",
+    "Honeyfunk",
+    "Jessie's Girl",
+    "La Unica",
+    "The Side Cars Band",
+    "Zedicus & Abyssinia Roots"
+   ],
+   "seat": "Every Breath You Take",
+   "suggested_name": "Cover Band Cay",
+   "island_center": [
+    804.4,
+    38.3
+   ],
+   "island_r": 19.9
+  },
+  {
+   "id": "outer_isles:p4",
    "region": "outer_isles",
    "members": [
     "Bone Thugs-n-Harmony",
@@ -970,8 +1023,8 @@
     "Wu-Tang Clan",
     "Z-Trip"
    ],
-   "seat": "Bone Thugs-n-Harmony",
-   "suggested_name": "Arrivals Anchorage",
+   "seat": "The Roots",
+   "suggested_name": "Hip Hop Haven",
    "island_center": [
     856.8,
     20.1
@@ -979,87 +1032,25 @@
    "island_r": 22
   },
   {
-   "id": "outer_isles:p1",
+   "id": "outer_isles:p5",
    "region": "outer_isles",
    "members": [
-    "Cassie & Maggie",
-    "Enter the Haggis",
-    "Gaelic Storm",
-    "Haggis X-1",
-    "Honeyfunk",
-    "House of Hamill",
-    "Jessie's Girl",
-    "La Unica",
-    "Every Breath You Take",
-    "The Side Cars Band",
-    "Young Dubliners",
-    "Zedicus & Abyssinia Roots"
-   ],
-   "seat": "Young Dubliners",
-   "suggested_name": "Innis Craic",
-   "island_center": [
-    786.4,
-    60.5
-   ],
-   "island_r": 22
-  },
-  {
-   "id": "outer_isles:p2",
-   "region": "outer_isles",
-   "members": [],
-   "seat": "AJR",
-   "suggested_name": "AJR Rock",
-   "island_center": [
-    530.7,
-    573.7
-   ],
-   "island_r": 22
-  },
-  {
-   "id": "outer_isles:p3",
-   "region": "outer_isles",
-   "members": [],
-   "seat": "Every Breath You Take",
-   "suggested_name": "Cover Band Cay",
-   "island_center": [
-    802.6,
-    39.4
-   ],
-   "island_r": 10.2
-  },
-  {
-   "id": "outer_isles:p4",
-   "region": "outer_isles",
-   "members": [
+    "Brassie",
+    "Chris Jacobs & Friends",
     "Hayley Williams",
     "Kate Davis",
     "Muna",
     "Mystery Friends",
+    "Sadurn",
     "Talia Segal",
     "The House You Grew Up In (THYGUI)",
     "Zara Phillips"
    ],
-   "seat": "The Roots",
-   "suggested_name": "Hip Hop Haven",
-   "island_center": [
-    960.8,
-    241.9
-   ],
-   "island_r": 17.4
-  },
-  {
-   "id": "outer_isles:p5",
-   "region": "outer_isles",
-   "members": [
-    "AJR",
-    "Brassie",
-    "Sadurn"
-   ],
    "seat": "Kate Davis",
    "suggested_name": "Fempop Skree",
    "island_center": [
-    944.1,
-    237.9
+    957.4,
+    242.3
    ],
    "island_r": 22
   },
@@ -1359,7 +1350,7 @@
    "id": 1,
    "name": "AJR",
    "region": "outer_isles",
-   "district": "outer_isles:p5",
+   "district": "outer_isles:p2",
    "size": "capital",
    "score": 6,
    "xy": [
@@ -1562,7 +1553,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override: seen once, arena artist worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1585,7 +1576,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Lower)",
+   "src": "follow (Lower): country/bluegrass adjacency; keep",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1673,7 +1664,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Similar-to GA-20 (Last.fm); densely-connected in DMV…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -1788,22 +1779,22 @@
   {
    "id": 16,
    "name": "Angélique Kidjo",
-   "region": "river_port",
-   "district": "river_port:override",
+   "region": "amplified_range",
+   "district": "amplified_range:override",
    "size": "village",
    "score": 0.5,
    "xy": [
-    497.5,
-    519.5
+    909.0,
+    264.1
    ],
    "region_uv": [
-    0.098,
-    0.3365
+    0.84,
+    0.7364
    ],
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Buy @ GMU Center for the Arts 2027-04-25 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -1889,7 +1880,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-10-12 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -1900,7 +1891,7 @@
    "region": "slide_foothills",
    "district": "slide_foothills:d4",
    "size": "town",
-   "score": 4,
+   "score": 1,
    "xy": [
     606.2,
     427.5
@@ -1909,9 +1900,11 @@
     0.1397,
     0.625
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "follow (Medium): new_artist_research; Hamilton Live presale Aug 2026",
+   "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
   },
@@ -1975,7 +1968,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Theater at MGM National Harbor 2026-11-10 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2147,7 +2140,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Hank Dietle's Tavern 2026-09-13 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2214,7 +2207,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Bass virtuoso (Mr. Big, Talas, David Lee Roth solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2237,7 +2230,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): bandcamp + 3 sources; bluegrass circuit adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -2260,7 +2253,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Southern rock / cosmic-country adjacent -…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2347,7 +2340,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "follow (Legacy)",
+   "src": "follow (Legacy): seen 2x; age 92; still touring 2026; 12 BMA wins;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -2356,7 +2349,7 @@
    "id": 367,
    "name": "Bone Thugs-n-Harmony",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
@@ -2555,14 +2548,16 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    423.9,
-    564.8
+    385.8,
+    570.4
    ],
    "region_uv": [
-    0.8369,
-    0.1808
+    0.7261,
+    0.2347
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -2651,7 +2646,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: alt-rock, occasional crossover",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2779,7 +2774,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; Hill Country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -2886,7 +2881,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): traditional blues guitarist; Alligator…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -2894,17 +2889,17 @@
   {
    "id": 50,
    "name": "Chris Jacobs & Friends",
-   "region": "delta_coast",
-   "district": "delta_coast:override",
-   "size": "village",
+   "region": "outer_isles",
+   "district": "outer_isles:p5",
+   "size": "waystation",
    "score": 0,
    "xy": [
-    344.8,
-    572.4
+    922.1,
+    267.6
    ],
    "region_uv": [
-    0.607,
-    0.2538
+    0.6256,
+    2.6417
    ],
    "flags": {
     "unvisited": true
@@ -2933,7 +2928,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Hamilton Live 2026-09-18 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3051,7 +3046,7 @@
    "id": 371,
    "name": "DJ Jazzy Jeff",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
@@ -3086,7 +3081,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-19 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3158,16 +3153,16 @@
    "id": 61,
    "name": "Danny Burns",
    "region": "outer_isles",
-   "district": "outer_isles:override",
+   "district": "outer_isles:p1",
    "size": "town",
    "score": 6,
    "xy": [
-    911.2,
-    58.7
+    795.0,
+    100.5
    ],
    "region_uv": [
-    0.5639,
-    0.4653
+    -0.0966,
+    0.9005
    ],
    "flags": {
     "unplaced": true
@@ -3216,7 +3211,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-09-15 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -3225,7 +3220,7 @@
    "id": 382,
    "name": "De La Soul",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "village",
    "score": 3,
    "xy": [
@@ -3334,17 +3329,17 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    477.8,
-    526.3
+    523.3,
+    529.9
    ],
    "region_uv": [
-    0.0192,
-    0.3801
+    0.2012,
+    0.4032
    ],
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Buy @ Bethesda Blues & Jazz 2026-09-16 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -3430,7 +3425,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; rising blues-soul",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3541,7 +3536,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; folk-blues legend",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3565,7 +3560,7 @@
     "legacy": true,
     "unvisited": true
    },
-   "src": "follow (Legacy)",
+   "src": "follow (Legacy): age 81; 2026 tour Europe + 6 US dates (Sep, arenas);…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Legacy"
@@ -3651,7 +3646,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Recher 2026-10-16 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3706,7 +3701,7 @@
    "id": 192,
    "name": "Every Breath You Take",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "city",
    "score": 15,
    "xy": [
@@ -3804,7 +3799,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Portland roots/folk-rock; bluegrass/country-rock…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3827,7 +3822,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; traditional blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -3957,7 +3952,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues-rock guitarist; hard rock origins (Heavy…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4133,7 +4128,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): seen; Warren Haynes — now followed on Seated",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4190,17 +4185,17 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    767.8,
-    78.0
+    794.3,
+    107.4
    ],
    "region_uv": [
-    -0.2512,
-    0.6669
+    -0.1005,
+    0.9731
    ],
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): Enter the Haggis successor project; NOT ON SEATED or…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4251,7 +4246,7 @@
    "id": 100,
    "name": "Hayley Williams",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 0,
    "xy": [
@@ -4274,7 +4269,7 @@
    "id": 102,
    "name": "Honeyfunk",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -4309,7 +4304,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Enter the Haggis successor project",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4418,7 +4413,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The 8x10 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -4611,7 +4606,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; blues-rock",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4683,7 +4678,7 @@
    "id": 119,
    "name": "Jessie's Girl",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -4764,7 +4759,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): Chicago slide-guitar legend; Kingston Mines…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -4871,7 +4866,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): former Bros. Landreth member; solo artist; Canadian…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4917,7 +4912,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Grammy-nominated soul-blues vocalist and…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -4974,12 +4969,12 @@
    "size": "village",
    "score": 3,
    "xy": [
-    493.8,
-    536.7
+    523.5,
+    518.6
    ],
    "region_uv": [
-    0.0832,
-    0.4468
+    0.202,
+    0.3308
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -5026,7 +5021,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Americana/folk singer-songwriter; Birchmere Oct 25…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5049,7 +5044,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Howard Theatre 2026-11-13 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5083,12 +5078,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    528.1,
-    250.6
+    510.2,
+    255.2
    ],
    "region_uv": [
-    0.6398,
-    0.1991
+    0.5879,
+    0.2196
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -5114,7 +5109,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ Concerts at The Sevareid House 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5137,7 +5132,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): bandcamp",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5190,7 +5185,7 @@
    "id": 139,
    "name": "Kate Davis",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "city",
    "score": 12,
    "xy": [
@@ -5290,7 +5285,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Fabulous Thunderbirds frontman; age 74;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -5355,7 +5350,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues guitarist; Bonamassa circle; occasional solo…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5364,7 +5359,7 @@
    "id": 160,
    "name": "LL Cool J",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -5385,7 +5380,7 @@
    "id": 373,
    "name": "La Unica",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -5441,7 +5436,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-10-08 Thu & 2026-10-09 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5454,12 +5449,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    394.2,
-    442.0
+    380.5,
+    486.9
    ],
    "region_uv": [
-    0.4321,
-    0.339
+    0.3961,
+    0.5292
    ],
    "flags": {},
    "src": "",
@@ -5529,7 +5524,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2027-01-01 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5552,7 +5547,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): bandcamp; sister of Sabine McCalla",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5617,7 +5612,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-10-08 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5728,7 +5723,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Choose @ The Recher 2026-10-07 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5751,7 +5746,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ 9:30 Club 2026-09-30 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -5816,7 +5811,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: indie singer-songwriter",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -5850,7 +5845,7 @@
    "region": "heartland",
    "district": "heartland:d7",
    "size": "hamlet",
-   "score": 3,
+   "score": 0,
    "xy": [
     329.9,
     402.0
@@ -5859,9 +5854,11 @@
     0.2629,
     0.1695
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "seen",
+   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -5938,14 +5935,16 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    422.6,
-    585.1
+    379.8,
+    573.6
    ],
    "region_uv": [
-    0.8331,
-    0.376
+    0.7088,
+    0.2655
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -5969,7 +5968,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): Louisiana soul-blues singer-songwriter; active…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6055,7 +6054,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override strong: Dire Straits legend; solo artist,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6078,7 +6077,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-11-22 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6101,7 +6100,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-11-12 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6210,7 +6209,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Warner Theatre 2026-09-22 Tue",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -6435,7 +6434,7 @@
    "id": 189,
    "name": "Muna",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 0,
    "xy": [
@@ -6458,7 +6457,7 @@
    "id": 375,
    "name": "Mystery Friends",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -6479,7 +6478,7 @@
    "id": 190,
    "name": "Nas",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -6514,7 +6513,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): new_artist_research; acoustic country blues",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6688,7 +6687,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: pop crossover; seen-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6743,17 +6742,17 @@
    "size": "city",
    "score": 3,
    "xy": [
-    833.5,
-    264.8
+    838.0,
+    204.5
    ],
    "region_uv": [
-    0.6243,
-    0.7392
+    0.6371,
+    0.498
    ],
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override strong: legendary artist still actively…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6797,7 +6796,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): promoted from NAR 2026-07-03; 2024 IBC Band winner +…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -6841,7 +6840,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Atlantis 2026-09-23 Wed",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6885,7 +6884,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Warner Theatre 2026-11-06 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -6931,7 +6930,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2026-12-10 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7051,17 +7050,17 @@
    "size": "waystation",
    "score": 3,
    "xy": [
-    441.9,
-    360.8
+    474.4,
+    323.9
    ],
    "region_uv": [
-    0.3892,
-    0.6911
+    0.4837,
+    0.5263
    ],
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Elkton Music Hall 2026-11-20 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -7074,12 +7073,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    618.6,
-    367.4
+    618.7,
+    366.9
    ],
    "region_uv": [
-    0.0103,
-    1.1494
+    0.0107,
+    1.1476
    ],
    "flags": {},
    "src": "",
@@ -7105,7 +7104,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): jazz-blues guitar legend; age 75; associated…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7193,7 +7192,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-09-24 Thu",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7237,7 +7236,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Birchmere 2026-09-20 Sun",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7399,12 +7398,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    466.1,
-    298.9
+    490.4,
+    274.3
    ],
    "region_uv": [
-    0.4596,
-    0.4146
+    0.5302,
+    0.3049
    ],
    "flags": {},
    "src": "",
@@ -7535,7 +7534,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Texas/OK blues-rock guitarist; Albert…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -7600,7 +7599,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): 5x Grammy-nominated bluegrass mandolinist;…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -7673,7 +7672,7 @@
    "name": "Sona Jobarteh",
    "region": "river_port",
    "district": "river_port:outskirts",
-   "size": "village",
+   "size": "hamlet",
    "score": 3,
    "xy": [
     492.4,
@@ -7841,15 +7840,15 @@
    "name": "Steve Earle",
    "region": "heartland",
    "district": "heartland:d1",
-   "size": "village",
+   "size": "hamlet",
    "score": 3,
    "xy": [
-    447.3,
-    478.2
+    369.8,
+    464.0
    ],
    "region_uv": [
-    0.5718,
-    0.4924
+    0.3679,
+    0.4322
    ],
    "flags": {},
    "src": "",
@@ -8156,7 +8155,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Lower)",
+   "src": "follow (Lower): sit-in doesn't count; follow for headline shows",
    "times_seen": 0,
    "vip": 0,
    "tier": "Lower"
@@ -8165,7 +8164,7 @@
    "id": 258,
    "name": "Talia Segal",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8328,7 +8327,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Jammin' Java 2026-09-26 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8362,12 +8361,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    486.8,
-    473.4
+    480.3,
+    421.2
    ],
    "region_uv": [
-    0.6758,
-    0.472
+    0.6587,
+    0.2508
    ],
    "flags": {},
    "src": "",
@@ -8435,7 +8434,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): Kim Wilson's band; follow alongside Kim…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -8507,7 +8506,7 @@
    "id": 377,
    "name": "The House You Grew Up In (THYGUI)",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8689,7 +8688,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): LA blues-rock trio (raw slide guitar, upright bass,…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8698,7 +8697,7 @@
    "id": 378,
    "name": "The Roots",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "city",
    "score": 3,
    "xy": [
@@ -8740,7 +8739,7 @@
    "id": 390,
    "name": "The Side Cars Band",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8818,7 +8817,7 @@
     "unvisited": true,
     "unplaced": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): blues-soul; strong live rep; add all services",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8841,7 +8840,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ The Birchmere 2026-09-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -8969,7 +8968,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium-Strong)",
+   "src": "follow (Medium-Strong): 8x lastfm similar graph (2026-07 run); annual…",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -9078,7 +9077,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: rare performer but legendary",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9122,7 +9121,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Rams Head On Stage 2026-09-07 Mon",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9210,7 +9209,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Howard Theatre 2026-12-04 Fri",
    "times_seen": 0,
    "vip": 0,
    "tier": "Low"
@@ -9244,12 +9243,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    521.8,
-    517.8
+    494.6,
+    537.0
    ],
    "region_uv": [
-    0.1952,
-    0.3256
+    0.0864,
+    0.4487
    ],
    "flags": {},
    "src": "",
@@ -9275,7 +9274,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "potential: Pass @ Hamilton Live 2026-11-21 Sat",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9342,7 +9341,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): in books; Gov't Mule",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9365,7 +9364,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium)",
+   "src": "follow (Medium): override medium: Americana-adjacent",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -9439,7 +9438,7 @@
    "id": 392,
    "name": "Wu-Tang Clan",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "town",
    "score": 3,
    "xy": [
@@ -9523,7 +9522,7 @@
    "id": 380,
    "name": "Z-Trip",
    "region": "outer_isles",
-   "district": "outer_isles:arrivals",
+   "district": "outer_isles:p4",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9609,7 +9608,7 @@
    "region": "slide_foothills",
    "district": "slide_foothills:override",
    "size": "village",
-   "score": 3,
+   "score": 0,
    "xy": [
     612.2,
     418.2
@@ -9618,9 +9617,11 @@
     0.1914,
     0.5856
    ],
-   "flags": {},
-   "src": "",
-   "times_seen": 1,
+   "flags": {
+    "unvisited": true
+   },
+   "src": "seen",
+   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -9672,7 +9673,7 @@
    "id": 290,
    "name": "Zara Phillips",
    "region": "outer_isles",
-   "district": "outer_isles:p4",
+   "district": "outer_isles:p5",
    "size": "waystation",
    "score": 0,
    "xy": [
@@ -9695,7 +9696,7 @@
    "id": 381,
    "name": "Zedicus & Abyssinia Roots",
    "region": "outer_isles",
-   "district": "outer_isles:p1",
+   "district": "outer_isles:p3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9751,7 +9752,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Strong)",
+   "src": "follow (Strong): override: indie supergroup worth tracking",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -10574,13 +10575,6 @@
    "cls": "trail",
    "crossRegion": false,
    "render": "trail"
-  },
-  {
-   "a": "Ariel Posen",
-   "b": "Zach Person",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
   },
   {
    "a": "Artur Menezes",
