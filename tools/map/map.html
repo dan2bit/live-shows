@@ -161,9 +161,10 @@
     p.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
     gRegions.appendChild(p);
     const t=document.createElementNS(NS,'text');
-    t.setAttribute('x',r.anchor[0]); t.setAttribute('y',r.anchor[1]);
+    const lx=(r.label_xy||r.anchor);
+    t.setAttribute('x',lx[0]); t.setAttribute('y',lx[1]);
     t.setAttribute('class','region-label');
-    t.setAttribute('font-size',Math.max(13,Math.min(22,r.rx/9)));
+    t.setAttribute('font-size',r.label_size||Math.max(13,Math.min(22,r.rx/9)));
     t.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
     t.textContent=r.label;
     gRegions.appendChild(t);
