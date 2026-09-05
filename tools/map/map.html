@@ -18,7 +18,7 @@
   body{background:#14100E;overflow:hidden;font-family:'Oswald',sans-serif;}
   #stage{position:absolute;inset:0;cursor:grab;}
   #stage.panning{cursor:grabbing;}
-  svg{display:block;width:100%;height:100%;}
+  #map{display:block;width:100%;height:100%;}
 
   /* regions: soft hulls and ghost labels */
   .region-hull{fill:var(--tint);fill-opacity:.05;stroke:var(--tint);stroke-opacity:.5;
@@ -48,7 +48,7 @@
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
   .geo-island{font-family:'Special Elite',monospace;fill:#5b8bb0;opacity:.6;letter-spacing:.08em;}
   .geo-water{fill:#2E4A6B;opacity:.66;font-style:italic;letter-spacing:.06em;}
-  #rose{position:absolute;right:16px;bottom:16px;pointer-events:none;opacity:.92;}
+  #rose{position:absolute;right:16px;bottom:16px;width:96px;height:96px;pointer-events:none;opacity:.92;}
   .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
   .stl.ruin .dot{fill:none;stroke:#7a5a33;stroke-width:1.5;stroke-dasharray:4.5 3.5;}
   .stl.ruin text{opacity:.7;font-style:italic;}
