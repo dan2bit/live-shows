@@ -23,8 +23,9 @@
   /* regions: soft hulls and ghost labels */
   .region-hull{fill:var(--tint);fill-opacity:.05;stroke:var(--tint);stroke-opacity:.5;
     stroke-width:.8;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;pointer-events:none;}
-  .region-label{font-family:'Special Elite',monospace;fill:var(--tint);fill-opacity:.55;
-    text-anchor:middle;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;}
+  .region-label{font-family:'Special Elite',monospace;fill:var(--tint);
+    text-anchor:middle;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;
+    paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:3px;}
 
   /* routes: styled by render, toggled by provenance */
   .route{fill:none;pointer-events:none;stroke-linecap:round;}
@@ -48,7 +49,7 @@
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
-  #rose{position:absolute;right:16px;bottom:16px;width:96px;height:96px;pointer-events:none;opacity:.92;}
+  #rose{pointer-events:none;opacity:.94;}
   .region-label,.geo-island,.geo-water{pointer-events:none;}
   body.editing .region-label,body.editing .geo-island,body.editing .geo-water{pointer-events:all;cursor:move;}
   .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
@@ -96,17 +97,7 @@
 </head>
 <body>
 <div id="stage"><svg id="map" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"></svg>
-<svg id="rose" width="96" height="96" viewBox="0 0 120 120">
-  <circle cx="60" cy="60" r="46" fill="rgba(237,224,194,.55)" stroke="#221A12" stroke-width="2"/>
-  <circle cx="60" cy="60" r="40" fill="none" stroke="#221A12" stroke-width=".7" stroke-dasharray="2 3"/>
-  <path d="M 60 20 C 53 32 50 44 60 53 C 70 44 67 32 60 20 Z" fill="#A63D2F" stroke="#221A12" stroke-width="1"/>
-  <path d="M 60 26 C 56 34 55 41 60 47" fill="none" stroke="rgba(237,224,194,.55)" stroke-width="1"/>
-  <g font-family="Special Elite" font-size="11" fill="#221A12" text-anchor="middle">
-    <text x="60" y="18">N</text><text x="106" y="64">E</text><text x="60" y="112">S</text><text x="14" y="64">W</text>
-  </g>
-  <image href="https://dan2bit.github.io/live-shows/static/brand-hat.png" x="42" y="48" width="36" height="30"
-    onerror="this.style.display='none'"/>
-</svg></div>
+</div>
 <div id="err"></div>
 <div id="zoomer">
   <button id="zin" title="Zoom in">+</button>
@@ -175,6 +166,12 @@
   const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
   const S=new Map(data.settlements.map(s=>[s.name,s]));
+  data.regions.forEach(r=>{
+    if(/<br\s*\/?>/i.test(r.label)){
+      r.label_lines=r.label.split(/<br\s*\/?>/i).map(x=>x.trim());
+      r.label=r.label_lines.join(' ');
+    }
+  });
   const RLABEL=Object.fromEntries(data.regions.map(r=>[r.id,r.label]));
 
   // regions: padded hulls + ghost labels
@@ -191,6 +188,15 @@
     t.setAttribute('class','region-label');
     t.dataset.rid=r.id;
     t.setAttribute('font-size',r.label_size||Math.max(13,Math.min(22,r.rx/9)));
+    if(r.label_lines&&r.label_lines.length>1){
+      t.textContent='';
+      r.label_lines.forEach((ln,i)=>{
+        const ts=document.createElementNS(NS,'tspan');
+        ts.setAttribute('x',lx[0]);
+        ts.setAttribute('dy',i===0?`${-(r.label_lines.length-1)*0.55}em`:'1.08em');
+        ts.textContent=ln;t.appendChild(ts);
+      });
+    }
     t.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
     t.textContent=r.label;
     gRegions.appendChild(t);
@@ -217,6 +223,22 @@
     p.dataset.cls=r.cls; p.dataset.cross=r.crossRegion?'1':'0';
     gRoutes.appendChild(p);
   }
+
+  // the compass rose settles on the unnamed northwest island
+  const rose=document.createElementNS(NS,'g');
+  rose.setAttribute('id','rose');
+  rose.setAttribute('transform','translate(75,88) scale(0.52) translate(-60,-60)');
+  rose.innerHTML=`
+    <circle cx="60" cy="60" r="46" fill="rgba(237,224,194,.55)" stroke="#221A12" stroke-width="2"/>
+    <circle cx="60" cy="60" r="40" fill="none" stroke="#221A12" stroke-width=".7" stroke-dasharray="2 3"/>
+    <path d="M 60 20 C 53 32 50 44 60 53 C 70 44 67 32 60 20 Z" fill="#A63D2F" stroke="#221A12" stroke-width="1"/>
+    <path d="M 60 26 C 56 34 55 41 60 47" fill="none" stroke="rgba(237,224,194,.55)" stroke-width="1"/>
+    <g font-family="Special Elite" font-size="11" fill="#221A12" text-anchor="middle">
+      <text x="60" y="18">N</text><text x="106" y="64">E</text><text x="60" y="112">S</text><text x="14" y="64">W</text>
+    </g>
+    <image href="https://dan2bit.github.io/live-shows/static/brand-hat.png" x="42" y="48" width="36" height="30"
+      onerror="this.style.display='none'"/>`;
+  map.appendChild(rose);
 
   // geo names: islands and waters
   const gGeo=document.createElementNS(NS,'g');

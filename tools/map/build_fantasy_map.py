@@ -1261,18 +1261,22 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
         entry["via"] = [[round(ga[0], 1), round(ga[1], 1)], [round(gb[0], 1), round(gb[1], 1)]]
     routes.append(entry)
 
+ISLAND_LABEL_XY = { "Kings' Rest": [ 235, 650 ], "The Foremothers": [ 169, 630 ], "Funk Atoll": [ 673, 657 ], "Reggae Isle": [ 662, 626 ], "Innis Craic": [ 747, 63 ], "Farrant Rock": [ 934, 66 ], "Hip Hop Haven": [ 902, 36 ], "Indiesoul Isle": [ 966, 180 ], "Pop Rock": [ 914, 278 ], "Fempop Skree": [ 968, 257 ] }  # canon 2026-09-05
 out = {
     "water_labels": [
-        {"name": nm_, "xy": list(pt_)}
-        for w_ in WATERWAYS if w_.get("names")
-        for nm_, pt_ in zip(w_["names"], w_["points"])
+        {"name": "Giddens Pool", "xy": [459, 253]},
+        {"name": "Lake Vega", "xy": [388, 323]},
+        {"name": "Volume", "xy": [469, 552]},
+        {"name": "Tone", "xy": [504, 550]},
+        {"name": "The Source", "xy": [576, 367]},
     ],
     "canonical_islets": [
         {"xy": [185, 617], "r": [10, 7]},    # Foremothers
         {"xy": [216, 641], "r": [11, 7]},    # Kings' Rest
         {"xy": [658, 636], "r": [11, 8]},    # Funk Atoll landing
     ],
-    "island_labels": (
+    "island_labels": ([
+        {**il, "xy": ISLAND_LABEL_XY.get(il["name"], il["xy"])} for il in (
         [{"name": dd["suggested_name"], "xy": dd["island_center"]}
          for dd in districts.values()
          if dd["region"] == "outer_isles" and dd.get("island_center")]
@@ -1287,7 +1291,7 @@ out = {
              "xy": [(xy["Taj Mahal"][0] + xy["John Primer"][0]) / 2,
                     (xy["Taj Mahal"][1] + xy["John Primer"][1]) / 2 + 14]}]
            if "Taj Mahal" in xy and "John Primer" in xy else [])
-    ),
+    )]),
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "pins.json").exists() else None,
@@ -1300,6 +1304,7 @@ out = {
                                if k not in ("toponym_suffixes", "toponym_prefixes")},
                  "anchor": list(spec["anchor"]),
                  "label_xy": list(spec.get("label_xy", spec["anchor"])),
+                 "label_lines": spec.get("label_lines"),
                  "label_size": spec.get("label_size"),
                  "hull": region_hulls.get(rid)} for rid, spec in REGIONS.items()],
     "waterways": [{**w, "points": [list(p) for p in w["points"]]} for w in WATERWAYS],
