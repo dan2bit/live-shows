@@ -305,8 +305,18 @@
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
   // exports are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
-  try{ Object.assign(pins, await (await fetch('pins.json',{cache:'no-store'})).json());
-       expBtn.textContent=`export pins (${Object.keys(pins).length})`; }catch(e){}
+  try{ const ptxt=await (await fetch('pins.json',{cache:'no-store'})).text();
+       Object.assign(pins, JSON.parse(ptxt));
+       expBtn.textContent=`export pins (${Object.keys(pins).length})`;
+       // freshness check: does the rendered data know about this pins file?
+       if(data.meta&&data.meta.pins_hash){
+         const buf=await crypto.subtle.digest('MD5'in crypto?'MD5':'SHA-1',new TextEncoder().encode(ptxt)).catch(()=>null);
+       }
+       const stalePins=Object.entries(pins).filter(([n,p])=>{
+         const st=S.get(n);return st&&(Math.abs(st.xy[0]-p[0])>=0.5||Math.abs(st.xy[1]-p[1])>=0.5);}).length;
+       if(stalePins>8){const e=document.getElementById('err');e.style.display='block';
+         e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
+  }catch(e){}
   editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';});
   expBtn.addEventListener('click',()=>{
     const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});

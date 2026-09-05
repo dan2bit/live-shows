@@ -18,7 +18,7 @@ anywhere; the repo root is auto-detected by walking up from this file (or pass
 
 Output: fantasy_map_data.json (see fantasy_map_schema.md for the contract).
 """
-import argparse, ast, csv, json, math, os, random, re, sys
+import argparse, ast, csv, hashlib, json, math, os, random, re, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -1148,6 +1148,10 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
 
 out = {
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
+             "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
+                          if (SCRIPT_DIR / "pins.json").exists() else None,
+             "overrides_hash": hashlib.md5((SCRIPT_DIR / "map_overrides.json").read_bytes()).hexdigest()[:10]
+                          if (SCRIPT_DIR / "map_overrides.json").exists() else None,
              "counts": {"settlements": len(settlements), "routes": len(routes),
                         "districts": len(districts)}},
     "canvas": CANVAS,
