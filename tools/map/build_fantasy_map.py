@@ -85,7 +85,7 @@ REGIONS = {
     "heartland": {
         "label": "Heartland",
         "terrain": "farmland plains — wheat, gravel roads, grain towers",
-        "label_xy": (380, 470), "label_size": 18,
+        "label_xy": (280, 520), "label_size": 18,
         "anchor": (420, 480), "rx": 190, "ry": 118,
         "toponym_suffixes": ["Hollow", "Fields", "Prairie", "Crossing", "Silo"],
         "toponym_prefixes": [],
@@ -101,7 +101,7 @@ REGIONS = {
     "quiet_woods": {
         "label": "Quiet Woods",
         "terrain": "forest and lakes — pine shade, cabin lights, still water",
-        "label_xy": (430, 300), "label_size": 17,
+        "label_xy": (630, 300), "label_size": 17,
         "anchor": (480, 318), "rx": 172, "ry": 112,
         "toponym_suffixes": ["Glen", "Hollow", "Lake", "Grove", "Vale"],
         "toponym_prefixes": [],
