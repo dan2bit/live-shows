@@ -177,6 +177,13 @@
   const S=new Map(data.settlements.map(s=>[s.name,s]));
   let LBL={regions:{},islands:{},waters:{}};
   try{ LBL=await (await fetch('labels.json',{cache:'no-store'})).json(); }catch(e){}
+  // pins.json is position truth - render it live, don't wait for the rebuild bot
+  let PINFILE={};
+  try{ PINFILE=await (await fetch('pins.json',{cache:'no-store'})).json(); }catch(e){}
+  for(const st of data.settlements){
+    const p=PINFILE[st.name];
+    if(p) st.xy=[+p[0],+p[1]];
+  }
 
   data.regions.forEach(r=>{
     if(/<br\s*\/?>/i.test(r.label)){
@@ -269,7 +276,7 @@
     t.setAttribute('class','geo-island');t.setAttribute('font-size',7);
     t.dataset.gname=il.name;t.dataset.gkind='island';
     t.setAttribute('text-anchor','middle');
-    t.setAttribute('x',il.xy[0]);t.setAttribute('y',il.xy[1]-14);
+    t.setAttribute('x',il.xy[0]);t.setAttribute('y',il.xy[1]);
     t.textContent=il.name;gGeo.appendChild(t);
   }
   for(const wl of WATER_SRC){
@@ -277,7 +284,7 @@
     t.setAttribute('class','geo-water');t.setAttribute('font-size',6.5);
     t.dataset.gname=wl.name;t.dataset.gkind='water';
     t.setAttribute('text-anchor','middle');
-    t.setAttribute('x',wl.xy[0]);t.setAttribute('y',wl.xy[1]+1.5);
+    t.setAttribute('x',wl.xy[0]);t.setAttribute('y',wl.xy[1]);
     t.textContent=wl.name;gGeo.appendChild(t);
   }
 
