@@ -46,6 +46,9 @@
   .stl.faded .dot{fill-opacity:.35;}
   .stl.legacy .dot{fill:var(--gold);}
   .stl .tick{stroke:var(--ink);stroke-width:.5;fill:var(--tint);}
+  .stl.traced .traceno{font-size:5.5px;fill:#0e5a70;paint-order:stroke;stroke:rgba(237,224,194,.9);stroke-width:1.6px;}
+  .stl.traced .dot{stroke:#0e5a70;stroke-width:1.6;}
+  .tracepath{fill:none;stroke:#0e5a70;stroke-width:1.2;stroke-dasharray:3 2;opacity:.75;vector-effect:non-scaling-stroke;}
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
@@ -117,6 +120,11 @@
     </select>
     <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export overrides (0)</button>
     <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export labels</button>
+    <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
+      <button id="traceBtn" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">trace waterway</button>
+      <button id="traceExp" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export waterways (0)</button>
+      <div id="traceMsg" style="font-size:10.5px;margin-top:3px;min-height:12px;"></div>
+    </div>
   </div>
   <div id="legend">
     <label><input type="checkbox" data-t="trail"> trails</label>
@@ -167,6 +175,9 @@
   const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
   const S=new Map(data.settlements.map(s=>[s.name,s]));
+  let LBL={regions:{},islands:{},waters:{}};
+  try{ LBL=await (await fetch('labels.json',{cache:'no-store'})).json(); }catch(e){}
+
   data.regions.forEach(r=>{
     if(/<br\s*\/?>/i.test(r.label)){
       r.label_lines=r.label.split(/<br\s*\/?>/i).map(x=>x.trim());
@@ -184,7 +195,10 @@
     p.style.setProperty('--tint',TINT[r.id]||'var(--ink)');
     gRegions.appendChild(p);
     const t=document.createElementNS(NS,'text');
-    const lx=(r.label_xy||r.anchor);
+    const lr=(LBL.regions||{})[r.id]||{};
+    const lx=(lr.xy||r.label_xy||r.anchor);
+    if(lr.lines) r.label_lines=lr.lines;
+    if(lr.size) r.label_size=lr.size;
     t.setAttribute('x',lx[0]); t.setAttribute('y',lx[1]);
     t.setAttribute('class','region-label');
     t.dataset.rid=r.id;
@@ -244,7 +258,13 @@
   // geo names: islands and waters
   const gGeo=document.createElementNS(NS,'g');
   map.appendChild(gGeo);
-  for(const il of (data.island_labels||[])){
+  const ISLES_SRC = Object.keys(LBL.islands||{}).length
+    ? Object.entries(LBL.islands).map(([name,xy])=>({name,xy}))
+    : (data.island_labels||[]);
+  const WATER_SRC = Object.keys(LBL.waters||{}).length
+    ? Object.entries(LBL.waters).map(([name,xy])=>({name,xy}))
+    : (data.water_labels||[]);
+  for(const il of ISLES_SRC){
     const t=document.createElementNS(NS,'text');
     t.setAttribute('class','geo-island');t.setAttribute('font-size',7);
     t.dataset.gname=il.name;t.dataset.gkind='island';
@@ -252,7 +272,7 @@
     t.setAttribute('x',il.xy[0]);t.setAttribute('y',il.xy[1]-14);
     t.textContent=il.name;gGeo.appendChild(t);
   }
-  for(const wl of (data.water_labels||[])){
+  for(const wl of WATER_SRC){
     const t=document.createElementNS(NS,'text');
     t.setAttribute('class','geo-water');t.setAttribute('font-size',6.5);
     t.dataset.gname=wl.name;t.dataset.gkind='water';
@@ -400,8 +420,6 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
   });
-  let LBL={regions:{},islands:{},waters:{}};
-  try{ LBL=await (await fetch('labels.json',{cache:'no-store'})).json(); }catch(e){}
   const overrides={};
   try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
   const editctl=document.getElementById('editctl'),
@@ -439,6 +457,52 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
   });
+  // waterway tracing: tag settlements in order along a riverbed; rename later
+  let TRACES=[];
+  try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
+  let tracing=null;
+  const traceBtn=document.getElementById('traceBtn'), traceExp=document.getElementById('traceExp'),
+        traceMsg=document.getElementById('traceMsg');
+  const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
+  const traceCount=()=>{traceExp.textContent=`export waterways (${TRACES.length})`;};
+  traceCount();
+  function endTrace(){
+    if(tracing&&tracing.settlements.length>=2){
+      TRACES.push(tracing);
+      traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} settlements saved`;
+    } else if(tracing){ traceMsg.textContent='trace discarded (needs 2+)'; }
+    document.querySelectorAll('.stl.traced').forEach(g=>{g.classList.remove('traced');
+      g.querySelectorAll('.traceno').forEach(t=>t.remove());});
+    tracing=null;traceBtn.textContent='trace waterway';traceCount();
+  }
+  traceBtn.addEventListener('click',()=>{
+    if(tracing){endTrace();return;}
+    tracing={id:`wway-${TRACES.length+1}`,name:null,settlements:[],points:[]};
+    traceBtn.textContent='end trace';
+    traceMsg.textContent=`${tracing.id}: click settlements from source to mouth`;
+  });
+  traceExp.addEventListener('click',()=>{
+    if(tracing)endTrace();
+    const blob=new Blob([JSON.stringify(TRACES,null,1)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='traced_waterways.json';a.click();URL.revokeObjectURL(a.href);
+  });
+  function traceAdd(g){
+    const st=S.get(g.dataset.name); if(!st)return;
+    tracing.settlements.push(st.name);
+    tracing.points.push([+st.xy[0].toFixed(1),+st.xy[1].toFixed(1)]);
+    g.classList.add('traced');
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('class','traceno');t.setAttribute('x',-(R[st.size]||2)-5);t.setAttribute('y',-3);
+    t.textContent=tracing.settlements.length;g.appendChild(t);
+    if(tracing.points.length>1){
+      const p=document.createElementNS(NS,'path');
+      p.setAttribute('class','tracepath');
+      p.setAttribute('d','M '+tracing.points.map(q=>q.join(' ')).join(' L '));
+      gTrace.replaceChildren(p);
+    }
+    traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} — ${st.name}`;
+  }
   const lblBtn=document.getElementById('exportLbl')||document.createElement('button');
   lblBtn.addEventListener('click',()=>{
     const blob=new Blob([JSON.stringify(LBL,null,1)],{type:'application/json'});
@@ -456,6 +520,7 @@
     const g=(window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
     if(rl){dragL=rl;e.preventDefault();return;}
+    if(g&&tracing){traceAdd(g);e.preventDefault();return;}
     if(g){dragS={g,name:g.dataset.name};selectStl(g);e.preventDefault();return;}
     pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
   });

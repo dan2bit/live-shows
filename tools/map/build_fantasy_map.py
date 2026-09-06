@@ -1270,12 +1270,15 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
 # {"regions": {id: {xy, size, lines?}}, "islands": {name: xy}, "waters": {name: xy}}
 # Edit by hand, or drag labels in map.html edit mode and export the file.
 # Regions fall back to spec/anchor; islands and waters not in the file are not drawn.
+_traced_path = SCRIPT_DIR / "traced_waterways.json"
+TRACED = json.loads(_traced_path.read_text()) if _traced_path.exists() else []
 _labels_path = SCRIPT_DIR / "labels.json"
 LABELS = (json.loads(_labels_path.read_text())
           if _labels_path.exists() else {"regions": {}, "islands": {}, "waters": {}})
 
 out = {
     "water_labels": [{"name": nm_, "xy": xy_} for nm_, xy_ in LABELS["waters"].items()],
+    "traced_waterways": TRACED,
     "canonical_islets": [
         {"xy": [185, 617], "r": [10, 7]},    # Foremothers
         {"xy": [216, 641], "r": [11, 7]},    # Kings' Rest
