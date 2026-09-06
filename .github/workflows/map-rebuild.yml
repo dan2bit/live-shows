@@ -18,6 +18,7 @@ on:
       - tools/map/pins.json
       - tools/map/map_overrides.json
       - tools/map/labels.json
+      - tools/map/traced_waterways.json
       - tools/map/discovered_adds.json
       - tools/map/build_fantasy_map.py
       - tools/map/emit_heightmap.py

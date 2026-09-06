@@ -1272,6 +1272,35 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
 # Regions fall back to spec/anchor; islands and waters not in the file are not drawn.
 _traced_path = SCRIPT_DIR / "traced_waterways.json"
 TRACED = json.loads(_traced_path.read_text()) if _traced_path.exists() else []
+# sparse-trace expansion: settlements within the corridor of the traced polyline
+# are captured (ordered by projection along the course) into trace["captured"]
+# for review - explicit clicks stay authoritative in trace["settlements"].
+def _proj_along(p, pts):
+    lens = [math.hypot(b[0]-a[0], b[1]-a[1]) for a, b in zip(pts, pts[1:])]
+    total = sum(lens) or 1e-9
+    best_d, best_t = 1e9, 0.0
+    for i, (a_, b_) in enumerate(zip(pts, pts[1:])):
+        vx, vy = b_[0]-a_[0], b_[1]-a_[1]; L2 = vx*vx+vy*vy or 1e-9
+        t = max(0.0, min(1.0, ((p[0]-a_[0])*vx + (p[1]-a_[1])*vy) / L2))
+        dd = math.hypot(p[0]-(a_[0]+t*vx), p[1]-(a_[1]+t*vy))
+        if dd < best_d:
+            best_d, best_t = dd, (sum(lens[:i]) + t*lens[i]) / total
+    return best_d, best_t
+for _tr in TRACED:
+    pts_ = [tuple(p) for p in _tr.get("points", [])]
+    if len(pts_) < 2:
+        _tr["captured"] = []
+        continue
+    listed = set(_tr.get("settlements", []))
+    caps = []
+    for _c in records:
+        if region_of.get(_c) == "outer_isles" or _c in listed or _c not in xy:
+            continue
+        dd_, tt_ = _proj_along(xy[_c], pts_)
+        if dd_ <= 10:
+            caps.append((tt_, _c, round(dd_, 1)))
+    caps.sort()
+    _tr["captured"] = [{"name": n_, "at": t_, "dist": d_} for t_, n_, d_ in caps]
 _labels_path = SCRIPT_DIR / "labels.json"
 LABELS = (json.loads(_labels_path.read_text())
           if _labels_path.exists() else {"regions": {}, "islands": {}, "waters": {}})
