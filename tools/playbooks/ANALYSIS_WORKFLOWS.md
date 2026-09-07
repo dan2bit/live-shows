@@ -207,7 +207,10 @@ Verify consistency between `live_shows_current.tsv`, `history/*.tsv`, and `artis
 
 ### Steps
 
-1. Run `scripts/validate_current.py` — checks column count and sentinel values
+1. Run both schema validators:
+   - `scripts/validate_current.py` — column count and sentinel values
+   - `scripts/validate_potential.py` — column count, `Decision` vocabulary, date and
+     weekday agreement, bracket-column format, and sort order
 2. Check `artists.tsv` against show history:
    - Every artist with an attended row should appear in `artists.tsv`
    - Times Seen count should match the number of attended rows

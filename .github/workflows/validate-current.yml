@@ -1,14 +1,37 @@
-name: Validate current shows
+name: Validate show data
+
+# Per-file schema validators for the two in-page-editable show TSVs. Drift
+# scanning across many files lives in data-hygiene.yml; this file is for
+# "does this one file still match its schema".
+#
+# Two jobs rather than two steps in one job, deliberately. Each reports its own
+# check name, they run in parallel, and a failure in one does not stop the
+# other from running or hide it behind a single red X. That matters while one
+# of the two is knowingly red.
+#
+# WHERE THIS BLOCKS: the push trigger is post-merge - a red X after the fact,
+# not a gate. The pull_request trigger runs the same checks before a merge into
+# main or staging, but it only becomes a hard gate once the job name is added
+# to that branch's required status checks in branch protection. Today the only
+# required check on main is the private-data guard.
 
 on:
   push:
     branches: [main]
     paths:
       - data/live_shows_current.tsv
+      - data/live_shows_potential.tsv
+  pull_request:
+    branches: [main, staging]
+    paths:
+      - data/live_shows_current.tsv
+      - data/live_shows_potential.tsv
+      - scripts/validate_current.py
+      - scripts/validate_potential.py
   workflow_dispatch:
 
 jobs:
-  validate:
+  validate-current:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +45,18 @@ jobs:
 
       - name: Validate column count and sentinels
         run: python scripts/validate_current.py
+
+  validate-potential:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate column count, decisions, dates, brackets and sort order
+        run: python scripts/validate_potential.py

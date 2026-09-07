@@ -297,6 +297,22 @@ transaction by hand.
 
 ## `live_shows_potential.tsv` write protocol
 
+**19 columns — no exceptions.** `validate_potential.py` enforces this, along with the
+`Decision` vocabulary, the date format, the bracket columns and the sort order. Write
+every column even when its value is empty. Omitting a single empty field mid-row shifts
+everything to its right by one position and the row is then padded back to 19, so the
+field count still looks correct — that is exactly how eight rows were silently corrupted
+from `Fees Notes` rightward, with the Notes paragraph rendering inside the Next Show
+bracket. MCP trailing-tab stripping produces the same class of damage from the other end.
+
+**Run `python3 scripts/validate_potential.py` before committing, not after.** It reads
+the file raw and never pads short rows, which is the point: a reader that tops a row up
+to the header width cannot see the defect it exists to catch.
+
+**Dates carry a weekday, and it must agree.** `2026-10-22 Thu` is checked against the
+calendar. A multi-night run is written as a range (`2026-09-25 Fri - 2026-09-27 Sun`)
+and only the leading date is validated.
+
 **Always fetch a fresh SHA immediately before writing.**
 
 The sequence for every write:
@@ -304,7 +320,8 @@ The sequence for every write:
 1. `get_file_contents` → capture current `sha` and content
 2. Apply the change (add row, remove row, or field update)
 3. Re-sort the full file: `Buy` → `Choose` → `Sell` → `Pass`, date ascending within each group
-4. Commit to `staging` via `create_or_update_file` with the freshly fetched `sha`
+4. Run `python3 scripts/validate_potential.py` — fix anything it reports before step 5
+5. Commit to `staging` via `create_or_update_file` with the freshly fetched `sha`
 
 **Private notes for a potential** (purchasing reminders, fee-avoidance, promo codes,
 box-office tips) go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by
@@ -323,7 +340,15 @@ surrounding purchased upcoming shows to help evaluate density.
 
 **Never reintroduce `#` comment blocks** into `live_shows_potential.tsv` (or any
 in-page-editable TSV). The in-page editor derives the header from `raw.split('\n')[0]`;
-a comment block wipes all rows on save (issue #80).
+a comment block wipes all rows on save (issue #80). `validate_potential.py` fails on any
+`#` line, and reports it before the header check so the diagnosis is not buried under a
+confusing one-column-header error.
+
+**A note for anyone extending this schema.** A column shift is only detectable where a
+strongly-typed column sits downstream of where the shift begins. Everything from
+`Fees Notes` to `Box Office` is free prose, which is why that corruption ran silently to
+the end of the row — the bracket-column format rule exists largely to plant a typed
+column at index 14/15. Appending more free-text columns widens the blind spot.
 
 ---
 
