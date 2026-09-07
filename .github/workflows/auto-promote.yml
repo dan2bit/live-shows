@@ -5,7 +5,20 @@ name: Auto-promote staging to main
 # job re-runs the private-data guard and, only if clean, fast-forwards `main`
 # using a deploy key that is the sole ruleset bypass actor. `main` only ever
 # advances by fast-forward from `staging`, so no staging sync is needed on
-# success. A failing commit is never promoted and is reset off `staging`.
+# success.
+#
+# TWO TIERS OF FAILURE, deliberately different:
+#
+#   - The private-data guard is a LEAK check. A failing commit is never promoted
+#     AND is reset off `staging`, because the offending content must not sit on a
+#     world-readable branch for a moment longer than necessary.
+#   - The potentials shape check is a CORRUPTION check. A failing commit is not
+#     promoted, but is LEFT on `staging` and the run goes red. Resetting would
+#     discard the author's work over a malformed row, which is disproportionate -
+#     nothing is leaking, the data is just wrong. Fix the row and push again.
+#
+# That is why the shape step is `continue-on-error` with the promote gated on its
+# outcome, rather than a plain failing step: a plain failure would trip the reset.
 
 on:
   push:
@@ -60,8 +73,13 @@ jobs:
           [ "$fail" -eq 0 ] || exit 1
           echo "OK — staging is clean."
 
+      - name: Validate potentials shape
+        id: shape
+        continue-on-error: true
+        run: python3 scripts/validate_potential.py
+
       - name: Promote staging -> main
-        if: success()
+        if: success() && steps.shape.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -75,6 +93,8 @@ jobs:
           git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
           git push promote HEAD:main
 
+      # Guard failures only. A soft-failing shape check does not mark the job
+      # failed, so this step is skipped and the commit stays on `staging`.
       - name: Reset staging on failure
         if: failure()
         shell: bash
@@ -82,3 +102,12 @@ jobs:
           set -euo pipefail
           git fetch origin main
           git push origin --force "origin/main:refs/heads/staging"
+
+      # Last, so that the reset step above has already been evaluated (and
+      # skipped) before the job is marked failed. Order is load-bearing here.
+      - name: Fail the run if the shape check failed
+        if: steps.shape.outcome == 'failure'
+        run: |
+          echo "::error::validate_potential.py failed - staging was NOT promoted."
+          echo "The commit is still on staging. Fix the row and push again."
+          exit 1
