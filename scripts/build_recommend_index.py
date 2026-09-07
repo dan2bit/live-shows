@@ -3,7 +3,7 @@
 build_recommend_index.py — generate recommend_index.json for the live-shows
 recommendation lookup.
 
-Denormalizes artist names from four sources into a flat variant->record index so
+Denormalizes artist names from five sources into a flat variant->record index so
 the web app can resolve any surface form of a known artist (inverted "X, The",
 accented, apostrophe'd, "... Band" suffixes, etc.) with an O(1) exact lookup,
 falling back to fuzzy matching only for genuine typos.
@@ -13,6 +13,12 @@ Sources (status precedence high -> low):
   2. fast_track.tsv             -> "fast_track"  (pre-authorized buys; tier/spotify)
   3. live_shows_potential.tsv   -> "potential"   (Buy/Choose/Sell/Pass; +support acts)
   4. follows/follows_master.tsv -> "follow"      (follow list; tier)
+  5. history/*.tsv              -> "seen-support" (attended bills; appearances/years)
+
+The history pass exists because an artist actually seen live was invisible to the
+index unless they independently earned an artists.tsv row or a follow. Support acts
+on potential rows were harvested; support acts on attended bills were not, which
+biased the index toward what is upcoming over what has happened.
 
 Run from the repo root:
     python3 scripts/build_recommend_index.py
@@ -36,18 +42,29 @@ ARTISTS   = ROOT / "data" / "artists.tsv"
 FASTTRACK = ROOT / "data" / "fast_track.tsv"
 POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
 FOLLOWS   = ROOT / "tools" / "research" / "follows" / "follows_master.tsv"
+HISTORY   = ROOT / "data" / "history"
 ALIASES   = ROOT / "data" / "recommend_aliases.tsv"
 OUTPUT    = ROOT / "data" / "recommend_index.json"
 
 # Metadata precedence (which source wins a field when several have it).
-STATUS_ORDER = ["seen", "fast_track", "potential", "follow"]
+STATUS_ORDER = ["seen", "fast_track", "potential", "follow", "seen-support"]
 TIER_ORDER   = ["fast_track", "follow", "potential", "seen"]
 
 # Also index support acts listed on potential rows (festival/opener lineups).
 HARVEST_POTENTIAL_SUPPORT = True
-# Potential rows whose Artist is an event, not a performer -> don't make a record
-# for the Artist cell (support acts are still harvested).
-SKIP_POTENTIAL_AGGREGATE = re.compile(r"festival|blues summit", re.I)
+# Rows whose Artist is an event, not a performer -> don't make a record for the
+# Artist cell (support acts are still harvested). Applies to potential and history
+# alike: an attended festival is a bill, not an act.
+SKIP_AGGREGATE = re.compile(r"festival|blues summit", re.I)
+
+# Supporting Acts on history rows separate acts with "/" (and, historically, ";").
+# Deliberately NOT "&" or "and": every ampersand in the harvested data sits inside a
+# band name ("Shovels & Rope", "The War and Treaty", "Robert Randolph & The Family
+# Band"), so splitting on it would shatter real acts and, because these records feed
+# the union-find below, fuse unrelated artists into one cluster.
+# name_forms.bill_components() splits on & / and / with, and is wrong here for exactly
+# that reason - see its module docstring.
+HISTORY_SUPPORT_SEP = re.compile(r"\s*[;/]\s*")
 
 
 # ── normalization ───────────────────────────────────────────────────────────
@@ -97,9 +114,65 @@ def yt_url(v):
 def blank_rec(name, status, **kw):
     rec = dict(name=name, status=status, decision="", tier="",
                times_seen="", first_seen="", most_recent_seen="",
-               spotify="", youtube="")
+               appearances="", spotify="", youtube="")
     rec.update(kw)
     return rec
+
+
+def alias_targets():
+    """{normalized alias -> canonical spelling} from recommend_aliases.tsv.
+
+    History harvests raw billing strings, and several of those billings are exactly
+    the alias side of a manual alias row ("Robert Randolph & The Family Band" ->
+    "Robert Randolph"). The automatic rules cannot derive those folds - that is why
+    the alias file exists - so a history record created under the billing name would
+    stand alongside the canonical record as a second entry for one act, and the
+    alias key would resolve ambiguously. Resolving here attaches the sighting to the
+    record the alias file already says owns it.
+    """
+    if not ALIASES.exists():
+        return {}
+    out = {}
+    for row in read_tsv(ALIASES, skip_hash=True):
+        alias, canon = row.get("Alias", ""), row.get("Canonical", "")
+        if alias and canon:
+            out[norm(alias)] = canon
+    return out
+
+
+def load_history():
+    """One record per distinct name spelling appearing in data/history/*.tsv.
+
+    Aggregates per raw spelling rather than per row so a repeat visit does not
+    become several records; spellings that differ ("Robert Cray" vs "Robert Cray
+    Band") stay separate here and are merged downstream by the union-find, which
+    is the one place that decides identity.
+    """
+    if not HISTORY.exists():
+        print("WARN: missing source %s" % HISTORY, file=sys.stderr)
+        return []
+
+    aliases = alias_targets()
+    agg = {}  # raw name -> [appearances, first_year, last_year]
+    for path in sorted(HISTORY.glob("*.tsv")):
+        for r in read_tsv(path):
+            year = (r.get("Show Date", "") or "")[:4]
+            names = [r.get("Artist", "")]
+            names += HISTORY_SUPPORT_SEP.split(r.get("Supporting Acts", "") or "")
+            for raw in names:
+                raw = raw.strip()
+                if len(raw) < 2 or raw == "-" or SKIP_AGGREGATE.search(raw):
+                    continue
+                raw = aliases.get(norm(raw), raw)
+                slot = agg.setdefault(raw, [0, year, year])
+                slot[0] += 1
+                if year:
+                    slot[1] = min(slot[1] or year, year)
+                    slot[2] = max(slot[2] or year, year)
+
+    return [blank_rec(name, "seen-support", appearances=str(count),
+                      first_seen=first, most_recent_seen=last)
+            for name, (count, first, last) in agg.items()]
 
 
 def load_records():
@@ -124,7 +197,7 @@ def load_records():
     for r in read_tsv(POTENTIAL):
         name = r.get("Artist", "")
         decision = r.get("Decision", "")
-        if name and not SKIP_POTENTIAL_AGGREGATE.search(name):
+        if name and not SKIP_AGGREGATE.search(name):
             recs.append(blank_rec(name, "potential",
                 decision=decision, tier=r.get("Tier", "")))
         if HARVEST_POTENTIAL_SUPPORT:
@@ -137,6 +210,8 @@ def load_records():
         name = r.get("Artist", "")
         if name:
             recs.append(blank_rec(name, "follow", tier=r.get("Tier", "")))
+
+    recs.extend(load_history())
 
     return recs
 
@@ -185,7 +260,11 @@ def rank_of(rec):
         return 2 if (d.startswith("buy") or d == "choose") else 4
     if s == "follow":
         return 3
-    return 5
+    if s == "seen-support":
+        # Last, so a history-only sighting never wins canonical name or metadata
+        # from a source that carries a curated tier or decision.
+        return 5
+    return 6
 
 
 def pick(members, field, order=STATUS_ORDER):
@@ -232,6 +311,16 @@ def build():
         ms = pick(members, "most_recent_seen")
         sp = pick(members, "spotify")
         yt = pick(members, "youtube")
+        ap = ""
+        if status == "seen-support":
+            # Sum across the spellings the union-find folded together, so an artist
+            # billed two ways reads as one artist seen twice rather than twice once.
+            hist = [m for m in members if m["status"] == "seen-support"]
+            ap = str(sum(int(m["appearances"] or 0) for m in hist))
+            years = [y for m in hist
+                     for y in (m["first_seen"], m["most_recent_seen"]) if y]
+            fs = min(years) if years else ""
+            ms = max(years) if years else ""
         if decision:
             rec["decision"] = decision
         if tier:
@@ -242,6 +331,8 @@ def build():
             rec["first_seen"] = fs
         if ms:
             rec["most_recent_seen"] = ms
+        if ap:
+            rec["appearances"] = ap
         if sp:
             rec["spotify"] = sp
         if yt:

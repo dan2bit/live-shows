@@ -14,6 +14,7 @@ on:
       - data/fast_track.tsv
       - data/live_shows_potential.tsv
       - tools/research/follows/follows_master.tsv
+      - data/history/**
       - data/recommend_aliases.tsv
       - scripts/build_recommend_index.py
   workflow_dispatch:
