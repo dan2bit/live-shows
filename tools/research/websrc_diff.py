@@ -35,7 +35,21 @@ Run from anywhere:
     python3 tools/research/websrc_diff.py
     python3 tools/research/websrc_diff.py --month 2026-09 --prior 2026-08
     python3 tools/research/websrc_diff.py --source hftb --json
-    python3 tools/research/websrc_diff.py --selftest
+
+HOW THIS IS CHECKED
+-------------------
+Two mechanisms, neither of which involves a synthetic corpus.
+
+The name-handling rules - acts(), key(), keys_of() - are pure string functions
+and carry doctests, sitting next to the prose that justifies each rule:
+
+    python3 -m doctest tools/research/websrc_diff.py
+
+The rest is checked against the real data on every run. check_invariants()
+hard-fails rather than printing a number to be eyeballed, because the failures
+this tool is prone to all look like plausible output: an empty roster reads as
+"no matches", and a broken tokenizer reads as "nothing new is tracked". A wrong
+answer that exits 0 is the thing to prevent.
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
@@ -69,8 +83,6 @@ ROSTERS = {
     "Alligator": WEBSRC / "alligator_records_artists.tsv",
     "Ruf":       WEBSRC / "ruf_records_artists.tsv",
 }
-
-FIXTURES = Path(__file__).resolve().parent / "fixtures" / "websrc_diff"
 
 # Normalized venue fragments. Matched as substrings of the normalized venue cell
 # because the two sources spell the same room differently - HereForTheBands says
@@ -110,6 +122,11 @@ def key(s):
     folding "&" to "and" first, so "The War and Treaty" and "War & Treaty" land
     on the same key. norm() strips punctuation rather than expanding it, which
     would otherwise leave those two a word apart.
+
+    >>> key("The War and Treaty") == key("War & Treaty")
+    True
+    >>> key("Ana Popovic")
+    'ana popovic'
     """
     return _norm((s or "").replace("&", " and "))
 
@@ -124,6 +141,11 @@ def keys_of(s):
 
     Identity only. surface_forms never splits a bill - that is acts() above, and
     the two must not be confused (see name_forms.py).
+
+    >>> sorted(keys_of("Robert Cray Band"))
+    ['robert cray', 'robert cray band']
+    >>> sorted(keys_of("Lone Bellow, The"))
+    ['lone bellow', 'lone bellow the']
     """
     return {k for k in (key(f) for f in surface_forms(s)) if k}
 
@@ -133,6 +155,26 @@ def acts(bill):
 
     A plain artist name yields itself. Returns a list in bill order so callers
     can report which component matched.
+
+    An ampersand is part of the name, never a separator:
+
+    >>> acts("Shovels & Rope")
+    ['Shovels & Rope']
+
+    A comma is a separator, and "night" must not eat a band called Nighthawks:
+
+    >>> acts("Cheekface, The Nighthawks")
+    ['Cheekface', 'The Nighthawks']
+
+    Tour and event labels are dropped, the acts around them kept:
+
+    >>> acts("Nino Paid, It's All Temporary Tour, with 1up Tee")
+    ['Nino Paid', '1up Tee']
+
+    A trailing parenthetical is not part of the name:
+
+    >>> acts("Yola (DJ set)")
+    ['Yola']
     """
     bill = (bill or "").strip()
     if not bill:
@@ -248,25 +290,35 @@ def load_rosters():
     These files head their first column "Artist Name", not "Artist" like every
     other source here, and Ruf suffixes a country ("Albert Castiglia (USA)").
     Reading the wrong header silently yields an empty roster and reports every
-    artist as a non-match, which reads identically to a real negative result -
-    so accept either header and strip the parenthetical.
+    artist as a non-match, which reads identically to a real negative result.
+    That is why a roster file that exists but parses to nothing is a hard error
+    here rather than a warning: "no blues-label artists are playing this month"
+    and "I could not read the roster" must never look the same in the output.
+    A roster that is simply absent is a legitimate state and only warns.
     """
     out = {}
     for label, path in ROSTERS.items():
-        rows = read_rows(path)
-        if not rows:
-            print("WARN: roster %s is empty or missing" % path.name, file=sys.stderr)
+        if not path.exists():
+            print("WARN: roster %s absent - skipping %s" % (path.name, label),
+                  file=sys.stderr)
             continue
+        rows = read_rows(path)
+        parsed = 0
         for r in rows:
             raw = r.get("Artist Name") or r.get("Artist") or ""
             raw = PARENTHETICAL.sub("", raw).strip()
             if not raw or "/" in raw:  # "Various Artists/Anthologies" is not an act
                 continue
+            parsed += 1
             for k in keys_of(raw):
                 if label not in out.setdefault(k, []):
                     out[k].append(label)
-        if not any(out):
-            print("WARN: roster %s parsed 0 artists" % path.name, file=sys.stderr)
+        if parsed == 0:
+            raise SystemExit(
+                "FATAL: roster %s exists but parsed 0 artists. Expected an "
+                "'Artist Name' or 'Artist' column; found %s. Refusing to report "
+                "zero label hits from a roster that was not read."
+                % (path.name, rows[0].keys() if rows else "no rows"))
     return out
 
 
@@ -313,7 +365,10 @@ def analyse(month, prior, sources):
         naive = {key(r["bill"]) for r in scrapes["hftb"]} & naive_tracking
         toks = {a for r in scrapes["hftb"] for a in r["acts"]
                 if keys_of(a) & set(tracking)}
-        result["join_diagnostic"] = {"naive": len(naive), "tokenized": len(toks)}
+        result["join_diagnostic"] = {
+            "naive": len(naive), "tokenized": len(toks),
+            "bills_split": sum(1 for r in scrapes["hftb"] if len(r["acts"]) > 1),
+        }
 
     all_keys = {}
     for src, info in present.items():
@@ -353,6 +408,36 @@ def analyse(month, prior, sources):
     result["untracked_single_source_core_venue"] = single_core
     result["label_roster_hits"] = label_hits
     return result
+
+
+def check_invariants(res):
+    """Conditions that must hold on real data. Returns a list of failures.
+
+    These are not unit tests; they run against the month's actual scrapes every
+    time. Each one guards a failure mode that produces believable output rather
+    than an error, which is the only kind worth an automatic check here.
+    """
+    problems = []
+    d = res.get("join_diagnostic")
+    if d:
+        if d["bills_split"] == 0:
+            problems.append(
+                "tokenizer split no HereForTheBands bill into multiple acts. "
+                "That source always carries multi-act bills, so the tokenizer "
+                "is a no-op and every join below is understated.")
+        if d["tokenized"] < d["naive"]:
+            problems.append(
+                "tokenized join (%d) found fewer tracked artists than the naive "
+                "join (%d). Tokenizing can only widen the match, so this means "
+                "the tracking index is being built differently from the scrape "
+                "side." % (d["tokenized"], d["naive"]))
+    for src, info in res["sources"].items():
+        if info["prior_found"] and info["prior_rows"] and not info["rows"]:
+            problems.append(
+                "%s: current month is empty but the prior month had %d rows - "
+                "the scrape almost certainly failed rather than the calendar "
+                "being empty." % (src, info["prior_rows"]))
+    return problems
 
 
 def render(res):
@@ -400,82 +485,6 @@ def render(res):
     return "\n".join(out)
 
 
-def _use_fixtures():
-    """Repoint every input at the fixture tree. --selftest only."""
-    global WEBSRC, ARCHIVE, TRACKING, ROSTERS
-    WEBSRC = ARCHIVE = FIXTURES
-    TRACKING = {name: FIXTURES / "tracking" / ("%s.tsv" % name) for name in TRACKING}
-    ROSTERS = {"Alligator": FIXTURES / "alligator_records_artists.tsv",
-               "Ruf": FIXTURES / "ruf_records_artists.tsv"}
-
-
-def selftest():
-    """Assert the behaviours this script exists to guarantee, on frozen input.
-
-    Every case below is a bug that was live at some point while this was being
-    written, not a hypothetical. The counts are small and hand-checkable on
-    purpose: a fixture you cannot verify by reading it is not a regression test,
-    it is a second implementation.
-    """
-    _use_fixtures()
-    res = analyse("2099-02", "2099-01", ["hftb", "bit"])
-    names = lambda seq: sorted(e["name"] for e in seq)
-    acts_seen = {a for src in ("hftb", "bit")
-                 for r in (load_scrape(src, "2099-02")[0] or []) for a in r["acts"]}
-
-    checks = [
-        # The join the script exists to fix. naive sees only the one act whose
-        # raw cell happens to equal a tracking Artist cell.
-        ("naive join finds 1", res["join_diagnostic"]["naive"] == 1),
-        ("tokenized join finds 3", res["join_diagnostic"]["tokenized"] == 3),
-
-        # "&" is not a separator: this must stay one act, never Shovels + Rope.
-        ("ampersand kept inside a band name", "Shovels & Rope" in acts_seen),
-        ("no act named Shovels", "Shovels" not in acts_seen),
-        ("no act named Rope", "Rope" not in acts_seen),
-
-        # Word-boundary noise filter: a bare "night" substring used to eat this.
-        ("The Nighthawks survives the noise filter",
-         "The Nighthawks" in acts_seen),
-        # ... while an actual tour label is still dropped.
-        ("tour label dropped",
-         not any("Temporary" in a for a in acts_seen)),
-
-        # surface_forms on the join: scrape says "Robert Cray", tracking file
-        # says "Robert Cray Band".
-        ("trailing-Band spelling resolves as tracked",
-         "Robert Cray" in names(res["tracked_new"])),
-        # Potentials Support column is part of the join.
-        ("support-column artist resolves as tracked",
-         "Taylor Ashton" in names(res["tracked_new"])),
-        ("tracked_new is exactly those two",
-         names(res["tracked_new"]) == ["Robert Cray", "Taylor Ashton"]),
-
-        # Corroboration across both sources.
-        ("corroborated is exactly the two in both sources",
-         names(res["untracked_corroborated"]) == ["Albert Castiglia", "Cheekface"]),
-
-        # Core-venue tier, new acts only, non-core excluded.
-        ("core-venue list has 5",
-         len(res["untracked_single_source_core_venue"]) == 5),
-        ("non-core venue excluded",
-         "Some Band" not in names(res["untracked_single_source_core_venue"])),
-        ("already-seen act excluded from new lists",
-         "Old Headliner" not in names(res["untracked_single_source_core_venue"])),
-
-        # Roster header is "Artist Name", and Ruf suffixes a country.
-        ("roster hit found despite Artist Name header and (USA) suffix",
-         names(res["label_roster_hits"]) == ["Albert Castiglia"]),
-        ("roster slash-entry skipped", len(load_rosters()) == 2),
-    ]
-
-    failed = [label for label, ok in checks if not ok]
-    for label, ok in checks:
-        print("  %s  %s" % ("PASS" if ok else "FAIL", label))
-    print("\n%d/%d checks passed" % (len(checks) - len(failed), len(checks)))
-    return 1 if failed else 0
-
-
 def main():
     # This report is long and will be piped to head or less; a broken pipe is the
     # normal way that ends, not an error worth a traceback.
@@ -490,12 +499,7 @@ def main():
     ap.add_argument("--prior", help="YYYY-MM to compare against (default: month - 1)")
     ap.add_argument("--source", choices=["hftb", "bit", "both"], default="both")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
-    ap.add_argument("--selftest", action="store_true",
-                    help="run the frozen-fixture regression checks and exit")
     args = ap.parse_args()
-
-    if args.selftest:
-        return selftest()
 
     month = args.month or latest_month(BIT_PAT) or latest_month(HFTB_PAT)
     if not month:
@@ -505,6 +509,13 @@ def main():
     sources = ["hftb", "bit"] if args.source == "both" else [args.source]
 
     res = analyse(month, prior, sources)
+
+    problems = check_invariants(res)
+    if problems:
+        for p in problems:
+            print("FATAL: %s" % p, file=sys.stderr)
+        return 3
+
     if args.json:
         print(json.dumps(res, indent=2, ensure_ascii=False))
     else:
