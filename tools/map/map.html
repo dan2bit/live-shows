@@ -48,6 +48,11 @@
   .stl .tick{stroke:var(--ink);stroke-width:.5;fill:var(--tint);}
   .stl.traced .traceno{font-size:5.5px;fill:#0e5a70;paint-order:stroke;stroke:rgba(237,224,194,.9);stroke-width:1.6px;}
   .stl.traced .dot{stroke:#0e5a70;stroke-width:1.6;}
+  body.tracing .stl .dot{fill:rgba(237,224,194,.92);stroke:#FF2FA0;stroke-width:1.4;stroke-dasharray:none;opacity:1;}
+  body.tracing .stl.tracedone .dot{fill:rgba(34,26,18,.28);stroke:rgba(34,26,18,.45);stroke-width:.8;}
+  body.tracing .stl.traced .dot{fill:#0e5a70;stroke:#0e5a70;}
+  body.tracing .stl text{opacity:.9;}
+  #traceName{width:100%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:4px;margin-top:4px;display:none;}
   .tracepath{fill:none;stroke:#0e5a70;stroke-width:1.2;stroke-dasharray:3 2;opacity:.75;vector-effect:non-scaling-stroke;}
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
@@ -123,6 +128,7 @@
     <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
       <button id="traceBtn" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">trace waterway</button>
       <button id="traceExp" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export waterways (0)</button>
+      <input id="traceName" placeholder="name / note for this waterway &mdash; Enter to save">
       <div id="traceMsg" style="font-size:10.5px;margin-top:3px;min-height:12px;"></div>
     </div>
   </div>
@@ -142,6 +148,7 @@
       <span>&#9875; harbor</span>
     </div>
     <label><input type="checkbox" id="editMode"> edit</label>
+    <label><input type="checkbox" id="traceMode"> trace rivers</label>
     <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
       font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
       export pins (0)</button>
@@ -247,19 +254,37 @@
   }
 
   // the compass rose settles on the unnamed northwest island
+  // clef needle over an engraved star, ringed by a circular five-line staff
   const rose=document.createElementNS(NS,'g');
   rose.setAttribute('id','rose');
-  rose.setAttribute('transform','translate(75,88) scale(0.52) translate(-60,-60)');
+  rose.setAttribute('pointer-events','none');rose.setAttribute('opacity','.95');
+  rose.setAttribute('transform','translate(75,88) scale(0.42)');
   rose.innerHTML=`
-    <circle cx="60" cy="60" r="46" fill="rgba(237,224,194,.55)" stroke="#221A12" stroke-width="2"/>
-    <circle cx="60" cy="60" r="40" fill="none" stroke="#221A12" stroke-width=".7" stroke-dasharray="2 3"/>
-    <path d="M 60 20 C 53 32 50 44 60 53 C 70 44 67 32 60 20 Z" fill="#A63D2F" stroke="#221A12" stroke-width="1"/>
-    <path d="M 60 26 C 56 34 55 41 60 47" fill="none" stroke="rgba(237,224,194,.55)" stroke-width="1"/>
-    <g font-family="Special Elite" font-size="11" fill="#221A12" text-anchor="middle">
-      <text x="60" y="18">N</text><text x="106" y="64">E</text><text x="60" y="112">S</text><text x="14" y="64">W</text>
+    <g fill="none" stroke="#221A12">
+      <circle r="47" stroke-width=".8"/><circle r="44.5" stroke-width=".8"/><circle r="42" stroke-width=".8"/>
+      <circle r="39.5" stroke-width=".8"/><circle r="37" stroke-width=".8"/>
     </g>
-    <image href="https://dan2bit.github.io/live-shows/static/brand-hat.png" x="42" y="48" width="36" height="30"
-      onerror="this.style.display='none'"/>`;
+    <g fill="#221A12">
+      <circle cx="30" cy="-27" r="2.2"/><circle cx="40" cy="9" r="2.2"/><circle cx="12" cy="41" r="2.2"/>
+      <circle cx="-26" cy="32" r="2.2"/><circle cx="-41" cy="-6" r="2.2"/><circle cx="-17" cy="-39" r="2.2"/>
+    </g>
+    <g id="rose-card"><path d="M0 -52 L7 -10 L0 0 Z" fill="#EDE0C2" stroke="#221A12" stroke-width="1.4"/>
+      <path d="M0 -52 L-7 -10 L0 0 Z" fill="#221A12"/></g>
+    <use href="#rose-card" transform="rotate(90)"/><use href="#rose-card" transform="rotate(180)"/>
+    <use href="#rose-card" transform="rotate(270)"/>
+    <g id="rose-inter"><path d="M0 -34 L4.5 -8 L0 0 Z" fill="#C9962E" stroke="#221A12" stroke-width="1"/>
+      <path d="M0 -34 L-4.5 -8 L0 0 Z" fill="#8a5a2a" stroke="#221A12" stroke-width="1"/></g>
+    <use href="#rose-inter" transform="rotate(45)"/><use href="#rose-inter" transform="rotate(135)"/>
+    <use href="#rose-inter" transform="rotate(225)"/><use href="#rose-inter" transform="rotate(315)"/>
+    <path id="rose-clef" d="M 0 -46 C 10 -40 10 -28 1 -22 C -10 -15 -12 -2 0 4 C 9 8 14 0 9 -6 C 5 -11 -2 -9 -2 -3 M 1 -22 L 3 26 C 3 34 -6 37 -9 31"
+      fill="none" stroke="#A63D2F" stroke-width="3" stroke-linecap="round"/>
+    <use href="#rose-clef" fill="none" stroke="#221A12" stroke-width="1" stroke-linecap="round"/>
+    <image href="https://dan2bit.github.io/live-shows/static/brand-hat.png" x="-15" y="-13" width="30" height="25"
+      onerror="this.style.display='none'"/>
+    <g font-family="Special Elite" font-size="13" fill="#221A12" text-anchor="middle"
+       style="paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:3px;">
+      <text x="0" y="-57">N</text><text x="62" y="5">E</text><text x="0" y="70">S</text><text x="-62" y="5">W</text>
+    </g>`;
   map.appendChild(rose);
 
   // geo names: islands and waters
@@ -464,52 +489,130 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
   });
-  // waterway tracing: tag settlements in order along a riverbed; rename later
+  // waterway tracing: a full-takeover mode - no other edits while tracing
   let TRACES=[];
   try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
-  let tracing=null;
+  let tracing=null, unsaved=0, pendingName=null;
+  const traceCb=document.getElementById('traceMode');
   const traceBtn=document.getElementById('traceBtn'), traceExp=document.getElementById('traceExp'),
-        traceMsg=document.getElementById('traceMsg');
+        traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
   const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
-  const traceCount=()=>{traceExp.textContent=`export waterways (${TRACES.length})`;};
+  const traceCount=()=>{traceExp.textContent=`export waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
   traceCount();
-  function endTrace(){
-    if(tracing&&tracing.settlements.length>=2){
-      TRACES.push(tracing);
-      traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} settlements saved`;
-    } else if(tracing){ traceMsg.textContent='trace discarded (needs 2+)'; }
-    document.querySelectorAll('.stl.traced').forEach(g=>{g.classList.remove('traced');
-      g.querySelectorAll('.traceno').forEach(t=>t.remove());});
-    tracing=null;traceBtn.textContent='trace waterway';traceCount();
+  function segd(p,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],L2=vx*vx+vy*vy||1e-9;
+    const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));
+    return Math.hypot(p[0]-(a[0]+t*vx),p[1]-(a[1]+t*vy));}
+  function tubeCapture(tr){
+    const pts=tr.points; if(pts.length<2)return[];
+    const listed=new Set(tr.settlements), caps=[];
+    for(const st of data.settlements){
+      if(st.region==='outer_isles'||listed.has(st.name))continue;
+      let dd=1e9;
+      for(let i=0;i<pts.length-1;i++)dd=Math.min(dd,segd(st.xy,pts[i],pts[i+1]));
+      if(dd<=10)caps.push(st.name);
+    }
+    return caps;
   }
+  function doneNames(){
+    const done=new Set();
+    for(const t of TRACES){
+      (t.settlements||[]).forEach(n=>done.add(n));
+      (t.captured||[]).forEach(c=>done.add(c.name||c));
+    }
+    return done;
+  }
+  function paintDone(){
+    const done=doneNames();
+    gStl.querySelectorAll('.stl').forEach(g=>g.classList.toggle('tracedone',done.has(g.dataset.name)));
+  }
+  traceCb.addEventListener('change',()=>{
+    const on=traceCb.checked;
+    document.body.classList.toggle('tracing',on);
+    if(on){
+      if(editCb.checked){editCb.checked=false;editCb.dispatchEvent(new Event('change'));}
+      editCb.disabled=true;
+      paintDone();
+      traceMsg.textContent=`${doneNames().size} settlements already traced \u2014 pink = still to do`;
+    }else{
+      editCb.disabled=false;
+      if(tracing)endTrace(true);
+      gStl.querySelectorAll('.stl.tracedone').forEach(g=>g.classList.remove('tracedone'));
+      traceMsg.textContent='';
+    }
+  });
+  function redrawTrace(){
+    gTrace.replaceChildren();
+    if(tracing&&tracing.points.length>1){
+      const p=document.createElementNS(NS,'path');
+      p.setAttribute('class','tracepath');
+      p.setAttribute('d','M '+tracing.points.map(q=>q.join(' ')).join(' L '));
+      gTrace.appendChild(p);
+    }
+    document.querySelectorAll('.stl.traced').forEach(g=>{
+      g.classList.remove('traced');
+      g.querySelectorAll('.traceno,.clicklabel').forEach(t=>t.remove());
+    });
+    if(!tracing)return;
+    tracing.settlements.forEach((n,i)=>{
+      const g=[...gStl.querySelectorAll('.stl')].find(x=>x.dataset.name===n);
+      if(!g)return;
+      g.classList.add('traced');
+      const st=S.get(n);
+      const no=document.createElementNS(NS,'text');
+      no.setAttribute('class','traceno');no.setAttribute('x',-(R[st.size]||2)-5);no.setAttribute('y',-3);
+      no.textContent=i+1;g.appendChild(no);
+      const lb=document.createElementNS(NS,'text');
+      lb.setAttribute('class','clicklabel');lb.setAttribute('x',(R[st.size]||2)+2.5);lb.setAttribute('y',2.5);
+      lb.textContent=n;g.appendChild(lb);
+    });
+  }
+  function toggleMember(g){
+    const n=g.dataset.name, st=S.get(n); if(!st)return;
+    const i=tracing.settlements.indexOf(n);
+    if(i>=0){tracing.settlements.splice(i,1);tracing.points.splice(i,1);}
+    else{tracing.settlements.push(n);tracing.points.push([+st.xy[0].toFixed(1),+st.xy[1].toFixed(1)]);}
+    redrawTrace();
+    traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} tagged`;
+  }
+  function endTrace(silent){
+    if(tracing&&tracing.settlements.length>=2){
+      tracing.captured=tubeCapture(tracing);
+      TRACES.push(tracing);unsaved++;
+      pendingName=tracing;
+      if(!silent){
+        traceName.style.display='block';traceName.value='';traceName.focus();
+        traceMsg.textContent=`${tracing.id} saved: ${tracing.settlements.length} tagged + ${tracing.captured.length} captured \u2014 name it, then EXPORT`;
+      }
+      paintDone();
+    } else if(tracing&&!silent){ traceMsg.textContent='trace discarded (needs 2+)'; }
+    tracing=null;redrawTrace();
+    traceBtn.textContent='trace waterway';traceCount();
+    if(unsaved>=2)traceMsg.textContent+=` \u26a0 ${unsaved} traces unsaved \u2014 export now`;
+  }
+  traceName.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&pendingName){
+      pendingName.name=traceName.value.trim()||null;
+      traceName.style.display='none';pendingName=null;
+      traceMsg.textContent='named \u2014 remember to export';
+    }
+  });
   traceBtn.addEventListener('click',()=>{
+    if(!traceCb.checked){traceCb.checked=true;traceCb.dispatchEvent(new Event('change'));}
     if(tracing){endTrace();return;}
-    tracing={id:`wway-${TRACES.length+1}`,name:null,settlements:[],points:[]};
+    tracing={id:`wway-${TRACES.length+1}`,name:null,settlements:[],points:[],captured:[]};
     traceBtn.textContent='end trace';
-    traceMsg.textContent=`${tracing.id}: click settlements from source to mouth`;
+    traceMsg.textContent=`${tracing.id}: click settlements source \u2192 mouth (click again to remove)`;
   });
   traceExp.addEventListener('click',()=>{
     if(tracing)endTrace();
     const blob=new Blob([JSON.stringify(TRACES,null,1)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='traced_waterways.json';a.click();URL.revokeObjectURL(a.href);
+    unsaved=0;traceCount();traceMsg.textContent='exported \u2713';
   });
-  function traceAdd(g){
-    const st=S.get(g.dataset.name); if(!st)return;
-    tracing.settlements.push(st.name);
-    tracing.points.push([+st.xy[0].toFixed(1),+st.xy[1].toFixed(1)]);
-    g.classList.add('traced');
-    const t=document.createElementNS(NS,'text');
-    t.setAttribute('class','traceno');t.setAttribute('x',-(R[st.size]||2)-5);t.setAttribute('y',-3);
-    t.textContent=tracing.settlements.length;g.appendChild(t);
-    if(tracing.points.length>1){
-      const p=document.createElementNS(NS,'path');
-      p.setAttribute('class','tracepath');
-      p.setAttribute('d','M '+tracing.points.map(q=>q.join(' ')).join(' L '));
-      gTrace.replaceChildren(p);
-    }
-    traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} — ${st.name}`;
-  }
+  window.addEventListener('beforeunload',e=>{
+    if(unsaved>0){e.preventDefault();e.returnValue='';}
+  });
   const lblBtn=document.getElementById('exportLbl')||document.createElement('button');
   lblBtn.addEventListener('click',()=>{
     const blob=new Blob([JSON.stringify(LBL,null,1)],{type:'application/json'});
