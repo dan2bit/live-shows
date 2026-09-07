@@ -570,6 +570,12 @@ support) to `live_shows_current.tsv`, also adds a `data/show_goals/hat_eligibili
 row for any artist not already present (`Yes`/`No` per the #115 semantics; ask Dan when
 uncertain).
 
+**Validate before committing.** Any write to `live_shows_potential.tsv` runs
+`python3 scripts/validate_potential.py` first — column count, `Decision` vocabulary,
+date and weekday agreement, bracket-column format, and sort order. Write every column
+even when empty; an omitted empty field shifts the rest of the row and still passes a
+field count. See `DATA_WRITE_PROTOCOLS.md` → `live_shows_potential.tsv` write protocol.
+
 **Step 3 — Autograph book check**
 
 For any show recommendation, per Routine 1 Step 3 logic.
@@ -657,6 +663,13 @@ Surface gaps. Confirm before adding to services.
 
 Apply the **calendar conflict rule** (Routine 3 Step 1). Check `fast_track.tsv` first
 (per `DATA_WRITE_PROTOCOLS.md`), then handle per Routine 4 Step 2.
+
+If this creates a `live_shows_potential.tsv` row, run
+`python3 scripts/validate_potential.py` before committing. This routine is the suspected
+source of the column shift repaired in #314 — several affected rows carry provenance
+text reading "Surfaced via Bandsintown / Songkick artist-follow alert", and one was
+written as recently as 2026-09. Write all 19 columns explicitly, including the empty
+ones.
 
 **Step 5 — Activity log draft** (subject: `[LOG] Routine 5 — [Artist] [source] — YYYY-MM-DD`)
 
