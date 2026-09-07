@@ -35,6 +35,7 @@ Run from anywhere:
     python3 tools/research/websrc_diff.py
     python3 tools/research/websrc_diff.py --month 2026-09 --prior 2026-08
     python3 tools/research/websrc_diff.py --source hftb --json
+    python3 tools/research/websrc_diff.py --selftest
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
@@ -68,6 +69,8 @@ ROSTERS = {
     "Alligator": WEBSRC / "alligator_records_artists.tsv",
     "Ruf":       WEBSRC / "ruf_records_artists.tsv",
 }
+
+FIXTURES = Path(__file__).resolve().parent / "fixtures" / "websrc_diff"
 
 # Normalized venue fragments. Matched as substrings of the normalized venue cell
 # because the two sources spell the same room differently - HereForTheBands says
@@ -397,6 +400,82 @@ def render(res):
     return "\n".join(out)
 
 
+def _use_fixtures():
+    """Repoint every input at the fixture tree. --selftest only."""
+    global WEBSRC, ARCHIVE, TRACKING, ROSTERS
+    WEBSRC = ARCHIVE = FIXTURES
+    TRACKING = {name: FIXTURES / "tracking" / ("%s.tsv" % name) for name in TRACKING}
+    ROSTERS = {"Alligator": FIXTURES / "alligator_records_artists.tsv",
+               "Ruf": FIXTURES / "ruf_records_artists.tsv"}
+
+
+def selftest():
+    """Assert the behaviours this script exists to guarantee, on frozen input.
+
+    Every case below is a bug that was live at some point while this was being
+    written, not a hypothetical. The counts are small and hand-checkable on
+    purpose: a fixture you cannot verify by reading it is not a regression test,
+    it is a second implementation.
+    """
+    _use_fixtures()
+    res = analyse("2099-02", "2099-01", ["hftb", "bit"])
+    names = lambda seq: sorted(e["name"] for e in seq)
+    acts_seen = {a for src in ("hftb", "bit")
+                 for r in (load_scrape(src, "2099-02")[0] or []) for a in r["acts"]}
+
+    checks = [
+        # The join the script exists to fix. naive sees only the one act whose
+        # raw cell happens to equal a tracking Artist cell.
+        ("naive join finds 1", res["join_diagnostic"]["naive"] == 1),
+        ("tokenized join finds 3", res["join_diagnostic"]["tokenized"] == 3),
+
+        # "&" is not a separator: this must stay one act, never Shovels + Rope.
+        ("ampersand kept inside a band name", "Shovels & Rope" in acts_seen),
+        ("no act named Shovels", "Shovels" not in acts_seen),
+        ("no act named Rope", "Rope" not in acts_seen),
+
+        # Word-boundary noise filter: a bare "night" substring used to eat this.
+        ("The Nighthawks survives the noise filter",
+         "The Nighthawks" in acts_seen),
+        # ... while an actual tour label is still dropped.
+        ("tour label dropped",
+         not any("Temporary" in a for a in acts_seen)),
+
+        # surface_forms on the join: scrape says "Robert Cray", tracking file
+        # says "Robert Cray Band".
+        ("trailing-Band spelling resolves as tracked",
+         "Robert Cray" in names(res["tracked_new"])),
+        # Potentials Support column is part of the join.
+        ("support-column artist resolves as tracked",
+         "Taylor Ashton" in names(res["tracked_new"])),
+        ("tracked_new is exactly those two",
+         names(res["tracked_new"]) == ["Robert Cray", "Taylor Ashton"]),
+
+        # Corroboration across both sources.
+        ("corroborated is exactly the two in both sources",
+         names(res["untracked_corroborated"]) == ["Albert Castiglia", "Cheekface"]),
+
+        # Core-venue tier, new acts only, non-core excluded.
+        ("core-venue list has 5",
+         len(res["untracked_single_source_core_venue"]) == 5),
+        ("non-core venue excluded",
+         "Some Band" not in names(res["untracked_single_source_core_venue"])),
+        ("already-seen act excluded from new lists",
+         "Old Headliner" not in names(res["untracked_single_source_core_venue"])),
+
+        # Roster header is "Artist Name", and Ruf suffixes a country.
+        ("roster hit found despite Artist Name header and (USA) suffix",
+         names(res["label_roster_hits"]) == ["Albert Castiglia"]),
+        ("roster slash-entry skipped", len(load_rosters()) == 2),
+    ]
+
+    failed = [label for label, ok in checks if not ok]
+    for label, ok in checks:
+        print("  %s  %s" % ("PASS" if ok else "FAIL", label))
+    print("\n%d/%d checks passed" % (len(checks) - len(failed), len(checks)))
+    return 1 if failed else 0
+
+
 def main():
     # This report is long and will be piped to head or less; a broken pipe is the
     # normal way that ends, not an error worth a traceback.
@@ -411,7 +490,12 @@ def main():
     ap.add_argument("--prior", help="YYYY-MM to compare against (default: month - 1)")
     ap.add_argument("--source", choices=["hftb", "bit", "both"], default="both")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the frozen-fixture regression checks and exit")
     args = ap.parse_args()
+
+    if args.selftest:
+        return selftest()
 
     month = args.month or latest_month(BIT_PAT) or latest_month(HFTB_PAT)
     if not month:
