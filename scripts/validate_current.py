@@ -41,7 +41,23 @@ def main() -> int:
         print(f"ERROR: {CURRENT_PATH} not found", file=sys.stderr)
         return 1
 
-    lines = CURRENT_PATH.read_text(encoding="utf-8").strip().splitlines()
+    # Strip trailing NEWLINES only, never trailing whitespace. A tab is
+    # whitespace, and the last column (Photo URL) is legitimately empty on some
+    # rows, so the final line can end in a tab. text.strip() eats it and turns a
+    # valid 19-field row into an 18-field one - the validator manufacturing the
+    # defect it exists to detect.
+    #
+    # General rule worth keeping: a validator reads raw and never normalizes.
+    # A reader that pads, strips or otherwise tidies its input cannot see the
+    # defect it was written to catch.
+    lines = CURRENT_PATH.read_text(encoding="utf-8").splitlines()
+    while lines and not lines[-1].strip():
+        lines.pop()
+
+    if not lines:
+        print(f"ERROR: {CURRENT_PATH} is empty", file=sys.stderr)
+        return 1
+
     headers = lines[0].split("\t")
 
     if len(headers) != EXPECTED_COLS:
