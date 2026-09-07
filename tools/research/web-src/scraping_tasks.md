@@ -16,7 +16,7 @@ Dates must always include the year (e.g. "Jul 04, 2026")
 4. Save the file in `/tools/research/web-src`
 5. Have Claude Desktop diff the file against the previous month
 
-_Faster path: the pagination endpoint (verified 2026-09-01)_
+_Faster path: the pagination endpoint (verified 2026-09-07)_
 
 The DOM route is fragile here. "View All" is a bare `div` (not a button) inside a
 `react-infinite-scroll` component, and scrolling stalls around 72 rows, so a DOM
@@ -45,6 +45,11 @@ Dedupe on `id`. Field mapping to the schema above:
 Sanity gate: compare the row count against the prior month before saving. A result
 near 36 or 72 means the pagination loop did not run and the file is partial.
 
+**Establish the date from a source other than the container clock.** The sandbox
+clock has been observed running days behind wall time, which silently mis-dates
+provenance notes and "days until show" math. Cross-check against the newest dated
+entries in the potentials file before writing any date into a scrape artifact.
+
 *Here for the Bands shows list MONTHLY*
 
 1. open https://www.hereforthebands.com/shows.php and choose dc
@@ -61,9 +66,34 @@ all shows at the same venue share the same Venue URL
 3. Save the file in `/tools/research/web-src`
 4. Have Claude Desktop diff the file against the previous month
 
+_Faster path: the per-day JSON endpoint (verified 2026-09-07)_
+
+The shows page ships no event markup at all - the table is built client-side by
+calling one endpoint per calendar day, which is why the DOM appears to grow while
+you watch it and why a scroll-and-scrape stops early at an arbitrary date:
+
+```
+https://www.hereforthebands.com/jc.php?region=1&page=ALL&date=YYYY-MM-DD
+```
+
+`region=1` is DC. Returns JSON shaped `{ "<date>": { "<venue>": { venue_url, shows: [...] } } }`
+- note the payload is itself keyed by the date, so unwrap that layer before reading
+venues. Empty days return `{}`. Loop day by day from today; Sep 2026 ran to
+2027-07-16 before the tail went empty (191 populated days, 1551 rows). Decode HTML
+entities in venue and show names. `venue_url` is sometimes absent - leave it blank.
+
+Caution: the Artist column holds an entire bill, comma-separated ("Cheekface, Apes
+Of The State"). Tokenize before comparing against tracking files or the join silently
+misses nearly everything - see websrc_diff.py.
+
 *Venue calendars scrape MONTHLY*
 
 1. ask Claude Desktop for the calendar URLs of venues in data/venues.tsv whose Calendar Coverage includes "Scrape"
+
+As of 2026-09-07 that is three venues: Collective Encore, Hub City Vinyl, and
+Bethesda Theater. None of the three publishes prices on its calendar page, and
+Hub City's list view carries no times or per-event links either, so expect the
+Price and Ticket URL columns to come back mostly empty.
 
 _Prompt 1_
 open each of these URLs in a new tab in this window
@@ -129,6 +159,11 @@ offer the running file after each artist before moving on to the next
 
 3. save the single file as `tools/research/web-src/fast-track-tour-dates.tsv`, overwriting the prior copy
    (this replaced the former per-artist fast-track-<artist>-tour-dates.tsv files, consolidated 2026-07-23)
+
+Each tour page is a different platform, so budget one browser permission grant per
+domain. Angelique Francis paginates through a Turbo Stream endpoint rather than a
+normal pager; Beth Hart and Kat Riggins publish no set times. Recompute the Day
+column from the date rather than trusting the site's own weekday label.
 
 *Youtube Playlist Inventory ON DEMAND*
 
