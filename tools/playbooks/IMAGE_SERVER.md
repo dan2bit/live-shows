@@ -86,6 +86,14 @@ People/faces: `person.read`; add `face.read` only if person-asset reads 403 with
 
 **Deliberately excluded:** `asset.upload`, `asset.update`, `asset.copy`, `asset.delete`, `stack.create`, `job.create`, `sharedLink.update`/`delete`, and all admin scopes — this key can classify, collect, and link but can never modify or destroy a photo. Server job runs (OCR/faces backfill) go through the Admin → Jobs UI, not this key.
 
+### CI key (label: `photo close (CI)`)
+
+A **third** key, held only as the `IMMICH_API_KEY` Actions secret on `dan2bit/live-shows` and used only by `close-photo-issue.yml`. Scopes: `asset.read`, `album.create`, `album.read`, `albumAsset.create`, `sharedLink.create`, `sharedLink.read`, `tag.create`, `tag.read`, `tag.asset`, `server.about`. Nothing else — it can file a photo into albums and mint album links, and can never upload, modify, tag-delete or destroy anything.
+
+- Set/rotate: `gh secret set IMMICH_API_KEY --repo dan2bit/live-shows` (paste the value at the prompt). Rotation is delete + recreate in Immich, then `gh secret set` again; editing scopes in place does not change the token.
+- The local `photos automation` key never goes into GitHub. Fork PRs cannot read repo secrets, and the workflow additionally gates on `author_association == 'OWNER'` — a stranger's comment cannot spend this key.
+- If the job reports `IMMICH_API_KEY secret is not set`, the secret is missing, not the key wrong; a wrong key surfaces as a 403 from the first album call.
+
 ### Module quick reference
 
 ```
@@ -98,7 +106,16 @@ python3 tools/photos/immich.py ocr <asset-id>
 python3 tools/photos/immich.py tag artist/sue-foley <asset-id> ...
 python3 tools/photos/immich.py link --assets <id> [<id> ...]
 python3 tools/photos/immich.py seed-crosswalk      # backfill working file
+
+python3 tools/photos/show_photos.py audit          # read-only: what does not line up
+python3 tools/photos/show_photos.py sync --dry-run # plan album/link materialisation
+python3 tools/photos/show_photos.py sync --write   # apply, and write the library rows
+python3 tools/photos/show_photos.py add --asset <id-or-link> --show 2026-08-25 \
+    --kind memorabilia --artist "Ghalia Volt" --subtype pick --signed --write
 ```
+
+- **Album rules** (the docstring in `show_photos.py` is authoritative): one show album per date, `<date> <headliner>`, found by date prefix, always created; one artist album per photographed artist holding every photo from every night that artist was in frame; the five upload albums double as kind albums. Every album carries exactly one share link, minted on first need and reused forever — the stored library URL must never be re-minted.
+- **Memorabilia** never goes through a `Photo:` issue. `add --kind memorabilia --show <date>` with the show date stated (the capture date is the photo session), then record the item in `item_log.tsv`.
 
 - **Shared-link defaults:** `allowDownload=true`, `showMetadata=false`, no expiry — viewers can save photos, but capture time/device/location EXIF stays private (parity with the old Google Photos shares).
 - **Taxonomy:** `tags --bootstrap` creates the standard facets — `kind/{with-artist,performance,memorabilia,selfie,crowd}`, `memorabilia/{setlist,cd,vinyl,poster,pick,ticket,autograph-book,photo-print,hat,other}`, and flat `signed`. Hat detail is a memorabilia subtype, not a kind. `show/<year>/<date>`, `artist/<slug>`, and `venue/<slug>` tags are created on demand via `tag`/`--ensure` (slugs must match the show-library slug rules).
