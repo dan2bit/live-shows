@@ -61,6 +61,27 @@ jobs:
               sys.exit(1)
           show_date = tm.group(1)
 
+          # Extract the headliner, so the script can tell two shows on one date apart.
+          # Titles read "Playlist: <headliner>[ w/ <support>] - <date> (<venue>)", with an
+          # older variant putting the venue and date after the dash in the other order.
+          #
+          # Everything before the em dash is the billing; the headliner is what precedes
+          # " w/ " (support acts) or " / " (co-bills, headliner first). Note the split is
+          # NOT on "&" - "Trombone Shorty & Orleans Avenue" and "John Primer & The Real
+          # Deal Blues Band" are single acts.
+          #
+          # Best-effort on purpose: an unparseable title yields an empty string, the
+          # script falls back to date-only matching, and that still works for every date
+          # carrying one show. It only fails where it would previously have corrupted.
+          artist = ""
+          billing = title.split(":", 1)[1] if ":" in title else title
+          billing = re.split(r'\s+[-\u2013\u2014]\s+', billing)[0]
+          billing = re.split(r'\s+w/\s+|\s+/\s+', billing)[0]
+          billing = re.sub(r'\s*\(.*?\)\s*$', '', billing).strip()
+          # Guard against a title shape that leaves the date or venue in the name.
+          if billing and not re.search(r'\d{4}-\d{2}-\d{2}', billing):
+              artist = billing
+
           # Extract YouTube URL from comment body
           url_re = re.compile(
               r'https?://(?:www\.)?youtube\.com/playlist\?list=[\w-]+',
@@ -76,16 +97,19 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"show_date={show_date}\n")
               f.write(f"playlist_url={playlist_url}\n")
+              f.write(f"artist={artist}\n")
 
           print(f"show_date={show_date}")
           print(f"playlist_url={playlist_url}")
+          print(f"artist={artist!r}" + ("" if artist else "  (falling back to date-only match)"))
           PYEOF
 
       - name: Update playlist URL in live_shows_current.tsv
         run: |
           python scripts/close_playlist_issue.py \
             "${{ steps.extract.outputs.show_date }}" \
-            "${{ steps.extract.outputs.playlist_url }}"
+            "${{ steps.extract.outputs.playlist_url }}" \
+            "${{ steps.extract.outputs.artist }}"
 
       - name: Commit updated TSV to staging
         run: |
