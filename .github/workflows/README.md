@@ -48,7 +48,7 @@ to 5× with backoff on races; bail on a real rebase conflict.
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
 | `close-playlist-issue.yml` | comment containing a `youtube.com/playlist` URL on an issue titled `Playlist:…` | Extracts the ISO show date from the title and the playlist URL from the comment, writes the URL into `data/live_shows_current.tsv` via `scripts/close_playlist_issue.py`, commits to `staging`, closes the issue. |
-| `close-photo-issue.yml` | comment containing a `photos.google.com/share` link on an issue titled `Photo:…` | Appends a row to `data/show_goals/artist-photos.tsv` via `scripts/close_photo_issue.py`, commits to `staging`, closes the issue. |
+| `close-photo-issue.yml` | owner comment **beginning with** a `photos.redhat-bootlegs.net/share/` link on an issue titled `Photo:…` | `scripts/close_photo_issue.py` → `show_photos.add_asset()`: tags the photo, files it in its show / artist / kind albums (creating and link-minting as needed), writes the show-album link to the show row and the artist-album link to `data/show_goals/artist-albums.tsv`, commits to `staging`, closes the issue. Needs the `IMMICH_API_KEY` secret. |
 
 ### Read-only checks (no commits; run on `main` post-promotion)
 
@@ -56,12 +56,15 @@ to 5× with backoff on races; bail on a real rebase conflict.
 |----------|---------|--------------|
 | `validate-current.yml` | push to `main` touching `live_shows_current.tsv` | `scripts/validate_current.py` — 19-column count and sentinel validation. |
 | `audit-times-seen.yml` | push to `main` touching ledger sources | `scripts/audit_times_seen.py` — blocking check that artists.tsv "Times Seen" equals the canonical ledger count from the artist-index builder. |
-| `reconcile-photos.yml` | push to `main` touching show TSVs or `artist-photos.tsv` | `scripts/reconcile_photos.py`: every show Photo URL must match a Share Link row keyed on the Google Photos `/photo/<ID>`. CORRUPT (near-miss ID) fails; MISSING only reports. |
+| `reconcile-photos.yml` | push to `main` touching show TSVs or the album TSVs | `scripts/reconcile_photos.py`: offline lint of every photo link — MALFORMED or DUPLICATE share key fails; OFF-HOST (a retired Google link) only reports. Server-side invariants are `tools/photos/show_photos.py audit`, run locally with the automation key. |
 
 ## Conventions
 
-- **Secrets:** `PROMOTE_DEPLOY_KEY` (SSH deploy key, ruleset bypass) is the only
-  custom secret; everything else uses `GITHUB_TOKEN`.
+- **Secrets:** `PROMOTE_DEPLOY_KEY` (SSH deploy key, ruleset bypass) and
+  `IMMICH_API_KEY` (the least-privilege image-server key used only by
+  `close-photo-issue.yml`; see `tools/playbooks/IMAGE_SERVER.md`) are the custom
+  secrets; everything else uses `GITHUB_TOKEN`. A job that holds a third-party
+  key must gate on `github.event.comment.author_association == 'OWNER'`.
 - **Concurrency:** every committing workflow has its own `concurrency` group
   with `cancel-in-progress: false` so runs queue rather than clobber.
 - **Race safety:** all bot pushes `git pull --rebase`/rebase before `git push`

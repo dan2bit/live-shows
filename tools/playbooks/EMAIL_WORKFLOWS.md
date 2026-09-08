@@ -487,17 +487,19 @@ nothing, a missing one loses the reminder entirely.
 
    Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
 
-**Step 6b — Open a GitHub issue for the artist-photo row (when a photo was taken)**
+**Step 6b — Open a GitHub issue per photographed artist (when a photo was taken)**
 
-When the notes indicate Dan got a photo with an artist (`Artist Interaction` is `Photo` or `Both`, or the note describes one), open one issue per photographed artist. Title: `Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `photo`. Body includes the artist, show date, venue, and any caption detail. The body MUST also include this share-link retrieval reminder (the workflow gate and parser accept ONLY `photos.google.com/share/…` URLs — the Share tool's `photos.app.goo.gl` shortlink and the logged-in address-bar `photos.google.com/album/…` URL are both silently rejected):
+When the notes indicate Dan got a photo with an artist (`Artist Interaction` is `Photo` or `Both`, or the note describes one), open one issue per photographed artist — including sidemen, who get their own artist album. Fetch `.github/ISSUE_TEMPLATE/photo.md` live and fill every `{{PLACEHOLDER}}`. Title: `Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `photo`. The artist name should be the library's spelling (a billing variant resolves through `recommend_aliases.tsv`, so add a row there rather than guessing).
 
-> **Getting the parseable link:** in Google Photos, Share the photo and copy the `photos.app.goo.gl` shortlink — then open that shortlink in a new tab and copy the **landing URL** (`https://photos.google.com/share/…/photo/…?key=…`). Paste the landing URL as the comment here. (Alternative: open the album through its existing share link, navigate to the photo, and copy the address bar.) This mirrors the `playlist` reminder in Step 6 — the Google Photos share link is later posted as a comment on the issue, which triggers `close-photo-issue.yml` (#131 item 4) to append the row to `data/show_goals/artist-photos.tsv` (`Date | Share Link | Caption`, header BOM preserved) and close the issue automatically. If the workflow is ever unavailable, append the row by hand. Do **not** touch `artists.tsv` — the `Photo` column is removed (#131); `artist-photos.tsv` is the sole photo record.
+The template carries the close-out contract; do not paraphrase it. In short: Dan uploads the still into the *Guitar gods and goddesses* album, creates a per-photo share link, and posts it **as the first thing in a comment**. `close-photo-issue.yml` then tags the photo, files it in the show / artist / kind albums, writes the show-album link to the show row and the artist-album link to `data/show_goals/artist-albums.tsv`, and closes the issue. Two photos from one show converge on one show-row link; two shows with one artist converge on one artist-albums row. There is no per-photo ledger to append to.
+
+Memorabilia photographed at the show (a signed setlist, a pick) does **not** get a `Photo:` issue — it is filed by hand with `show_photos.py add --kind memorabilia --show <date>` and recorded in `item_log.tsv`. Do **not** touch `artists.tsv` — it carries no photo column.
 
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
 Include explicit confirmation in the log body that the Step 6 playlist issue (and Step
 6b photo issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
-file, not reconstructed from memory.
+file (`playlist.md` / `photo.md`), not reconstructed from memory.
 
 **Final:** Apply `processed` label.
 

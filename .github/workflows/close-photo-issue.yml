@@ -1,15 +1,30 @@
 name: Close photo issue
 
-# main requires the `guard` status check, so the artist-photos.tsv write
-# goes to `staging` via the promote deploy key (a GITHUB_TOKEN push to staging
-# would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
-# fast-forward main. Triggered by a comment carrying the image-server share link
-# on a "Photo:" issue. The script also mirrors the share link into the
-# matching live_shows_current.tsv row's Photo URL, so both files ride one commit.
+# main requires the `guard` status check, so the library writes go to
+# `staging` via the promote deploy key (a GITHUB_TOKEN push to staging would
+# NOT trigger auto-promote). No [skip ci]: auto-promote must run to
+# fast-forward main.
 #
-# Forkers: PHOTO_HOST below is this fork's image server. It is deliberately not
-# read from config.yaml — a workflow that parsed config to decide what to trust
-# would let a config edit widen what the automation accepts. Change it here.
+# Triggered by a comment on a "Photo:" issue that BEGINS with the photo's own
+# image-server share link. The handler resolves that link to its asset, tags
+# it, files it in the show album, the artist album and the kind album
+# (creating any that are missing, minting one share link per album only where
+# none exists), and writes the show-album link to the show row and the
+# artist-album link to artist-albums.tsv. Both rows ride one commit.
+#
+# Trust boundary, in order of importance:
+#   1. Only the repository owner's comments fire the job. The handler holds an
+#      image-server key; a stranger's comment must not be able to spend it.
+#   2. The comment must START with the link. A link mentioned mid-sentence
+#      (an example, a quote of an earlier comment) does not fire, which is
+#      the failure that put a placeholder row in the library once.
+#   3. PHOTO_HOST is fixed here, not read from config.yaml - a workflow that
+#      parsed config to decide what to trust would let a config edit widen
+#      what the automation accepts. Forkers: change it here.
+#
+# IMMICH_API_KEY is the least-privilege "photo close (CI)" key described in
+# tools/playbooks/IMAGE_SERVER.md: it can read, tag, create albums and mint
+# links, and can never upload, modify or delete a photo.
 
 on:
   issue_comment:
@@ -24,19 +39,11 @@ env:
 
 jobs:
   close-photo:
-    # Only run when:
-    # 1. The comment is on an issue (not a PR)
-    # 2. The issue title starts with "Photo:"
-    # 3. The comment carries an image-server share link, OR a retired Google
-    #    Photos link in either form. Firing on the retired forms lets the job
-    #    say the host moved instead of silently doing nothing — the library was
-    #    migrated and a Google link would write a row pointing at the old home.
     if: |
       github.event.issue.pull_request == null &&
       startsWith(github.event.issue.title, 'Photo:') &&
-      (contains(github.event.comment.body, 'photos.redhat-bootlegs.net/share') ||
-       contains(github.event.comment.body, 'photos.google.com/share') ||
-       contains(github.event.comment.body, 'photos.app.goo.gl/'))
+      github.event.comment.author_association == 'OWNER' &&
+      startsWith(github.event.comment.body, 'https://photos.redhat-bootlegs.net/share/')
 
     runs-on: ubuntu-latest
     permissions:
@@ -54,7 +61,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Extract share link from comment
+      - name: Extract the share link
         id: extract
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
@@ -67,50 +74,35 @@ jobs:
           host = os.environ["PHOTO_HOST"]
           out = os.environ["GITHUB_OUTPUT"]
 
-          # An image-server share link is what the appender needs. A Google
-          # Photos link in either form is retired: the library was migrated and
-          # every photo link now points at the image server, so writing a Google
-          # link would reintroduce the old host one row at a time. Report it
-          # rather than accepting it.
-          pattern = r'https?://' + re.escape(host) + r'/share/\S+'
-          m = re.search(pattern, comment)
-          if m:
-              link = m.group(0).rstrip('.,)>]')
-              with open(out, "a") as f:
-                  f.write("mode=ok\n")
-                  f.write(f"share_link={link}\n")
-              print(f"share_link={link}")
-          elif re.search(r'https?://photos\.(google\.com/share|app\.goo\.gl)/\S+', comment):
-              with open(out, "a") as f:
-                  f.write("mode=legacy\n")
-              print("retired Google Photos link found - asking for an image-server link")
-          else:
-              print(f"ERROR: no {host} share link found in comment", file=sys.stderr)
+          # The job gate already requires the comment to start with the
+          # link; this just trims it at the first whitespace or trailing
+          # punctuation so a note after the link is allowed.
+          m = re.match(r'https://' + re.escape(host) + r'/share/[A-Za-z0-9_-]+', comment)
+          if not m:
+              print(f"ERROR: comment does not begin with a {host} share link", file=sys.stderr)
               sys.exit(1)
+          link = m.group(0)
+          with open(out, "a") as f:
+              f.write(f"share_link={link}\n")
+          print(f"share_link={link}")
           PYEOF
 
-      - name: Ask for an image-server link
-        if: steps.extract.outputs.mode == 'legacy'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue comment ${{ github.event.issue.number }} \
-            --repo ${{ github.repository }} \
-            --body 'That is a Google Photos link, which the photo automation no longer accepts. The photo library was migrated to the image server and every link in it now points there, so a Google link would reintroduce the old host. Upload the still to Immich, use **Share -> Create link**, and paste the resulting `https://'"$PHOTO_HOST"'/share/...` URL here.'
-
-      - name: Append row to artist-photos.tsv + mirror Photo URL to show row
-        id: append
-        if: steps.extract.outputs.mode == 'ok'
+      - name: File the photo (tags, albums, links) and write the library rows
+        id: file
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           SHARE_LINK: ${{ steps.extract.outputs.share_link }}
+          IMMICH_API_KEY: ${{ secrets.IMMICH_API_KEY }}
         run: |
+          if [ -z "$IMMICH_API_KEY" ]; then
+            echo "ERROR: IMMICH_API_KEY secret is not set - see tools/playbooks/IMAGE_SERVER.md" >&2
+            exit 1
+          fi
           python scripts/close_photo_issue.py "$ISSUE_TITLE" "$SHARE_LINK"
 
       - name: Commit updated TSVs to staging
-        if: steps.extract.outputs.mode == 'ok'
         run: |
-          git add data/show_goals/artist-photos.tsv data/live_shows_current.tsv
+          git add data/live_shows_current.tsv data/history/*.tsv data/show_goals/artist-albums.tsv
           if git diff --cached --quiet; then
             echo "No TSV changes - nothing to commit."
           else
@@ -123,22 +115,20 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
-            git commit -m "photo: row added from issue #${{ github.event.issue.number }}"
+            git commit -m "photo: filed from issue #${{ github.event.issue.number }}"
             git fetch promote staging
             git rebase promote/staging
             git push promote HEAD:staging
           fi
 
       - name: Close the issue
-        if: steps.extract.outputs.mode == 'ok'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ALBUM_NOTE: ${{ steps.append.outputs.album_note }}
+          SHOW_LINK: ${{ steps.file.outputs.show_link }}
+          ARTIST: ${{ steps.file.outputs.artist }}
+          ARTIST_LINK: ${{ steps.file.outputs.artist_link }}
         run: |
-          BODY="Photo row written to artist-photos.tsv automatically."
-          if [ -n "$ALBUM_NOTE" ]; then
-            BODY="$BODY"$'\n\n'"$ALBUM_NOTE"
-          fi
+          BODY="Photo filed."$'\n\n'"Show album: $SHOW_LINK"$'\n'"Artist album ($ARTIST): $ARTIST_LINK"
           gh issue close ${{ github.event.issue.number }} \
             --repo ${{ github.repository }} \
             --comment "$BODY"
