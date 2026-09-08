@@ -15,9 +15,25 @@ remove/re-sort/recompute transaction by hand:
   2. Re-sort potentials: Buy -> Choose -> Sell -> Pass, date ascending within
      each group.
   3. Recompute Prev/Next brackets for every future-dated Buy/Choose row from
-     the purchased-upcoming set. This is the CANONICAL bracket implementation;
-     check_brackets.py validates the same math — keep the two in step.
-     Pass/Sell rows are never touched (they are exempt from bracket checks).
+     the purchased-upcoming set, and CLEAR them to "-" on every Sell/Pass row.
+     This is the CANONICAL bracket implementation; check_brackets.py validates
+     the same math — keep the two in step.
+
+     Brackets answer "what else have I already bought around this date", which
+     is a question about a show you might still buy. A Pass has been decided, so
+     the field has no reader — but the value does not vanish when the decision
+     changes. handleDecisionChange() in app.js writes only the Decision cell, so
+     a Buy flipped to Pass in the browser keeps whatever brackets it had, and
+     they then rot: 18 such rows pointed at a show that is no longer purchased-
+     upcoming, 14 of them at an Ariel Posen date that had since flipped to
+     attended, and two more at a Robert Cray Band show that was itself passed on.
+     Every one was a Pass row; no Buy/Choose bracket was ever wrong, because
+     those are recomputed here on every run.
+
+     Clearing rather than recomputing is deliberate. Recomputing would keep the
+     values honest but preserve the ambiguity about whether they mean anything;
+     "-" says the decision is made. It also makes the rule in
+     DATA_WRITE_PROTOCOLS.md true rather than aspirational.
   4. Remove any fast_track.tsv row whose Artist exactly matches an upcoming
      current row's Artist — the first-show wait is over. (The private
      fast_track_caps.tsv twin is deleted client-side / in Routine 1; this
@@ -30,7 +46,10 @@ Routine 1 commits, notes edits) and must be silent when there is nothing to do.
 
 Idempotent: a second run over the same inputs writes nothing.
 Run in CI by .github/workflows/potentials-maintenance.yml (before the prune),
-which owns the staging commit and the push retry-with-rebase loop.
+which owns the staging commit and the push retry-with-rebase loop. That workflow
+already triggers on both live_shows_potential.tsv and live_shows_current.tsv, so
+a show flipping upcoming -> attended re-runs this even though the potentials file
+itself did not change.
 
 Exit codes: 0 unless required files are missing (1). The workflow detects
 changes via git diff, not via exit code.
@@ -147,7 +166,18 @@ def main() -> int:
     kept.sort(key=lambda r: (dec_rank(r), (r.get("Date") or "")))
 
     for row in kept:
-        if (row.get("Decision") or "").strip().lower() not in ("buy", "choose"):
+        decision = (row.get("Decision") or "").strip().lower()
+
+        # Sell/Pass: the decision is made, so the brackets have no reader. Clear
+        # them rather than leave whatever the row carried when it was Buy/Choose.
+        # "-" and not "" so that "cleared" is distinguishable from "never set".
+        if decision in ("sell", "pass"):
+            for col in ("Prev Show (2026)", "Next Show (2026)"):
+                if (row.get(col) or "").strip() != "-":
+                    row[col] = "-"
+            continue
+
+        if decision not in ("buy", "choose"):
             continue
         show_date = extract_last_date(row.get("Date", ""))
         if not show_date or show_date < today:
