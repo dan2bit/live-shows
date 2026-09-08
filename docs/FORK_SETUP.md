@@ -253,6 +253,21 @@ Two behaviors worth knowing before you rely on it: a guard-failing commit is
 based on `main` only when staging is quiet, and re-sync staging afterward), and
 bot pushes retry with rebase to survive races.
 
+### 2b. The image-server key (only if you run the photo pipeline)
+
+`close-photo-issue.yml` files a photo into Immich albums when you comment its
+share link on a `Photo:` issue. It needs an Immich API key with exactly these
+scopes — `asset.read`, `album.create`, `album.read`, `albumAsset.create`,
+`sharedLink.create`, `sharedLink.read`, `tag.create`, `tag.read`, `tag.asset`,
+`server.about` — and nothing that can upload, modify or delete a photo.
+
+- Immich → Account Settings → API Keys → create, label it `photo close (CI)`.
+- Value → Actions secret **`IMMICH_API_KEY`**.
+- Set `PHOTO_HOST` in the workflow file to your server's public host.
+
+Without the pipeline, leave the secret unset: the job fails fast with a
+message rather than half-filing a photo.
+
 ### 3. The automation/MCP token
 
 A third fine-grained PAT for whatever drives your automation (MCP server,
