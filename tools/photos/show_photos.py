@@ -15,10 +15,38 @@ Everything after that happens here.
 
   tag       Apply the tags recorded by `edit` to Immich.
 
-  sync      Materialise tags into albums: for each distinct show/ and
-            artist/ tag, ensure the album exists, add missing assets, mint a
-            share link if absent, and print the row for the data file.
-            Idempotent — safe to re-run after every show.
+  add       One asset, end to end: tag it, put it in its show album, its
+            kind album and (when an artist is named) the artist album, and
+            report the links the library rows need. The issue-close
+            workflow calls this; memorabilia and portraits use it by hand.
+
+  sync      Materialise tags into albums for the whole server: show/,
+            artist/ and kind/. Ensure each album, add missing assets, mint
+            a share link only where none exists, and print (or with
+            --write, apply) the library rows. Idempotent — safe to re-run
+            after every show, and it is the one-time backfill too.
+
+  audit     Read-only. Resolve every photo link the library holds back to
+            its Immich object and report what does not line up: show rows
+            still on a per-photo link, artist rows off-host, tags with no
+            row, photos with no artist. Run it before and after sync.
+
+ALBUM RULES
+
+  show      one album per show date, named "<date> <headliner>", found by
+            date prefix so a rename never forks a second album; every photo
+            tagged show/<date> is a member. Always created, even for one
+            photo: the show row then carries exactly one link, whatever
+            happens later.
+  artist    every photo from every show at which the artist was
+            PHOTOGRAPHED — the artist/ tag decides eligibility, the show
+            albums decide membership. A bandmate's solo shot from the same
+            night is therefore in both albums, and an artist who played but
+            was never in frame gets no album at all. Adding a photo to a
+            night changes every artist album anchored on that night.
+  kind      the five upload albums double as the standing type albums;
+            kind/ tags are synced INTO them so a photo re-tagged after
+            upload still lands in the right one.
 
 WHY A SYNC STEP EXISTS AT ALL
 
@@ -65,7 +93,10 @@ sys.path.insert(0, os.path.join(_ROOT, "scripts"))
 import immich  # noqa: E402
 from name_forms import goal_norm  # noqa: E402
 
-ARTIST_ALBUMS = os.path.join(_ROOT, "data", "show_goals", "artist-albums.tsv")
+ARTIST_ALBUMS = "data/show_goals/artist-albums.tsv"
+KIND_ALBUMS = "data/show_goals/kind-albums.tsv"
+CURRENT = "data/live_shows_current.tsv"
+HISTORY_DIR = "data/history"
 
 # Upload album -> kind tag. The mobile app can only sort into albums, so the
 # album a photo lands in is the one classification made at capture time.
@@ -77,7 +108,50 @@ KIND_BY_ALBUM = {
     "crowds i'm in": "crowd",
 }
 
+# kind tag -> the standing type album it is materialised into. These are the
+# same five albums the phone uploads into; the display names here are what
+# a fresh server gets if an album is missing, and lookup is by the hint in
+# KIND_BY_ALBUM so a hand-renamed album still resolves.
+KIND_ALBUM_NAMES = {
+    "with-artist": "Guitar gods and goddesses",
+    "performance": "Player portraits",
+    "memorabilia": "Concert memorabilia",
+    "selfie": "Preshow selfies",
+    "crowd": "Crowds I'm in",
+}
+
 MEMORABILIA_KIND = "memorabilia"
+
+_UUID_RE = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
+
+def show_album_name(date, headliner=""):
+    """The one naming rule for show albums, shared by add, sync and the
+    issue-close handler. The headliner is decoration for the Immich UI;
+    the date is the key (see find_show_album)."""
+    return f"{date} {headliner}".strip()
+
+
+def find_show_album(albums_by_name, date):
+    """The show album for a date: exact bare-date name, else the first album
+    whose name starts with the date. Prefix lookup means an album created
+    under the bare-date rule, or renamed by hand, is still the same album
+    rather than the seed of a second one."""
+    if date in albums_by_name:
+        return albums_by_name[date]
+    for name, album in sorted(albums_by_name.items()):
+        if name.startswith(date + " "):
+            return album
+    return None
+
+
+def artist_album_name(slug, hints):
+    """Display name for an artist album. Prefer the name the library already
+    uses for this slug (show rows, artist-albums.tsv, the caller); fall
+    back to title-casing the slug, which loses diacritics and apostrophes
+    but still canonicalises to the same artist through goal_norm."""
+    return hints.get(slug) or slug.replace("-", " ").title()
 
 
 def _slug(name):
@@ -96,13 +170,18 @@ def _slug(name):
 
 # ── show lookup ────────────────────────────────────────────────────────────
 
+def _history_files():
+    hist = os.path.join(_ROOT, HISTORY_DIR)
+    if not os.path.isdir(hist):
+        return []
+    return [f"{HISTORY_DIR}/{f}" for f in sorted(os.listdir(hist))
+            if f.endswith(".tsv")]
+
+
 def _show_rows():
-    rows = list(immich._read_tsv_rows("data/live_shows_current.tsv"))
-    hist = os.path.join(_ROOT, "data", "history")
-    if os.path.isdir(hist):
-        for f in sorted(os.listdir(hist)):
-            if f.endswith(".tsv"):
-                rows.extend(immich._read_tsv_rows(f"data/history/{f}"))
+    rows = list(immich._read_tsv_rows(CURRENT))
+    for relpath in _history_files():
+        rows.extend(immich._read_tsv_rows(relpath))
     return rows
 
 
@@ -317,86 +396,505 @@ def cmd_tag(args):
         print("\n[DRY RUN] nothing written. Re-run without --dry-run.")
 
 
-# ── sync ───────────────────────────────────────────────────────────────────
+# ── library rows ───────────────────────────────────────────────────────────
+
+def _read_artist_albums():
+    """[(artist, url)] in file order, so a rewrite keeps the rows where a
+    human left them and only appends what is new."""
+    out = []
+    for row in immich._read_tsv_rows(ARTIST_ALBUMS):
+        name = (row.get("Artist") or "").strip()
+        if name:
+            out.append((name, (row.get("Album URL") or "").strip()))
+    return out
+
+
+def _write_artist_albums(rows):
+    path = os.path.join(_ROOT, ARTIST_ALBUMS)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("Artist\tAlbum URL\n")
+        for name, url in rows:
+            f.write(f"{name}\t{url}\n")
+
+
+def _write_kind_albums(rows):
+    path = os.path.join(_ROOT, KIND_ALBUMS)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("Kind\tAlbum\tAlbum URL\n")
+        for kind, album, url in rows:
+            f.write(f"{kind}\t{album}\t{url}\n")
+
+
+def _name_hints():
+    """slug -> display name, from every place the library already spells an
+    artist: show bills (headliner and support) and artist-albums.tsv rows.
+    The first spelling seen wins; artist-albums.tsv is read first because
+    its spelling is the one already keyed by the site."""
+    hints = {}
+    for name, _ in _read_artist_albums():
+        hints.setdefault(_slug(name), name)
+    for row in _show_rows():
+        for name in show_bill(row):
+            hints.setdefault(_slug(name), name)
+    return hints
+
+
+def set_show_photo_url(date, url, headliner=None):
+    """Write `url` into the Photo URL column of the show row for `date`,
+    across live_shows_current.tsv and every history file. Current is
+    checked first, as everywhere. Short rows (trailing tabs stripped on the
+    way through the API) are padded back to full width. Returns a status
+    line; a row whose Photo URL already equals `url` is a no-op, which is
+    the path that fires on the second and later photos of one show."""
+    for relpath in [CURRENT] + _history_files():
+        path = os.path.join(_ROOT, relpath)
+        if not os.path.exists(path):
+            continue
+        with open(path, encoding="utf-8") as f:
+            raw = f.read()
+        bom = "\ufeff" if raw.startswith("\ufeff") else ""
+        lines = raw[len(bom):].split("\n")
+        header = lines[0].split("\t")
+        try:
+            di = next(header.index(h) for h in ("Show Date", "Date")
+                      if h in header)
+            ai = next(header.index(h) for h in ("Artist", "Headliner")
+                      if h in header)
+            pi = header.index("Photo URL")
+        except (StopIteration, ValueError):
+            continue
+        for i in range(1, len(lines)):
+            if not lines[i].strip():
+                continue
+            cells = lines[i].split("\t")
+            if len(cells) < len(header):
+                cells += [""] * (len(header) - len(cells))
+            if cells[di].strip() != date:
+                continue
+            if headliner and goal_norm(cells[ai]) != goal_norm(headliner):
+                continue
+            cur = cells[pi].strip()
+            if cur == url:
+                return f"Photo URL already set on the show row; no change. ({relpath})"
+            cells[pi] = url
+            lines[i] = "\t".join(cells)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(bom + "\n".join(lines))
+            was = f" (was {cur})" if cur and cur != "-" else ""
+            return f"Photo URL written to show row: {date} / {cells[ai]}{was} ({relpath})"
+    return (f"WARN: no show row for {date}"
+            + (f" / {headliner}" if headliner else "") + " - Photo URL not written")
+
+
+def upsert_artist_album(name, url):
+    """Add or update the artist-albums.tsv row for `name`, matched by slug
+    so a spelling variant does not create a second row. Returns a status
+    line; an unchanged row is a no-op."""
+    rows = _read_artist_albums()
+    want = _slug(name)
+    for i, (have, cur) in enumerate(rows):
+        if _slug(have) == want:
+            if cur == url:
+                return f"artist-albums.tsv row for {have} already carries this link; no change."
+            rows[i] = (have, url)
+            _write_artist_albums(rows)
+            return f"artist-albums.tsv row updated: {have} (was {cur or '-'})"
+    rows.append((name, url))
+    _write_artist_albums(rows)
+    return f"artist-albums.tsv row added: {name}"
+
+
+# ── album resolution ───────────────────────────────────────────────────────
 
 def _album_by_name():
     return {(a.get("albumName") or "").strip(): a for a in immich.albums()}
 
 
-def _read_artist_albums():
-    rows = {}
-    if os.path.exists(ARTIST_ALBUMS):
-        for row in immich._read_tsv_rows("data/show_goals/artist-albums.tsv"):
-            name = (row.get("Artist") or "").strip()
-            if name:
-                rows[name] = (row.get("Album URL") or "").strip()
-    return rows
+def _album_members(album):
+    return {a["id"] for a in immich.search_metadata(album_id=album["id"])}
+
+
+def resolve_asset(ref, links=None):
+    """An asset id from what a human can paste: the id itself, or a
+    per-photo share link. An album link is refused rather than guessed at -
+    the caller is asking which photo, and an album does not say."""
+    ref = (ref or "").strip()
+    if _UUID_RE.match(ref):
+        return ref
+    key = immich.share_key(ref)
+    if not key:
+        raise SystemExit(f"not an asset id or a /share/ link: {ref!r}")
+    link = immich.shared_link_by_key(key, links)
+    if link is None:
+        raise SystemExit(f"no shared link on the server has key {key}")
+    if link.get("type") == "ALBUM":
+        raise SystemExit("that is an album link; paste the photo's own share "
+                         "link (Share -> Create link on the photo) or its asset id")
+    assets = link.get("assets") or []
+    if len(assets) != 1:
+        raise SystemExit(f"that link covers {len(assets)} assets; need exactly one")
+    return assets[0]["id"]
+
+
+class _Albums:
+    """Album, membership and link state for one run, fetched once and kept
+    current as the run creates things. Every mutating call is guarded by
+    dry_run and logs one line, so a --dry-run transcript reads as the plan
+    the real run will execute."""
+
+    def __init__(self, dry_run):
+        self.dry = dry_run
+        self.by_name = _album_by_name()
+        self.links = immich.links_by_album()
+        self.log = []
+
+    def _say(self, msg):
+        self.log.append(msg)
+        print(("  [dry] " if self.dry else "  ") + msg)
+
+    def ensure(self, album, name, asset_ids, description=""):
+        """Create `name` with `asset_ids`, or add the missing ones to the
+        existing `album`. Returns the album dict (a stub under dry run)."""
+        asset_ids = set(asset_ids)
+        if album is None:
+            self._say(f"create album {name!r} with {len(asset_ids)} asset(s)")
+            if self.dry:
+                album = {"id": None, "albumName": name}
+            else:
+                album = immich.create_album(name, asset_ids=asset_ids,
+                                            description=description)
+            self.by_name[name] = album
+            return album
+        if album.get("id") is None:
+            return album
+        missing = asset_ids - _album_members(album)
+        if missing:
+            self._say(f"{album.get('albumName')!r} += {len(missing)} asset(s)")
+            if not self.dry:
+                immich.add_album_assets(album["id"], missing)
+        return album
+
+    def link(self, album, description):
+        """The album's share URL, minting one only if none exists."""
+        album_id = album.get("id")
+        if album_id and album_id in self.links:
+            return immich.link_url(self.links[album_id])
+        self._say(f"mint share link for {album.get('albumName')!r}")
+        if self.dry or not album_id:
+            return f"<link for {album.get('albumName')}>"
+        link = immich.create_link(album_id=album_id, description=description)
+        self.links[album_id] = link
+        return immich.link_url(link)
+
+    def kind_album(self, kind):
+        """The standing type album for a kind, by the hint in KIND_BY_ALBUM."""
+        for name, album in self.by_name.items():
+            for hint, k in KIND_BY_ALBUM.items():
+                if k == kind and hint in name.lower():
+                    return album
+        return None
+
+
+# ── sync ───────────────────────────────────────────────────────────────────
+
+def _tag_index():
+    """value -> tag id for every tag on the server."""
+    return {(t.get("value") or ""): t["id"] for t in immich.tags()
+            if t.get("value")}
+
+
+def _assets_of(tag_id):
+    return {a["id"] for a in immich.search_metadata(tag_id=tag_id)}
+
+
+def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
+                 name_hints=None):
+    """Materialise tags into albums and links.
+
+    dates / artists / kinds restrict which albums are touched (None = every
+    tag of that axis on the server). Show membership is always loaded in
+    full, because an artist album is the union of the artist's show
+    albums and that union cannot be built from one show.
+
+    Returns {"shows": {date: url}, "artists": {name: url},
+             "kinds": {kind: (album name, url)}}."""
+    hints = dict(_name_hints())
+    hints.update(name_hints or {})
+    tags = _tag_index()
+    st = _Albums(dry_run)
+    out = {"shows": {}, "artists": {}, "kinds": {}}
+
+    # show/<date> -> member asset ids, for every show tag. This is the
+    # membership source for both show and artist albums.
+    show_assets = {}
+    for val, tid in tags.items():
+        if val.startswith("show/"):
+            date = val[len("show/"):].split("/")[-1]
+            ids = _assets_of(tid)
+            if ids:
+                show_assets[date] = ids
+
+    for date in sorted(show_assets):
+        if dates is not None and date not in dates:
+            continue
+        row = find_show(date)
+        headliner = (row.get("Artist") or "").strip() if row else ""
+        album = find_show_album(st.by_name, date)
+        album = st.ensure(album, show_album_name(date, headliner),
+                          show_assets[date], description=f"show/{date}")
+        out["shows"][date] = st.link(album, show_album_name(date, headliner))
+
+    # A scoped run must still touch every artist anchored on an affected
+    # night: adding one photo to a show changes each of those albums, not
+    # only the named artist's. So the scope is "named, or in frame at one
+    # of these shows", and the second test needs the artist's own assets.
+    affected = set()
+    for d in (dates or ()):
+        affected |= show_assets.get(d, set())
+
+    for val, tid in sorted(tags.items()):
+        if not val.startswith("artist/"):
+            continue
+        slug = val[len("artist/"):]
+        if artists is not None and slug not in artists and not affected:
+            continue
+        own = _assets_of(tid)
+        if not own:
+            continue
+        if artists is not None and slug not in artists and not (own & affected):
+            continue
+        nights = {d for d, ids in show_assets.items() if ids & own}
+        members = set(own)
+        for d in nights:
+            members |= show_assets[d]
+        name = artist_album_name(slug, hints)
+        album = st.ensure(st.by_name.get(name), name, members,
+                          description=f"artist/{slug}")
+        out["artists"][name] = st.link(album, name)
+
+    for kind, display in KIND_ALBUM_NAMES.items():
+        if kinds is not None and kind not in kinds:
+            continue
+        tid = tags.get(f"kind/{kind}")
+        ids = _assets_of(tid) if tid else set()
+        album = st.kind_album(kind)
+        if album is None and not ids:
+            continue
+        album = st.ensure(album, display, ids, description=f"kind/{kind}")
+        out["kinds"][kind] = (album.get("albumName") or display,
+                              st.link(album, album.get("albumName") or display))
+    return out
+
+
+def _print_rows(result):
+    if result["shows"]:
+        print("\nShow rows (Photo URL):")
+        for date, url in sorted(result["shows"].items()):
+            print(f"{date}\t{url}")
+    if result["artists"]:
+        print("\ndata/show_goals/artist-albums.tsv:")
+        for name, url in sorted(result["artists"].items()):
+            print(f"{name}\t{url}")
+    if result["kinds"]:
+        print("\ndata/show_goals/kind-albums.tsv:")
+        for kind, (album, url) in sorted(result["kinds"].items()):
+            print(f"{kind}\t{album}\t{url}")
+
+
+def _apply_rows(result):
+    """Write the sync result into the library: show rows, artist-albums.tsv,
+    kind-albums.tsv. Each is an upsert; unchanged rows are left alone."""
+    print()
+    for date, url in sorted(result["shows"].items()):
+        print(set_show_photo_url(date, url))
+    for name, url in sorted(result["artists"].items()):
+        print(upsert_artist_album(name, url))
+    if result["kinds"]:
+        rows = [(k, a, u) for k, (a, u) in sorted(result["kinds"].items())]
+        _write_kind_albums(rows)
+        print(f"kind-albums.tsv written: {len(rows)} row(s)")
 
 
 def cmd_sync(args):
-    """Materialise show/ and artist/ tags into albums, minting a share link
-    for any album that lacks one.
-
-    Idempotent by construction: album lookup is by name, asset adds are a
-    set difference, and a link is minted only when the album has none."""
-    want = {}
-    for t in immich.tags():
-        val = t.get("value") or ""
-        if val.startswith("show/") or val.startswith("artist/"):
-            want[val] = t["id"]
-    if not want:
-        print("No show/ or artist/ tags on the server yet. Run `tag` first.")
-        return
-
-    albums = _album_by_name()
-    known_links = _read_artist_albums()
-    new_rows = []
-
-    for path in sorted(want):
-        kind, _, leaf = path.partition("/")
-        asset_ids = [a["id"] for a in immich.search_metadata(tag_id=want[path])]
-        if not asset_ids:
-            continue
-        album_name = (f"{leaf}" if kind == "show"
-                      else leaf.replace("-", " ").title())
-        album = albums.get(album_name)
-
-        if album is None:
-            if args.dry_run:
-                print(f"  [dry] create album {album_name!r} "
-                      f"with {len(asset_ids)} asset(s)")
-                continue
-            album = immich.create_album(album_name, asset_ids=asset_ids)
-            albums[album_name] = album
-            print(f"  created {album_name!r} with {len(asset_ids)} asset(s)")
-        else:
-            have = {a["id"] for a in
-                    immich.search_metadata(album_id=album["id"])}
-            missing = [i for i in asset_ids if i not in have]
-            if missing:
-                if args.dry_run:
-                    print(f"  [dry] add {len(missing)} asset(s) to "
-                          f"{album_name!r}")
-                else:
-                    immich.add_album_assets(album["id"], missing)
-                    print(f"  {album_name!r} += {len(missing)} asset(s)")
-
-        if kind == "artist" and album_name not in known_links:
-            if args.dry_run:
-                print(f"  [dry] mint share link for {album_name!r}")
-            else:
-                link = immich.create_link(album_id=album["id"],
-                                          description=album_name)
-                url = immich.link_url(link or {})
-                new_rows.append((album_name, url))
-                print(f"  minted {album_name!r} -> {url}")
-
-    if new_rows:
-        print("\nAppend to data/show_goals/artist-albums.tsv:")
-        for name, url in new_rows:
-            print(f"{name}\t{url}")
+    result = sync_targets(dry_run=args.dry_run)
+    _print_rows(result)
     if args.dry_run:
         print("\n[DRY RUN] nothing written.")
+    elif args.write:
+        _apply_rows(result)
+    else:
+        print("\nRows printed only. Re-run with --write to apply them.")
+
+
+# ── add ────────────────────────────────────────────────────────────────────
+
+def add_asset(asset_id, show, kind, artist=None, subtype=None, signed=False,
+              detail=False, dry_run=False):
+    """Tag one asset and place it in every album it belongs to.
+
+    Returns {"asset_id", "show_link", "artist", "artist_link"}; the caller
+    owns the library writes (the issue-close handler writes the show row
+    and the artist-albums.tsv row from these). Nothing here reads EXIF:
+    `show` is stated by the caller, which is what memorabilia needs."""
+    row = find_show(show)
+    if not row:
+        raise SystemExit(f"No show row for {show}. Checked "
+                         "live_shows_current.tsv and data/history/*.tsv.")
+    if kind not in KIND_ALBUM_NAMES:
+        raise SystemExit(f"kind must be one of {', '.join(KIND_ALBUM_NAMES)}")
+    venue = show_venue(row)
+    paths = [f"show/{show}", f"kind/{kind}"]
+    slug = None
+    if artist:
+        slug = _slug(artist)
+        paths.append(f"artist/{slug}")
+    if subtype:
+        paths.append(f"memorabilia/{subtype}")
+    if signed:
+        paths.append("signed")
+    if detail:
+        paths.append("detail")
+    if venue:
+        paths.append(f"venue/{_slug(venue)}")
+
+    print(f"tags for {asset_id[:8]}:")
+    _apply({asset_id: paths}, dry_run)
+    print("albums:")
+    result = sync_targets(dates={show}, artists={slug} if slug else set(),
+                          kinds={kind}, dry_run=dry_run,
+                          name_hints={slug: artist} if slug else None)
+    if dry_run and show not in result["shows"]:
+        # Under dry run the tag was not applied, so the show may have no
+        # members yet on the server; report the album that would exist.
+        result["shows"][show] = f"<link for {show_album_name(show, row.get('Artist', ''))}>"
+    name = artist_album_name(slug, {slug: artist}) if slug else None
+    return {
+        "asset_id": asset_id,
+        "show_link": result["shows"].get(show, ""),
+        "artist": name,
+        "artist_link": result["artists"].get(name, "") if name else "",
+    }
+
+
+def cmd_add(args):
+    asset_id = resolve_asset(args.asset)
+    res = add_asset(asset_id, args.show, args.kind, artist=args.artist,
+                    subtype=args.subtype, signed=args.signed,
+                    detail=args.detail, dry_run=args.dry_run)
+    print()
+    print(f"show row link  : {res['show_link']}")
+    if res["artist"]:
+        print(f"artist album   : {res['artist']}\t{res['artist_link']}")
+    if args.dry_run:
+        print("\n[DRY RUN] nothing written. Re-run without --dry-run.")
+    elif args.write:
+        print()
+        print(set_show_photo_url(args.show, res["show_link"]))
+        if res["artist"]:
+            print(upsert_artist_album(res["artist"], res["artist_link"]))
+    else:
+        print("\nImmich updated; library rows printed only. Re-run with "
+              "--write to apply them.")
+
+
+# ── audit ──────────────────────────────────────────────────────────────────
+
+def _show_row_links():
+    """[(relpath, date, artist, url)] for every show row with a Photo URL."""
+    out = []
+    for relpath in [CURRENT] + _history_files():
+        for row in immich._read_tsv_rows(relpath):
+            url = (row.get("Photo URL") or "").strip()
+            if url and url != "-":
+                date = (row.get("Show Date") or row.get("Date") or "").strip()
+                artist = (row.get("Artist") or row.get("Headliner") or "").strip()
+                out.append((relpath, date, artist, url))
+    return out
+
+
+def cmd_audit(args):
+    """Every finding is something a later sync or a human must do; nothing
+    here writes. Sections are ordered from the show row outward."""
+    links = immich.shared_links()
+    by_key = {l.get("key"): l for l in links}
+    albums = _album_by_name()
+    tags = _tag_index()
+    show_tags = {v[len("show/"):].split("/")[-1]: tid
+                 for v, tid in tags.items() if v.startswith("show/")}
+    findings = 0
+
+    print("== Show rows")
+    seen_dates = set()
+    for relpath, date, artist, url in _show_row_links():
+        seen_dates.add(date)
+        link = by_key.get(immich.share_key(url))
+        if not immich.on_photo_host(url):
+            findings += 1
+            print(f"  OFF-HOST   {date} {artist}  {url}  ({relpath})")
+        elif link is None:
+            findings += 1
+            print(f"  DEAD KEY   {date} {artist}  {url}  ({relpath})")
+        elif link.get("type") != "ALBUM":
+            findings += 1
+            n = len(link.get("assets") or [])
+            print(f"  PER-PHOTO  {date} {artist}  {n} asset(s); needs the show album link")
+        elif not find_show_album(albums, date):
+            findings += 1
+            print(f"  ALBUM-NAME {date} {artist}  row links album "
+                  f"{(link.get('album') or {}).get('albumName')!r}, which does not "
+                  f"follow the date-prefix rule")
+    for date in sorted(show_tags):
+        if date not in seen_dates and not args.fast:
+            n = len(_assets_of(show_tags[date]))
+            if n:
+                findings += 1
+                print(f"  NO LINK    {date}  {n} tagged asset(s) but no Photo URL on a show row")
+
+    print("== Artist rows")
+    artist_rows = _read_artist_albums()
+    row_slugs = {_slug(n) for n, _ in artist_rows}
+    for name, url in artist_rows:
+        if not immich.on_photo_host(url):
+            findings += 1
+            print(f"  OFF-HOST   {name}  {url}")
+        elif immich.share_key(url) not in by_key:
+            findings += 1
+            print(f"  DEAD KEY   {name}  {url}")
+    for val in sorted(tags):
+        if val.startswith("artist/") and val[len("artist/"):] not in row_slugs:
+            findings += 1
+            print(f"  NO ROW     {val}")
+
+    if not args.fast:
+        print("== Photos with no artist")
+        artist_tagged = set()
+        for val, tid in tags.items():
+            if val.startswith("artist/"):
+                artist_tagged |= _assets_of(tid)
+        for date, tid in sorted(show_tags.items()):
+            untagged = _assets_of(tid) - artist_tagged
+            if untagged:
+                findings += 1
+                print(f"  {date}  {len(untagged)} asset(s) tagged show/ but no artist/")
+
+        print("== Kind albums")
+        st = _Albums(dry_run=True)
+        for kind in KIND_ALBUM_NAMES:
+            tid = tags.get(f"kind/{kind}")
+            ids = _assets_of(tid) if tid else set()
+            album = st.kind_album(kind)
+            if album is None:
+                if ids:
+                    findings += 1
+                    print(f"  NO ALBUM   kind/{kind}  {len(ids)} tagged asset(s)")
+                continue
+            missing = ids - _album_members(album)
+            if missing:
+                findings += 1
+                print(f"  MISSING    kind/{kind}  {len(missing)} tagged asset(s) not in "
+                      f"{album.get('albumName')!r}")
+
+    print(f"\n{findings} finding(s)." if findings else "\nClean.")
 
 
 def cmd_scaffold(args):
@@ -465,12 +963,36 @@ def main():
     p.add_argument("--window-days", type=int, default=1)
     p.add_argument("--out", metavar="FILE", required=True)
 
-    p = sub.add_parser("sync", help="materialise tags into albums + links")
+    p = sub.add_parser("add", help="one asset: tag it and place it in its albums")
+    p.add_argument("--asset", required=True, metavar="ID_OR_LINK",
+                   help="asset id, or the photo's own /share/ link")
+    p.add_argument("--show", required=True, metavar="DATE",
+                   help="the show date - stated, never derived from EXIF")
+    p.add_argument("--kind", required=True, choices=sorted(KIND_ALBUM_NAMES))
+    p.add_argument("--artist", metavar="NAME",
+                   help="who is in frame; omit for crowd/selfie/anonymous memorabilia")
+    p.add_argument("--subtype", metavar="LEAF",
+                   help="memorabilia/* leaf, e.g. pick or setlist")
+    p.add_argument("--signed", action="store_true")
+    p.add_argument("--detail", action="store_true")
+    p.add_argument("--write", action="store_true",
+                   help="also write the show row and artist-albums.tsv row")
     p.add_argument("--dry-run", action="store_true")
+
+    p = sub.add_parser("sync", help="materialise tags into albums + links")
+    p.add_argument("--write", action="store_true",
+                   help="apply the rows to the library TSVs (show rows, "
+                        "artist-albums.tsv, kind-albums.tsv)")
+    p.add_argument("--dry-run", action="store_true")
+
+    p = sub.add_parser("audit", help="read-only: what does not line up")
+    p.add_argument("--fast", action="store_true",
+                   help="skip the per-tag membership searches")
 
     args = ap.parse_args()
     {"plan": cmd_plan, "tag": cmd_tag, "sync": cmd_sync,
-     "scaffold": cmd_scaffold}[args.cmd](args)
+     "scaffold": cmd_scaffold, "add": cmd_add,
+     "audit": cmd_audit}[args.cmd](args)
 
 
 if __name__ == "__main__":
