@@ -73,6 +73,8 @@ Goal eligibility files (`hat_eligibility.tsv`, `autograph_books_eligibility.tsv`
 
 **`push_files` promotes normally:** the multi-file Git Data API fires the `push` trigger on `staging` like any other push — batches auto-promote with no follow-up commit (verified 2026-08-24).
 
+**A blob SHA is only valid on the branch it was read from.** `main` and `staging` are usually identical, so a SHA read from one works against the other — until a bot commit lands on `staging` and `main` lags for as long as auto-promote takes to re-run the guard and fast-forward. Any write that reads a SHA from one branch and PUTs it to another races that window, and the failure is a bare 409 that looks like a permissions problem. This is why the in-page editor fetches write SHAs with `?ref=dataBranch()` rather than through the read path, whose preview ref resolves to the default branch. Reads may target any branch; a write must read from the branch it writes to.
+
 ### File-type rules
 
 - **Public non-executable files** (`.tsv`, `.json`, `.md`, `index.html`, config) → commit to `staging` in `dan2bit/live-shows` via MCP.
