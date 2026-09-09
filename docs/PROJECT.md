@@ -1,6 +1,7 @@
 # live-shows — Data Schemas & Repo Conventions
 
-Reference for the data-file layouts and the repository/commit conventions used when editing this project with Claude. Operational procedures live in the workflow docs (see `README.md` for the map); this file should rarely need updating.
+Machine-facing reference for the data files and commit rules. Prose explanations of
+*why* live in the playbooks; this file is the lookup table.
 
 ---
 
@@ -8,60 +9,86 @@ Reference for the data-file layouts and the repository/commit conventions used w
 
 ### live_shows_current.tsv — 19 columns (public schema)
 
-Rows are `attended` or `upcoming`, ordered chronologically by Show Date.
+| # | Column |
+|---|---|
+| 0 | Show ID |
+| 1 | Artist |
+| 2 | Supporting Artist |
+| 3 | Show Date |
+| 4 | Doors Time |
+| 5 | Start Time |
+| 6 | Venue Name |
+| 7 | Venue Address |
+| 8 | Venue Event URL |
+| 9 | Seat Type (`GA` \| `Seated`) |
+| 10 | VIP (`Y` \| blank) |
+| 11 | Group (`Y` \| blank) |
+| 12 | Ticket Access |
+| 13 | Setlist.fm URL |
+| 14 | Status (`upcoming` \| `attended`) |
+| 15 | Artist Interaction |
+| 16 | Playlist URL |
+| 17 | Notes / Memories |
+| 18 | Photo URL |
 
-1. Show ID
-2. Artist
-3. Supporting Artist
-4. Show Date
-5. Doors Time
-6. Start Time
-7. Venue Name
-8. Venue Address
-9. Venue Event URL
-10. Seat Type (`GA` | `Seated`)
-11. VIP (`Y` or blank)
-12. Group (`Y` or blank)
-13. Ticket Access
-14. Setlist.fm URL
-15. Status
-16. Artist Interaction
-17. Playlist URL
-18. Notes / Memories
-19. Photo URL
+Cost, seat info, ticket quantity and private notes live in
+`dan2bit/live-shows-private → current_private.tsv`, keyed on **Show Date + Artist**.
 
-Financial and seat detail (Seat Info, Ticket Quantity, Face Value, Fees, Total Cost, Purchase Date, Food & Bev, Parking, Merch, Private Notes) lives in `dan2bit/live-shows-private → current_private.tsv`, keyed by `Show Date` + `Artist`.
-
-**Multi-act shows:** when a date has multiple performers, column 14 (Setlist.fm URL) holds `MULTI:YYYY-MM-DD`, and the per-act setlist links live under that date key in `setlists/<year>.json` — support acts first, headliner last.
-
-**Known issue — trailing-tab strip:** the GitHub MCP `create_or_update_file` tool strips trailing tabs from each line, so rows that end in empty columns can arrive short. The `parseTsv()` function in `index.html` compensates at parse time by padding/realigning rows back to the full column count.
+Upcoming rows carry `-` sentinels in Setlist.fm URL (13) and Playlist URL (16).
+`validate_current.py` enforces the column count, the status vocabulary, the flag
+columns and those sentinels.
 
 ### live_shows_potential.tsv — 19 columns (public schema)
 
-`Artist | Support | Date | Decision | Watching For | Venue | Venue City | Tier | Ticket Service | Purchase URL | Event URL | Face Price | Fees Notes | Availability Notes | Prev Show | Next Show | Notes | BIT URL | Box Office`
+| # | Column |
+|---|---|
+| 0 | Artist |
+| 1 | Support |
+| 2 | Date |
+| 3 | Decision (`Buy` \| `Choose` \| `Sell` \| `Pass`) |
+| 4 | Watching For |
+| 5 | Venue |
+| 6 | Venue City |
+| 7 | Tier |
+| 8 | Ticket Service |
+| 9 | Purchase URL |
+| 10 | Event URL |
+| 11 | Face Price |
+| 12 | Fees Notes |
+| 13 | Availability Notes |
+| 14 | Prev Show (2026) |
+| 15 | Next Show (2026) |
+| 16 | Notes |
+| 17 | BIT URL |
+| 18 | Box Office |
 
-- **Decision values:** `Buy`, `Buy (paper @ [show])`, `Choose`, `Sell`, `Pass`. Never leave Decision blank — use `Choose` for undecided.
-- **Sort:** Buy → Choose → Sell → Pass (alpha within group), date ascending within each group. Re-sort the full file on every change.
-- **Prev/Next Show brackets:** reference only purchased upcoming shows (status `upcoming` in `live_shows_current.tsv`) — never potentials, never attended shows. Re-check on every purchase or move to attended.
-- **`Sell`** is read-only — set when a confirmed ticket is listed for resale; not editable via the index.html dropdown.
-- **Tier** uses the follows_master vocabulary (`Strong`, `Medium-Strong`, `Medium`, `Lower`/`Low`) — cross-reference `tools/research/follows/follows_master.tsv` rather than writing `TBD` for artists already tiered there.
-- **Pricing is public here by design:** what a potential ticket *costs* (Face Price, Fees Notes) is public; what was actually *spent* on purchased shows is private.
-- **No Private Notes column** — private notes go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by `Artist` + `Date`.
+Sort order: `Buy` → `Choose` → `Sell` → `Pass`, date ascending within each group;
+re-sort on every change. Prev/Next brackets are computed for `Buy`/`Choose` from
+purchased **upcoming** shows only and cleared to `-` on `Sell`/`Pass` — see
+`reconcile_purchases.py`, the canonical implementation. Private notes live in
+`dan2bit/live-shows-private → potential_private.tsv`, keyed on **Artist + Date**.
+
+Never reintroduce a `#` comment block: the in-page editor derives its header from
+line 1, so a comment block wipes every row on save.
 
 ### artists.tsv — 9 columns
 
-`Artist | Times Seen | First Seen | Most Recent Seen | YouTube Channel | Spotify URL | Book Autograph | VIP Count | Via`
+Artist | Times Seen | First Seen | Most Recent Seen | Spotify URL | YouTube Channel |
+Hat Autograph (deprecated) | Notes | Portrait URL
 
-- **Via** attributes combined-bill sightings (e.g. Joe Satriani via `SatchVai Band`, Taj Mahal via `TajMo`) — the builder borrows the bill's sightings for the component artist.
-- Photo and hat completions are **not** columns here — they derive from Photo URLs on show rows and `data/show_goals/hat_signatures.tsv` respectively (see `docs/GOALS_SPEC.md`).
+Never reconstruct this file from memory — fetch it live, make targeted string
+replacements, and push full content.
 
 ### venues.tsv
 
-One row per venue: parking, transit, seating, box office hours, notes. Canonical source for venue defaults.
+Canonical venue names plus a Short Name display column and a Calendar Coverage
+column that drives the monthly scrape set. Blank Short Name means identity.
 
 ### data/show_goals/
 
-Goal eligibility files (`hat_eligibility.tsv`, `autograph_books_eligibility.tsv`) and signature event logs (`hat_signatures.tsv`, `book_signatures.tsv`), plus photo album mappings (`artist-albums.tsv`, `artist-photos.tsv`). Schemas and the attribution vocabulary are specified in `docs/GOALS_SPEC.md`.
+Eligibility and signature files per goal (hat, autograph books). Eligibility answers
+"meets the criteria"; signatures answer "already obtained". A signature never removes
+eligibility — completed wins at render time.
 
 ---
 
@@ -72,6 +99,8 @@ Goal eligibility files (`hat_eligibility.tsv`, `autograph_books_eligibility.tsv`
 `main` requires the `guard` CI status check. **Do not push directly to `main` via MCP — it will be rejected.** All MCP data commits go to `staging`; `auto-promote.yml` fast-forwards `main` after the guard passes.
 
 **`push_files` promotes normally:** the multi-file Git Data API fires the `push` trigger on `staging` like any other push — batches auto-promote with no follow-up commit (verified 2026-08-24).
+
+**A blob SHA is only valid on the branch it was read from.** `main` and `staging` are usually identical, so a SHA read from one works against the other — until a bot commit lands on `staging` and `main` lags for as long as auto-promote takes to re-run the guard and fast-forward. Any write that reads a SHA from one branch and PUTs it to another races that window, and the failure is a bare 409 that looks like a permissions problem. This is why the in-page editor fetches write SHAs with `?ref=dataBranch()` rather than through the read path, whose preview ref resolves to the default branch. Reads may target any branch; a write must read from the branch it writes to.
 
 ### File-type rules
 
@@ -92,15 +121,22 @@ Throughout this project, private files are written as **`dan2bit/live-shows-priv
 
 ## Artist interaction
 
-- **Hat signing:** female musicians only. Do not infer gender across all `artists.tsv` entries — apply only when context makes it clear (e.g., during show processing or explicit mention).
-- **Autograph book check:** required before creating any new calendar event.
-- **Artist Interaction values:** `Photo`, `Autograph`, `Both`, or blank.
-- **Goal badges are config-driven** from `data/show_goals/` event logs and eligibility files (see `docs/GOALS_SPEC.md`) — the site no longer parses note-strings. `HAT:` / `BRING RHBS` / `BRING APS` prefixes in Notes remain as inert human reminders only (and in calendar event descriptions).
+Hat signing targets female musicians who have not already signed. Eligibility lives in
+`data/show_goals/hat_eligibility.tsv`; actual signers in
+`data/show_goals/hat_signatures.tsv`, which is canonical. The `artists.tsv` Hat
+Autograph column is deprecated — do not set it.
+
+Autograph books follow the same eligibility/signatures split via
+`autograph_books_eligibility.tsv` and `book_signatures.tsv`. There is no combined file.
+
+Artist Interaction field values: `Photo`, `Autograph`, `Both`, or blank.
 
 ---
 
 ## Reference
 
-- **Spending budget:** $500/month. Multi-ticket orders count 1 ticket against budget; extras tracked as "shared." Wolf Trap food/bev = $0 (Lary donor access).
-- **YouTube channel:** `@dan2bit`, OAuth under `dan2bit@gmail.com` (not `redhat.bootlegs`). See `HOWTO_CHANNEL.md`.
-- **Key people:** Lary Chinowsky (frequent companion; Wolf Trap donor; recommendations), Jennifer (occasional companion), Bob Lubbehusen, Ed Warburton, Steve Goodman (blues-community contacts; recommendations), Joe Murphy (Friday Night Tunes DJ, tastemaker)
+- Write protocols and per-file transaction rules: `tools/playbooks/DATA_WRITE_PROTOCOLS.md`
+- Inbox routines: `tools/playbooks/EMAIL_WORKFLOWS.md`
+- Analysis and monthly passes: `tools/playbooks/ANALYSIS_WORKFLOWS.md`
+- Scrape prompts and endpoints: `tools/research/web-src/scraping_tasks.md`
+- Issue history behind these designs: `docs/ISSUE_LOG.md`
