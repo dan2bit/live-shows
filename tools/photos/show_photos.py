@@ -1038,30 +1038,114 @@ def _name_in_text(name, text):
     return bool(n) and re.search(r"(?<![a-z0-9])" + re.escape(n) + r"(?![a-z0-9])", t) is not None
 
 
+def _squash(text):
+    return re.sub(r"[^a-z0-9]", "", goal_norm(text or ""))
+
+
+def _act_in_text(name, text, aliases):
+    """Does a caption name this act? Exact word-bounded containment of the
+    name or any alias; else the punctuation-squashed form ("J. P. Soars" /
+    "JP Soars", "All-Stars" / "Allstars"); else, for a name of three or
+    more words, its first two ("Ally Venable Band" is "Ally Venable" in
+    every caption that names her)."""
+    forms = {name} | {a for a, c in aliases.items() if goal_norm(c) == goal_norm(name)}
+    if any(_name_in_text(f, text) for f in forms):
+        return True
+    sq = _squash(text)
+    if any(_squash(f) and _squash(f) in sq for f in forms):
+        return True
+    words = goal_norm(name).split()
+    return len(words) >= 3 and _name_in_text(" ".join(words[:2]), text)
+
+
 def _seen_with_for(date):
     return [(r.get("Seen With") or "").strip()
             for r in immich._read_tsv_rows(SEEN_WITH)
             if (r.get("Show Date") or "").strip() == date and (r.get("Seen With") or "").strip()]
 
 
+_RUN = r"[A-Z][\w.'\u2019-]*(?:\s+[A-Z][\w.'\u2019-]*)+"
+_PEOPLE_RE = re.compile(_RUN)
+_OF_BAND_RE = re.compile(r"\s+(?:of|for|from)\s+(?P<band>.+?)(?=\s*[.@,(|]|\s+-\s|\s+and\s+|\s+w/|$)")
+
+
+def _people_of_band(caption):
+    """('Laura Rogers and Lydia Slagle of Secret Sisters', ...) ->
+    (["Laura Rogers", "Lydia Slagle"], "Secret Sisters"), else None. The
+    people are the capitalised runs of two or more words before the
+    of/for/from; a role phrase ("Tikyra Jackson, drummer for ...") sits
+    between and is skipped because it is lowercase."""
+    m = _OF_BAND_RE.search(caption or "")
+    if not m:
+        return None
+    prefix = caption[:m.start()]
+    people = [re.sub(r"\s*\(again\)", "", r).strip() for r in _PEOPLE_RE.findall(prefix)]
+    people = [p for p in people if p]
+    if not people:
+        return None
+    return people, m.group("band").strip()
+
+
 def _caption_artists(caption, date, aliases):
-    """Who a caption is about, from the names the library already knows for
-    that night. Sidemen (seen_with.tsv) win outright when one is named:
-    the photo is of them, and the band is in the same show album anyway.
-    Otherwise every bill act named in the caption, alias-aware. Returns
-    library spellings."""
+    """(names, anchored) - who a caption is about, from the names the
+    library knows for that night. In order: a "PERSON of BAND" form whose
+    band is on the bill names the person(s), not the band; sidemen from
+    seen_with.tsv named in the caption; bill acts named in the caption
+    (alias- and punctuation-tolerant). Those three anchor the caption to
+    the night (anchored=True). Failing all of them, the capitalised run
+    the caption opens with is taken as a person the library does not know
+    yet (anchored=False). Library spellings where known."""
     row = find_show(date) if date else None
-    found = [n for n in _seen_with_for(date) if _name_in_text(n, caption)] if date else []
-    if found:
-        return found
     if not row:
-        return []
-    out = []
-    for name in show_bill(row):
-        forms = {name} | {a for a, c in aliases.items() if goal_norm(c) == goal_norm(name)}
-        if any(_name_in_text(f, caption) for f in forms):
-            out.append(name)
-    return out
+        return [], False
+    bill = show_bill(row)
+    sidemen = [n for n in _seen_with_for(date) if _name_in_text(n, caption)]
+    ofb = _people_of_band(caption)
+    if ofb:
+        people, band = ofb
+        if any(_act_in_text(b, band, aliases) for b in bill):
+            names = list(people)
+            for n in sidemen:
+                if not any(goal_norm(n) == goal_norm(p) for p in names):
+                    names.append(n)
+            return names, True
+    names = list(sidemen)
+    for b in bill:
+        if _act_in_text(b, caption, aliases) and not any(
+                goal_norm(b) == goal_norm(n) for n in names):
+            names.append(b)
+    if names:
+        return names, True
+    m = _PEOPLE_RE.match(caption or "")
+    if m:
+        return [re.sub(r"\s*\(again\)", "", m.group(0)).strip()], False
+    return [], False
+
+
+def _resolve_night(row_iso, caption, aliases):
+    """(date, names) for an artist-photos row. Candidate nights are the date
+    written in the caption, then the row timestamp, then the day before it
+    (post-midnight capture). The first candidate whose show row is named
+    in the caption wins; failing that, the first candidate that is a show
+    at all. A timestamp that lands on a different show therefore loses to
+    the caption that names the right one."""
+    cands = []
+    day_before = ((datetime.date.fromisoformat(row_iso) - datetime.timedelta(days=1)).isoformat()
+                  if row_iso else "")
+    for c in (_caption_iso(caption), row_iso, day_before):
+        if c and c not in cands:
+            cands.append(c)
+    fallback = ""
+    for c in cands:
+        if not find_show(c):
+            continue
+        names, anchored = _caption_artists(caption, c, aliases)
+        if anchored:
+            return c, names
+        fallback = fallback or c
+    if not fallback:
+        return "", []
+    return fallback, _caption_artists(caption, fallback, aliases)[0]
 
 
 def _link_assets(link):
@@ -1119,16 +1203,7 @@ def cmd_seed(args):
             dead.append(("", caption[:40], url))
             continue
         iso = _row_iso(row.get("Date"))
-        date = ""
-        cands = [iso]
-        if iso:
-            cands.append((datetime.date.fromisoformat(iso)
-                          - datetime.timedelta(days=1)).isoformat())
-        cands.append(_caption_iso(caption))
-        for c in cands:
-            if c and find_show(c):
-                date = c
-                break
+        date, names = _resolve_night(iso, caption, aliases)
         assets = _link_assets(link)
         for aid in assets:
             plan[aid].add("kind/with-artist")
@@ -1137,7 +1212,6 @@ def cmd_seed(args):
             continue
         for aid in assets:
             plan[aid] |= show_tags(date)
-        names = _caption_artists(caption, date, aliases)
         if not names and args.assume_headliner:
             names = [show_bill(find_show(date))[0]]
         if not names:
