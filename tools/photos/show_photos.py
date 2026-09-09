@@ -106,6 +106,8 @@ ARTIST_PHOTOS = "data/show_goals/artist-photos.tsv"
 SEEN_WITH = "data/seen_with.tsv"
 ALIASES = "data/recommend_aliases.tsv"
 KIND_ALBUMS = "data/show_goals/kind-albums.tsv"
+VENUES = "data/venues.tsv"
+VENUE_ALIASES = "data/venue_aliases.tsv"
 CURRENT = "data/live_shows_current.tsv"
 HISTORY_DIR = "data/history"
 
@@ -177,6 +179,59 @@ def _slug(name):
     cleaned = re.sub(r"['\u2019]", "", name or "")
     return re.sub(r"-+", "-",
                   re.sub(r"[^a-z0-9]+", "-", goal_norm(cleaned))).strip("-")
+
+
+# ── venue identity ─────────────────────────────────────────────────────────
+
+_VENUE_CACHE = {}
+
+
+def _venue_key(value):
+    """Fold a venue name to its match key, the same way app.js and
+    check_box_office.py do: no leading 'the', no punctuation."""
+    key = re.sub(r"^the\s+", "", (value or "").strip().lower())
+    key = re.sub(r"[^a-z0-9 ]+", " ", key)
+    return re.sub(r"\s+", " ", key).strip()
+
+
+def _venue_identity():
+    """(aliases, display) keyed by folded name: aliases -> canonical Venue
+    Name; display -> Short Name where venues.tsv has one, else the
+    canonical Venue Name."""
+    if not _VENUE_CACHE:
+        aliases, display = {}, {}
+        for row in immich._read_tsv_rows(VENUE_ALIASES):
+            a, c = (row.get("Alias") or "").strip(), (row.get("Venue Name") or "").strip()
+            if a and c:
+                aliases[_venue_key(a)] = c
+        for row in immich._read_tsv_rows(VENUES):
+            name = (row.get("Venue Name") or "").strip()
+            if name:
+                display[_venue_key(name)] = (row.get("Short Name") or "").strip() or name
+        _VENUE_CACHE["aliases"], _VENUE_CACHE["display"] = aliases, display
+    return _VENUE_CACHE["aliases"], _VENUE_CACHE["display"]
+
+
+def venue_slug(venue_str):
+    """(slug, resolved) for whatever spelling a show row carries.
+
+    History rows hold the setlist.fm long form ("Birchmere, Alexandria, VA,
+    USA"); current rows hold the library name. Both must reach one tag, so
+    the string is first-comma-truncated, folded, passed through
+    venue_aliases.tsv, and looked up in venues.tsv; the tag is built from
+    the Short Name (or the canonical name when there is none). An
+    unrecognised venue slugs as given with resolved=False, so the caller
+    can report it rather than silently minting a second identity."""
+    raw = (venue_str or "").split(",")[0].strip()
+    if not raw:
+        return "", True
+    aliases, display = _venue_identity()
+    key = _venue_key(raw)
+    if key in aliases:
+        key = _venue_key(aliases[key])
+    if key in display:
+        return _slug(display[key]), True
+    return _slug(raw), False
 
 
 # ── show lookup ────────────────────────────────────────────────────────────
@@ -294,7 +349,7 @@ def cmd_plan(args):
         print(f"also on : {', '.join(bill[1:])}")
     print(f"venue   : {venue}")
     print(f"derives : show/{args.show}  "
-          + (f"venue/{_slug(venue)}" if venue
+          + (f"venue/{venue_slug(venue)[0]}" if venue
              else "venue/??  <- NO VENUE on the show row"))
     print()
     if not assets:
@@ -384,7 +439,7 @@ def cmd_tag(args):
             show_date = fields.get("show") or args.show
             paths.append(f"show/{show_date}")
             if venue:
-                paths.append(f"venue/{_slug(venue)}")
+                paths.append(f"venue/{venue_slug(venue)[0]}")
             plan[asset_id] = paths
     else:
         if not args.derived_only:
@@ -395,7 +450,7 @@ def cmd_tag(args):
             if a["kind"]:
                 paths.append(f"kind/{a['kind']}")
             if venue:
-                paths.append(f"venue/{_slug(venue)}")
+                paths.append(f"venue/{venue_slug(venue)[0]}")
             plan[a["id"]] = paths
 
     if not plan:
@@ -799,7 +854,11 @@ def add_asset(asset_id, show, kind, artist=None, subtype=None, signed=False,
     if detail:
         paths.append("detail")
     if venue:
-        paths.append(f"venue/{_slug(venue)}")
+        vslug, known = venue_slug(venue)
+        if not known:
+            print(f"WARN: venue {venue!r} is not in venues.tsv or venue_aliases.tsv; "
+                  f"tagging venue/{vslug} as given")
+        paths.append(f"venue/{vslug}")
 
     print(f"tags for {asset_id[:8]}:")
     _apply({asset_id: paths}, dry_run)
@@ -1021,13 +1080,17 @@ def cmd_seed(args):
     hints = _name_hints()
     plan = collections.defaultdict(set)
     off_host, dead, no_date, unmatched, unknown = [], [], [], [], {}
+    unknown_venues = {}
 
     def show_tags(date):
         row = find_show(date)
         venue = show_venue(row) if row else ""
         tags = {f"show/{date}"}
         if venue:
-            tags.add(f"venue/{_slug(venue)}")
+            vslug, known = venue_slug(venue)
+            if not known:
+                unknown_venues[venue] = vslug
+            tags.add(f"venue/{vslug}")
         return tags
 
     # 1. show rows: the linked asset(s) belong to that night.
@@ -1120,6 +1183,11 @@ def cmd_seed(args):
         print(f"\nNAME NOT IN LIBRARY ({len(unknown)}) - tagged as given; the album will take this spelling:")
         for name, slug in sorted(unknown.items()):
             print(f"  {name}  -> artist/{slug}")
+    if unknown_venues:
+        print(f"\nVENUE NOT IN LIBRARY ({len(unknown_venues)}) - no venues.tsv row or venue_aliases.tsv "
+              "alias resolves this spelling; tagged as given (add an alias row and re-run):")
+        for venue, slug in sorted(unknown_venues.items()):
+            print(f"  {venue}  -> venue/{slug}")
     if args.dry_run:
         print("\n[DRY RUN] nothing written. Re-run without --dry-run to tag.")
 
