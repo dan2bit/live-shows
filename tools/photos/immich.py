@@ -99,10 +99,16 @@ def _load_env_file():
 
 KEY_SOURCE = "unset"
 
+# Captured at import, before _load_env_file() can seed the process
+# environment from tools/photos/.env. Deciding this per request would see
+# the seeded value on the second call and report "shell" for a key that
+# came from the file.
+_KEY_IN_SHELL_AT_START = bool(os.environ.get("IMMICH_API_KEY"))
+
 
 def _config():
     global KEY_SOURCE
-    from_shell = bool(os.environ.get("IMMICH_API_KEY"))
+    from_shell = _KEY_IN_SHELL_AT_START
     file_vals = _load_env_file()
     url = os.environ.get("IMMICH_URL", DEFAULT_URL).rstrip("/")
     key = os.environ.get("IMMICH_API_KEY", "")
