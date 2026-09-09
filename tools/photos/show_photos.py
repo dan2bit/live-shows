@@ -31,6 +31,14 @@ Everything after that happens here.
             still on a per-photo link, artist rows off-host, tags with no
             row, photos with no artist. Run it before and after sync.
 
+  seed      The one-time bootstrap for a library whose photos were linked
+            before any tag existed. Resolves every link the library holds
+            (show rows, artist-photos.tsv) to its asset and tags it from
+            the row: show/ and venue/ from the show row, kind/ from the
+            upload album it sits in, artist/ from the caption matched
+            against that night's bill and sidemen. Read the --dry-run
+            report first: unmatched captions and dates are listed there.
+
 ALBUM RULES
 
   show      one album per show date, named "<date> <headliner>", found by
@@ -94,6 +102,9 @@ import immich  # noqa: E402
 from name_forms import goal_norm  # noqa: E402
 
 ARTIST_ALBUMS = "data/show_goals/artist-albums.tsv"
+ARTIST_PHOTOS = "data/show_goals/artist-photos.tsv"
+SEEN_WITH = "data/seen_with.tsv"
+ALIASES = "data/recommend_aliases.tsv"
 KIND_ALBUMS = "data/show_goals/kind-albums.tsv"
 CURRENT = "data/live_shows_current.tsv"
 HISTORY_DIR = "data/history"
@@ -436,7 +447,40 @@ def _name_hints():
     for row in _show_rows():
         for name in show_bill(row):
             hints.setdefault(_slug(name), name)
+    for row in immich._read_tsv_rows(SEEN_WITH):
+        name = (row.get("Seen With") or "").strip()
+        if name:
+            hints.setdefault(_slug(name), name)
     return hints
+
+
+def _aliases():
+    """Alias -> Canonical from recommend_aliases.tsv (# comment lines and
+    the header skipped), both as given."""
+    out = {}
+    path = os.path.join(_ROOT, ALIASES)
+    if not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8") as f:
+        for ln in f:
+            if not ln.strip() or ln.lstrip().startswith("#"):
+                continue
+            c = ln.rstrip("\n").split("\t")
+            if len(c) >= 2 and c[0].strip() and c[0].strip() != "Alias" and c[1].strip():
+                out[c[0].strip()] = c[1].strip()
+    return out
+
+
+def canonical_artist(name, aliases=None):
+    """The library's spelling for a name via recommend_aliases.tsv; a name
+    with no alias row comes back as given. Billing drift ("X & Y" vs "X and
+    Y") resolves through a data row, never a code change."""
+    aliases = _aliases() if aliases is None else aliases
+    want = goal_norm(name)
+    for alias, canon in aliases.items():
+        if goal_norm(alias) == want:
+            return canon
+    return name
 
 
 def set_show_photo_url(date, url, headliner=None):
@@ -897,6 +941,189 @@ def cmd_audit(args):
     print(f"\n{findings} finding(s)." if findings else "\nClean.")
 
 
+# ── seed ───────────────────────────────────────────────────────────────────
+
+_ROW_DATE_RE = re.compile(r"^([A-Z][a-z]{2}) (\d{1,2}), (\d{4})")
+_CAP_ISO = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_CAP_US = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
+
+
+def _row_iso(text):
+    """'Oct 16, 2021, 10:31:28 PM' or 'Dec 14, 2022' -> ISO date, or ""."""
+    m = _ROW_DATE_RE.match((text or "").strip())
+    if not m:
+        return ""
+    try:
+        d = datetime.datetime.strptime(" ".join(m.groups()), "%b %d %Y").date()
+    except ValueError:
+        return ""
+    return d.isoformat()
+
+
+def _caption_iso(text):
+    m = _CAP_ISO.search(text or "")
+    if m:
+        return m.group(1)
+    m = _CAP_US.search(text or "")
+    if m:
+        mo, dy, yr = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if yr < 100:
+            yr += 2000
+        return f"{yr:04d}-{mo:02d}-{dy:02d}"
+    return ""
+
+
+def _name_in_text(name, text):
+    """Word-bounded, punctuation-folded containment."""
+    n, t = goal_norm(name), goal_norm(text)
+    return bool(n) and re.search(r"(?<![a-z0-9])" + re.escape(n) + r"(?![a-z0-9])", t) is not None
+
+
+def _seen_with_for(date):
+    return [(r.get("Seen With") or "").strip()
+            for r in immich._read_tsv_rows(SEEN_WITH)
+            if (r.get("Show Date") or "").strip() == date and (r.get("Seen With") or "").strip()]
+
+
+def _caption_artists(caption, date, aliases):
+    """Who a caption is about, from the names the library already knows for
+    that night. Sidemen (seen_with.tsv) win outright when one is named:
+    the photo is of them, and the band is in the same show album anyway.
+    Otherwise every bill act named in the caption, alias-aware. Returns
+    library spellings."""
+    row = find_show(date) if date else None
+    found = [n for n in _seen_with_for(date) if _name_in_text(n, caption)] if date else []
+    if found:
+        return found
+    if not row:
+        return []
+    out = []
+    for name in show_bill(row):
+        forms = {name} | {a for a, c in aliases.items() if goal_norm(c) == goal_norm(name)}
+        if any(_name_in_text(f, caption) for f in forms):
+            out.append(name)
+    return out
+
+
+def _link_assets(link):
+    """Asset ids behind a shared link: its own for INDIVIDUAL, the album's
+    membership for ALBUM."""
+    if link.get("type") == "ALBUM":
+        album = link.get("album") or {}
+        return _album_members(album) if album.get("id") else set()
+    return {a["id"] for a in (link.get("assets") or [])}
+
+
+def cmd_seed(args):
+    links = immich.shared_links()
+    by_key = {l.get("key"): l for l in links}
+    aliases = _aliases()
+    hints = _name_hints()
+    plan = collections.defaultdict(set)
+    off_host, dead, no_date, unmatched, unknown = [], [], [], [], {}
+
+    def show_tags(date):
+        row = find_show(date)
+        venue = show_venue(row) if row else ""
+        tags = {f"show/{date}"}
+        if venue:
+            tags.add(f"venue/{_slug(venue)}")
+        return tags
+
+    # 1. show rows: the linked asset(s) belong to that night.
+    for relpath, date, artist, url in _show_row_links():
+        if not immich.on_photo_host(url):
+            off_host.append((date, artist, url, relpath))
+            continue
+        link = by_key.get(immich.share_key(url))
+        if link is None:
+            dead.append((date, artist, url))
+            continue
+        for aid in _link_assets(link):
+            plan[aid] |= show_tags(date)
+
+    # 2. artist-photos.tsv rows: with-artist by definition; the night from
+    #    the row date (a post-midnight timestamp means the day before),
+    #    else the date in the caption; the artist from the caption.
+    for row in immich._read_tsv_rows(ARTIST_PHOTOS):
+        url = (row.get("Share Link") or "").strip()
+        caption = (row.get("Caption / Artist Info") or "").strip()
+        if not immich.on_photo_host(url):
+            off_host.append(("", caption[:40], url, ARTIST_PHOTOS))
+            continue
+        link = by_key.get(immich.share_key(url))
+        if link is None:
+            dead.append(("", caption[:40], url))
+            continue
+        iso = _row_iso(row.get("Date"))
+        date = ""
+        cands = [iso]
+        if iso:
+            cands.append((datetime.date.fromisoformat(iso)
+                          - datetime.timedelta(days=1)).isoformat())
+        cands.append(_caption_iso(caption))
+        for c in cands:
+            if c and find_show(c):
+                date = c
+                break
+        assets = _link_assets(link)
+        for aid in assets:
+            plan[aid].add("kind/with-artist")
+        if not date:
+            no_date.append((iso or "?", caption[:60]))
+            continue
+        for aid in assets:
+            plan[aid] |= show_tags(date)
+        names = _caption_artists(caption, date, aliases)
+        if not names and args.assume_headliner:
+            names = [show_bill(find_show(date))[0]]
+        if not names:
+            unmatched.append((date, caption[:70]))
+            continue
+        for name in names:
+            name = canonical_artist(name, aliases)
+            slug = _slug(name)
+            if slug not in hints:
+                unknown[name] = slug
+            for aid in assets:
+                plan[aid].add(f"artist/{slug}")
+
+    # 3. kind from upload-album membership, for everything on the server.
+    for album_id, kind in _album_kinds().items():
+        for a in immich.search_metadata(album_id=album_id):
+            plan[a["id"]].add(f"kind/{kind}")
+
+    n_tags = sum(len(v) for v in plan.values())
+    print(f"{len(plan)} asset(s), {n_tags} tag(s):")
+    _apply(plan, args.dry_run)
+
+    if off_host:
+        print(f"\nOFF-HOST ({len(off_host)}) - not on the image server; find the asset and run "
+              "`add --asset <id> --show <date> --kind with-artist --artist <name>`:")
+        for date, who, url, src in off_host:
+            print(f"  {date} {who}  {url}  ({src})")
+    if dead:
+        print(f"\nDEAD KEY ({len(dead)}) - link on the host but no such shared link:")
+        for date, who, url in dead:
+            print(f"  {date} {who}  {url}")
+    if no_date:
+        print(f"\nNO SHOW DATE ({len(no_date)}) - row date, day-before and caption date match no show row; "
+              "kind tagged, show/ and artist/ not:")
+        for iso, cap in no_date:
+            print(f"  {iso}  {cap}")
+    if unmatched:
+        print(f"\nUNMATCHED CAPTION ({len(unmatched)}) - no bill act or sideman named; show/ tagged, "
+              "artist/ not (re-run with --assume-headliner, or add seen_with/alias rows):")
+        for date, cap in unmatched:
+            print(f"  {date}  {cap}")
+    if unknown:
+        print(f"\nNAME NOT IN LIBRARY ({len(unknown)}) - tagged as given; the album will take this spelling:")
+        for name, slug in sorted(unknown.items()):
+            print(f"  {name}  -> artist/{slug}")
+    if args.dry_run:
+        print("\n[DRY RUN] nothing written. Re-run without --dry-run to tag.")
+
+
 def cmd_scaffold(args):
     """Write an assignments file pre-filled with everything derivable.
 
@@ -989,10 +1216,15 @@ def main():
     p.add_argument("--fast", action="store_true",
                    help="skip the per-tag membership searches")
 
+    p = sub.add_parser("seed", help="one-time: tag every library-linked asset from its rows")
+    p.add_argument("--assume-headliner", action="store_true",
+                   help="a caption naming nobody the library knows is the headliner")
+    p.add_argument("--dry-run", action="store_true")
+
     args = ap.parse_args()
     {"plan": cmd_plan, "tag": cmd_tag, "sync": cmd_sync,
      "scaffold": cmd_scaffold, "add": cmd_add,
-     "audit": cmd_audit}[args.cmd](args)
+     "audit": cmd_audit, "seed": cmd_seed}[args.cmd](args)
 
 
 if __name__ == "__main__":
