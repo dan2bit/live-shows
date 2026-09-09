@@ -54,31 +54,12 @@ _HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_HERE.parent / "tools" / "photos"))
 
-from name_forms import goal_norm  # noqa: E402
 import show_photos  # noqa: E402
-
-ALIASES_PATH = Path("data/recommend_aliases.tsv")
 
 # Photo: [Artist] — [YYYY-MM-DD] ([Venue])   (em dash or hyphen as the separator)
 TITLE_RE = re.compile(
     r"^Photo:\s*(?P<artist>.+?)\s*[—-]\s*(?P<date>\d{4}-\d{2}-\d{2})\s*\((?P<venue>.+)\)\s*$"
 )
-
-
-def canonical_artist(name):
-    """The library's spelling for a name, via recommend_aliases.tsv
-    (Alias -> Canonical; # comment lines and the header skipped). A name
-    with no alias row is returned as given."""
-    if not ALIASES_PATH.exists():
-        return name
-    want = goal_norm(name)
-    for ln in ALIASES_PATH.read_text(encoding="utf-8").splitlines():
-        if not ln.strip() or ln.lstrip().startswith("#"):
-            continue
-        c = ln.split("\t")
-        if len(c) >= 2 and c[0].strip() != "Alias" and goal_norm(c[0]) == want:
-            return c[1].strip() or name
-    return name
 
 
 def _gh_output(**kv):
@@ -102,7 +83,7 @@ def main() -> int:
     if not m:
         print(f"ERROR: could not parse issue title: {title!r}", file=sys.stderr)
         return 1
-    artist = canonical_artist(m.group("artist").strip())
+    artist = show_photos.canonical_artist(m.group("artist").strip())
     iso = m.group("date")
 
     asset_id = show_photos.resolve_asset(link)
