@@ -707,7 +707,7 @@ def _assets_of(tag_id):
 
 
 def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
-                 name_hints=None):
+                 name_hints=None, known=None):
     """Materialise tags into albums and links.
 
     dates / artists / kinds restrict which albums are touched (None = every
@@ -715,10 +715,17 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
     full, because an artist album is the union of the artist's show
     albums and that union cannot be built from one show.
 
+    known = {"shows": {date: ids}, "artists": {slug: ids}, "kinds": {kind:
+    ids}} is membership the caller already holds and is unioned in before
+    the server is consulted. `add` passes the asset it has just tagged: a
+    search by a tag created moments ago can come back empty, and the one
+    asset this run is about must never depend on that round-trip.
+
     Returns {"shows": {date: url}, "artists": {name: url},
              "kinds": {kind: (album name, url)}}."""
     hints = dict(_name_hints())
     hints.update(name_hints or {})
+    known = known or {}
     tags = _tag_index()
     st = _Albums(dry_run)
     out = {"shows": {}, "artists": {}, "kinds": {}}
@@ -732,6 +739,8 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
             ids = _assets_of(tid)
             if ids:
                 show_assets[date] = ids
+    for date, ids in (known.get("shows") or {}).items():
+        show_assets.setdefault(date, set()).update(ids)
 
     for date in sorted(show_assets):
         if dates is not None and date not in dates:
@@ -751,13 +760,14 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
     for d in (dates or ()):
         affected |= show_assets.get(d, set())
 
-    for val, tid in sorted(tags.items()):
-        if not val.startswith("artist/"):
-            continue
-        slug = val[len("artist/"):]
+    known_artists = known.get("artists") or {}
+    artist_tags = {val[len("artist/"):]: tid for val, tid in tags.items()
+                   if val.startswith("artist/")}
+    for slug in sorted(set(artist_tags) | set(known_artists)):
+        tid = artist_tags.get(slug)
         if artists is not None and slug not in artists and not affected:
             continue
-        own = _assets_of(tid)
+        own = (_assets_of(tid) if tid else set()) | set(known_artists.get(slug, ()))
         if not own:
             continue
         if artists is not None and slug not in artists and not (own & affected):
@@ -775,7 +785,7 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
         if kinds is not None and kind not in kinds:
             continue
         tid = tags.get(f"kind/{kind}")
-        ids = _assets_of(tid) if tid else set()
+        ids = (_assets_of(tid) if tid else set()) | set((known.get("kinds") or {}).get(kind, ()))
         album = st.kind_album(kind)
         if album is None and not ids:
             continue
@@ -863,13 +873,12 @@ def add_asset(asset_id, show, kind, artist=None, subtype=None, signed=False,
     print(f"tags for {asset_id[:8]}:")
     _apply({asset_id: paths}, dry_run)
     print("albums:")
+    known = {"shows": {show: {asset_id}}, "kinds": {kind: {asset_id}},
+             "artists": {slug: {asset_id}} if slug else {}}
     result = sync_targets(dates={show}, artists={slug} if slug else set(),
                           kinds={kind}, dry_run=dry_run,
-                          name_hints={slug: artist} if slug else None)
-    if dry_run and show not in result["shows"]:
-        # Under dry run the tag was not applied, so the show may have no
-        # members yet on the server; report the album that would exist.
-        result["shows"][show] = f"<link for {show_album_name(show, row.get('Artist', ''))}>"
+                          name_hints={slug: artist} if slug else None,
+                          known=known)
     name = artist_album_name(slug, {slug: artist}) if slug else None
     return {
         "asset_id": asset_id,
