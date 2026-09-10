@@ -2,213 +2,137 @@
 """
 reconcile_photos.py
 
-Cross-checks the Photo URL values recorded on shows (live_shows_current.tsv and
-data/history/*.tsv) against the Share Link values in
-data/show_goals/artist-photos.tsv, matched on the Google Photos /photo/<ID>
-segment. Reports only — never auto-fixes:
+Offline lint of every photo link the show library carries: the Photo URL on
+each show row (live_shows_current.tsv and data/history/*.tsv) and the Album
+URL on each data/show_goals/artist-albums.tsv and kind-albums.tsv row.
+Reports only — never auto-fixes, and needs no server access.
 
-  MISSING  — a show carries a Photo URL whose /photo/<ID> is absent from
-             artist-photos.tsv (the photo has no row yet; expected for a new
-             show until its `photo` issue is processed)
-  CORRUPT  — a show's Photo URL /photo/<ID> is a near-miss for an id that IS in
-             artist-photos.tsv (within 2 edits). This is the transcription-typo
-             case: one of the two URLs is almost certainly broken.
+  OFF-HOST — a link that does not point at the image server (a retired
+             Google Photos link that escaped the migration, or a typo in the
+             host). The site would render it, but it is not part of the
+             library any more.
+  MALFORMED — an image-server URL with no /share/<key> token, or a key that
+             is not the shape the server issues. A dead badge on the live
+             site.
+  DUPLICATE — two show rows carrying the same share key. Every show has its
+             own album, so two rows on one link means one of them is wrong.
 
-Standing album audit:
-
-  ALBUM GAP — an artist has photos at 2+ distinct shows (counted from the BUILT
-             index data/artist_modal_index.json show_log[].photo_url — never
-             times_seen, never artists.tsv, so seen_with-only names like Brandon
-             Miller resolve) but no data/show_goals/artist-albums.tsv row. This
-             is the backstop for the close_photo_issue.py reminder path; it
-             catches backfilled / manually-added photos. Album URL uniqueness is
-             deliberately NOT checked (shared band albums are legitimate).
+Anything that needs the server — whether a key resolves, whether a show
+row's link is the show album rather than a per-photo link, whether every
+artist/ tag has a row — is `tools/photos/show_photos.py audit`, which runs
+with the automation key and is not a CI check.
 
 Usage:
     python scripts/reconcile_photos.py [--strict]
 
 Exit codes:
-    0  — clean, or only MISSING / ALBUM GAP findings (informational)
-    1  — one or more CORRUPT findings; or any finding when --strict is passed
-
-Rationale for the split: CORRUPT is a real bug (a dead link on the live site),
-so it fails the run by default. MISSING and ALBUM GAP are to-dos, not errors,
-so they only fail under --strict.
+    0  — clean, or only OFF-HOST findings
+    1  — any MALFORMED or DUPLICATE finding; or any finding under --strict
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
-import json
 import re
 import sys
 from pathlib import Path
-
-from name_forms import goal_norm
+from urllib.parse import urlsplit
 
 CURRENT = Path("data/live_shows_current.tsv")
 HISTORY_DIR = Path("data/history")
-PHOTOS = Path("data/show_goals/artist-photos.tsv")
-ALBUMS = Path("data/show_goals/artist-albums.tsv")
-INDEX = Path("data/artist_modal_index.json")
+ALBUM_FILES = (Path("data/show_goals/artist-albums.tsv"),
+               Path("data/show_goals/kind-albums.tsv"))
 
-PHOTO_ID_RE = re.compile(r"/photo/([A-Za-z0-9_-]+)")
+PHOTO_HOST = "photos.redhat-bootlegs.net"
+SHARE_KEY_RE = re.compile(r"^/share/([A-Za-z0-9_-]{20,})$")
 DATE_HEADERS = ("Show Date", "Date")
 ARTIST_HEADERS = ("Artist", "Headliner")
 
 
-def photo_id(url):
-    m = PHOTO_ID_RE.search(url or "")
-    return m.group(1) if m else None
+def classify(url):
+    """(status, key) where status is "ok", "off-host" or "malformed"."""
+    parts = urlsplit(url)
+    if parts.netloc.lower() != PHOTO_HOST:
+        return "off-host", None
+    m = SHARE_KEY_RE.match(parts.path)
+    if not m:
+        return "malformed", None
+    return "ok", m.group(1)
 
 
-def within_edits(a, b, max_dist):
-    """Bounded Levenshtein: True iff edit distance(a, b) <= max_dist."""
-    if abs(len(a) - len(b)) > max_dist:
-        return False
-    prev = list(range(len(b) + 1))
-    for i, ca in enumerate(a, 1):
-        cur = [i]
-        for j, cb in enumerate(b, 1):
-            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
-        prev = cur
-        if min(prev) > max_dist:
-            return False
-    return prev[-1] <= max_dist
-
-
-def _col(header, names, default=None):
+def _col(header, names):
     for n in names:
         if n in header:
             return header.index(n)
-    return default
+    return None
 
 
-def load_show_photos():
-    """Return list of (source, date, artist, pid) for every show-side Photo URL."""
+def _rows(path, url_col, label_cols):
+    """[(label, url)] for every row of a TSV with a non-empty url column."""
     out = []
-    files = []
-    if CURRENT.exists():
-        files.append(CURRENT)
-    if HISTORY_DIR.is_dir():
-        files.extend(sorted(HISTORY_DIR.glob("*.tsv")))
-
-    for path in files:
-        lines = path.read_text(encoding="utf-8").splitlines()
-        if not lines:
+    if not path.exists():
+        return out
+    lines = path.read_text(encoding="utf-8-sig").splitlines()
+    if not lines:
+        return out
+    header = lines[0].split("\t")
+    if url_col not in header:
+        return out
+    ui = header.index(url_col)
+    li = [_col(header, names) for names in label_cols]
+    for ln in lines[1:]:
+        c = ln.split("\t")
+        if len(c) <= ui:
             continue
-        header = lines[0].split("\t")
-        if "Photo URL" not in header:
+        url = c[ui].strip()
+        if not url or url == "-":
             continue
-        pi = header.index("Photo URL")
-        di = _col(header, DATE_HEADERS, 0)
-        ai = _col(header, ARTIST_HEADERS, 1)
-        src = "current" if path == CURRENT else path.name
-        for ln in lines[1:]:
-            c = ln.split("\t")
-            if len(c) <= pi:
-                continue
-            url = c[pi].strip()
-            if not url or url == "-":
-                continue
-            pid = photo_id(url)
-            date = c[di].strip() if di is not None and di < len(c) else ""
-            artist = c[ai].strip() if ai is not None and ai < len(c) else ""
-            out.append((src, date, artist, pid))
+        label = " ".join(c[i].strip() for i in li if i is not None and i < len(c))
+        out.append((label, url))
     return out
-
-
-def load_file_ids():
-    ids = set()
-    if PHOTOS.exists():
-        for ln in PHOTOS.read_text(encoding="utf-8").splitlines()[1:]:
-            c = ln.split("\t")
-            if len(c) > 1:
-                pid = photo_id(c[1])
-                if pid:
-                    ids.add(pid)
-    return ids
-
-
-def load_album_keys():
-    """goal_norm(Artist) keys present in artist-albums.tsv."""
-    keys = set()
-    if ALBUMS.exists():
-        for ln in ALBUMS.read_text(encoding="utf-8").splitlines()[1:]:
-            c = ln.split("\t")
-            if len(c) >= 2 and c[0].strip() and c[1].strip():
-                keys.add(goal_norm(c[0]))
-    return keys
-
-
-def album_gaps():
-    """Album-audit backstop: [(display name, photographed-show count)] for artists with
-    photos at 2+ distinct shows and no artist-albums.tsv row. None if the built
-    index is absent (report skipped, not failed)."""
-    if not INDEX.exists():
-        return None
-    try:
-        idx = json.loads(INDEX.read_text(encoding="utf-8"))
-    except ValueError:
-        return None
-    album_keys = load_album_keys()
-    gaps = []
-    for key, rec in (idx.get("artists") or {}).items():
-        log = ((rec.get("seen") or {}).get("show_log")) or []
-        dates = {e.get("date") for e in log if e.get("photo_url") and e.get("date")}
-        if len(dates) < 2:
-            continue
-        name = rec.get("name") or key
-        if key in album_keys or goal_norm(name) in album_keys:
-            continue
-        gaps.append((name, len(dates)))
-    return sorted(gaps)
 
 
 def main():
     strict = "--strict" in sys.argv[1:]
-    file_ids = load_file_ids()
-    shows = load_show_photos()
+    files = ([CURRENT] if CURRENT.exists() else []) + (
+        sorted(HISTORY_DIR.glob("*.tsv")) if HISTORY_DIR.is_dir() else [])
 
-    missing, corrupt = [], []
-    for src, date, artist, pid in shows:
-        if pid is None or pid in file_ids:
-            continue
-        near = next((fid for fid in file_ids if within_edits(pid, fid, 2)), None)
-        if near:
-            corrupt.append((src, date, artist, pid, near))
-        else:
-            missing.append((src, date, artist, pid))
+    off_host, malformed, seen = [], [], {}
+    for path in files:
+        for label, url in _rows(path, "Photo URL", (DATE_HEADERS, ARTIST_HEADERS)):
+            status, key = classify(url)
+            if status == "off-host":
+                off_host.append((path.name, label, url))
+            elif status == "malformed":
+                malformed.append((path.name, label, url))
+            else:
+                seen.setdefault(key, []).append((path.name, label))
+    for path in ALBUM_FILES:
+        for label, url in _rows(path, "Album URL", (("Artist", "Kind"),)):
+            status, _ = classify(url)
+            if status == "off-host":
+                off_host.append((path.name, label, url))
+            elif status == "malformed":
+                malformed.append((path.name, label, url))
 
-    if corrupt:
-        print("CORRUPT — show Photo URL near-misses an artist-photos.tsv id (likely a typo in one):")
-        for src, date, artist, pid, near in corrupt:
-            print(f"  [{src}] {date} {artist}")
-            print(f"      show id: {pid}")
-            print(f"      file id: {near}")
-    if missing:
-        print("MISSING — show photo has no row in artist-photos.tsv yet:")
-        for src, date, artist, pid in missing:
-            print(f"  [{src}] {date} {artist}  ({pid})")
-    if not corrupt and not missing:
-        print("OK — every show Photo URL is present in artist-photos.tsv.")
+    duplicates = {k: v for k, v in seen.items() if len(v) > 1}
 
-    gaps = album_gaps()
-    if gaps is None:
-        print("ALBUM AUDIT skipped — data/artist_modal_index.json not found.")
-        gaps = []
-    elif gaps:
-        print("ALBUM GAP — 2+ photographed shows but no artist-albums.tsv row (photo-badge):")
-        for name, cnt in gaps:
-            print(f"  {name}  ({cnt} photographed shows)")
-    else:
-        print("OK — every 2+-photographed artist has an artist-albums.tsv row.")
+    for title, rows in (("MALFORMED - image-server URL with no usable share key:", malformed),
+                        ("OFF-HOST - link is not on the image server:", off_host)):
+        if rows:
+            print(title)
+            for src, label, url in rows:
+                print(f"  [{src}] {label}  {url}")
+    if duplicates:
+        print("DUPLICATE - one share key on more than one show row:")
+        for key, rows in duplicates.items():
+            print(f"  {key}")
+            for src, label in rows:
+                print(f"      [{src}] {label}")
+    if not (malformed or off_host or duplicates):
+        print("OK - every photo link is a well-formed image-server share link.")
 
-    print(f"\nsummary: {len(corrupt)} corrupt, {len(missing)} missing, "
-          f"{len(gaps)} album gaps, {len(shows)} show photos checked.")
-
-    if corrupt or (strict and (missing or gaps)):
-        return 1
-    return 0
+    hard = bool(malformed or duplicates)
+    return 1 if hard or (strict and off_host) else 0
 
 
 if __name__ == "__main__":

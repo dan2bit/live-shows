@@ -37,6 +37,7 @@ the csv module (default quoting corrupts fields containing literal quotes).
 import argparse
 import json
 import os
+import re
 import ssl
 import sys
 import urllib.error
@@ -98,10 +99,16 @@ def _load_env_file():
 
 KEY_SOURCE = "unset"
 
+# Captured at import, before _load_env_file() can seed the process
+# environment from tools/photos/.env. Deciding this per request would see
+# the seeded value on the second call and report "shell" for a key that
+# came from the file.
+_KEY_IN_SHELL_AT_START = bool(os.environ.get("IMMICH_API_KEY"))
+
 
 def _config():
     global KEY_SOURCE
-    from_shell = bool(os.environ.get("IMMICH_API_KEY"))
+    from_shell = _KEY_IN_SHELL_AT_START
     file_vals = _load_env_file()
     url = os.environ.get("IMMICH_URL", DEFAULT_URL).rstrip("/")
     key = os.environ.get("IMMICH_API_KEY", "")
@@ -305,6 +312,47 @@ def link_url(link):
     key = link.get("key", "")
     url_base = os.environ.get("IMMICH_URL", DEFAULT_URL).rstrip("/")
     return f"{url_base}/share/{key}"
+
+
+_SHARE_KEY_RE = re.compile(r"/share/([A-Za-z0-9_-]+)")
+
+
+def share_key(url):
+    """The token in a /share/<key> URL, or "" for anything else. The key is
+    the stable identity of a shared link: the same album or asset can be
+    shared more than once, but one key names exactly one link."""
+    m = _SHARE_KEY_RE.search(url or "")
+    return m.group(1) if m else ""
+
+
+def on_photo_host(url):
+    """True when a URL points at this library's image server. Anything else
+    (a retired Google Photos link, a typo) is a row that still needs a mint."""
+    host = urllib.parse.urlsplit(
+        os.environ.get("IMMICH_URL", DEFAULT_URL)).netloc.lower()
+    return urllib.parse.urlsplit(url or "").netloc.lower() == host
+
+
+def shared_link_by_key(key, links=None):
+    """The shared-link record whose /share/ token is `key`, or None. Pass a
+    cached shared_links() list to avoid one listing call per lookup."""
+    for link in (links if links is not None else shared_links()):
+        if link.get("key") == key:
+            return link
+    return None
+
+
+def links_by_album(links=None):
+    """album_id -> the first existing ALBUM shared link over it. Looking here
+    before minting is what keeps re-runs from growing a second link per
+    album; the stored library URL must stay the one the site already has."""
+    out = {}
+    for link in (links if links is not None else shared_links()):
+        album_id = ((link.get("album") or {}).get("id")
+                    if link.get("type") == "ALBUM" else None)
+        if album_id and album_id not in out:
+            out[album_id] = link
+    return out
 
 
 # ── crosswalk seeding ──────────────────────────────────────────────────────

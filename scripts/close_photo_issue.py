@@ -4,218 +4,71 @@ close_photo_issue.py
 
 Called by the photo-close GitHub Actions workflow
 (.github/workflows/close-photo-issue.yml) when a `Photo:` issue receives a
-comment containing a Google Photos share link.
+comment that begins with the photo's own image-server share link.
 
 Usage:
     python scripts/close_photo_issue.py <issue_title> <share_link>
 
 Parses the artist, show date, and venue from the issue title
     Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])
-and appends one row to data/show_goals/artist-photos.tsv:
-    Date <tab> Share Link <tab> Caption / Artist Info
+resolves the pasted per-photo link to its Immich asset, and hands that one
+asset to tools/photos/show_photos.py add_asset(), which owns everything on
+the server side: tags (kind/with-artist, artist/<slug>, show/<date>,
+venue/<slug>), the show album, the artist album, the kind album, and one
+share link per album, minted only when none exists.
 
-The file's UTF-8 BOM header is preserved. Columns written:
-    Date     "Mon D, YYYY" derived from the show date (to-the-day; the exact
-             Google Photos capture timestamp is not available to the workflow)
-    Caption  "[Artist] [(again)] @ [Venue] M/D/YY"  — "(again)" when the artist
-             already appears somewhere in the file
+Two library rows are then upserted from the links add_asset() reports:
 
-Additionally mirrors the share link into the matching live_shows_current.tsv
-row's Photo URL column (the badge/affinity photo credit reads the show row,
-not artist-photos.tsv). Row match is show-date + headliner-or-supporting-act,
-canonicalized through recommend_aliases.tsv (the same alias data the recommend/artist-index builders
-use) so billing drift ("X & Y" title vs "X and Y" row) resolves via a data row,
-never a code change. An existing different link is never clobbered; no-match is
-a warning, not a failure. History-year shows are out of scope (legacy/backfill
-only).
+    live_shows_current.tsv (or the history file)  Photo URL  <- show-album link
+    data/show_goals/artist-albums.tsv             Artist row <- artist-album link
 
-Idempotent: if the share link's presence key is already in the file, the append
-is skipped but the show-row mirror still runs (heals a half-applied state). The
-key is the per-photo id (/photo/<id>) when present, else the album/share id
-(/share/<id>) for an album-scoped link that has no /photo/ segment.
+Both are idempotent on the same link, so the second and later photos from
+one show, and the second and later shows with one artist, are no-ops on
+the rows and membership adds on the server. There is no per-photo ledger:
+the show album is the record of the night, the artist album the record of
+the artist, and the tags on the asset the record of what the photo is.
 
-Album-needed check: after appending, the artist's photographed-show count is
-recomputed from the BUILT artist index (data/artist_modal_index.json — whose universe
-includes seen_with-only names like Brandon Miller; never artists.tsv). If the artist
-now has photos at 2+ distinct shows and no data/show_goals/artist-albums.tsv row, an
-"album needed" reminder is printed and exported as the `album_note` step output for
-the close comment. If a row exists, the reminder says to add the photo to the existing
-album (the share link is stable — no repo change needed).
+The artist name is canonicalized through recommend_aliases.tsv before it
+becomes a tag, so billing drift ("X & Y" title vs "X and Y" row) resolves
+via a data row, never a code change.
 
 Exits:
-    0  — row appended, or the photo was already present
-    1  — error (title unparseable, file missing)
+    0  — rows written, or already correct
+    1  — error (title unparseable, link unresolvable, no show row, Immich
+         refused a call)
+
+Requires IMMICH_API_KEY in the environment: in CI that is the least-privilege
+photo-close key held as a repository secret (see
+tools/playbooks/IMAGE_SERVER.md); nothing here can upload, modify or delete
+a photo.
 
 The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 """
 
-import json
 import os
 import re
 import sys
-from datetime import date
 from pathlib import Path
 
-from name_forms import goal_norm
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE))
+sys.path.insert(0, str(_HERE.parent / "tools" / "photos"))
 
-PHOTOS_PATH = Path("data/show_goals/artist-photos.tsv")
-ALBUMS_PATH = Path("data/show_goals/artist-albums.tsv")
-INDEX_PATH = Path("data/artist_modal_index.json")
-CURRENT_PATH = Path("data/live_shows_current.tsv")
-ALIASES_PATH = Path("data/recommend_aliases.tsv")
+import show_photos  # noqa: E402
 
 # Photo: [Artist] — [YYYY-MM-DD] ([Venue])   (em dash or hyphen as the separator)
 TITLE_RE = re.compile(
     r"^Photo:\s*(?P<artist>.+?)\s*[—-]\s*(?P<date>\d{4}-\d{2}-\d{2})\s*\((?P<venue>.+)\)\s*$"
 )
-PHOTO_ID_RE = re.compile(r"/photo/([A-Za-z0-9_-]+)")
-ALBUM_ID_RE = re.compile(r"/share/([A-Za-z0-9_-]+)")
 
 
-def presence_key(link):
-    """A stable identifier for dedup. Prefer the per-photo id; fall back to the
-    album/share id for an album-scoped link — Google's current "Share -> Create
-    Link" form is /share/<album id>?key= with no /photo/ segment. The album's
-    ?key= share token can rotate when the album is re-shared, so the album id is
-    a steadier presence key than the whole URL, and it matches the
-    one-album-per-show convention (a show's photos live in one album, linked
-    once). Returns "" for a link that is neither, which never dedups."""
-    m = PHOTO_ID_RE.search(link)
-    if m:
-        return m.group(1)
-    m = ALBUM_ID_RE.search(link)
-    if m:
-        return m.group(1)
-    return ""
-
-
-def load_aliases():
-    """goal_norm(Alias) -> goal_norm(Canonical) from recommend_aliases.tsv (# comment
-    lines and the header skipped). The same alias data build_recommend_index.py and
-    build_artist_index.py canonicalize with — goal_norm alone does NOT equate '&' with
-    'and', so billing variants like "Trombone Shorty and Orleans Avenue" resolve only
-    through their alias row. A new variant is fixed by adding a row there."""
-    out = {}
-    if ALIASES_PATH.exists():
-        for ln in ALIASES_PATH.read_text(encoding="utf-8").splitlines():
-            if not ln.strip() or ln.lstrip().startswith("#"):
-                continue
-            c = ln.split("\t")
-            if len(c) >= 2 and c[0].strip() and c[1].strip() and c[0].strip() != "Alias":
-                out[goal_norm(c[0])] = goal_norm(c[1])
-    return out
-
-
-def canon(s, aliases):
-    """Alias-aware canonical key for artist matching."""
-    k = goal_norm(s)
-    return aliases.get(k, k)
-
-
-def find_index_record(arts, artist):
-    """Look up an artist in the built index: canonical key first, then a display-name
-    scan (covers alias-canonicalized keys). Joining the built index — not artists.tsv —
-    is what keeps seen_with-only names (e.g. Brandon Miller) resolvable."""
-    key = goal_norm(artist)
-    rec = arts.get(key)
-    if rec is None:
-        for v in arts.values():
-            if goal_norm((v or {}).get("name") or "") == key:
-                return v
-    return rec
-
-
-def load_albums():
-    """goal_norm(Artist) -> Album URL from artist-albums.tsv. Album URL is deliberately
-    NOT unique across rows (shared band albums are legitimate) — no uniqueness check."""
-    out = {}
-    if ALBUMS_PATH.exists():
-        for ln in ALBUMS_PATH.read_text(encoding="utf-8").splitlines()[1:]:
-            c = ln.split("\t")
-            if len(c) >= 2 and c[0].strip() and c[1].strip():
-                out[goal_norm(c[0])] = c[1].strip()
-    return out
-
-
-def album_check(artist, iso_date):
-    """Return an album reminder line, or None. Trigger is photos at 2+ DISTINCT shows
-    (the badge's show_log[].photo_url count — not times_seen), with the just-logged
-    show date unioned in since the index may predate this photo's row."""
-    if not INDEX_PATH.exists():
-        return None
-    try:
-        idx = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
-    except ValueError:
-        return None
-    rec = find_index_record(idx.get("artists") or {}, artist)
-    if rec is None:
-        return None
-    log = ((rec.get("seen") or {}).get("show_log")) or []
-    photo_dates = {e.get("date") for e in log if e.get("photo_url") and e.get("date")}
-    photo_dates.add(iso_date)
-    url = load_albums().get(goal_norm(artist))
-    if url:
-        return f"ALBUM: add this photo to the existing Google Photos album for {artist}: {url}"
-    if len(photo_dates) >= 2:
-        return (f"ALBUM NEEDED: {artist} now has photos at {len(photo_dates)} shows and no "
-                f"artist-albums.tsv row - create the Google Photos album and add the row to "
-                f"data/show_goals/artist-albums.tsv.")
-    return None
-
-
-def update_current_row(artist, iso, link):
-    """Mirror the share link into the matching live_shows_current.tsv row's
-    Photo URL (the last column — short rows from trailing-tab stripping are padded
-    back to full width, which also restores the columns on write). The row is
-    matched on the headliner Artist OR any act in the "/"-separated Supporting
-    Artist field, so a support-act photo reaches the show row too; matching is
-    alias-aware (see load_aliases) so billing drift resolves via
-    recommend_aliases.tsv. Never clobbers a different existing link. Returns a
-    status line for the workflow log."""
-    if not CURRENT_PATH.exists():
-        return f"WARN: {CURRENT_PATH} not found - Photo URL not written"
-    raw = CURRENT_PATH.read_text(encoding="utf-8")
-    lines = raw.split("\n")
-    header = lines[0].split("\t")
-    try:
-        di = header.index("Show Date")
-        ai = header.index("Artist")
-        pi = header.index("Photo URL")
-    except ValueError:
-        return "WARN: live_shows_current.tsv header missing expected columns - Photo URL not written"
-    # A support-act photo issue must reach the show row, which is keyed on the
-    # headliner Artist. Match the headliner OR any act in the "/"-separated
-    # Supporting Artist field. Not split on "&" - that is part of band names
-    # like "Robert Jon & The Wreck".
-    si = header.index("Supporting Artist") if "Supporting Artist" in header else None
-    aliases = load_aliases()
-    want = canon(artist, aliases)
-    for i in range(1, len(lines)):
-        if not lines[i].strip():
-            continue
-        cells = lines[i].split("\t")
-        if len(cells) < len(header):
-            cells += [""] * (len(header) - len(cells))
-        if cells[di].strip() != iso:
-            continue
-        row_acts = {canon(cells[ai], aliases)}
-        if si is not None and cells[si].strip():
-            row_acts |= {canon(a, aliases) for a in cells[si].split("/") if a.strip()}
-        if want not in row_acts:
-            continue
-        cur = cells[pi].strip()
-        if cur == link:
-            return "Photo URL already set on the show row; no change."
-        if cur not in ("", "-"):
-            return (f"WARN: show row {iso} / {cells[ai]} already carries a different "
-                    f"Photo URL - left unchanged.")
-        cells[pi] = link
-        lines[i] = "\t".join(cells)
-        CURRENT_PATH.write_text("\n".join(lines), encoding="utf-8")
-        return f"Photo URL written to show row: {iso} / {cells[ai]}"
-    return (f"WARN: no matching live_shows_current row for {iso} / {artist} "
-            f"(history-year show, or a billing variant missing from "
-            f"recommend_aliases.tsv) - Photo URL not written")
+def _gh_output(**kv):
+    gh_out = os.environ.get("GITHUB_OUTPUT")
+    if not gh_out:
+        return
+    with open(gh_out, "a", encoding="utf-8") as fh:
+        for k, v in kv.items():
+            fh.write(f"{k}={v}\n")
 
 
 def main() -> int:
@@ -230,46 +83,20 @@ def main() -> int:
     if not m:
         print(f"ERROR: could not parse issue title: {title!r}", file=sys.stderr)
         return 1
-    artist = m.group("artist").strip()
+    artist = show_photos.canonical_artist(m.group("artist").strip())
     iso = m.group("date")
-    venue = m.group("venue").strip()
 
-    if not PHOTOS_PATH.exists():
-        print(f"ERROR: {PHOTOS_PATH} not found", file=sys.stderr)
-        return 1
+    asset_id = show_photos.resolve_asset(link)
+    print(f"asset {asset_id} <- {link}")
 
-    # Read with utf-8 so the leading BOM stays as part of the content and is
-    # written back verbatim; artist-photos.tsv is BOM-headed by design.
-    raw = PHOTOS_PATH.read_text(encoding="utf-8")
+    res = show_photos.add_asset(asset_id, iso, "with-artist", artist=artist)
 
-    key = presence_key(link)
-    if key and key in raw:
-        print("Photo already present (share-link id found in file); no change.")
-        print(update_current_row(artist, iso, link))
-        return 0
+    print()
+    print(show_photos.set_show_photo_url(iso, res["show_link"]))
+    print(show_photos.upsert_artist_album(res["artist"], res["artist_link"]))
 
-    y, mo, d = (int(x) for x in iso.split("-"))
-    dt = date(y, mo, d)
-    date_col = f"{dt.strftime('%b')} {d}, {y}"          # e.g. "May 9, 2026"
-    mdy = f"{mo}/{d}/{str(y)[2:]}"                        # e.g. "5/9/26"
-    again = " (again)" if artist in raw else ""
-    caption = f"{artist}{again} @ {venue} {mdy}"
-    row = f"{date_col}\t{link}\t{caption}"
-
-    if not raw.endswith("\n"):
-        raw += "\n"
-    PHOTOS_PATH.write_text(raw + row + "\n", encoding="utf-8")
-    print(f"Appended row: {row}")
-
-    print(update_current_row(artist, iso, link))
-
-    note = album_check(artist, iso)
-    if note:
-        print(note)
-        gh_out = os.environ.get("GITHUB_OUTPUT")
-        if gh_out:
-            with open(gh_out, "a", encoding="utf-8") as fh:
-                fh.write(f"album_note={note}\n")
+    _gh_output(show_link=res["show_link"], artist=res["artist"],
+               artist_link=res["artist_link"])
     return 0
 
 
