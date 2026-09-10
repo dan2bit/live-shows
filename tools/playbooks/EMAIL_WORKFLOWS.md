@@ -487,18 +487,18 @@ nothing, a missing one loses the reminder entirely.
 
    Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
 
-**Step 6b — Open a GitHub issue per photographed artist (when a photo was taken)**
+**Step 6b — Open ONE `Photos:` issue for the show (when any photo was taken)**
 
-When the notes indicate Dan got a photo with an artist (`Artist Interaction` is `Photo` or `Both`, or the note describes one), open one issue per photographed artist — including sidemen, who get their own artist album. Fetch `.github/ISSUE_TEMPLATE/photo.md` live and fill every `{{PLACEHOLDER}}`. Title: `Photo: [Artist] — [YYYY-MM-DD] ([Venue short name])`. Label: `photo`. The artist name should be the library's spelling (a billing variant resolves through `recommend_aliases.tsv`, so add a row there rather than guessing).
+One issue per show, not per artist. Open it whenever the notes mention any photo at all - with an artist, a pre-show selfie, a crowd shot, a stage portrait, or memorabilia (a setlist, a pick, the hat after a signing, anything signed). Fetch `.github/ISSUE_TEMPLATE/photo.md` live and fill every `{{PLACEHOLDER}}`: title `Photos: [Headliner] — [YYYY-MM-DD] ([Venue short name])`, label `photo`, the bill line, and the expected-photos checklist built from the notes - one `with-artist:` line per person named (sidemen included, in the library's spelling; a billing variant resolves through `recommend_aliases.tsv`, so add a row there rather than guessing), a `pre-show selfie` line if one was taken, a `memorabilia:` line per item. Delete the checklist lines that do not apply. The template carries the close-out contract; do not paraphrase it.
 
-The template carries the close-out contract; do not paraphrase it. In short: Dan uploads the still into the *Guitar gods and goddesses* album, creates a per-photo share link, and posts it **as the first thing in a comment**. `close-photo-issue.yml` then tags the photo, files it in the show / artist / kind albums, writes the show-album link to the show row and the artist-album link to `data/show_goals/artist-albums.tsv`, and closes the issue. Two photos from one show converge on one show-row link; two shows with one artist converge on one artist-albums row. There is no per-photo ledger to append to.
+In short: Dan uploads each photo from the phone into the Immich album that says what it is (that album is the photo's kind), creates a per-photo share link, and posts it as a comment, link first, one comment per photo - `artist="..."` when the person is not the headliner or the photo is a stage portrait, `subtype=... [signed] [artist="..."]` for memorabilia, `close` on the last one. `close-photo-issue.yml` files each photo and replies with the links; the issue stays open until `close`, which also holds the show row back from rollover until the photos are in.
 
-Memorabilia photographed at the show (a signed setlist, a pick) does **not** get a `Photo:` issue — it is filed by hand with `show_photos.py add --kind memorabilia --show <date>` and recorded in `item_log.tsv`. Do **not** touch `artists.tsv` — it carries no photo column.
+Memorabilia photographed at the show is filed through the same issue, but the *item* still goes to `data/show_goals/item_log.tsv` via the `item-log` skill - the photo pipeline records the picture, the ledger records the thing. Do **not** touch `artists.tsv` — it carries no photo column.
 
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
 Include explicit confirmation in the log body that the Step 6 playlist issue (and Step
-6b photo issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
+6b photos issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
 file (`playlist.md` / `photo.md`), not reconstructed from memory.
 
 **Final:** Apply `processed` label.
