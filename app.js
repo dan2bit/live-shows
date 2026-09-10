@@ -247,22 +247,37 @@ function applyTheme(cfg){
 }
 
 // Contents-API fetch (public repo by default); attaches the stored PAT when present.
-async function ghFetch(path,opts,owner,repo){
+async function _ghFetchRef(path,opts,owner,repo,_ref,_refLabel){
   opts=opts||{};
   var pat=localStorage.getItem(PAT_KEY);
   var headers={'Accept':'application/vnd.github.v3+json'};
   if(pat)headers['Authorization']='token '+pat;
   var url='https://api.github.com/repos/'+(owner||OWNER)+'/'+(repo||REPO)+'/contents/'+path;
-  var _ref=_dataRef();   // reads may target a preview branch (public repo only)
+  // Ref only ever applies to the public repo. The private sidecar has no staging
+  // pipeline: its reads and writes both resolve from its own default branch, and
+  // pointing them at data_branch would name a branch that does not exist there.
   if(_ref&&(owner||OWNER)===OWNER&&(repo||REPO)===REPO)url+='?ref='+encodeURIComponent(_ref);
   var res=await fetch(url,Object.assign({cache:'no-store'},opts,{headers:Object.assign(headers,opts.headers||{})}));
   if(!res.ok){
     var _em='GitHub API '+res.status+': '+res.statusText;
     try{var _eb=await res.json();if(_eb&&_eb.message&&_eb.message!=='Not Found')_em+=' — '+_eb.message;}catch(e){}
-    if(_ref)_em+=' (dataref='+_ref+')';
+    if(_ref)_em+=' ('+(_refLabel||'ref')+'='+_ref+')';
     throw new Error(_em);
   }
   return res.json();
+}
+// READ path. May target a preview branch (public repo only) — display only.
+async function ghFetch(path,opts,owner,repo){
+  return _ghFetchRef(path,opts,owner,repo,_dataRef(),'dataref');
+}
+// WRITE path. The blob sha handed to a PUT must come from the branch that PUT
+// targets. ghFetch resolves the read-side preview ref, which defaults to the
+// repo's default branch — so with data_branch: staging it was reading a sha from
+// main and submitting it against staging. That is only valid while the two are in
+// sync, and it stops being true for as long as a bot commit sits on staging
+// waiting for auto-promote to fast-forward main. Every such write raced.
+async function ghFetchForWrite(path,opts,owner,repo){
+  return _ghFetchRef(path,opts,owner,repo,dataBranch(),'branch');
 }
 function _decodeB64(c){return decodeURIComponent(escape(atob(c.replace(/\n/g,''))));
 }
@@ -682,7 +697,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       await _savePrivateSidecar(CURRENT_PRIVATE_PATH,['Show Date','Artist'],{'Show Date':currentRows[rowIdx]['Show Date'],'Artist':currentRows[rowIdx]['Artist']},field,newVal);
       currentRows[rowIdx][field]=newVal;
     } else if(fileKey==='current'){
-      var fd=await ghFetch(CURRENT_PATH);
+      var fd=await ghFetchForWrite(CURRENT_PATH);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
       var rows=parseTsv(raw);
@@ -694,7 +709,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       await _savePrivateSidecar(POTENTIAL_PRIVATE_PATH,['Artist','Date'],{'Artist':potentialRows[rowIdx]['Artist'],'Date':potentialRows[rowIdx]['Date']},field,newVal);
       potentialRows[rowIdx][field]=newVal;
     } else if(fileKey==='potential'){
-      var fd=await ghFetch(POTENTIAL_PATH);
+      var fd=await ghFetchForWrite(POTENTIAL_PATH);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
       var rows=parseTsv(raw);
@@ -705,7 +720,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
       var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+POTENTIAL_PATH,{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'potential: update '+msgArtist+' '+field,content:btoa(unescape(encodeURIComponent(serializeTsv(rows,headers)))),sha:fd.sha,branch:dataBranch()})});
       if(!res.ok)throw new Error(await res.text());
     } else if(fileKey==='fasttrack'){
-      var fd=await ghFetch(FAST_TRACK_PATH);
+      var fd=await ghFetchForWrite(FAST_TRACK_PATH);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
       var rows=parseFastTrack(raw);
@@ -716,7 +731,7 @@ async function saveEdit(cellId,fileKey,rowIdx,field){
     } else if(fileKey.startsWith('history:')){
       var yr=parseInt(fileKey.split(':')[1]);
       var histPath='data/history/'+yr+'.tsv';
-      var fd=await ghFetch(histPath);
+      var fd=await ghFetchForWrite(histPath);
       var raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
       var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
       var rows=parseTsv(raw);
@@ -1094,7 +1109,7 @@ function _pmStep(n,msg,cls){var el=document.getElementById('pm-steps');if(!el)re
 // chronological position, committed to staging via dataBranch().
 async function _purchaseAppendPublic(r,form,iso){
   var pat=localStorage.getItem(PAT_KEY);if(!pat)throw new Error('no auth');
-  var fd=await ghFetch(CURRENT_PATH);
+  var fd=await ghFetchForWrite(CURRENT_PATH);
   var raw=_decodeB64(fd.content),headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();});
   var rows=parseTsv(raw);
   var nr={};headers.forEach(function(h){nr[h]='-';});
@@ -1329,7 +1344,7 @@ function renderPotential(){
 async function handleRevoke(idx){
   if(!confirm('Remove this Sell row from potentials? This cannot be undone.'))return;
   try{
-    var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+    var fd=await ghFetchForWrite(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
     var _target=potentialRows[idx];
     var _fi=rows.findIndex(function(r){return r['Artist']===_target['Artist']&&r['Date']===_target['Date'];});
@@ -1345,7 +1360,7 @@ async function handleDecisionChange(select){
   var idx=parseInt(select.dataset.row),newVal=select.value,ind=document.getElementById('save-'+idx);
   ind.textContent='…';ind.className='save-indicator';
   try{
-    var fd=await ghFetch(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
+    var fd=await ghFetchForWrite(POTENTIAL_PATH),raw=decodeURIComponent(escape(atob(fd.content.replace(/\n/g,''))));
     var headers=raw.split('\n')[0].split('\t').map(function(h){return h.trim();}),rows=parseTsv(raw);
     var _target=potentialRows[idx];
     var _fi=rows.findIndex(function(r){return r['Artist']===_target['Artist']&&r['Date']===_target['Date'];});
@@ -1546,7 +1561,7 @@ async function commitConfig(){
   try{jsyaml.load(ta.value);}catch(e){st.textContent='YAML error (not committed): '+e.message;return;}
   st.textContent='committing...';
   try{
-    var fd=await ghFetch('config.yaml');
+    var fd=await ghFetchForWrite('config.yaml');
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha,branch:dataBranch()})});
     if(!res.ok)throw new Error(await res.text());
     st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
