@@ -111,11 +111,13 @@ python3 tools/photos/show_photos.py audit          # read-only: what does not li
 python3 tools/photos/show_photos.py sync --dry-run # plan album/link materialisation
 python3 tools/photos/show_photos.py sync --write   # apply, and write the library rows
 python3 tools/photos/show_photos.py add --asset <id-or-link> --show 2026-08-25 \
-    --kind memorabilia --artist "Ghalia Volt" --subtype pick --signed --write
+    --artist "Ghalia Volt" --subtype pick --signed --write   # kind comes from the upload album
 ```
 
+- **Filing from the phone** goes through one `Photos:` issue per show (template: `.github/ISSUE_TEMPLATE/photo.md`), one comment per photo, link first, then tokens: `artist="..."`, `subtype=LEAF`, `signed`, `detail`, `close`. The kind is never typed - it is the upload album the photo sits in. `subtype` is exactly one of `setlist cd vinyl poster pick ticket autograph-book photo-print hat other`; anything else is refused with the list.
+
 - **Album rules** (the docstring in `show_photos.py` is authoritative): one show album per date, `<date> <headliner>`, found by date prefix, always created; one artist album per photographed artist holding every photo from every night that artist was in frame; the five upload albums double as kind albums. Every album carries exactly one share link, minted on first need and reused forever — the stored library URL must never be re-minted.
-- **Memorabilia** never goes through a `Photo:` issue. `add --kind memorabilia --show <date>` with the show date stated (the capture date is the photo session), then record the item in `item_log.tsv`.
+- **Memorabilia** takes its show date from the issue title (or `--show`), never from the capture date - the capture date is the photo session. The picture is filed by the pipeline; the item is recorded separately in `item_log.tsv`.
 
 - **Shared-link defaults:** `allowDownload=true`, `showMetadata=false`, no expiry — viewers can save photos, but capture time/device/location EXIF stays private (parity with the old Google Photos shares).
 - **Taxonomy:** `tags --bootstrap` creates the standard facets — `kind/{with-artist,performance,memorabilia,selfie,crowd}`, `memorabilia/{setlist,cd,vinyl,poster,pick,ticket,autograph-book,photo-print,hat,other}`, and flat `signed`. Hat detail is a memorabilia subtype, not a kind. `show/<year>/<date>`, `artist/<slug>`, and `venue/<slug>` tags are created on demand via `tag`/`--ensure` (slugs must match the show-library slug rules).
