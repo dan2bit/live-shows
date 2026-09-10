@@ -15,10 +15,12 @@ Everything after that happens here.
 
   tag       Apply the tags recorded by `edit` to Immich.
 
-  add       One asset, end to end: tag it, put it in its show album, its
-            kind album and (when an artist is named) the artist album, and
+  add       One asset, end to end: tag it (kind from the upload album it
+            sits in unless stated), put it in its show album, its kind
+            album and (when an artist is named) the artist album, and
             report the links the library rows need. The issue-close
-            workflow calls this; memorabilia and portraits use it by hand.
+            workflow calls this once per comment; anything can also be
+            filed by hand with it.
 
   sync      Materialise tags into albums for the whole server: show/,
             artist/ and kind/. Ensure each album, add missing assets, mint
@@ -290,6 +292,22 @@ def _album_kinds():
             if hint in name:
                 out[a["id"]] = kind
     return out
+
+
+# memorabilia/* leaves, from the taxonomy immich.py bootstraps. A subtype
+# outside this list is refused rather than minted: the vocabulary is what
+# makes "everything that is a pick" answerable later.
+MEMORABILIA_SUBTYPES = tuple(t.split("/", 1)[1] for t in immich.MEMORABILIA_TAGS)
+
+
+def asset_kind(asset_id):
+    """The kind a photo was sorted into at upload, from which of the five
+    upload albums holds it. None when it sits in none of them, which is
+    the one case a human has to answer by moving the photo."""
+    for album_id, kind in _album_kinds().items():
+        if any(a["id"] == asset_id for a in immich.search_metadata(album_id=album_id)):
+            return kind
+    return None
 
 
 def gather(date, window_days=1):
@@ -837,20 +855,35 @@ def cmd_sync(args):
 
 # ── add ────────────────────────────────────────────────────────────────────
 
-def add_asset(asset_id, show, kind, artist=None, subtype=None, signed=False,
+def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False,
               detail=False, dry_run=False):
     """Tag one asset and place it in every album it belongs to.
 
-    Returns {"asset_id", "show_link", "artist", "artist_link"}; the caller
-    owns the library writes (the issue-close handler writes the show row
-    and the artist-albums.tsv row from these). Nothing here reads EXIF:
-    `show` is stated by the caller, which is what memorabilia needs."""
+    kind=None means "whichever upload album the photo sits in" - the
+    classification made on the phone, which the issue-close handler never
+    second-guesses. Returns {"asset_id", "kind", "show_link", "artist",
+    "artist_link"}; the caller owns the library writes (the issue-close
+    handler writes the show row and the artist-albums.tsv row from these).
+    Nothing here reads EXIF: `show` is stated by the caller, which is what
+    memorabilia needs."""
     row = find_show(show)
     if not row:
         raise SystemExit(f"No show row for {show}. Checked "
                          "live_shows_current.tsv and data/history/*.tsv.")
+    if kind is None:
+        kind = asset_kind(asset_id)
+        if kind is None:
+            raise SystemExit("this photo is in none of the five upload albums, so its "
+                             "kind cannot be derived - move it into one in Immich "
+                             "(Guitar gods / Player portraits / Concert memorabilia / "
+                             "Preshow selfies / Crowds) or pass --kind")
+        print(f"kind {kind} (from the upload album)")
     if kind not in KIND_ALBUM_NAMES:
         raise SystemExit(f"kind must be one of {', '.join(KIND_ALBUM_NAMES)}")
+    if subtype and subtype not in MEMORABILIA_SUBTYPES:
+        raise SystemExit(f"subtype must be one of: {', '.join(MEMORABILIA_SUBTYPES)}")
+    if subtype and kind != MEMORABILIA_KIND:
+        raise SystemExit("subtype only applies to memorabilia")
     venue = show_venue(row)
     paths = [f"show/{show}", f"kind/{kind}"]
     slug = None
@@ -882,6 +915,7 @@ def add_asset(asset_id, show, kind, artist=None, subtype=None, signed=False,
     name = artist_album_name(slug, {slug: artist}) if slug else None
     return {
         "asset_id": asset_id,
+        "kind": kind,
         "show_link": result["shows"].get(show, ""),
         "artist": name,
         "artist_link": result["artists"].get(name, "") if name else "",
@@ -1346,11 +1380,12 @@ def main():
                    help="asset id, or the photo's own /share/ link")
     p.add_argument("--show", required=True, metavar="DATE",
                    help="the show date - stated, never derived from EXIF")
-    p.add_argument("--kind", required=True, choices=sorted(KIND_ALBUM_NAMES))
+    p.add_argument("--kind", choices=sorted(KIND_ALBUM_NAMES),
+                   help="default: whichever upload album the photo is in")
     p.add_argument("--artist", metavar="NAME",
                    help="who is in frame; omit for crowd/selfie/anonymous memorabilia")
-    p.add_argument("--subtype", metavar="LEAF",
-                   help="memorabilia/* leaf, e.g. pick or setlist")
+    p.add_argument("--subtype", choices=MEMORABILIA_SUBTYPES, metavar="LEAF",
+                   help="memorabilia only: " + ", ".join(MEMORABILIA_SUBTYPES))
     p.add_argument("--signed", action="store_true")
     p.add_argument("--detail", action="store_true")
     p.add_argument("--write", action="store_true",
