@@ -53,7 +53,7 @@ SAMPLE_MAP = {
     "sample-files/show_goals/hat_eligibility-sample.tsv": "data/show_goals/hat_eligibility.tsv",
     "sample-files/show_goals/autograph_books_eligibility-sample.tsv": "data/show_goals/autograph_books_eligibility.tsv",
     "sample-files/show_goals/artist-albums-sample.tsv": "data/show_goals/artist-albums.tsv",
-    "sample-files/show_goals/artist-photos-sample.tsv": "data/show_goals/artist-photos.tsv",
+    "sample-files/show_goals/kind-albums-sample.tsv": "data/show_goals/kind-albums.tsv",
     "sample-files/show_goals/book_signatures-sample.tsv": "data/show_goals/book_signatures.tsv",
     "sample-files/show_goals/hat_signatures-sample.tsv": "data/show_goals/hat_signatures.tsv",
 }
