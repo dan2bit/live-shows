@@ -45,6 +45,10 @@ Dedupe on `id`. Field mapping to the schema above:
 Sanity gate: compare the row count against the prior month before saving. A result
 near 36 or 72 means the pagination loop did not run and the file is partial.
 
+This view is personalised to the rhbl follow graph, so it needs the logged-in
+session. It cannot be scraped headless - without the session you get either an
+error or a generic DC listing that looks plausible and silently is not yours.
+
 **Establish the date from a source other than the container clock.** The sandbox
 clock has been observed running days behind wall time, which silently mis-dates
 provenance notes and "days until show" math. Cross-check against the newest dated
@@ -76,11 +80,27 @@ you watch it and why a scroll-and-scrape stops early at an arbitrary date:
 https://www.hereforthebands.com/jc.php?region=1&page=ALL&date=YYYY-MM-DD
 ```
 
-`region=1` is DC. Returns JSON shaped `{ "<date>": { "<venue>": { venue_url, shows: [...] } } }`
+Returns JSON shaped `{ "<date>": { "<venue>": { venue_url, shows: [...] } } }`
 - note the payload is itself keyed by the date, so unwrap that layer before reading
 venues. Empty days return `{}`. Loop day by day from today; Sep 2026 ran to
 2027-07-16 before the tail went empty (191 populated days, 1551 rows). Decode HTML
-entities in venue and show names. `venue_url` is sometimes absent - leave it blank.
+entities in venue and show names (`&ndash;` and `&amp;` arrive raw). `venue_url` is
+sometimes absent - leave it blank.
+
+**`region` is a bitmask, not a rotating id** (verified 2026-09-11): dc=1, bal=2,
+wd=4, phi=8. So `region=3` returns DC **and** Baltimore in one pass. The `■`
+toggles in the site's region box read 14/13/11/7 - those are 15 minus each bit,
+i.e. "everything except this one", computed from current selection state, which is
+what makes the ids look like they rotate. The named region links are stable.
+
+Every scrape through 2026-09 used `region=1`, so Baltimore-area rooms that appear
+in potentials and history (The 8x10, Ottobar, Baltimore Soundstage) have never been
+in the HFTB half of the diff. Switching to `region=3` closes that - but the first
+`region=3` file diffed against a `region=1` prior month reports every Baltimore act
+as new. Re-baseline deliberately rather than reading that as signal.
+
+**Works headless** - plain HTTP, no cookies, normal User-Agent (verified
+2026-09-11). Unlike the BIT view above, nothing here is personalised.
 
 Caution: the Artist column holds an entire bill, comma-separated ("Cheekface, Apes
 Of The State"). Tokenize before comparing against tracking files or the join silently
@@ -88,7 +108,13 @@ misses nearly everything - see websrc_diff.py.
 
 *Venue calendars scrape MONTHLY*
 
-1. ask Claude Desktop for the calendar URLs of venues in data/venues.tsv whose Calendar Coverage includes "Scrape"
+1. ask Claude Desktop for the calendar URLs of venues in data/venues.tsv whose `Coverage` column contains `scrape`
+
+   (This replaced the old free-text `Calendar Coverage` column in 2026-09. `Coverage`
+   is a pipe-separated controlled vocabulary - `hftb`, `email`, `scrape`, `watch`,
+   `artist-platform`, `none` - so this is now an exact membership test rather than a
+   substring match on prose. `Newsletter Source`, `Subscription` and `Coverage Checked`
+   carry the rest of what that column used to imply.)
 
 As of 2026-09-07 that is three venues: Collective Encore, Hub City Vinyl, and
 Bethesda Theater. None of the three publishes prices on its calendar page, and
