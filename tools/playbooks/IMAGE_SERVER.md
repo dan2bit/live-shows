@@ -10,8 +10,23 @@ Operational runbook for the still-photo **image server** — the Immich instance
 - **DNS:** Cloudflare (free plan).
 - **Registrar:** Cloudflare Registrar. Registered 2026-08-19 through **2027-08-20**, auto-renew **ON**. Billing alerts → `redhat.bootlegs@gmail.com`.
 - **Records:**
-  - `www` / apex → GitHub Pages (the live-shows site). **Not yet wired** — the site still serves at the default `dan2bit.github.io` Pages URL. When wired, keep these **DNS-only (grey cloud)** so Pages can provision its own HTTPS cert without Cloudflare intercepting the ACME challenge.
+  - **apex** → GitHub Pages (the live-shows site). **Live**: four A records to `185.199.108.153`, `.109.153`, `.110.153`, `.111.153`, **DNS-only (grey cloud)**. Pages serves the site and issues its own Let's Encrypt cert.
+  - `www` → GitHub Pages. CNAME to `dan2bit.github.io`, **DNS-only (grey cloud)**. Not canonical and not wanted as a hostname — it exists because Pages runs a companion DNS check on `www` whenever the primary is an apex, reports `InvalidDNSError` when no record exists, and can withhold the certificate over it. With the record present, Pages folds `www` into the cert and redirects it to the apex on its own (the repo-root `CNAME` file names the apex as canonical).
   - `photos.redhat-bootlegs.net` → the Immich pod. **Live** (2026-08-22): CNAME to `natural-dodo.pikapod.net`, **DNS-only (grey cloud)**, registered as a custom domain in the PikaPods pod settings (PikaPods issues the Let's Encrypt cert). Grey cloud is required — PikaPods' domain verification and cert issuance need the CNAME visible in DNS and traffic hitting the pod directly; a proxied (orange) record masks the CNAME and breaks both. Add the Cloudflare record **first**, then add the domain in PikaPods (it verifies the CNAME at add-time).
+  - **Sending records** (`send.` subdomain, plus DKIM) are written by Resend's Cloudflare integration for outbound mail from `redhat-bootlegs.net`. Do not hand-edit them. Note that `send.redhat-bootlegs.net` is a bounce-handling record set, **not** a sending identity — mail is sent from the apex.
+
+### Proxy setting: grey vs orange
+
+The rule is **not** "always grey cloud", though every record above happens to be grey:
+
+- **Grey cloud (DNS only)** for anything that *serves content and owns its own certificate* — Pages and PikaPods both need to complete their own ACME challenge, and a proxied record masks the origin so issuance silently hangs "pending" with no error.
+- **Orange cloud (proxied)** for *redirect-only hostnames*, which have no origin at all. A Cloudflare redirect rule cannot fire on a request Cloudflare never sees, so grey there resolves to nothing.
+
+Getting either backwards fails confusingly rather than loudly.
+
+### Moving the site to a new origin resets browser storage
+
+The in-page editor keeps its GitHub PAT in `localStorage`, which browsers scope per **origin**. `https://dan2bit.github.io` and `https://redhat-bootlegs.net` are different origins, so the PAT (and any other client-side state) must be re-entered once after the cutover. Nothing is lost — the old value still sits under the old origin, which is itself worth clearing, since a working token in a browser store nobody visits is easy to forget about.
 
 ## Hosting — PikaPods
 
