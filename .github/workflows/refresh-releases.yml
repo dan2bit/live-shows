@@ -23,6 +23,15 @@ name: Daily release refresh (spotify_cache)
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote. data/artist_spotify.json promoting to main cascade-triggers
 # artist-modal-index.yml — expected and desired. History: docs/ISSUE_LOG.md.
+#
+# The digest step runs BEFORE the commit step, and that order is load-bearing:
+# release_digest.py compares the working copy against HEAD, which only shows the
+# sweep's findings while the cache is flushed but not yet committed. Move it
+# after the commit and it reports nothing every time.
+#
+# Mail goes out only when the digest found something. Silence on a quiet day is
+# the point - an alert channel that mails you to say nothing happened is one you
+# stop reading.
 
 on:
   schedule:
@@ -86,6 +95,44 @@ jobs:
             exit 0
           fi
           python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
+
+      - name: Mail the release digest
+        # always(): a rate-limit bail exits the refresh step non-zero, but the
+        # entries pulled before it bailed are real and flushed - they deserve
+        # reporting. Mirrors the commit step's reasoning below.
+        #
+        # Reads the flushed cache against HEAD, so it cannot report entries a
+        # bail left unsaved. No API calls: title, type and the Spotify link are
+        # already in the cache.
+        if: always()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -euo pipefail
+          python3 scripts/release_digest.py > /tmp/release_digest.txt || {
+            echo "digest failed - not fatal, the sweep's work is still committed below"
+            exit 0
+          }
+          cat /tmp/release_digest.txt
+
+          # "NEW RELEASES (3)" -> 3; "No new releases." -> no match -> 0
+          COUNT="$(sed -n 's/^NEW RELEASES (\([0-9]\+\)).*/\1/p' /tmp/release_digest.txt | head -1)"
+          COUNT="${COUNT:-0}"
+
+          if [ "$COUNT" = "0" ]; then
+            echo "No new releases - no mail sent."
+            exit 0
+          fi
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::$COUNT new release(s) found but RESEND_API_KEY is unset - digest not mailed."
+            exit 0
+          fi
+
+          SUBJECT="[releases] $COUNT new"
+          [ "$COUNT" = "1" ] || SUBJECT="[releases] $COUNT new releases"
+          python3 scripts/notify_email.py \
+            --subject "$SUBJECT" \
+            --body-file /tmp/release_digest.txt
 
       - name: Commit to staging if changed
         # always(): a real 429 exits the refresh step non-zero, and without
