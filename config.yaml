@@ -33,7 +33,7 @@ site:
   # Brand/identity. Asset paths below are RELATIVE to repo root and are expanded in
   # app.js to absolute https://<owner>.github.io/<repo>/<path> URLs at apply time, to
   # satisfy github.io Set pages_base ONLY if you have a custom domain or similar setup
-  # pages_base: https://example.com
+  pages_base: https://redhat-bootlegs.net
   favicon: static/favicon.png
   brand_icon: static/brand-hat.png
   about_handle: "About @dan2bit"
@@ -237,7 +237,7 @@ show_goals:
 # Title, handle, hero image, and hero alt mirror the site.* keys above.
 meta:
   description: "A live-music tracker for DC/MD/VA — blues, blues-rock, Americana, and roots at small venues. Where I've been, where I'm headed, and bootlegs from the shows."   # also in index.html: <meta name="description">, og:description, twitter:description
-  canonical: https://dan2bit.github.io/live-shows/   # <link rel="canonical">, og:url
+  canonical: https://redhat-bootlegs.net/   # <link rel="canonical">, og:url
   theme_color: "#b3242b"        # browser-chrome tint — deliberately separate from theme.color_accent
   og_image_width: 960           # dimensions of site.about_hero_image, for og:image:width/height
   og_image_height: 540
