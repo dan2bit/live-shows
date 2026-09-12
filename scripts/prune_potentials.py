@@ -11,6 +11,13 @@ All decisions are pruned when past-dated. Pass rows are the normal case.
 Buy/Choose rows pruned without being downgraded first are flagged in the
 NAR Source field as 'pruned-potentials-buy' or 'pruned-potentials-choose'
 for future triage. Sell rows are also pruned but not added to NAR.
+
+An artist already in artists.tsv (seen live) or follows_master.tsv (approved
+to follow) never gets a NAR row: NAR is the precursor set, and a known artist
+re-entering it through the prune path is the drift this script must not
+create. The "already known" test uses the same name normalization and alias
+map as the rest of the repo, so "Ghalia Volt Band" is recognised as
+"Ghalia Volt".
 """
 
 import re
@@ -18,11 +25,36 @@ import sys
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from name_forms import norm, variant_keys  # noqa: E402
+
 TODAY = date.today()
 POTENTIALS_PATH = Path("data/live_shows_potential.tsv")
 NAR_PATH = Path("tools/research/follows/new_artist_research.tsv")
 ARTISTS_PATH = Path("data/artists.tsv")
 FOLLOWS_MASTER_PATH = Path("tools/research/follows/follows_master.tsv")
+ALIASES_PATH = Path("data/recommend_aliases.tsv")
+TIER_COLUMN = ("Proposed Tier", "Category")  # first one present wins
+
+
+def load_aliases() -> dict[str, str]:
+    out: dict[str, str] = {}
+    if not ALIASES_PATH.exists():
+        return out
+    for line in ALIASES_PATH.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) >= 2 and parts[0] != "Alias":
+            out[norm(parts[0])] = norm(parts[1])
+    return out
+
+
+def name_keys(name: str, aliases: dict[str, str]) -> set[str]:
+    """Alias-aware identity keys for one artist name."""
+    keys = variant_keys(name)
+    keys |= {k.replace(" and ", " ") for k in keys}
+    return keys | {aliases[k] for k in keys if k in aliases}
 
 
 def extract_last_date(date_str: str) -> date | None:
@@ -78,7 +110,10 @@ def nar_row_for(pruned: dict, nar_headers: list[str]) -> dict:
     row = {h: "" for h in nar_headers}
     row["Artist"] = artist
     row["Signal"] = f"pruned-potentials {TODAY.isoformat()}"
-    row["Category"] = tier
+    for col in TIER_COLUMN:
+        if col in nar_headers:
+            row[col] = tier
+            break
     row["Overview & Niche"] = overview
     row["Status"] = "pending-review"
     row["Source"] = nar_source_for(decision)
@@ -93,19 +128,21 @@ def main() -> int:
     pot_headers, pot_rows = read_tsv(POTENTIALS_PATH)
     nar_headers, nar_rows = read_tsv(NAR_PATH) if NAR_PATH.exists() else ([], [])
 
-    existing_nar_artists = {r.get("Artist", "").lower() for r in nar_rows}
+    aliases = load_aliases()
+    existing_nar_keys: set[str] = set()
+    for r in nar_rows:
+        existing_nar_keys |= name_keys(r.get("Artist", ""), aliases)
 
     # An artist who's already been seen (artists.tsv) or is already tracked
     # (follows_master.tsv) doesn't belong in NAR just because a potentials
     # row for them got pruned; NAR is for *new*-artist discovery, not a
     # place a known artist can end up via the Pass/pruning path.
-    known_artists: set[str] = set()
-    if ARTISTS_PATH.exists():
-        _, artists_rows = read_tsv(ARTISTS_PATH)
-        known_artists |= {r.get("Artist", "").lower() for r in artists_rows}
-    if FOLLOWS_MASTER_PATH.exists():
-        _, follows_rows = read_tsv(FOLLOWS_MASTER_PATH)
-        known_artists |= {r.get("Artist", "").lower() for r in follows_rows}
+    known_keys: set[str] = set()
+    for path in (ARTISTS_PATH, FOLLOWS_MASTER_PATH):
+        if path.exists():
+            _, rows = read_tsv(path)
+            for r in rows:
+                known_keys |= name_keys(r.get("Artist", ""), aliases)
 
     kept = []
     pruned_rows = []
@@ -136,14 +173,15 @@ def main() -> int:
         for r in pruned_rows:
             if r.get("Decision", "").lower() == "sell":
                 continue
-            artist = r.get("Artist", "").lower()
-            if not artist or artist in existing_nar_artists:
+            artist = r.get("Artist", "").strip()
+            keys = name_keys(artist, aliases)
+            if not artist or keys & existing_nar_keys:
                 continue
-            if artist in known_artists:
-                print(f"  skip (already known): {r.get('Artist')}")
+            if keys & known_keys:
+                print(f"  skip (already known): {artist}")
                 continue
             nar_rows.append(nar_row_for(r, nar_headers))
-            existing_nar_artists.add(artist)
+            existing_nar_keys |= keys
             added += 1
             print(f"  + Added to NAR as pending-review: {r.get('Artist')} [{nar_source_for(r.get('Decision',''))}]")
         if added:

@@ -13,6 +13,11 @@
 #     docs/ISSUE_LOG.md). BLOCKING on a staging push and on any PR into
 #     main/staging, but only for the files the change touched; the full-repo
 #     scan stays advisory.
+#   - reconcile_follows.py --hygiene — the follows-pipeline invariants that need
+#     only the repo (NAR/follows_master overlap, NAR/artists overlap, fast_track
+#     rows with no follows_master row). ADVISORY everywhere: a violation is a
+#     ledger to tidy, not a push to reject, and the follows-watch mail gives it
+#     a reader.
 #
 # WHERE IT BLOCKS: a staging push and a PR into main/staging are the blocking
 # contexts. A direct push to main runs everything advisory, so a pre-existing
@@ -150,3 +155,6 @@ jobs:
           else
             python scripts/check_evergreen.py
           fi
+
+      - name: Follows-pipeline invariants
+        run: python tools/research/reconcile_follows.py --hygiene

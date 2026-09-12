@@ -14,9 +14,7 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 
 **A — Web-src discovery diff.** Cross-reference the fresh BIT DC Recommends and HereForTheBands (HFTB) exports against the tracking files to catch newly-surfaced artists worth tiering.
 
-**B — BIT/Seated roster refresh.** Compare the current BIT/Seated follow roster against `tools/research/follows/follows_master.tsv` to catch:
-- Artists added to BIT/Seated who are not yet in `follows_master.tsv`
-- Artists in `follows_master.tsv` marked as BIT/Seated follows who are missing from the actual roster
+**B — BIT/Seated roster refresh.** Reconcile the rhbl account against `tools/research/follows/follows_master.tsv` with `tools/research/reconcile_follows.py`: artists followed with no follows_master row, rows flagged Y that are not followed, followed artists whose flag is blank, and the three repo-only pipeline invariants (see `FOLLOWS_PIPELINE.md`).
 
 **C — Terminal-state rollover (#277).** Migrate attended rows that have reached terminal state (setlist + playlist present, no open playlist/photo issue) from `live_shows_current.tsv` to `history/<year>.tsv`, with their private twins archived to `history_private/<year>.tsv` in the private repo.
 
@@ -30,17 +28,17 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 
 **B — BIT/Seated roster refresh**
 
-4. **Export BIT and Seated rosters** from the respective apps/sites and save to `web-src/` with the current date in the filename.
-5. **Diff the new exports** against the most recent previous exports:
-   ```bash
-   diff web-src/rhbl-bandsintown-PREV.tsv web-src/rhbl-bandsintown-NEW.tsv
-   diff web-src/rhbl-seated-PREV.tsv web-src/rhbl-seated-NEW.tsv
-   ```
-6. **Reconcile against `tools/research/follows/follows_master.tsv`:**
-   - For each new artist in the export not in follows_master: add a row with appropriate tier
-   - For each artist missing from the export but marked Y in follows_master: investigate (unfollowed? account issue?)
-   - **Seated exception:** artists flagged `NOT ON SEATED` in follows_master notes are expected gaps — do not surface them as actionable.
-7. **Update `tools/research/follows/follows_master.tsv`** as needed and commit.
+4. **Refresh both exports** per `web-src/scraping_tasks.md` (BIT via the paged endpoint, Seated from the DOM) into `tools/research/follows/rhbl-bandsintown.tsv` and `rhbl-seated.tsv`, overwriting. Commit with the export date in the message.
+5. **Run the reconcile** from the repo root: `python3 tools/research/reconcile_follows.py`. Empty output means the account and the ledgers agree. `--json` for machine use; `--footer` to see the export ages regardless.
+6. **Act on each section** - every line is one of a fixed set of moves:
+   - *followed, no follows_master row* → promote (a `follows_master` row, tiered, with `src:` / `tour:` tokens; delete the NAR row if there is one) or unfollow. Never flag a NAR row - NAR rows are not followed.
+   - *flagged Y, not followed* → follow now, or take the flag off.
+   - *followed, flag blank* → set the flag. If the platform uses a different display name, add a `data/recommend_aliases.tsv` row rather than editing the export.
+   - *Invariant 1-3* → see `FOLLOWS_PIPELINE.md`.
+   - `NOT ON SEATED` notes are expected gaps and are listed separately; a note that says so for an artist who is in fact followed is a note to fix.
+7. **Re-run until it prints nothing**, then commit `follows_master.tsv` (and any NAR deletions, alias rows, hat-eligibility rows) to `staging`.
+
+Between monthly runs, `follows-watch.yml` mails a reminder on every push to `main` that adds a `follows_master` or `fast_track` row, and `data-hygiene.yml` runs the invariants advisory. Neither replaces this pass: only a fresh export shows what the account actually follows.
 
 **C — Terminal-state rollover**
 
@@ -193,12 +191,15 @@ https://www.qobuz.com/us-en/interpreter/<kebab-slug>/download-streaming-albums
 ### NAR row format
 
 ```
-Artist | Signal | Category | Official Site | Bandcamp | Overview & Niche | USA Touring | Most Recent Release | Status | Source
+Artist | Signal | Proposed Tier | Genre | Official Site | Bandcamp | Overview & Niche | USA Touring | Most Recent Release | Status | Source
 ```
 
 - Signal: source identifier (e.g. `festival-lineup 2026`, `gnoosic 2x unprompted`)
+- Proposed Tier: a tier word or blank; Genre: the kind of act (one column until 2026-09)
 - Status: `pending-review` until evaluated
 - Source: where discovered
+
+NAR rows are candidates, not follows - see `FOLLOWS_PIPELINE.md` for what a promotion writes.
 
 ---
 
@@ -264,8 +265,8 @@ Review the `pending-review` rows in NAR and assign follow tiers or mark as pass.
    - Recent releases
    - Online presence (official site, Spotify, YouTube)
 3. Assign a tier (Strong, Medium-Strong, Medium, Low) or mark as pass
-4. Update `Status` to `active` or `pass` and add research notes to Overview & Niche
-5. For artists assigned a tier, add to `tools/research/follows/follows_master.tsv`
+4. Rows still under research: `Status = active`, research notes into Overview & Niche, a tier word into Proposed Tier
+5. Rows assigned a tier: add to `tools/research/follows/follows_master.tsv` and **delete the NAR row**, carrying the `src:` / `tour:` tokens per `FOLLOWS_PIPELINE.md`; then follow on the platforms (the `follows-watch` mail will remind). Rows marked pass: delete the NAR row.
 
 ### Tier guidelines
 
