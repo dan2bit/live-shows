@@ -206,7 +206,7 @@ The full, current catalog — triggers, behavior, and conventions — lives in
 | Pipeline & gating | `private-data-guard`, `auto-promote` |
 | Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
 | Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
-| Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos` |
+| Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos`, `data-hygiene`, `follows-watch` |
 
 `close-playlist-issue` and `close-photo-issue` both parse the issue body/comment
 against the structure their respective `.github/ISSUE_TEMPLATE/*.md` file defines
@@ -219,6 +219,11 @@ top of missing pipeline steps. Both failure modes trace to the same root cause
 Bot commits do **not** use `[skip ci]` — auto-promote is wanted; retrigger loops
 are prevented by excluding each bot's output file from its own trigger paths.
 All bot pushes rebase onto `staging` before pushing to prevent bot-vs-bot races.
+
+**Mail-to-inbox workflows** (`refresh-releases`, `follows-watch`) send through
+`scripts/notify_email.py` (Resend, `RESEND_API_KEY` secret) to the rhbl inbox,
+where Gmail filters label them for the Inbox+Data routines. An empty report
+sends nothing.
 
 **`cache-bust` note:** fires on any of the four JS/CSS files (`app.js`,
 `recommend.js`, `artist-modal.js`, `styles.css`). After any cache-bust run,
