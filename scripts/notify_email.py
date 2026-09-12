@@ -51,6 +51,12 @@ API = "https://api.resend.com/emails"
 DEFAULT_FROM = "alerts@send.redhat-bootlegs.net"
 DEFAULT_TO = "redhat.bootlegs@gmail.com"
 
+# api.resend.com sits behind Cloudflare, which blocks urllib's default
+# "Python-urllib/3.x" on client fingerprint and returns 403 with Cloudflare
+# error code 1010 - not a Resend error, and nothing in the response mentions
+# authentication, so it reads like a bad key. Any explicit User-Agent clears it.
+USER_AGENT = "live-shows-notify/1.0 (+https://github.com/dan2bit/live-shows)"
+
 
 def send(payload, api_key, timeout=30):
     req = urllib.request.Request(
@@ -59,6 +65,8 @@ def send(payload, api_key, timeout=30):
         headers={
             "Authorization": "Bearer %s" % api_key,
             "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": USER_AGENT,
         },
         method="POST",
     )
@@ -69,7 +77,15 @@ def send(payload, api_key, timeout=30):
         detail = e.read().decode("utf-8", "replace")[:400]
         # Deliberately does not echo the key or the Authorization header - CI
         # logs are readable by anyone who can read the repo.
-        raise SystemExit("FATAL: Resend returned %s: %s" % (e.code, detail))
+        hint = ""
+        if e.code == 403 and "1010" in detail:
+            hint = ("\n  This is Cloudflare in front of Resend rejecting the "
+                    "client fingerprint, not an auth failure. Check the "
+                    "User-Agent header is being sent.")
+        elif e.code in (401, 403):
+            hint = ("\n  Check RESEND_API_KEY is a sending key and that the "
+                    "From domain is verified in Resend.")
+        raise SystemExit("FATAL: Resend returned %s: %s%s" % (e.code, detail, hint))
     except (urllib.error.URLError, TimeoutError) as e:
         raise SystemExit("FATAL: could not reach Resend: %s" % e)
 
