@@ -15,10 +15,13 @@ name: Weekly HFTB refresh
 # back to the core-venue tier, which is a browse list rather than a decision
 # list.
 #
-# NO EMAIL YET. The digest lands in the job summary, which needs no credential.
-# Routing it to rhbl means putting an SMTP app password in repo secrets, and the
-# same question is open for the daily release digest. Answer it once for both
-# rather than twice differently. History: docs/ISSUE_LOG.md.
+# The digest is mailed to rhbl via scripts/notify_email.py (Resend, the
+# RESEND_API_KEY repository secret - an API key that can only push mail through
+# Resend, not a mailbox credential). The job summary still gets a copy; the mail
+# is what actually gets read between sessions.
+#
+# Quiet weeks send nothing. A weekly mail reporting that nothing happened is how
+# an alert channel teaches you to ignore it. History: docs/ISSUE_LOG.md.
 #
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote, with the rebase retry loop copied from the release-refresh
@@ -121,15 +124,66 @@ jobs:
             echo "No prior file to diff against - skipping." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          python3 tools/research/websrc_diff.py --source hftb \
+            --month "$MONTH" --prior "$PRIOR_LABEL" \
+            --file "$FILE" --prior-file "$PRIOR_FILE" > /tmp/hftb_diff.txt
+
           {
             echo '## Weekly HFTB diff'
             echo
             echo '```'
-            python3 tools/research/websrc_diff.py --source hftb \
-              --month "$MONTH" --prior "$PRIOR_LABEL" \
-              --file "$FILE" --prior-file "$PRIOR_FILE"
+            cat /tmp/hftb_diff.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+          # Counts come from --json, not from grepping the rendered report. The
+          # section headings are presentation; a formatting change would silently
+          # break a text parse, while the JSON carries the arrays themselves.
+          python3 tools/research/websrc_diff.py --source hftb \
+            --month "$MONTH" --prior "$PRIOR_LABEL" \
+            --file "$FILE" --prior-file "$PRIOR_FILE" --json > /tmp/hftb_diff.json
+
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          d = json.load(open('/tmp/hftb_diff.json'))
+          untracked = sum(len(d.get(k, [])) for k in (
+              'untracked_corroborated',
+              'untracked_single_source_core_venue',
+              'label_roster_hits'))
+          print('untracked=%d' % untracked)
+          print('tracked_new=%d' % len(d.get('tracked_new', [])))
+          PY
+
+      - name: Mail the weekly diff
+        # Skipped on a re-baseline for the same reason the diff step is: a region
+        # change makes every newly-covered act look new, and that is a coverage
+        # change rather than a week of announcements.
+        if: ${{ github.event.inputs.rebaseline != 'true' }}
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          UNTRACKED: ${{ steps.diff.outputs.untracked }}
+          TRACKED_NEW: ${{ steps.diff.outputs.tracked_new }}
+        run: |
+          set -euo pipefail
+          [ -f /tmp/hftb_diff.txt ] || { echo "No diff produced - nothing to mail."; exit 0; }
+
+          U="${UNTRACKED:-0}"
+          T="${TRACKED_NEW:-0}"
+
+          # websrc_diff always prints a header and counts, so notify_email's
+          # empty-body rule cannot suppress a quiet week on its own.
+          if [ "$U" = "0" ] && [ "$T" = "0" ]; then
+            echo "quiet week - no mail sent."
+            exit 0
+          fi
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::$U untracked / $T tracked-new found but RESEND_API_KEY is unset - digest not mailed."
+            exit 0
+          fi
+
+          SUBJECT="[hftb] $U untracked new ($(date -u +%Y-%m-%d))"
+          [ "$T" = "0" ] || SUBJECT="[hftb] $U untracked, $T tracked ($(date -u +%Y-%m-%d))"
+          python3 scripts/notify_email.py --subject "$SUBJECT" --body-file /tmp/hftb_diff.txt
 
       - name: Note the re-baseline
         if: ${{ github.event.inputs.rebaseline == 'true' }}
