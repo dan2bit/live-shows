@@ -16,9 +16,9 @@ name: Weekly HFTB refresh
 # list.
 #
 # NO EMAIL YET. The digest lands in the job summary, which needs no credential.
-# Routing it to rhbl means putting an SMTP app password in repo secrets - see
-# #338, where the same question is open for release alerts. Answer it once for
-# both rather than twice differently.
+# Routing it to rhbl means putting an SMTP app password in repo secrets, and the
+# same question is open for the daily release digest. Answer it once for both
+# rather than twice differently. History: docs/ISSUE_LOG.md.
 #
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote, with the rebase retry loop copied from the release-refresh
