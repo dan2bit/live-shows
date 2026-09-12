@@ -50,6 +50,85 @@ Two related monthly passes off the `web-src/` scrapes (see `web-src/scraping_tas
 
 ---
 
+## Workflow 1-W — Weekly HFTB Refresh
+
+**Frequency:** Weekly. Optional; Workflow 1-A remains the monthly pass of record.
+
+### Purpose
+
+HFTB is the most comprehensive geographic listing available, and its low signal
+ratio is the price of surfacing medium-tier and from-nowhere acts that fire from
+no other channel. The problem was never its worth - it was that a monthly export
+sits unread for 29 days, so an on-sale can open and close inside one cycle.
+
+This pass shortens the loop to a week without touching the monthly convention.
+
+### Why HFTB only
+
+`jc.php` is unauthenticated and unpersonalised, so `scrape_hftb.py` fetches it
+with a plain HTTP client - no browser, no session (verified 2026-09-11).
+
+**BIT recommends cannot be included and should not be attempted.** That view is
+personalised to the rhbl follow graph; without the session it returns either an
+error or a generic DC listing that looks plausible and is not ours. BIT stays on
+the monthly browser pass, which is also where it belongs - it derives from
+follows, so those artists already reach us by follow mail and release alerts
+(#338). It is the source least in need of freshening.
+
+**Cost of the split:** no two-source corroboration. The monthly pass produces a
+shortlist of acts appearing in *both* exports (27 in 2026-09); the weekly pass
+cannot. Single-source hits fall back to the core-venue tier, which is a browse
+list rather than a decision list. Expect the weekly output to be noisier per hit.
+
+### Steps
+
+1. **Stage the committed file before scraping.** `scrape_hftb.py` writes in
+   place, so the previous week's copy must be preserved first:
+   ```bash
+   cp tools/research/web-src/rhbl-hereforthebands-dc-$(date +%Y-%m).tsv /tmp/hftb-prev.tsv
+   ```
+   Getting this order wrong makes the diff compare the new file against itself
+   and report nothing new - which reads as a quiet week rather than a mistake.
+
+2. **Re-scrape in place.**
+   ```bash
+   python3 tools/research/web-src/scrape_hftb.py
+   ```
+   Defaults to `region=3` (DC + Baltimore) and walks until 45 consecutive empty
+   days. A full walk is ~350 requests, a few minutes. Expect roughly 2,200 rows
+   and 119 venues; the script refuses to write an empty file over a good one.
+
+3. **Diff against last week.** Both files share a month, so the `-YYYY-MM`
+   lookup cannot tell them apart - hence the explicit overrides:
+   ```bash
+   python3 tools/research/websrc_diff.py --source hftb \
+     --month $(date +%Y-%m) --prior last-week \
+     --file tools/research/web-src/rhbl-hereforthebands-dc-$(date +%Y-%m).tsv \
+     --prior-file /tmp/hftb-prev.tsv
+   ```
+   `--prior` is a display label only when `--prior-file` is given; it appears in
+   the report header and need not be a real month.
+
+4. **Triage** exactly as Workflow 1-A step 2-3: check newly-surfaced names against
+   all six tracking files, surface anything unmatched for a tier decision.
+
+5. **Commit** the refreshed scrape to `staging`. The file keeps its `-YYYY-MM`
+   name, so the monthly archive rotation is unaffected - the month-over-month
+   diff in Workflow 1-A still works, just against a fresher current-month file.
+
+### Notes
+
+- **The first run after a region change is not a week of announcements.** A
+  `region=3` file diffed against a `region=1` predecessor reports every Baltimore
+  act as new. Re-baseline deliberately and commit it undiffed.
+- The first weekly run after any re-baseline is also noisier than steady state,
+  since the tail shifts as well as the near term.
+- Row counts are only meaningful on a full walk. A short probe (`--days 3`)
+  returns ~60 rows/day because shows cluster in the near term, while the monthly
+  average is nearer 8/day.
+
+---
+
 ## Workflow 2 — Quarterly Artist Research
 
 **Frequency:** Quarterly (first run Jul 7, 2026)
