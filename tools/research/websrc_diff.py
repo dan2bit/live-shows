@@ -207,8 +207,19 @@ def read_rows(path):
     return rows
 
 
+# Explicit file overrides, set by --file / --prior-file. They exist for the
+# weekly run, which re-scrapes the CURRENT month's file in place and diffs it
+# against the copy that was committed last week - two files that share a month
+# and cannot be told apart by the -YYYY-MM convention.
+_FILE_OVERRIDE = {}
+
+
 def find_scrape(pattern, month):
     """Current month lives in web-src; the prior month has usually been archived."""
+    key = (pattern, month)
+    if key in _FILE_OVERRIDE:
+        p = Path(_FILE_OVERRIDE[key])
+        return p if p.exists() else None
     for base in (WEBSRC, ARCHIVE):
         p = base / (pattern % month)
         if p.exists():
@@ -229,6 +240,19 @@ def latest_month(pattern):
 def prior_month(month):
     y, m = (int(x) for x in month.split("-"))
     return "%04d-%02d" % (y - 1, 12) if m == 1 else "%04d-%02d" % (y, m - 1)
+
+
+def _display_path(path):
+    """Repo-relative when possible, absolute otherwise.
+
+    An explicit --file/--prior-file can legitimately point outside the repo -
+    a workflow stages last week's committed copy in a temp dir - and
+    Path.relative_to raises rather than falling back.
+    """
+    try:
+        return str(Path(path).resolve().relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 
 def load_scrape(source, month):
@@ -340,7 +364,7 @@ def analyse(month, prior, sources):
             continue
         prev, _ = load_scrape(src, prior)
         scrapes[src] = rows
-        present[src] = {"path": str(path.relative_to(ROOT)),
+        present[src] = {"path": _display_path(path),
                         "rows": len(rows),
                         "prior_rows": len(prev) if prev else 0,
                         "prior_found": prev is not None}
@@ -499,7 +523,20 @@ def main():
     ap.add_argument("--prior", help="YYYY-MM to compare against (default: month - 1)")
     ap.add_argument("--source", choices=["hftb", "bit", "both"], default="both")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--file", help="explicit path for the current-month scrape "
+                                   "(overrides the -YYYY-MM lookup)")
+    ap.add_argument("--prior-file", help="explicit path for the comparison scrape")
     args = ap.parse_args()
+
+    if (args.file or args.prior_file) and args.source == "both":
+        # Each override names one file, so it can only describe one source.
+        print("--file/--prior-file require an explicit --source (hftb or bit)",
+              file=sys.stderr)
+        return 2
+    if (args.file or args.prior_file) and not (args.month and args.prior):
+        print("--file/--prior-file require explicit --month and --prior labels",
+              file=sys.stderr)
+        return 2
 
     month = args.month or latest_month(BIT_PAT) or latest_month(HFTB_PAT)
     if not month:
@@ -507,6 +544,13 @@ def main():
         return 2
     prior = args.prior or prior_month(month)
     sources = ["hftb", "bit"] if args.source == "both" else [args.source]
+
+    if args.file or args.prior_file:
+        pat = HFTB_PAT if args.source == "hftb" else BIT_PAT
+        if args.file:
+            _FILE_OVERRIDE[(pat, month)] = args.file
+        if args.prior_file:
+            _FILE_OVERRIDE[(pat, prior)] = args.prior_file
 
     res = analyse(month, prior, sources)
 
