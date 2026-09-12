@@ -1,0 +1,117 @@
+# follows-watch - "you added someone, go follow them".
+#
+# Fires on a push to main that adds rows to the follow ledgers
+# (follows_master.tsv or fast_track.tsv). For each added artist it mails the
+# platforms still to be followed on, via scripts/follows_reminder.py and
+# scripts/notify_email.py (Resend; RESEND_API_KEY secret). A push that only
+# edits existing rows produces an empty report and no mail.
+#
+# Read-only: no commit step, contents: read. It also appends the follows
+# reconcile (tools/research/reconcile_follows.py) to the same mail when that
+# report is non-empty, so ledger-vs-platform drift has a reader; the
+# repo-only invariants additionally run advisory in data-hygiene.yml.
+#
+# main is the trigger rather than staging because auto-promote fast-forwards
+# main from staging, so github.event.before..github.sha is exactly the range
+# that landed; on staging the same range can include a guard-reset.
+#
+# The reminder is a nudge, not a check: the follows_master flag is set by hand
+# once the follow is done, and the monthly reconcile against a fresh platform
+# export (Workflow 1-B) is what closes the loop.
+name: follows-watch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/research/follows/follows_master.tsv"
+      - "data/fast_track.tsv"
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Ref to diff against (default HEAD~1)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: follows-watch
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The diff base must be reachable: the pushed range for a push event,
+          # HEAD~1 for a dispatch.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build the reminder
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='${{ github.event.inputs.base || github.event.before }}'
+          if [ -z "$base" ] \
+            || [ "$base" = "0000000000000000000000000000000000000000" ] \
+            || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            base="$(git rev-parse --verify -q 'HEAD~1' || true)"
+          fi
+          echo "diff base: ${base:-<none>}"
+          : > /tmp/follows_mail.txt
+          if [ -n "$base" ]; then
+            python3 scripts/follows_reminder.py --base "$base" --footer > /tmp/follows_reminder.txt
+            cat /tmp/follows_reminder.txt >> /tmp/follows_mail.txt
+          fi
+          python3 tools/research/reconcile_follows.py > /tmp/follows_reconcile.txt || true
+          if [ -s /tmp/follows_reconcile.txt ]; then
+            printf '\n\n== Reconcile against the committed platform exports ==\n\n' >> /tmp/follows_mail.txt
+            cat /tmp/follows_reconcile.txt >> /tmp/follows_mail.txt
+          fi
+          cat /tmp/follows_mail.txt
+          {
+            echo "### follows-watch"
+            echo
+            if [ -s /tmp/follows_mail.txt ]; then
+              echo '```'; cat /tmp/follows_mail.txt; echo '```'
+            else
+              echo "No added rows and no drift - nothing to report."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          # "- Name: add to ..." lines -> count
+          COUNT="$(grep -c '^- ' /tmp/follows_reminder.txt 2>/dev/null || true)"
+          echo "count=${COUNT:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Mail the reminder
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -s /tmp/follows_mail.txt ]; then
+            echo "Nothing to mail."
+            exit 0
+          fi
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::follows reminder ready but RESEND_API_KEY is unset - not mailed."
+            exit 0
+          fi
+          COUNT='${{ steps.report.outputs.count }}'
+          if [ "$COUNT" = "0" ]; then
+            SUBJECT="[follows] drift against the platform exports"
+          elif [ "$COUNT" = "1" ]; then
+            SUBJECT="[follows] 1 new - add to BIT/Seated"
+          else
+            SUBJECT="[follows] $COUNT new - add to BIT/Seated"
+          fi
+          python3 scripts/notify_email.py \
+            --subject "$SUBJECT" \
+            --body-file /tmp/follows_mail.txt
