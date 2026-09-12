@@ -46,32 +46,80 @@ automated with a filter on subject keywords (e.g. "ticket purchase", "ticket rec
 
 ## Venue Newsletter Subscriptions
 
-Subscribe **redhat.bootlegs@gmail.com** to these. Apply `ticket-alert` label via Gmail
-filter on the sender address once subscribed.
+**Subscription state is not tracked here.** It lives in `data/venues.tsv`, where it
+can be checked against the inbox instead of asserted. This section explains the
+schema and the signup quirks; the current state is always the file.
 
-### Subscribed ✅
+### Where it lives
 
-| Venue | Notes |
-|-------|-------|
-| The Birchmere | |
-| Hamilton Live | |
-| Rams Head On Stage | |
-| The State Theatre | |
-| Collective Encore | |
-| Union Stage Presents (Jammin' Java, Union Stage, Pearl Street, Howard Theatre) | |
-| Wolf Trap — wolftrap.org | Email alerts |
-| 9:30 Club / Merriweather / other IMP venues | imppresents.com |
+Three columns, replacing the old free-text `Calendar Coverage` (2026-09):
+
+| Column | Values |
+|---|---|
+| `Coverage` | pipe-separated: `hftb`, `email`, `scrape`, `watch`, `artist-platform`, `none` |
+| `Newsletter Source` | the sending domain, e.g. `info.impconcerts.com` |
+| `Subscription` | `flowing`, `awaiting`, `unconfirmed`, or blank |
+| `Coverage Checked` | ISO date the row was last verified against the inbox |
+
+`Coverage` is multi-valued because most venues have more than one channel - Blues
+Alley reads `hftb|email|watch`.
+
+### Why `Newsletter Source` is separate from the venue
+
+Several subscriptions cover **multiple rooms from one sender**, which the old
+single-column format could not express:
+
+| Sender | Covers |
+|---|---|
+| `info.impconcerts.com` | 9:30 Club, The Anthem, Lincoln Theatre, Merriweather |
+| `unionstagepresents.com` | Union Stage, Pearl Street Warehouse, Jammin' Java |
+| `r2.arts-mail.com` | Weinberg Center for the Arts, New Spire Arts |
+| `music.ramsheadonstage.com` | Rams Head On Stage, Maryland Hall |
+
+So "is this venue covered" is a question about the sender, not the venue name.
+
+### The three subscription states, and why they are distinct
+
+All three are attested in the current data, and only the first is really coverage:
+
+- **`flowing`** - newsletters arriving. Verifiable: search the inbox for the sender.
+- **`awaiting`** - signup confirmed, no newsletter yet. A welcome mail arrived and
+  nothing since.
+- **`unconfirmed`** - subscribed as far as we know, but nothing has ever arrived from
+  that sender, not even a welcome.
+
+The distinction matters because `Calendar Coverage` had been recording **intent**
+rather than observed coverage since the mid-2026 subscription burst - values written
+when subscribing, never reconciled against what actually arrived. An audit found six
+of its claims wrong in one direction or the other.
+
+### Verifying
+
+Search the inbox by sender domain and update `Subscription` and `Coverage Checked`.
+`Coverage Checked` is the column that makes staleness visible; without a date, a
+wrong value is indistinguishable from a current one.
+
+Two cautions from the audit that produced this schema:
+
+- **Resolve venue names through `data/venue_aliases.tsv` first.** HFTB and the
+  newsletters spell rooms differently (`The Hamilton` / `Hamilton Live`,
+  `Songbyrd DC` / `Songbyrd Music House`). Normalization folds case, a leading
+  "The" and punctuation - it does **not** bridge word-level differences.
+- **Page the whole search window.** A first page of Gmail results is not 90 days;
+  a venue mailing fortnightly can fall outside it and read as silent.
+
+### Signup quirks worth remembering
+
+Operational notes, not status:
+
+| Venue | Note |
+|---|---|
+| Hub City Vinyl | Mailchimp; email change not supported, requires a fresh signup |
 | Bethesda Theater | Re-targeted 2026-04-01 via Constant Contact |
-| Ticketmaster newsletter | Forwarded from dan2bit |
-
-### Pending — fresh signup needed under redhat.bootlegs ⚠️
-
-| Venue | Notes |
-|-------|-------|
-| Hub City Vinyl (Hagerstown) | liveathubcityvinyl.com · Mailchimp; email change not supported, requires new signup |
-| Strathmore | strathmore.org |
-| Capital One Hall | capitalonehall.com |
-| The Fillmore Silver Spring | fillmoresilverspring.com |
+| Rams Head On Stage | Two lists: `mail@restaurant.ramsheadgroup.com` is the hospitality list (beer releases, festivals) and is **not** show announcements; `hello@music.ramsheadonstage.com` is the ticket-alert list |
+| Blues Alley | Mail arrives reliably but is an image with no parseable text - the changedetection watch exists to supply the content the mail withholds |
+| Sixth & I | The mail on file is an **account registration**, not a newsletter signup - weaker evidence than a "thanks for subscribing" confirmation |
+| Ticketmaster | Forwarded from dan2bit rather than subscribed directly |
 
 ---
 
@@ -79,15 +127,13 @@ filter on the sender address once subscribed.
 
 Canonical source: `Direct Mail` column in `tools/research/follows/follows_master.tsv`.
 
-### Subscribed ✅
-
-Albert Castiglia, Allison Russell, Amythyst Kiah, Buffalo Nichols, Bywater Call,
-Christone 'Kingfish' Ingram, Daniel Donato, Ghalia Volt, Jackie Venson, Judith Hill,
-Larkin Poe, The Lone Bellow, Mike Zito, Robert Randolph, Ruthie Foster, Samantha Fish,
-Shemekia Copeland, Southern Avenue, Sue Foley, Taj Farrant, Tal Wilkenfeld,
-Trombone Shorty & Orleans Avenue, Vanessa Collier, The War and Treaty.
+The list of who is subscribed is **not duplicated here** - it drifts from the
+column the moment either changes. Filter `follows_master.tsv` on `Direct Mail`
+instead.
 
 ### Not subscribed — known reasons
+
+Kept here because these are *reasons*, which the column has nowhere to store:
 
 | Artist | Reason |
 |--------|--------|
@@ -143,8 +189,11 @@ scan the email footer for a subscription management link:
   if locked, do a fresh signup at the venue website under rhbl
 - **Other providers:** note the sender address if no management link is found
 
-Venues successfully re-targeted: Bethesda Theater (2026-04-01, Constant Contact).
-Venues pending re-targeting: Hub City Vinyl (Mailchimp, requires new signup).
+Which venues still need re-targeting is derivable rather than listed: a venue whose
+`Subscription` in `venues.tsv` is not `flowing`, or whose `Newsletter Source` is
+blank while mail arrives at dan2bit, is a candidate. Do not keep a list here - the
+last one went stale (it named Hub City Vinyl as pending long after
+`mail.liveathubcityvinyl.com` began arriving at rhbl).
 
 ---
 
