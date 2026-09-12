@@ -142,27 +142,52 @@ offer the completed file before moving on to the next venue
 *Bandsintown scrape follows list ON CHANGE*
 
 1. log in as rhbl to bandsintown
-2. open https://www.bandsintown.com/u/tracked-artists and make sure View All is active
+2. open https://www.bandsintown.com/u/tracked-artists
 
 _Prompt_
-create rhbl-bandsintown.tsv for download. one column: Artist
-Capture: the artist names only from the tracked-artists page
-Flag any entry that is not an artist name (page titles, tour-schedule pages, stray UI text) instead of including it silently
+Export my tracked artists to rhbl-bandsintown.tsv for download. One column, header "Artist".
+Use the paged endpoint (below) from the page console rather than scrolling. Artist names only, as displayed. Flag any entry that is not a plain artist name instead of dropping it.
+Sanity gate: compare the count against the previous export; a result of exactly 50 means the cursor loop did not run.
 
-3. Save the file in `/tools/research/follows`, overwriting the existing file
+3. Save the file in `/tools/research/follows`, overwriting the existing file. Put the export date in the commit message - the file carries none.
+
+**Faster path - the tracked-artists endpoint (verified 2026-09-12).** The page pages
+through a same-origin JSON endpoint, fetchable from the page context with
+`credentials: 'include'`:
+
+    GET https://www.bandsintown.com/u/trackedArtists?max=50&cursor=<cursor>
+
+Response is `{ artists: [...], nextCursorArtist }`. Start with no cursor and pass
+`nextCursorArtist` back until it comes back empty (Sep 2026: 50/50/48/24 = 172).
+Artist -> `artists[].name`. That is the account's display name, which is
+occasionally a page title rather than a bare artist name ("Albert Castiglia Tour
+Schedule Page"): map those in `data/recommend_aliases.tsv`, do not hand-edit the
+export - the export is evidence of what the account follows.
+
+**No search-results URL.** The header search is a type-ahead; Enter lands on
+`/a/<id>-<slug>`. Reminder mail cannot deep-link a name to a search.
 
 *Seated scrape follows list ON CHANGE*
 
 1. login as rhbl to seated.com
-2. open https://go.seated.com/notifications and make sure all artists are visible
+2. open https://go.seated.com/notifications - the whole Following list renders at once (no pagination)
 
 _Prompt_
-create rhbl-seated.tsv for download. one column: Artist
-Capture: only the artists names in the Following section of this page. 
-skip over the "Recommended for You" list
-Flag any entry that is not an artist name (page titles, stray UI text) instead of including it silently
+Export my followed artists to rhbl-seated.tsv for download. One column, header "Artist".
+Capture only the names in the Following section; skip "Recommended for You" entirely.
+Sanity gate: the count should match the page's own "Following (N)" heading and be close to the previous export.
+Flag any entry that is not an artist name instead of dropping it. Do not follow, unfollow, or change any notification setting.
 
-3. Save the file in `/tools/research/follows`, overwriting the existing file
+3. Save the file in `/tools/research/follows`, overwriting the existing file. Put the export date in the commit message.
+
+**No usable endpoint (verified 2026-09-12).** The page loads its list from
+`https://api.seated.com/api/v1/artist-followers?include=artist-profile`, which is
+cross-origin from `go.seated.com` and CORS-blocked from the console. Read the DOM.
+The artist search is an in-page overlay with no results URL.
+
+**After either export:** `python3 tools/research/reconcile_follows.py` from the repo
+root reports ledger-vs-platform drift (empty output = clean). This is Workflow 1-B
+in `ANALYSIS_WORKFLOWS.md`.
 
 *Fast track tour pages scrape MONTHLY*
 
