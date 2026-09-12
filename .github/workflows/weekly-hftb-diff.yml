@@ -1,0 +1,185 @@
+name: Weekly HFTB refresh
+
+# Workflow 1-W (see tools/playbooks/ANALYSIS_WORKFLOWS.md). Re-scrapes the
+# HereForTheBands listing and diffs it against last week's committed copy, so
+# HFTB's breadth stops sitting unread for 29 days between monthly passes.
+#
+# HFTB ONLY, deliberately. jc.php is unauthenticated and unpersonalised, so it
+# fetches from a runner with no browser and no session. The Bandsintown
+# recommends view is personalised to the rhbl follow graph and CANNOT be added
+# here: without the session it returns a generic DC listing that looks
+# plausible and is not ours. BIT stays on the monthly browser pass.
+#
+# Cost of the split: no two-source corroboration, so the weekly report's
+# shortlist is noisier per hit than the monthly one. Single-source hits fall
+# back to the core-venue tier, which is a browse list rather than a decision
+# list.
+#
+# NO EMAIL YET. The digest lands in the job summary, which needs no credential.
+# Routing it to rhbl means putting an SMTP app password in repo secrets - see
+# #338, where the same question is open for release alerts. Answer it once for
+# both rather than twice differently.
+#
+# Commits ride the established bot pattern: deploy key -> staging ->
+# auto-promote, with the rebase retry loop copied from the release-refresh
+# workflow.
+
+on:
+  schedule:
+    - cron: "0 11 * * 5"
+  workflow_dispatch:
+    inputs:
+      region:
+        description: "HFTB region bitmask (dc=1 bal=2 wd=4 phi=8)"
+        required: false
+        default: "3"
+      days:
+        description: "Max calendar days to walk"
+        required: false
+        default: "420"
+      rebaseline:
+        description: "Scrape and commit WITHOUT diffing (use after a region change)"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-hftb
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: staging
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Stage last week's copy before anything overwrites it
+        # scrape_hftb.py writes in place. If this runs after the scrape, the
+        # diff compares the new file against itself and reports nothing new -
+        # which reads as a quiet week rather than a broken job.
+        #
+        # On the first run of a calendar month the current-month file does not
+        # exist yet, so there is nothing to stage; PRIOR_LABEL then points at
+        # last month's file and the run degrades to a month-over-month diff,
+        # which is correct rather than a failure.
+        id: stage
+        run: |
+          set -euo pipefail
+          MONTH="$(date -u +%Y-%m)"
+          PREV_MONTH="$(date -u -d '1 month ago' +%Y-%m)"
+          CUR="tools/research/web-src/rhbl-hereforthebands-dc-${MONTH}.tsv"
+
+          if [ -f "$CUR" ]; then
+            cp "$CUR" /tmp/hftb-prev.tsv
+            echo "prior_file=/tmp/hftb-prev.tsv" >> "$GITHUB_OUTPUT"
+            echo "prior_label=last-week"          >> "$GITHUB_OUTPUT"
+            echo "Staged $(wc -l < "$CUR") lines from $CUR"
+          else
+            ARCH="tools/archive/rhbl-hereforthebands-dc-${PREV_MONTH}.tsv"
+            SRC="tools/research/web-src/rhbl-hereforthebands-dc-${PREV_MONTH}.tsv"
+            if   [ -f "$SRC" ];  then cp "$SRC"  /tmp/hftb-prev.tsv
+            elif [ -f "$ARCH" ]; then cp "$ARCH" /tmp/hftb-prev.tsv
+            else echo "No current-month and no prior-month file - first run?"; fi
+            if [ -f /tmp/hftb-prev.tsv ]; then
+              echo "prior_file=/tmp/hftb-prev.tsv" >> "$GITHUB_OUTPUT"
+            fi
+            echo "prior_label=${PREV_MONTH}" >> "$GITHUB_OUTPUT"
+            echo "New month - comparing against ${PREV_MONTH}"
+          fi
+          echo "month=${MONTH}" >> "$GITHUB_OUTPUT"
+          echo "file=${CUR}"    >> "$GITHUB_OUTPUT"
+
+      - name: Scrape HFTB
+        env:
+          REGION: ${{ github.event.inputs.region || '3' }}
+          DAYS: ${{ github.event.inputs.days || '420' }}
+        run: |
+          python3 tools/research/web-src/scrape_hftb.py \
+            --region "$REGION" --days "$DAYS" --quiet
+
+      - name: Diff against last week
+        id: diff
+        if: ${{ github.event.inputs.rebaseline != 'true' }}
+        env:
+          FILE: ${{ steps.stage.outputs.file }}
+          PRIOR_FILE: ${{ steps.stage.outputs.prior_file }}
+          MONTH: ${{ steps.stage.outputs.month }}
+          PRIOR_LABEL: ${{ steps.stage.outputs.prior_label }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PRIOR_FILE:-}" ]; then
+            echo "No prior file to diff against - skipping." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo '## Weekly HFTB diff'
+            echo
+            echo '```'
+            python3 tools/research/websrc_diff.py --source hftb \
+              --month "$MONTH" --prior "$PRIOR_LABEL" \
+              --file "$FILE" --prior-file "$PRIOR_FILE"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Note the re-baseline
+        if: ${{ github.event.inputs.rebaseline == 'true' }}
+        run: |
+          {
+            echo '## Re-baseline run'
+            echo
+            echo 'Scraped and committed WITHOUT diffing. A region change makes every'
+            echo 'newly-covered act look new, which is a coverage change and not a'
+            echo 'week of announcements. Next weekly run diffs against this file.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the refreshed scrape to staging
+        # always(): the scrape flushes as it goes, so a partial file is still
+        # worth keeping if a later step fails. Matches the release-refresh
+        # workflow's reasoning.
+        if: always()
+        env:
+          FILE: ${{ steps.stage.outputs.file }}
+        run: |
+          set -euo pipefail
+          [ -f "$FILE" ] || { echo "No scrape file produced - nothing to commit."; exit 0; }
+          git add "$FILE"
+          if git diff --cached --quiet; then
+            echo "$FILE unchanged - nothing to commit."
+            exit 0
+          fi
+
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+          chmod 600 "$HOME/.ssh/promote_key"
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+          git commit -m "ci: weekly HFTB refresh (region ${{ github.event.inputs.region || '3' }})"
+          for attempt in 1 2 3 4 5; do
+            git fetch promote staging
+            git rebase promote/staging || {
+              echo "rebase conflict on staging - bailing (not a race, a real conflict)"
+              exit 1
+            }
+            if git push promote HEAD:staging; then
+              echo "push succeeded on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s"
+            sleep "$attempt"
+          done
+          echo "gave up after 5 attempts"
+          exit 1
