@@ -28,10 +28,19 @@ including by --dry-run.
 
 SENDING DOMAIN
 
-Mail goes from a dedicated sending subdomain rather than the apex, because
-mailbox providers build reputation per sending domain. Automated mail on
-send.<domain> cannot drag down anything sent from the apex later, and it keeps
-these DNS records clear of the ones serving the site.
+From address must match a domain listed as verified on resend.com/domains -
+here, the apex redhat-bootlegs.net.
+
+Do not be misled by the `send.` records in DNS. When you verify an apex domain,
+Resend places the SPF and return-path MX records on a `send.` subdomain for
+bounce handling. Those are DNS records, not a sending identity: sending from
+alerts@send.redhat-bootlegs.net fails with "domain is not verified" even though
+records under that name plainly exist.
+
+A real sending subdomain is possible and worth having for reputation isolation
+(mailbox providers build reputation per sending domain), but it has to be added
+as its own domain in Resend with its own DKIM records - it is not a side effect
+of verifying the apex.
 
 EMPTY BODIES ARE NOT SENT
 
@@ -48,7 +57,7 @@ import urllib.error
 import urllib.request
 
 API = "https://api.resend.com/emails"
-DEFAULT_FROM = "alerts@send.redhat-bootlegs.net"
+DEFAULT_FROM = "alerts@redhat-bootlegs.net"
 DEFAULT_TO = "redhat.bootlegs@gmail.com"
 
 # api.resend.com sits behind Cloudflare, which blocks urllib's default
@@ -84,13 +93,24 @@ def send(payload, api_key, timeout=30):
                     "User-Agent header is being sent.")
         elif e.code in (401, 403):
             hint = ("\n  Check RESEND_API_KEY is a sending key and that the "
-                    "From domain is verified in Resend.")
+                    "From domain exactly matches one listed as verified on "
+                    "resend.com/domains. The `send.` records Resend creates "
+                    "under an apex domain are for bounce handling and are NOT "
+                    "a sending identity.")
         raise SystemExit("FATAL: Resend returned %s: %s%s" % (e.code, detail, hint))
     except (urllib.error.URLError, TimeoutError) as e:
         raise SystemExit("FATAL: could not reach Resend: %s" % e)
 
 
 def main():
+    # --dry-run output gets piped to head like any report; a broken pipe is the
+    # normal way that ends, not an error worth a traceback.
+    try:
+        import signal
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except (ImportError, AttributeError, ValueError):
+        pass
+
     ap = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
     ap.add_argument("--subject", required=True)
     ap.add_argument("--to", default=DEFAULT_TO)
