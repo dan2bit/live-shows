@@ -65,6 +65,7 @@ and date pruning (Routine 3).
 - `ticket-alert` = `Label_8111132848568068688`
 - `show-notes` = `Label_4852367418911615829`
 - `ticket-receipt` = `Label_8008139800288276097`
+- `hftb-diff` = `Label_6917329658463339331`
 
 **Search patterns:**
 
