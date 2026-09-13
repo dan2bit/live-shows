@@ -31,6 +31,9 @@ They look similar and must never be merged:
                          exact string misses, a retry is free, and a wrong fold shows up
                          in the log rather than corrupting a join.
 
+  identity_keys(raw)     variant_keys plus the hand-maintained alias table. The one to
+                         use for any join against the tracking files — see its docstring.
+
 TWO NORMALIZERS, for the same reason: norm() is used WITH a surface_forms expansion
 (recommend index), goal_norm() WITHOUT one (goal badges), so the article de-inversion has
 to live in different places. See each docstring.
@@ -48,6 +51,7 @@ The issue history behind these designs is logged in docs/ISSUE_LOG.md.
 
 import re
 import unicodedata
+from pathlib import Path
 
 # Explicit separators only. Ordered so "and his"/"and her" win over bare "and".
 _BILL_SEP = re.compile(
@@ -175,3 +179,76 @@ def lookup_forms(raw):
             seen.add(k)
             out.append(f)
     return out
+
+
+# ── Alias-table identity ─────────────────────────────────────────────────────
+# The rules above are derivable from the string. recommend_aliases.tsv holds the
+# pairs that are NOT — "Billy F Gibbons" / "Billy Gibbons", "Trombone Shorty" /
+# "Trombone Shorty & Orleans Avenue". Any join that skips it reports long-tracked
+# artists as untracked, which reads as a finding rather than a bug.
+
+_ALIASES_PATH = Path(__file__).resolve().parents[1] / "data" / "recommend_aliases.tsv"
+_alias_cache = None
+
+
+def _alias_pairs(path=None):
+    """[(alias_keys, canonical_keys)] from recommend_aliases.tsv.
+
+    Resolved relative to this file, not the cwd, so a caller run from anywhere
+    gets the table rather than silently getting none. An absent file is a valid
+    state (a fork may have no aliases) and yields no pairs.
+    """
+    global _alias_cache
+    if path is None:
+        if _alias_cache is None:
+            _alias_cache = _read_alias_pairs(_ALIASES_PATH)
+        return _alias_cache
+    return _read_alias_pairs(Path(path))
+
+
+def _read_alias_pairs(path):
+    if not path.exists():
+        return []
+    pairs = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        parts = raw.split("\t")
+        if len(parts) < 2:
+            continue
+        alias, canon = parts[0].strip(), parts[1].strip()
+        if alias.lower() == "alias" or not alias or not canon:
+            continue
+        pairs.append((variant_keys(alias), variant_keys(canon)))
+    return pairs
+
+
+def identity_keys(name, path=None):
+    """Every normalized form one artist name can legitimately be spelled under.
+
+    variant_keys() plus the alias table, expanded in BOTH directions so a match
+    works whichever side of an alias row the caller happens to hold.
+
+    Identity only — never splits a bill. See the module docstring.
+
+    A caller resolving a lookup through this can match SEVERAL keys at once, and
+    they may carry different values: "Lone Bellow, The" normalizes to both
+    `lone bellow` and `lone bellow the`. Resolve such a collision deterministically
+    (strongest tier, earliest date) rather than taking the first match off the set.
+
+    >>> "billy gibbons" in identity_keys("Billy F Gibbons")
+    True
+    >>> "trombone shorty" in identity_keys("Trombone Shorty & Orleans Avenue")
+    True
+    >>> sorted(identity_keys("Robert Cray Band")) [:2]
+    ['robert cray', 'robert cray band']
+    """
+    keys = variant_keys(name)
+    if not keys:
+        return keys
+    for alias_keys, canon_keys in _alias_pairs(path):
+        if keys & alias_keys:
+            keys = keys | canon_keys
+        elif keys & canon_keys:
+            keys = keys | alias_keys
+    return keys
