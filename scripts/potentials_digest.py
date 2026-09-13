@@ -75,9 +75,9 @@ def infer_year(month, day, today, weekday=None):
     the past, in which case next year. An on-sale note two months old is stale
     data; one six months old is far more likely to be next year's.
 
-    A weekday in the text beats the rule outright - "Fri Jul 31" is only 2026 if
-    2026-07-31 is a Friday. That is real evidence rather than a heuristic, so it
-    is preferred when present and unambiguous.
+    A weekday in the text beats the rule outright: "Fri Jul 31" resolves to 2026
+    only because that day of that year actually falls on a Friday. That is real
+    evidence rather than a heuristic, so it wins when present and unambiguous.
     """
     cands = []
     for y in (today.year - 1, today.year, today.year + 1):
