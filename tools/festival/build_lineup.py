@@ -16,7 +16,7 @@ and `artist_modal_index.json`.
     python3 tools/festival/build_lineup.py --check        # verify, write nothing
     python3 tools/festival/build_lineup.py --json         # print, write nothing
 
-WHY DISPLAY NAMES ARE A SEPARATE FILE
+WHY DISPLAY NAMES ARE A SEPARATE FILE FROM THE ALIAS TABLE
 
 The posters do NOT use the canonical name, and that is deliberate rather than
 sloppy. The crescendo poster grades type size by slot, so the closer is set in
@@ -28,12 +28,37 @@ So a generator emitting one name everywhere would regress both layouts, and a
 generator storing only the short name would lose the link back to artist data
 (`identity_keys()` resolves the canonical form, not the poster's abbreviation).
 
-`festival/display_overrides.tsv` holds `Artist | Short | Medium`:
+`data/artist_display.tsv` holds `Artist | Short | Medium`:
 
   - `Short`  - the crescendo poster, where type is largest
   - `Medium` - the timeline poster's two-column list
   - neither  - the canonical name is already short enough, which is the case for
                58 of the 60 acts
+
+It lives in `data/` rather than `festival/` because it is not festival-specific:
+the map has the same problem, where a long name overflows a settlement label. A
+second copy under `tools/map/` would be exactly the duplication this prevents.
+
+IT IS NOT recommend_aliases.tsv, AND MUST NOT BE MERGED WITH IT
+
+The two look alike and run in opposite directions:
+
+  recommend_aliases.tsv  many spellings -> one canonical. Identity, on the way IN.
+  artist_display.tsv     one canonical -> one name per width. Rendering, on the way OUT.
+
+`identity_keys()` expands the alias table BIDIRECTIONALLY, so a display row living
+there would leak into every join as a claim that two names mean the same artist.
+
+The decisive case is Kingfish. `recommend_aliases.tsv` already carries
+`Kingfish -> Christone 'Kingfish' Ingram`, but the poster wants neither of those:
+it wants `Kingfish Ingram`, a third form in neither file. A display name cannot be
+derived from an alias even when a shorter alias exists.
+
+Lookups resolve through `identity_keys()` rather than raw string equality, because
+the repo carries two spellings of that act - `artists.tsv` and the alias table use
+`Christone 'Kingfish' Ingram`, the festival markdown uses `Christone "Kingfish"
+Ingram`. They normalize to the same key; an exact match would silently stop
+applying the moment either file changed quote style.
 
 An override naming an artist who is not in the lineup is reported, because that
 is how the file goes stale: the act gets cut, the override stays, and nothing
@@ -61,8 +86,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+from name_forms import identity_keys  # noqa: E402  (path set above)
+
 SOURCE = ROOT / "festival" / "festival_lineup.md"
-OVERRIDES = ROOT / "festival" / "display_overrides.tsv"
+OVERRIDES = ROOT / "data" / "artist_display.tsv"
 OUTPUT = ROOT / "festival" / "lineup.json"
 
 # "## Day 1 (Friday) - Blues"
@@ -142,7 +170,7 @@ def check(days, overrides):
         problems.append("parsed %d days, expected 3 - the '## Day N (Name) - Theme' "
                         "heading format probably changed" % len(days))
 
-    seen, acts = {}, 0
+    seen, acts, lineup_keys = {}, 0, set()
     for d in days:
         if len(d["slots"]) != 20:
             problems.append("day %d has %d slots, expected 20 (10 per stage)"
@@ -155,15 +183,39 @@ def check(days, overrides):
                                 "no act plays twice" % (s["artist"], seen[key],
                                                         "day %d" % d["number"]))
             seen[key] = "day %d" % d["number"]
+            lineup_keys |= identity_keys(s["artist"])
 
     if acts and acts != 60:
         problems.append("parsed %d acts, expected 60" % acts)
 
+    # Resolved through identity_keys, not raw equality - see the docstring. An
+    # exact match would report a false stale row the moment a quote style differs.
     for name in overrides:
-        if name.lower() not in seen:
+        if not (identity_keys(name) & lineup_keys):
             problems.append("display override for %r, which is not in the lineup - "
                             "cut act, or a typo in the override" % name)
     return problems
+
+
+def resolve_display(days, overrides):
+    """Attach short/medium to each slot, keyed through identity_keys.
+
+    The canonical name stays on every slot regardless. A renderer needs the short
+    form for the layout AND the canonical form to link back to artist data - the
+    short form does not resolve on its own ("Kingfish Ingram" shares no identity
+    key with the canonical spelling).
+    """
+    index = {}
+    for name, entry in overrides.items():
+        for k in identity_keys(name):
+            index[k] = entry
+    for d in days:
+        for slot in d["slots"]:
+            entry = next((index[k] for k in sorted(identity_keys(slot["artist"]))
+                          if k in index), None)
+            if entry:
+                slot["display"] = dict(entry)
+    return days
 
 
 def build(days, overrides):
@@ -199,6 +251,9 @@ def main():
     days = parse_markdown(src.read_text(encoding="utf-8"))
     overrides = parse_overrides(OVERRIDES)
     problems = check(days, overrides)
+
+    if not problems:
+        days = resolve_display(days, overrides)
 
     if problems:
         for p in problems:
