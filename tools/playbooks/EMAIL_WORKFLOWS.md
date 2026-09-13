@@ -58,6 +58,7 @@ and date pruning (Routine 3).
 | `artist-follow` | Gmail filter (BIT/Songkick) or manual | Routine 5 |
 | `ticket-sold` | Gmail filter (forwards from dan2bit@gmail.com with `sold` in subject — covers AXS resales, StubHub, Ticketmaster resales) | Routine 6 |
 | `hftb-diff` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[hftb]`) | Routine 7 |
+| `show-reminders` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[potentials]`) | Routine 8 |
 | `processed` | Claude at end of each routine | All routines (excluded via `-label:processed`) |
 
 **Label IDs:**
@@ -66,6 +67,7 @@ and date pruning (Routine 3).
 - `show-notes` = `Label_4852367418911615829`
 - `ticket-receipt` = `Label_8008139800288276097`
 - `hftb-diff` = `Label_6917329658463339331`
+- `show-reminders` = `Label_6890844345333686816`
 
 **Search patterns:**
 
@@ -78,6 +80,7 @@ and date pruning (Routine 3).
 | 5 — Artist follow / signup | `label:artist-follow -label:processed` |
 | 6 — Ticket sold | `label:ticket-sold -label:processed` |
 | 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
+| 8 — Show reminders | `label:show-reminders -label:processed` |
 
 ---
 
@@ -766,6 +769,66 @@ silence looks wrong.
 diffed against a `region=1` predecessor reports every newly-covered act as new. The
 workflow skips the mail on a `rebaseline=true` dispatch, but the *following* week's
 diff still carries the tail shift.
+
+---
+
+## Routine 8 — Show Reminders
+
+**Trigger:** `label:show-reminders -label:processed`
+
+Sender `alerts@redhat-bootlegs.net`, subject prefixed `[potentials]` with whatever
+is most time-sensitive that week. Produced by `weekly-potentials-digest.yml` on a
+Monday-morning schedule.
+
+The label is named for the class, not the sender: anything that reminds Dan to act
+on a show he has not yet bought belongs here. The weekly potentials digest is the
+first such mail; a later reminder of the same kind can share the label rather than
+growing a ninth routine.
+
+**What the digest already checked**, so the routine does not repeat it: on-sale
+dates inside 7 days, on-sale dates that have passed with the row still Buy or
+Choose, Buy rows whose show is inside 30 days with no purchase recorded, Choose
+rows inside 14 days, and Buy/Choose rows missing price or links.
+
+**What it deliberately did NOT check, and this routine must:**
+
+- **Calendar conflicts.** `weekly-potentials-digest.yml` holds no calendar
+  credential by design. Before acting on anything in the digest, apply the Routine
+  3 rule - check the Dan Concert Calendar for the surrounding window, per artist,
+  for hard conflicts, consecutive-night density and personal blocks.
+- **Whether a Choose should become a Pass.** The digest reports a Choose sitting
+  inside 14 days; it does not judge it. That judgement is the point of the routine.
+
+### Steps
+
+**Step 1 — Read the report.** Plain text in the mail body, already rendered.
+
+**Step 2 — Act per section.**
+- *On-sale this week* - calendar check, then buy or set a reminder.
+- *On-sale passed, still open* - the on-sale came and went. Either the row is now
+  a Pass, or it was bought and the row was never cleared, in which case
+  `reconcile_purchases.py` should have caught it and the mismatch is worth a look.
+- *Buy with no purchase recorded* - the one that costs money. Buy it, or admit it
+  is a Pass.
+- *Choose inside 14 days* - decide.
+- *Missing price or link* - the `find-potential-tickets` skill fills these.
+
+**Step 3 — Write any decisions** to `data/live_shows_potential.tsv` on `staging`,
+with explicit confirmation, per the usual potentials rules. The digest itself is
+read-only and changed nothing.
+
+**Step 4 — Activity log draft** (subject: `[LOG] Routine 8 — show reminders — YYYY-MM-DD`).
+
+**Final:** Apply `processed` label.
+
+**Nothing to do on a quiet week** - the workflow sends no mail when every section
+is empty, so an empty label is the normal state rather than a sign the job failed.
+Check the Actions run history if the silence looks wrong.
+
+**A `Watching For, not read as a date` section is a data note, not a task.** It
+lists rows whose free text the parser could not read. That is expected for prose
+entries; a high count is the argument for making `Watching For` a machine-readable
+column rather than for rewording individual rows.
 
 ---
 
