@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+  GENERATED FILE - do not hand-edit. Changes here are lost on the next run.
+
+  Lineup content : festival/festival_lineup.md  (plus data/artist_display.tsv
+                   for names that need shortening to fit)
+  Design, CSS,
+  masthead, foot : tools/festival/poster_crescendo.template.html
+
+  Rebuild both posters:
+      python3 tools/festival/build_lineup.py       # md  -> festival/lineup.json
+      python3 tools/festival/render_posters.py     # json -> both posters
+
+  `render_posters.py --check` fails if a committed poster has drifted from what
+  the template would produce, and `--diff` shows what a hand-edit would lose.
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
