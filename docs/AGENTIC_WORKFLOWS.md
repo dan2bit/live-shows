@@ -207,6 +207,7 @@ The full, current catalog — triggers, behavior, and conventions — lives in
 | Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
 | Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
 | Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos`, `data-hygiene`, `follows-watch` |
+| Scheduled digests | `refresh-releases`, `weekly-hftb-diff`, `weekly-potentials-digest` |
 
 `close-playlist-issue` and `close-photo-issue` both parse the issue body/comment
 against the structure their respective `.github/ISSUE_TEMPLATE/*.md` file defines
@@ -220,10 +221,32 @@ Bot commits do **not** use `[skip ci]` — auto-promote is wanted; retrigger loo
 are prevented by excluding each bot's output file from its own trigger paths.
 All bot pushes rebase onto `staging` before pushing to prevent bot-vs-bot races.
 
-**Mail-to-inbox workflows** (`refresh-releases`, `follows-watch`) send through
+**Mail-to-inbox workflows** (`refresh-releases`, `weekly-hftb-diff`,
+`weekly-potentials-digest`, `follows-watch`) send through
 `scripts/notify_email.py` (Resend, `RESEND_API_KEY` secret) to the rhbl inbox,
 where Gmail filters label them for the Inbox+Data routines. An empty report
 sends nothing.
+
+Three things about that family are easy to get wrong when adding a fourth:
+
+- **Silence on a quiet run is the design, not a fault.** A digest that mails
+  weekly to say nothing happened is one you stop reading. `notify_email.py`
+  refuses an empty body, which is enough for a report that prints nothing at all
+  (`potentials_digest.py`); a report that always prints a header
+  (`release_digest.py`, `websrc_diff.py`) needs the workflow to check its own
+  counts before calling the sender.
+- **Counts come from `--json`, never from grepping the rendered report.** The
+  section headings are presentation and do change — `release_digest`'s header
+  grew an actionable suffix — so a text parse breaks silently while the JSON
+  carries the numbers directly.
+- **The digest step runs before the commit step** where a workflow has both.
+  `release_digest.py` compares the working copy against `HEAD`, so committing
+  first would leave it reporting nothing every time, with no error to notice.
+
+The Resend key can only push mail through Resend and reads no mailbox, so it is
+not a send-as credential for the inbox it writes to — unlike the Gmail app
+password it replaced. A digest job that finds it unset emits a `::warning::`
+naming the count that went unmailed rather than failing the run.
 
 **`cache-bust` note:** fires on any of the four JS/CSS files (`app.js`,
 `recommend.js`, `artist-modal.js`, `styles.css`). After any cache-bust run,

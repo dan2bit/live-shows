@@ -50,6 +50,29 @@ to 5× with backoff on races; bail on a real rebase conflict.
 | `close-playlist-issue.yml` | comment containing a `youtube.com/playlist` URL on an issue titled `Playlist:…` | Extracts the ISO show date from the title and the playlist URL from the comment, writes the URL into `data/live_shows_current.tsv` via `scripts/close_playlist_issue.py`, commits to `staging`, closes the issue. |
 | `close-photo-issue.yml` | owner comment **beginning with** a `photos.redhat-bootlegs.net/share/` link on an issue titled `Photo:…` | `scripts/close_photo_issue.py` → `show_photos.add_asset()`: tags the photo, files it in its show / artist / kind albums (creating and link-minting as needed), writes the show-album link to the show row and the artist-album link to `data/show_goals/artist-albums.tsv`, commits to `staging`, closes the issue. Needs the `IMMICH_API_KEY` secret. |
 
+### Scheduled digests (mail out; no commits)
+
+Each builds a plain-text report from committed files and mails it to the project
+inbox through `scripts/notify_email.py` (Resend, `RESEND_API_KEY`). None commits
+anything, and none holds a calendar credential — conflict checks stay in
+session.
+
+| Workflow | Trigger | What it does |
+|----------|---------|--------------|
+| `weekly-potentials-digest.yml` | Monday 12:00 UTC | `scripts/potentials_digest.py` — sweeps the gap between a potentials row and the purchase: on-sale within 7 days, on-sale passed with the row still Buy/Choose, Buy rows whose show is inside 30 days with nothing purchased, Choose rows inside 14 days, and rows missing price or links. Read-only (`permissions: contents: read`); `--today` dispatch input for testing windows. |
+| `weekly-hftb-diff.yml` | Friday 11:00 UTC | Re-scrapes HereForTheBands and diffs against last week's committed copy, then mails the report. This one *does* commit the refreshed scrape — see `tools/playbooks/ANALYSIS_WORKFLOWS.md` Workflow 1-W. |
+| `refresh-releases.yml` | daily 06:47 UTC | Refreshes the Spotify release cache, then `scripts/release_digest.py` renders what the sweep found and mails it when there are hits. Commits the cache to `staging`. |
+
+**All three are silent when there is nothing to report.** A digest that mails
+weekly to say nothing happened is one you stop reading, so each either produces
+an empty body — which `notify_email.py` refuses to send — or checks its own
+counts before calling it. `refresh-releases` and `weekly-hftb-diff` need the
+explicit count check because their reports always print a header.
+
+**Digest steps run before their commit step** where both exist. `release_digest.py`
+compares the working copy against `HEAD`, so a commit first would leave it
+reporting nothing, every time, with no error.
+
 ### Read-only checks (no commits; run on `main` post-promotion)
 
 | Workflow | Trigger | What it does |
@@ -60,11 +83,16 @@ to 5× with backoff on races; bail on a real rebase conflict.
 
 ## Conventions
 
-- **Secrets:** `PROMOTE_DEPLOY_KEY` (SSH deploy key, ruleset bypass) and
+- **Secrets:** `PROMOTE_DEPLOY_KEY` (SSH deploy key, ruleset bypass),
   `IMMICH_API_KEY` (the least-privilege image-server key used only by
-  `close-photo-issue.yml`; see `tools/playbooks/IMAGE_SERVER.md`) are the custom
+  `close-photo-issue.yml`; see `tools/playbooks/IMAGE_SERVER.md`) and
+  `RESEND_API_KEY` (outbound mail for the digests above) are the custom
   secrets; everything else uses `GITHUB_TOKEN`. A job that holds a third-party
   key must gate on `github.event.comment.author_association == 'OWNER'`.
+  `RESEND_API_KEY` can only push mail through Resend — it reads no mailbox, so
+  it is not a send-as credential for the inbox it writes to. A digest job that
+  finds it unset emits a `::warning::` naming the count that went unmailed
+  rather than failing, so a missing secret never costs the run.
 - **Concurrency:** every committing workflow has its own `concurrency` group
   with `cancel-in-progress: false` so runs queue rather than clobber.
 - **Race safety:** all bot pushes `git pull --rebase`/rebase before `git push`
