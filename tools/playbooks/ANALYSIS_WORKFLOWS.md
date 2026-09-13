@@ -114,6 +114,35 @@ list rather than a decision list. Expect the weekly output to be noisier per hit
    name, so the monthly archive rotation is unaffected - the month-over-month
    diff in Workflow 1-A still works, just against a fresher current-month file.
 
+### Running under CI
+
+`weekly-hftb-diff.yml` performs steps 1-3 and 5 on a Friday-morning schedule
+(and on `workflow_dispatch`), leaving step 4 - the triage - as the only human
+part. The manual commands above remain correct for an off-schedule run.
+
+**The report is mailed.** It goes to rhbl via `scripts/notify_email.py`,
+subject-prefixed `[hftb]` with the untracked count, and is filed by Gmail filter
+under its own label. The job summary still carries a copy, but the mail is what
+gets read between sessions - a digest that lands only on a CI page is the same
+unread artifact as a TSV, which is the problem Workflow 1-W exists to solve.
+
+Triage is therefore an Inbox+Data session item worked from that label, ending
+with `processed` like the other routines. The triage rules are step 4 above and
+are not restated in `EMAIL_WORKFLOWS.md`.
+
+**Quiet weeks send nothing.** `websrc_diff.py` always prints a header and counts,
+so an empty-body suppression cannot catch a quiet week on its own; the workflow
+reads the untracked and tracked-new counts from `--json` and skips the mail when
+both are zero. A weekly mail reporting that nothing happened is how an alert
+channel teaches you to ignore it.
+
+Counts come from `--json` rather than from grepping the rendered report: the
+section headings are presentation, and a formatting change would silently break
+a text parse while the JSON carries the arrays themselves.
+
+A `rebaseline=true` dispatch skips both the diff and the mail, for the reason in
+the first note below.
+
 ### Notes
 
 - **The first run after a region change is not a week of announcements.** A
