@@ -115,9 +115,19 @@ jobs:
           }
           cat /tmp/release_digest.txt
 
-          # "NEW RELEASES (3)" -> 3; "No new releases." -> no match -> 0
-          COUNT="$(sed -n 's/^NEW RELEASES (\([0-9]\+\)).*/\1/p' /tmp/release_digest.txt | head -1)"
-          COUNT="${COUNT:-0}"
+          # Counts come from --json, not from grepping the rendered report. The
+          # header is presentation and now varies ("NEW RELEASES (3) - 1 worth a
+          # tour-page check"), so a text parse would break on a formatting change
+          # while the JSON carries count and actionable directly. Re-running the
+          # digest is free: it reads committed files and makes no API calls.
+          python3 scripts/release_digest.py --json > /tmp/release_digest.json || true
+
+          jq_count() {
+            python3 -c "import json,sys;print(json.load(open('/tmp/release_digest.json')).get('$1',0))" \
+              2>/dev/null || echo 0
+          }
+          COUNT="$(jq_count count)"
+          ACTIONABLE="$(jq_count actionable)"
 
           if [ "$COUNT" = "0" ]; then
             echo "No new releases - no mail sent."
@@ -128,8 +138,16 @@ jobs:
             exit 0
           fi
 
-          SUBJECT="[releases] $COUNT new"
-          [ "$COUNT" = "1" ] || SUBJECT="[releases] $COUNT new releases"
+          # The subject answers "does this need a look" from the inbox list, so a
+          # digest with nothing actionable can be left unopened.
+          if [ "$COUNT" = "1" ]; then
+            SUBJECT="[releases] 1 new"
+          else
+            SUBJECT="[releases] $COUNT new releases"
+          fi
+          if [ "$ACTIONABLE" != "0" ]; then
+            SUBJECT="$SUBJECT - $ACTIONABLE worth a tour-page check"
+          fi
           python3 scripts/notify_email.py \
             --subject "$SUBJECT" \
             --body-file /tmp/release_digest.txt
