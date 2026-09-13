@@ -1,20 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-  GENERATED FILE - do not hand-edit. Changes here are lost on the next run.
-
-  Lineup content : festival/festival_lineup.md  (plus data/artist_display.tsv
-                   for names that need shortening to fit)
-  Design, CSS,
-  masthead, foot : tools/festival/poster_timeline.template.html
-
-  Rebuild both posters:
-      python3 tools/festival/build_lineup.py       # md  -> festival/lineup.json
-      python3 tools/festival/render_posters.py     # json -> both posters
-
-  `render_posters.py --check` fails if a committed poster has drifted from what
-  the template would produce, and `--diff` shows what a hand-edit would lose.
--->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -162,117 +147,51 @@
 
   <!-- ================= DAY 1 ================= -->
     <section class="day d1">
-    <div class="day-band"><span class="day-name">Friday</span></div>
-    <div class="closer">Christone &ldquo;Kingfish&rdquo; Ingram</div>
-    <div class="co">Gary Clark Jr. <span class="dot">&#9733;</span> Eric Gales <span class="dot">&#9733;</span> Keb&rsquo; Mo&rsquo;</div>
+    <div class="day-band"><span class="day-name">{{DAY1_NAME}}</span></div>
+    <div class="closer">{{DAY1_CLOSER}}</div>
+    <div class="co">{{DAY1_CO}}</div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
-        <ul>
-          <li><span>Buffalo Nichols</span><span class="t">12:30</span></li>
-          <li><span>Taj Farrant</span><span class="t">1:30</span></li>
-          <li><span>Matteo Mancuso</span><span class="t">2:30</span></li>
-          <li><span>Selwyn Birchwood</span><span class="t">3:30</span></li>
-          <li><span>Eric Johanson</span><span class="t">4:30</span></li>
-          <li><span>Sonny Landreth</span><span class="t">5:30</span></li>
-          <li><span>Tab Benoit</span><span class="t">6:30</span></li>
-          <li><span>Ally Venable</span><span class="t">7:30</span></li>
-          <li class="fav"><span>Gary Clark Jr.</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Kingfish Ingram</span><span class="t">9:30</span></li>
-        </ul>
+        <ul>{{DAY1_STAGE1}}</ul>
       </div>
       <div class="stage">
         <h3>Second Stage</h3>
-        <ul>
-          <li><span>Toronzo Cannon</span><span class="t">12:00</span></li>
-          <li><span>Evan Nicole Bell</span><span class="t">1:00</span></li>
-          <li><span>Ghalia Volt</span><span class="t">2:00</span></li>
-          <li><span>D.K. Harrell</span><span class="t">3:00</span></li>
-          <li><span>Albert Castiglia</span><span class="t">4:00</span></li>
-          <li><span>Mike Zito</span><span class="t">5:00</span></li>
-          <li><span>Robert Jon &amp; The Wreck</span><span class="t">6:00</span></li>
-          <li><span>Angelique Francis</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Keb&rsquo; Mo&rsquo;</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Eric Gales</span><span class="t">9:00</span></li>
-        </ul>
+        <ul>{{DAY1_STAGE2}}</ul>
       </div>
     </div>
   </section>
 
   <!-- ================= DAY 2 ================= -->
   <section class="day d2">
-    <div class="day-band"><span class="day-name">Saturday</span></div>
-    <div class="closer">Jon Batiste</div>
-    <div class="co">The Lone Bellow <span class="dot">&#9733;</span> Trombone Shorty &amp; Orleans Avenue <span class="dot">&#9733;</span> Galactic</div>
+    <div class="day-band"><span class="day-name">{{DAY2_NAME}}</span></div>
+    <div class="closer">{{DAY2_CLOSER}}</div>
+    <div class="co">{{DAY2_CO}}</div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
-        <ul>
-          <li><span>Jake Xerxes Fussell</span><span class="t">12:30</span></li>
-          <li><span>Miko Marks</span><span class="t">1:30</span></li>
-          <li><span>Shovels &amp; Rope</span><span class="t">2:30</span></li>
-          <li><span>Whitney Mong&eacute;</span><span class="t">3:30</span></li>
-          <li><span>The War and Treaty</span><span class="t">4:30</span></li>
-          <li><span>The Avett Brothers</span><span class="t">5:30</span></li>
-          <li><span>Daniel Donato&rsquo;s Cosmic Country</span><span class="t">6:30</span></li>
-          <li><span>The Wood Brothers</span><span class="t">7:30</span></li>
-          <li class="fav"><span>The Lone Bellow</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Jon Batiste</span><span class="t">9:30</span></li>
-        </ul>
+        <ul>{{DAY2_STAGE1}}</ul>
       </div>
       <div class="stage">
                 <h3>Second Stage</h3>
-        <ul>
-          <li><span>Sabine McCalla</span><span class="t">12:00</span></li>
-          <li><span>Amythyst Kiah</span><span class="t">1:00</span></li>
-          <li><span>Kingsley Flood</span><span class="t">2:00</span></li>
-          <li><span>Ariel Posen</span><span class="t">3:00</span></li>
-          <li><span>The Bros. Landreth</span><span class="t">4:00</span></li>
-          <li><span>JJ Grey &amp; Mofro</span><span class="t">5:00</span></li>
-          <li><span>James Hunter Six</span><span class="t">6:00</span></li>
-          <li><span>St. Paul &amp; The Broken Bones</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Galactic</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Trombone Shorty &amp; Orleans Ave.</span><span class="t">9:00</span></li>
-        </ul>
+        <ul>{{DAY2_STAGE2}}</ul>
       </div>
     </div>
   </section>
 
   <!-- ================= DAY 3 ================= -->
   <section class="day d3">
-    <div class="day-band"><span class="day-name">Sunday</span></div>
-    <div class="closer">Larkin Poe</div>
-    <div class="co">Vanessa Collier <span class="dot">&#9733;</span> Allison Russell <span class="dot">&#9733;</span> Jackie Venson</div>
+    <div class="day-band"><span class="day-name">{{DAY3_NAME}}</span></div>
+    <div class="closer">{{DAY3_CLOSER}}</div>
+    <div class="co">{{DAY3_CO}}</div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
-        <ul>
-          <li><span>Carly Harvey</span><span class="t">12:30</span></li>
-          <li><span>Grace Bowers</span><span class="t">1:30</span></li>
-          <li><span>Danielle Nicole</span><span class="t">2:30</span></li>
-          <li><span>Nikki Hill</span><span class="t">3:30</span></li>
-          <li><span>Sue Foley</span><span class="t">4:30</span></li>
-          <li><span>Southern Avenue</span><span class="t">5:30</span></li>
-          <li><span>Samantha Fish</span><span class="t">6:30</span></li>
-          <li><span>Beth Hart</span><span class="t">7:30</span></li>
-          <li class="fav"><span>Vanessa Collier</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Larkin Poe</span><span class="t">9:30</span></li>
-        </ul>
+        <ul>{{DAY3_STAGE1}}</ul>
       </div>
       <div class="stage">
         <h3>Second Stage</h3>
-        <ul>
-          <li><span>Muireann Bradley</span><span class="t">12:00</span></li>
-          <li><span>Danielle Ponder</span><span class="t">1:00</span></li>
-          <li><span>Caitlin Krisko &amp; The Broadcast</span><span class="t">2:00</span></li>
-          <li><span>Judith Hill</span><span class="t">3:00</span></li>
-          <li><span>Lake Street Dive</span><span class="t">4:00</span></li>
-          <li><span>ZZ Ward</span><span class="t">5:00</span></li>
-          <li><span>Joanne Shaw Taylor</span><span class="t">6:00</span></li>
-          <li><span>Ana Popovi&#263;</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Jackie Venson</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Allison Russell</span><span class="t">9:00</span></li>
-        </ul>
+        <ul>{{DAY3_STAGE2}}</ul>
       </div>
     </div>
   </section>
