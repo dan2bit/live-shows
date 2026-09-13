@@ -25,12 +25,22 @@ A poster gets saved to disk, printed, and opened from a stale cache. Fetching
 the JSON at render time makes it blank in all three cases, which is a worse
 failure than the duplication it removes.
 
-THE TEMPLATES ARE THE EDITABLE SOURCE
+THE .template.html FILES ARE THE EDITABLE SOURCE
 
-`tools/festival/templates/*.html` hold the full page - every rule of CSS, the
-masthead, the footer. Only the lineup regions are placeholders. Design changes
-go there; the posters under `festival/` are generated and any hand-edit is lost
-on the next run. Both carry a header comment saying so.
+`tools/festival/poster_*.template.html` hold the full page - every rule of CSS,
+the masthead, the footer. Only the lineup regions are placeholders. Design
+changes go there; the posters under `festival/` are generated and any hand-edit
+is lost on the next run.
+
+The "generated file" banner is INJECTED at render time rather than stored in the
+template. A banner living in the template would greet anyone opening it with
+"do not hand-edit" about the one file they are supposed to edit - and would
+point at itself as the place to make changes.
+
+Flat naming rather than a `templates/` subdirectory: the suffix already says
+what the file is, and a directory holding two files next to the one script that
+reads them earns nothing. It also removes a `mkdir` that can silently not
+happen, leaving the script to fail at runtime instead.
 
 THREE WIDTH CONTEXTS, WHICH IS WHY THE DATA CARRIES ALL THREE FORMS
 
@@ -64,12 +74,32 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LINEUP = ROOT / "festival" / "lineup.json"
-TEMPLATES = Path(__file__).resolve().parent / "templates"
+HERE = Path(__file__).resolve().parent
 TARGETS = {
-    "crescendo": (TEMPLATES / "poster_crescendo.html", ROOT / "festival" / "index.html"),
-    "timeline": (TEMPLATES / "poster_timeline.html",
+    "crescendo": (HERE / "poster_crescendo.template.html",
+                  ROOT / "festival" / "index.html"),
+    "timeline": (HERE / "poster_timeline.template.html",
                  ROOT / "festival" / "festival_poster.html"),
 }
+
+# Injected directly under <html>, so it is the first thing in the generated file
+# and the first thing a "view source" shows.
+BANNER = """<!--
+  GENERATED FILE - do not hand-edit. Changes here are lost on the next run.
+
+  Lineup content : festival/festival_lineup.md  (plus data/artist_display.tsv
+                   for names that need shortening to fit)
+  Design, CSS,
+  masthead, foot : tools/festival/%s
+
+  Rebuild both posters:
+      python3 tools/festival/build_lineup.py       # md  -> festival/lineup.json
+      python3 tools/festival/render_posters.py     # json -> both posters
+
+  `render_posters.py --check` fails if a committed poster has drifted from what
+  the template would produce, and `--diff` shows what a hand-edit would lose.
+-->
+"""
 
 # h12 is the noon block; h1x..h9x are the nine hours after it.
 SIZE_CLASSES = ["h12"] + ["h%dx" % n for n in range(1, 10)]
@@ -169,6 +199,13 @@ def headline(day):
 def render(kind, doc):
     tpl_path, _ = TARGETS[kind]
     out = tpl_path.read_text(encoding="utf-8")
+
+    anchor = '<html lang="en">\n'
+    if anchor not in out:
+        raise SystemExit("FATAL: %s has no `%s` line to anchor the banner to"
+                         % (tpl_path.name, anchor.strip()))
+    out = out.replace(anchor, anchor + BANNER % tpl_path.name, 1)
+
     for day in doc["days"]:
         n = day["number"]
         out = out.replace("{{DAY%d_NAME}}" % n, esc(day["name"]))
