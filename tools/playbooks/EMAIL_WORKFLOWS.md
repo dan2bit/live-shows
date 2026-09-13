@@ -57,6 +57,7 @@ and date pruning (Routine 3).
 | `artist-mail` | Gmail filter (artist newsletter senders) | Routine 4 |
 | `artist-follow` | Gmail filter (BIT/Songkick) or manual | Routine 5 |
 | `ticket-sold` | Gmail filter (forwards from dan2bit@gmail.com with `sold` in subject — covers AXS resales, StubHub, Ticketmaster resales) | Routine 6 |
+| `hftb-diff` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[hftb]`) | Routine 7 |
 | `processed` | Claude at end of each routine | All routines (excluded via `-label:processed`) |
 
 **Label IDs:**
@@ -75,6 +76,7 @@ and date pruning (Routine 3).
 | 4 — Artist newsletter | `label:artist-mail -label:processed` |
 | 5 — Artist follow / signup | `label:artist-follow -label:processed` |
 | 6 — Ticket sold | `label:ticket-sold -label:processed` |
+| 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
 
 ---
 
@@ -718,6 +720,51 @@ remaining tickets).
 **Step 6 — Activity log draft** (subject: `[LOG] Routine 6 — [Artist] [platform] sale — YYYY-MM-DD`)
 
 **Final:** Apply `processed` label.
+
+---
+
+## Routine 7 — Weekly HFTB Diff
+
+**Trigger:** `label:hftb-diff -label:processed`
+
+Sender `alerts@redhat-bootlegs.net`, subject prefixed `[hftb]` with the untracked
+count. Produced by `weekly-hftb-diff.yml` on a Friday-morning schedule — the body is
+`websrc_diff.py` output, already rendered.
+
+**The triage rules are NOT restated here.** They live in
+`ANALYSIS_WORKFLOWS.md` → Workflow 1-W step 4, which is the same triage as
+Workflow 1-A steps 2-3: check every newly-surfaced name against all six tracking
+files, surface anything unmatched for a tier decision. Duplicating them here is how
+the two documents drift, and the rules are the part most likely to change.
+
+What this routine adds over reading the mail is the write-up and the labelling:
+
+**Step 1 — Read the report.** It is plain text in the mail body. No fetching, no
+parsing — the scrape and the diff already ran in CI, and the refreshed scrape is
+already committed to `staging`.
+
+**Step 2 — Triage** per Workflow 1-W step 4.
+
+**Step 3 — Act on the outcome.** A name worth following becomes a `follows_master`
+row (or a NAR row if it needs research first) per `FOLLOWS_PIPELINE.md`. A show worth
+attending becomes a potentials row via the Routine 3 rules, calendar check included —
+a weekly diff is not an exemption from the clear-date requirement.
+
+**Step 4 — Activity log draft** (subject: `[LOG] Routine 7 — HFTB weekly — YYYY-MM-DD`).
+Note the counts and what was promoted, so the next run can tell a quiet week from an
+ignored one.
+
+**Final:** Apply `processed` label.
+
+**Nothing to do on a quiet week** — the workflow sends no mail when the untracked and
+tracked-new counts are both zero, so an empty label is the normal state between
+announcements rather than a sign the job failed. Check the Actions run history if the
+silence looks wrong.
+
+**The first mail after a re-baseline is not a normal week.** A `region=3` scrape
+diffed against a `region=1` predecessor reports every newly-covered act as new. The
+workflow skips the mail on a `rebaseline=true` dispatch, but the *following* week's
+diff still carries the tail shift.
 
 ---
 
