@@ -26,6 +26,12 @@ already pulled and cached by `latest_release()` on every run and then discarded
 at display time. This is rendering, not collection, which matters against a
 Dev-mode app that is already rate-limit constrained.
 
+The same goes for the tier / DMV-date join: `follows_master.tsv`,
+`fast_track.tsv`, `artists.tsv` and the two show files are all committed files
+already read by other scripts. A release from a followed artist is the strongest
+leading indicator of a tour announcement this project has, and treating it as a
+prompt rather than as news costs nothing.
+
 WHAT COUNTS AS A HIT
 
 The sweep produces several kinds of line and only one is interesting:
@@ -50,10 +56,27 @@ import argparse
 import json
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from name_forms import identity_keys  # noqa: E402  (path set above)
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "data" / "artist_spotify.json"
+
+FOLLOWS = ROOT / "tools" / "research" / "follows" / "follows_master.tsv"
+FAST_TRACK = ROOT / "data" / "fast_track.tsv"
+ARTISTS = ROOT / "data" / "artists.tsv"
+CURRENT = ROOT / "data" / "live_shows_current.tsv"
+POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
+
+# Sort order and the actionable test. fast-track outranks Strong: a fast-track
+# artist is on the list precisely because their shows do not reliably surface in
+# time, so a release from one is the most time-sensitive thing here.
+TIER_RANK = {"fast-track": 0, "Strong": 1, "Medium-Strong": 2,
+             "Medium": 3, "Lower": 4, "Low": 4}
+ACTIONABLE_TIERS = {"fast-track", "Strong", "Medium-Strong"}
 
 
 def load(path):
@@ -70,6 +93,111 @@ def load_head(rel):
             f"FATAL: could not read HEAD:{rel} ({e}). Pass --before explicitly "
             f"if this is not a git checkout.")
     return json.loads(out.stdout)
+
+
+def read_tsv(path):
+    """Header-keyed rows. Absent file yields none - a fork may lack any of these."""
+    if not path.exists():
+        return []
+    lines = [ln for ln in path.read_text(encoding="utf-8").splitlines()
+             if ln.strip() and not ln.lstrip().startswith("#")]
+    if not lines:
+        return []
+    header = [h.strip() for h in lines[0].split("\t")]
+    out = []
+    for ln in lines[1:]:
+        cells = ln.split("\t")
+        out.append({h: (cells[i].strip() if i < len(cells) else "")
+                    for i, h in enumerate(header)})
+    return out
+
+
+def load_context():
+    """(tier, dmv, tour) keyed on every identity form of each artist.
+
+    Every lookup below goes through identity_keys(), never a raw string compare.
+    Skipping the alias table makes long-tracked artists report as untracked - a
+    wrong answer that reads like a finding rather than a bug.
+    """
+    tier, tour, dmv = {}, {}, {}
+
+    for r in read_tsv(ARTISTS):
+        seen = (r.get("Times Seen") or "").strip()
+        if not r.get("Artist"):
+            continue
+        label = ("seen %s times, no follow row" % seen) if seen else "seen before, no follow row"
+        for k in identity_keys(r["Artist"]):
+            tier.setdefault(k, label)
+
+    # follows_master then fast_track, each overriding the weaker statement above.
+    for r in read_tsv(FOLLOWS):
+        t = (r.get("Tier") or "").strip()
+        if r.get("Artist") and t:
+            for k in identity_keys(r["Artist"]):
+                tier[k] = t
+
+    for r in read_tsv(FAST_TRACK):
+        if not r.get("Artist"):
+            continue
+        for k in identity_keys(r["Artist"]):
+            tier[k] = "fast-track"
+            if (r.get("Tour URL") or "").strip():
+                tour[k] = r["Tour URL"].strip()
+
+    today = date.today().isoformat()
+
+    def note(keys, when, text):
+        for k in keys:
+            cur = dmv.get(k)
+            if cur is None or when < cur[0]:
+                dmv[k] = (when, text)
+
+    for r in read_tsv(CURRENT):
+        d = (r.get("Show Date") or "").strip()
+        if r.get("Artist") and d >= today:
+            note(identity_keys(r["Artist"]), d,
+                 "%s at %s (purchased)" % (d, (r.get("Venue Name") or "?").strip()))
+
+    # Pass and Sell rows are deliberately excluded: a passed show is not a date
+    # you would act on, so reporting it as "the next DMV date" would suppress the
+    # actionable flag on exactly the artist worth checking.
+    for r in read_tsv(POTENTIAL):
+        d = (r.get("Date") or "").strip()[:10]
+        dec = (r.get("Decision") or "?").strip()
+        if r.get("Artist") and d >= today and dec not in ("Pass", "Sell"):
+            note(identity_keys(r["Artist"]), d,
+                 "%s at %s (%s)" % (d, (r.get("Venue") or "?").strip(), dec))
+
+    return tier, dmv, tour
+
+
+def annotate(name, ctx):
+    """-> dict of join context for one artist. Never raises on a miss.
+
+    One artist can match SEVERAL keys with different values - "Lone Bellow, The"
+    normalizes to both `lone bellow` (Strong, from follows_master) and
+    `lone bellow the` (an artists.tsv sighting). Picking the first match off a set
+    would make the answer depend on set iteration order, so every lookup here
+    resolves deterministically: the strongest tier, the earliest date, and the
+    first tour URL by sorted key.
+    """
+    tier_map, dmv_map, tour_map = ctx
+    keys = identity_keys(name)
+
+    tiers = [tier_map[k] for k in sorted(keys) if k in tier_map]
+    t = min(tiers, key=lambda x: (TIER_RANK.get(x, 9), x)) if tiers else "untracked"
+
+    dates = [dmv_map[k] for k in sorted(keys) if k in dmv_map]
+    d = min(dates) if dates else None
+
+    u = next((tour_map[k] for k in sorted(keys) if k in tour_map), None)
+    return {
+        "tier": t,
+        "dmv": d[1] if d else None,
+        "tour_url": u,
+        "actionable": t in ACTIONABLE_TIERS and d is None,
+        "_rank": (TIER_RANK.get(t, 9), (d[0] if d else "9999"), name.lower()),
+    }
 
 
 def rel_of(entry):
@@ -117,12 +245,17 @@ def diff(before, after, include_first=False):
     return hits, counts
 
 
-def render(hits, counts):
+def render(hits, counts, ctx=None):
     out = []
     if not hits:
         out.append("No new releases.")
     else:
-        out.append("NEW RELEASES (%d)" % len(hits))
+        n_act = sum(1 for n, _, _ in hits
+                    if ctx and annotate(n, ctx)["actionable"]) if ctx else 0
+        head = "NEW RELEASES (%d)" % len(hits)
+        if n_act:
+            head += " - %d worth a tour-page check" % n_act
+        out.append(head)
         out.append("=" * 62)
         for name, old_date, r in hits:
             kind = r.get("type") or "release"
@@ -132,6 +265,11 @@ def render(hits, counts):
             out.append("  %s -> %s" % (old_date or "first seen", r.get("date")))
             if r.get("url"):
                 out.append("  %s" % r["url"])
+            if ctx:
+                a = annotate(name, ctx)
+                out.append("  tier: %s - %s" % (a["tier"], a["dmv"] or "no DMV date on file"))
+                if a["tour_url"]:
+                    out.append("  tour: %s" % a["tour_url"])
     out.append("")
     out.append("--")
     out.append("%d checked this run - %d unchanged - %d no spotify_id"
@@ -166,6 +304,8 @@ def main():
                     help="also report entries whose latest_release went from "
                          "null to a date (noisy during backfill)")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--no-join", action="store_true",
+                    help="skip the tier / DMV-date join and report the raw diff")
     args = ap.parse_args()
 
     after = load(args.after) if args.after else load(CACHE)
@@ -174,14 +314,27 @@ def main():
 
     hits, counts = diff(before, after, args.include_first)
 
+    ctx = None if args.no_join else load_context()
+    if ctx:
+        # fast-track and Strong first, then by nearest DMV date, then by name.
+        hits.sort(key=lambda h: annotate(h[0], ctx)["_rank"])
+
     if args.json:
+        rels = []
+        for n, o, r in hits:
+            row = {"artist": n, "previous": o, **r}
+            if ctx:
+                a = annotate(n, ctx)
+                row.update({k: a[k] for k in ("tier", "dmv", "tour_url", "actionable")})
+            rels.append(row)
         print(json.dumps({
             "count": len(hits),
+            "actionable": sum(1 for r in rels if r.get("actionable")),
             "counts": counts,
-            "releases": [{"artist": n, "previous": o, **r} for n, o, r in hits],
+            "releases": rels,
         }, indent=2, ensure_ascii=False))
     else:
-        print(render(hits, counts))
+        print(render(hits, counts, ctx))
     return 0
 
 
