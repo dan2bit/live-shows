@@ -78,6 +78,24 @@ directly — every such tag is flagged with a `<!-- config: -->` marker, and the
 `meta:` block at the bottom of `config.yaml` is the checklist of them. Editing
 that block alone does nothing.
 
+**The About-modal links are the opposite: config only.** `site.about_links` is a
+list of `{url, label}` pairs, and `app.js` clears the `<ul class="about-links">`
+in `index.html` before rendering it — so the markup there is deliberately empty
+and there is nothing to keep in sync. Add, remove and reorder links by editing
+`config.yaml` alone.
+
+It is empty rather than seeded because a static copy is only ever visible when
+config fails to load, which is a state where the title, theme, tab labels and
+hero image have already fallen back too — and a fork that never edited the
+markup would ship the upstream author's links.
+
+Link URLs are used verbatim, NOT resolved through `pages_base`. An external
+link is fine as an absolute URL. For a page inside your own fork, use a path
+**relative to the repo root without a leading slash** — `festival/`, not
+`/festival/`. A leading slash resolves against the domain root, which is correct
+only when the site is served from a custom domain at the root; on a default
+`<owner>.github.io/<repo>/` Pages URL it points outside the fork and 404s.
+
 ### 3. Data files
 
 Everything the site shows lives in TSVs under `data/`:

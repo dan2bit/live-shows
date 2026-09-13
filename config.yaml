@@ -52,14 +52,13 @@ site:
         label: "🎵 music links on Linktree"
       - url: https://signers.redhat-bootlegs.net
         label: "🎩 hat autographs"
-      # Mirrored in index.html as an .about-link <li>. Update both.
       - url: https://photos.redhat-bootlegs.net/s/musicians
         label: "📷 album: Guitar Gods & Goddesses"
-      - url: /tools/research/graph/artist-graph.html
+      - url: tools/research/graph/artist-graph.html
         label: "🔗 The Artist Graph"
-      - url: /festival/
+      - url: festival/
         label: "🎸 The Festival Poster"
-      - url: /tools/map/map.html
+      - url: tools/map/map.html
         label: "🌐 The Fantasy Map of Guitarlandria"
 
   about_footer: "Life is short. Buy the tickets."

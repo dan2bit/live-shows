@@ -92,12 +92,11 @@
     </div>
     <div class="about-body">
       <p>I haunt small venues across the DC/MD/VA area: blues, blues-rock, Americana, roots. I post bootleg recordings from what I catch. This page tracks where I've been and where I'm going.</p>
-      <ul class="about-links">
-        <li><a class="about-link" href="https://www.youtube.com/@dan2bit" target="_blank">&#9654; @dan2bit on YouTube &#8212; bootlegs</a></li>
-        <li><a class="about-link" href="https://linktr.ee/dan2bit" target="_blank">&#127925; Music links &#8212; Linktree</a></li>
-        <li><a class="about-link" href="https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit?usp=sharing" target="_blank">&#127913; Hat autographs</a></li>
-        <li><a class="about-link" href="https://photos.redhat-bootlegs.net/s/musicians" target="_blank">&#128247; Guitar Gods &amp; Goddesses &#8212; photo album</a></li>
-      </ul>
+      <!-- Filled from config.yaml site.about_links by app.js, which clears this
+           list before rendering. Deliberately empty: a static copy here is never
+           shown when config loads, and a fork that did not edit it would ship
+           someone else's links. -->
+      <ul class="about-links"></ul>
       <h3 class="about-footer" style="margin:14px 0 0;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text)">Life is short. Buy the tickets.</h3>
     </div>
     <button class="about-close-btn" onclick="closeAboutModal()" aria-label="Close">&#10005;</button>
