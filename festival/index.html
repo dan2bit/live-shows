@@ -39,6 +39,9 @@
   }
   .masthead{text-align:center;border-bottom:3px double var(--ink);padding-bottom:22px;}
   .hat{width:84px;filter:sepia(.3) contrast(1.05);margin-bottom:6px;}
+  /* Same affordance as the site header's hat button: tips and lifts on hover. */
+  .hat-link{display:inline-block;opacity:.85;transition:opacity .15s,transform .15s;}
+  .hat-link:hover{opacity:1;transform:rotate(-8deg) scale(1.08);}
   .eyebrow{
     font-family:'Special Elite',monospace;font-size:13px;letter-spacing:.28em;
     text-transform:uppercase;margin-bottom:8px;
@@ -119,7 +122,7 @@
 <div class="poster">
 
   <header class="masthead">
-    <img class="hat" src="../static/brand-hat.png" alt="" onerror="this.style.display='none'">
+    <a class="hat-link" href="../index.html" title="Back to live-shows"><img class="hat" src="../static/brand-hat.png" alt="live-shows" onerror="this.style.display='none'"></a>
     <div class="eyebrow">Dan2bit Presents &mdash; One Weekend Only</div>
     <h1>Red House <span class="rev">Revival</span></h1>
     <div class="sub">Three Days &bull; Two Stages &bull; The Running Order</div>

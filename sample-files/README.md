@@ -32,3 +32,12 @@ produce a clean, working, empty fork — see `docs/FORK_SETUP.md`.
   a fully-specified entry (price ceiling, distance radius, venue scale); define
   whatever cap vocabulary you like — agents read these values as policy, so
   keep the wording consistent across rows.
+- `artist_display-sample.tsv` and `recommend_aliases-sample.tsv` look alike and
+  are **not interchangeable**. The alias table maps many spellings to one
+  canonical name and is read on the way IN, to decide whether two rows are the
+  same artist. The display table maps one canonical name to one name per
+  width and is applied on the way OUT, when a layout cannot fit the real name.
+  A blank `Short` or `Medium` falls back to the canonical name, so most acts
+  need no row at all. Keep typography out of it — an em dash or a curly
+  apostrophe is the renderer's job, and putting those here fills the file with
+  variants of names that were already fine.
