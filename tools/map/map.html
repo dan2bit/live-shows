@@ -58,6 +58,9 @@
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
   #rose{pointer-events:none;opacity:.94;}
+  #rose-home{pointer-events:all;cursor:pointer;}
+  #rose-home:hover #rose-clef,#rose-home:focus-visible #rose-clef{stroke:#0e5a70;}
+  #rose-home:hover circle,#rose-home:focus-visible circle{opacity:.85;}
   .region-label,.geo-island,.geo-water{pointer-events:none;}
   body.editing .region-label,body.editing .geo-island,body.editing .geo-water{pointer-events:all;cursor:move;}
   .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
@@ -255,11 +258,17 @@
 
   // the compass rose settles on the unnamed northwest island
   // clef needle over an engraved star, ringed by a circular five-line staff
-  const rose=document.createElementNS(NS,'g');
-  rose.setAttribute('id','rose');
-  rose.setAttribute('pointer-events','none');rose.setAttribute('opacity','.95');
-  rose.setAttribute('transform','translate(70,82) scale(0.42)');
-  rose.innerHTML=`
+  // Wrapped in an SVG <a> (#rose-home) so the rose itself is the map's way back
+  // to the site (issue #359) - the rest of #rose stays pointer-events:none via CSS.
+  const rose=document.createElementNS(NS,'a');
+  rose.setAttribute('id','rose-home');
+  rose.setAttributeNS('http://www.w3.org/1999/xlink','href','../../index.html');
+  rose.setAttribute('href','../../index.html');
+  rose.setAttribute('aria-label','Back to live-shows');
+  const roseInner=document.createElementNS(NS,'g');
+  roseInner.setAttribute('id','rose');
+  roseInner.setAttribute('transform','translate(70,82) scale(0.42)');
+  roseInner.innerHTML=`<title>Back to live-shows</title>
     <g fill="none" stroke="#221A12">
       <circle r="47" stroke-width=".8"/><circle r="44.5" stroke-width=".8"/><circle r="42" stroke-width=".8"/>
       <circle r="39.5" stroke-width=".8"/><circle r="37" stroke-width=".8"/>
@@ -279,12 +288,13 @@
     <path id="rose-clef" d="M 0 -46 C 10 -40 10 -28 1 -22 C -10 -15 -12 -2 0 4 C 9 8 14 0 9 -6 C 5 -11 -2 -9 -2 -3 M 1 -22 L 3 26 C 3 34 -6 37 -9 31"
       fill="none" stroke="#A63D2F" stroke-width="3" stroke-linecap="round"/>
     <use href="#rose-clef" fill="none" stroke="#221A12" stroke-width="1" stroke-linecap="round"/>
-    <image href="https://dan2bit.github.io/live-shows/static/brand-hat.png" x="-15" y="-13" width="30" height="25"
+    <image href="../../static/brand-hat.png" x="-15" y="-13" width="30" height="25"
       onerror="this.style.display='none'"/>
     <g font-family="Special Elite" font-size="13" fill="#221A12" text-anchor="middle"
        style="paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:3px;">
       <text x="0" y="-57">N</text><text x="62" y="5">E</text><text x="0" y="70">S</text><text x="-62" y="5">W</text>
     </g>`;
+  rose.appendChild(roseInner);
   map.appendChild(rose);
 
   // geo names: islands and waters
