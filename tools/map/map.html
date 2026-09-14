@@ -27,7 +27,7 @@
     text-anchor:middle;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;
     paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:3px;}
 
-  /* routes: styled by render, toggled by provenance 
+  /* routes: styled by render, toggled by provenance */
   .route{fill:none;pointer-events:none;stroke-linecap:round;}
   .r-road{stroke:#4a3a26;stroke-width:.9;opacity:.75;}
   .r-river{stroke:#3a5a44;stroke-width:.9;opacity:.7;}
@@ -36,7 +36,7 @@
   .r-ferry{stroke:#2E4A6B;stroke-width:.8;stroke-dasharray:.5 3;opacity:.8;}
   .r-pass{stroke:#4a3a26;stroke-width:.8;stroke-dasharray:4 2;opacity:.6;}
   .r-highway{stroke:#4a3a26;stroke-width:1.1;opacity:.6;}
-   */
+
   .stl{cursor:pointer;pointer-events:bounding-box;}
   .stl circle{pointer-events:all;}
   .stl circle{stroke:var(--ink);vector-effect:non-scaling-stroke;}
@@ -178,9 +178,9 @@
   map.appendChild(bg);
 
   const gRegions=document.createElementNS(NS,'g');
- // const gRoutes=document.createElementNS(NS,'g');
+  const gRoutes=document.createElementNS(NS,'g');
   const gStl=document.createElementNS(NS,'g');
-  map.append(gRegions,gStl);
+  map.append(gRegions,gRoutes,gStl);
 
   const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
@@ -246,14 +246,14 @@
     }
     return d;
   }
- // for(const r of data.routes){
- //   const a=S.get(r.a),b=S.get(r.b); if(!a||!b)continue;
- //   const pts=[a.xy,...(r.via||[]),b.xy];
- //   const p=document.createElementNS(NS,'path');
- //   p.setAttribute('d',smoothPath(pts));
- //   p.setAttribute('class',`route r-${r.render}`);
- //   p.dataset.cls=r.cls; p.dataset.cross=r.crossRegion?'1':'0';
- //   gRoutes.appendChild(p);
+  for(const r of data.routes){
+    const a=S.get(r.a),b=S.get(r.b); if(!a||!b)continue;
+    const pts=[a.xy,...(r.via||[]),b.xy];
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',smoothPath(pts));
+    p.setAttribute('class',`route r-${r.render}`);
+    p.dataset.cls=r.cls; p.dataset.cross=r.crossRegion?'1':'0';
+    gRoutes.appendChild(p);
   }
 
   // the compass rose settles on the unnamed northwest island
