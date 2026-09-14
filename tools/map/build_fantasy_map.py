@@ -417,12 +417,6 @@ for c in records:  # stragglers: isolated unknowns drift to the Isles
     if not region_of.get(c):
         region_of[c] = "outer_isles" if G.degree(c) == 0 else "heartland"
 
-_early_ov_path = SCRIPT_DIR / "map_overrides.json"
-if _early_ov_path.exists():
-    for _nm, _ov in json.loads(_early_ov_path.read_text()).items():
-        if _nm in records and _ov.get("region") in REGIONS:
-            region_of[_nm] = _ov["region"]
-
 # ---------------------------------------------------------------- districts
 random.seed(RNG_SEED)
 districts = {}          # district id -> {region, members, suggested_name}
