@@ -278,6 +278,7 @@ MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     "Gillian Welch & David Rawlings": "Gillian Welch",
     "Victor Wooten & The Wooten Brothers": "Victor Wooten",
     "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
+    "John Primer & The Real Deal Blues Band": "John Primer",
 }
 SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
     "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
@@ -416,6 +417,12 @@ for c in records:  # stragglers: isolated unknowns drift to the Isles
     if not region_of.get(c):
         region_of[c] = "outer_isles" if G.degree(c) == 0 else "heartland"
 
+_early_ov_path = SCRIPT_DIR / "map_overrides.json"
+if _early_ov_path.exists():
+    for _nm, _ov in json.loads(_early_ov_path.read_text()).items():
+        if _nm in records and _ov.get("region") in REGIONS:
+            region_of[_nm] = _ov["region"]
+
 # ---------------------------------------------------------------- districts
 random.seed(RNG_SEED)
 districts = {}          # district id -> {region, members, suggested_name}
@@ -470,39 +477,18 @@ def score(c):
             + 2 * m.get("vip", 0)
             + TIER_SCORE.get(r.get("tier"), 0))
 
-# The Outer Isles regroup: the taste graph barely connects the outliers, so
-# districts there are rebuilt as peg crews - genre-family buckets chunked small.
-def isle_family(c):
-    tags = [t.lower() for t in lastfm(spot.get(c, {})).get("tags", [])]
-    joined = " ".join(tags)
-    for kws, fam in ((("celtic", "irish", "scottish"), "celtic"),
-                     (("tribute", "cover"), "tribute"),
-                     (("metal", "djent", "progressive"), "metal"),
-                     (("pop", "indie"), "pop")):
-        if any(k in joined for k in kws):
-            return fam
-    return "far"
-
-isle_members_all = sorted(c for c in records if region_of[c] == "outer_isles")
-for did in [d_ for d_ in list(districts) if districts[d_]["region"] == "outer_isles"]:
-    del districts[did]
-fams = defaultdict(list)
-for c in isle_members_all:
-    fams[isle_family(c)].append(c)
-pegs = []
-for fam in sorted(fams):
-    mem = fams[fam]
-    for j in range(0, len(mem), 6):
-        pegs.append((fam, mem[j:j + 6]))
-for pi2, (fam, mem) in enumerate(pegs, 1):
-    did = f"outer_isles:p{pi2}"
-    seat = max(mem, key=lambda c: score(c))
-    seatword = re.sub(r"[^A-Za-z]", "", seat.split()[-1]) or "Peg"
-    sfx = REGIONS["outer_isles"]["toponym_suffixes"][pi2 % len(REGIONS["outer_isles"]["toponym_suffixes"])]
-    districts[did] = {"region": "outer_isles", "members": mem, "seat": seat,
-                      "suggested_name": f"{seatword} {sfx}"}
-    for c in mem:
-        district_of[c] = did
+# #363 simplification (2026-09-14): Outer Isles previously rebuilt its
+# districts as hand-numbered "peg crews" - genre-family buckets (isle_family),
+# PEG_CREW relabeling, CURATED_ISLES per-crew island art - a parallel
+# subsystem that existed only because early members were too taste-graph-
+# sparse for normal community detection. It didn't scale: the auto-chunking's
+# fixed 6-crew capacity overflowed as the roster grew past 34 members. Every
+# named island (Innis Craic, Pop Rock, etc.) is just a label position in
+# labels.json -> islands - the same mechanism already used for Funk Atoll,
+# Reggae Isle, and Legends Island on the mainland, with no per-artist
+# membership tracking. Outer Isles now gets the same community-detection
+# districts as every other region (built by the main loop above); nothing
+# region-specific happens here.
 
 CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR"}
 
@@ -579,8 +565,6 @@ for reg, spec in REGIONS.items():
     members = [c for c in records if region_of[c] == reg]
     if not members:
         continue
-    if reg == "outer_isles":
-        continue  # placed below, one island per district along the headstock
     # quotient layout: springs position the districts, members ring their district
     dids = sorted({district_of[m] for m in members})
     Q = nx.Graph(); Q.add_nodes_from(dids)
@@ -766,60 +750,6 @@ def relax(rounds):
             break
 tidy(); relax(24); tidy(); relax(18); tidy()
 
-def refresh_isle_islands():
-    """Island geometry follows the members - rerun after any hand pins."""
-    for did, dd in districts.items():
-        if dd["region"] != "outer_isles":
-            continue
-        pts = [xy[m] for m in dd["members"] if m in xy and region_of[m] == "outer_isles"]
-        if not pts:
-            continue
-        cxp = sum(p[0] for p in pts) / len(pts)
-        cyp = sum(p[1] for p in pts) / len(pts)
-        spread = max((math.hypot(p[0] - cxp, p[1] - cyp) for p in pts), default=6)
-        dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
-        dd["island_r"] = round(min(max(spread + 7, 10), 22), 1)
-
-
-
-    """Island geometry follows the members - rerun after any hand pins."""
-    for did, dd in districts.items():
-        if dd["region"] != "outer_isles":
-            continue
-        pts = [xy[m] for m in dd["members"] if m in xy and region_of[m] == "outer_isles"]
-        if not pts:
-            continue
-        cxp = sum(p[0] for p in pts) / len(pts)
-        cyp = sum(p[1] for p in pts) / len(pts)
-        spread = max((math.hypot(p[0] - cxp, p[1] - cyp) for p in pts), default=6)
-        dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
-        dd["island_r"] = round(min(max(spread + 7, 10), 22), 1)
-
-
-# The pegs: each Outer Isles district is its own island flanking the headstock.
-AXIS_G = math.radians(-38); HEEL_G = (645, 325)
-ug = (math.cos(AXIS_G), math.sin(AXIS_G)); vg = (-math.sin(AXIS_G), math.cos(AXIS_G))
-isle_ds = sorted((did for did, dd in districts.items() if dd["region"] == "outer_isles"),
-                 key=lambda did: -len(districts[did]["members"]))
-for pi, did in enumerate(isle_ds):
-    dd = districts[did]
-    k = pi // 2
-    side = 1 if pi % 2 else -1
-    t = 246 + ((0, 54, 108) if side < 0 else (6, 56, 100))[k]
-    off = side * (116 + (0, 12, -8)[k])
-    cxp = HEEL_G[0] + ug[0] * t + vg[0] * off
-    cyp = HEEL_G[1] + ug[1] * t + vg[1] * off
-    cxp = min(max(cxp, 20), 978); cyp = min(max(cyp, 18), 260)
-    n = len(dd["members"])
-    r_isl = min(7.5 + 2.0 * math.sqrt(n), 14) * (1.0, 0.82, 1.14)[k]
-    dd["island_center"] = [round(cxp, 1), round(cyp, 1)]
-    dd["island_r"] = round(r_isl, 1)
-    ring = max(3.0, r_isl - 6)
-    for j, m in enumerate(sorted(dd["members"])):
-        ang = j * 2.399963  # golden angle
-        rr = ring * math.sqrt((j + 0.5) / max(n, 1))
-        xy[m] = (cxp + rr * math.cos(ang), cyp + rr * math.sin(ang))
-
 # ---- arrivals: discovered settlements and fast-track towns, staged for hand placement ----
 SIZE_OVERRIDE = {}
 UNPLACED = set()
@@ -905,26 +835,6 @@ if pins_path.exists():
         if nm in xy:
             xy[nm] = (float(p_[0]), float(p_[1]))
             UNPLACED.discard(nm)   # a pinned settlement is a placed settlement
-    # a pinned islander joins the crew whose island he actually stands on
-    isle_crews = [d_ for d_, dd in districts.items()
-                  if dd["region"] == "outer_isles" and not d_.endswith(":outskirts")]
-    for nm in json.loads(pins_path.read_text()):
-        if region_of.get(nm) != "outer_isles" or nm not in xy:
-            continue
-        def crew_center(d_, excl):
-            pts = [xy[m] for m in districts[d_]["members"] if m in xy and m != excl]
-            return (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)) if pts else None
-        best = min((d_ for d_ in isle_crews if crew_center(d_, nm)),
-                   key=lambda d_: math.hypot(xy[nm][0] - crew_center(d_, nm)[0],
-                                             xy[nm][1] - crew_center(d_, nm)[1]))
-        cur = district_of.get(nm)
-        if best != cur:
-            if cur in districts and nm in districts[cur]["members"]:
-                districts[cur]["members"].remove(nm)
-            districts[best]["members"].append(nm)
-            districts[best]["members"].sort()
-            district_of[nm] = best
-    refresh_isle_islands()
 
 # ---- source references: a short "why on the map" line per non-seen settlement ----
 def _read_tsv(p):
@@ -984,32 +894,6 @@ CURATED_SIZE = {
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
                     "Jackie Venson", "Orianthi", "Queen Latifah"}
-PEG_CREW = {   # name -> crew; the eye-test canon of 2026-09-05
-    "Every Breath You Take": "p3", "Jessie's Girl": "p3", "Honeyfunk": "p3",
-    "La Unica": "p3", "The Side Cars Band": "p3", "Zedicus & Abyssinia Roots": "p3",
-    "Young Dubliners": "p1", "Cassie & Maggie": "p1", "Gaelic Storm": "p1",
-    "Haggis X-1": "p1", "House of Hamill": "p1", "Enter the Haggis": "p1",
-    "Danny Burns": "p1",
-    "The Roots": "p4", "Wu-Tang Clan": "p4", "Bone Thugs-n-Harmony": "p4",
-    "DJ Jazzy Jeff": "p4", "De La Soul": "p4", "LL Cool J": "p4",
-    "Nas": "p4", "Z-Trip": "p4",
-    "Hozier": "p6", "Chelsea Cutler": "p6", "Gigi Perez": "p6",
-    "Valley": "p6", "Zara Larsson": "p6", "kitchen": "p6",
-    "Kate Davis": "p5", "Sadurn": "p5", "Brassie": "p5",
-    "Mystery Friends": "p5", "The House You Grew Up In (THYGUI)": "p5",
-    "Talia Segal": "p5", "Chris Jacobs & Friends": "p5",
-    "Hayley Williams": "p5", "Muna": "p5", "Zara Phillips": "p5",
-    "AJR": "p2",
-}
-
-CURATED_ISLES = {   # crew -> (seat, island name)
-    "outer_isles:p1": ("Young Dubliners", "Innis Craic"),
-    "outer_isles:p2": ("AJR", "Pop Rock"),
-    "outer_isles:p3": ("Every Breath You Take", "Cover Band Cay"),
-    "outer_isles:p4": ("The Roots", "Hip Hop Haven"),
-    "outer_isles:p5": ("Kate Davis", "Fempop Skree"),
-    "outer_isles:p6": ("Hozier", "Indiesoul Isle"),
-}
 
 def rename_settlement(old, new):
     if old not in records:
@@ -1046,67 +930,16 @@ move_to_region("George Clinton & Parliament-Funkadelic", "river_port")
 move_to_region("DuPont Brass", "river_port")
 move_to_region("Queen Latifah", "river_port")
 move_to_region("L\u012bve", "amplified_range", stage=False)   # Dan's pin already mainlands him
-# AJR Rock is one-of-one: the rest of the old funk crew stages at the Anchorage
-_p2 = districts.get("outer_isles:p2")
-if _p2:
-    for m in [m for m in _p2["members"] if m != "AJR"]:
-        _p2["members"].remove(m)
-        districts["outer_isles:arrivals"]["members"].append(m)
-        district_of[m] = "outer_isles:arrivals"
-        if m not in _pins_law:
-            UNPLACED.add(m)
-    districts["outer_isles:arrivals"]["members"].sort()
-# Brassie and Sadurn emigrate to Fempop Skree (final placement is Dan's)
+# Brassie and Sadurn join the Outer Isles roster (final placement is Dan's)
 for m in ("Brassie", "Sadurn"):
-    if m in records:
+    if m in records and region_of.get(m) != "outer_isles":
         old_d = district_of.get(m)
         if old_d in districts and m in districts[old_d]["members"]:
             districts[old_d]["members"].remove(m)
         region_of[m] = "outer_isles"
-        district_of[m] = "outer_isles:p5"
-        districts["outer_isles:p5"]["members"].append(m)
+        district_of[m] = "outer_isles:arrivals"
         if m not in _pins_law:
-            ic5 = districts["outer_isles:p5"].get("island_center", [960, 240])
-            jr4 = random.Random(f"{RNG_SEED}:fp:{m}")
-            xy[m] = (ic5[0] + (jr4.random() - 0.5) * 10, ic5[1] + (jr4.random() - 0.5) * 8)
             UNPLACED.add(m)
-districts["outer_isles:p5"]["members"].sort()
-# PEG_CREW is law: explicit crew assignment overrides proximity drift
-for nm, crew in PEG_CREW.items():
-    did = f"outer_isles:{crew}"
-    if nm not in records or did not in districts:
-        continue
-    cur = district_of.get(nm)
-    if cur == did:
-        continue
-    if cur in districts and nm in districts[cur]["members"]:
-        districts[cur]["members"].remove(nm)
-    if region_of.get(nm) == "outer_isles":
-        districts[did]["members"].append(nm)
-        districts[did]["members"].sort()
-        district_of[nm] = did
-for did in [d_ for d_, dd in districts.items()
-            if dd["region"] == "outer_isles" and not dd["members"]]:
-    del districts[did]
-for did, (seat_, iname_) in CURATED_ISLES.items():
-    if did in districts:
-        districts[did]["seat"] = seat_
-        districts[did]["suggested_name"] = iname_
-refresh_isle_islands()
-# crew emigrants without a pin land on their island's shore ring
-for nm, crew in PEG_CREW.items():
-    did = f"outer_isles:{crew}"
-    if (nm not in xy or nm in _pins_law or did not in districts
-            or district_of.get(nm) != did):
-        continue
-    ic_ = districts[did].get("island_center")
-    ir_ = districts[did].get("island_r", 12)
-    if ic_ and math.hypot(xy[nm][0] - ic_[0], xy[nm][1] - ic_[1]) > ir_:
-        jr6 = random.Random(f"{RNG_SEED}:crew:{nm}")
-        ang_ = jr6.random() * 6.28318
-        rr_ = max(ir_ - 5, 3) * jr6.random()
-        xy[nm] = (ic_[0] + rr_ * math.cos(ang_), ic_[1] + rr_ * math.sin(ang_))
-refresh_isle_islands()
 
 # Dan's viewer overrides (map_overrides.json): region and size, position untouched
 OVERRIDE_SIZE = {}
@@ -1132,7 +965,6 @@ if ov_path.exists():
                 UNPLACED.add(nm)
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
-    refresh_isle_islands()
 
 _decree_pins = (set(json.loads((SCRIPT_DIR / "pins.json").read_text()))
                 if (SCRIPT_DIR / "pins.json").exists() else set())
@@ -1220,11 +1052,55 @@ def hull_of(pts, pad=16):
         out.append([round(x + dx / d * pad, 1), round(y + dy / d * pad, 1)])
     return out
 
+# Sutherland-Hodgman: clip a convex polygon against one half-plane. Points on
+# the far side of the line through p0 with outward normal n are cut away;
+# clipping a convex polygon against a half-plane always yields a convex result.
+def clip_halfplane(poly, p0, n):
+    def side(pt):
+        return (pt[0]-p0[0])*n[0] + (pt[1]-p0[1])*n[1]
+    out = []
+    for i in range(len(poly)):
+        cur, prev = poly[i], poly[i-1]
+        cur_in, prev_in = side(cur) <= 0, side(prev) <= 0
+        if cur_in != prev_in:
+            d1, d2 = side(prev), side(cur)
+            t = d1 / (d1 - d2) if (d1 - d2) else 0
+            out.append([prev[0]+t*(cur[0]-prev[0]), prev[1]+t*(cur[1]-prev[1])])
+        if cur_in:
+            out.append(cur)
+    return out
+
+# #363: region hulls drawn independently overlapped heavily (Amplified Range's
+# hull alone covered parts of every other region, measured against live data).
+# Clip each region's padded hull against the perpendicular bisector toward
+# every other region's member centroid, so no two regions' drawn boundaries
+# overlap. A member whose actual position sits past its own region's bisector
+# (a real outlier, not a hull artifact) renders outside its ghost boundary -
+# expected per the schema doc ("these are not meant as exact borders"), not a
+# bug to chase here.
+def clip_to_neighbors(region, hull, centroids):
+    poly = [tuple(p) for p in hull]
+    cx, cy = centroids[region]
+    for other, (ox, oy) in centroids.items():
+        if other == region or not poly:
+            continue
+        mx, my = (cx+ox)/2, (cy+oy)/2
+        poly = clip_halfplane(poly, (mx, my), (ox-cx, oy-cy))
+    return [[round(x, 1), round(y, 1)] for x, y in poly]
+
 region_hulls = {}
+region_centroids = {}
+for reg in REGIONS:
+    pts = [xy[c] for c in records if region_of[c] == reg]
+    if pts:
+        region_centroids[reg] = (sum(p[0] for p in pts) / len(pts),
+                                  sum(p[1] for p in pts) / len(pts))
 for reg in REGIONS:
     pts = [xy[c] for c in records if region_of[c] == reg]
     hl = hull_of(pts)
     if hl:
+        hl = clip_to_neighbors(reg, hl, region_centroids)
+    if hl and len(hl) >= 3:
         region_hulls[reg] = hl
 
 # gateways: each ordered region pair gets one crossing point per side, so
