@@ -23,6 +23,13 @@ name: Weekly HFTB refresh
 # Quiet weeks send nothing. A weekly mail reporting that nothing happened is how
 # an alert channel teaches you to ignore it. History: docs/ISSUE_LOG.md.
 #
+# The untracked names are pre-scored before mailing
+# (tools/research/score_candidates.py): Last.fm tags and similar-artist overlap
+# with the tracked set, MusicBrainz genres, label rosters and bill co-occurrence,
+# rendered as ordered buckets with reasons. Scoring orders; it never drops a
+# name. Enrichment is cached in data/candidate_cache.json, committed alongside
+# the scrape. LASTFM_API_KEY is the only credential it uses - zero Spotify.
+#
 # Commits ride the established bot pattern: deploy key -> staging ->
 # auto-promote, with the rebase retry loop copied from the release-refresh
 # workflow.
@@ -154,6 +161,33 @@ jobs:
           print('tracked_new=%d' % len(d.get('tracked_new', [])))
           PY
 
+      - name: Score the untracked names
+        # Reads the --json diff, enriches new names from Last.fm and
+        # MusicBrainz (cached), and writes the bucketed report. Empty output
+        # when the diff had no untracked names. A missing key is a warning,
+        # not a failure: the raw diff still mails.
+        if: ${{ github.event.inputs.rebaseline != 'true' }}
+        env:
+          FILE: ${{ steps.stage.outputs.file }}
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: |
+          set -euo pipefail
+          [ -f /tmp/hftb_diff.json ] || { echo "No diff JSON - nothing to score."; exit 0; }
+          python3 tools/research/score_candidates.py \
+            --diff /tmp/hftb_diff.json --scrape "$FILE" > /tmp/hftb_scored.txt || {
+            echo "::warning::scoring failed - mailing the raw diff only"
+            : > /tmp/hftb_scored.txt
+          }
+          if [ -s /tmp/hftb_scored.txt ]; then
+            {
+              echo '## Scored'
+              echo
+              echo '```'
+              cat /tmp/hftb_scored.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Mail the weekly diff
         # Skipped on a re-baseline for the same reason the diff step is: a region
         # change makes every newly-covered act look new, and that is a coverage
@@ -183,7 +217,14 @@ jobs:
 
           SUBJECT="[hftb] $U untracked new ($(date -u +%Y-%m-%d))"
           [ "$T" = "0" ] || SUBJECT="[hftb] $U untracked, $T tracked ($(date -u +%Y-%m-%d))"
-          python3 scripts/notify_email.py --subject "$SUBJECT" --body-file /tmp/hftb_diff.txt
+          # Scored buckets first (the part to read), then the raw diff for the
+          # counts and the tracked-new section the scorer does not cover.
+          if [ -s /tmp/hftb_scored.txt ]; then
+            { cat /tmp/hftb_scored.txt; printf '\n\n%s\n\n' "== Raw diff =="; cat /tmp/hftb_diff.txt; } > /tmp/hftb_mail.txt
+          else
+            cp /tmp/hftb_diff.txt /tmp/hftb_mail.txt
+          fi
+          python3 scripts/notify_email.py --subject "$SUBJECT" --body-file /tmp/hftb_mail.txt
 
       - name: Note the re-baseline
         if: ${{ github.event.inputs.rebaseline == 'true' }}
@@ -207,8 +248,9 @@ jobs:
           set -euo pipefail
           [ -f "$FILE" ] || { echo "No scrape file produced - nothing to commit."; exit 0; }
           git add "$FILE"
+          [ -f data/candidate_cache.json ] && git add data/candidate_cache.json
           if git diff --cached --quiet; then
-            echo "$FILE unchanged - nothing to commit."
+            echo "$FILE and the candidate cache unchanged - nothing to commit."
             exit 0
           fi
 
