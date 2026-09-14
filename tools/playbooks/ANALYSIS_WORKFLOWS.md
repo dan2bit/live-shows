@@ -107,8 +107,16 @@ list rather than a decision list. Expect the weekly output to be noisier per hit
    `--prior` is a display label only when `--prior-file` is given; it appears in
    the report header and need not be a real month.
 
-4. **Triage** exactly as Workflow 1-A step 2-3: check newly-surfaced names against
-   all six tracking files, surface anything unmatched for a tier decision.
+4. **Triage.** The mail arrives pre-scored (`tools/research/score_candidates.py`,
+   run by the workflow on the `--json` diff): every untracked name in one of four
+   buckets with its reasons - Strong fit (genre or taste-graph), Possible, No
+   signal (not on Last.fm or MusicBrainz at all - usually local and new, read
+   these), Off-profile. Scoring orders; it never drops a name. Tier decisions
+   are still made here; a name that earns one goes to NAR or `follows_master`
+   per `FOLLOWS_PIPELINE.md`. Unknown tags listed in the footer get added to
+   `data/taste_genres.tsv` (or marked `x`) so the weights grow from what shows up.
+   To score by hand: `python3 tools/research/score_candidates.py --diff <diff.json> --scrape <scrape.tsv>`
+   (`--offline` reads the cache only).
 
 5. **Commit** the refreshed scrape to `staging`. The file keeps its `-YYYY-MM`
    name, so the monthly archive rotation is unaffected - the month-over-month
