@@ -596,6 +596,7 @@
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
   let dragL=null, downAt=null;
   stage.addEventListener('pointerdown',e=>{
+    if(e.target.closest('#rose-home')){return;}  // let the anchor's native click/nav fire uncaptured (#363 follow-up)
     downAt=[e.clientX,e.clientY];
     const rl=(window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
     const g=(window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
