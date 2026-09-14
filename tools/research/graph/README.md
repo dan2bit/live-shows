@@ -8,7 +8,7 @@ nodes. This makes the Strategy-session discovery heuristic ("densely-connected
 in the DMV blues peer network") visible: raise or lower the candidate threshold
 slider to control how much unexplored territory shows.
 
-**Live page:** https://dan2bit.github.io/live-shows/tools/research/graph/artist-graph.html
+**Live page:** https://redhat-bootlegs.net/tools/research/graph/artist-graph.html
 
 The page fetches `artist_modal_index.json`, `artist_spotify.json`,
 `recommend_aliases.tsv`, and `config.yaml` from the deployed site at load, so it
@@ -33,7 +33,7 @@ act from attended `live_shows_current.tsv` rows (`Supporting Artist`) and
 same `data/seen_with.tsv` sideman appears with both (≥2 different headliners;
 the sideman gets no node of their own). Attended shows only — upcoming rows and
 potential-show `Support` are deliberately excluded. On overlap, label
-precedence is curated #174 relation > `same bill` > `shared personnel: <name>`,
+precedence is curated #174 relation > `same bill` > `shared personnel: <n>`,
 and the matching taste edge is suppressed exactly as with #174. Endpoints that
 don't resolve to tracked nodes skip silently.
 
