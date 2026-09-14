@@ -1071,13 +1071,34 @@ def clip_halfplane(poly, p0, n):
 # (a real outlier, not a hull artifact) renders outside its ghost boundary -
 # expected per the schema doc ("these are not meant as exact borders"), not a
 # bug to chase here.
+#
+# Two mainland pairs run genuinely intermixed member clouds rather than
+# cleanly separated ones (Quiet Woods/Heartland, Quiet Woods/Steel Foothills):
+# a plain midpoint bisector between their centroids cuts through real members
+# on both sides, including — for the Heartland pair — the Quiet Woods capital.
+# A per-pair bias moves the clip line off-center for just these two pairs,
+# tuned empirically against live data to the point that best balances both
+# sides' coverage without costing any other region's own boundary (every
+# other pair keeps the plain midpoint below).
+HULL_BOUNDARY_BIAS = {
+    ("quiet_woods", "heartland"): 0.66,
+    ("quiet_woods", "slide_foothills"): 0.60,
+}
+
 def clip_to_neighbors(region, hull, centroids):
     poly = [tuple(p) for p in hull]
     cx, cy = centroids[region]
     for other, (ox, oy) in centroids.items():
         if other == region or not poly:
             continue
-        mx, my = (cx+ox)/2, (cy+oy)/2
+        key, rkey = (region, other), (other, region)
+        if key in HULL_BOUNDARY_BIAS:
+            t = HULL_BOUNDARY_BIAS[key]
+        elif rkey in HULL_BOUNDARY_BIAS:
+            t = 1 - HULL_BOUNDARY_BIAS[rkey]
+        else:
+            t = 0.5
+        mx, my = cx + t*(ox-cx), cy + t*(oy-cy)
         poly = clip_halfplane(poly, (mx, my), (ox-cx, oy-cy))
     return [[round(x, 1), round(y, 1)] for x, y in poly]
 
