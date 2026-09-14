@@ -1,6 +1,6 @@
 This is a strategic planning session for the live-shows project.
 
-Repo: dan2bit/live-shows (public). GitHub Pages: https://dan2bit.github.io/live-shows/.
+Repo: dan2bit/live-shows (public). GitHub Pages: https://redhat-bootlegs.net/.
 
 This session is for open-ended work: architectural design, artist research and follow tier decisions, 
 quarterly inbox refresh analysis (Routine 3 deep pass), artist discovery (Gnoosic, festival lineups, 
