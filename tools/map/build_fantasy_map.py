@@ -272,7 +272,7 @@ for _c, _hv in _hist_seen.items():
         seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,
                          "most_recent": _hv["last"], "via_history": True}
 
-# audit #318 dedupe: merges and co-bill suppressions, decided 2026-09-05
+# audit dedupe: merges and co-bill suppressions
 MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     "Daniel Donato's Cosmic Country": "Daniel Donato",
     "Gillian Welch & David Rawlings": "Gillian Welch",
