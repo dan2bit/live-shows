@@ -426,7 +426,7 @@
   "generated_from": "2026-09-14",
   "seed": 2026,
   "pins_hash": "91cff36179",
-  "overrides_hash": "fa32527a6c",
+  "overrides_hash": "931811f62a",
   "counts": {
    "settlements": 422,
    "routes": 508,
@@ -468,16 +468,12 @@
      479.6
     ],
     [
-     409.3,
-     527.8
+     335.8,
+     507.8
     ],
     [
-     429.0,
-     548.0
-    ],
-    [
-     433.3,
-     597.0
+     434.3,
+     596.8
     ],
     [
      388.3,
@@ -511,24 +507,24 @@
    "label_lines": null,
    "hull": [
     [
-     607.5,
-     289.2
+     606.7,
+     290.4
     ],
     [
-     593.2,
-     205.9
+     592.3,
+     206.9
     ],
     [
-     735.7,
-     147.0
+     743.3,
+     144.7
     ],
     [
-     896.8,
-     311.4
+     863.6,
+     254.6
     ],
     [
-     787.5,
-     415.9
+     765.9,
+     400.6
     ]
    ]
   },
@@ -566,12 +562,12 @@
      444.7
     ],
     [
-     634.2,
-     494.0
+     635.9,
+     493.1
     ],
     [
-     595.8,
-     477.1
+     595.5,
+     475.9
     ],
     [
      593.8,
@@ -597,28 +593,36 @@
    "label_lines": null,
    "hull": [
     [
-     550.8,
-     377.5
+     243.7,
+     424.5
     ],
     [
-     541.2,
-     453.0
+     258.8,
+     405.0
     ],
     [
-     429.0,
-     548.0
+     304.5,
+     349.6
     ],
     [
-     275.1,
-     389.6
+     336.6,
+     317.0
     ],
     [
-     303.4,
-     356.3
+     515.1,
+     433.0
     ],
     [
-     330.5,
-     326.2
+     516.0,
+     442.1
+    ],
+    [
+     440.0,
+     587.1
+    ],
+    [
+     420.1,
+     583.9
     ]
    ]
   },
@@ -647,20 +651,16 @@
      591.1
     ],
     [
-     461.9,
-     527.8
+     462.2,
+     544.7
     ],
     [
-     465.8,
-     516.9
+     516.0,
+     442.1
     ],
     [
-     541.2,
-     453.0
-    ],
-    [
-     723.1,
-     533.2
+     723.5,
+     530.4
     ],
     [
      715.4,
@@ -694,8 +694,8 @@
    "label_lines": null,
    "hull": [
     [
-     325.9,
-     325.1
+     331.0,
+     313.3
     ],
     [
      363.1,
@@ -714,16 +714,16 @@
      201.2
     ],
     [
-     596.3,
-     224.4
+     595.3,
+     224.0
     ],
     [
-     607.5,
-     289.2
+     606.7,
+     290.4
     ],
     [
-     550.8,
-     377.5
+     515.1,
+     433.0
     ]
    ]
   },
@@ -745,36 +745,44 @@
    "label_lines": null,
    "hull": [
     [
-     710.1,
-     120.9
+     712.3,
+     116.4
     ],
     [
-     790.8,
-     16.1
+     788.4,
+     16.6
     ],
     [
-     862.6,
-     21.0
+     871.0,
+     4.7
     ],
     [
-     908.1,
-     48.2
+     908.7,
+     41.7
     ],
     [
-     1000.7,
-     188.0
+     912.7,
+     45.7
     ],
     [
-     986.5,
-     244.1
+     920.5,
+     56.0
     ],
     [
-     980.5,
-     254.1
+     1000.6,
+     191.1
     ],
     [
-     879.3,
-     293.5
+     985.2,
+     247.5
+    ],
+    [
+     979.0,
+     257.4
+    ],
+    [
+     899.9,
+     287.8
     ]
    ]
   }
@@ -1373,7 +1381,6 @@
     "Safety Bear",
     "Sanjay Arora",
     "Sea Griffin",
-    "Talia Segal",
     "Wytold"
    ],
    "seat": "Talia Segal",
@@ -1383,8 +1390,7 @@
    "id": "heartland:d10",
    "region": "heartland",
    "members": [
-    "Every Breath You Take",
-    "The Side Cars Band"
+    "Every Breath You Take"
    ],
    "seat": "Every Breath You Take",
    "suggested_name": "Take Hollow"
@@ -1402,10 +1408,7 @@
   {
    "id": "heartland:d12",
    "region": "heartland",
-   "members": [
-    "Honeyfunk",
-    "Zedicus & Abyssinia Roots"
-   ],
+   "members": [],
    "seat": "Zedicus & Abyssinia Roots",
    "suggested_name": "Roots Prairie"
   },
@@ -1498,34 +1501,21 @@
   {
    "id": "heartland:d7",
    "region": "heartland",
-   "members": [
-    "Bone Thugs-n-Harmony",
-    "DJ Jazzy Jeff",
-    "LL Cool J",
-    "The Roots",
-    "Z-Trip"
-   ],
+   "members": [],
    "seat": "LL Cool J",
    "suggested_name": "J Prairie"
   },
   {
    "id": "heartland:d8",
    "region": "heartland",
-   "members": [
-    "Blu Eye Extinction",
-    "MonoNeon"
-   ],
+   "members": [],
    "seat": "George Clinton & Parliament-Funkadelic",
    "suggested_name": "ParliamentFunkadelic Crossing"
   },
   {
    "id": "heartland:d9",
    "region": "heartland",
-   "members": [
-    "De La Soul",
-    "Nas",
-    "Wu-Tang Clan"
-   ],
+   "members": [],
    "seat": "Wu-Tang Clan",
    "suggested_name": "Clan Silo"
   },
@@ -1618,6 +1608,7 @@
     "Larry Keel Duo",
     "Muna",
     "Every Breath You Take",
+    "P!nk",
     "Winston Mitchell",
     "Zara Larsson",
     "Zara Phillips",
@@ -3049,19 +3040,21 @@
   {
    "id": 53,
    "name": "Blu Eye Extinction",
-   "region": "heartland",
-   "district": "heartland:d8",
+   "region": "river_port",
+   "district": "river_port:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    656.4,
-    667.8
+    663.3,
+    506.1
    ],
    "region_uv": [
-    1.1221,
-    1.2958
+    0.7611,
+    0.2509
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -3094,8 +3087,8 @@
   {
    "id": 55,
    "name": "Bone Thugs-n-Harmony",
-   "region": "heartland",
-   "district": "heartland:d7",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -3103,8 +3096,8 @@
     32.7
    ],
    "region_uv": [
-    1.6342,
-    -1.3953
+    0.2216,
+    0.1948
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3860,8 +3853,8 @@
   {
    "id": 111,
    "name": "DJ Jazzy Jeff",
-   "region": "heartland",
-   "district": "heartland:d7",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -3869,8 +3862,8 @@
     31.3
    ],
    "region_uv": [
-    1.6739,
-    -1.4013
+    0.3074,
+    0.1802
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -4053,19 +4046,21 @@
   {
    "id": 102,
    "name": "De La Soul",
-   "region": "heartland",
-   "district": "heartland:d9",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    853.6,
-    12.0
+    888.0,
+    70.8
    ],
    "region_uv": [
-    1.6411,
-    -1.4831
+    0.4318,
+    0.5915
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -5192,19 +5187,21 @@
   {
    "id": 163,
    "name": "Honeyfunk",
-   "region": "heartland",
-   "district": "heartland:d12",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    814.4,
-    41.8
+    905.8,
+    67.7
    ],
    "region_uv": [
-    1.5379,
-    -1.3568
+    0.5331,
+    0.5595
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -6414,8 +6411,8 @@
   {
    "id": 241,
    "name": "LL Cool J",
-   "region": "heartland",
-   "district": "heartland:d7",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -6423,8 +6420,8 @@
     26.9
    ],
    "region_uv": [
-    1.6063,
-    -1.4199
+    0.1614,
+    0.1344
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -7487,19 +7484,21 @@
   {
    "id": 275,
    "name": "MonoNeon",
-   "region": "heartland",
-   "district": "heartland:d8",
+   "region": "river_port",
+   "district": "river_port:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    632.4,
-    670.0
+    643.8,
+    504.4
    ],
    "region_uv": [
-    1.0589,
-    1.3051
+    0.6831,
+    0.2394
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -7639,19 +7638,21 @@
   {
    "id": 282,
    "name": "Nas",
-   "region": "heartland",
-   "district": "heartland:d9",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    860.8,
-    11.4
+    902.9,
+    67.1
    ],
    "region_uv": [
-    1.66,
-    -1.4856
+    0.5167,
+    0.5532
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -7876,8 +7877,8 @@
   {
    "id": 295,
    "name": "P!nk",
-   "region": "amplified_range",
-   "district": "amplified_range:override",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
    "size": "village",
    "score": 1,
    "xy": [
@@ -7885,8 +7886,8 @@
     236.3
    ],
    "region_uv": [
-    1.0,
-    0.6252
+    0.8693,
+    2.3156
    ],
    "flags": {
     "unvisited": true
@@ -9562,19 +9563,20 @@
   {
    "id": 382,
    "name": "Talia Segal",
-   "region": "heartland",
-   "district": "heartland:d1",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    969.2,
-    237.5
+    904.4,
+    59.4
    ],
    "region_uv": [
-    1.9453,
-    -0.5275
+    0.525,
+    0.4728
    ],
    "flags": {
+    "unplaced": true,
     "ruin": true
    },
    "src": "history pass: seen as support",
@@ -10095,8 +10097,8 @@
   {
    "id": 325,
    "name": "The Roots",
-   "region": "heartland",
-   "district": "heartland:d7",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "city",
    "score": 3,
    "xy": [
@@ -10104,8 +10106,8 @@
     20.4
    ],
    "region_uv": [
-    1.6784,
-    -1.4475
+    0.317,
+    0.0667
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -10137,19 +10139,21 @@
   {
    "id": 349,
    "name": "The Side Cars Band",
-   "region": "heartland",
-   "district": "heartland:d10",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    809.8,
-    44.3
+    901.0,
+    55.7
    ],
    "region_uv": [
-    1.5258,
-    -1.3462
+    0.5059,
+    0.4343
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -10812,19 +10816,21 @@
   {
    "id": 414,
    "name": "Wu-Tang Clan",
-   "region": "heartland",
-   "district": "heartland:d9",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    845.7,
-    16.9
+    911.1,
+    69.0
    ],
    "region_uv": [
-    1.6203,
-    -1.4623
+    0.5632,
+    0.5729
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -10917,19 +10923,21 @@
   {
    "id": 419,
    "name": "Z-Trip",
-   "region": "heartland",
-   "district": "heartland:d7",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    868.9,
-    8.8
+    911.4,
+    70.5
    ],
    "region_uv": [
-    1.6813,
-    -1.4966
+    0.5648,
+    0.5884
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -11089,19 +11097,21 @@
   {
    "id": 425,
    "name": "Zedicus & Abyssinia Roots",
-   "region": "heartland",
-   "district": "heartland:d12",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    799.4,
-    31.2
+    890.9,
+    68.6
    ],
    "region_uv": [
-    1.4984,
-    -1.4017
+    0.4481,
+    0.5686
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -11473,8 +11483,18 @@
    "a": "Alexia Gabriella",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Allison Russell",
@@ -12114,8 +12134,18 @@
    "a": "Antoñio Villaronga",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Aoife O'Donovan",
@@ -12332,8 +12362,18 @@
    "a": "Bev Stanton",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Big Boi",
@@ -12487,18 +12527,8 @@
    "a": "Blu Eye Extinction",
    "b": "George Clinton & Parliament-Funkadelic",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     574.0,
-     536.2
-    ],
-    [
-     496.6,
-     508.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Bobby Rush",
@@ -13088,8 +13118,18 @@
    "a": "Christian Crowley",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Christone 'Kingfish' Ingram",
@@ -13227,8 +13267,18 @@
    "a": "Damien Bethel",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Daniel Donato",
@@ -13693,8 +13743,18 @@
    "a": "Erin Frisby",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Evan Nicole Bell",
@@ -13717,18 +13777,8 @@
    "a": "Every Breath You Take",
    "b": "The Side Cars Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     856.1,
-     100.2
-    ],
-    [
-     523.7,
-     389.7
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Fancy Hagood",
@@ -13944,18 +13994,8 @@
    "a": "George Clinton & Parliament-Funkadelic",
    "b": "MonoNeon",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     496.6,
-     508.0
-    ],
-    [
-     574.0,
-     536.2
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Ghalia Volt",
@@ -14452,8 +14492,18 @@
    "a": "Jasper Hobbs",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Jax Hollow",
@@ -14870,8 +14920,18 @@
    "a": "Juels Bland",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Kaia Kater",
@@ -15077,18 +15137,8 @@
    "a": "LL Cool J",
    "b": "Queen Latifah",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     523.7,
-     389.7
-    ],
-    [
-     856.1,
-     100.2
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "LL Cool J",
@@ -15307,8 +15357,18 @@
    "a": "Lou Black",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Lucinda Williams",
@@ -15634,8 +15694,18 @@
    "a": "Mx. Mundy",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Nas",
@@ -15662,8 +15732,18 @@
    "a": "Nina Goodman",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "North Mississippi Allstars",
@@ -15800,8 +15880,18 @@
    "a": "Rebecca Berlin",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Rebirth Brass Band",
@@ -15924,8 +16014,18 @@
    "a": "Robzie Trulove",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Ruthie Foster",
@@ -15962,8 +16062,18 @@
    "a": "Safety Bear",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Samantha Fish",
@@ -16010,8 +16120,18 @@
    "a": "Sanjay Arora",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Sarah McLachlan",
@@ -16052,8 +16172,18 @@
    "a": "Sea Griffin",
    "b": "Talia Segal",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     523.7,
+     389.7
+    ],
+    [
+     856.1,
+     100.2
+    ]
+   ]
   },
   {
    "a": "Selwyn Birchwood",
@@ -16385,8 +16515,18 @@
    "a": "Talia Segal",
    "b": "Wytold",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "ferry",
+   "via": [
+    [
+     856.1,
+     100.2
+    ],
+    [
+     523.7,
+     389.7
+    ]
+   ]
   },
   {
    "a": "Taylor Ashton",
