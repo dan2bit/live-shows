@@ -1075,27 +1075,81 @@ def clip_halfplane(poly, p0, n):
             out.append(cur)
     return out
 
-# Region hulls drawn independently overlapped heavily (Amplified Range's hull
-# alone covered parts of every other region, measured against live data).
-# Clip each region's padded hull against the perpendicular bisector toward
-# every other region's member centroid, so no two regions' drawn boundaries
-# overlap. A member whose actual position sits past its own region's bisector
-# (a real outlier, not a hull artifact) renders outside its ghost boundary -
-# expected per the schema doc ("these are not meant as exact borders"), not a
-# bug to chase here.
-#
-# Two mainland pairs run genuinely intermixed member clouds rather than
-# cleanly separated ones (Quiet Woods/Heartland, Quiet Woods/Steel Foothills):
-# a plain midpoint bisector between their centroids cuts through real members
-# on both sides, including — for the Heartland pair — the Quiet Woods capital.
-# A per-pair bias moves the clip line off-center for just these two pairs,
-# tuned empirically against live data to the point that best balances both
-# sides' coverage without costing any other region's own boundary (every
-# other pair keeps the plain midpoint below).
-HULL_BOUNDARY_BIAS = {
-    ("quiet_woods", "heartland"): 0.66,
-    ("quiet_woods", "slide_foothills"): 0.60,
+# Region hulls originally were all generated-hull-plus-bisector-clip: drawn
+# independently they overlapped heavily (Amplified Range's hull alone covered
+# parts of every other region, measured against live data), so each was
+# clipped against the perpendicular bisector toward every other region's
+# member centroid. That's still exactly how Outer Isles' hull is built below
+# — the one region without a MANUAL_HULL entry. A member whose actual
+# position sits past its own region's bisector or manual polygon (a real
+# outlier, not a hull artifact) renders outside its ghost boundary — expected
+# per the schema doc ("these are not meant as exact borders"), not a bug to
+# chase here.
+# Six of the seven mainland/isle regions (all but Outer Isles) now use a
+# hand-built polygon rather than the generated-hull-plus-bisector-clip below.
+# These were worked out over several iterations against live settlement data
+# in the map hull/misfit review session: starting from HULL_BOUNDARY_BIAS
+# (a per-pair bisector nudge, still the right tool for Outer Isles, the one
+# region still on the generated path), moving to fully custom shapes once it
+# became clear that some boundaries — Amplified Range's north shelf against
+# Outer Isles, Quiet Woods' southeast kink against Heartland and Steel
+# Foothills — have member clouds too intermixed for any single bisector
+# position to serve both sides. Coverage and known trade-offs, checked
+# against live data:
+#   delta_coast       41/43   (Mallow Hill, The Jesse Williams Band outside)
+#   amplified_range  102/110  (8 outside -- Blondshell, Jackie Venson, Joan
+#                              Jett & The Blackhearts, Kelli Baker Band, Nick
+#                              Lowe & Los Straitjackets, Peter Case, Rainbow
+#                              Kitten Surprise, Taj Farrant -- these need a
+#                              pins.json/placement fix, not a hull-shape one)
+#   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
+#                              see river_port note below)
+#   heartland         50/50
+#   river_port        60/60   (captures Joey Landreth and The Bros. Landreth,
+#                              both tagged slide_foothills -- an accepted,
+#                              deliberate trade-off: King Solomon Hicks and
+#                              the two Landreths sit close enough together
+#                              that no polygon boundary separates them
+#                              cleanly without either dropping King Solomon
+#                              Hicks or self-intersecting; capturing all three
+#                              was the chosen trade over leaving King Solomon
+#                              Hicks out)
+#   quiet_woods       77/79   (Oliver Wood, The Wildmans outside)
+MANUAL_HULL = {
+    "delta_coast": [
+        [124.6, 587.1], [157.8, 537.6], [232.5, 479.6], [335.8, 507.8],
+        [434.3, 596.8], [388.3, 607.3], [244.3, 632.1], [161.1, 609.7],
+    ],
+    "amplified_range": [
+        [606.7, 290.4], [592.3, 206.9], [751.6, 150.6], [834.75, 145.6],
+        [917.9, 160.6], [863.6, 254.6], [713.1, 400.0],
+    ],
+    "slide_foothills": [
+        [585.4, 358.9], [596.0, 342.3], [651.1, 331.2], [688.7, 364.1],
+        [728.4, 444.7], [635.9, 493.1], [595.5, 475.9], [593.8, 470.4],
+    ],
+    "heartland": [
+        [243.7, 424.5], [258.8, 405.0], [304.5, 349.6], [319.4, 334.5],
+        [508.0, 457.2], [440.0, 587.1], [420.1, 583.9],
+    ],
+    "river_port": [
+        [463.2, 591.1], [462.2, 544.7], [516.0, 442.1], [603.1, 482.0],
+        [700.0, 482.0], [723.5, 530.4], [715.4, 587.7], [665.6, 693.5],
+        [647.2, 699.5],
+    ],
+    "quiet_woods": [
+        [493.8, 447.9], [321.2, 335.7], [363.1, 239.1], [382.0, 228.0],
+        [470.2, 207.2], [528.6, 201.2], [595.3, 224.0], [611.5, 318.2],
+        [582.0, 358.0], [582.0, 450.0],
+    ],
 }
+
+# Outer Isles is the one region still built from its generated hull, clipped
+# against every neighbor's bisector; HULL_BOUNDARY_BIAS is empty because
+# every mainland pair it used to cover now has a MANUAL_HULL entry instead,
+# but the plain-midpoint fallback in clip_to_neighbors is still exercised for
+# every Outer Isles/mainland pair.
+HULL_BOUNDARY_BIAS = {}
 
 def clip_to_neighbors(region, hull, centroids):
     poly = [tuple(p) for p in hull]
@@ -1122,6 +1176,9 @@ for reg in REGIONS:
         region_centroids[reg] = (sum(p[0] for p in pts) / len(pts),
                                   sum(p[1] for p in pts) / len(pts))
 for reg in REGIONS:
+    if reg in MANUAL_HULL:
+        region_hulls[reg] = MANUAL_HULL[reg]
+        continue
     pts = [xy[c] for c in records if region_of[c] == reg]
     hl = hull_of(pts)
     if hl:
