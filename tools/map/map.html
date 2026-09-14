@@ -136,11 +136,13 @@
       <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="none" stroke="#7a5a33" stroke-width="1.4" stroke-dasharray="4.5 3.5"/></svg> ruin</span>
       <span>&#9875; harbor</span>
     </div>
-    <label><input type="checkbox" id="editMode"> edit</label>
-    <label><input type="checkbox" id="traceMode"> trace rivers</label>
-    <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
-      font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
-      export pins (0)</button>
+    <div id="ownerControls" style="display:none">
+      <label><input type="checkbox" id="editMode"> edit</label>
+      <label><input type="checkbox" id="traceMode"> trace rivers</label>
+      <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
+        font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
+        export pins (0)</button>
+    </div>
   </div>
 </div>
 <script>
@@ -151,6 +153,14 @@
   const DATA=qs.get('data')||'fantasy_map_data.json';
   const map=document.getElementById('map');
   const err=m=>{const e=document.getElementById('err');e.style.display='block';e.textContent=m;};
+
+  // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
+  // store, so a token saved there just works here too — no separate auth surface on
+  // the map. This only hides the controls for a bystander; it does not yet grant any
+  // write capability of its own (see issue #367 item 2 for direct-commit exports).
+  const PAT_KEY='ghpat_liveshows';
+  const authed=!!localStorage.getItem(PAT_KEY);
+  if(authed){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
 
   let data;
   try{ data=await (await fetch(DATA,{cache:'no-store'})).json(); }
@@ -342,7 +352,7 @@
 
   // toggles: regions / unvisited / names / geo names
   const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
-  document.querySelectorAll('#legend input').forEach(cb=>{
+  document.querySelectorAll('#legend input[data-t]').forEach(cb=>{
     cb.addEventListener('change',()=>{
       const t=cb.dataset.t,on=cb.checked;
       if(t==='labels')       show([...gStl.querySelectorAll('text')],on);
@@ -405,6 +415,7 @@
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
   // exports are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
+  if(authed){
   try{ const ptxt=await (await fetch('pins.json',{cache:'no-store'})).text();
        Object.assign(pins, JSON.parse(ptxt));
        expBtn.textContent=`export pins (${Object.keys(pins).length})`;
@@ -423,12 +434,15 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
   });
+  }
   const overrides={};
-  try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
   const editctl=document.getElementById('editctl'),
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
         exportOv=document.getElementById('exportOv'), editwho=document.getElementById('editwho');
+  if(authed){
+  try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
+  }
   let selected=null;
   function selectStl(g){
     selected=g;
@@ -441,6 +455,7 @@
     (overrides[name]??={})[key]=val;
     exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
   }
+  if(authed){
   exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
   ovRegion.addEventListener('change',()=>{
     if(!selected)return;
@@ -460,16 +475,21 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
   });
+  }
   // waterway tracing: a full-takeover mode - no other edits while tracing
   let TRACES=[];
-  try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
-  let tracing=null, unsaved=0, pendingName=null;
   const traceCb=document.getElementById('traceMode');
   const traceBtn=document.getElementById('traceBtn'), traceExp=document.getElementById('traceExp'),
         traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
   const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
+  if(authed){
+  try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
+  }
+  let tracing=null, unsaved=0, pendingName=null;
   const traceCount=()=>{traceExp.textContent=`export waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
+  if(authed){
   traceCount();
+  }
   function segd(p,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],L2=vx*vx+vy*vy||1e-9;
     const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));
     return Math.hypot(p[0]-(a[0]+t*vx),p[1]-(a[1]+t*vy));}
@@ -496,6 +516,7 @@
     const done=doneNames();
     gStl.querySelectorAll('.stl').forEach(g=>g.classList.toggle('tracedone',done.has(g.dataset.name)));
   }
+  if(authed){
   traceCb.addEventListener('change',()=>{
     const on=traceCb.checked;
     document.body.classList.toggle('tracing',on);
@@ -511,6 +532,7 @@
       traceMsg.textContent='';
     }
   });
+  }
   function redrawTrace(){
     gTrace.replaceChildren();
     if(tracing&&tracing.points.length>1){
@@ -560,6 +582,7 @@
     traceBtn.textContent='trace waterway';traceCount();
     if(unsaved>=2)traceMsg.textContent+=` \u26a0 ${unsaved} traces unsaved \u2014 export now`;
   }
+  if(authed){
   traceName.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&pendingName){
       pendingName.name=traceName.value.trim()||null;
@@ -591,6 +614,7 @@
     a.download='labels.json';a.click();URL.revokeObjectURL(a.href);
     lblBtn.textContent='export labels';
   });
+  }
   let pan=null, dragS=null;
   const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
@@ -598,8 +622,8 @@
   stage.addEventListener('pointerdown',e=>{
     if(e.target.closest('#rose-home')){return;}  // let the anchor's native click/nav fire uncaptured (#363 follow-up)
     downAt=[e.clientX,e.clientY];
-    const rl=(window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
-    const g=(window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
+    const rl=(authed&&window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
+    const g=(authed&&window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
     if(rl){dragL=rl;e.preventDefault();return;}
     if(g&&tracing){traceAdd(g);e.preventDefault();return;}
@@ -634,7 +658,7 @@
   stage.addEventListener('pointerup',e=>{
     // click (not drag) in view mode toggles a settlement label
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
-       &&!(window.editCb&&editCb.checked)){
+       &&!(authed&&window.editCb&&editCb.checked)){
       const g=e.target.closest&&e.target.closest('.stl');
       if(g){
         const ex=g.querySelector('.clicklabel');
