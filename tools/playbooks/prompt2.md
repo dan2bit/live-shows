@@ -1,6 +1,6 @@
 This is a site development and repo management session for the live-shows project.
 
-Repo: dan2bit/live-shows (public). GitHub Pages: https://dan2bit.github.io/live-shows/.
+Repo: dan2bit/live-shows (public). GitHub Pages: https://redhat-bootlegs.net/.
 Working dir root /. Key source files: index.html, app.js, recommend.js, styles.css.
 
 Start every session by:
