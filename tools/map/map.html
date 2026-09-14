@@ -27,16 +27,6 @@
     text-anchor:middle;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;
     paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:3px;}
 
-  /* routes: styled by render, toggled by provenance */
-  .route{fill:none;pointer-events:none;stroke-linecap:round;}
-  .r-road{stroke:#4a3a26;stroke-width:.9;opacity:.75;}
-  .r-river{stroke:#3a5a44;stroke-width:.9;opacity:.7;}
-  .r-bridge{stroke:#7a2f22;stroke-width:1.1;opacity:.9;}
-  .r-trail{stroke:#5a4a33;stroke-width:.45;stroke-dasharray:1.6 2.4;opacity:.4;}
-  .r-ferry{stroke:#2E4A6B;stroke-width:.8;stroke-dasharray:.5 3;opacity:.8;}
-  .r-pass{stroke:#4a3a26;stroke-width:.8;stroke-dasharray:4 2;opacity:.6;}
-  .r-highway{stroke:#4a3a26;stroke-width:1.1;opacity:.6;}
-
   .stl{cursor:pointer;pointer-events:bounding-box;}
   .stl circle{pointer-events:all;}
   .stl circle{stroke:var(--ink);vector-effect:non-scaling-stroke;}
@@ -57,7 +47,7 @@
   .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
-  #rose{pointer-events:none;opacity:.94;}
+  #rose{opacity:.94;}
   #rose-home{pointer-events:all;cursor:pointer;}
   #rose-home:hover #rose-clef,#rose-home:focus-visible #rose-clef{stroke:#0e5a70;}
   #rose-home:hover circle,#rose-home:focus-visible circle{opacity:.85;}
@@ -136,10 +126,6 @@
     </div>
   </div>
   <div id="legend">
-    <label><input type="checkbox" data-t="trail"> trails</label>
-    <label><input type="checkbox" data-t="road"> roads</label>
-    <label><input type="checkbox" data-t="river"> bills</label>
-    <label><input type="checkbox" data-t="cross"> crossings</label>
     <label><input type="checkbox" data-t="regions" checked> regions</label>
     <label><input type="checkbox" data-t="waystation" checked> unvisited</label>
     <label><input type="checkbox" data-t="labels" checked> names</label>
@@ -178,9 +164,8 @@
   map.appendChild(bg);
 
   const gRegions=document.createElementNS(NS,'g');
-  const gRoutes=document.createElementNS(NS,'g');
   const gStl=document.createElementNS(NS,'g');
-  map.append(gRegions,gRoutes,gStl);
+  map.append(gRegions,gStl);
 
   const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
@@ -234,32 +219,11 @@
     gRegions.appendChild(t);
   }
 
-  // routes flow through their gateway waypoints (smooth Catmull-Rom curve)
-  function smoothPath(pts){
-    if(pts.length===2)return `M${pts[0]} L${pts[1]}`;
-    let d=`M${pts[0]}`;
-    for(let i=0;i<pts.length-1;i++){
-      const p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
-      const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
-      const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
-      d+=` C${c1} ${c2} ${p2}`;
-    }
-    return d;
-  }
-  for(const r of data.routes){
-    const a=S.get(r.a),b=S.get(r.b); if(!a||!b)continue;
-    const pts=[a.xy,...(r.via||[]),b.xy];
-    const p=document.createElementNS(NS,'path');
-    p.setAttribute('d',smoothPath(pts));
-    p.setAttribute('class',`route r-${r.render}`);
-    p.dataset.cls=r.cls; p.dataset.cross=r.crossRegion?'1':'0';
-    gRoutes.appendChild(p);
-  }
-
   // the compass rose settles on the unnamed northwest island
   // clef needle over an engraved star, ringed by a circular five-line staff
   // Wrapped in an SVG <a> (#rose-home) so the rose itself is the map's way back
-  // to the site (issue #359) - the rest of #rose stays pointer-events:none via CSS.
+  // to the site (issue #359). #rose no longer sets pointer-events:none (#363) -
+  // that was blocking hit-testing on every child, so the rose was unclickable.
   const rose=document.createElementNS(NS,'a');
   rose.setAttribute('id','rose-home');
   rose.setAttributeNS('http://www.w3.org/1999/xlink','href','../../index.html');
@@ -376,18 +340,15 @@
     gStl.appendChild(g);
   }
 
-  // toggles: provenance-based, plus crossings / regions / unvisited / names
+  // toggles: regions / unvisited / names / geo names
   const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
   document.querySelectorAll('#legend input').forEach(cb=>{
     cb.addEventListener('change',()=>{
       const t=cb.dataset.t,on=cb.checked;
       if(t==='labels')       show([...gStl.querySelectorAll('text')],on);
       else if(t==='waystation') show([...gStl.querySelectorAll('.stl.unvisited')],on);
-    else if(t==='geo') gGeo.style.display=on?'':'none';
+      else if(t==='geo') gGeo.style.display=on?'':'none';
       else if(t==='regions') gRegions.style.display=on?'':'none';
-      else if(t==='cross')   show([...gRoutes.children].filter(p=>p.dataset.cross==='1'),on);
-      else if(t==='road')    show([...gRoutes.children].filter(p=>p.dataset.cls==='road'||p.dataset.cls==='bridge'),on);
-      else                   show([...gRoutes.children].filter(p=>p.dataset.cls===t),on);
     });
   });
 
@@ -423,7 +384,7 @@
     }
   });
 
-  // apply initial legend state (routes ship hidden until the thoroughfare pass)
+  // apply initial legend state
   document.querySelectorAll('#legend input[data-t]').forEach(cb=>cb.dispatchEvent(new Event('change')));
 
   // zoom: wheel-to-cursor, buttons, fit; drag to pan — one viewBox for all layers
