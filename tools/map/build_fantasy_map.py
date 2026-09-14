@@ -471,18 +471,17 @@ def score(c):
             + 2 * m.get("vip", 0)
             + TIER_SCORE.get(r.get("tier"), 0))
 
-# #363 simplification (2026-09-14): Outer Isles previously rebuilt its
-# districts as hand-numbered "peg crews" - genre-family buckets (isle_family),
-# PEG_CREW relabeling, CURATED_ISLES per-crew island art - a parallel
-# subsystem that existed only because early members were too taste-graph-
-# sparse for normal community detection. It didn't scale: the auto-chunking's
-# fixed 6-crew capacity overflowed as the roster grew past 34 members. Every
-# named island (Innis Craic, Pop Rock, etc.) is just a label position in
-# labels.json -> islands - the same mechanism already used for Funk Atoll,
-# Reggae Isle, and Legends Island on the mainland, with no per-artist
-# membership tracking. Outer Isles now gets the same community-detection
-# districts as every other region (built by the main loop above); nothing
-# region-specific happens here.
+# Outer Isles used to rebuild its districts as hand-numbered "peg crews" -
+# genre-family buckets (isle_family), PEG_CREW relabeling, CURATED_ISLES
+# per-crew island art - a parallel subsystem that existed only because early
+# members were too taste-graph-sparse for normal community detection. It
+# didn't scale: the auto-chunking's fixed crew capacity overflowed as the
+# roster grew. Every named island (Innis Craic, Pop Rock, etc.) is just a
+# label position in labels.json -> islands - the same mechanism already used
+# for Funk Atoll, Reggae Isle, and Legends Island on the mainland, with no
+# per-artist membership tracking. Outer Isles now gets the same community-
+# detection districts as every other region (built by the main loop above);
+# nothing region-specific happens here.
 
 CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR"}
 
@@ -1064,8 +1063,8 @@ def clip_halfplane(poly, p0, n):
             out.append(cur)
     return out
 
-# #363: region hulls drawn independently overlapped heavily (Amplified Range's
-# hull alone covered parts of every other region, measured against live data).
+# Region hulls drawn independently overlapped heavily (Amplified Range's hull
+# alone covered parts of every other region, measured against live data).
 # Clip each region's padded hull against the perpendicular bisector toward
 # every other region's member centroid, so no two regions' drawn boundaries
 # overlap. A member whose actual position sits past its own region's bisector
