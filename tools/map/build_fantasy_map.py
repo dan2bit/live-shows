@@ -196,11 +196,23 @@ def tsv_rows(path):
     return [dict(zip(hdr, r)) for r in rows[1:]]
 
 idx = json.loads((DATA / "recommend_index.json").read_text())
-records = {r["canonical"]: r for r in idx["records"]}
+
+# DC9 "Why Don't We Duet?" (2024-10-08, data/history/2024.tsv) listed 17
+# co-performers as Talia Segal's Supporting Acts for a single benefit-show
+# pairing round; none had any other appearance in the tracked history and
+# none belong on the map on their own account. Talia is the one exception --
+# kept, unaffected by this list.
+MAP_EXCLUDE = {
+    "Alexia Gabriella", "Antoñio Villaronga", "Bev Stanton", "Christian Crowley",
+    "Damien Bethel", "Erin Frisby", "Jasper Hobbs", "Juels Bland", "Lou Black",
+    "Mx. Mundy", "Nina Goodman", "Rebecca Berlin", "Robzie Trulove",
+    "Safety Bear", "Sanjay Arora", "Sea Griffin", "Wytold",
+}
+records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
             for k, v in idx["variants"].items()}
 # variants maps lower-name -> record id; normalize to canonical
-id2canon = {r["id"]: r["canonical"] for r in idx["records"]}
+id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
 variants = {k: id2canon[v] for k, v in idx["variants"].items() if v in id2canon}
 
 def resolve(name):
