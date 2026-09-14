@@ -15,7 +15,7 @@ The page fetches `artist_modal_index.json`, `artist_spotify.json`,
 always reflects current `main` with no build step. It is deliberately not linked
 from the main site — it's a research instrument, not a visitor feature.
 
-**Kinship edges (#174):** solid amber edges mark membership/kinship relations
+**Kinship edges:** solid amber edges mark membership/kinship relations
 the co-listening data can't see — fronts, member-of, successor-of, sibling —
 sourced from `data/related_acts.tsv` (domain content, same species as
 `recommend_aliases.tsv`) plus bill relations derived from the `Via` column of
@@ -25,7 +25,7 @@ relation shows up in `follows_master` notes; rows whose endpoints aren't
 tracked yet are skipped silently and activate when the artist lands. A node's
 tooltip lists its kin with relation labels.
 
-**Concert-history edges (#177):** the same solid treatment also carries edges
+**Concert-history edges:** the same solid treatment also carries edges
 derived from Dan's own attendance logs. Bill edges connect headliner ↔ support
 act from attended `live_shows_current.tsv` rows (`Supporting Artist`) and
 `data/history/*.tsv` (`Supporting Acts`), with multiple support acts
@@ -47,12 +47,10 @@ Opening the file locally requires a static server (`python3 -m http.server` from
 the repo root, then `/tools/research/graph/artist-graph.html`) — `file://` can't
 fetch the relative data paths.
 
-See issue #171 for the full rendering spec and normalization rules, and #174 for
-the kinship edge design.
 
 # geographic narrative
 
-_generated 7-17-26_
+_generated 7-17-26 - precursor to the separate tools/map project_
 
 The map is dominated by a single warm supercontinent: contemporary blues and
 blues-rock, where nearly every heavyweight in the system lives within a border
