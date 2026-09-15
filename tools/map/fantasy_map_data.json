@@ -384,8 +384,8 @@
  "meta": {
   "generated_from": "2026-09-15",
   "seed": 2026,
-  "pins_hash": "d15c4c1f70",
-  "overrides_hash": "0da54cf3d6",
+  "pins_hash": "dc7a9999be",
+  "overrides_hash": "f8e2ef2f4a",
   "counts": {
    "settlements": 405,
    "routes": 491,
@@ -2059,12 +2059,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    682.5,
-    407.8
+    707.2,
+    481.5
    ],
    "region_uv": [
-    0.838,
-    -0.3795
+    0.9368,
+    0.0929
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -2316,15 +2316,15 @@
    "name": "Ana Popović",
    "region": "delta_coast",
    "district": "delta_coast:d5",
-   "size": "capital",
+   "size": "city",
    "score": 15,
    "xy": [
-    243.3,
-    586.0
+    384.4,
+    586.5
    ],
    "region_uv": [
-    0.3119,
-    0.3846
+    0.7221,
+    0.3894
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -2340,12 +2340,12 @@
    "size": "village",
    "score": 5,
    "xy": [
-    561.8,
-    537.3
+    682.4,
+    577.3
    ],
    "region_uv": [
-    0.3552,
-    0.4506
+    0.8376,
+    0.7071
    ],
    "flags": {},
    "src": "",
@@ -2361,12 +2361,12 @@
    "size": "town",
    "score": 3,
    "xy": [
-    658.7,
-    556.8
+    664.7,
+    559.0
    ],
    "region_uv": [
-    0.7428,
-    0.5756
+    0.7668,
+    0.5897
    ],
    "flags": {
     "unvisited": true
@@ -2927,12 +2927,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    663.3,
-    506.1
+    632.1,
+    672.1
    ],
    "region_uv": [
-    0.7612,
-    0.2506
+    0.6364,
+    1.3147
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3125,12 +3125,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    665.8,
-    517.2
+    722.7,
+    486.9
    ],
    "region_uv": [
-    0.7712,
-    0.3218
+    0.9988,
+    0.1276
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -3167,12 +3167,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    260.3,
-    610.5
+    286.0,
+    588.8
    ],
    "region_uv": [
-    0.3614,
-    0.6202
+    0.436,
+    0.4115
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3557,12 +3557,12 @@
    "size": "village",
    "score": 2,
    "xy": [
-    326.9,
-    569.6
+    343.9,
+    593.1
    ],
    "region_uv": [
-    0.5549,
-    0.2269
+    0.6044,
+    0.4529
    ],
    "flags": {
     "legacy": true,
@@ -3669,16 +3669,15 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    550.2,
-    576.2
+    542.1,
+    561.0
    ],
    "region_uv": [
-    0.3089,
-    0.7
+    0.2764,
+    0.6026
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -3693,11 +3692,11 @@
    "size": "town",
    "score": 6,
    "xy": [
-    251.7,
+    248.1,
     601.4
    ],
    "region_uv": [
-    0.3363,
+    0.3259,
     0.5327
    ],
    "flags": {},
@@ -3735,12 +3734,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    702.4,
-    578.4
+    691.6,
+    570.6
    ],
    "region_uv": [
-    0.9176,
-    0.7141
+    0.8744,
+    0.6641
    ],
    "flags": {
     "unvisited": true
@@ -3907,12 +3906,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    525.5,
-    491.3
+    554.6,
+    540.5
    ],
    "region_uv": [
-    0.2099,
-    0.1558
+    0.3264,
+    0.4712
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3928,16 +3927,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    257.3,
-    614.2
+    268.1,
+    548.8
    ],
    "region_uv": [
-    0.3527,
-    0.6555
+    0.384,
+    0.0269
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -3973,12 +3971,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    483.7,
-    531.9
+    482.1,
+    531.6
    ],
    "region_uv": [
-    0.0428,
-    0.416
+    0.0364,
+    0.4141
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -4059,12 +4057,12 @@
    "size": "village",
    "score": 3.5,
    "xy": [
-    558.0,
-    557.3
+    637.0,
+    680.5
    ],
    "region_uv": [
-    0.34,
-    0.5785
+    0.656,
+    1.3686
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -4280,12 +4278,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    699.7,
-    424.9
+    702.7,
+    426.2
    ],
    "region_uv": [
-    0.9457,
-    0.614
+    0.9716,
+    0.6195
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -4433,16 +4431,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    545.2,
-    578.8
+    471.9,
+    559.7
    ],
    "region_uv": [
-    0.2886,
-    0.7167
+    -0.0044,
+    0.5942
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -4698,12 +4695,12 @@
    "size": "town",
    "score": 7,
    "xy": [
-    712.8,
-    441.0
+    616.1,
+    464.4
    ],
    "region_uv": [
-    1.0586,
-    0.6822
+    0.225,
+    0.7814
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -5371,12 +5368,12 @@
    "size": "town",
    "score": 10,
    "xy": [
-    564.3,
-    537.0
+    702.4,
+    572.2
    ],
    "region_uv": [
-    0.3652,
-    0.4486
+    0.9176,
+    0.6744
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -5763,16 +5760,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    548.4,
-    571.2
+    554.8,
+    587.7
    ],
    "region_uv": [
-    0.3017,
-    0.6682
+    0.3272,
+    0.7737
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -6071,15 +6067,15 @@
    "name": "Kent Burnside",
    "region": "river_port",
    "district": "river_port:outskirts",
-   "size": "hamlet",
+   "size": "village",
    "score": 3,
    "xy": [
-    548.6,
-    481.9
+    630.8,
+    509.1
    ],
    "region_uv": [
-    0.3022,
-    0.0958
+    0.6312,
+    0.2699
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -6118,12 +6114,12 @@
    "size": "village",
    "score": 4,
    "xy": [
-    603.1,
-    482.0
+    601.2,
+    485.3
    ],
    "region_uv": [
-    0.5204,
-    0.0962
+    0.5128,
+    0.1173
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -6776,12 +6772,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    422.6,
-    585.1
+    386.0,
+    608.3
    ],
    "region_uv": [
-    0.8331,
-    0.376
+    0.7267,
+    0.599
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -7235,12 +7231,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    643.8,
-    504.4
+    630.2,
+    678.4
    ],
    "region_uv": [
-    0.6832,
-    0.2397
+    0.6288,
+    1.3551
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -7277,16 +7273,15 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    250.9,
-    617.5
+    300.6,
+    515.1
    ],
    "region_uv": [
-    0.3341,
-    0.6871
+    0.4785,
+    -0.2971
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong)",
    "times_seen": 0,
@@ -7496,12 +7491,12 @@
    "size": "town",
    "score": 9,
    "xy": [
-    684.0,
-    427.3
+    687.1,
+    419.0
    ],
    "region_uv": [
-    0.8103,
-    0.6242
+    0.8371,
+    0.589
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -8196,12 +8191,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    241.8,
-    584.8
+    301.3,
+    564.6
    ],
    "region_uv": [
-    0.3076,
-    0.3726
+    0.4805,
+    0.1788
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -8470,15 +8465,15 @@
    "name": "Shemekia Copeland",
    "region": "delta_coast",
    "district": "delta_coast:d2",
-   "size": "city",
+   "size": "capital",
    "score": 6,
    "xy": [
-    372.9,
-    602.9
+    250.0,
+    589.0
    ],
    "region_uv": [
-    0.6887,
-    0.5471
+    0.3314,
+    0.4135
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -8748,16 +8743,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    551.6,
-    580.9
+    564.3,
+    597.6
    ],
    "region_uv": [
-    0.3143,
-    0.73
+    0.3652,
+    0.8372
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -8946,16 +8940,15 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    396.3,
-    576.5
+    281.8,
+    528.8
    ],
    "region_uv": [
-    0.7566,
-    0.2936
+    0.4238,
+    -0.1654
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong)",
    "times_seen": 0,
@@ -9012,12 +9005,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    705.8,
-    541.1
+    655.3,
+    536.8
    ],
    "region_uv": [
-    0.9312,
-    0.4747
+    0.7292,
+    0.4474
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -9054,12 +9047,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    632.1,
-    501.2
+    676.7,
+    575.7
    ],
    "region_uv": [
-    0.6365,
-    0.2195
+    0.8148,
+    0.6968
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -9568,12 +9561,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    366.0,
-    645.6
+    313.4,
+    522.3
    ],
    "region_uv": [
-    0.6687,
-    0.9577
+    0.5157,
+    -0.2279
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -9610,12 +9603,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    492.4,
-    513.2
+    487.4,
+    554.6
    ],
    "region_uv": [
-    0.0776,
-    0.2962
+    0.0576,
+    0.5615
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -10170,12 +10163,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    502.0,
-    599.9
+    679.9,
+    485.9
    ],
    "region_uv": [
-    0.1161,
-    0.8519
+    0.8276,
+    0.1212
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
