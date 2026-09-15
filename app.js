@@ -1512,6 +1512,8 @@ function closeMultisetModal(){document.getElementById('multisetModal').classList
 
 // -- Config editor --
 var _cfgDraft=null;  // unsaved working copy of config.yaml, preserved across modal open/close
+var _cfgCommitted=null;  // textarea content as of the last successful commit; closeConfigEditor
+                          // skips re-capturing into _cfgDraft when the value matches this exactly
 function _gearVisible(){
   var gear=document.getElementById('configGearBtn');if(!gear)return;
   var webEdit=!SITE_CONFIG.features||SITE_CONFIG.features.web_edit!==false;
@@ -1529,7 +1531,14 @@ async function openConfigEditor(){
     st.textContent='loaded from repo';
   }catch(e){ta.value='';st.textContent='load failed: '+e.message;}
 }
-function closeConfigEditor(){_cfgDraft=document.getElementById('configEditorText').value;document.getElementById('configModal').classList.remove('open');}
+// Only capture the textarea into the draft if it differs from the last successful
+// commit — otherwise a plain Close after Commit re-captures the just-committed text
+// and the next open falsely claims "restored your unsaved edits" for nothing unsaved.
+function closeConfigEditor(){
+  var val=document.getElementById('configEditorText').value;
+  if(val!==_cfgCommitted)_cfgDraft=val;
+  document.getElementById('configModal').classList.remove('open');
+}
 async function revertConfigToRepo(){
   _cfgDraft=null;
   var ta=document.getElementById('configEditorText'),st=document.getElementById('configEditorStatus');
@@ -1562,7 +1571,8 @@ async function commitConfig(){
     var fd=await ghFetchForWrite('config.yaml');
     var res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/config.yaml',{method:'PUT',headers:{'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat,'Content-Type':'application/json'},body:JSON.stringify({message:'config: edit via in-page editor',content:btoa(unescape(encodeURIComponent(ta.value))),sha:fd.sha,branch:dataBranch()})});
     if(!res.ok)throw new Error(await res.text());
-    st.textContent='committed - live ~1 min after Pages redeploys';_cfgDraft=null;
+    _cfgCommitted=ta.value;_cfgDraft=null;
+    st.textContent='pushed to '+dataBranch()+' - visible after CI promotes and Pages rebuilds (a few minutes)';
   }catch(e){st.textContent='commit failed: '+e.message;}
 }
 // ── Boot ───────────────────────────────────────────────
