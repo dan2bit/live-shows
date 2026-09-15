@@ -387,9 +387,9 @@
   "pins_hash": "e30d0a62e5",
   "overrides_hash": "f8e2ef2f4a",
   "counts": {
-   "settlements": 405,
-   "routes": 491,
-   "districts": 79
+   "settlements": 402,
+   "routes": 479,
+   "districts": 77
   }
  },
  "canvas": {
@@ -1334,19 +1334,11 @@
    "id": "heartland:d1",
    "region": "heartland",
    "members": [
-    "Cowboy Junkies",
-    "Emmylou Harris",
-    "Gillian Welch",
-    "Hayes Carll",
-    "Jobi Riccio",
-    "John Prine Celebration",
-    "Lucinda Williams",
-    "Margo Price",
-    "Patty Griffin",
-    "Tommy Prine"
+    "Charly Lowry",
+    "Valerie June"
    ],
-   "seat": "John Prine Celebration",
-   "suggested_name": "Celebration Fields"
+   "seat": "Valerie June",
+   "suggested_name": "June Fields"
   },
   {
    "id": "heartland:d10",
@@ -1359,63 +1351,67 @@
    "id": "heartland:d11",
    "region": "heartland",
    "members": [
-    "Every Breath You Take"
+    "Billy Strings",
+    "Daniel Donato",
+    "Greensky Bluegrass"
    ],
-   "seat": "Every Breath You Take",
-   "suggested_name": "Take Fields"
+   "seat": "Billy Strings",
+   "suggested_name": "Strings Fields"
   },
   {
    "id": "heartland:d12",
    "region": "heartland",
    "members": [
-    "Lynn Hollyfield"
+    "Every Breath You Take"
    ],
-   "seat": "Lynn Hollyfield",
-   "suggested_name": "Hollyfield Prairie"
+   "seat": "Every Breath You Take",
+   "suggested_name": "Take Prairie"
   },
   {
    "id": "heartland:d13",
    "region": "heartland",
-   "members": [],
-   "seat": "Zedicus & Abyssinia Roots",
-   "suggested_name": "Roots Crossing"
+   "members": [
+    "Lynn Hollyfield"
+   ],
+   "seat": "Lynn Hollyfield",
+   "suggested_name": "Hollyfield Crossing"
   },
   {
    "id": "heartland:d14",
    "region": "heartland",
-   "members": [
-    "Maggie Rose",
-    "The Hip Snacks"
-   ],
-   "seat": "Maggie Rose",
-   "suggested_name": "Rose Silo"
+   "members": [],
+   "seat": "Zedicus & Abyssinia Roots",
+   "suggested_name": "Roots Silo"
   },
   {
    "id": "heartland:d2",
    "region": "heartland",
    "members": [
+    "Jobi Riccio",
+    "Maggie Rose",
+    "Margo Price",
+    "Molly Tuttle",
+    "Punch Brothers",
+    "Sierra Hull",
+    "The Hip Snacks"
+   ],
+   "seat": "Margo Price",
+   "suggested_name": "Price Prairie"
+  },
+  {
+   "id": "heartland:d3",
+   "region": "heartland",
+   "members": [
     "Al Olender",
     "Amy Stroup",
-    "Billy Strings",
-    "Daniel Donato",
-    "Greensky Bluegrass",
+    "Hayes Carll",
     "Lindsay Lou",
     "Shovels & Rope",
     "The Secret Sisters",
     "The Wood Brothers"
    ],
    "seat": "Shovels & Rope",
-   "suggested_name": "Rope Prairie"
-  },
-  {
-   "id": "heartland:d3",
-   "region": "heartland",
-   "members": [
-    "Charly Lowry",
-    "Valerie June"
-   ],
-   "seat": "Valerie June",
-   "suggested_name": "June Crossing"
+   "suggested_name": "Rope Crossing"
   },
   {
    "id": "heartland:d4",
@@ -1455,30 +1451,32 @@
    "id": "heartland:d7",
    "region": "heartland",
    "members": [
+    "Cowboy Junkies",
+    "Emmylou Harris",
+    "Gillian Welch",
+    "Lucinda Williams",
+    "Patty Griffin"
+   ],
+   "seat": "Lucinda Williams",
+   "suggested_name": "Williams Prairie"
+  },
+  {
+   "id": "heartland:d8",
+   "region": "heartland",
+   "members": [
     "Chelsey Green",
     "The War and Treaty",
     "Tiera Kennedy"
    ],
    "seat": "The War and Treaty",
-   "suggested_name": "Treaty Prairie"
-  },
-  {
-   "id": "heartland:d8",
-   "region": "heartland",
-   "members": [],
-   "seat": "George Clinton & Parliament-Funkadelic",
-   "suggested_name": "ParliamentFunkadelic Crossing"
+   "suggested_name": "Treaty Crossing"
   },
   {
    "id": "heartland:d9",
    "region": "heartland",
-   "members": [
-    "Molly Tuttle",
-    "Punch Brothers",
-    "Sierra Hull"
-   ],
-   "seat": "Molly Tuttle",
-   "suggested_name": "Tuttle Silo"
+   "members": [],
+   "seat": "George Clinton & Parliament-Funkadelic",
+   "suggested_name": "ParliamentFunkadelic Silo"
   },
   {
    "id": "heartland:outskirts",
@@ -1489,7 +1487,8 @@
     "India Ramey",
     "Last Train Home",
     "Sarah Borges & Eric Ambel",
-    "The Devil Makes Three"
+    "The Devil Makes Three",
+    "Tommy Prine"
    ],
    "seat": null,
    "suggested_name": "Heartland Outskirts"
@@ -1760,6 +1759,8 @@
    "region": "river_port",
    "members": [
     "Danielle Ponder",
+    "Diana Silvers",
+    "Jon Batiste",
     "Judith Hill",
     "Mavis Staples",
     "The Soul Rebels",
@@ -1768,15 +1769,6 @@
    ],
    "seat": "Trombone Shorty & Orleans Avenue",
    "suggested_name": "Avenue Landing"
-  },
-  {
-   "id": "river_port:d10",
-   "region": "river_port",
-   "members": [
-    "ZZ Ward"
-   ],
-   "seat": "ZZ Ward",
-   "suggested_name": "Ward Wharf"
   },
   {
    "id": "river_port:d2",
@@ -1832,46 +1824,35 @@
    "id": "river_port:d6",
    "region": "river_port",
    "members": [
-    "Diana Silvers",
-    "Jon Batiste",
-    "National Symphony Orchestra"
+    "Galactic",
+    "Jah Works"
    ],
-   "seat": "Jon Batiste",
-   "suggested_name": "Batiste Landing"
+   "seat": "Galactic",
+   "suggested_name": "Galactic Landing"
   },
   {
    "id": "river_port:d7",
    "region": "river_port",
    "members": [
-    "Galactic",
-    "Jah Works"
+    "Sweet Leda"
    ],
-   "seat": "Galactic",
-   "suggested_name": "Galactic Parade"
+   "seat": "Sweet Leda",
+   "suggested_name": "Leda Parade"
   },
   {
    "id": "river_port:d8",
    "region": "river_port",
    "members": [
-    "Anders Osborne",
-    "Tab Benoit & Anders Osborne"
+    "ZZ Ward"
    ],
-   "seat": "Tab Benoit & Anders Osborne",
-   "suggested_name": "Osborne Bend"
-  },
-  {
-   "id": "river_port:d9",
-   "region": "river_port",
-   "members": [
-    "Sweet Leda"
-   ],
-   "seat": "Sweet Leda",
-   "suggested_name": "Leda Ward"
+   "seat": "ZZ Ward",
+   "suggested_name": "Ward Bend"
   },
   {
    "id": "river_port:outskirts",
    "region": "river_port",
    "members": [
+    "Anders Osborne",
     "Angelique Francis",
     "Bobby Rush",
     "Deanna Bogart",
@@ -2034,7 +2015,7 @@
    "id": 3,
    "name": "Al Olender",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -2273,7 +2254,7 @@
    "id": 17,
    "name": "Amy Stroup",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -2336,9 +2317,9 @@
    "id": 20,
    "name": "Anders Osborne",
    "region": "river_port",
-   "district": "river_port:d8",
-   "size": "village",
-   "score": 5,
+   "district": "river_port:outskirts",
+   "size": "town",
+   "score": 8,
    "xy": [
     682.4,
     577.3
@@ -2349,7 +2330,7 @@
    ],
    "flags": {},
    "src": "",
-   "times_seen": 1,
+   "times_seen": 2,
    "vip": 0,
    "tier": "Medium-Strong"
   },
@@ -2835,7 +2816,7 @@
    "id": 49,
    "name": "Billy Strings",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d11",
    "size": "town",
    "score": 3,
    "xy": [
@@ -3444,7 +3425,7 @@
    "id": 80,
    "name": "Charly Lowry",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d1",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -3486,7 +3467,7 @@
    "id": 82,
    "name": "Chelsey Green",
    "region": "heartland",
-   "district": "heartland:d7",
+   "district": "heartland:d8",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -3642,7 +3623,7 @@
    "id": 90,
    "name": "Cowboy Junkies",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d7",
    "size": "town",
    "score": 3,
    "xy": [
@@ -3753,7 +3734,7 @@
    "id": 95,
    "name": "Daniel Donato",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d11",
    "size": "capital",
    "score": 27,
    "xy": [
@@ -3967,7 +3948,7 @@
    "id": 107,
    "name": "Diana Silvers",
    "region": "river_port",
-   "district": "river_port:d6",
+   "district": "river_port:d1",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -4160,7 +4141,7 @@
    "id": 119,
    "name": "Emmylou Harris",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -4580,16 +4561,16 @@
    "id": 141,
    "name": "Galactic",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d6",
    "size": "town",
    "score": 6,
    "xy": [
-    518.9,
-    531.5
+    575.2,
+    492.8
    ],
    "region_uv": [
-    0.1837,
-    0.4134
+    0.4089,
+    0.1653
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -4733,7 +4714,7 @@
    "id": 148,
    "name": "Gillian Welch",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d7",
    "size": "waystation",
    "score": 1,
    "xy": [
@@ -4867,7 +4848,7 @@
    "id": 155,
    "name": "Greensky Bluegrass",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d11",
    "size": "town",
    "score": 9,
    "xy": [
@@ -4932,7 +4913,7 @@
    "id": 158,
    "name": "Hayes Carll",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -5236,7 +5217,7 @@
    "id": 175,
    "name": "Jah Works",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d6",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -5517,7 +5498,7 @@
    "id": 192,
    "name": "Jobi Riccio",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d2",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -5669,31 +5650,10 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 200,
-   "name": "John Prine Celebration",
-   "region": "heartland",
-   "district": "heartland:d1",
-   "size": "hamlet",
-   "score": 3,
-   "xy": [
-    353.9,
-    438.0
-   ],
-   "region_uv": [
-    0.326,
-    0.3222
-   ],
-   "flags": {},
-   "src": "seen as support (history TSVs; no artists.tsv row)",
-   "times_seen": 1,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 201,
    "name": "Jon Batiste",
    "region": "river_port",
-   "district": "river_port:d6",
+   "district": "river_port:d1",
    "size": "city",
    "score": 14,
    "xy": [
@@ -6483,7 +6443,7 @@
    "id": 238,
    "name": "Lindsay Lou",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "town",
    "score": 6,
    "xy": [
@@ -6571,7 +6531,7 @@
    "id": 246,
    "name": "Lucinda Williams",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d7",
    "size": "waystation",
    "score": 3,
    "xy": [
@@ -6682,7 +6642,7 @@
    "id": 251,
    "name": "Lynn Hollyfield",
    "region": "heartland",
-   "district": "heartland:d12",
+   "district": "heartland:d13",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -6747,7 +6707,7 @@
    "id": 253,
    "name": "Maggie Rose",
    "region": "heartland",
-   "district": "heartland:d14",
+   "district": "heartland:d2",
    "size": "town",
    "score": 6,
    "xy": [
@@ -6854,7 +6814,7 @@
    "id": 258,
    "name": "Margo Price",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d2",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7206,7 +7166,7 @@
    "id": 274,
    "name": "Molly Tuttle",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d2",
    "size": "village",
    "score": 3.5,
    "xy": [
@@ -7398,27 +7358,6 @@
    "tier": "Medium"
   },
   {
-   "id": 284,
-   "name": "National Symphony Orchestra",
-   "region": "river_port",
-   "district": "river_port:d6",
-   "size": "hamlet",
-   "score": 3,
-   "xy": [
-    538.8,
-    590.5
-   ],
-   "region_uv": [
-    0.2631,
-    0.7916
-   ],
-   "flags": {},
-   "src": "seen as support (history TSVs; no artists.tsv row)",
-   "times_seen": 1,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 286,
    "name": "Nick Lowe & Los Straitjackets",
    "region": "amplified_range",
@@ -7596,7 +7535,7 @@
    "id": 296,
    "name": "Patty Griffin",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7770,7 +7709,7 @@
    "id": 306,
    "name": "Punch Brothers",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d2",
    "size": "waystation",
    "score": 3,
    "xy": [
@@ -8485,7 +8424,7 @@
    "id": 348,
    "name": "Shovels & Rope",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "city",
    "score": 12,
    "xy": [
@@ -8506,7 +8445,7 @@
    "id": 350,
    "name": "Sierra Hull",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d2",
    "size": "town",
    "score": 1,
    "xy": [
@@ -9001,7 +8940,7 @@
    "id": 375,
    "name": "Sweet Leda",
    "region": "river_port",
-   "district": "river_port:d9",
+   "district": "river_port:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9023,8 +8962,8 @@
    "name": "Tab Benoit",
    "region": "river_port",
    "district": "river_port:override",
-   "size": "city",
-   "score": 18,
+   "size": "capital",
+   "score": 21,
    "xy": [
     677.0,
     566.3
@@ -9035,30 +8974,9 @@
    ],
    "flags": {},
    "src": "history pass: seen as support",
-   "times_seen": 5,
+   "times_seen": 6,
    "vip": 0,
    "tier": "Strong"
-  },
-  {
-   "id": 377,
-   "name": "Tab Benoit & Anders Osborne",
-   "region": "river_port",
-   "district": "river_port:d8",
-   "size": "hamlet",
-   "score": 3,
-   "xy": [
-    676.7,
-    575.7
-   ],
-   "region_uv": [
-    0.8148,
-    0.6968
-   ],
-   "flags": {},
-   "src": "seen as support (history TSVs; no artists.tsv row)",
-   "times_seen": 1,
-   "vip": 0,
-   "tier": null
   },
   {
    "id": 378,
@@ -9473,7 +9391,7 @@
    "id": 162,
    "name": "The Hip Snacks",
    "region": "heartland",
-   "district": "heartland:d14",
+   "district": "heartland:d2",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9706,7 +9624,7 @@
    "id": 341,
    "name": "The Secret Sisters",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9813,7 +9731,7 @@
    "id": 405,
    "name": "The War and Treaty",
    "region": "heartland",
-   "district": "heartland:d7",
+   "district": "heartland:d8",
    "size": "town",
    "score": 9,
    "xy": [
@@ -9855,7 +9773,7 @@
    "id": 413,
    "name": "The Wood Brothers",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "city",
    "score": 12,
    "xy": [
@@ -9897,7 +9815,7 @@
    "id": 388,
    "name": "Tiera Kennedy",
    "region": "heartland",
-   "district": "heartland:d7",
+   "district": "heartland:d8",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -9985,7 +9903,7 @@
    "id": 392,
    "name": "Tommy Prine",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:outskirts",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -10071,7 +9989,7 @@
    "id": 396,
    "name": "Valerie June",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d1",
    "size": "town",
    "score": 9,
    "xy": [
@@ -10528,7 +10446,7 @@
    "id": 428,
    "name": "ZZ Ward",
    "region": "river_port",
-   "district": "river_port:d10",
+   "district": "river_port:d8",
    "size": "city",
    "score": 19,
    "xy": [
@@ -11063,23 +10981,6 @@
   },
   {
    "a": "Allison Russell",
-   "b": "John Prine Celebration",
-   "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
-  },
-  {
-   "a": "Allison Russell",
    "b": "Joy Oladokun",
    "cls": "trail",
    "crossRegion": false,
@@ -11543,7 +11444,7 @@
   },
   {
    "a": "Anders Osborne",
-   "b": "Tab Benoit & Anders Osborne",
+   "b": "Tab Benoit",
    "cls": "road",
    "crossRegion": false,
    "render": "road"
@@ -13087,13 +12988,6 @@
   },
   {
    "a": "Emmylou Harris",
-   "b": "John Prine Celebration",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "Emmylou Harris",
    "b": "Lucinda Williams",
    "cls": "trail",
    "crossRegion": false,
@@ -13352,13 +13246,6 @@
   {
    "a": "Every Breath You Take",
    "b": "The Side Cars Band",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "Fancy Hagood",
-   "b": "John Prine Celebration",
    "cls": "river",
    "crossRegion": false,
    "render": "river"
@@ -13805,13 +13692,6 @@
   },
   {
    "a": "Hayes Carll",
-   "b": "John Prine Celebration",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "Hayes Carll",
    "b": "Shovels & Rope",
    "cls": "trail",
    "crossRegion": false,
@@ -13830,23 +13710,6 @@
    "cls": "river",
    "crossRegion": false,
    "render": "river"
-  },
-  {
-   "a": "I'm With Her",
-   "b": "John Prine Celebration",
-   "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
   },
   {
    "a": "I'm With Her",
@@ -14252,13 +14115,6 @@
   },
   {
    "a": "Jobi Riccio",
-   "b": "John Prine Celebration",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "Jobi Riccio",
    "b": "Margo Price",
    "cls": "trail",
    "crossRegion": false,
@@ -14333,51 +14189,6 @@
    "cls": "trail",
    "crossRegion": false,
    "render": "trail"
-  },
-  {
-   "a": "John Prine Celebration",
-   "b": "Lucius",
-   "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
-  },
-  {
-   "a": "John Prine Celebration",
-   "b": "Margo Price",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "John Prine Celebration",
-   "b": "Patty Griffin",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "John Prine Celebration",
-   "b": "Tommy Prine",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
-  },
-  {
-   "a": "Jon Batiste",
-   "b": "National Symphony Orchestra",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
   },
   {
    "a": "Jon Batiste",
@@ -15131,7 +14942,7 @@
   },
   {
    "a": "Mike Zito",
-   "b": "Tab Benoit & Anders Osborne",
+   "b": "Tab Benoit",
    "cls": "river",
    "crossRegion": true,
    "render": "highway",
@@ -15908,13 +15719,6 @@
      314.0
     ]
    ]
-  },
-  {
-   "a": "Tab Benoit",
-   "b": "Tab Benoit & Anders Osborne",
-   "cls": "road",
-   "crossRegion": false,
-   "render": "road"
   },
   {
    "a": "Tab Benoit",
