@@ -94,6 +94,9 @@
   #zoomer button:hover{background:#f5ecd6;}
   #err{position:absolute;top:16px;left:16px;right:64px;color:var(--paper);
     font-family:'Special Elite',monospace;font-size:14px;line-height:1.7;display:none;}
+  .save-ind{font-family:'Special Elite',monospace;}
+  .save-ind.ok{color:#2e6b3d;}
+  .save-ind.err{color:#a63d2f;}
 </style>
 </head>
 <body>
@@ -116,11 +119,14 @@
     <select id="ovSize" style="width:42%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:3px;">
       <option>hamlet</option><option>waystation</option><option>village</option><option>town</option><option>city</option><option>capital</option>
     </select>
-    <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export overrides (0)</button>
-    <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export labels</button>
+    <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save overrides (0)</button>
+    <span class="save-ind" id="ind-ov" style="font-size:10.5px;margin-left:4px;"></span>
+    <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save labels</button>
+    <span class="save-ind" id="ind-lbl" style="font-size:10.5px;margin-left:4px;"></span>
     <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
       <button id="traceBtn" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">trace waterway</button>
-      <button id="traceExp" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">export waterways (0)</button>
+      <button id="traceExp" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save waterways (0)</button>
+      <span class="save-ind" id="ind-trace" style="font-size:10.5px;margin-left:4px;"></span>
       <input id="traceName" placeholder="name / note for this waterway &mdash; Enter to save">
       <div id="traceMsg" style="font-size:10.5px;margin-top:3px;min-height:12px;"></div>
     </div>
@@ -141,7 +147,8 @@
       <label><input type="checkbox" id="traceMode"> trace rivers</label>
       <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
         font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
-        export pins (0)</button>
+        save pins (0)</button>
+      <span class="save-ind" id="ind-pins" style="font-size:10.5px;margin-left:4px;"></span>
     </div>
   </div>
 </div>
@@ -156,11 +163,49 @@
 
   // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
   // store, so a token saved there just works here too — no separate auth surface on
-  // the map. This only hides the controls for a bystander; it does not yet grant any
-  // write capability of its own (see issue #367 item 2 for direct-commit exports).
+  // the map. For an authed user this also grants write capability: the four save
+  // buttons below commit straight to staging with this same PAT.
   const PAT_KEY='ghpat_liveshows';
   const authed=!!localStorage.getItem(PAT_KEY);
   if(authed){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
+
+  // Repo + branch this page commits to. map.html has no config.yaml of its own
+  // (unlike app.js's dataBranch(), which reads site.data_branch) — this fork's
+  // data branch is 'staging' (auto-promote.yml fast-forwards main from there),
+  // so it's hardcoded here rather than duplicating a config loader for one value.
+  const OWNER='dan2bit', REPO='live-shows', BRANCH='staging';
+
+  // Contents-API PUT: fetch a fresh SHA immediately before writing (per the repo's
+  // commit rules — never reuse a SHA from an earlier read), then PUT the full file
+  // content to BRANCH. Mirrors app.js's ghFetchForWrite + raw-fetch-PUT pattern,
+  // inlined here since map.html has no shared script include with the list pages.
+  async function ghCommitJson(path,obj,message){
+    const pat=localStorage.getItem(PAT_KEY);
+    if(!pat) throw new Error('no auth');
+    const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat};
+    const getUrl='https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path+'?ref='+encodeURIComponent(BRANCH);
+    const fd=await (await fetch(getUrl,{cache:'no-store',headers})).json();
+    if(!fd.sha) throw new Error('could not read current sha for '+path);
+    const body=JSON.stringify(obj,null,1)+'\n';
+    const putRes=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path,{
+      method:'PUT',
+      headers:Object.assign({'Content-Type':'application/json'},headers),
+      body:JSON.stringify({message,content:btoa(unescape(encodeURIComponent(body))),sha:fd.sha,branch:BRANCH})
+    });
+    if(!putRes.ok) throw new Error(await putRes.text());
+    return putRes.json();
+  }
+  // Save-indicator: same three-state pattern app.js uses for inline edits
+  // ('…' in flight, '✓' ok, '✗ <msg>' err) — inlined here for the same reason
+  // as ghCommitJson above.
+  function setInd(id,state,msg){
+    const el=document.getElementById(id);if(!el)return;
+    el.className='save-ind';
+    if(state==='pending'){el.textContent='…';}
+    else if(state==='ok'){el.textContent='✓';el.classList.add('ok');}
+    else if(state==='err'){el.textContent='✗ '+(msg||'error').slice(0,60);el.classList.add('err');}
+    else{el.textContent='';}
+  }
 
   let data;
   try{ data=await (await fetch(DATA,{cache:'no-store'})).json(); }
@@ -413,12 +458,12 @@
   document.getElementById('zin').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,0.75);
   document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
-  // exports are cumulative: seed this session from the committed files
+  // saves are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
   if(authed){
   try{ const ptxt=await (await fetch('pins.json',{cache:'no-store'})).text();
        Object.assign(pins, JSON.parse(ptxt));
-       expBtn.textContent=`export pins (${Object.keys(pins).length})`;
+       expBtn.textContent=`save pins (${Object.keys(pins).length})`;
        // freshness check: does the rendered data know about this pins file?
        if(data.meta&&data.meta.pins_hash){
          const buf=await crypto.subtle.digest('MD5'in crypto?'MD5':'SHA-1',new TextEncoder().encode(ptxt)).catch(()=>null);
@@ -429,10 +474,15 @@
          e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
   }catch(e){}
   editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);});
-  expBtn.addEventListener('click',()=>{
-    const blob=new Blob([JSON.stringify(pins,null,1)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='pins.json';a.click();URL.revokeObjectURL(a.href);
+  expBtn.addEventListener('click',async()=>{
+    setInd('ind-pins','pending');
+    expBtn.disabled=true;
+    try{
+      await ghCommitJson('tools/map/pins.json',pins,'map: update pins ('+Object.keys(pins).length+') via in-page editor');
+      setInd('ind-pins','ok');
+      expBtn.textContent=`save pins (${Object.keys(pins).length})`;
+    }catch(e){ console.error(e); setInd('ind-pins','err',e.message); }
+    expBtn.disabled=false;
   });
   }
   const overrides={};
@@ -453,10 +503,10 @@
   }
   function markOv(name,key,val){
     (overrides[name]??={})[key]=val;
-    exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
+    exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
   }
   if(authed){
-  exportOv.textContent=`export overrides (${Object.keys(overrides).length})`;
+  exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
   ovRegion.addEventListener('change',()=>{
     if(!selected)return;
     markOv(selected.dataset.name,'region',ovRegion.value);
@@ -470,10 +520,15 @@
     selected.classList.add(sz);
     selected.querySelector('.dot').setAttribute('r',{capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7}[sz]||2);
   });
-  exportOv.addEventListener('click',()=>{
-    const blob=new Blob([JSON.stringify(overrides,null,1)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='map_overrides.json';a.click();URL.revokeObjectURL(a.href);
+  exportOv.addEventListener('click',async()=>{
+    setInd('ind-ov','pending');
+    exportOv.disabled=true;
+    try{
+      await ghCommitJson('tools/map/map_overrides.json',overrides,'map: update overrides ('+Object.keys(overrides).length+') via in-page editor');
+      setInd('ind-ov','ok');
+      exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
+    }catch(e){ console.error(e); setInd('ind-ov','err',e.message); }
+    exportOv.disabled=false;
   });
   }
   // waterway tracing: a full-takeover mode - no other edits while tracing
@@ -486,7 +541,7 @@
   try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
   }
   let tracing=null, unsaved=0, pendingName=null;
-  const traceCount=()=>{traceExp.textContent=`export waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
+  const traceCount=()=>{traceExp.textContent=`save waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
   if(authed){
   traceCount();
   }
@@ -574,20 +629,20 @@
       pendingName=tracing;
       if(!silent){
         traceName.style.display='block';traceName.value='';traceName.focus();
-        traceMsg.textContent=`${tracing.id} saved: ${tracing.settlements.length} tagged + ${tracing.captured.length} captured \u2014 name it, then EXPORT`;
+        traceMsg.textContent=`${tracing.id} saved: ${tracing.settlements.length} tagged + ${tracing.captured.length} captured \u2014 name it, then SAVE`;
       }
       paintDone();
     } else if(tracing&&!silent){ traceMsg.textContent='trace discarded (needs 2+)'; }
     tracing=null;redrawTrace();
     traceBtn.textContent='trace waterway';traceCount();
-    if(unsaved>=2)traceMsg.textContent+=` \u26a0 ${unsaved} traces unsaved \u2014 export now`;
+    if(unsaved>=2)traceMsg.textContent+=` \u26a0 ${unsaved} traces unsaved \u2014 save now`;
   }
   if(authed){
   traceName.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&pendingName){
       pendingName.name=traceName.value.trim()||null;
       traceName.style.display='none';pendingName=null;
-      traceMsg.textContent='named \u2014 remember to export';
+      traceMsg.textContent='named \u2014 remember to save';
     }
   });
   traceBtn.addEventListener('click',()=>{
@@ -597,22 +652,30 @@
     traceBtn.textContent='end trace';
     traceMsg.textContent=`${tracing.id}: click settlements source \u2192 mouth (click again to remove)`;
   });
-  traceExp.addEventListener('click',()=>{
+  traceExp.addEventListener('click',async()=>{
     if(tracing)endTrace();
-    const blob=new Blob([JSON.stringify(TRACES,null,1)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='traced_waterways.json';a.click();URL.revokeObjectURL(a.href);
-    unsaved=0;traceCount();traceMsg.textContent='exported \u2713';
+    setInd('ind-trace','pending');
+    traceExp.disabled=true;
+    try{
+      await ghCommitJson('tools/map/traced_waterways.json',TRACES,'map: update traced waterways ('+TRACES.length+') via in-page editor');
+      setInd('ind-trace','ok');
+      unsaved=0;traceCount();
+    }catch(e){ console.error(e); setInd('ind-trace','err',e.message); }
+    traceExp.disabled=false;
   });
   window.addEventListener('beforeunload',e=>{
     if(unsaved>0){e.preventDefault();e.returnValue='';}
   });
   const lblBtn=document.getElementById('exportLbl')||document.createElement('button');
-  lblBtn.addEventListener('click',()=>{
-    const blob=new Blob([JSON.stringify(LBL,null,1)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='labels.json';a.click();URL.revokeObjectURL(a.href);
-    lblBtn.textContent='export labels';
+  lblBtn.addEventListener('click',async()=>{
+    setInd('ind-lbl','pending');
+    lblBtn.disabled=true;
+    try{
+      await ghCommitJson('tools/map/labels.json',LBL,'map: update labels via in-page editor');
+      setInd('ind-lbl','ok');
+      lblBtn.textContent='save labels';
+    }catch(e){ console.error(e); setInd('ind-lbl','err',e.message); }
+    lblBtn.disabled=false;
   });
   }
   let pan=null, dragS=null;
@@ -639,7 +702,7 @@
       if(dragL.dataset.rid) (LBL.regions[dragL.dataset.rid]??={}).xy=[X,Y];
       else if(dragL.dataset.gkind==='island') LBL.islands[dragL.dataset.gname]=[X,Y];
       else LBL.waters[dragL.dataset.gname]=[X,Y];
-      lblBtn.textContent='export labels *';
+      lblBtn.textContent='save labels *';
       readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">(${X}, ${Y}) \u2014 in labels.json</div>`;
       return;
     }
@@ -647,7 +710,7 @@
       const [mx,my]=toMap(e.clientX,e.clientY);
       dragS.g.setAttribute('transform',`translate(${mx.toFixed(1)},${my.toFixed(1)})`);
       if(dragS.name){pins[dragS.name]=[+mx.toFixed(1),+my.toFixed(1)];
-        expBtn.textContent=`export pins (${Object.keys(pins).length})`;}
+        expBtn.textContent=`save pins (${Object.keys(pins).length})`;}
       return;
     }
     if(!pan)return;
