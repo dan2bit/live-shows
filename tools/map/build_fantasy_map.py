@@ -211,6 +211,10 @@ MAP_EXCLUDE = {
     # single incidental support credit (times_seen 1, no artists.tsv row of
     # its own), not a distinct artist worth its own settlement.
     "National Symphony Orchestra",
+    # John Prine Celebration: an event/tribute credit, not an artist -- same
+    # shape as an "Experience Hendrix"-style all-star tribute show. Same
+    # single-incidental-credit signature as the row above.
+    "John Prine Celebration",
 }
 records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
