@@ -959,15 +959,23 @@ if ov_path.exists():
                 districts[old_d]["members"].remove(nm)
             region_of[nm] = ov["region"]
             district_of[nm] = f"{ov['region']}:override"
-            spec_o = REGIONS[ov["region"]]
-            ex_ = (xy[nm][0] - spec_o["anchor"][0]) / spec_o["rx"]
-            ey_ = (xy[nm][1] - spec_o["anchor"][1]) / spec_o["ry"]
-            if ex_ * ex_ + ey_ * ey_ > 1.1:   # far outside: restage near the new home
-                jr5 = random.Random(f"{RNG_SEED}:ov:{nm}")
-                sx_, sy_ = clamp_to_land(spec_o["anchor"][0] + spec_o["rx"] * 0.45,
-                                         spec_o["anchor"][1] - spec_o["ry"] * 0.45, spec_o["anchor"])
-                xy[nm] = (sx_ + (jr5.random() - 0.5) * 24, sy_ + (jr5.random() - 0.5) * 18)
-                UNPLACED.add(nm)
+            # A pinned settlement's position is Dan's, not the auto-layout's --
+            # restaging it here would silently discard the pin the moment its
+            # region changed underneath it (found via 10 Outer Isles/River Port
+            # settlements that had a correct pins.json entry but kept showing
+            # unplaced with a different xy, because this block restaged them
+            # on every run regardless of the pin). Skip the ellipse check and
+            # restage entirely when a pin already exists for this name.
+            if nm not in _pins_law:
+                spec_o = REGIONS[ov["region"]]
+                ex_ = (xy[nm][0] - spec_o["anchor"][0]) / spec_o["rx"]
+                ey_ = (xy[nm][1] - spec_o["anchor"][1]) / spec_o["ry"]
+                if ex_ * ex_ + ey_ * ey_ > 1.1:   # far outside: restage near the new home
+                    jr5 = random.Random(f"{RNG_SEED}:ov:{nm}")
+                    sx_, sy_ = clamp_to_land(spec_o["anchor"][0] + spec_o["rx"] * 0.45,
+                                             spec_o["anchor"][1] - spec_o["ry"] * 0.45, spec_o["anchor"])
+                    xy[nm] = (sx_ + (jr5.random() - 0.5) * 24, sy_ + (jr5.random() - 0.5) * 18)
+                    UNPLACED.add(nm)
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
 
