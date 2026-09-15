@@ -170,24 +170,14 @@
      "dist": 2.7
     },
     {
+     "name": "Cicada Rhythm",
+     "at": 0.2667748699530225,
+     "dist": 4.3
+    },
+    {
      "name": "Madeleine Roger",
      "at": 0.41874316721488564,
      "dist": 0.7
-    },
-    {
-     "name": "Cicada Rhythm",
-     "at": 0.48151931176421536,
-     "dist": 5.4
-    },
-    {
-     "name": "Vienna Teng",
-     "at": 0.5064671457566998,
-     "dist": 0.1
-    },
-    {
-     "name": "Kashus Culpepper",
-     "at": 0.5640140487667451,
-     "dist": 8.0
     },
     {
      "name": "Linda Perry",
@@ -233,11 +223,6 @@
      "name": "Josh Ritter",
      "at": 0.10432785196425504,
      "dist": 2.8
-    },
-    {
-     "name": "Rainbow Kitten Surprise",
-     "at": 0.543794878429099,
-     "dist": 1.0
     },
     {
      "name": "Patty Griffin",
@@ -397,9 +382,9 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-09-14",
+  "generated_from": "2026-09-15",
   "seed": 2026,
-  "pins_hash": "946d0b2db3",
+  "pins_hash": "d15c4c1f70",
   "overrides_hash": "0da54cf3d6",
   "counts": {
    "settlements": 405,
@@ -743,40 +728,40 @@
    "label_lines": null,
    "hull": [
     [
-     719.2,
-     108.1
+     683.2,
+     78.4
     ],
     [
-     789.4,
-     16.3
+     790.7,
+     16.1
     ],
     [
-     871.4,
-     4.8
+     873.1,
+     5.3
     ],
     [
-     908.8,
-     41.7
+     910.6,
+     42.9
     ],
     [
-     920.4,
-     56.0
+     922.1,
+     57.4
     ],
     [
-     1000.7,
-     189.7
+     1000.6,
+     190.9
     ],
     [
-     985.8,
-     246.1
+     985.6,
+     246.7
     ],
     [
-     979.7,
-     256.1
+     979.4,
+     256.6
     ],
     [
-     901.0,
-     286.5
+     906.0,
+     285.0
     ]
    ]
   }
@@ -2422,16 +2407,14 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    867.9,
-    154.9
+    742.9,
+    179.6
    ],
    "region_uv": [
-    0.7227,
-    0.2998
+    0.3654,
+    0.3984
    ],
-   "flags": {
-    "unplaced": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -3293,16 +3276,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    723.6,
-    255.0
+    722.5,
+    346.9
    ],
    "region_uv": [
-    0.3104,
-    0.7
+    0.3071,
+    1.0676
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -3401,12 +3383,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    517.8,
-    380.4
+    387.8,
+    255.5
    ],
    "region_uv": [
-    -1.6716,
-    3.8167
+    -2.4102,
+    2.5156
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3620,16 +3602,15 @@
    "size": "hamlet",
    "score": 0,
    "xy": [
-    413.6,
-    362.8
+    428.4,
+    361.0
    ],
    "region_uv": [
-    0.3071,
-    0.7
+    0.35,
+    0.692
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -5629,12 +5610,12 @@
    "size": "town",
    "score": 6,
    "xy": [
-    455.2,
-    444.4
+    453.4,
+    442.2
    ],
    "region_uv": [
-    0.5926,
-    0.3492
+    0.5879,
+    0.3398
    ],
    "flags": {
     "legacy": true
@@ -5961,16 +5942,15 @@
    "size": "waystation",
    "score": 2,
    "xy": [
-    408.1,
-    365.7
+    550.3,
+    435.7
    ],
    "region_uv": [
-    0.2909,
-    0.7128
+    0.7044,
+    1.0254
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong)",
    "times_seen": 0,
@@ -7558,12 +7538,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    430,
-    426
+    456.6,
+    388.1
    ],
    "region_uv": [
-    0.3547,
-    0.9821
+    0.432,
+    0.8129
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -7868,12 +7848,12 @@
    "size": "hamlet",
    "score": 0,
    "xy": [
-    375.4,
-    373.4
+    700.3,
+    190.9
    ],
    "region_uv": [
-    -0.6846,
-    1.1736
+    0.2437,
+    0.4436
    ],
    "flags": {
     "unvisited": true
@@ -8514,12 +8494,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    341.8,
-    453.2
+    408.4,
+    451.6
    ],
    "region_uv": [
-    0.2942,
-    0.3864
+    0.4695,
+    0.3797
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9865,12 +9845,12 @@
    "size": "village",
    "score": 4,
    "xy": [
-    379.3,
-    393.4
+    527.8,
+    391.7
    ],
    "region_uv": [
-    0.2072,
-    0.8365
+    0.639,
+    0.829
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -9886,12 +9866,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    405.3,
-    431.8
+    420.3,
+    423.3
    ],
    "region_uv": [
-    0.4613,
-    0.2958
+    0.5008,
+    0.2597
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -10232,16 +10212,15 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    411.7,
-    357.4
+    426.2,
+    379.0
    ],
    "region_uv": [
-    0.3014,
-    0.6757
+    0.3436,
+    0.7723
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -10367,16 +10346,14 @@
    "size": "village",
    "score": 4,
    "xy": [
-    565.8,
-    275.3
+    469.2,
+    275.9
    ],
    "region_uv": [
-    0.7493,
-    0.3092
+    0.4686,
+    0.3121
    ],
-   "flags": {
-    "unplaced": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
