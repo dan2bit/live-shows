@@ -156,8 +156,8 @@
 
   // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
   // store, so a token saved there just works here too — no separate auth surface on
-  // the map. This only hides the controls for a bystander; it does not yet grant any
-  // write capability of its own (see issue #367 item 2 for direct-commit exports).
+  // the map. This hides the controls for a bystander; for an authed user it also grants
+  // write capability of its own for direct-commit exports to staging
   const PAT_KEY='ghpat_liveshows';
   const authed=!!localStorage.getItem(PAT_KEY);
   if(authed){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
