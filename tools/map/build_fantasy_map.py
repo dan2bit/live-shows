@@ -207,6 +207,14 @@ MAP_EXCLUDE = {
     "Damien Bethel", "Erin Frisby", "Jasper Hobbs", "Juels Bland", "Lou Black",
     "Mx. Mundy", "Nina Goodman", "Rebecca Berlin", "Robzie Trulove",
     "Safety Bear", "Sanjay Arora", "Sea Griffin", "Wytold",
+    # National Symphony Orchestra: same shape as the DC9 cluster above -- a
+    # single incidental support credit (times_seen 1, no artists.tsv row of
+    # its own), not a distinct artist worth its own settlement.
+    "National Symphony Orchestra",
+    # John Prine Celebration: an event/tribute credit, not an artist -- same
+    # shape as an "Experience Hendrix"-style all-star tribute show. Same
+    # single-incidental-credit signature as the row above.
+    "John Prine Celebration",
 }
 records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
@@ -295,6 +303,10 @@ MERGES = {   # absorbed -> survivor (survivor inherits seen history)
 SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
     "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
     "Blood Brothers": ["Mike Zito", "Albert Castiglia"],
+    # Same shape as the two rows above: a co-bill credit where both principals
+    # also exist independently on the map (Tab Benoit and Anders Osborne each
+    # have their own settlement, seen history, and pin).
+    "Tab Benoit & Anders Osborne": ["Tab Benoit", "Anders Osborne"],
 }
 def _fold_seen(dst, src_meta):
     m_ = seen_meta.setdefault(dst, {"times_seen": 0, "vip": 0, "most_recent": ""})
@@ -629,7 +641,7 @@ for reg, spec in REGIONS.items():
 CANON_PINS = {                                # first pin moves the whole district
     "Larkin Poe": (608, 373),                 # east shore of the source lake
     "The Lone Bellow": (562, 366),            # west shore of the source lake
-    "Ana Popović": (296, 662),           # delta capital on the measured coast
+    "Shemekia Copeland": (296, 662),           # delta capital on the measured coast
 }
 INDIV_PINS = {                                # hand seats, moved alone, never clamped
     "Trombone Shorty & Orleans Avenue": (654, 556),   # Big Muddy's east bank
@@ -895,6 +907,12 @@ CURATED_SIZE = {
     "Glen Hansard": "town", "L\u012bve": "village",
     "Joan Jett & The Blackhearts": "village",
     "Danny Burns": "town",
+    # Delta Coast capital swap: Shemekia Copeland promoted, Ana Popović
+    # demoted -- an explicit curatorial choice (avoiding a single ethnic
+    # reading of the region's capital seat), independent of either artist's
+    # computed score. Positions swapped correspondingly in pins.json.
+    "Shemekia Copeland": "capital",
+    "Ana Popović": "city",
 }
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
