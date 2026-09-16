@@ -248,6 +248,27 @@
   // pins.json is position truth - render it live, don't wait for the rebuild bot
   let PINFILE={};
   try{ PINFILE=await (await fetch('pins.json',{cache:'no-store'})).json(); }catch(e){}
+
+  // #366: roster staleness — is fantasy_map_data.json behind recommend_index.json?
+  (async()=>{
+    if(!authed) return;   // decision: staleness banner is for authed users only
+    let idx=null;
+    for(const p of ['/data/recommend_index.json','../../data/recommend_index.json']){
+      try{ idx=await (await fetch(p,{cache:'no-store'})).json(); if(idx) break; }catch(e){}
+    }
+    if(!idx||!idx.records) return;
+    const onMap=new Set(data.settlements.map(s=>s.name));
+    const missing=idx.records.map(r=>r.canonical).filter(n=>!onMap.has(n)&&!PINFILE[n]);
+    const unpinned=data.settlements.filter(s=>!PINFILE[s.name]&&s.region!=='outer_isles').length;
+    if(missing.length===0) return;
+    const b=document.createElement('div');
+    b.id='rosterBanner';
+    b.style.cssText='position:absolute;top:8px;left:8px;max-width:340px;background:rgba(166,61,47,.93);color:#EDE0C2;font-family:Oswald;font-size:12px;padding:7px 10px;border:1.5px solid #221A12;z-index:9;';
+    b.innerHTML=`<b>${missing.length} roster artist${missing.length>1?'s':''} not on the map</b> · ${unpinned} settlements unpinned — map data is behind recommend_index.<br>`
+      +`<span style="font-size:10.5px;opacity:.9">rebuild: GitHub → Actions → “Rebuild fantasy map data” → Run workflow · or: <code>gh workflow run map-rebuild.yml</code></span>`
+      +`<span style="font-size:10.5px;display:block;opacity:.8;margin-top:2px" title="${missing.slice(0,20).join(', ').replace(/"/g,'&quot;')}">hover for names</span>`;
+    document.getElementById('stage').appendChild(b);
+  })();
   for(const st of data.settlements){
     const p=PINFILE[st.name];
     if(p) st.xy=[+p[0],+p[1]];
