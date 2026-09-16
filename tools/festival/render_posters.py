@@ -63,12 +63,22 @@ Everything positional comes from the running order rather than the data file:
   timeline co-headliners main second-to-last, second stage last, second-to-last
 
 Storing any of it would let the JSON disagree with the layout it describes.
+
+ACT NAMES ARE LINKS, PRINTED AS PLAIN TYPE
+
+Every rendered name is an <a class="act"> that opens the artist card. The anchor
+carries the CANONICAL artist (data-artist) and a slot note; the visible label is
+whatever width the context called for. The templates style the anchor to print
+with no link colour or underline - the underline appears only under a pointer or
+keyboard focus, on screen - so a printed poster looks exactly as it did before.
+The slug in the href comes from data/artist_modal_index.json when present.
 """
 
 import argparse
 import html.entities
 import json
 import re
+import unicodedata
 import sys
 from pathlib import Path
 
@@ -127,6 +137,67 @@ def esc(s):
     return "".join(out)
 
 
+def attr(s):
+    """Plain attribute escaping - canonical names and notes ride in data-* attributes
+    exactly as stored, so the modal's own normalizer sees the ASCII source form."""
+    s = html.escape(s, quote=True)
+    return "".join(ch if ord(ch) < 128 else "&#%d;" % ord(ch) for ch in s)
+
+
+def norm(s):
+    """The artist index's key form - mirrors the modal's own normalizer (de-invert
+    "X, The", de-accent, lowercase, drop one leading article, punctuation to space).
+    Lookups go through it so the lineup's Christone "Kingfish" Ingram meets the
+    index's Christone 'Kingfish' Ingram, and James Hunter Six meets The James Hunter Six."""
+    s = s.strip()
+    m = re.match(r"^(.*),\s+(the|a|an)$", s, re.I)
+    if m:
+        s = m.group(2) + " " + m.group(1)
+    s = "".join(ch for ch in unicodedata.normalize("NFKD", s) if not unicodedata.combining(ch)).lower()
+    s = re.sub(r"^\s*(the|a|an)\s+", "", s)
+    s = re.sub(r"[^a-z0-9 ]+", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def load_slugs():
+    """(index keys -> slug, alias key -> index key) from the prebuilt artist index.
+    The anchor href carries the slug so an act name is a real deep link
+    (#artist/<slug>) even without the click handler; a missing index yields
+    href="#", and the click path still resolves by name."""
+    idx = ROOT / "data" / "artist_modal_index.json"
+    if not idx.exists():
+        return {}, {}
+    doc = json.loads(idx.read_text(encoding="utf-8"))
+    arts = doc.get("artists") or {}
+    return ({k: a.get("slug", "") for k, a in arts.items() if a.get("slug")},
+            doc.get("aliases") or {})
+
+
+SLUGS, ALIASES = load_slugs()
+
+
+def slug_for(canonical):
+    k = norm(canonical)
+    return SLUGS.get(k) or SLUGS.get(ALIASES.get(k, ""), "")
+
+
+STAGE_NAMES = {1: "Main Stage", 2: "Second Stage"}
+
+
+def act_link(slot, label_html, day, extra=""):
+    """Wrap a rendered name so a click opens the artist card. The anchor carries the
+    CANONICAL artist in data-artist - the modal resolves and displays that, never the
+    poster's abbreviated label - plus a note the card shows as its breadcrumb. Styled
+    to print as plain type (see the template's a.act rules)."""
+    canonical = slot["artist"]
+    note = "Day %d \u00b7 %s %s%s" % (day["number"], STAGE_NAMES[slot["stage"]], slot["time"],
+                                    (" \u00b7 " + extra) if extra else "")
+    slug = slug_for(canonical)
+    href = "#artist/" + slug if slug else "#"
+    return ('<a class="act" href="%s" data-artist="%s" data-note="%s">%s</a>'
+            % (href, attr(canonical), attr(note), label_html))
+
+
 def time_key(t):
     """Running order on a 12-hour clock that starts at noon."""
     h, m = (int(x) for x in t.split(":"))
@@ -165,7 +236,7 @@ def render_bill(day):
         inner = []
         for slot in block:
             inner.append('<span class="%s s%d">%s</span>'
-                         % (cls, slot["stage"], esc(name_for(slot, "short"))))
+                         % (cls, slot["stage"], act_link(slot, esc(name_for(slot, "short")), day)))
         parts.append('<span class="sep">&middot;</span>'.join(inner))
     return "".join(parts)
 
@@ -176,8 +247,8 @@ def render_stage(day, stage):
     for slot in sorted((s for s in day["slots"] if s["stage"] == stage),
                        key=lambda s: time_key(s["time"])):
         cls = ' class="fav"' if slot["favorite"] else ""
-        rows.append('          <li%s><span>%s</span><span class="t">%s</span></li>'
-                    % (cls, esc(name_for(slot, "medium")), slot["time"]))
+        rows.append('          <li%s>%s<span class="t">%s</span></li>'
+                    % (cls, act_link(slot, esc(name_for(slot, "medium")), day), slot["time"]))
     return "\n" + "\n".join(rows) + "\n        "
 
 
@@ -214,11 +285,11 @@ def render(kind, doc):
         else:
             closer, co = headline(day)
             out = out.replace("{{DAY%d_CLOSER}}" % n,
-                              esc(name_for(closer, "canonical")))
+                              act_link(closer, esc(name_for(closer, "canonical")), day, "closer"))
             out = out.replace(
                 "{{DAY%d_CO}}" % n,
                 ' <span class="dot">&#9733;</span> '.join(
-                    esc(name_for(s, "canonical")) for s in co))
+                    act_link(s, esc(name_for(s, "canonical")), day, "co-headliner") for s in co))
             out = out.replace("{{DAY%d_STAGE1}}" % n, render_stage(day, 1))
             out = out.replace("{{DAY%d_STAGE2}}" % n, render_stage(day, 2))
 

@@ -25,6 +25,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../artist-modal.css?v=b6fbc14a">
+<!-- The poster hosts the artist modal: an act name opens the card. Loaded synchronously so
+     amInit() below runs during parse, ahead of the module's own self-init, which is what lets a
+     #artist/<slug> link resolve against basePath. -->
+<script src="../artist-modal.js?v=b6fbc14a"></script>
 <style>
   :root{
     --paper:#EDE0C2;
@@ -147,9 +152,15 @@
     .stages{grid-template-columns:1fr;gap:14px;}
     .poster{padding:26px 18px 22px;}
   }
+  /* Act names open the artist card. On paper they must be plain type: no link colour, no
+     underline. The underline appears only under a pointer or keyboard focus, on screen. */
+  a.act{color:inherit;text-decoration:none;}
+  a.act:hover,a.act:focus-visible{text-decoration:underline;text-underline-offset:.14em;text-decoration-thickness:.06em;outline:none;}
   @media print{
     body{background:#fff;padding:0;}
     .poster{box-shadow:none;max-width:100%;}
+    a.act,a.act:hover{text-decoration:none;}
+    .am-overlay{display:none !important;}
   }
 </style>
 </head>
@@ -221,5 +232,21 @@
   </footer>
 
 </div>
+<!-- Artist modal mount + host wiring. The click handler passes the canonical artist from the
+     anchor's data-artist, never its visible label, plus the poster's own context for the card's
+     breadcrumb. No write path is passed, so the favorite gauge is read-only here. -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
+<script>
+amInit({basePath:"../",mount:"artistModal",theme:"poster",configUrl:"../config.yaml"});
+document.addEventListener("click",function(e){
+  var a=e.target.closest&&e.target.closest("a.act");if(!a)return;
+  e.preventDefault();
+  openArtistModal(a.dataset.artist,{surface:"the poster",label:a.textContent.trim(),note:a.dataset.note||""});
+});
+</script>
 </body>
 </html>
