@@ -305,6 +305,28 @@ field count still looks correct — that is exactly how eight rows were silently
 from `Fees Notes` rightward, with the Notes paragraph rendering inside the Next Show
 bracket. MCP trailing-tab stripping produces the same class of damage from the other end.
 
+**Every column gets a value — `-` for "not applicable / no value exists," never a
+truly empty cell (2026-09-16).** "Write every column even when its value is empty"
+(above) is about *count* — 19 tab-separated fields, always — but it is also about
+*content*: an empty cell between two tabs is not the same thing as a deliberate `-`
+sentinel, even though both can satisfy a naive field-count check. `TBD` and `-` mean
+different things and are not interchangeable:
+- `TBD` — the value is known to exist but hasn't been looked up yet (a price before
+  on-sale, fees not yet checked at checkout).
+- `-` — there is no value to fill in at all (no ticket service, no purchase URL, no
+  event URL yet, because the show was just announced with no on-sale details).
+
+A run of several genuinely-blank cells in one row — not `-`, not `TBD`, just nothing
+between the tabs — is the shape a stricter validator (or a human reviewer) flags even
+when the raw column count is correct, because it looks identical to a field that got
+silently dropped. Two Choose/Pass rows added 2026-09-16 (Kenny Wayne Shepherd, The
+James Hunter Six — both "just announced, not yet on sale") left Ticket Service /
+Purchase URL / Event URL as three consecutive truly-empty cells; `validate_potential.py`
+column count was fine at 19, but both rows needed a same-day follow-up commit once
+flagged. The pattern to copy is any existing "just announced" row, e.g. Beck:
+`Live Nation / Ticketmaster\t-\t-\tTBD` — service name filled in, both URLs `-`,
+price `TBD`.
+
 **Run `python3 scripts/validate_potential.py` before committing, not after.** It reads
 the file raw and never pads short rows, which is the point: a reader that tops a row up
 to the header width cannot see the defect it exists to catch.
