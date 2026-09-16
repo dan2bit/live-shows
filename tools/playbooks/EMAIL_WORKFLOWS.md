@@ -677,7 +677,11 @@ If this creates a `live_shows_potential.tsv` row, run
 source of the column shift repaired in #314 — several affected rows carry provenance
 text reading "Surfaced via Bandsintown / Songkick artist-follow alert", and one was
 written as recently as 2026-09. Write all 19 columns explicitly, including the empty
-ones.
+ones — and "empty" means `-`, not a truly blank cell. Two rows added by this routine
+2026-09-16 (Kenny Wayne Shepherd, The James Hunter Six) left Ticket Service / Purchase
+URL / Event URL as three genuinely-empty cells instead of `-`; see
+`DATA_WRITE_PROTOCOLS.md` → `live_shows_potential.tsv` write protocol for the `-` vs
+`TBD` distinction and the full incident writeup.
 
 **Step 5 — Activity log draft** (subject: `[LOG] Routine 5 — [Artist] [source] — YYYY-MM-DD`)
 
