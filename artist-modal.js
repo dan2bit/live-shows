@@ -19,7 +19,7 @@
 var AM={
   basePath:'',          // prefix for every relative data fetch: '' at repo root, '../../../' from tools/research/graph/
   mount:'artistModal',  // id of the overlay element; its content area is <mount>Body
-  theme:'site',         // data-am-theme on the rendered card; only 'site' is styled today (poster/map: later steps)
+  theme:'site',         // data-am-theme on the rendered card: 'site' (default) or 'poster'; map is not styled yet
   esc:null,             // HTML escaper                       (app.js: esc)
   features:null,        // feature-flag predicate (key)->bool  (app.js: featureOn)
   config:null,          // site config object                 (app.js: SITE_CONFIG)
@@ -29,12 +29,27 @@ var AM={
   authed:null,          // bool; enables the favorite control (app.js: authed)
   rows:null,            // {current:[], potential:[]} for the upcoming/considering context (app.js: currentRows/potentialRows)
   parseTsv:null,        // TSV -> [{col:val}]                  (app.js: parseTsv; a small fallback parser is built in)
+  configUrl:null,       // path to config.yaml for a host with no SITE_CONFIG: the module reads site.owner and
+                        // features.* itself (regex, not a YAML parser) - explicit owner/features options still win
   // favorite WRITE path only - absent on a page without app.js, and the gauge simply stops being clickable
   serializeTsv:null,ghFetch:null,repo:null,patKey:null,dataBranch:null
 };
 function amInit(opts){
   Object.keys(opts||{}).forEach(function(k){if(Object.prototype.hasOwnProperty.call(AM,k))AM[k]=opts[k];});
+  if(AM.configUrl&&!amCfgStarted)amLoadConfigUrl();
   amWire();
+}
+// Minimal config.yaml read for hosts without app.js: site.owner and every features.<key>: false.
+// The features predicate consults amCfgOff live, so it is correct as soon as the fetch lands.
+var amCfgStarted=false,amCfgOff=null,amCfgOwner='';
+function amLoadConfigUrl(){
+  amCfgStarted=true;
+  fetch(AM.configUrl,{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
+    var o=/^\s+owner:\s*([^\s#]+)/m.exec(t);if(o)amCfgOwner=o[1];
+    var off=new Set(),fb=/^features:[^\n]*\n((?:[ \t]+[^\n]*\n?)+)/m.exec(t);
+    if(fb)fb[1].split('\n').forEach(function(l){var kv=/^\s+([a-z_]+):\s*false\b/.exec(l);if(kv)off.add(kv[1]);});
+    amCfgOff=off;
+  }).catch(function(e){console.warn('artist-modal config read skipped:',e.message);amCfgOff=new Set();});
 }
 // ── host-resolving helpers: AM option -> app.js global -> safe default ──
 function amEsc(s){
@@ -44,6 +59,7 @@ function amEsc(s){
 }
 function amFeature(k){
   if(AM.features)return !!AM.features(k);
+  if(amCfgOff)return !amCfgOff.has(k);             // config.yaml semantics: on unless explicitly false
   return typeof featureOn==='function'?!!featureOn(k):false;
 }
 function amConfig(){return AM.config||(typeof SITE_CONFIG!=='undefined'?SITE_CONFIG:{});}
@@ -52,7 +68,7 @@ function amAsset(p){
   if(typeof _assetUrl==='function')return _assetUrl(p);
   return AM.basePath+p;
 }
-function amOwnerName(){return AM.owner||(typeof OWNER!=='undefined'?OWNER:'');}
+function amOwnerName(){return AM.owner||amCfgOwner||(typeof OWNER!=='undefined'?OWNER:'');}
 function amAuthed(){return AM.authed!==null?!!AM.authed:(typeof authed!=='undefined'?!!authed:false);}
 function amPath(p){return AM.basePath+p;}
 function amParseTsv(text){
@@ -116,7 +132,12 @@ function amShow(){var m=amMount();if(m)m.classList.add('open');}
 function amHide(){var m=amMount();if(m)m.classList.remove('open');}
 function amErr(msg){return'<div class="am-loose"><p class="am-err">'+amEsc(msg)+'</p>'
   +'<div class="am-actions"><button class="btn" onclick="closeArtistModal()">Close</button></div></div>';}
-async function openArtistModal(name){
+// ctx (optional) is the calling surface's own context: {surface, label, note}. A surface that
+// renders an abbreviated label ("Kingfish Ingram" on a poster) passes it here; the card still
+// resolves to and shows the canonical name, and the label lands in a breadcrumb beneath it.
+var amCtx=null;
+async function openArtistModal(name,ctx){
+  amCtx=ctx||null;
   amShow();
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
@@ -128,6 +149,7 @@ async function openArtistModal(name){
   amOpenRec(rec,name,key);
 }
 async function openArtistBySlug(slug){
+  amCtx=null;   // a slug route (deep link, a Similar chip) has no calling surface
   amShow();
   amBody('<div class="am-loose am-loading">'+amHatImg('am-hat-mini')+'<span>Loading\u2026</span></div>');
   var data;try{data=await amLoadIndex();}catch(e){amBody(amErr('Couldn\u2019t load artist data \u2014 please try again.'));return;}
@@ -344,6 +366,7 @@ function amRender(rec,displayName,key){
     :'<div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>';
   h+='<div class="am-id"><div class="am-name">'+amEsc(rec.name||displayName||'')+'</div>';
   h+=amStatusLine(rec.name||displayName||'');
+  h+=amFrom();
   if(rec.genres&&rec.genres.length)
     h+='<div class="am-genres">'+rec.genres.slice(0,4).map(function(g){return'<span class="am-genre">'+amEsc(g)+'</span>';}).join('')+'</div>';
   h+='</div></div>';
@@ -356,11 +379,21 @@ function amRender(rec,displayName,key){
   h+=amYou(rec,key);
   return h+'</div>';
 }
+// Breadcrumb: how the calling surface labelled this artist and where. Shown only when a
+// surface supplied it. The label sits BELOW the canonical name - it never replaces it.
+function amFrom(){
+  var c=amCtx;if(!c||!(c.label||c.note))return'';
+  var h='<div class="am-from">opened from '+amEsc(c.surface||'this page');
+  if(c.label)h+=' as <b>'+amEsc(c.label)+'</b>';
+  if(c.note)h+=' \u00b7 '+amEsc(c.note);
+  return h+'</div>';
+}
 function amUnknown(displayName,key){
   return'<div class="am-card" data-am-theme="'+amEsc(AM.theme)+'"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
     +'<div class="am-head"><div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>'
     +'<div class="am-id"><div class="am-name">'+amEsc(displayName||'Unknown')+'</div>'
     +amStatusLine(displayName||'')
+    +amFrom()
     +'<div class="am-none">No details on file yet.</div></div></div>'
     +amRowOnly(key)
     +'<div class="am-links"><a class="am-link" href="https://open.spotify.com/search/'+encodeURIComponent(displayName||'')+'" target="_blank">Search Spotify</a></div></div>';

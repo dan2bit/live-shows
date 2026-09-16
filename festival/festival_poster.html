@@ -40,6 +40,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../artist-modal.css?v=b6fbc14a">
+<!-- The poster hosts the artist modal: an act name opens the card. Loaded synchronously so
+     amInit() below runs during parse, ahead of the module's own self-init, which is what lets a
+     #artist/<slug> link resolve against basePath. -->
+<script src="../artist-modal.js?v=b6fbc14a"></script>
 <style>
   :root{
     --paper:#EDE0C2;
@@ -162,9 +167,15 @@
     .stages{grid-template-columns:1fr;gap:14px;}
     .poster{padding:26px 18px 22px;}
   }
+  /* Act names open the artist card. On paper they must be plain type: no link colour, no
+     underline. The underline appears only under a pointer or keyboard focus, on screen. */
+  a.act{color:inherit;text-decoration:none;}
+  a.act:hover,a.act:focus-visible{text-decoration:underline;text-underline-offset:.14em;text-decoration-thickness:.06em;outline:none;}
   @media print{
     body{background:#fff;padding:0;}
     .poster{box-shadow:none;max-width:100%;}
+    a.act,a.act:hover{text-decoration:none;}
+    .am-overlay{display:none !important;}
   }
 </style>
 </head>
@@ -181,37 +192,37 @@
   <!-- ================= DAY 1 ================= -->
     <section class="day d1">
     <div class="day-band"><span class="day-name">Friday</span></div>
-    <div class="closer">Christone &ldquo;Kingfish&rdquo; Ingram</div>
-    <div class="co">Gary Clark Jr. <span class="dot">&#9733;</span> Eric Gales <span class="dot">&#9733;</span> Keb&rsquo; Mo&rsquo;</div>
+    <div class="closer"><a class="act" href="#artist/christone-kingfish-ingram" data-artist="Christone &quot;Kingfish&quot; Ingram" data-note="Day 1 &#183; Main Stage 9:30 &#183; closer">Christone &ldquo;Kingfish&rdquo; Ingram</a></div>
+    <div class="co"><a class="act" href="#artist/gary-clark-jr" data-artist="Gary Clark Jr." data-note="Day 1 &#183; Main Stage 8:30 &#183; co-headliner">Gary Clark Jr.</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/eric-gales" data-artist="Eric Gales" data-note="Day 1 &#183; Second Stage 9:00 &#183; co-headliner">Eric Gales</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/keb-mo" data-artist="Keb&#x27; Mo&#x27;" data-note="Day 1 &#183; Second Stage 8:00 &#183; co-headliner">Keb&rsquo; Mo&rsquo;</a></div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
         <ul>
-          <li><span>Buffalo Nichols</span><span class="t">12:30</span></li>
-          <li><span>Taj Farrant</span><span class="t">1:30</span></li>
-          <li><span>Matteo Mancuso</span><span class="t">2:30</span></li>
-          <li><span>Selwyn Birchwood</span><span class="t">3:30</span></li>
-          <li><span>Eric Johanson</span><span class="t">4:30</span></li>
-          <li><span>Sonny Landreth</span><span class="t">5:30</span></li>
-          <li><span>Tab Benoit</span><span class="t">6:30</span></li>
-          <li><span>Ally Venable</span><span class="t">7:30</span></li>
-          <li class="fav"><span>Gary Clark Jr.</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Kingfish Ingram</span><span class="t">9:30</span></li>
+          <li><a class="act" href="#artist/buffalo-nichols" data-artist="Buffalo Nichols" data-note="Day 1 &#183; Main Stage 12:30">Buffalo Nichols</a><span class="t">12:30</span></li>
+          <li><a class="act" href="#artist/taj-farrant" data-artist="Taj Farrant" data-note="Day 1 &#183; Main Stage 1:30">Taj Farrant</a><span class="t">1:30</span></li>
+          <li><a class="act" href="#artist/matteo-mancuso" data-artist="Matteo Mancuso" data-note="Day 1 &#183; Main Stage 2:30">Matteo Mancuso</a><span class="t">2:30</span></li>
+          <li><a class="act" href="#artist/selwyn-birchwood" data-artist="Selwyn Birchwood" data-note="Day 1 &#183; Main Stage 3:30">Selwyn Birchwood</a><span class="t">3:30</span></li>
+          <li><a class="act" href="#artist/eric-johanson" data-artist="Eric Johanson" data-note="Day 1 &#183; Main Stage 4:30">Eric Johanson</a><span class="t">4:30</span></li>
+          <li><a class="act" href="#artist/sonny-landreth" data-artist="Sonny Landreth" data-note="Day 1 &#183; Main Stage 5:30">Sonny Landreth</a><span class="t">5:30</span></li>
+          <li><a class="act" href="#artist/tab-benoit" data-artist="Tab Benoit" data-note="Day 1 &#183; Main Stage 6:30">Tab Benoit</a><span class="t">6:30</span></li>
+          <li><a class="act" href="#artist/ally-venable" data-artist="Ally Venable" data-note="Day 1 &#183; Main Stage 7:30">Ally Venable</a><span class="t">7:30</span></li>
+          <li class="fav"><a class="act" href="#artist/gary-clark-jr" data-artist="Gary Clark Jr." data-note="Day 1 &#183; Main Stage 8:30">Gary Clark Jr.</a><span class="t">8:30</span></li>
+          <li class="fav"><a class="act" href="#artist/christone-kingfish-ingram" data-artist="Christone &quot;Kingfish&quot; Ingram" data-note="Day 1 &#183; Main Stage 9:30">Kingfish Ingram</a><span class="t">9:30</span></li>
         </ul>
       </div>
       <div class="stage">
         <h3>Second Stage</h3>
         <ul>
-          <li><span>Toronzo Cannon</span><span class="t">12:00</span></li>
-          <li><span>Evan Nicole Bell</span><span class="t">1:00</span></li>
-          <li><span>Ghalia Volt</span><span class="t">2:00</span></li>
-          <li><span>D.K. Harrell</span><span class="t">3:00</span></li>
-          <li><span>Albert Castiglia</span><span class="t">4:00</span></li>
-          <li><span>Mike Zito</span><span class="t">5:00</span></li>
-          <li><span>Robert Jon &amp; The Wreck</span><span class="t">6:00</span></li>
-          <li><span>Angelique Francis</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Keb&rsquo; Mo&rsquo;</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Eric Gales</span><span class="t">9:00</span></li>
+          <li><a class="act" href="#artist/toronzo-cannon" data-artist="Toronzo Cannon" data-note="Day 1 &#183; Second Stage 12:00">Toronzo Cannon</a><span class="t">12:00</span></li>
+          <li><a class="act" href="#artist/evan-nicole-bell" data-artist="Evan Nicole Bell" data-note="Day 1 &#183; Second Stage 1:00">Evan Nicole Bell</a><span class="t">1:00</span></li>
+          <li><a class="act" href="#artist/ghalia-volt" data-artist="Ghalia Volt" data-note="Day 1 &#183; Second Stage 2:00">Ghalia Volt</a><span class="t">2:00</span></li>
+          <li><a class="act" href="#artist/d-k-harrell" data-artist="D.K. Harrell" data-note="Day 1 &#183; Second Stage 3:00">D.K. Harrell</a><span class="t">3:00</span></li>
+          <li><a class="act" href="#artist/albert-castiglia" data-artist="Albert Castiglia" data-note="Day 1 &#183; Second Stage 4:00">Albert Castiglia</a><span class="t">4:00</span></li>
+          <li><a class="act" href="#artist/mike-zito" data-artist="Mike Zito" data-note="Day 1 &#183; Second Stage 5:00">Mike Zito</a><span class="t">5:00</span></li>
+          <li><a class="act" href="#artist/robert-jon-the-wreck" data-artist="Robert Jon &amp; The Wreck" data-note="Day 1 &#183; Second Stage 6:00">Robert Jon &amp; The Wreck</a><span class="t">6:00</span></li>
+          <li><a class="act" href="#artist/angelique-francis" data-artist="Angelique Francis" data-note="Day 1 &#183; Second Stage 7:00">Angelique Francis</a><span class="t">7:00</span></li>
+          <li class="fav"><a class="act" href="#artist/keb-mo" data-artist="Keb&#x27; Mo&#x27;" data-note="Day 1 &#183; Second Stage 8:00">Keb&rsquo; Mo&rsquo;</a><span class="t">8:00</span></li>
+          <li class="fav"><a class="act" href="#artist/eric-gales" data-artist="Eric Gales" data-note="Day 1 &#183; Second Stage 9:00">Eric Gales</a><span class="t">9:00</span></li>
         </ul>
       </div>
     </div>
@@ -220,37 +231,37 @@
   <!-- ================= DAY 2 ================= -->
   <section class="day d2">
     <div class="day-band"><span class="day-name">Saturday</span></div>
-    <div class="closer">Jon Batiste</div>
-    <div class="co">The Lone Bellow <span class="dot">&#9733;</span> Trombone Shorty &amp; Orleans Avenue <span class="dot">&#9733;</span> Galactic</div>
+    <div class="closer"><a class="act" href="#artist/jon-batiste" data-artist="Jon Batiste" data-note="Day 2 &#183; Main Stage 9:30 &#183; closer">Jon Batiste</a></div>
+    <div class="co"><a class="act" href="#artist/lone-bellow" data-artist="The Lone Bellow" data-note="Day 2 &#183; Main Stage 8:30 &#183; co-headliner">The Lone Bellow</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/trombone-shorty-orleans-avenue" data-artist="Trombone Shorty &amp; Orleans Avenue" data-note="Day 2 &#183; Second Stage 9:00 &#183; co-headliner">Trombone Shorty &amp; Orleans Avenue</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/galactic" data-artist="Galactic" data-note="Day 2 &#183; Second Stage 8:00 &#183; co-headliner">Galactic</a></div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
         <ul>
-          <li><span>Jake Xerxes Fussell</span><span class="t">12:30</span></li>
-          <li><span>Miko Marks</span><span class="t">1:30</span></li>
-          <li><span>Shovels &amp; Rope</span><span class="t">2:30</span></li>
-          <li><span>Whitney Mong&eacute;</span><span class="t">3:30</span></li>
-          <li><span>The War and Treaty</span><span class="t">4:30</span></li>
-          <li><span>The Avett Brothers</span><span class="t">5:30</span></li>
-          <li><span>Daniel Donato&rsquo;s Cosmic Country</span><span class="t">6:30</span></li>
-          <li><span>The Wood Brothers</span><span class="t">7:30</span></li>
-          <li class="fav"><span>The Lone Bellow</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Jon Batiste</span><span class="t">9:30</span></li>
+          <li><a class="act" href="#artist/jake-xerxes-fussell" data-artist="Jake Xerxes Fussell" data-note="Day 2 &#183; Main Stage 12:30">Jake Xerxes Fussell</a><span class="t">12:30</span></li>
+          <li><a class="act" href="#artist/miko-marks" data-artist="Miko Marks" data-note="Day 2 &#183; Main Stage 1:30">Miko Marks</a><span class="t">1:30</span></li>
+          <li><a class="act" href="#artist/shovels-rope" data-artist="Shovels &amp; Rope" data-note="Day 2 &#183; Main Stage 2:30">Shovels &amp; Rope</a><span class="t">2:30</span></li>
+          <li><a class="act" href="#artist/whitney-monge" data-artist="Whitney Mong&#233;" data-note="Day 2 &#183; Main Stage 3:30">Whitney Mong&eacute;</a><span class="t">3:30</span></li>
+          <li><a class="act" href="#artist/war-and-treaty" data-artist="The War and Treaty" data-note="Day 2 &#183; Main Stage 4:30">The War and Treaty</a><span class="t">4:30</span></li>
+          <li><a class="act" href="#artist/avett-brothers" data-artist="The Avett Brothers" data-note="Day 2 &#183; Main Stage 5:30">The Avett Brothers</a><span class="t">5:30</span></li>
+          <li><a class="act" href="#artist/daniel-donato" data-artist="Daniel Donato&#x27;s Cosmic Country" data-note="Day 2 &#183; Main Stage 6:30">Daniel Donato&rsquo;s Cosmic Country</a><span class="t">6:30</span></li>
+          <li><a class="act" href="#artist/wood-brothers" data-artist="The Wood Brothers" data-note="Day 2 &#183; Main Stage 7:30">The Wood Brothers</a><span class="t">7:30</span></li>
+          <li class="fav"><a class="act" href="#artist/lone-bellow" data-artist="The Lone Bellow" data-note="Day 2 &#183; Main Stage 8:30">The Lone Bellow</a><span class="t">8:30</span></li>
+          <li class="fav"><a class="act" href="#artist/jon-batiste" data-artist="Jon Batiste" data-note="Day 2 &#183; Main Stage 9:30">Jon Batiste</a><span class="t">9:30</span></li>
         </ul>
       </div>
       <div class="stage">
                 <h3>Second Stage</h3>
         <ul>
-          <li><span>Sabine McCalla</span><span class="t">12:00</span></li>
-          <li><span>Amythyst Kiah</span><span class="t">1:00</span></li>
-          <li><span>Kingsley Flood</span><span class="t">2:00</span></li>
-          <li><span>Ariel Posen</span><span class="t">3:00</span></li>
-          <li><span>The Bros. Landreth</span><span class="t">4:00</span></li>
-          <li><span>JJ Grey &amp; Mofro</span><span class="t">5:00</span></li>
-          <li><span>James Hunter Six</span><span class="t">6:00</span></li>
-          <li><span>St. Paul &amp; The Broken Bones</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Galactic</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Trombone Shorty &amp; Orleans Ave.</span><span class="t">9:00</span></li>
+          <li><a class="act" href="#artist/sabine-mccalla" data-artist="Sabine McCalla" data-note="Day 2 &#183; Second Stage 12:00">Sabine McCalla</a><span class="t">12:00</span></li>
+          <li><a class="act" href="#artist/amythyst-kiah" data-artist="Amythyst Kiah" data-note="Day 2 &#183; Second Stage 1:00">Amythyst Kiah</a><span class="t">1:00</span></li>
+          <li><a class="act" href="#artist/kingsley-flood" data-artist="Kingsley Flood" data-note="Day 2 &#183; Second Stage 2:00">Kingsley Flood</a><span class="t">2:00</span></li>
+          <li><a class="act" href="#artist/ariel-posen" data-artist="Ariel Posen" data-note="Day 2 &#183; Second Stage 3:00">Ariel Posen</a><span class="t">3:00</span></li>
+          <li><a class="act" href="#artist/bros-landreth" data-artist="The Bros. Landreth" data-note="Day 2 &#183; Second Stage 4:00">The Bros. Landreth</a><span class="t">4:00</span></li>
+          <li><a class="act" href="#artist/jj-grey-mofro" data-artist="JJ Grey &amp; Mofro" data-note="Day 2 &#183; Second Stage 5:00">JJ Grey &amp; Mofro</a><span class="t">5:00</span></li>
+          <li><a class="act" href="#artist/james-hunter-six" data-artist="James Hunter Six" data-note="Day 2 &#183; Second Stage 6:00">James Hunter Six</a><span class="t">6:00</span></li>
+          <li><a class="act" href="#artist/st-paul-the-broken-bones" data-artist="St. Paul &amp; The Broken Bones" data-note="Day 2 &#183; Second Stage 7:00">St. Paul &amp; The Broken Bones</a><span class="t">7:00</span></li>
+          <li class="fav"><a class="act" href="#artist/galactic" data-artist="Galactic" data-note="Day 2 &#183; Second Stage 8:00">Galactic</a><span class="t">8:00</span></li>
+          <li class="fav"><a class="act" href="#artist/trombone-shorty-orleans-avenue" data-artist="Trombone Shorty &amp; Orleans Avenue" data-note="Day 2 &#183; Second Stage 9:00">Trombone Shorty &amp; Orleans Ave.</a><span class="t">9:00</span></li>
         </ul>
       </div>
     </div>
@@ -259,37 +270,37 @@
   <!-- ================= DAY 3 ================= -->
   <section class="day d3">
     <div class="day-band"><span class="day-name">Sunday</span></div>
-    <div class="closer">Larkin Poe</div>
-    <div class="co">Vanessa Collier <span class="dot">&#9733;</span> Allison Russell <span class="dot">&#9733;</span> Jackie Venson</div>
+    <div class="closer"><a class="act" href="#artist/larkin-poe" data-artist="Larkin Poe" data-note="Day 3 &#183; Main Stage 9:30 &#183; closer">Larkin Poe</a></div>
+    <div class="co"><a class="act" href="#artist/vanessa-collier" data-artist="Vanessa Collier" data-note="Day 3 &#183; Main Stage 8:30 &#183; co-headliner">Vanessa Collier</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/allison-russell" data-artist="Allison Russell" data-note="Day 3 &#183; Second Stage 9:00 &#183; co-headliner">Allison Russell</a> <span class="dot">&#9733;</span> <a class="act" href="#artist/jackie-venson" data-artist="Jackie Venson" data-note="Day 3 &#183; Second Stage 8:00 &#183; co-headliner">Jackie Venson</a></div>
     <div class="stages">
       <div class="stage">
         <h3>Main Stage</h3>
         <ul>
-          <li><span>Carly Harvey</span><span class="t">12:30</span></li>
-          <li><span>Grace Bowers</span><span class="t">1:30</span></li>
-          <li><span>Danielle Nicole</span><span class="t">2:30</span></li>
-          <li><span>Nikki Hill</span><span class="t">3:30</span></li>
-          <li><span>Sue Foley</span><span class="t">4:30</span></li>
-          <li><span>Southern Avenue</span><span class="t">5:30</span></li>
-          <li><span>Samantha Fish</span><span class="t">6:30</span></li>
-          <li><span>Beth Hart</span><span class="t">7:30</span></li>
-          <li class="fav"><span>Vanessa Collier</span><span class="t">8:30</span></li>
-          <li class="fav"><span>Larkin Poe</span><span class="t">9:30</span></li>
+          <li><a class="act" href="#artist/carly-harvey" data-artist="Carly Harvey" data-note="Day 3 &#183; Main Stage 12:30">Carly Harvey</a><span class="t">12:30</span></li>
+          <li><a class="act" href="#artist/grace-bowers" data-artist="Grace Bowers" data-note="Day 3 &#183; Main Stage 1:30">Grace Bowers</a><span class="t">1:30</span></li>
+          <li><a class="act" href="#artist/danielle-nicole" data-artist="Danielle Nicole" data-note="Day 3 &#183; Main Stage 2:30">Danielle Nicole</a><span class="t">2:30</span></li>
+          <li><a class="act" href="#artist/nikki-hill" data-artist="Nikki Hill" data-note="Day 3 &#183; Main Stage 3:30">Nikki Hill</a><span class="t">3:30</span></li>
+          <li><a class="act" href="#artist/sue-foley" data-artist="Sue Foley" data-note="Day 3 &#183; Main Stage 4:30">Sue Foley</a><span class="t">4:30</span></li>
+          <li><a class="act" href="#artist/southern-avenue" data-artist="Southern Avenue" data-note="Day 3 &#183; Main Stage 5:30">Southern Avenue</a><span class="t">5:30</span></li>
+          <li><a class="act" href="#artist/samantha-fish" data-artist="Samantha Fish" data-note="Day 3 &#183; Main Stage 6:30">Samantha Fish</a><span class="t">6:30</span></li>
+          <li><a class="act" href="#artist/beth-hart" data-artist="Beth Hart" data-note="Day 3 &#183; Main Stage 7:30">Beth Hart</a><span class="t">7:30</span></li>
+          <li class="fav"><a class="act" href="#artist/vanessa-collier" data-artist="Vanessa Collier" data-note="Day 3 &#183; Main Stage 8:30">Vanessa Collier</a><span class="t">8:30</span></li>
+          <li class="fav"><a class="act" href="#artist/larkin-poe" data-artist="Larkin Poe" data-note="Day 3 &#183; Main Stage 9:30">Larkin Poe</a><span class="t">9:30</span></li>
         </ul>
       </div>
       <div class="stage">
         <h3>Second Stage</h3>
         <ul>
-          <li><span>Muireann Bradley</span><span class="t">12:00</span></li>
-          <li><span>Danielle Ponder</span><span class="t">1:00</span></li>
-          <li><span>Caitlin Krisko &amp; The Broadcast</span><span class="t">2:00</span></li>
-          <li><span>Judith Hill</span><span class="t">3:00</span></li>
-          <li><span>Lake Street Dive</span><span class="t">4:00</span></li>
-          <li><span>ZZ Ward</span><span class="t">5:00</span></li>
-          <li><span>Joanne Shaw Taylor</span><span class="t">6:00</span></li>
-          <li><span>Ana Popovi&#263;</span><span class="t">7:00</span></li>
-          <li class="fav"><span>Jackie Venson</span><span class="t">8:00</span></li>
-          <li class="fav"><span>Allison Russell</span><span class="t">9:00</span></li>
+          <li><a class="act" href="#artist/muireann-bradley" data-artist="Muireann Bradley" data-note="Day 3 &#183; Second Stage 12:00">Muireann Bradley</a><span class="t">12:00</span></li>
+          <li><a class="act" href="#artist/danielle-ponder" data-artist="Danielle Ponder" data-note="Day 3 &#183; Second Stage 1:00">Danielle Ponder</a><span class="t">1:00</span></li>
+          <li><a class="act" href="#artist/caitlin-krisko-the-broadcast" data-artist="Caitlin Krisko &amp; The Broadcast" data-note="Day 3 &#183; Second Stage 2:00">Caitlin Krisko &amp; The Broadcast</a><span class="t">2:00</span></li>
+          <li><a class="act" href="#artist/judith-hill" data-artist="Judith Hill" data-note="Day 3 &#183; Second Stage 3:00">Judith Hill</a><span class="t">3:00</span></li>
+          <li><a class="act" href="#artist/lake-street-dive" data-artist="Lake Street Dive" data-note="Day 3 &#183; Second Stage 4:00">Lake Street Dive</a><span class="t">4:00</span></li>
+          <li><a class="act" href="#artist/zz-ward" data-artist="ZZ Ward" data-note="Day 3 &#183; Second Stage 5:00">ZZ Ward</a><span class="t">5:00</span></li>
+          <li><a class="act" href="#artist/joanne-shaw-taylor" data-artist="Joanne Shaw Taylor" data-note="Day 3 &#183; Second Stage 6:00">Joanne Shaw Taylor</a><span class="t">6:00</span></li>
+          <li><a class="act" href="#artist/ana-popovic" data-artist="Ana Popovi&#263;" data-note="Day 3 &#183; Second Stage 7:00">Ana Popovi&#263;</a><span class="t">7:00</span></li>
+          <li class="fav"><a class="act" href="#artist/jackie-venson" data-artist="Jackie Venson" data-note="Day 3 &#183; Second Stage 8:00">Jackie Venson</a><span class="t">8:00</span></li>
+          <li class="fav"><a class="act" href="#artist/allison-russell" data-artist="Allison Russell" data-note="Day 3 &#183; Second Stage 9:00">Allison Russell</a><span class="t">9:00</span></li>
         </ul>
       </div>
     </div>
@@ -302,5 +313,21 @@
   </footer>
 
 </div>
+<!-- Artist modal mount + host wiring. The click handler passes the canonical artist from the
+     anchor's data-artist, never its visible label, plus the poster's own context for the card's
+     breadcrumb. No write path is passed, so the favorite gauge is read-only here. -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
+<script>
+amInit({basePath:"../",mount:"artistModal",theme:"poster",configUrl:"../config.yaml"});
+document.addEventListener("click",function(e){
+  var a=e.target.closest&&e.target.closest("a.act");if(!a)return;
+  e.preventDefault();
+  openArtistModal(a.dataset.artist,{surface:"the poster",label:a.textContent.trim(),note:a.dataset.note||""});
+});
+</script>
 </body>
 </html>
