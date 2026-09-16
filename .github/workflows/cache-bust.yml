@@ -3,15 +3,18 @@ name: Cache-bust static assets
 # Rewrites the ?v= query strings on app.js, recommend.js, artist-modal.js,
 # artist-modal.css and styles.css to the current commit SHA whenever any of those
 # files change, forcing browsers/CDN to fetch the new versions immediately.
-# Two host pages carry these references: index.html (all five) and the
-# artist-graph research page (artist-modal.js/.css, via a ../../../ prefix -
-# the sed patterns capture any leading path so one pass covers both).
+# Host pages carrying these references: index.html (all five); the artist-graph
+# research page (artist-modal.js/.css via a ../../../ prefix); and the festival
+# posters (artist-modal.js/.css via a ../ prefix) - both the templates under
+# tools/festival/ and the rendered pages under festival/, kept in step here so
+# `render_posters.py --check` stays clean after a bump. The sed patterns capture
+# any leading path, so one pass covers every host.
 #
 # main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
 # auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
-# auto-promote to run. Neither host page is a watched path, so promotion back
-# to main does not retrigger this workflow.
+# auto-promote to run. No host page is a watched path, so promotion back to
+# main does not retrigger this workflow.
 
 on:
   push:
@@ -43,7 +46,9 @@ jobs:
         run: |
           SHA="${{ github.sha }}"
           SHORT="${SHA:0:8}"
-          HOSTS="index.html tools/research/graph/artist-graph.html"
+          HOSTS="index.html tools/research/graph/artist-graph.html \
+                 tools/festival/poster_timeline.template.html tools/festival/poster_crescendo.template.html \
+                 festival/festival_poster.html festival/index.html"
 
           # Replace any existing ?v=... or no version at all, for each asset.
           # Patterns handle both: href="styles.css" and href="styles.css?v=abc123",
@@ -62,7 +67,9 @@ jobs:
 
       - name: Commit to staging if changed
         run: |
-          git add index.html tools/research/graph/artist-graph.html
+          git add index.html tools/research/graph/artist-graph.html \
+                  tools/festival/poster_timeline.template.html tools/festival/poster_crescendo.template.html \
+                  festival/festival_poster.html festival/index.html
           if git diff --cached --quiet; then
             echo "host pages unchanged — nothing to commit."
           else
