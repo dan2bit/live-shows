@@ -84,10 +84,6 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 /* Zoom tool (names the existing d3.zoom behavior; wheel/pinch/drag still work) */
 #zoomer{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-direction:column;gap:4px}
 #zoomer .chip{margin:0;justify-content:center;font:inherit;font-size:13px;line-height:1.3;padding:3px 9px}
-/* Tooltip goal badges — history-row treatment scaled for the 11.5px flyout */
-.gb{font-family:inherit;font-size:8.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 4px;border-radius:2px;margin-left:4px;white-space:nowrap;vertical-align:1px}
-.gb-hat{background:var(--hat-bg);color:var(--hat);border:1px solid var(--hat-dim)}
-.gb-book{background:var(--book-bg);color:var(--book);border:1px solid var(--book-dim)}
 @media (prefers-reduced-motion:reduce){#tip{transition:none}.hat-loading-img{animation:none}}
 </style>
 </head>
@@ -203,18 +199,6 @@ function deriveTierRamp(accent){
   set("--t-lower",   hslToHex(h,s,Math.max(l*0.48,8)));
   set("--t-legacy",  hslToHex(h,s*0.85,Math.max(l*0.48,8)));
 }
-// Tooltip badge triplets from the same _deriveTriad rules as app.js:
-// dim = hsl(h, s, max(l*.48, 8)); bg = hsl(h, s*.85, max(l*.16, 5)).
-function deriveBadgeVars(){
-  const set=(k,v)=>document.documentElement.style.setProperty(k,v);
-  ["hat","book"].forEach(key=>{
-    const base=getComputedStyle(document.documentElement).getPropertyValue("--"+key).trim();
-    if(!/^#[0-9a-fA-F]{6}$/.test(base))return;
-    const [h,s,l]=hexToHsl(base);
-    set("--"+key+"-dim",hslToHex(h,s,Math.max(l*0.48,8)));
-    set("--"+key+"-bg", hslToHex(h,s*0.85,Math.max(l*0.16,5)));
-  });
-}
 
 /* --- normalization (build_recommend_index.py vocabulary) --- */
 let ALIASES = {};
@@ -249,7 +233,6 @@ async function loadAll(){
     if(fb) for(const l of fb[1].split("\n")){ const kv=/^\s+([a-z_]+):\s*false\b/.exec(l); if(kv) AM_FEATURES_OFF.add(kv[1]); }
   }
   deriveTierRamp(accent);
-  deriveBadgeVars();
 
   // nodes: tier!=null OR seen>0; merge duplicate surface forms
   const nodes={};
@@ -495,12 +478,17 @@ function build(){
     const k=DATA.kinByNode[d.id]; if(!k||!k.length)return"";
     return `<div class="t">kin: ${k.map(x=>`${(byId[x.other]||{}).name||x.other} (${x.rel})`).join(", ")}</div>`;
   }
+  // Hover shows what the graph alone knows: the name (most nodes carry no canvas label),
+  // the affinity that sizes the node, and the kin edges the graph derived from bills and
+  // shared personnel. Everything about the artist as an artist - tier, seen count, goals,
+  // genres, releases - lives in the card a click opens, so the hover does not repeat it.
+  // Candidates have no card; their hover stays the full picture.
   const tip=d3.select("#tip");
   node.on("mousemove",(e,d)=>{
     tip.style("opacity",1).style("left",(e.pageX+14)+"px").style("top",(e.pageY-10)+"px")
       .html(d.cand
         ?`<div class="cand-n">${d.name}</div><div class="t">not tracked · similar to ${d.indeg}:</div>${d.via.join("<br>")}`
-        :`<div class="n">${d.name}</div><div class="t">${d.tier||"—"} · seen ${d.seen}${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}${d.ft?" · fast-track":""}${d.hat?' <span class="gb gb-hat">🎩 HAT</span>':""}${d.book?' <span class="gb gb-book">📚 BOOK</span>':""}</div>${(d.genres||[]).join(" · ")}${kinTip(d)}`);
+        :`<div class="n">${d.name}</div><div class="t">tracked${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}</div>${kinTip(d)}`);
   }).on("mouseleave",()=>tip.style("opacity",0));
   // A click (or Enter/Space) on a tracked node opens the artist modal. The graph passes its
   // own label; openArtistModal resolves it to the canonical record via amNorm + the index
