@@ -22,8 +22,14 @@
 
 <link rel="icon" type="image/png" sizes="32x32" href="../../../static/favicon.png">
 <link rel="shortcut icon" type="image/png" href="../../../static/favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../artist-modal.css?v=7052e180">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<!-- #376 step 3: the graph is the first host of the artist modal outside index.html. Loaded
+     synchronously (not defer) so amInit() can run at the top of the inline script below,
+     during parse, ahead of the module's own DOMContentLoaded self-init - which is what lets a
+     #artist/<slug> deep link resolve against basePath instead of 404ing at repo-relative paths. -->
+<script src="../../../artist-modal.js?v=7052e180"></script>
 <style>
 :root{
   /* chrome tokens mirror styles.css; tier colors are set at runtime from
@@ -73,6 +79,8 @@ input[type=range]{width:100%;accent-color:var(--sell)}
 .cnode{fill:var(--bg);stroke:var(--sell);stroke-width:1.5;stroke-dasharray:3 2.5}
 .lbl{fill:var(--muted);font-size:9px;pointer-events:none;font-family:inherit}
 .lbl.big{fill:var(--text);font-size:10.5px}
+#g g[role="button"]{cursor:pointer;outline:none}
+#g g[role="button"]:focus-visible>circle:first-of-type{stroke:var(--text);stroke-width:2}
 /* Zoom tool (names the existing d3.zoom behavior; wheel/pinch/drag still work) */
 #zoomer{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-direction:column;gap:4px}
 #zoomer .chip{margin:0;justify-content:center;font:inherit;font-size:13px;line-height:1.3;padding:3px 9px}
@@ -108,6 +116,13 @@ input[type=range]{width:100%;accent-color:var(--sell)}
   <div>loading data…</div>
 </div>
 <svg id="g" role="img" aria-label="Artist similarity network"></svg>
+<!-- Artist modal mount: the .am-overlay shell from artist-modal.css, since this page has no
+     .modal-backdrop of its own. Ids match the AM.mount default (artistModal / artistModalBody). -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
 <script>
 "use strict";
 /* ============================================================================
@@ -117,7 +132,8 @@ input[type=range]{width:100%;accent-color:var(--sell)}
  *   ../../../data/artist_modal_index.json   nodes (tier/seen/affinity/badges)
  *   ../../../data/artist_spotify.json       edges (lastfm.similar)
  *   ../../../data/recommend_aliases.tsv     normalization aliases
- *   ../../../config.yaml                    theme.color_accent -> tier ramp
+ *   ../../../config.yaml                    theme.color_accent -> tier ramp; site.owner + features.* -> artist modal host options
+ *   ../../../artist-modal.js / .css         the artist card a node click opens (#376 step 3 - first caller outside index.html)
  *   ../../../data/artists.tsv               Via column -> bill kinship edges
  *   ../../../data/related_acts.tsv          hand-maintained kinship edges
  *   ../../../data/seen_with.tsv             recurring sidemen -> shared-personnel edges
@@ -136,6 +152,15 @@ input[type=range]{width:100%;accent-color:var(--sell)}
  * app.js _deriveTriad (canonical source of the dimming math):
  *   dim = hsl(h, s, max(l*0.48, 8)); bg-sat rule = s*0.85.
  * ==========================================================================*/
+// ── Artist modal host wiring (#376 step 3) ──
+// amInit() is the module's only coupling. basePath rewrites its repo-relative data fetches
+// from this depth; the features predicate mirrors app.js featureOn() - on unless config.yaml
+// says `false` - and reads AM_FEATURES_OFF live, so it is correct once loadAll fills it. Owner
+// and the upcoming-show rows arrive in a second amInit() after the data loads (idempotent).
+// No write path is passed, so the favorite gauge renders read-only here by design.
+const AM_FEATURES_OFF=new Set();
+amInit({basePath:"../../../",mount:"artistModal",theme:"site",features:k=>!AM_FEATURES_OFF.has(k)});
+
 const PATHS = {
   idx:     "../../../data/artist_modal_index.json",
   cache:   "../../../data/artist_spotify.json",
@@ -214,7 +239,15 @@ async function loadAll(){
     const p=line.split("\t"); if(p.length>=2&&p[0]&&p[1]) ALIASES[baseNorm(p[0])]=baseNorm(p[1]);
   });}
   let accent="#c83020";
-  if(cfgR.ok){ const m=/color_accent:\s*"(#[0-9a-fA-F]{6})"/.exec(await cfgR.text()); if(m) accent=m[1]; }
+  let owner="";
+  if(cfgR.ok){
+    const cfgText=await cfgR.text();
+    const m=/color_accent:\s*"(#[0-9a-fA-F]{6})"/.exec(cfgText); if(m) accent=m[1];
+    // site.owner -> the "@owner & this artist" label; features.<key>: false -> AM_FEATURES_OFF
+    const o=/^\s+owner:\s*([^\s#]+)/m.exec(cfgText); if(o) owner=o[1];
+    const fb=/^features:[^\n]*\n((?:[ \t]+[^\n]*\n?)+)/m.exec(cfgText);
+    if(fb) for(const l of fb[1].split("\n")){ const kv=/^\s+([a-z_]+):\s*false\b/.exec(l); if(kv) AM_FEATURES_OFF.add(kv[1]); }
+  }
   deriveTierRamp(accent);
   deriveBadgeVars();
 
@@ -317,7 +350,8 @@ async function loadAll(){
       sup.split("/").forEach(s=>{if(s.trim())addKinSoft(p[ai],s,"same bill");});
     });
   }
-  if(currentR&&currentR.ok)billEdges(await currentR.text(),"Supporting Artist","Status");
+  const currentText=(currentR&&currentR.ok)?await currentR.text():"";
+  if(currentText)billEdges(currentText,"Supporting Artist","Status");
   for(const r of histR)if(r&&r.ok)billEdges(await r.text(),"Supporting Acts",null);
   // Shared-personnel edges: a seen_with.tsv sideman recurring across >=2
   // different tracked headliners links those headliners pairwise. The person
@@ -362,7 +396,8 @@ async function loadAll(){
   return {nodes:Object.values(nodes),
     links:[...edges].sort().filter(e=>!(e in kin))
       .map(e=>{const[a,b]=e.split("\u0001");return{source:a,target:b};}),
-    kinLinks,kinByNode,candidates};
+    kinLinks,kinByNode,candidates,
+    owner,current:amParseTsv(currentText)};   // host context for the artist modal (second amInit)
 }
 
 /* --- rendering --- */
@@ -444,7 +479,9 @@ function build(){
   const link=root.append("g").selectAll("line").data(allLinks).join("line")
     .attr("class",d=>d.kl?"klink":d.cl?"clink":"link");
   const node=root.append("g").selectAll("g").data(all).join("g")
-    .call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(.25).restart();d.fx=d.x;d.fy=d.y;})
+    .attr("tabindex",d=>d.cand?null:0).attr("role",d=>d.cand?null:"button")
+    .attr("aria-label",d=>d.cand?null:"Open "+d.name)
+    .call(d3.drag().clickDistance(4).on("start",(e,d)=>{if(!e.active)sim.alphaTarget(.25).restart();d.fx=d.x;d.fy=d.y;})
       .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y;}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=d.fy=null;}));
   node.filter(d=>!d.cand).append("circle").attr("r",radius).attr("fill",d=>tierColor(d.tier)).attr("fill-opacity",.94);
   node.filter(d=>!d.cand&&d.hat).append("circle").attr("class","hatring").attr("r",d=>radius(d)+2.4);
@@ -465,6 +502,15 @@ function build(){
         ?`<div class="cand-n">${d.name}</div><div class="t">not tracked · similar to ${d.indeg}:</div>${d.via.join("<br>")}`
         :`<div class="n">${d.name}</div><div class="t">${d.tier||"—"} · seen ${d.seen}${d.affinity!=null?" · affinity "+d.affinity.toFixed(2):""}${d.ft?" · fast-track":""}${d.hat?' <span class="gb gb-hat">🎩 HAT</span>':""}${d.book?' <span class="gb gb-book">📚 BOOK</span>':""}</div>${(d.genres||[]).join(" · ")}${kinTip(d)}`);
   }).on("mouseleave",()=>tip.style("opacity",0));
+  // A click (or Enter/Space) on a tracked node opens the artist modal. The graph passes its
+  // own label; openArtistModal resolves it to the canonical record via amNorm + the index
+  // aliases and renders THAT name - the label is a rendering concern of this surface only
+  // (#376 canonical-name requirement). Candidates stay hover-only until step 6 gives them a card.
+  node.filter(d=>!d.cand).on("click keydown",function(e,d){
+    if(e.type==="keydown"&&e.key!==" "&&e.key!=="Enter")return;
+    e.preventDefault();tip.style("opacity",0);
+    openArtistModal(d.name);
+  });
 
   sim.on("tick",()=>{
     link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
@@ -499,7 +545,9 @@ document.getElementById("candmin").addEventListener("input",e=>{
 document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value;applySearch();});
 
 loadAll().then(d=>{
-  DATA=d;paintChips();document.getElementById("loading").remove();build();
+  DATA=d;paintChips();document.getElementById("loading").remove();
+  amInit({owner:d.owner,rows:{current:d.current,potential:[]}});   // host context now known
+  build();
 }).catch(err=>{
   const el=document.getElementById("loading");el.className="err";
   el.textContent="failed to load data — open via the deployed site URL (fetch: "+err.message+")";
