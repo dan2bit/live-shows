@@ -1,14 +1,17 @@
 name: Cache-bust static assets
 
-# Rewrites the ?v= query strings on app.js, recommend.js, artist-modal.js, and styles.css
-# in index.html to the current commit SHA whenever any of those files change,
-# forcing browsers/CDN to fetch the new versions immediately.
+# Rewrites the ?v= query strings on app.js, recommend.js, artist-modal.js,
+# artist-modal.css and styles.css to the current commit SHA whenever any of those
+# files change, forcing browsers/CDN to fetch the new versions immediately.
+# Two host pages carry these references: index.html (all five) and the
+# artist-graph research page (artist-modal.js/.css, via a ../../../ prefix -
+# the sed patterns capture any leading path so one pass covers both).
 #
 # main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
 # auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
-# auto-promote to run. index.html is not a watched path, so promotion back to
-# main does not retrigger this workflow.
+# auto-promote to run. Neither host page is a watched path, so promotion back
+# to main does not retrigger this workflow.
 
 on:
   push:
@@ -17,6 +20,7 @@ on:
       - app.js
       - recommend.js
       - artist-modal.js
+      - artist-modal.css
       - styles.css
   workflow_dispatch:
 
@@ -35,28 +39,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Rewrite asset version strings in index.html
+      - name: Rewrite asset version strings in the host pages
         run: |
           SHA="${{ github.sha }}"
           SHORT="${SHA:0:8}"
+          HOSTS="index.html tools/research/graph/artist-graph.html"
 
           # Replace any existing ?v=... or no version at all, for each asset.
-          # Patterns handle both: href="styles.css" and href="styles.css?v=abc123"
+          # Patterns handle both: href="styles.css" and href="styles.css?v=abc123",
+          # and \1 captures an optional leading path (../../../ on the graph page)
+          # so the same pass rewrites a repo-relative reference from any depth.
           sed -i \
-            -e "s|href=\"styles\.css\(?\([^\"]*\)\)\?\"|href=\"styles.css?v=${SHORT}\"|g" \
-            -e "s|src=\"app\.js\(?\([^\"]*\)\)\?\"|src=\"app.js?v=${SHORT}\"|g" \
-            -e "s|src=\"recommend\.js\(?\([^\"]*\)\)\?\"|src=\"recommend.js?v=${SHORT}\"|g" \
-            -e "s|src=\"artist-modal\.js\(?\([^\"]*\)\)\?\"|src=\"artist-modal.js?v=${SHORT}\"|g" \
-            index.html
+            -e "s|href=\"\([^\"]*/\)\?styles\.css\(?[^\"]*\)\?\"|href=\"\1styles.css?v=${SHORT}\"|g" \
+            -e "s|href=\"\([^\"]*/\)\?artist-modal\.css\(?[^\"]*\)\?\"|href=\"\1artist-modal.css?v=${SHORT}\"|g" \
+            -e "s|src=\"\([^\"]*/\)\?app\.js\(?[^\"]*\)\?\"|src=\"\1app.js?v=${SHORT}\"|g" \
+            -e "s|src=\"\([^\"]*/\)\?recommend\.js\(?[^\"]*\)\?\"|src=\"\1recommend.js?v=${SHORT}\"|g" \
+            -e "s|src=\"\([^\"]*/\)\?artist-modal\.js\(?[^\"]*\)\?\"|src=\"\1artist-modal.js?v=${SHORT}\"|g" \
+            $HOSTS
 
           echo "Updated asset references to ?v=${SHORT}"
-          grep -E '(app\.js|recommend\.js|artist-modal\.js|styles\.css)' index.html
+          grep -HE '(app\.js|recommend\.js|artist-modal\.(js|css)|styles\.css)' $HOSTS
 
       - name: Commit to staging if changed
         run: |
-          git add index.html
+          git add index.html tools/research/graph/artist-graph.html
           if git diff --cached --quiet; then
-            echo "index.html unchanged — nothing to commit."
+            echo "host pages unchanged — nothing to commit."
           else
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
