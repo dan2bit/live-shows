@@ -4,9 +4,9 @@
    its own `site` tokens on .am-card (below) rather than reading the host's :root,
    because hosts differ - the graph mirrors styles.css but under other names
    (--muted, --dim, --brand) and lacks the badge triplets - and the `site` theme
-   is a fixed palette, not "whatever the host has". A themed host will add
-   .am-card[data-am-theme="poster"|"map"] overrides of these same tokens; none
-   are defined yet.
+   is a fixed palette, not "whatever the host has". A themed host overrides these
+   same tokens under .am-card[data-am-theme="..."]: poster is defined at the end of
+   this file; map is not yet.
 
    The nine --am-* tokens at the end of the block were hardcoded near-blacks
    (#141414, #232323, #6f6b60 ...) that would render as black blobs on any paper
@@ -31,6 +31,8 @@
   --gray:#878380;--gray-dim:#3a3530;
   --am-you-bg:#141414;--am-rule:#232323;--am-sec-h:#6f6b60;--am-sim-bg:#161616;--am-hat-no-bg:#131313;
   --am-combined-bg:#101010;--am-minimal:#57534a;--am-you-lbl:#c8c2b6;--am-gauge-track:#3a3632;
+  --am-hatch-a:#242424;--am-hatch-b:#1d1d1d;--am-play-hover:#2a0c0c;
+  --am-gauge-fill:var(--amber);--am-gauge-glow:200,48,32;
   font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--text);
 }
 
@@ -42,7 +44,7 @@
 
 /* identity header — square oEmbed avatar beside the name (banner fallback) */
 .am-head{display:flex;gap:14px;align-items:center;padding:18px 20px 6px;}
-.am-avatar{flex:0 0 76px;width:76px;height:76px;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:repeating-linear-gradient(45deg,#242424 0 9px,#1d1d1d 9px 18px);display:flex;align-items:center;justify-content:center;}
+.am-avatar{flex:0 0 76px;width:76px;height:76px;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:repeating-linear-gradient(45deg,var(--am-hatch-a) 0 9px,var(--am-hatch-b) 9px 18px);display:flex;align-items:center;justify-content:center;}
 .am-avatar-photo{background:none;border-color:var(--border-bright);}
 .am-hat-fallback{width:42px;height:42px;object-fit:contain;opacity:.4;filter:grayscale(1);}
 .am-photo{width:100%;height:100%;object-fit:cover;}
@@ -71,14 +73,14 @@
 .am-sec-h{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--am-sec-h);margin-bottom:9px;}
 .am-release{display:flex;gap:12px;align-items:center;}
 .am-rel-art{flex:0 0 52px;width:52px;height:52px;border-radius:4px;border:1px solid var(--border);object-fit:cover;}
-.am-rel-art-ph{background:repeating-linear-gradient(45deg,#242424 0 6px,#1d1d1d 6px 12px);display:flex;align-items:center;justify-content:center;text-align:center;}
+.am-rel-art-ph{background:repeating-linear-gradient(45deg,var(--am-hatch-a) 0 6px,var(--am-hatch-b) 6px 12px);display:flex;align-items:center;justify-content:center;text-align:center;}
 .am-rel-art-ph span{font-family:var(--mono);font-size:7px;color:var(--am-sec-h);line-height:1.4;}
 .am-rel-body{min-width:0;}
 .am-rel-name{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--text);}
 .am-rel-meta{display:flex;align-items:center;gap:9px;margin-top:3px;}
 .am-rel-meta span{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
 .am-play{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:4px;color:var(--amber);font-size:9px;text-decoration:none;cursor:pointer;transition:background .12s,border-color .12s;}
-.am-play:hover{background:#2a0c0c;border-color:var(--amber);}
+.am-play:hover{background:var(--am-play-hover);border-color:var(--amber);}
 .am-simrow{display:flex;flex-wrap:wrap;gap:7px;}
 .am-sim{font-family:var(--mono);font-size:11px;text-decoration:none;border-radius:3px;padding:4px 9px;cursor:pointer;color:var(--text-muted);background:var(--am-sim-bg);border:1px solid var(--border);}
 .am-sim-in{display:inline-flex;align-items:center;gap:5px;color:var(--text);background:var(--surface-bright);border-color:var(--border-bright);}
@@ -150,15 +152,15 @@ span.am-b-photo{color:var(--text-dim);background:var(--am-hat-no-bg);border-styl
 
 /* brand-hat favorite gauge (conic fill by --aff) */
 .am-gauge{position:relative;flex:0 0 108px;width:104px;height:88px;align-self:flex-end;cursor:help;}
-.am-gauge::after{content:'';position:absolute;top:50%;left:50%;width:94px;height:94px;transform:translate(-50%,-50%);border-radius:50%;background:conic-gradient(var(--amber) calc(var(--aff)*1turn),var(--am-gauge-track) 0);-webkit-mask:radial-gradient(circle farthest-side,transparent calc(100% - 1.6px),#000 calc(100% - 1.6px));mask:radial-gradient(circle farthest-side,transparent calc(100% - 1.6px),#000 calc(100% - 1.6px));pointer-events:none;}
-.am-gauge-glow{position:absolute;inset:-16px;background:radial-gradient(circle at 54% 60%,rgba(200,48,32,var(--glow,.1)),rgba(200,48,32,0) 66%);}
+.am-gauge::after{content:'';position:absolute;top:50%;left:50%;width:94px;height:94px;transform:translate(-50%,-50%);border-radius:50%;background:conic-gradient(var(--am-gauge-fill) calc(var(--aff)*1turn),var(--am-gauge-track) 0);-webkit-mask:radial-gradient(circle farthest-side,transparent calc(100% - 1.6px),#000 calc(100% - 1.6px));mask:radial-gradient(circle farthest-side,transparent calc(100% - 1.6px),#000 calc(100% - 1.6px));pointer-events:none;}
+.am-gauge-glow{position:absolute;inset:-16px;background:radial-gradient(circle at 54% 60%,rgba(var(--am-gauge-glow),var(--glow,.1)),rgba(var(--am-gauge-glow),0) 66%);}
 .am-gauge-base{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:grayscale(1) brightness(.55);opacity:.32;}
 .am-gauge-fill{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;-webkit-mask:conic-gradient(#000 calc(var(--aff)*1turn),transparent 0) center/100% 100% no-repeat;mask:conic-gradient(#000 calc(var(--aff)*1turn),transparent 0) center/100% 100% no-repeat;filter:drop-shadow(0 3px 7px rgba(0,0,0,.55));}
 /* Explicit favorite — the gauge is the promote/remove CTA; star = pinned to full */
 .am-gauge-btn{cursor:pointer;transition:filter .12s;}
 .am-gauge-btn:hover{filter:brightness(1.15);}
 .am-gauge-btn:focus-visible{outline:1px solid var(--amber);outline-offset:3px;border-radius:4px;}
-.am-gauge-star{position:absolute;top:-2px;right:2px;font-size:15px;line-height:1;color:var(--amber);text-shadow:0 0 7px rgba(200,48,32,.9);pointer-events:none;}
+.am-gauge-star{position:absolute;top:-2px;right:2px;font-size:15px;line-height:1;color:var(--am-gauge-fill);text-shadow:0 0 7px rgba(var(--am-gauge-glow),.9);pointer-events:none;}
 
 /* minimal edge case (hat-ineligible, never seen) + loose containers */
 .am-minimal{border-top:1px solid var(--am-rule);padding:12px 20px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--am-minimal);line-height:1.6;}
@@ -167,6 +169,34 @@ span.am-b-photo{color:var(--text-dim);background:var(--am-hat-no-bg);border-styl
 .am-hat-mini{width:24px;height:24px;object-fit:contain;opacity:.5;}
 .am-err{color:var(--red);font-size:13px;}
 .am-actions{display:flex;gap:8px;margin-top:12px;}
+/* calling-surface breadcrumb under the name: "opened from the poster as Kingfish Ingram · ..." */
+.am-from{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--text-dim);margin-top:6px;}
+.am-from b{font-weight:400;color:var(--text);border-bottom:1px dotted var(--text-dim);}
+
+/* ── poster theme: the festival poster's own paper, ink and juke-red, with Alfa Slab One for the
+   name. Everything is a token swap over the site block above; the gauge draws from the brand
+   hat's own red rather than the poster accent so the ring reads as part of the hat. ── */
+.am-card[data-am-theme="poster"]{
+  --mono:'Special Elite',monospace;--sans:'Oswald',sans-serif;
+  --bg:#EDE0C2;--surface:#E3D2AB;--surface-bright:#EDE0C2;--border:#c7b58c;--border-bright:#a8925f;
+  --text:#221A12;--text-muted:#5a4b33;--text-dim:#6f5e42;
+  --amber:#A63D2F;--amber-dim:#7a2a20;--amber-bg:#e9cfae;
+  --green:#3d6b45;--green-dim:#5a8a62;--green-bg:#d6dcc3;
+  --yellow:#8A6A1F;--yellow-dim:#b09447;--yellow-bg:#e8d9ad;
+  --red:#A63D2F;--sell:#2E4A6B;--sell-dim:#5f7a99;--sell-bg:#cfd6df;
+  --hat:#8A6A1F;--hat-dim:#a8925f;--hat-bg:#e5d3a4;
+  --book:#5a3f7a;--book-dim:#8b6fa8;--book-bg:#ddd0e3;
+  --gray:#6f5e42;--gray-dim:#a8925f;
+  --am-you-bg:#D9C79E;--am-rule:#b9a578;--am-sec-h:#7a6a4a;--am-sim-bg:#E9DBB8;--am-hat-no-bg:#E9DBB8;
+  --am-combined-bg:#E9DBB8;--am-minimal:#7a6a4a;--am-you-lbl:#221A12;--am-gauge-track:#c7b58c;
+  --am-hatch-a:#E3D2AB;--am-hatch-b:#EDE0C2;--am-play-hover:#e0c39a;
+  --am-gauge-fill:#d80000;--am-gauge-glow:216,0,0;
+  border-color:#221A12;border-radius:3px;box-shadow:0 30px 70px rgba(34,26,18,.45);
+}
+.am-card[data-am-theme="poster"] .am-name{font-family:'Alfa Slab One',serif;font-weight:400;font-size:25px;letter-spacing:0;text-transform:none;line-height:1.02;}
+.am-card[data-am-theme="poster"] .am-close{background:#EDE0C2;border-color:#221A12;color:#221A12;}
+.am-card[data-am-theme="poster"] .am-you{box-shadow:inset 0 8px 12px -10px rgba(34,26,18,.5);}
+
 @media(max-width:768px){
   .artist-modal{width:100vw;max-width:100vw;}
   .am-card{border-radius:0;border:none;max-height:100vh;min-height:100vh;}
