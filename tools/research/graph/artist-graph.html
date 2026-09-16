@@ -25,7 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../artist-modal.css?v=7052e180">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<!-- #376 step 3: the graph is the first host of the artist modal outside index.html. Loaded
+<!-- The graph hosts the artist modal (index.html is the other host). Loaded
      synchronously (not defer) so amInit() can run at the top of the inline script below,
      during parse, ahead of the module's own DOMContentLoaded self-init - which is what lets a
      #artist/<slug> deep link resolve against basePath instead of 404ing at repo-relative paths. -->
@@ -133,7 +133,7 @@ input[type=range]{width:100%;accent-color:var(--sell)}
  *   ../../../data/artist_spotify.json       edges (lastfm.similar)
  *   ../../../data/recommend_aliases.tsv     normalization aliases
  *   ../../../config.yaml                    theme.color_accent -> tier ramp; site.owner + features.* -> artist modal host options
- *   ../../../artist-modal.js / .css         the artist card a node click opens (#376 step 3 - first caller outside index.html)
+ *   ../../../artist-modal.js / .css         the artist card a node click opens
  *   ../../../data/artists.tsv               Via column -> bill kinship edges
  *   ../../../data/related_acts.tsv          hand-maintained kinship edges
  *   ../../../data/seen_with.tsv             recurring sidemen -> shared-personnel edges
@@ -152,7 +152,7 @@ input[type=range]{width:100%;accent-color:var(--sell)}
  * app.js _deriveTriad (canonical source of the dimming math):
  *   dim = hsl(h, s, max(l*0.48, 8)); bg-sat rule = s*0.85.
  * ==========================================================================*/
-// ── Artist modal host wiring (#376 step 3) ──
+// ── Artist modal host wiring ──
 // amInit() is the module's only coupling. basePath rewrites its repo-relative data fetches
 // from this depth; the features predicate mirrors app.js featureOn() - on unless config.yaml
 // says `false` - and reads AM_FEATURES_OFF live, so it is correct once loadAll fills it. Owner
@@ -505,7 +505,7 @@ function build(){
   // A click (or Enter/Space) on a tracked node opens the artist modal. The graph passes its
   // own label; openArtistModal resolves it to the canonical record via amNorm + the index
   // aliases and renders THAT name - the label is a rendering concern of this surface only
-  // (#376 canonical-name requirement). Candidates stay hover-only until step 6 gives them a card.
+  // (the modal's canonical-name rule). Candidates stay hover-only until they get a card of their own.
   node.filter(d=>!d.cand).on("click keydown",function(e,d){
     if(e.type==="keydown"&&e.key!==" "&&e.key!=="Enter")return;
     e.preventDefault();tip.style("opacity",0);
