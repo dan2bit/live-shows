@@ -1080,11 +1080,14 @@ for did, d in districts.items():
 # ("these are not meant as exact borders"), not a bug to chase here.
 # Coverage and known trade-offs, checked against live data:
 #   delta_coast       41/43   (Mallow Hill, The Jesse Williams Band outside)
-#   amplified_range  102/110  (8 outside -- Blondshell, Jackie Venson, Joan
-#                              Jett & The Blackhearts, Kelli Baker Band, Nick
-#                              Lowe & Los Straitjackets, Peter Case, Rainbow
-#                              Kitten Surprise, Taj Farrant -- these need a
-#                              pins.json/placement fix, not a hull-shape one)
+#   amplified_range  100/101  (the north edge sits 12px above where it was
+#                              first traced, which ran straight through the
+#                              pins of Ally Venable Band and Jackie Venson at
+#                              its two corners; the northeast corner is also
+#                              out to [941,144] so Jackie clears the east edge.
+#                              Queen Latifah stays north of it on the pegs.
+#                              Taj Farrant remains outside - a placement fix,
+#                              not a hull-shape one)
 #   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
 #                              see river_port note below)
 #   heartland         50/50
@@ -1109,8 +1112,8 @@ MANUAL_HULL = {
         [434.3, 596.8], [388.3, 607.3], [244.3, 632.1], [161.1, 609.7],
     ],
     "amplified_range": [
-        [606.7, 290.4], [592.3, 206.9], [751.6, 150.6], [834.75, 145.6],
-        [917.9, 160.6], [863.6, 254.6], [713.1, 400.0],
+        [606.7, 290.4], [592.3, 206.9], [751.6, 138.6], [834.75, 133.6],
+        [941.0, 144.0], [863.6, 254.6], [713.1, 400.0],
     ],
     "slide_foothills": [
         [585.4, 358.9], [596.0, 342.3], [651.1, 331.2], [688.7, 364.1],
