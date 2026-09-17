@@ -105,11 +105,6 @@
      "name": "Al Olender",
      "at": 0.3855897313545272,
      "dist": 3.1
-    },
-    {
-     "name": "Winston Mitchell",
-     "at": 0.6307664248353133,
-     "dist": 7.3
     }
    ]
   },
@@ -448,12 +443,13 @@
    "Daniel Donato's Cosmic Country": "Daniel Donato",
    "Gillian Welch & David Rawlings": "Gillian Welch",
    "John Primer & The Real Deal Blues Band": "John Primer",
-   "Victor Wooten & The Wooten Brothers": "Victor Wooten"
+   "Victor Wooten & The Wooten Brothers": "Victor Wooten",
+   "Winston Mitchell": "Larry Keel Duo"
   },
-  "pins_hash": "12a0b2484a",
-  "overrides_hash": "e30c5c2a68",
+  "pins_hash": "d227c05865",
+  "overrides_hash": "9f1079d257",
   "counts": {
-   "settlements": 401,
+   "settlements": 400,
    "routes": 476,
    "districts": 77
   }
@@ -541,15 +537,15 @@
     ],
     [
      751.6,
-     150.6
+     138.6
     ],
     [
      834.75,
-     145.6
+     133.6
     ],
     [
-     917.9,
-     160.6
+     941.0,
+     144.0
     ],
     [
      863.6,
@@ -1242,7 +1238,6 @@
     "Slash",
     "Taj Farrant",
     "The Heavy Heavy",
-    "The Iguanas",
     "They Might Be Giants",
     "Tommy Emmanuel"
    ],
@@ -2200,7 +2195,9 @@
     0.4765,
     0.0763
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 1,
@@ -3494,12 +3491,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    315.7,
-    380.9
+    332.2,
+    393.4
    ],
    "region_uv": [
-    0.2255,
-    0.0801
+    0.2689,
+    0.1331
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3585,12 +3582,12 @@
    "size": "capital",
    "score": 27,
    "xy": [
-    721.6,
-    317.2
+    720.8,
+    316.4
    ],
    "region_uv": [
-    0.3046,
-    0.9488
+    0.3023,
+    0.9456
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -5206,8 +5203,7 @@
     0.3224
    ],
    "flags": {
-    "harbormistress": true,
-    "stray": true
+    "harbormistress": true
    },
    "src": "history pass: seen as support",
    "times_seen": 3,
@@ -6733,16 +6729,14 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    386.0,
-    608.3
+    381.1,
+    581.3
    ],
    "region_uv": [
-    0.7267,
-    0.599
+    0.7125,
+    0.3394
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -8203,7 +8197,9 @@
     1.0422,
     0.6826
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 0,
@@ -8631,7 +8627,9 @@
     0.2689,
     -0.1298
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 2,
    "vip": 0,
@@ -8998,9 +8996,7 @@
     0.9231,
     -0.0176
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -9439,21 +9435,19 @@
   {
    "id": 167,
    "name": "The Iguanas",
-   "region": "amplified_range",
-   "district": "amplified_range:outskirts",
+   "region": "slide_foothills",
+   "district": "slide_foothills:override",
    "size": "village",
    "score": 4,
    "xy": [
-    677.3,
-    292.0
+    663.6,
+    447.2
    ],
    "region_uv": [
-    0.1781,
-    0.8481
+    0.6345,
+    0.7085
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -10002,14 +9996,16 @@
    "size": "town",
    "score": 9,
    "xy": [
-    456.2,
-    539.1
+    303.3,
+    377.6
    ],
    "region_uv": [
-    0.5953,
-    0.7504
+    0.1929,
+    0.0661
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 2,
    "vip": 0,
@@ -10303,29 +10299,6 @@
    "tier": null
   },
   {
-   "id": 411,
-   "name": "Winston Mitchell",
-   "region": "heartland",
-   "district": "heartland:override",
-   "size": "waystation",
-   "score": 0,
-   "xy": [
-    282.7,
-    428.9
-   ],
-   "region_uv": [
-    0.1387,
-    0.2835
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 413,
    "name": "Wu-Tang Clan",
    "region": "outer_isles",
@@ -10466,7 +10439,9 @@
     0.5776,
     0.5679
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 2,
@@ -15628,18 +15603,8 @@
    "a": "Sonny Landreth",
    "b": "The Iguanas",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Sonny Landreth",
