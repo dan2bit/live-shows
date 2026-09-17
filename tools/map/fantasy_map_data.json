@@ -105,11 +105,6 @@
      "name": "Al Olender",
      "at": 0.3855897313545272,
      "dist": 3.1
-    },
-    {
-     "name": "Winston Mitchell",
-     "at": 0.6307664248353133,
-     "dist": 7.3
     }
    ]
   },
@@ -448,12 +443,13 @@
    "Daniel Donato's Cosmic Country": "Daniel Donato",
    "Gillian Welch & David Rawlings": "Gillian Welch",
    "John Primer & The Real Deal Blues Band": "John Primer",
-   "Victor Wooten & The Wooten Brothers": "Victor Wooten"
+   "Victor Wooten & The Wooten Brothers": "Victor Wooten",
+   "Winston Mitchell": "Larry Keel Duo"
   },
   "pins_hash": "12a0b2484a",
   "overrides_hash": "e30c5c2a68",
   "counts": {
-   "settlements": 401,
+   "settlements": 400,
    "routes": 476,
    "districts": 77
   }
@@ -541,15 +537,15 @@
     ],
     [
      751.6,
-     150.6
+     138.6
     ],
     [
      834.75,
-     145.6
+     133.6
     ],
     [
-     917.9,
-     160.6
+     941.0,
+     144.0
     ],
     [
      863.6,
@@ -2200,7 +2196,9 @@
     0.4765,
     0.0763
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 1,
@@ -5206,8 +5204,7 @@
     0.3224
    ],
    "flags": {
-    "harbormistress": true,
-    "stray": true
+    "harbormistress": true
    },
    "src": "history pass: seen as support",
    "times_seen": 3,
@@ -8203,7 +8200,9 @@
     1.0422,
     0.6826
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 0,
@@ -8631,7 +8630,9 @@
     0.2689,
     -0.1298
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 2,
    "vip": 0,
@@ -8998,9 +8999,7 @@
     0.9231,
     -0.0176
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -10009,7 +10008,9 @@
     0.5953,
     0.7504
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 2,
    "vip": 0,
@@ -10303,29 +10304,6 @@
    "tier": null
   },
   {
-   "id": 411,
-   "name": "Winston Mitchell",
-   "region": "heartland",
-   "district": "heartland:override",
-   "size": "waystation",
-   "score": 0,
-   "xy": [
-    282.7,
-    428.9
-   ],
-   "region_uv": [
-    0.1387,
-    0.2835
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 413,
    "name": "Wu-Tang Clan",
    "region": "outer_isles",
@@ -10466,7 +10444,9 @@
     0.5776,
     0.5679
    ],
-   "flags": {},
+   "flags": {
+    "harbormistress": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 4,
    "vip": 2,
