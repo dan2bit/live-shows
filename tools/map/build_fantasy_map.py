@@ -299,6 +299,9 @@ MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     "Victor Wooten & The Wooten Brothers": "Victor Wooten",
     "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
     "John Primer & The Real Deal Blues Band": "John Primer",
+    # Winston Mitchell is the mandolin half of the Larry Keel Duo (the same
+    # Sevareid House bill listed him as support); one act, one settlement.
+    "Winston Mitchell": "Larry Keel Duo",
 }
 SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
     "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
@@ -916,7 +919,12 @@ CURATED_SIZE = {
 }
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
-                    "Jackie Venson", "Orianthi", "Queen Latifah"}
+                    "Jackie Venson", "Orianthi", "Queen Latifah",
+                    # one per remaining mainland region, promoted in place at
+                    # their current size and pin: Secondline, the Foothills,
+                    # the Delta, the Woods, the Heartland
+                    "ZZ Ward", "Samantha Fish", "Southern Avenue", "Allison Russell",
+                    "Valerie June"}
 
 def rename_settlement(old, new):
     if old not in records:
@@ -1075,11 +1083,14 @@ for did, d in districts.items():
 # ("these are not meant as exact borders"), not a bug to chase here.
 # Coverage and known trade-offs, checked against live data:
 #   delta_coast       41/43   (Mallow Hill, The Jesse Williams Band outside)
-#   amplified_range  102/110  (8 outside -- Blondshell, Jackie Venson, Joan
-#                              Jett & The Blackhearts, Kelli Baker Band, Nick
-#                              Lowe & Los Straitjackets, Peter Case, Rainbow
-#                              Kitten Surprise, Taj Farrant -- these need a
-#                              pins.json/placement fix, not a hull-shape one)
+#   amplified_range  100/101  (the north edge sits 12px above where it was
+#                              first traced, which ran straight through the
+#                              pins of Ally Venable Band and Jackie Venson at
+#                              its two corners; the northeast corner is also
+#                              out to [941,144] so Jackie clears the east edge.
+#                              Queen Latifah stays north of it on the pegs.
+#                              Taj Farrant is outside by decree - see
+#                              STRAY_EXEMPT below)
 #   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
 #                              see river_port note below)
 #   heartland         50/50
@@ -1104,8 +1115,8 @@ MANUAL_HULL = {
         [434.3, 596.8], [388.3, 607.3], [244.3, 632.1], [161.1, 609.7],
     ],
     "amplified_range": [
-        [606.7, 290.4], [592.3, 206.9], [751.6, 150.6], [834.75, 145.6],
-        [917.9, 160.6], [863.6, 254.6], [713.1, 400.0],
+        [606.7, 290.4], [592.3, 206.9], [751.6, 138.6], [834.75, 133.6],
+        [941.0, 144.0], [863.6, 254.6], [713.1, 400.0],
     ],
     "slide_foothills": [
         [585.4, 358.9], [596.0, 342.3], [651.1, 331.2], [688.7, 364.1],
@@ -1150,8 +1161,14 @@ def point_in_poly(x, y, poly):
             inside = not inside
     return inside
 
+# Pinned outside their region's polygon on purpose. Taj Farrant holds Farrant
+# Rock, his own islet at the top of the headstock (a labels.json island, not a
+# tuning-peg isle), while remaining a Range citizen - the polygon is not meant
+# to reach him, and he is not a placement to fix.
+STRAY_EXEMPT = {"Taj Farrant"}
+
 for st in settlements:
-    if st["region"] == "outer_isles" or st["flags"].get("unplaced"):
+    if st["region"] == "outer_isles" or st["flags"].get("unplaced") or st["name"] in STRAY_EXEMPT:
         continue
     if st["name"] not in _pins_law:
         st["flags"]["unpinned"] = True
