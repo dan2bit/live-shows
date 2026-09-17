@@ -1126,6 +1126,33 @@ MANUAL_HULL = {
 # draws no boundary for it - the label still renders from labels.json.
 region_hulls = dict(MANUAL_HULL)
 
+# ---- placement flags: the editor's worklist, three kinds of "needs a hand" ----
+# unplaced  the builder staged it in a ring; the position means nothing (set above)
+# unpinned  builder-positioned, no pins.json entry: the only marks that can move
+#           on a rebuild, since everything else is pinned - a look, not always a drag
+# stray     pinned, but the pin lies outside its region's polygon: a region changed
+#           under a pin made for the old one, or a known outlier. Advisory - the
+#           polygons are not exact borders, and some outliers are deliberate.
+# All three are mainland-only: Outer Isles sits on fixed pegs with no polygon.
+# map.html re-derives unpinned and stray against the live pins.json before it
+# draws, the same way it applies live pin positions, so a pin saved after the
+# last rebuild is honoured immediately.
+def point_in_poly(x, y, poly):
+    inside = False
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i - 1], poly[i]
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+for st in settlements:
+    if st["region"] == "outer_isles" or st["flags"].get("unplaced"):
+        continue
+    if st["name"] not in _pins_law:
+        st["flags"]["unpinned"] = True
+    elif region_hulls.get(st["region"]) and not point_in_poly(*st["xy"], region_hulls[st["region"]]):
+        st["flags"]["stray"] = True
+
 # gateways: each ordered region pair gets one crossing point per side, so
 # cross-region routes bundle into shared corridors instead of great circles
 def edge_point(reg, toward):
