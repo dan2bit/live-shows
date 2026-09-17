@@ -310,6 +310,7 @@ SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bil
     # also exist independently on the map (Tab Benoit and Anders Osborne each
     # have their own settlement, seen history, and pin).
     "Tab Benoit & Anders Osborne": ["Tab Benoit", "Anders Osborne"],
+    "SatchVai Band": ["Joe Satriani", "Steve Vai"],
 }
 def _fold_seen(dst, src_meta):
     m_ = seen_meta.setdefault(dst, {"times_seen": 0, "vip": 0, "most_recent": ""})
@@ -1267,6 +1268,7 @@ out = {
              # staleness banner subtracts these before calling the map "behind"
              "excluded": sorted(MAP_EXCLUDE),
              "merged": dict(sorted(MERGES.items())),
+             "suppressed": sorted(SUPPRESSED_CREDIT),
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "pins.json").exists() else None,
              "overrides_hash": hashlib.md5((SCRIPT_DIR / "map_overrides.json").read_bytes()).hexdigest()[:10]

@@ -274,7 +274,7 @@
     // Names the builder leaves off on purpose (MAP_EXCLUDE) or folds into another
     // settlement (MERGES) are not "missing" - the builder publishes both lists in meta.
     const meta=data.meta||{};
-    const notRoster=new Set([...(meta.excluded||[]),...Object.keys(meta.merged||{})]);
+    const notRoster=new Set([...(meta.excluded||[]),...Object.keys(meta.merged||{}),...(meta.suppressed||[])]);
     const missing=idx.records.map(r=>r.canonical).filter(n=>!onMap.has(n)&&!PINFILE[n]&&!notRoster.has(n));
     // Two different facts, kept apart: "unplaced" is the builder's flag and is what the
     // pink halo shows; "no pin" is a builder-positioned settlement with no pins.json
