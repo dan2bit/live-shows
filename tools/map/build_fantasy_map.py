@@ -919,8 +919,9 @@ HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
                     "Jackie Venson", "Orianthi", "Queen Latifah",
                     # one per remaining mainland region, promoted in place at
                     # their current size and pin: Secondline, the Foothills,
-                    # the Delta, the Woods
-                    "ZZ Ward", "Samantha Fish", "Southern Avenue", "Allison Russell"}
+                    # the Delta, the Woods, the Heartland
+                    "ZZ Ward", "Samantha Fish", "Southern Avenue", "Allison Russell",
+                    "Valerie June"}
 
 def rename_settlement(old, new):
     if old not in records:
