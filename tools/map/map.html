@@ -258,13 +258,25 @@
     }
     if(!idx||!idx.records) return;
     const onMap=new Set(data.settlements.map(s=>s.name));
-    const missing=idx.records.map(r=>r.canonical).filter(n=>!onMap.has(n)&&!PINFILE[n]);
-    const unpinned=data.settlements.filter(s=>!PINFILE[s.name]&&s.region!=='outer_isles').length;
+    // Names the builder leaves off on purpose (MAP_EXCLUDE) or folds into another
+    // settlement (MERGES) are not "missing" - the builder publishes both lists in meta.
+    const meta=data.meta||{};
+    const notRoster=new Set([...(meta.excluded||[]),...Object.keys(meta.merged||{})]);
+    const missing=idx.records.map(r=>r.canonical).filter(n=>!onMap.has(n)&&!PINFILE[n]&&!notRoster.has(n));
+    // Two different facts, kept apart: "unplaced" is the builder's flag and is what the
+    // pink halo shows; "no pin" is a builder-positioned settlement with no pins.json
+    // entry (Outer Isles sits on fixed pegs and is left out of that count).
+    const unplaced=data.settlements.filter(s=>s.flags&&s.flags.unplaced).map(s=>s.name);
+    const nopin=data.settlements.filter(s=>!PINFILE[s.name]&&s.region!=='outer_isles').map(s=>s.name);
     if(missing.length===0) return;
+    const clause=(n,txt,names)=>n?` · <span title="${names.slice(0,20).join(', ').replace(/"/g,'&quot;')}">${n} ${txt}</span>`:'';
     const b=document.createElement('div');
     b.id='rosterBanner';
     b.style.cssText='position:absolute;top:8px;left:8px;max-width:340px;background:rgba(166,61,47,.93);color:#EDE0C2;font-family:Oswald;font-size:12px;padding:7px 10px;border:1.5px solid #221A12;z-index:9;';
-    b.innerHTML=`<b>${missing.length} roster artist${missing.length>1?'s':''} not on the map</b> · ${unpinned} settlements unpinned — map data is behind recommend_index.<br>`
+    b.innerHTML=`<b>${missing.length} roster artist${missing.length>1?'s':''} not on the map</b>`
+      +clause(unplaced.length,'awaiting hand placement (haloed)',unplaced)
+      +clause(nopin.length,'builder-placed, no pin',nopin)
+      +` — map data is behind recommend_index.<br>`
       +`<span style="font-size:10.5px;opacity:.9">rebuild: GitHub → Actions → “Rebuild fantasy map data” → Run workflow · or: <code>gh workflow run map-rebuild.yml</code></span>`
       +`<span style="font-size:10.5px;display:block;opacity:.8;margin-top:2px" title="${missing.slice(0,20).join(', ').replace(/"/g,'&quot;')}">hover for names</span>`;
     document.getElementById('stage').appendChild(b);
