@@ -446,11 +446,17 @@
    "Victor Wooten & The Wooten Brothers": "Victor Wooten",
    "Winston Mitchell": "Larry Keel Duo"
   },
+  "suppressed": [
+   "Blood Brothers",
+   "Samantha Fish & Jesse Dayton",
+   "SatchVai Band",
+   "Tab Benoit & Anders Osborne"
+  ],
   "pins_hash": "d227c05865",
   "overrides_hash": "9f1079d257",
   "counts": {
-   "settlements": 400,
-   "routes": 476,
+   "settlements": 399,
+   "routes": 473,
    "districts": 77
   }
  },
@@ -1039,13 +1045,12 @@
    "id": "amplified_range:d10",
    "region": "amplified_range",
    "members": [
-    "Jimmie Vaughan",
-    "Robert Cray Band",
-    "Robin Trower",
-    "The Fabulous Thunderbirds"
+    "Gary Hoey",
+    "Joe Satriani",
+    "Steve Vai"
    ],
-   "seat": "The Fabulous Thunderbirds",
-   "suggested_name": "Thunderbirds Crag"
+   "seat": "Eric Johnson",
+   "suggested_name": "Johnson Crag"
   },
   {
    "id": "amplified_range:d11",
@@ -1170,28 +1175,16 @@
    "id": "amplified_range:d5",
    "region": "amplified_range",
    "members": [
-    "Gary Hoey",
-    "Joe Satriani",
-    "SatchVai Band",
-    "Steve Vai"
-   ],
-   "seat": "Joe Satriani",
-   "suggested_name": "Satriani Crag"
-  },
-  {
-   "id": "amplified_range:d6",
-   "region": "amplified_range",
-   "members": [
     "Cat Power",
     "Modest Mouse",
     "Pixies",
     "Violent Femmes"
    ],
    "seat": "Pixies",
-   "suggested_name": "Pixies Pass"
+   "suggested_name": "Pixies Crag"
   },
   {
-   "id": "amplified_range:d7",
+   "id": "amplified_range:d6",
    "region": "amplified_range",
    "members": [
     "Joanna Connor",
@@ -1200,10 +1193,10 @@
     "Sue Foley"
    ],
    "seat": "Sue Foley",
-   "suggested_name": "Foley Summit"
+   "suggested_name": "Foley Pass"
   },
   {
-   "id": "amplified_range:d8",
+   "id": "amplified_range:d7",
    "region": "amplified_range",
    "members": [
     "Beck",
@@ -1212,14 +1205,26 @@
     "Weyes Blood"
    ],
    "seat": "Beck",
-   "suggested_name": "Beck Overdrive"
+   "suggested_name": "Beck Summit"
+  },
+  {
+   "id": "amplified_range:d8",
+   "region": "amplified_range",
+   "members": [],
+   "seat": "Alabama Shakes",
+   "suggested_name": "Shakes Overdrive"
   },
   {
    "id": "amplified_range:d9",
    "region": "amplified_range",
-   "members": [],
-   "seat": "Alabama Shakes",
-   "suggested_name": "Shakes Ridge"
+   "members": [
+    "Jimmie Vaughan",
+    "Robert Cray Band",
+    "Robin Trower",
+    "The Fabulous Thunderbirds"
+   ],
+   "seat": "The Fabulous Thunderbirds",
+   "suggested_name": "Thunderbirds Ridge"
   },
   {
    "id": "amplified_range:outskirts",
@@ -2639,7 +2644,7 @@
    "id": 38,
    "name": "Beck",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "town",
    "score": 6,
    "xy": [
@@ -3359,7 +3364,7 @@
    "id": 76,
    "name": "Cat Power",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -4623,7 +4628,7 @@
    "id": 143,
    "name": "Gary Hoey",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d10",
    "size": "waystation",
    "score": 1,
    "xy": [
@@ -5405,7 +5410,7 @@
    "id": 186,
    "name": "Jimmie Vaughan",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d9",
    "size": "town",
    "score": 6,
    "xy": [
@@ -5451,7 +5456,7 @@
    "id": 189,
    "name": "Joanna Connor",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "town",
    "score": 3,
    "xy": [
@@ -5537,9 +5542,9 @@
    "id": 193,
    "name": "Joe Satriani",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
-   "size": "hamlet",
-   "score": 3,
+   "district": "amplified_range:d10",
+   "size": "town",
+   "score": 6,
    "xy": [
     806.6,
     182.4
@@ -5550,7 +5555,7 @@
    ],
    "flags": {},
    "src": "",
-   "times_seen": 1,
+   "times_seen": 2,
    "vip": 0,
    "tier": null
   },
@@ -6373,7 +6378,7 @@
    "id": 234,
    "name": "Lightnin' Malcolm",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "village",
    "score": 4,
    "xy": [
@@ -7121,7 +7126,7 @@
    "id": 271,
    "name": "Modest Mouse",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7597,7 +7602,7 @@
    "id": 298,
    "name": "Phoenix",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7641,7 +7646,7 @@
    "id": 302,
    "name": "Pixies",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7949,7 +7954,7 @@
    "id": 318,
    "name": "Robert Cray Band",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d9",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8014,7 +8019,7 @@
    "id": 321,
    "name": "Robin Trower",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d9",
    "size": "waystation",
    "score": 1,
    "xy": [
@@ -8250,33 +8255,10 @@
    "tier": null
   },
   {
-   "id": 337,
-   "name": "SatchVai Band",
-   "region": "amplified_range",
-   "district": "amplified_range:d5",
-   "size": "hamlet",
-   "score": 3,
-   "xy": [
-    721.2,
-    314.3
-   ],
-   "region_uv": [
-    0.3036,
-    0.9373
-   ],
-   "flags": {
-    "unpinned": true
-   },
-   "src": "seen as support (history TSVs; no artists.tsv row)",
-   "times_seen": 1,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 338,
    "name": "Scott Tournet",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8469,7 +8451,7 @@
    "id": 350,
    "name": "Sir Chloe",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8769,9 +8751,9 @@
    "id": 366,
    "name": "Steve Vai",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d10",
    "size": "town",
-   "score": 6,
+   "score": 9,
    "xy": [
     801.2,
     181.9
@@ -8782,7 +8764,7 @@
    ],
    "flags": {},
    "src": "",
-   "times_seen": 1,
+   "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
   },
@@ -8811,7 +8793,7 @@
    "id": 368,
    "name": "Sue Foley",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "city",
    "score": 15,
    "xy": [
@@ -9329,7 +9311,7 @@
    "id": 130,
    "name": "The Fabulous Thunderbirds",
    "region": "amplified_range",
-   "district": "amplified_range:d10",
+   "district": "amplified_range:d9",
    "size": "waystation",
    "score": 2,
    "xy": [
@@ -10147,7 +10129,7 @@
    "id": 401,
    "name": "Violent Femmes",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d5",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -10237,7 +10219,7 @@
    "id": 407,
    "name": "Weyes Blood",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -11493,13 +11475,6 @@
      572.7
     ]
    ]
-  },
-  {
-   "a": "Animals as Leaders",
-   "b": "SatchVai Band",
-   "cls": "river",
-   "crossRegion": false,
-   "render": "river"
   },
   {
    "a": "Anna Moss",
@@ -14149,13 +14124,6 @@
   },
   {
    "a": "Joe Satriani",
-   "b": "SatchVai Band",
-   "cls": "road",
-   "crossRegion": false,
-   "render": "road"
-  },
-  {
-   "a": "Joe Satriani",
    "b": "Steve Vai",
    "cls": "trail",
    "crossRegion": false,
@@ -15420,13 +15388,6 @@
    "cls": "trail",
    "crossRegion": false,
    "render": "trail"
-  },
-  {
-   "a": "SatchVai Band",
-   "b": "Steve Vai",
-   "cls": "road",
-   "crossRegion": false,
-   "render": "road"
   },
   {
    "a": "Scott Tournet",
