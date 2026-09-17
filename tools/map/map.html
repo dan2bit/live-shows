@@ -186,6 +186,10 @@
   const DATA=qs.get('data')||'fantasy_map_data.json';
   const map=document.getElementById('map');
   const err=m=>{const e=document.getElementById('err');e.style.display='block';e.textContent=m;};
+  // cache:'no-store' defeats the browser cache but not the Pages CDN edge; a per-load
+  // query string is what actually fetches the file that was just committed (the
+  // background image below already does this, and artist-modal.js does it for its data)
+  const fresh=u=>u+(u.includes('?')?'&':'?')+'t='+Date.now();
 
   // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
   // store, so a token saved there just works here too — no separate auth surface on
@@ -234,7 +238,7 @@
   }
 
   let data;
-  try{ data=await (await fetch(DATA,{cache:'no-store'})).json(); }
+  try{ data=await (await fetch(fresh(DATA),{cache:'no-store'})).json(); }
   catch(e){ return err(`Could not load ${DATA} — serve over http (python3 -m http.server), not file://`); }
 
   const W=data.canvas.w,H=data.canvas.h;
@@ -252,10 +256,10 @@
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
   const S=new Map(data.settlements.map(s=>[s.name,s]));
   let LBL={regions:{},islands:{},waters:{}};
-  try{ LBL=await (await fetch('labels.json',{cache:'no-store'})).json(); }catch(e){}
+  try{ LBL=await (await fetch(fresh('labels.json'),{cache:'no-store'})).json(); }catch(e){}
   // pins.json is position truth - render it live, don't wait for the rebuild bot
   let PINFILE={};
-  try{ PINFILE=await (await fetch('pins.json',{cache:'no-store'})).json(); }catch(e){}
+  try{ PINFILE=await (await fetch(fresh('pins.json'),{cache:'no-store'})).json(); }catch(e){}
 
   // #366: roster staleness — is fantasy_map_data.json behind recommend_index.json?
   // (async: its first await yields, so the synchronous flag refresh below runs before it reads flags)
@@ -263,7 +267,7 @@
     if(!authed) return;   // decision: staleness banner is for authed users only
     let idx=null;
     for(const p of ['/data/recommend_index.json','../../data/recommend_index.json']){
-      try{ idx=await (await fetch(p,{cache:'no-store'})).json(); if(idx) break; }catch(e){}
+      try{ idx=await (await fetch(fresh(p),{cache:'no-store'})).json(); if(idx) break; }catch(e){}
     }
     if(!idx||!idx.records) return;
     const onMap=new Set(data.settlements.map(s=>s.name));
@@ -533,7 +537,7 @@
   // saves are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
   if(authed){
-  try{ const ptxt=await (await fetch('pins.json',{cache:'no-store'})).text();
+  try{ const ptxt=await (await fetch(fresh('pins.json'),{cache:'no-store'})).text();
        Object.assign(pins, JSON.parse(ptxt));
        expBtn.textContent=`save pins (${Object.keys(pins).length})`;
        // freshness check: does the rendered data know about this pins file?
@@ -562,7 +566,7 @@
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
         exportOv=document.getElementById('exportOv'), editwho=document.getElementById('editwho');
   if(authed){
-  try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
+  try{ Object.assign(overrides, await (await fetch(fresh('map_overrides.json'),{cache:'no-store'})).json()); }catch(e){}
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
   }
   // keep a mark's class list in step with its (live) flags after an edit
@@ -642,7 +646,7 @@
         traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
   const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
   if(authed){
-  try{ TRACES=await (await fetch('traced_waterways.json',{cache:'no-store'})).json(); }catch(e){}
+  try{ TRACES=await (await fetch(fresh('traced_waterways.json'),{cache:'no-store'})).json(); }catch(e){}
   }
   let tracing=null, unsaved=0, pendingName=null;
   const traceCount=()=>{traceExp.textContent=`save waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
