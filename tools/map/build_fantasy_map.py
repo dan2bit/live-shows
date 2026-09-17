@@ -299,6 +299,9 @@ MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     "Victor Wooten & The Wooten Brothers": "Victor Wooten",
     "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
     "John Primer & The Real Deal Blues Band": "John Primer",
+    # Winston Mitchell is the mandolin half of the Larry Keel Duo (the same
+    # Sevareid House bill listed him as support); one act, one settlement.
+    "Winston Mitchell": "Larry Keel Duo",
 }
 SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
     "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
@@ -1086,8 +1089,8 @@ for did, d in districts.items():
 #                              its two corners; the northeast corner is also
 #                              out to [941,144] so Jackie clears the east edge.
 #                              Queen Latifah stays north of it on the pegs.
-#                              Taj Farrant remains outside - a placement fix,
-#                              not a hull-shape one)
+#                              Taj Farrant is outside by decree - see
+#                              STRAY_EXEMPT below)
 #   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
 #                              see river_port note below)
 #   heartland         50/50
@@ -1158,8 +1161,14 @@ def point_in_poly(x, y, poly):
             inside = not inside
     return inside
 
+# Pinned outside their region's polygon on purpose. Taj Farrant holds Farrant
+# Rock, his own islet at the top of the headstock (a labels.json island, not a
+# tuning-peg isle), while remaining a Range citizen - the polygon is not meant
+# to reach him, and he is not a placement to fix.
+STRAY_EXEMPT = {"Taj Farrant"}
+
 for st in settlements:
-    if st["region"] == "outer_isles" or st["flags"].get("unplaced"):
+    if st["region"] == "outer_isles" or st["flags"].get("unplaced") or st["name"] in STRAY_EXEMPT:
         continue
     if st["name"] not in _pins_law:
         st["flags"]["unpinned"] = True
