@@ -452,8 +452,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "d227c05865",
-  "overrides_hash": "d5ba2f566a",
+  "pins_hash": "570a2b94eb",
+  "overrides_hash": "27c9506fcf",
   "counts": {
    "settlements": 399,
    "routes": 473,
@@ -1583,7 +1583,6 @@
     "Jessie's Girl",
     "Muna",
     "Every Breath You Take",
-    "P!nk",
     "Talia Segal",
     "Zara Larsson",
     "Zara Phillips",
@@ -7513,17 +7512,17 @@
   {
    "id": 294,
    "name": "P!nk",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "amplified_range",
+   "district": "amplified_range:override",
    "size": "town",
    "score": 1,
    "xy": [
-    854.3,
-    234.4
+    853.3,
+    233.4
    ],
    "region_uv": [
-    0.2403,
-    2.2958
+    0.6809,
+    0.6136
    ],
    "flags": {
     "unvisited": true
