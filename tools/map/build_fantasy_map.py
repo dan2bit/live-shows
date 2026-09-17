@@ -1083,15 +1083,20 @@ for did, d in districts.items():
 #   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
 #                              see river_port note below)
 #   heartland         50/50
-#   river_port        60/60   (captures Joey Landreth and The Bros. Landreth,
-#                              both tagged slide_foothills -- an accepted,
-#                              deliberate trade-off: King Solomon Hicks and
-#                              the two Landreths sit close enough together
-#                              that no polygon boundary separates them
-#                              cleanly without either dropping King Solomon
-#                              Hicks or self-intersecting; capturing all three
-#                              was the chosen trade over leaving King Solomon
-#                              Hicks out)
+#   river_port        61/61   (its north edge east of King Solomon Hicks IS
+#                              the Steel Foothills' southern edge, vertex for
+#                              vertex, so the two share a true border - the
+#                              earlier shape turned south at x=700 and left
+#                              Alabama Shakes and Brittany Howard in a notch
+#                              outside both. It still captures Joey Landreth
+#                              and The Bros. Landreth, both tagged
+#                              slide_foothills -- an accepted, deliberate
+#                              trade-off: King Solomon Hicks and the two
+#                              Landreths sit close enough together that no
+#                              polygon boundary separates them cleanly
+#                              without either dropping King Solomon Hicks or
+#                              self-intersecting; capturing all three was the
+#                              chosen trade over leaving King Solomon Hicks out)
 #   quiet_woods       77/79   (Oliver Wood, The Wildmans outside)
 MANUAL_HULL = {
     "delta_coast": [
@@ -1112,8 +1117,8 @@ MANUAL_HULL = {
     ],
     "river_port": [
         [463.2, 591.1], [462.2, 544.7], [516.0, 442.1], [603.1, 482.0],
-        [700.0, 482.0], [723.5, 530.4], [715.4, 587.7], [665.6, 693.5],
-        [647.2, 699.5],
+        [635.9, 493.1], [728.4, 444.7], [723.5, 530.4], [715.4, 587.7],
+        [665.6, 693.5], [647.2, 699.5],
     ],
     "quiet_woods": [
         [493.8, 447.9], [321.2, 335.7], [363.1, 239.1], [382.0, 228.0],
