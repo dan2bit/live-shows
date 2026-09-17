@@ -916,7 +916,11 @@ CURATED_SIZE = {
 }
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
-                    "Jackie Venson", "Orianthi", "Queen Latifah"}
+                    "Jackie Venson", "Orianthi", "Queen Latifah",
+                    # one per remaining mainland region, promoted in place at
+                    # their current size and pin: Secondline, the Foothills,
+                    # the Delta, the Woods
+                    "ZZ Ward", "Samantha Fish", "Southern Avenue", "Allison Russell"}
 
 def rename_settlement(old, new):
     if old not in records:
