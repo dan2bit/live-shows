@@ -105,6 +105,11 @@
      "name": "Al Olender",
      "at": 0.3855897313545272,
      "dist": 3.1
+    },
+    {
+     "name": "Winston Mitchell",
+     "at": 0.6307664248353133,
+     "dist": 7.3
     }
    ]
   },
@@ -445,8 +450,8 @@
    "John Primer & The Real Deal Blues Band": "John Primer",
    "Victor Wooten & The Wooten Brothers": "Victor Wooten"
   },
-  "pins_hash": "598b4b95d3",
-  "overrides_hash": "2273be19a7",
+  "pins_hash": "12a0b2484a",
+  "overrides_hash": "d38aacc7cb",
   "counts": {
    "settlements": 401,
    "routes": 476,
@@ -1145,7 +1150,6 @@
     "Caitlin Krisko & The Broadcast",
     "Canned Heat",
     "Grace Bowers",
-    "Jon Spencer",
     "Mitch Ryder",
     "Orianthi"
    ],
@@ -1577,12 +1581,10 @@
     "Danny Burns",
     "Hayley Williams",
     "Jessie's Girl",
-    "Larry Keel Duo",
     "Muna",
     "Every Breath You Take",
     "P!nk",
     "Talia Segal",
-    "Winston Mitchell",
     "Zara Larsson",
     "Zara Phillips",
     "kitchen"
@@ -1632,7 +1634,8 @@
    "id": "quiet_woods:d12",
    "region": "quiet_woods",
    "members": [
-    "Elvis Costello & The Imposters"
+    "Elvis Costello & The Imposters",
+    "Nick Lowe & Los Straitjackets"
    ],
    "seat": "Nick Lowe & Los Straitjackets",
    "suggested_name": "Straitjackets Lake"
@@ -2341,12 +2344,12 @@
    "size": "town",
    "score": 8,
    "xy": [
-    682.4,
-    577.3
+    675.5,
+    565.2
    ],
    "region_uv": [
-    0.8376,
-    0.7071
+    0.81,
+    0.6295
    ],
    "flags": {},
    "src": "",
@@ -2362,12 +2365,12 @@
    "size": "town",
    "score": 3,
    "xy": [
-    664.7,
-    559.0
+    684.3,
+    584.0
    ],
    "region_uv": [
-    0.7668,
-    0.5897
+    0.8452,
+    0.75
    ],
    "flags": {
     "unvisited": true
@@ -5347,12 +5350,12 @@
    "size": "town",
    "score": 10,
    "xy": [
-    702.4,
-    572.2
+    701.5,
+    573.6
    ],
    "region_uv": [
-    0.9176,
-    0.6744
+    0.914,
+    0.6833
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -5655,12 +5658,12 @@
    "size": "city",
    "score": 14,
    "xy": [
-    612.9,
-    554.6
+    601.8,
+    570.0
    ],
    "region_uv": [
-    0.5596,
-    0.5615
+    0.5152,
+    0.6603
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -5692,21 +5695,19 @@
   {
    "id": 202,
    "name": "Jon Spencer",
-   "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "region": "slide_foothills",
+   "district": "slide_foothills:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    694.6,
-    241.9
+    687.9,
+    441.1
    ],
    "region_uv": [
-    0.2274,
-    0.6477
+    0.844,
+    0.6826
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -5789,12 +5790,12 @@
    "size": "city",
    "score": 12,
    "xy": [
-    629.4,
-    522.2
+    497.1,
+    565.2
    ],
    "region_uv": [
-    0.6256,
-    0.3538
+    0.0964,
+    0.6295
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -6262,8 +6263,8 @@
   {
    "id": 229,
    "name": "Larry Keel Duo",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "waystation",
    "score": 1,
    "xy": [
@@ -6271,8 +6272,8 @@
     377.2
    ],
    "region_uv": [
-    -2.7142,
-    3.7833
+    0.2745,
+    0.0644
    ],
    "flags": {
     "unvisited": true
@@ -7362,8 +7363,8 @@
   {
    "id": 285,
    "name": "Nick Lowe & Los Straitjackets",
-   "region": "amplified_range",
-   "district": "amplified_range:override",
+   "region": "quiet_woods",
+   "district": "quiet_woods:d12",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -7371,12 +7372,10 @@
     233.6
    ],
    "region_uv": [
-    -0.1951,
-    0.6144
+    0.6939,
+    0.1232
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -8971,12 +8970,12 @@
    "size": "city",
    "score": 21,
    "xy": [
-    677.0,
-    566.3
+    666.0,
+    558.5
    ],
    "region_uv": [
-    0.816,
-    0.6365
+    0.772,
+    0.5865
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9552,12 +9551,12 @@
    "size": "village",
    "score": 6,
    "xy": [
-    602.6,
-    567.3
+    588.7,
+    616.7
    ],
    "region_uv": [
-    0.5184,
-    0.6429
+    0.4628,
+    0.9596
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -10306,8 +10305,8 @@
   {
    "id": 411,
    "name": "Winston Mitchell",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "waystation",
    "score": 0,
    "xy": [
@@ -10315,8 +10314,8 @@
     428.9
    ],
    "region_uv": [
-    -3.0074,
-    4.3219
+    0.1387,
+    0.2835
    ],
    "flags": {
     "unvisited": true
@@ -10460,12 +10459,12 @@
    "size": "city",
    "score": 19,
    "xy": [
-    496.5,
-    565.1
+    617.4,
+    555.6
    ],
    "region_uv": [
-    0.094,
-    0.6288
+    0.5776,
+    0.5679
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -13002,18 +13001,8 @@
    "a": "Elvis Costello & The Imposters",
    "b": "Nick Lowe & Los Straitjackets",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Emmylou Harris",
@@ -14267,18 +14256,8 @@
    "a": "Jon Spencer",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Josh Ritter",
