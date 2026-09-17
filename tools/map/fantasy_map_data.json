@@ -410,7 +410,7 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-09-16",
+  "generated_from": "2026-09-17",
   "seed": 2026,
   "excluded": [
    "Alexia Gabriella",
@@ -686,8 +686,12 @@
      482.0
     ],
     [
-     700.0,
-     482.0
+     635.9,
+     493.1
+    ],
+    [
+     728.4,
+     444.7
     ],
     [
      723.5,
@@ -2058,9 +2062,7 @@
     0.9368,
     0.0929
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -3126,9 +3128,7 @@
     0.9988,
     0.1276
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -3996,7 +3996,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "follow (Medium-Strong)",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
@@ -4954,11 +4954,11 @@
    "score": 3,
    "xy": [
     729.5,
-    295.8
+    295.9
    ],
    "region_uv": [
-    0.3272,
-    0.8634
+    0.3273,
+    0.8635
    ],
    "flags": {
     "unpinned": true
@@ -7916,11 +7916,11 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    758.5,
+    758.4,
     255.3
    ],
    "region_uv": [
-    0.41,
+    0.4098,
     0.7011
    ],
    "flags": {
@@ -7959,8 +7959,8 @@
    "name": "Robert Cray Band",
    "region": "amplified_range",
    "district": "amplified_range:d10",
-   "size": "town",
-   "score": 6,
+   "size": "hamlet",
+   "score": 3,
    "xy": [
     744.2,
     267.2
@@ -7975,7 +7975,7 @@
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
-   "tier": "Strong"
+   "tier": null
   },
   {
    "id": 319,
@@ -8268,8 +8268,8 @@
     314.3
    ],
    "region_uv": [
-    0.3035,
-    0.9371
+    0.3036,
+    0.9373
    ],
    "flags": {
     "unpinned": true
@@ -9827,7 +9827,7 @@
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
-   "tier": "-"
+   "tier": null
   },
   {
    "id": 387,
