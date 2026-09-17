@@ -1061,67 +1061,19 @@ for did, d in districts.items():
         d["seat"] = cap
         d["suggested_name"] = f"{word} {sfx}"
 
-# convex hull per region (padded) for the boundary layer
-def hull_of(pts, pad=16):
-    pts = sorted(set((round(x, 1), round(y, 1)) for x, y in pts))
-    if len(pts) < 3:
-        return None
-    def cross(o, a, b): return (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0])
-    lo, up = [], []
-    for p in pts:
-        while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0: lo.pop()
-        lo.append(p)
-    for p in reversed(pts):
-        while len(up) >= 2 and cross(up[-2], up[-1], p) <= 0: up.pop()
-        up.append(p)
-    hull = lo[:-1] + up[:-1]
-    cx_ = sum(p[0] for p in hull) / len(hull); cy_ = sum(p[1] for p in hull) / len(hull)
-    out = []
-    for x, y in hull:
-        dx, dy = x - cx_, y - cy_
-        d = math.hypot(dx, dy) or 1
-        out.append([round(x + dx / d * pad, 1), round(y + dy / d * pad, 1)])
-    return out
-
-# Sutherland-Hodgman: clip a convex polygon against one half-plane. Points on
-# the far side of the line through p0 with outward normal n are cut away;
-# clipping a convex polygon against a half-plane always yields a convex result.
-def clip_halfplane(poly, p0, n):
-    def side(pt):
-        return (pt[0]-p0[0])*n[0] + (pt[1]-p0[1])*n[1]
-    out = []
-    for i in range(len(poly)):
-        cur, prev = poly[i], poly[i-1]
-        cur_in, prev_in = side(cur) <= 0, side(prev) <= 0
-        if cur_in != prev_in:
-            d1, d2 = side(prev), side(cur)
-            t = d1 / (d1 - d2) if (d1 - d2) else 0
-            out.append([prev[0]+t*(cur[0]-prev[0]), prev[1]+t*(cur[1]-prev[1])])
-        if cur_in:
-            out.append(cur)
-    return out
-
-# Region hulls originally were all generated-hull-plus-bisector-clip: drawn
-# independently they overlapped heavily (Amplified Range's hull alone covered
-# parts of every other region, measured against live data), so each was
-# clipped against the perpendicular bisector toward every other region's
-# member centroid. That's still exactly how Outer Isles' hull is built below
-# — the one region without a MANUAL_HULL entry. A member whose actual
-# position sits past its own region's bisector or manual polygon (a real
-# outlier, not a hull artifact) renders outside its ghost boundary — expected
-# per the schema doc ("these are not meant as exact borders"), not a bug to
-# chase here.
-# Six of the seven mainland/isle regions (all but Outer Isles) now use a
-# hand-built polygon rather than the generated-hull-plus-bisector-clip below.
-# These were worked out over several iterations against live settlement data
-# in the map hull/misfit review session: starting from HULL_BOUNDARY_BIAS
-# (a per-pair bisector nudge, still the right tool for Outer Isles, the one
-# region still on the generated path), moving to fully custom shapes once it
-# became clear that some boundaries — Amplified Range's north shelf against
-# Outer Isles, Quiet Woods' southeast kink against Heartland and Steel
-# Foothills — have member clouds too intermixed for any single bisector
-# position to serve both sides. Coverage and known trade-offs, checked
-# against live data:
+# Region ghost boundaries are hand-built polygons, one per mainland region.
+# They began as generated convex hulls clipped against every neighbor's
+# bisector, but the member clouds along some boundaries (Amplified Range's
+# north shelf, Quiet Woods' southeast kink against Heartland and Steel
+# Foothills) are too intermixed for any bisector position to serve both
+# sides, so each was worked out by hand against live settlement data in the
+# hull/misfit review session. Outer Isles has no polygon by decision: its
+# settlements sit on the pegs off the headstock, and the sea around them
+# already reads as the boundary; the label alone marks the region. A member
+# whose position sits past its own polygon (a real outlier, not a hull
+# artifact) renders outside its ghost boundary - expected per the schema doc
+# ("these are not meant as exact borders"), not a bug to chase here.
+# Coverage and known trade-offs, checked against live data:
 #   delta_coast       41/43   (Mallow Hill, The Jesse Williams Band outside)
 #   amplified_range  102/110  (8 outside -- Blondshell, Jackie Venson, Joan
 #                              Jett & The Blackhearts, Kelli Baker Band, Nick
@@ -1170,47 +1122,9 @@ MANUAL_HULL = {
     ],
 }
 
-# Outer Isles is the one region still built from its generated hull, clipped
-# against every neighbor's bisector; HULL_BOUNDARY_BIAS is empty because
-# every mainland pair it used to cover now has a MANUAL_HULL entry instead,
-# but the plain-midpoint fallback in clip_to_neighbors is still exercised for
-# every Outer Isles/mainland pair.
-HULL_BOUNDARY_BIAS = {}
-
-def clip_to_neighbors(region, hull, centroids):
-    poly = [tuple(p) for p in hull]
-    cx, cy = centroids[region]
-    for other, (ox, oy) in centroids.items():
-        if other == region or not poly:
-            continue
-        key, rkey = (region, other), (other, region)
-        if key in HULL_BOUNDARY_BIAS:
-            t = HULL_BOUNDARY_BIAS[key]
-        elif rkey in HULL_BOUNDARY_BIAS:
-            t = 1 - HULL_BOUNDARY_BIAS[rkey]
-        else:
-            t = 0.5
-        mx, my = cx + t*(ox-cx), cy + t*(oy-cy)
-        poly = clip_halfplane(poly, (mx, my), (ox-cx, oy-cy))
-    return [[round(x, 1), round(y, 1)] for x, y in poly]
-
-region_hulls = {}
-region_centroids = {}
-for reg in REGIONS:
-    pts = [xy[c] for c in records if region_of[c] == reg]
-    if pts:
-        region_centroids[reg] = (sum(p[0] for p in pts) / len(pts),
-                                  sum(p[1] for p in pts) / len(pts))
-for reg in REGIONS:
-    if reg in MANUAL_HULL:
-        region_hulls[reg] = MANUAL_HULL[reg]
-        continue
-    pts = [xy[c] for c in records if region_of[c] == reg]
-    hl = hull_of(pts)
-    if hl:
-        hl = clip_to_neighbors(reg, hl, region_centroids)
-    if hl and len(hl) >= 3:
-        region_hulls[reg] = hl
+# A region absent from MANUAL_HULL (Outer Isles) gets hull=null and map.html
+# draws no boundary for it - the label still renders from labels.json.
+region_hulls = dict(MANUAL_HULL)
 
 # gateways: each ordered region pair gets one crossing point per side, so
 # cross-region routes bundle into shared corridors instead of great circles
@@ -1300,6 +1214,10 @@ out = {
     ],
     "island_labels": [{"name": nm_, "xy": xy_} for nm_, xy_ in LABELS["islands"].items()],
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
+             # roster names that are NOT settlements on purpose: the map page's
+             # staleness banner subtracts these before calling the map "behind"
+             "excluded": sorted(MAP_EXCLUDE),
+             "merged": dict(sorted(MERGES.items())),
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "pins.json").exists() else None,
              "overrides_hash": hashlib.md5((SCRIPT_DIR / "map_overrides.json").read_bytes()).hexdigest()[:10]
