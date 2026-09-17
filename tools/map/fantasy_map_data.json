@@ -38,8 +38,8 @@
   {
    "name": "Tremolo River",
    "xy": [
-    310,
-    595
+    278,
+    617
    ]
   }
  ],
@@ -440,8 +440,8 @@
    "John Primer & The Real Deal Blues Band": "John Primer",
    "Victor Wooten & The Wooten Brothers": "Victor Wooten"
   },
-  "pins_hash": "0f285994c3",
-  "overrides_hash": "e7b783d746",
+  "pins_hash": "ae740d6359",
+  "overrides_hash": "2273be19a7",
   "counts": {
    "settlements": 401,
    "routes": 476,
@@ -1138,8 +1138,7 @@
     "Grace Bowers",
     "Jon Spencer",
     "Mitch Ryder",
-    "Orianthi",
-    "Samantha Fish"
+    "Orianthi"
    ],
    "seat": "Samantha Fish",
    "suggested_name": "Fish Overdrive"
@@ -8195,17 +8194,17 @@
   {
    "id": 332,
    "name": "Samantha Fish",
-   "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "region": "slide_foothills",
+   "district": "slide_foothills:override",
    "size": "city",
    "score": 15,
    "xy": [
-    756.5,
-    307.1
+    710.9,
+    441.1
    ],
    "region_uv": [
-    0.4043,
-    0.9084
+    1.0422,
+    0.6826
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11116,8 +11115,18 @@
    "a": "Ally Venable Band",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Ally Venable Band",
@@ -11323,15 +11332,15 @@
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     364.2,
-     552.2
+     381.9,
+     554.5
     ],
     [
-     681.6,
-     293.4
+     595.6,
+     428.8
     ]
    ]
   },
@@ -11713,8 +11722,18 @@
    "a": "Bernard Allison",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Bernard Allison",
@@ -11820,8 +11839,18 @@
    "a": "Billy Gibbons",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Billy Gibbons",
@@ -12290,8 +12319,18 @@
    "a": "Buddy Guy",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Buddy Guy",
@@ -12339,15 +12378,15 @@
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     364.2,
-     552.2
+     381.9,
+     554.5
     ],
     [
-     681.6,
-     293.4
+     595.6,
+     428.8
     ]
    ]
   },
@@ -12417,8 +12456,18 @@
    "a": "Canned Heat",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Carly Harvey",
@@ -13116,18 +13165,8 @@
    "a": "Eric Johanson",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Eric Johanson",
@@ -13294,15 +13333,15 @@
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     637.1,
-     475.8
+     622.4,
+     473.3
     ],
     [
-     728.5,
-     314.0
+     617.0,
+     489.2
     ]
    ]
   },
@@ -13479,18 +13518,8 @@
    "a": "Ghalia Volt",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Gigi Perez",
@@ -13678,8 +13707,18 @@
    "a": "Grace Bowers",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Hannah Honeycutt",
@@ -14111,8 +14150,18 @@
    "a": "Joanne Shaw Taylor",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Joanne Shaw Taylor",
@@ -14226,8 +14275,18 @@
    "a": "Jon Spencer",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Josh Ritter",
@@ -14395,8 +14454,18 @@
    "a": "Kenny Wayne Shepherd",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Kenny Wayne Shepherd",
@@ -14561,18 +14630,8 @@
    "a": "Larkin Poe",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Larkin Poe",
@@ -15003,8 +15062,18 @@
    "a": "Mitch Ryder",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     713.5,
+     309.0
+    ],
+    [
+     693.3,
+     336.4
+    ]
+   ]
   },
   {
    "a": "Modest Mouse",
@@ -15348,33 +15417,23 @@
    "a": "Samantha Fish",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Samantha Fish",
    "b": "Southern Avenue",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     681.6,
-     293.4
+     595.6,
+     428.8
     ],
     [
-     364.2,
-     552.2
+     381.9,
+     554.5
     ]
    ]
   },
@@ -15382,8 +15441,18 @@
    "a": "Samantha Fish",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": true,
+   "render": "pass",
+   "via": [
+    [
+     693.3,
+     336.4
+    ],
+    [
+     713.5,
+     309.0
+    ]
+   ]
   },
   {
    "a": "Sarah McLachlan",
