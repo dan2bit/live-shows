@@ -65,6 +65,11 @@ inside its region's bounding box — the transplant-safe coordinate. `flags` app
 true: `faded` (not seen since before 2019 — ruins, ghost towns, overgrown signposts),
 `legacy` (Buddy Guy tier — lighthouses or monuments rather than towns), `unvisited`
 (same population as waystation, kept separate so you can restyle without re-deriving).
+Three more are the editor's worklist rather than facts about the artist, and a viewer-facing
+render should ignore them: `unplaced` (staged in a ring by the builder; the position is
+meaningless until hand-placed), `unpinned` (builder-positioned with no pins.json entry, so
+the position can move on a rebuild), `stray` (pinned, but the pin lies outside the region's
+polygon — advisory, since the polygons are not exact borders). All three are mainland-only.
 `score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus) if you want
 continuous scaling instead of the tier buckets.
 

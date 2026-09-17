@@ -71,7 +71,14 @@
   #rose-home:hover circle,#rose-home:focus-visible circle{opacity:.85;}
   .region-label,.geo-island,.geo-water{pointer-events:none;}
   body.editing .region-label,body.editing .geo-island,body.editing .geo-water{pointer-events:all;cursor:move;}
-  .stl.unplaced .halo{fill:none;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;vector-effect:non-scaling-stroke;}
+  /* placement halos are the editor's worklist: drawn only while editing, one ring per kind.
+     unplaced = staged, position meaningless (solid pink dash); unpinned = builder-positioned,
+     no pin, can move on a rebuild (faint dotted); stray = pinned outside its region polygon,
+     advisory, behind its own toggle (amber dash). */
+  .stl .halo{display:none;fill:none;vector-effect:non-scaling-stroke;}
+  body.editing .stl.unplaced .halo{display:block;stroke:#FF2FA0;stroke-width:1.7;stroke-dasharray:3 1.6;}
+  body.editing .stl.unpinned .halo{display:block;stroke:#FF2FA0;stroke-width:1;stroke-dasharray:1 2;opacity:.6;}
+  body.editing.strays .stl.stray .halo{display:block;stroke:#C9962E;stroke-width:1.4;stroke-dasharray:4 2;}
   .stl.ruin .dot{fill:none;stroke:#7a5a33;stroke-width:1.5;stroke-dasharray:4.5 3.5;}
   .stl.ruin text{opacity:.7;font-style:italic;}
   .stl .anchor-mark{font-size:5.5px;fill:#1d4f6e;paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:1.6px;pointer-events:none;}
@@ -139,6 +146,7 @@
     </select>
     <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save overrides (0)</button>
     <span class="save-ind" id="ind-ov" style="font-size:10.5px;margin-left:4px;"></span>
+    <label style="display:block;font-size:11.5px;margin-top:5px;"><input type="checkbox" id="showStrays" checked> region strays (amber)</label>
     <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save labels</button>
     <span class="save-ind" id="ind-lbl" style="font-size:10.5px;margin-left:4px;"></span>
     <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
@@ -250,6 +258,7 @@
   try{ PINFILE=await (await fetch('pins.json',{cache:'no-store'})).json(); }catch(e){}
 
   // #366: roster staleness — is fantasy_map_data.json behind recommend_index.json?
+  // (async: its first await yields, so the synchronous flag refresh below runs before it reads flags)
   (async()=>{
     if(!authed) return;   // decision: staleness banner is for authed users only
     let idx=null;
@@ -267,7 +276,7 @@
     // pink halo shows; "no pin" is a builder-positioned settlement with no pins.json
     // entry (Outer Isles sits on fixed pegs and is left out of that count).
     const unplaced=data.settlements.filter(s=>s.flags&&s.flags.unplaced).map(s=>s.name);
-    const nopin=data.settlements.filter(s=>!PINFILE[s.name]&&s.region!=='outer_isles').map(s=>s.name);
+    const nopin=data.settlements.filter(s=>s.flags&&s.flags.unpinned).map(s=>s.name);
     if(missing.length===0) return;
     const clause=(n,txt,names)=>n?` · <span title="${names.slice(0,20).join(', ').replace(/"/g,'&quot;')}">${n} ${txt}</span>`:'';
     const b=document.createElement('div');
@@ -281,9 +290,21 @@
       +`<span style="font-size:10.5px;display:block;opacity:.8;margin-top:2px" title="${missing.slice(0,20).join(', ').replace(/"/g,'&quot;')}">hover for names</span>`;
     document.getElementById('stage').appendChild(b);
   })();
+  // point-in-polygon for the stray flag (same ray cast as the builder's point_in_poly)
+  const HULL=Object.fromEntries(data.regions.map(r=>[r.id,r.hull]));
+  const inPoly=(x,y,poly)=>{let inside=false;for(let i=0;i<poly.length;i++){const [x1,y1]=poly[i?i-1:poly.length-1],[x2,y2]=poly[i];
+    if((y1>y)!==(y2>y)&&x<x1+(y-y1)*(x2-x1)/(y2-y1))inside=!inside;}return inside;};
+  // pins.json is position truth and the placement flags follow it: a pin saved after the
+  // last rebuild places the settlement now, so re-derive unpinned/stray from the live file
   for(const st of data.settlements){
     const p=PINFILE[st.name];
     if(p) st.xy=[+p[0],+p[1]];
+    st.flags=st.flags||{};
+    if(st.region==='outer_isles')continue;
+    if(p){delete st.flags.unplaced;delete st.flags.unpinned;
+      const h=HULL[st.region];
+      if(h&&!inPoly(st.xy[0],st.xy[1],h))st.flags.stray=true;else delete st.flags.stray;}
+    else if(!st.flags.unplaced)st.flags.unpinned=true;
   }
 
   data.regions.forEach(r=>{
@@ -408,7 +429,7 @@
     const dot=document.createElementNS(NS,'circle');
     dot.setAttribute('class','dot');dot.setAttribute('r',r);dot.setAttribute('stroke-width',.8);
     g.appendChild(dot);
-    if(s.flags&&s.flags.unplaced){
+    if(s.flags&&(s.flags.unplaced||s.flags.unpinned||s.flags.stray)){
       const halo=document.createElementNS(NS,'circle');
       halo.setAttribute('class','halo');halo.setAttribute('r',r+3.4);
       g.appendChild(halo);
@@ -544,6 +565,26 @@
   try{ Object.assign(overrides, await (await fetch('map_overrides.json',{cache:'no-store'})).json()); }catch(e){}
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
   }
+  // keep a mark's class list in step with its (live) flags after an edit
+  function reflag(g){
+    const st=S.get(g.dataset.name);
+    ['unplaced','unpinned','stray'].forEach(f=>g.classList.toggle(f,!!(st.flags&&st.flags[f])));
+    if(!g.querySelector('.halo')&&st.flags&&(st.flags.unplaced||st.flags.unpinned||st.flags.stray)){
+      const halo=document.createElementNS(NS,'circle');
+      halo.setAttribute('class','halo');halo.setAttribute('r',(R[st.size]||2)+3.4);
+      g.insertBefore(halo,g.querySelector('text'));
+    }
+  }
+  function pinHere(g,xy){
+    const st=S.get(g.dataset.name);
+    pins[g.dataset.name]=[+xy[0].toFixed(1),+xy[1].toFixed(1)];
+    st.xy=pins[g.dataset.name];
+    delete st.flags.unplaced;delete st.flags.unpinned;
+    const h=HULL[st.region];
+    if(h&&!inPoly(st.xy[0],st.xy[1],h))st.flags.stray=true;else delete st.flags.stray;
+    reflag(g);
+    expBtn.textContent=`save pins (${Object.keys(pins).length})`;
+  }
   let selected=null;
   function selectStl(g){
     selected=g;
@@ -560,9 +601,21 @@
   exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
   ovRegion.addEventListener('change',()=>{
     if(!selected)return;
-    markOv(selected.dataset.name,'region',ovRegion.value);
+    const name=selected.dataset.name, st=S.get(name), reg=data.regions.find(r=>r.id===ovRegion.value);
+    markOv(name,'region',ovRegion.value);
     selected.style.setProperty('--tint',TINT[ovRegion.value]||'var(--ink)');
+    // A pin was made for the old region; it is a well-placed pin in the wrong country now.
+    // Drop it and stage the mark near the new region's label, so the next act is the drag.
+    st.region=ovRegion.value;
+    if(pins[name]){delete pins[name];expBtn.textContent=`save pins (${Object.keys(pins).length})`;}
+    const lx=(LBL.regions[ovRegion.value]||{}).xy||reg.label_xy||reg.anchor;
+    st.xy=[lx[0]+14,lx[1]+10];
+    selected.setAttribute('transform',`translate(${st.xy[0]},${st.xy[1]})`);
+    delete st.flags.unpinned;delete st.flags.stray;st.flags.unplaced=true;
+    reflag(selected);
   });
+  document.getElementById('showStrays').addEventListener('change',e=>document.body.classList.toggle('strays',e.target.checked));
+  document.body.classList.add('strays');
   ovSize.addEventListener('change',()=>{
     if(!selected)return;
     const name=selected.dataset.name, sz=ovSize.value;
@@ -760,8 +813,7 @@
     if(dragS){
       const [mx,my]=toMap(e.clientX,e.clientY);
       dragS.g.setAttribute('transform',`translate(${mx.toFixed(1)},${my.toFixed(1)})`);
-      if(dragS.name){pins[dragS.name]=[+mx.toFixed(1),+my.toFixed(1)];
-        expBtn.textContent=`save pins (${Object.keys(pins).length})`;}
+      if(dragS.name){dragS.moved=true;pinHere(dragS.g,[mx,my]);}
       return;
     }
     if(!pan)return;
@@ -770,6 +822,12 @@
     pan={x:e.clientX,y:e.clientY};apply();
   });
   stage.addEventListener('pointerup',e=>{
+    // click (not drag) in edit mode on an unpinned settlement pins it where it stands
+    if(dragS&&!dragS.moved&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4){
+      const st=S.get(dragS.name);
+      if(st&&!pins[dragS.name]&&st.region!=='outer_isles'){pinHere(dragS.g,st.xy);
+        findmsg.textContent=`pinned ${dragS.name} where it stands`;}
+    }
     // click (not drag) in view mode toggles a settlement label
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
        &&!(authed&&window.editCb&&editCb.checked)){
