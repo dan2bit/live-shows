@@ -34,6 +34,13 @@
     576,
     367
    ]
+  },
+  {
+   "name": "Tremolo River",
+   "xy": [
+    310,
+    595
+   ]
   }
  ],
  "traced_waterways": [
@@ -405,6 +412,34 @@
  "meta": {
   "generated_from": "2026-09-16",
   "seed": 2026,
+  "excluded": [
+   "Alexia Gabriella",
+   "Antoñio Villaronga",
+   "Bev Stanton",
+   "Christian Crowley",
+   "Damien Bethel",
+   "Erin Frisby",
+   "Jasper Hobbs",
+   "John Prine Celebration",
+   "Juels Bland",
+   "Lou Black",
+   "Mx. Mundy",
+   "National Symphony Orchestra",
+   "Nina Goodman",
+   "Rebecca Berlin",
+   "Robzie Trulove",
+   "Safety Bear",
+   "Sanjay Arora",
+   "Sea Griffin",
+   "Wytold"
+  ],
+  "merged": {
+   "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
+   "Daniel Donato's Cosmic Country": "Daniel Donato",
+   "Gillian Welch & David Rawlings": "Gillian Welch",
+   "John Primer & The Real Deal Blues Band": "John Primer",
+   "Victor Wooten & The Wooten Brothers": "Victor Wooten"
+  },
   "pins_hash": "0f285994c3",
   "overrides_hash": "e7b783d746",
   "counts": {
@@ -747,40 +782,7 @@
    "rx": 88,
    "ry": 48,
    "label_lines": null,
-   "hull": [
-    [
-     677.3,
-     82.8
-    ],
-    [
-     793.5,
-     15.9
-    ],
-    [
-     858.6,
-     -2.4
-    ],
-    [
-     874.4,
-     -5.4
-    ],
-    [
-     1000.7,
-     190.1
-    ],
-    [
-     975.7,
-     245.9
-    ],
-    [
-     935.4,
-     275.2
-    ],
-    [
-     908.4,
-     285.6
-    ]
-   ]
+   "hull": null
   }
  ],
  "waterways": [
