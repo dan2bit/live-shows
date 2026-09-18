@@ -479,7 +479,7 @@
     g.dataset.lt=LABEL_TIER[s.size]||4;
     const lbl=document.createElementNS(NS,'text');
     lbl.setAttribute('class','lbl');lbl.setAttribute('x',r+3);lbl.setAttribute('y',3);
-    lbl.textContent=s.name;g.appendChild(lbl);
+    lbl.textContent=s.label||s.name;g.appendChild(lbl);   // short form from artist_display.tsv when there is one
     g.addEventListener('mouseenter',()=>{
       readout.classList.remove('idle');
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
