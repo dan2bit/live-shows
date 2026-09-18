@@ -459,8 +459,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "6f73fbe6b9",
-  "overrides_hash": "27c9506fcf",
+  "pins_hash": "91f153148f",
+  "overrides_hash": "0359c4df02",
   "counts": {
    "settlements": 399,
    "routes": 473,
@@ -3204,14 +3204,16 @@
    "size": "town",
    "score": 6,
    "xy": [
-    374.4,
-    539.7
+    423.8,
+    655.2
    ],
    "region_uv": [
-    0.38,
-    0.753
+    0.51,
+    1.2424
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 2,
    "vip": 0,
@@ -4473,15 +4475,16 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    471.9,
-    559.7
+    446.0,
+    646.0
    ],
    "region_uv": [
-    -0.0044,
-    0.5942
+    -0.108,
+    1.1474
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "stray": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -6692,15 +6695,16 @@
    "size": "town",
    "score": 9,
    "xy": [
-    418.6,
-    537.4
+    420.0,
+    646.0
    ],
    "region_uv": [
-    0.4963,
-    0.7432
+    0.5,
+    1.2034
    ],
    "flags": {
-    "legacy": true
+    "legacy": true,
+    "stray": true
    },
    "src": "history pass: seen as support",
    "times_seen": 2,
@@ -6780,14 +6784,16 @@
    "size": "town",
    "score": 6,
    "xy": [
-    400.5,
-    556.5
+    423.8,
+    636.8
    ],
    "region_uv": [
-    0.4487,
-    0.8242
+    0.51,
+    1.1644
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -7020,14 +7026,16 @@
    "size": "town",
    "score": 6,
    "xy": [
-    616.1,
-    513.3
+    677.2,
+    495.1
    ],
    "region_uv": [
-    0.5724,
-    0.2968
+    0.8168,
+    0.1804
    ],
-   "flags": {},
+   "flags": {
+    "unpinned": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -7041,15 +7049,16 @@
    "size": "town",
    "score": 9,
    "xy": [
-    619.9,
-    537.4
+    433.0,
+    633.0
    ],
    "region_uv": [
-    0.5876,
-    0.4513
+    -0.16,
+    1.0641
    ],
    "flags": {
-    "legacy": true
+    "legacy": true,
+    "stray": true
    },
    "src": "history pass: seen as support",
    "times_seen": 2,
@@ -7130,15 +7139,16 @@
    "size": "town",
    "score": 3,
    "xy": [
-    276.9,
-    605.4
+    433.0,
+    659.0
    ],
    "region_uv": [
-    0.4096,
-    0.5712
+    0.8634,
+    1.0865
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "stray": true
    },
    "src": "fast track: NPR Best Roots Music 2022; Grand Ole Opry debut 2022;…",
    "times_seen": 0,
@@ -7220,14 +7230,16 @@
    "size": "town",
    "score": 6,
    "xy": [
-    532.3,
-    504.2
+    573.6,
+    476.5
    ],
    "region_uv": [
-    0.2372,
-    0.2385
+    0.4022,
+    0.0607
    ],
-   "flags": {},
+   "flags": {
+    "unpinned": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -8165,14 +8177,16 @@
    "size": "town",
    "score": 6,
    "xy": [
-    266.8,
-    562.7
+    442.2,
+    655.2
    ],
    "region_uv": [
-    0.3802,
-    0.1606
+    0.8901,
+    1.05
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -8745,15 +8759,16 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    564.3,
-    597.6
+    442.2,
+    636.8
    ],
    "region_uv": [
-    0.3652,
-    0.8372
+    -0.1232,
+    1.0885
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "stray": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -9115,15 +9130,16 @@
    "size": "town",
    "score": 0.5,
    "xy": [
-    524.0,
-    499.2
+    551.6,
+    576.2
    ],
    "region_uv": [
-    0.204,
-    0.2064
+    0.3146,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
    "src": "follow (Lower)",
    "times_seen": 0,
@@ -10200,14 +10216,16 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    521.8,
-    517.8
+    552.8,
+    553.7
    ],
    "region_uv": [
-    0.1952,
-    0.3256
+    0.3192,
+    0.556
    ],
-   "flags": {},
+   "flags": {
+    "unpinned": true
+   },
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -10676,7 +10694,7 @@
    "name": "Ziggy Marley",
    "region": "river_port",
    "district": "river_port:d1",
-   "size": "hamlet",
+   "size": "town",
    "score": 3,
    "xy": [
     648.5,
