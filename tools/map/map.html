@@ -479,7 +479,7 @@
     g.dataset.lt=LABEL_TIER[s.size]||4;
     const lbl=document.createElementNS(NS,'text');
     lbl.setAttribute('class','lbl');lbl.setAttribute('x',r+3);lbl.setAttribute('y',3);
-    lbl.textContent=s.name;g.appendChild(lbl);
+    lbl.textContent=s.label||s.name;g.appendChild(lbl);   // short form from artist_display.tsv when there is one
     g.addEventListener('mouseenter',()=>{
       readout.classList.remove('idle');
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
@@ -489,6 +489,53 @@
     });
     gStl.appendChild(g);
   }
+
+  // Label placement. Every label defaults to the east of its mark; where that would print
+  // over a neighbour, it moves to the least crowded of four slots (east, west, north, south).
+  // Scored in map units against every settlement's dot (always visible), against labels
+  // already placed - a label whose tier is shown whenever this one is counts in full, one that
+  // only appears at a deeper zoom counts half - and against the lakes, which cost more than a
+  // dot: a name printed across water is the one thing that never reads. The collision box is
+  // the x-height band, not the full line, and a dot must reach at least DOT_TOL into it to
+  // count, so a mark that grazes a descender's worth of the box does not push a label off
+  // its side. Bigger settlements place first so a capital is never pushed aside by a hamlet.
+  // Harbormistresses keep the west slot for their anchor glyph and legends keep the north for
+  // their tick. Ties go east, so nothing moves without cause.
+  const CHAR_W=3.5,LBL_H=5.5,DOT_TOL=1.5,LAKE_COST=3;   // 7px Oswald 500 in map units, roughly
+  const LAKES=(data.lakes||[]).map(l=>({x0:l.xy[0]-l.r,x1:l.xy[0]+l.r,y0:l.xy[1]-l.r,y1:l.xy[1]+l.r}));
+  function placeLabels(){
+    const marks=[...gStl.querySelectorAll('.stl')].map(g=>{
+      const st=S.get(g.dataset.name),m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
+      return{g,st,x:+m[1],y:+m[2],r:R[st.size]||2,lt:+g.dataset.lt,w:(g.querySelector('.lbl').textContent.length)*CHAR_W};
+    }).sort((a,b)=>order.indexOf(b.st.size)-order.indexOf(a.st.size));
+    const placed=[];
+    const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
+    for(const m of marks){
+      const gap=m.r+3;
+      const slots=[
+        {k:'e',x:gap,y:3,a:'start', box:{x0:m.x+gap,x1:m.x+gap+m.w,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
+        {k:'w',x:-gap,y:3,a:'end',  box:{x0:m.x-gap-m.w,x1:m.x-gap,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
+        {k:'n',x:0,y:-gap-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y-gap-1-LBL_H,y1:m.y-gap-1}},
+        {k:'s',x:0,y:gap+LBL_H-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y+gap-1,y1:m.y+gap-1+LBL_H}},
+      ].filter(sl=>!(sl.k==='w'&&m.st.flags.harbormistress)&&!(sl.k==='n'&&m.st.flags.legacy));
+      let best=null;
+      for(const sl of slots){
+        let cost=0;
+        for(const o of marks){ if(o===m)continue;
+          const d={x0:o.x-o.r-1,x1:o.x+o.r+1,y0:o.y-o.r-1,y1:o.y+o.r+1};
+          const ox=Math.min(sl.box.x1,d.x1)-Math.max(sl.box.x0,d.x0),oy=Math.min(sl.box.y1,d.y1)-Math.max(sl.box.y0,d.y0);
+          if(ox>DOT_TOL&&oy>DOT_TOL)cost+=1; }
+        for(const o of placed){ if(hit(sl.box,o.box))cost+=o.lt<=m.lt?2:1; }
+        for(const l of LAKES){ if(hit(sl.box,l))cost+=LAKE_COST; }
+        if(!best||cost<best.cost)best={sl,cost};
+      }
+      const t=m.g.querySelector('.lbl');
+      t.setAttribute('x',best.sl.x);t.setAttribute('y',best.sl.y);t.setAttribute('text-anchor',best.sl.a);
+      m.g.dataset.side=best.sl.k;
+      placed.push({box:best.sl.box,lt:m.lt});
+    }
+  }
+  placeLabels();
 
   // toggles: regions / unvisited / names / geo names
   const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
@@ -636,6 +683,7 @@
     selected.setAttribute('transform',`translate(${st.xy[0]},${st.xy[1]})`);
     delete st.flags.unpinned;delete st.flags.stray;st.flags.unplaced=true;
     reflag(selected);
+    placeLabels();
   });
   document.getElementById('showStrays').addEventListener('change',e=>document.body.classList.toggle('strays',e.target.checked));
   document.body.classList.add('strays');
@@ -842,6 +890,7 @@
     pan={x:e.clientX,y:e.clientY};apply();
   });
   stage.addEventListener('pointerup',e=>{
+    if(dragS&&dragS.moved)placeLabels();   // a moved mark changes its neighbours' best slots too
     // click (not drag) in edit mode on an unpinned settlement pins it where it stands
     if(dragS&&!dragS.moved&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4){
       const st=S.get(dragS.name);

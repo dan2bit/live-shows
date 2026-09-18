@@ -720,9 +720,9 @@ _riv_segs = []
 for wid, ext in (("the_bigmuddy", (648, 665)), ("the_parade", (636, 618)), ("slowhand_creek", None)):
     pts = [tuple(p) for p in _ww[wid]["points"]] + ([ext] if ext else [])
     _riv_segs += list(zip(pts, pts[1:]))
-_lakes = ([(tuple(_ww["the_forest_lake"]["points"][0]), 20)]
-          + [(tuple(p), 14) for p in _ww["the_knob_lakes"]["points"]]
-          + [(tuple(p), 34) for p in _ww["the_shoulder_lakes"]["points"]])
+# lake radii, map units - the hazard pass keeps marks off them and the page keeps labels off them
+LAKE_R = {"the_forest_lake": 20, "the_knob_lakes": 14, "the_shoulder_lakes": 34}
+_lakes = [(tuple(p), LAKE_R[wid]) for wid in LAKE_R for p in _ww[wid]["points"]]
 _HARBOR = ((642, 592), 62)
 
 def hazard_push(x, y):
@@ -1302,6 +1302,9 @@ out = {
                               spec.get("label_size")),
                  "hull": region_hulls.get(rid)} for rid, spec in REGIONS.items()],
     "waterways": [{**w, "points": [list(p) for p in w["points"]]} for w in WATERWAYS],
+    # the lakes as circles, so the page's label placement can treat water as an obstacle
+    "lakes": [{"name": n_, "xy": list(p_), "r": LAKE_R[w["id"]]}
+              for w in WATERWAYS if w["id"] in LAKE_R for n_, p_ in zip(w["names"], w["points"])],
     "districts": [{"id": did, **d} for did, d in sorted(districts.items())],
     "settlements": settlements,
     "routes": routes,
