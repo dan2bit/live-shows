@@ -62,7 +62,17 @@
   body.tracing .stl text{opacity:.9;}
   #traceName{width:100%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:4px;margin-top:4px;display:none;}
   .tracepath{fill:none;stroke:#0e5a70;stroke-width:1.2;stroke-dasharray:3 2;opacity:.75;vector-effect:non-scaling-stroke;}
-  .clicklabel{font-size:6.5px;paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2px;}
+  /* settlement labels: every settlement carries one <text class="lbl"> at one size; zoom decides
+     which tiers show. apply() writes data-zoom-tier on the svg from vb.w (1: capitals and cities,
+     2: + towns, 3: + villages, 4: + hamlets and waystations) and each .stl carries data-lt, its
+     own tier. A label pinned by a click (.pinlabel), a finder hit (.found) or a traced settlement
+     (.traced) shows at any zoom. The legend's "names" toggle still hides them all. */
+  .stl .lbl{display:none;font-size:7px;}
+  #map[data-zoom-tier="1"] .stl[data-lt="1"] .lbl,
+  #map[data-zoom-tier="2"] .stl[data-lt="1"] .lbl,#map[data-zoom-tier="2"] .stl[data-lt="2"] .lbl,
+  #map[data-zoom-tier="3"] .stl[data-lt="1"] .lbl,#map[data-zoom-tier="3"] .stl[data-lt="2"] .lbl,#map[data-zoom-tier="3"] .stl[data-lt="3"] .lbl,
+  #map[data-zoom-tier="4"] .stl .lbl,
+  .stl.pinlabel .lbl,.stl.found .lbl,.stl.traced .lbl{display:block;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
   #rose{opacity:.94;}
@@ -421,6 +431,17 @@
   // settlements, small first so capitals sit on top
   const order=['waystation','hamlet','village','town','city','capital'];
   const R={capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7};
+  // Label tiers. vb.w is the visible width in map units (1000 = the whole map), so it already is
+  // the zoom level: above 500 only capitals and cities are labelled, then towns join at 2x,
+  // villages at 4x, hamlets and waystations at 8x. Towns and villages deliberately wait for a
+  // visibly deeper zoom than an even split would give; tune the three breakpoints by eye
+  // against the Range ridge and the Woods, the two densest regions.
+  const ZOOM_TIERS=[500,250,120];
+  const zoomTier=w=>w>ZOOM_TIERS[0]?1:w>ZOOM_TIERS[1]?2:w>ZOOM_TIERS[2]?3:4;
+  const LABEL_TIER={capital:1,city:1,town:2,village:3,hamlet:4,waystation:4};
+  // the shallowest vb.w that shows a label of each tier, just inside its breakpoint - where a
+  // single finder match lands so its own name is readable
+  const FOUND_W={1:1000,2:480,3:240,4:110};
   const readout=document.getElementById('readout');
   for(const s of [...data.settlements].sort((x,y)=>order.indexOf(x.size)-order.indexOf(y.size))){
     const g=document.createElementNS(NS,'g');
@@ -455,12 +476,10 @@
       ring.setAttribute('class','ring');ring.setAttribute('r',r+2.4);
       g.appendChild(ring);
     }
-    if(s.size==='capital'||s.size==='city'){
-      const t=document.createElementNS(NS,'text');
-      t.setAttribute('x',r+3);t.setAttribute('y',3);
-      t.setAttribute('font-size',s.size==='capital'?9:7);
-      t.textContent=s.name;g.appendChild(t);
-    }
+    g.dataset.lt=LABEL_TIER[s.size]||4;
+    const lbl=document.createElementNS(NS,'text');
+    lbl.setAttribute('class','lbl');lbl.setAttribute('x',r+3);lbl.setAttribute('y',3);
+    lbl.textContent=s.name;g.appendChild(lbl);
     g.addEventListener('mouseenter',()=>{
       readout.classList.remove('idle');
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
@@ -489,7 +508,7 @@
   let foundEls=[];
   function clearFound(){
     foundEls.forEach(g=>{g.classList.remove('found');
-      g.querySelectorAll('.foundring,.foundlabel').forEach(e=>e.remove());});
+      g.querySelectorAll('.foundring').forEach(e=>e.remove());});
     foundEls=[];
   }
   finder.addEventListener('input',()=>{
@@ -503,15 +522,15 @@
       const ring=document.createElementNS(NS,'circle');
       ring.setAttribute('class','foundring');ring.setAttribute('r',9);
       g.insertBefore(ring,g.firstChild);
-      if(!g.querySelector('text:not(.anchor-mark)')){
-        const t=document.createElementNS(NS,'text');
-        t.setAttribute('class','foundlabel');t.setAttribute('x',7);t.setAttribute('y',3);
-        t.setAttribute('font-size',7);t.textContent=g.dataset.name;g.appendChild(t);
-      }
     });
     if(hits.length){
       const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(hits[0].getAttribute('transform'));
-      if(m){vb.x=+m[1]-vb.w/2;vb.y=+m[2]-vb.h/2;apply();}
+      if(m){
+        // exactly one match: zoom in (never out) to the depth where its own label tier shows,
+        // so a hamlet searched by name lands as a labelled dot, not a floating unlabelled one
+        if(hits.length===1){const w=FOUND_W[+hits[0].dataset.lt]||FOUND_W[4];if(vb.w>w){vb.w=w;vb.h=w*H/W;}}
+        vb.x=+m[1]-vb.w/2;vb.y=+m[2]-vb.h/2;apply();
+      }
     }
   });
 
@@ -520,7 +539,7 @@
 
   // zoom: wheel-to-cursor, buttons, fit; drag to pan — one viewBox for all layers
   let vb={x:0,y:0,w:W,h:H};
-  const apply=()=>map.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const apply=()=>{map.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);map.dataset.zoomTier=zoomTier(vb.w);};
   function zoomAt(px,py,k){
     vb={x:px-(px-vb.x)*k,y:py-(py-vb.y)*k,w:vb.w*k,h:vb.h*k};apply();
   }
@@ -706,7 +725,7 @@
     }
     document.querySelectorAll('.stl.traced').forEach(g=>{
       g.classList.remove('traced');
-      g.querySelectorAll('.traceno,.clicklabel').forEach(t=>t.remove());
+      g.querySelectorAll('.traceno').forEach(t=>t.remove());
     });
     if(!tracing)return;
     tracing.settlements.forEach((n,i)=>{
@@ -717,9 +736,6 @@
       const no=document.createElementNS(NS,'text');
       no.setAttribute('class','traceno');no.setAttribute('x',-(R[st.size]||2)-5);no.setAttribute('y',-3);
       no.textContent=i+1;g.appendChild(no);
-      const lb=document.createElementNS(NS,'text');
-      lb.setAttribute('class','clicklabel');lb.setAttribute('x',(R[st.size]||2)+2.5);lb.setAttribute('y',2.5);
-      lb.textContent=n;g.appendChild(lb);
     });
   }
   function toggleMember(g){
@@ -836,22 +852,12 @@
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
        &&!(authed&&window.editCb&&editCb.checked)){
       const g=e.target.closest&&e.target.closest('.stl');
-      if(g){
-        const ex=g.querySelector('.clicklabel');
-        if(ex)ex.remove();
-        else if(!g.querySelector('text:not(.anchor-mark):not(.clicklabel)')){
-          const st=S.get(g.dataset.name);
-          const t=document.createElementNS(NS,'text');
-          t.setAttribute('class','clicklabel');
-          t.setAttribute('x',(R[st.size]||2)+2.5);t.setAttribute('y',2.5);
-          t.textContent=g.dataset.name;g.appendChild(t);
-        }
-      }
+      if(g)g.classList.toggle('pinlabel');
     }
     pan=null;dragS=null;dragL=null;downAt=null;stage.classList.remove('panning');
   });
   window.addEventListener('keydown',e=>{
-    if(e.key==='Escape')document.querySelectorAll('.clicklabel').forEach(t=>t.remove());
+    if(e.key==='Escape')document.querySelectorAll('.stl.pinlabel').forEach(g=>g.classList.remove('pinlabel'));
   });
   apply();
 
