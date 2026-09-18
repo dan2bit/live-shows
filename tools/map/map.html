@@ -490,6 +490,46 @@
     gStl.appendChild(g);
   }
 
+  // Label placement. Every label defaults to the east of its mark; where that would print
+  // over a neighbour, it moves to the least crowded of four slots (east, west, north, south).
+  // Scored in map units against every settlement's dot (always visible) and against labels
+  // already placed - a label whose tier is shown whenever this one is counts in full, one that
+  // only appears at a deeper zoom counts half. Bigger settlements place first so a capital is
+  // never pushed aside by a hamlet. Harbormistresses keep the west slot for their anchor glyph
+  // and legends keep the north for their tick. Ties go east, so nothing moves without cause.
+  const CHAR_W=3.5,LBL_H=7;   // 7px Oswald 500 in map units, roughly
+  function placeLabels(){
+    const marks=[...gStl.querySelectorAll('.stl')].map(g=>{
+      const st=S.get(g.dataset.name),m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
+      return{g,st,x:+m[1],y:+m[2],r:R[st.size]||2,lt:+g.dataset.lt,w:(g.querySelector('.lbl').textContent.length)*CHAR_W};
+    }).sort((a,b)=>order.indexOf(b.st.size)-order.indexOf(a.st.size));
+    const placed=[];
+    const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
+    for(const m of marks){
+      const gap=m.r+3;
+      const slots=[
+        {k:'e',x:gap,y:3,a:'start', box:{x0:m.x+gap,x1:m.x+gap+m.w,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
+        {k:'w',x:-gap,y:3,a:'end',  box:{x0:m.x-gap-m.w,x1:m.x-gap,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
+        {k:'n',x:0,y:-gap-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y-gap-1-LBL_H,y1:m.y-gap-1}},
+        {k:'s',x:0,y:gap+LBL_H-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y+gap-1,y1:m.y+gap-1+LBL_H}},
+      ].filter(sl=>!(sl.k==='w'&&m.st.flags.harbormistress)&&!(sl.k==='n'&&m.st.flags.legacy));
+      let best=null;
+      for(const sl of slots){
+        let cost=0;
+        for(const o of marks){ if(o===m)continue;
+          const d={x0:o.x-o.r-1,x1:o.x+o.r+1,y0:o.y-o.r-1,y1:o.y+o.r+1};
+          if(hit(sl.box,d))cost+=1; }
+        for(const o of placed){ if(hit(sl.box,o.box))cost+=o.lt<=m.lt?2:1; }
+        if(!best||cost<best.cost)best={sl,cost};
+      }
+      const t=m.g.querySelector('.lbl');
+      t.setAttribute('x',best.sl.x);t.setAttribute('y',best.sl.y);t.setAttribute('text-anchor',best.sl.a);
+      m.g.dataset.side=best.sl.k;
+      placed.push({box:best.sl.box,lt:m.lt});
+    }
+  }
+  placeLabels();
+
   // toggles: regions / unvisited / names / geo names
   const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
   document.querySelectorAll('#legend input[data-t]').forEach(cb=>{
@@ -636,6 +676,7 @@
     selected.setAttribute('transform',`translate(${st.xy[0]},${st.xy[1]})`);
     delete st.flags.unpinned;delete st.flags.stray;st.flags.unplaced=true;
     reflag(selected);
+    placeLabels();
   });
   document.getElementById('showStrays').addEventListener('change',e=>document.body.classList.toggle('strays',e.target.checked));
   document.body.classList.add('strays');
@@ -842,6 +883,7 @@
     pan={x:e.clientX,y:e.clientY};apply();
   });
   stage.addEventListener('pointerup',e=>{
+    if(dragS&&dragS.moved)placeLabels();   // a moved mark changes its neighbours' best slots too
     // click (not drag) in edit mode on an unpinned settlement pins it where it stands
     if(dragS&&!dragS.moved&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4){
       const st=S.get(dragS.name);
