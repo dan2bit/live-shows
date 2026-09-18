@@ -262,6 +262,20 @@ for r in tsv_rows(DATA / "artists.tsv"):
             "most_recent": r.get("Most Recent Seen") or r.get("First Seen") or "",
         }
 
+# Map labels. data/artist_display.tsv (Canonical | Medium | Short) is shared with
+# the festival posters; the map takes Short, falls back to Medium, and emits a
+# label only when it differs from the canonical, so the JSON stays sparse. The
+# canonical name is what every other field, the plate readout, the finder and
+# the artist card use - the label is a rendering concern of the canvas alone.
+DISPLAY = {}
+_disp_path = DATA / "artist_display.tsv"
+if _disp_path.exists():
+    for r in tsv_rows(_disp_path):
+        c = resolve(r.get("Canonical")) or (r.get("Canonical") or "").strip()
+        lab = (r.get("Short") or r.get("Medium") or "").strip()
+        if c and lab and lab != c:
+            DISPLAY[c] = lab
+
 # history TSVs credit seen-time to indexed artists that artists.tsv never rowed
 # (support slots, co-headline cells); artists.tsv remains authoritative when present.
 def _hist_tokens(cell):
@@ -931,7 +945,7 @@ def rename_settlement(old, new):
     if old not in records:
         return
     records[new] = {**records.pop(old), "canonical": new}
-    for dmap in (seen_meta, SIZE_OVERRIDE):
+    for dmap in (seen_meta, SIZE_OVERRIDE, DISPLAY):
         if old in dmap: dmap[new] = dmap.pop(old)
     for smap in (region_of, district_of):
         if old in smap: smap[new] = smap.pop(old)
@@ -1041,6 +1055,7 @@ for c in sorted(records):
     m = seen_meta.get(c, {})
     settlements.append({
         "id": records[c]["id"], "name": c,
+        **({"label": DISPLAY[c]} if c in DISPLAY else {}),
         "region": reg, "district": district_of.get(c),
         "size": OVERRIDE_SIZE.get(c) or CURATED_SIZE.get(c) or SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg]),
         "score": round(s, 1),
