@@ -492,12 +492,17 @@
 
   // Label placement. Every label defaults to the east of its mark; where that would print
   // over a neighbour, it moves to the least crowded of four slots (east, west, north, south).
-  // Scored in map units against every settlement's dot (always visible) and against labels
+  // Scored in map units against every settlement's dot (always visible), against labels
   // already placed - a label whose tier is shown whenever this one is counts in full, one that
-  // only appears at a deeper zoom counts half. Bigger settlements place first so a capital is
-  // never pushed aside by a hamlet. Harbormistresses keep the west slot for their anchor glyph
-  // and legends keep the north for their tick. Ties go east, so nothing moves without cause.
-  const CHAR_W=3.5,LBL_H=7;   // 7px Oswald 500 in map units, roughly
+  // only appears at a deeper zoom counts half - and against the lakes, which cost more than a
+  // dot: a name printed across water is the one thing that never reads. The collision box is
+  // the x-height band, not the full line, and a dot must reach at least DOT_TOL into it to
+  // count, so a mark that grazes a descender's worth of the box does not push a label off
+  // its side. Bigger settlements place first so a capital is never pushed aside by a hamlet.
+  // Harbormistresses keep the west slot for their anchor glyph and legends keep the north for
+  // their tick. Ties go east, so nothing moves without cause.
+  const CHAR_W=3.5,LBL_H=5.5,DOT_TOL=1.5,LAKE_COST=3;   // 7px Oswald 500 in map units, roughly
+  const LAKES=(data.lakes||[]).map(l=>({x0:l.xy[0]-l.r,x1:l.xy[0]+l.r,y0:l.xy[1]-l.r,y1:l.xy[1]+l.r}));
   function placeLabels(){
     const marks=[...gStl.querySelectorAll('.stl')].map(g=>{
       const st=S.get(g.dataset.name),m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
@@ -518,8 +523,10 @@
         let cost=0;
         for(const o of marks){ if(o===m)continue;
           const d={x0:o.x-o.r-1,x1:o.x+o.r+1,y0:o.y-o.r-1,y1:o.y+o.r+1};
-          if(hit(sl.box,d))cost+=1; }
+          const ox=Math.min(sl.box.x1,d.x1)-Math.max(sl.box.x0,d.x0),oy=Math.min(sl.box.y1,d.y1)-Math.max(sl.box.y0,d.y0);
+          if(ox>DOT_TOL&&oy>DOT_TOL)cost+=1; }
         for(const o of placed){ if(hit(sl.box,o.box))cost+=o.lt<=m.lt?2:1; }
+        for(const l of LAKES){ if(hit(sl.box,l))cost+=LAKE_COST; }
         if(!best||cost<best.cost)best={sl,cost};
       }
       const t=m.g.querySelector('.lbl');
