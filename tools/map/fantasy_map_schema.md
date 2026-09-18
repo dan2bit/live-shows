@@ -58,6 +58,11 @@ hover, draw soft hulls around their members, or ignore them entirely at low zoom
 }
 ```
 
+`label`, present only when it differs from `name`, is the short form the canvas prints
+beside the mark (from `data/artist_display.tsv`, Short then Medium, the same file the
+festival posters use). `name` is canonical and is what the readout, the finder and the artist
+card show; a renderer that has room should ignore `label`.
+
 `size` is one of `capital` (one per region, the highest-scoring seen act), `city`, `town`,
 `village`, `hamlet`, `waystation` (followed but never seen — render as a campfire, survey
 marker, or rumor on the map's edge). `region_uv` is the settlement's position normalized 0..1
