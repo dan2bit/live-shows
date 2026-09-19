@@ -91,7 +91,14 @@
   body.editing.strays .stl.stray .halo{display:block;stroke:#C9962E;stroke-width:1.4;stroke-dasharray:4 2;}
   .stl.ruin .dot{fill:none;stroke:#7a5a33;stroke-width:1.5;stroke-dasharray:4.5 3.5;}
   .stl.ruin text{opacity:.7;font-style:italic;}
-  .stl .anchor-mark{font-size:5.5px;fill:#1d4f6e;paint-order:stroke;stroke:rgba(237,224,194,.8);stroke-width:1.6px;pointer-events:none;}
+  /* Paper-white on the tinted dot. Strokes are non-scaling so the glyph keeps its
+     weight as the dot grows with zoom; the geometry scales, the ink does not. */
+  .stl .hm-anchor{color:var(--paper);pointer-events:none;}
+  .stl .hm-anchor *{vector-effect:non-scaling-stroke;}
+  /* An unvisited dot is paper-filled, so a paper glyph would vanish into it. No
+     current harbormistress is unvisited (the flag implies a visit), but the map
+     data is editable, so this is a guard rather than dead style. */
+  .stl.unvisited .hm-anchor{color:var(--tint);}
   .stl.found .foundring{fill:none;stroke:#FFDD35;stroke-width:2.2;vector-effect:non-scaling-stroke;animation:pulse 1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{stroke-opacity:1;}50%{stroke-opacity:.25;}}
   #finder{width:100%;font-family:'Oswald';font-size:13px;background:#f6eed9;border:1.5px solid var(--ink);padding:5px 7px;margin-top:9px;}
@@ -135,7 +142,25 @@
 </style>
 </head>
 <body>
-<div id="stage"><svg id="map" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"></svg>
+<div id="stage"><svg id="map" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"><defs>
+  <!-- Harbormistress anchor. Hand-drawn rather than an icon-set path: at a 3-4 unit
+       radius an imported anchor turns to mud, and four stroked elements survive.
+       Stroke is currentColor so the same symbol serves the paper-white glyph on a
+       tinted dot and the ink-coloured swatch in the legend.
+       Nothing here is a closed loop except the shackle - that is what keeps the
+       silhouette reading as an anchor and not a flower at small sizes. -->
+  <symbol id="hm-anchor" viewBox="-5 -5 10 10">
+    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+      <circle cx="0" cy="-3.6" r="1.1" stroke-width="0.8"/>
+      <line x1="0" y1="-2.5" x2="0" y2="2.6"/>
+      <line x1="-1.5" y1="-1.6" x2="1.5" y2="-1.6" stroke-width="0.85"/>
+      <path d="M0 2.6 C -2.6 2.6 -3.4 0.8 -3.2 -0.4"/>
+      <path d="M-3.2 -0.4 L-2.1 0.1 M-3.2 -0.4 L-3.9 0.5" stroke-width="0.8"/>
+      <path d="M0 2.6 C 2.6 2.6 3.4 0.8 3.2 -0.4"/>
+      <path d="M3.2 -0.4 L2.1 0.1 M3.2 -0.4 L3.9 0.5" stroke-width="0.8"/>
+    </g>
+  </symbol>
+</defs></svg>
 </div>
 <div id="err"></div>
 <div id="zoomer">
@@ -176,7 +201,7 @@
       <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="rgba(237,224,194,.9)" stroke="#3d6b45" stroke-width="1.2" stroke-dasharray="1.6 1.4"/></svg> unvisited</span>
       <span><svg width="12" height="14"><path d="M6 1 L8.4 4.6 L3.6 4.6 Z" fill="#3d6b45" stroke="#221A12" stroke-width=".5"/><circle cx="6" cy="9" r="4" fill="#C9962E" stroke="#221A12"/></svg> legend</span>
       <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="none" stroke="#7a5a33" stroke-width="1.4" stroke-dasharray="4.5 3.5"/></svg> ruin</span>
-      <span>&#9875; harbor</span>
+      <span><svg width="12" height="12" viewBox="-5 -5 10 10" style="color:var(--ink)"><use href="#hm-anchor" x="-5" y="-5" width="10" height="10"/></svg> harbor</span>
     </div>
     <div id="ownerControls" style="display:none">
       <label><input type="checkbox" id="editMode"> edit</label>
@@ -467,9 +492,16 @@
       g.appendChild(tk);
     }
     if(s.flags&&s.flags.harbormistress){
-      const am=document.createElementNS(NS,'text');
-      am.setAttribute('class','anchor-mark');am.setAttribute('x',-(r+6.5));am.setAttribute('y',3);
-      am.textContent='\u2693';g.appendChild(am);
+      // On the dot, not west of it: the label placement pass below no longer has to
+      // forfeit a slot to keep the name clear of the glyph. Scaled to the dot's own
+      // radius so it grows with zoom the way the dot does.
+      const am=document.createElementNS(NS,'use');
+      am.setAttribute('class','hm-anchor');
+      am.setAttribute('href','#hm-anchor');
+      am.setAttribute('x',-5);am.setAttribute('y',-5);
+      am.setAttribute('width',10);am.setAttribute('height',10);
+      am.setAttribute('transform',`scale(${(r/5).toFixed(3)})`);
+      g.appendChild(am);
     }
     if(s.size==='capital'){
       const ring=document.createElementNS(NS,'circle');
@@ -499,8 +531,9 @@
   // the x-height band, not the full line, and a dot must reach at least DOT_TOL into it to
   // count, so a mark that grazes a descender's worth of the box does not push a label off
   // its side. Bigger settlements place first so a capital is never pushed aside by a hamlet.
-  // Harbormistresses keep the west slot for their anchor glyph and legends keep the north for
-  // their tick. Ties go east, so nothing moves without cause.
+  // Legends keep the north slot clear for their tick; harbormistresses now carry their
+  // anchor on the dot, so they place like anyone else. Ties go east, so nothing moves
+  // without cause.
   const CHAR_W=3.5,LBL_H=5.5,DOT_TOL=1.5,LAKE_COST=3;   // 7px Oswald 500 in map units, roughly
   const LAKES=(data.lakes||[]).map(l=>({x0:l.xy[0]-l.r,x1:l.xy[0]+l.r,y0:l.xy[1]-l.r,y1:l.xy[1]+l.r}));
   function placeLabels(){
@@ -517,7 +550,7 @@
         {k:'w',x:-gap,y:3,a:'end',  box:{x0:m.x-gap-m.w,x1:m.x-gap,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
         {k:'n',x:0,y:-gap-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y-gap-1-LBL_H,y1:m.y-gap-1}},
         {k:'s',x:0,y:gap+LBL_H-1,a:'middle',box:{x0:m.x-m.w/2,x1:m.x+m.w/2,y0:m.y+gap-1,y1:m.y+gap-1+LBL_H}},
-      ].filter(sl=>!(sl.k==='w'&&m.st.flags.harbormistress)&&!(sl.k==='n'&&m.st.flags.legacy));
+      ].filter(sl=>!(sl.k==='n'&&m.st.flags.legacy));
       let best=null;
       for(const sl of slots){
         let cost=0;
