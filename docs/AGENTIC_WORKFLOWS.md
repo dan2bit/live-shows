@@ -51,7 +51,7 @@ live-shows-private/ (private repo — dan2bit/live-shows-private)
   spending.tsv                ← spending authority
 ```
 
-The `tools/` directory contains Dan-only pipeline files: YouTube scripts, follow lists, playbooks, personal data. None of it is read by the site.
+The `tools/` directory contains Dan-only pipeline files: YouTube scripts, follow lists, playbooks, personal data, and the page-watch registry (`tools/watch/`). None of it is read by the site.
 
 ### Auth layer
 
@@ -83,9 +83,9 @@ The system prompt (Claude Instructions, pinned to the Project) carries the stand
 
 ---
 
-## Inbox + Data Sessions (Routines 1–6)
+## Inbox + Data Sessions (Routines 1–9)
 
-Triggered by: forwarded ticket receipts, post-show note emails, newsletter emails, resale sale notifications
+Triggered by: forwarded ticket receipts, post-show note emails, newsletter emails, resale sale notifications, scheduled digests
 
 These sessions are launched by the `live-shows-inbox` Claude Skill
 (`tools/playbooks/skills/live-shows-inbox/SKILL.md`) - it establishes the
@@ -141,6 +141,28 @@ routine search until someone notices it unlabeled in a general inbox sweep.
 **Trigger:** Email tagged `ticket-sold` (forwards from dan2bit@gmail.com with `sold` in subject)
 **Data written:** `data/live_shows_current.tsv` (→ `staging`, remove/update row), `dan2bit/live-shows-private → current_private.tsv` (remove/update), `dan2bit/live-shows-private → spending.tsv` (negative cost row), Google Calendar (delete event)
 **Key rules:** Rarest routine; records net proceeds as a negative Ticket Cost in spending.tsv to offset the original purchase
+
+### Routine 9 — Page watch alert
+
+**Trigger:** `[watch] <name>` mail tagged `watch-alert`, produced by `.github/workflows/daily-page-watch.yml`
+**Data written:** none directly — this routine reads and decides; anything actionable flows into the same potentials/follows writes as Routines 3–5
+**Key rules:** Replaces the retired changedetection.io pod (see below). Each thread is already taste-profile-scored before it reaches the inbox — `score_candidates.py`, the same engine Routine 7's HFTB pipeline uses. See `EMAIL_WORKFLOWS.md` → Routine 9 for the full read/act procedure, and the `watch-manager` skill (`tools/playbooks/skills/watch-manager/SKILL.md`) for adding, retiring, or force-checking a watched page — that conversational work is a separate skill, not part of this routine.
+
+**Page-watch system design.** `tools/watch/` is a small declarative registry
+(`watches.tsv`: one row per watched page, `kind` = `artist` or `venue`, its own
+`check_every_days` cadence) plus a generic engine (`watch_diff.py`,
+`extractors.py`) run daily by `daily-page-watch.yml`. It exists specifically
+because the prior approach — a changedetection.io pod doing raw page-diffs —
+worked fine for pages a real browser session can read but hit bot detection
+(403s, Playwright crashes) the moment the same check ran unattended; the
+lesson from that investigation was **plain-HTTP-fetchable or don't watch it
+headless at all**, never "add a browser and hope." Every row in the registry
+is confirmed fetchable before it's added — see the `watch-manager` skill.
+A `venue`-kind page's added/removed bookings get real relevance scoring
+(exact tracking-file match, then a source-specific free pre-filter, then
+`score_candidates.py`) before anything mails, which is the taste-profile
+layer the old raw-diff system never had. Full write protocol for
+`watches.tsv` and the snapshot conventions: `DATA_WRITE_PROTOCOLS.md`.
 
 ---
 
@@ -217,7 +239,7 @@ The full, current catalog — triggers, behavior, and conventions — lives in
 | Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
 | Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
 | Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos`, `data-hygiene`, `follows-watch` |
-| Scheduled digests | `refresh-releases`, `weekly-hftb-diff`, `weekly-potentials-digest` |
+| Scheduled digests | `refresh-releases`, `weekly-hftb-diff`, `weekly-potentials-digest`, `daily-page-watch` |
 
 `close-playlist-issue` and `close-photo-issue` both parse the issue body/comment
 against the structure their respective `.github/ISSUE_TEMPLATE/*.md` file defines
@@ -232,7 +254,7 @@ are prevented by excluding each bot's output file from its own trigger paths.
 All bot pushes rebase onto `staging` before pushing to prevent bot-vs-bot races.
 
 **Mail-to-inbox workflows** (`refresh-releases`, `weekly-hftb-diff`,
-`weekly-potentials-digest`, `follows-watch`) send through
+`weekly-potentials-digest`, `follows-watch`, `daily-page-watch`) send through
 `scripts/notify_email.py` (Resend, `RESEND_API_KEY` secret) to the rhbl inbox,
 where Gmail filters label them for the Inbox+Data routines. An empty report
 sends nothing.
@@ -256,6 +278,13 @@ Three things about that family are easy to get wrong when adding a fourth:
   category arrives**, or that first instance sits unlabeled and invisible to
   every routine's `label:X -label:processed` search — see the `releases-digest`
   first-run note under Routine 4 above for the concrete incident.
+
+`daily-page-watch` is architecturally the odd one out in this family: it mails
+**one `[watch] <name>` message per site with a real change**, not one digest
+summarizing everything, since the point is a specific alert per change (matching
+the retired changedetection pod's own behavior) rather than a periodic roundup.
+It also reuses `score_candidates.py` as a subprocess rather than reimplementing
+scoring — see the page-watch system design note under Routine 9 above.
 
 The Resend key can only push mail through Resend and reads no mailbox, so it is
 not a send-as credential for the inbox it writes to — unlike the Gmail app
@@ -309,4 +338,4 @@ Memory updates happen via the `memory_user_edits` tool. Sensitive content (healt
 
 ## Invocation Patterns
 
-The workflows are invoked conversationally — "run Routine 3" or "process inbox" — rather than through scripts or cron jobs. This keeps the human in the loop at each step and makes it easy to deviate from the routine when something unexpected comes up.
+The workflows are invoked conversationally — "run Routine 3" or "process inbox" — rather than through scripts or cron jobs. This keeps the human in the loop at each step and makes it easy to deviate from the routine when something unexpected comes up. `daily-page-watch.yml` is the one exception to "no cron jobs" in this system — its daily schedule is what makes an unattended headless watch possible at all; the routine that reads its output is still entirely conversational.
