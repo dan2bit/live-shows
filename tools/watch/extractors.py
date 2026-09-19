@@ -1,24 +1,34 @@
 """
 extractors.py - per-site page parsing for the watch system.
 
-Two things live here: a small dependency-free HTML-to-visible-text helper
-(visible_lines), used by every "artist"-kind watch and by any "venue"-kind
-extractor that wants a starting point; and the EXTRACTORS registry, keyed by
-the string a watches.tsv row's `extractor` column names.
+Three things live here: a small dependency-free HTML-to-visible-text helper
+(visible_lines), used by every "artist"-kind watch by default and by any
+"venue"-kind extractor that wants a starting point; a generic image-URL
+extractor (image_urls) for the rare "artist"-kind site whose real signal is
+which image is referenced rather than any visible text; and the EXTRACTORS
+registry, keyed by the string a watches.tsv row's `extractor` column names.
 
-An EXTRACTORS entry is a dict:
+An EXTRACTORS entry is a dict with either or both of:
     {
         "extract": fn(html_text) -> [{"date": "YYYY-MM-DD", "title": str,
                                        "status": str}, ...],
         "offprofile": fn(title) -> bool,   # optional - a fast, free, source-
                                             # specific negative signal, checked
                                             # before any scoring API call
+        "lines": fn(html_text) -> [str, ...],
     }
+
+"extract" (+ optional "offprofile") is read by watch_diff.py for a
+"venue"-kind row - structured event records, diffed as a set. "lines" is read
+for an "artist"-kind row that names an extractor explicitly - a whole-page
+diff over whatever this function returns instead of the default
+visible_lines() output. An "artist"-kind row with no extractor named (the
+common case) needs no entry here at all - watch_diff.py calls visible_lines()
+directly.
 
 Adding a new venue-kind site means adding one function here and one row in
 watches.tsv - see tools/playbooks/skills/watch-manager/SKILL.md for the
-conversational path. An "artist"-kind site (a single-subject tour page) needs
-no entry here at all - watch_diff.py diffs its cleaned text directly.
+conversational path.
 """
 
 import re
@@ -237,7 +247,31 @@ def hamilton_live(html_text):
     return events
 
 
+# ---- Generic: image URLs on a page, as pseudo-text-lines -------------------
+#
+# For an "artist"-kind watch whose real signal lives in which image is
+# referenced rather than in any visible text - a small venue that posts its
+# calendar as a flyer image with the month baked into the filename (e.g. JV's
+# Restaurant: JV_NEW_FLYER_DESIGN_SEPT_2026_...) rather than running a real
+# ticketing platform. This never reads the image itself - OCR is out of scope
+# for this system - it only diffs which image URL the page currently
+# references, which is enough to answer "did a new one go up" without ever
+# seeing what is on it. Pair with the row's own ignore_contains to exclude a
+# static image on the same page that never signals anything (a logo, a "how
+# to book us" flyer) and would otherwise fire a spurious mail if it changed.
+#
+# Reads the raw HTML only - not visible_lines() output, since some sites swap
+# an <img> tag's src to an inline data: URI via client-side JS after load
+# (confirmed on JV's Restaurant's own calendar page, 2026-09-19); that JS
+# never runs against a plain fetch, so the raw HTML this function sees always
+# carries the real, informative filename regardless.
+
+def image_urls(html_text):
+    return re.findall(r'<img[^>]+src="([^"]+)"', html_text)
+
+
 EXTRACTORS = {
     "blues_alley": {"extract": blues_alley, "offprofile": blues_alley_offprofile},
     "hamilton_live": {"extract": hamilton_live},
+    "image_urls": {"lines": image_urls},
 }
