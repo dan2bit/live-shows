@@ -8,7 +8,8 @@ decision (iconography, typography, the painted background) belongs to the design
 ## The model in one paragraph
 
 Every tracked artist is a **settlement**. Genre gravity (Last.fm tags) sorts settlements into
-six **regions**, each with a terrain archetype: trad/acoustic blues on the coastal tidewater,
+six tag-derived **regions** (a seventh, the Steel Foothills, is hand-rostered — see the end of
+this file), each with a terrain archetype: trad/acoustic blues on the coastal tidewater,
 blues-rock in the mountains, Americana/country on the farmland plains, funk/brass/jam at the
 river port, folk/singer-songwriter in the forest, and genre outliers plus Celtic acts offshore
 on the isles. Within a region, graph community detection groups settlements into **districts**
@@ -63,6 +64,12 @@ beside the mark (from `data/artist_display.tsv`, Short then Medium, the same fil
 festival posters use). `name` is canonical and is what the readout, the finder and the artist
 card show; a renderer that has room should ignore `label`.
 
+`src`, present on nearly every settlement, is the builder's own sentence about why this
+artist is on the map at all - `follow (Medium)`, `history pass: seen as support`,
+`seen as support (history TSVs; no artists.tsv row)`. It is provenance, not taste: the
+readout prints it in small type, and the artist card surfaces it as *on the map because:
+...* for a settlement nobody has visited, where it is the only answer to "why is this here".
+
 `size` is one of `capital` (one per region, the highest-scoring seen act), `city`, `town`,
 `village`, `hamlet`, `waystation` (followed but never seen — render as a campfire, survey
 marker, or rumor on the map's edge). `region_uv` is the settlement's position normalized 0..1
@@ -82,8 +89,37 @@ continuous scaling instead of the tier buckets.
 provenance (`road` kinship, `river` attended-bill, `bridge` shared-sideman, `trail` taste
 similarity); `render` equals `cls` within a region and is upgraded across regions to `ferry`,
 `pass`, or `highway`. Suggested visual weight: roads and river-roads solid, bridges distinct
-(they are rare and interesting — five exist), trails faint/dashed, ferries as dotted arcs over
-water. Current census: ~340 routes, of which ~160 trails.
+(they are rare and interesting — nine exist), trails faint/dashed, ferries as dotted arcs over
+water. Current census: 480 routes — 285 trails, 172 river-roads, 14 roads, 9 bridges; after the
+cross-region re-class, 99 render as passes, 85 as highways and 8 as ferries.
+
+## What the artist card consumes
+
+`artist-modal.js` renders a settlement-aware card, and the contract between it and this
+data is deliberately narrow - the module never learns map internals. A caller passes:
+
+```js
+openArtistModal(settlement.name, {          // ALWAYS the canonical name, never `label`
+  surface:'the map',
+  label: settlement.label || null,          // the short form the canvas printed, context only
+  settlement:{
+    region, region_label, size,             // -> the "where" line, under the canonical name
+    tint,                                   // the region colour, becomes the card's accent
+    flags,                                  // `unvisited` switches the glyph and the phrasing
+    src                                     // -> "on the map because: ..." when never visited
+  }
+});
+```
+
+Two rules the map side must honour:
+
+**The card opens on the canonical name.** `label` may legitimately read `Kingfish` on a
+narrow mark, but the card resolves and displays the full `artists.tsv` identity, with the
+short form shown beneath it as *opened from the map as Kingfish* - never in its place.
+
+**The glyph agrees with the canvas.** The card draws the settlement mark the way the map
+draws it - filled tinted dot, plus a ring for a capital, hollow and dashed for `unvisited` -
+so the two surfaces never contradict each other about what a settlement is.
 
 ## Suggested render order
 
@@ -125,14 +161,25 @@ assignments. The knobs worth turning live at the top of build_fantasy_map.py: TA
 CURATED_REGIONS / CAPITAL_OVERRIDE (the Steel Foothills machinery), EDGE_WEIGHT, and the
 size thresholds in size_tier.
 
-## Current census (2026-09-01 index)
+## Current census (2026-09-18 index)
 
-293 settlements, 341 routes, 55 districts across seven regions. Regional capitals: Kingfish
-(The Amplified Range, 86 settlements), Larkin Poe (The Steel Foothills, 12 - see below),
-Daniel Donato (The Heartland, 44), The Lone Bellow (The Quiet Woods, 63), Trombone Shorty
-(Second Line Riverlands, 37), Ana Popovic (The Delta Coast, 20), and New York's Finest
-holding the Outer Isles (31), where the tribute acts, the pop outliers, and the Celtic
-bands share ferry service.
+403 settlements, 480 routes, 78 districts across seven regions - by size: 7 capitals,
+29 cities, 99 towns, 46 villages, 141 hamlets, 81 waystations.
+
+| region | settlements | capital |
+|---|---|---|
+| The Amplified Range | 98 | Christone 'Kingfish' Ingram |
+| The Quiet Woods | 81 | The Lone Bellow |
+| Secondline Riverlands | 63 | Trombone Shorty & Orleans Avenue |
+| The Heartland | 51 | Daniel Donato |
+| The Delta Coast | 43 | Shemekia Copeland |
+| The Outer Isles | 43 | AJR |
+| The Steel Foothills | 24 | Larkin Poe (see below) |
+
+Two capitals are decreed rather than computed: Larkin Poe and AJR hold theirs through
+`CAPITAL_OVERRIDE`, and Shemekia Copeland through `CURATED_SIZE` - an explicit curatorial
+swap with Ana Popovic, independent of either artist's score. The Outer Isles is where the
+tribute acts, the pop outliers and the Celtic bands share ferry service.
 
 ## The Steel Foothills (curated region)
 

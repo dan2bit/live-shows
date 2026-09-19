@@ -28,16 +28,25 @@ So a generator emitting one name everywhere would regress both layouts, and a
 generator storing only the short name would lose the link back to artist data
 (`identity_keys()` resolves the canonical form, not the poster's abbreviation).
 
-`data/artist_display.tsv` holds `Artist | Short | Medium`:
+`data/artist_display.tsv` holds `Canonical | Medium | Short | Poster`:
 
-  - `Short`  - the crescendo poster, where type is largest
-  - `Medium` - the timeline poster's two-column list
-  - neither  - the canonical name is already short enough, which is the case for
-               58 of the 60 acts
+  - `Short`  - the MAP only: a label beside a 3-pixel dot
+  - `Medium` - the map's roomier contexts
+  - `Poster` - both festival posters, sparse: present only where the poster wants
+               something other than `Medium`
+  - blank    - fall back to `Medium`, then to the canonical name
+
+`Short` is map-only by decision. The map abbreviates hard because its labels sit
+beside a dot - `St. Paul & The Broken Bones` becomes `Broken Bones` - and those
+cuts read as mistakes at poster size. `Poster` exists because the two surfaces are
+answering different questions, not because one of them is wrong.
 
 It lives in `data/` rather than `festival/` because it is not festival-specific:
 the map has the same problem, where a long name overflows a settlement label. A
-second copy under `tools/map/` would be exactly the duplication this prevents.
+second copy under `tools/map/` did appear and has since been merged back into this
+one - which is why the header reads `Canonical` rather than `Artist`, and why this
+parser reads by column NAME. Most rows in it are the map's and name acts that are
+not on any festival bill; that is expected, not drift.
 
 IT IS NOT recommend_aliases.tsv, AND MUST NOT BE MERGED WITH IT
 
@@ -136,23 +145,39 @@ def parse_markdown(text):
 
 
 def parse_overrides(path):
-    """-> {canonical: {short, medium}}. Absent file is fine - most acts need none."""
+    """-> {canonical: {short, medium}}. Absent file is fine - most acts need none.
+
+    Read by COLUMN NAME, not position. This file is shared with the map builder,
+    whose header is `Canonical | Medium | Short` - a positional read of that order
+    silently swaps the two widths, and a positional header guard looking for the
+    literal "Artist" lets the header row through as an override for an act called
+    "Canonical". Both happened. tools/map/build_fantasy_map.py has always read it
+    by name, which is why only this side broke.
+
+    The identity column answers to `Canonical` or `Artist`, so either header works.
+    """
     if not path.exists():
         return {}
+    lines = [l for l in path.read_text(encoding="utf-8").splitlines()
+             if l.strip() and not l.lstrip().startswith("#")]
+    if not lines:
+        return {}
+    header = [c.strip().lower() for c in lines[0].split("\t")]
+    if header[0] not in ("canonical", "artist"):
+        raise SystemExit("FATAL: %s has an unrecognised header %r - expected a "
+                         "Canonical (or Artist) column first" % (path, lines[0]))
+    idx = {name: header.index(name) for name in ("short", "medium", "poster")
+           if name in header}
+
     out = {}
-    for i, raw in enumerate(path.read_text(encoding="utf-8").splitlines()):
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
+    for raw in lines[1:]:
         cells = [c.strip() for c in raw.split("\t")]
-        if i == 0 and cells[0].lower() == "artist":
-            continue
         if not cells[0]:
             continue
         entry = {}
-        if len(cells) > 1 and cells[1]:
-            entry["short"] = cells[1]
-        if len(cells) > 2 and cells[2]:
-            entry["medium"] = cells[2]
+        for width, col in idx.items():
+            if col < len(cells) and cells[col]:
+                entry[width] = cells[col]
         if entry:
             out[cells[0]] = entry
     return out
@@ -188,12 +213,11 @@ def check(days, overrides):
     if acts and acts != 60:
         problems.append("parsed %d acts, expected 60" % acts)
 
-    # Resolved through identity_keys, not raw equality - see the docstring. An
-    # exact match would report a false stale row the moment a quote style differs.
-    for name in overrides:
-        if not (identity_keys(name) & lineup_keys):
-            problems.append("display override for %r, which is not in the lineup - "
-                            "cut act, or a typo in the override" % name)
+    # NOT an error when a row names an act that is not on the bill: this file is
+    # shared with the map, which carries a row for every settlement that needs a
+    # shorter label. Most of its rows will never appear in a festival lineup. The
+    # check that used to live here assumed a festival-scoped file of two rows and
+    # fired 56 times the moment the two files were merged.
     return problems
 
 

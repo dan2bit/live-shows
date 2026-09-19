@@ -25,6 +25,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../artist-modal.css">
+<!-- not deferred: amInit() runs at the top of the inline script below -->
+<script src="../../artist-modal.js"></script>
 <style>
   :root{
     --paper:#EDE0C2; --ink:#221A12; --gold:#C9962E;
@@ -105,6 +108,14 @@
   #findmsg{font-family:'Special Elite',monospace;font-size:10.5px;margin-top:3px;min-height:13px;}
   .stl text{font-family:'Oswald';font-weight:500;fill:var(--ink);
     paint-order:stroke;stroke:rgba(237,224,194,.85);stroke-width:2.4px;pointer-events:none;}
+  /* A visible settlement name is the link to its card - the same rule the poster and the
+     list pages use, so the map does not invent a third convention. The DOT keeps toggling
+     the label, so an unlabelled hamlet is still "click to ask its name, click the name to
+     ask about it". View mode only: edit and trace keep pointer-events:none here so drag
+     and trace targets are exactly what they were. */
+  body:not(.editing):not(.tracing) .stl text.lbl{pointer-events:auto;cursor:pointer;}
+  body:not(.editing):not(.tracing) .stl text.lbl:hover{text-decoration:underline;}
+  #readout .name.am-open{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;}
   .stl:hover .dot{stroke-width:1.6;}
 
   #plate{
@@ -163,6 +174,12 @@
 </defs></svg>
 </div>
 <div id="err"></div>
+<!-- Artist-modal mount: the .am-overlay shell from artist-modal.css. Ids match AM.mount. -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
 <div id="zoomer">
   <button id="zin" title="Zoom in">+</button>
   <button id="zout" title="Zoom out">&minus;</button>
@@ -220,6 +237,11 @@
   const SVG_BG=qs.get('svg')||'map.svg';
   const DATA=qs.get('data')||'fantasy_map_data.json';
   const map=document.getElementById('map');
+  // Artist modal. basePath lifts its repo-relative data fetches out of tools/map/; configUrl
+  // lets the module read site.owner and features.* itself, since this page has no app.js and
+  // therefore no SITE_CONFIG. No write path is passed, so the favorite gauge is read-only
+  // here exactly as it is on the graph.
+  amInit({basePath:'../../',mount:'artistModal',theme:'map',configUrl:'../../config.yaml'});
   const err=m=>{const e=document.getElementById('err');e.style.display='block';e.textContent=m;};
   // cache:'no-store' defeats the browser cache but not the Pages CDN edge; a per-load
   // query string is what actually fetches the file that was just committed (the
@@ -512,10 +534,17 @@
     const lbl=document.createElementNS(NS,'text');
     lbl.setAttribute('class','lbl');lbl.setAttribute('x',r+3);lbl.setAttribute('y',3);
     lbl.textContent=s.label||s.name;g.appendChild(lbl);   // short form from artist_display.tsv when there is one
+    // Everything the card needs to agree with the canvas, and nothing about map internals.
+    // The canonical name is passed separately: s.label may be a short display form, and the
+    // modal must always resolve and show the full canonical identity.
+    g._amCtx=()=>({surface:'the map',label:(s.label&&s.label!==s.name)?s.label:null,
+      settlement:{region:s.region,region_label:RLABEL[s.region]||s.region,size:s.size,
+        tint:TINT[s.region]||null,flags:s.flags||{},src:s.src||null}});
     g.addEventListener('mouseenter',()=>{
       readout.classList.remove('idle');
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
-      readout.innerHTML=`<div class="name">${s.name}</div>
+      readoutFor=g;
+      readout.innerHTML=`<div class="name am-open" title="Open the artist card">${s.name}</div>
         <div class="where">${RLABEL[s.region]||s.region} \u2014 ${s.size}</div>
         <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}${s.src?`<br><span style="font-family:'Special Elite';font-size:10.5px;opacity:.8">${s.src}</span>`:''}</div>`;
     });
@@ -930,17 +959,60 @@
       if(st&&!pins[dragS.name]&&st.region!=='outer_isles'){pinHere(dragS.g,st.xy);
         findmsg.textContent=`pinned ${dragS.name} where it stands`;}
     }
-    // click (not drag) in view mode toggles a settlement label
+    // click (not drag) in view mode: a visible NAME opens the card, the dot toggles the label
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
-       &&!(authed&&window.editCb&&editCb.checked)){
+       &&!(authed&&window.editCb&&editCb.checked)&&!document.body.classList.contains('tracing')){
       const g=e.target.closest&&e.target.closest('.stl');
-      if(g)g.classList.toggle('pinlabel');
+      if(g&&e.target.closest('text.lbl'))openSettlementCard(g);
+      else if(g)g.classList.toggle('pinlabel');
     }
     pan=null;dragS=null;dragL=null;downAt=null;stage.classList.remove('panning');
   });
-  window.addEventListener('keydown',e=>{
-    if(e.key==='Escape')document.querySelectorAll('.stl.pinlabel').forEach(g=>g.classList.remove('pinlabel'));
+  // ── artist card: three ways in, none of which spends the dot's click budget ──
+  // The canonical name is always what the modal opens on; s.label (the short form the
+  // canvas may be printing) rides along as context only.
+  let readoutFor=null;
+  function openSettlementCard(g){
+    if(!g||typeof openArtistModal!=='function')return;
+    openArtistModal(g.dataset.name,g._amCtx?g._amCtx():null);
+  }
+  // The plate readout works in EVERY mode, including edit and trace where the canvas path is
+  // off, and gives touch a route: tap the dot, then tap the name on the plate.
+  readout.addEventListener('click',e=>{
+    if(e.target.closest('.name.am-open')&&readoutFor)openSettlementCard(readoutFor);
   });
+  // Finder: Enter on exactly one match opens its card, after the input handler has zoomed to it.
+  finder.addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const q=fold(finder.value.trim());
+    if(q.length<2)return;
+    const hits=[...gStl.querySelectorAll('.stl')].filter(g=>fold(g.dataset.name||'').includes(q));
+    if(hits.length===1){e.preventDefault();openSettlementCard(hits[0]);}
+  });
+  window.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    // With the card open Esc closes it and nothing else - the click-labels survive, so
+    // dismissing the card does not also wipe the labels the reader just set up.
+    const am=document.getElementById('artistModal');
+    if(am&&am.classList.contains('open')){closeArtistModal();return;}
+    document.querySelectorAll('.stl.pinlabel').forEach(g=>g.classList.remove('pinlabel'));
+  });
+  // Deep link: #artist/<slug> on this page opens the card AND recentres on that settlement
+  // (finder-style pan, zoom untouched). A card opened by clicking never moves the map.
+  function amRecentre(){
+    const m=(location.hash||'').match(/^#artist\/(.+)$/);
+    if(!m)return;
+    const want=decodeURIComponent(m[1]);
+    // amSlugify, not a local copy: amNorm de-inverts "X, The" and drops a leading article,
+    // so a hand-rolled slug would silently miss "The Teskey Brothers" and never recentre.
+    if(typeof amSlugify!=='function')return;
+    const g=[...gStl.querySelectorAll('.stl')].find(x=>amSlugify(x.dataset.name||'')===want);
+    if(!g)return;
+    const t=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
+    if(t){vb.x=+t[1]-vb.w/2;vb.y=+t[2]-vb.h/2;apply();}
+  }
+  window.addEventListener('hashchange',amRecentre);
+  amRecentre();
   apply();
 
   // the plate drags by its title bar
