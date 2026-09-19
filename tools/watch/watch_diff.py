@@ -136,9 +136,25 @@ def is_due(row, force_slug):
 
 # ---- artist-kind: whole-page text diff -------------------------------------
 
-def clean_lines(html_text, ignore_contains):
-    from extractors import visible_lines
-    lines = visible_lines(html_text)
+def clean_lines(html_text, ignore_contains, extractor_name=None):
+    """Default: visible_lines(). If the row names an extractor with a "lines"
+    entry, use that instead - for an artist-kind site whose real signal is
+    which image is referenced rather than any visible text (see
+    extractors.image_urls). Unset/"-" (every row so far except one) is
+    unaffected - this is purely additive."""
+    if extractor_name and extractor_name != "-":
+        from extractors import EXTRACTORS
+        spec = EXTRACTORS.get(extractor_name)
+        if spec and "lines" in spec:
+            lines = spec["lines"](html_text)
+        else:
+            print("::warning::artist-kind row names extractor '%s' with no 'lines' entry - "
+                  "falling back to visible_lines" % extractor_name)
+            from extractors import visible_lines
+            lines = visible_lines(html_text)
+    else:
+        from extractors import visible_lines
+        lines = visible_lines(html_text)
     if ignore_contains and ignore_contains != "-":
         bad = [s.strip().lower() for s in ignore_contains.split("|") if s.strip()]
         lines = [ln for ln in lines if not any(b in ln.lower() for b in bad)]
@@ -147,7 +163,7 @@ def clean_lines(html_text, ignore_contains):
 
 def process_artist(row):
     html_text = fetch(row["url"])
-    new_lines = clean_lines(html_text, row.get("ignore_contains", "-"))
+    new_lines = clean_lines(html_text, row.get("ignore_contains", "-"), row.get("extractor"))
     snap_path = SNAPSHOTS / ("%s.txt" % row["slug"])
     summary = ["%s: %d visible lines" % (row["name"], len(new_lines))]
 
