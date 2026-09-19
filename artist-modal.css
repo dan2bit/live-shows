@@ -5,8 +5,8 @@
    because hosts differ - the graph mirrors styles.css but under other names
    (--muted, --dim, --brand) and lacks the badge triplets - and the `site` theme
    is a fixed palette, not "whatever the host has". A themed host overrides these
-   same tokens under .am-card[data-am-theme="..."]: poster is defined at the end of
-   this file; map is not yet.
+   same tokens under .am-card[data-am-theme="..."]: poster and map are defined at
+   the end of this file.
 
    The nine --am-* tokens at the end of the block were hardcoded near-blacks
    (#141414, #232323, #6f6b60 ...) that would render as black blobs on any paper
@@ -196,6 +196,45 @@ span.am-b-photo{color:var(--text-dim);background:var(--am-hat-no-bg);border-styl
 .am-card[data-am-theme="poster"] .am-name{font-family:'Alfa Slab One',serif;font-weight:400;font-size:25px;letter-spacing:0;text-transform:none;line-height:1.02;}
 .am-card[data-am-theme="poster"] .am-close{background:#EDE0C2;border-color:#221A12;color:#221A12;}
 .am-card[data-am-theme="poster"] .am-you{box-shadow:inset 0 8px 12px -10px rgba(34,26,18,.5);}
+
+/* settlement line (map theme): the plate's "where" readout with the glyph the canvas
+   draws. Lives in the base block, not the map theme, because the markup is theme-agnostic -
+   only a caller that passes ctx.settlement ever renders it. */
+.am-stl{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.04em;color:var(--text-muted);margin-top:5px;}
+.am-stl-mark{width:13px;height:13px;flex:0 0 13px;color:var(--tint,var(--amber));}
+.am-stl-why{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
+  color:var(--text-dim);margin-top:7px;}
+
+/* ── map theme: the map plate's own bezel - paper ground, ink border with the inset paper
+   outline, Oswald for the name. The accent is --tint, the settlement's REGION colour, set
+   on the card by the caller, so the meters and dots match the dot that was clicked. Falls
+   back to the poster juke-red if a caller passes no tint. ── */
+.am-card[data-am-theme="map"]{
+  --mono:'Special Elite',monospace;--sans:'Oswald',sans-serif;
+  --bg:#EDE0C2;--surface:#EDE0C2;--surface-bright:#f5ecd6;--border:#c7b58c;--border-bright:#a8925f;
+  --text:#221A12;--text-muted:#5a4b33;--text-dim:#6f5e42;
+  --amber:var(--tint,#A63D2F);--amber-dim:#7a2a20;--amber-bg:#e9cfae;
+  --green:#3d6b45;--green-dim:#5a8a62;--green-bg:#d6dcc3;
+  --yellow:#8A6A1F;--yellow-dim:#b09447;--yellow-bg:#e8d9ad;
+  --red:#A63D2F;--sell:#2E4A6B;--sell-dim:#5f7a99;--sell-bg:#cfd6df;
+  --hat:#8A6A1F;--hat-dim:#a8925f;--hat-bg:#e5d3a4;
+  --book:#5a3f7a;--book-dim:#8b6fa8;--book-bg:#ddd0e3;
+  --gray:#6f5e42;--gray-dim:#a8925f;
+  --am-you-bg:#E3D2AB;--am-rule:#b9a578;--am-sec-h:#7a6a4a;--am-sim-bg:#E9DBB8;--am-hat-no-bg:#E9DBB8;
+  --am-combined-bg:#E9DBB8;--am-minimal:#7a6a4a;--am-you-lbl:#221A12;--am-gauge-track:#c7b58c;
+  --am-hatch-a:#E3D2AB;--am-hatch-b:#EDE0C2;--am-play-hover:#e0c39a;
+  /* Gauge keeps the brand hat's own red. The region tints (foothills purple, coast indigo,
+     woods green) clash with the red logo the ring wraps, so the accent stops at the meters. */
+  --am-gauge-fill:#d80000;--am-gauge-glow:216,0,0;
+  background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 55%),#EDE0C2;
+  border:2px solid #221A12;border-radius:0;
+  outline:1px solid #EDE0C2;outline-offset:-6px;
+  box-shadow:0 8px 28px rgba(0,0,0,.55);
+}
+.am-card[data-am-theme="map"] .am-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:22px;letter-spacing:0;text-transform:none;line-height:1.1;}
+.am-card[data-am-theme="map"] .am-close{background:#EDE0C2;border-color:#221A12;color:#221A12;}
+.am-card[data-am-theme="map"] .am-you{box-shadow:inset 0 8px 12px -10px rgba(34,26,18,.5);}
 
 @media(max-width:768px){
   .artist-modal{width:100vw;max-width:100vw;}

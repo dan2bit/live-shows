@@ -19,7 +19,7 @@
 var AM={
   basePath:'',          // prefix for every relative data fetch: '' at repo root, '../../../' from tools/research/graph/
   mount:'artistModal',  // id of the overlay element; its content area is <mount>Body
-  theme:'site',         // data-am-theme on the rendered card: 'site' (default) or 'poster'; map is not styled yet
+  theme:'site',         // data-am-theme on the rendered card: 'site' (default), 'poster' or 'map'
   esc:null,             // HTML escaper                       (app.js: esc)
   features:null,        // feature-flag predicate (key)->bool  (app.js: featureOn)
   config:null,          // site config object                 (app.js: SITE_CONFIG)
@@ -357,7 +357,7 @@ async function amFavSave(message){
 function amRender(rec,displayName,key){
   if(!rec)return amUnknown(displayName,key);
   var spotify=amFeature('spotify');
-  var h='<div class="am-card" data-am-theme="'+amEsc(AM.theme)+'">';
+  var h='<div class="am-card" data-am-theme="'+amEsc(AM.theme)+'"'+amTintStyle()+'>';
   h+='<button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>';
   // Identity header (square-avatar fallback for the banner)
   h+='<div class="am-head">';
@@ -366,6 +366,7 @@ function amRender(rec,displayName,key){
     :'<div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>';
   h+='<div class="am-id"><div class="am-name">'+amEsc(rec.name||displayName||'')+'</div>';
   h+=amStatusLine(rec.name||displayName||'');
+  h+=amSettlement();
   h+=amFrom();
   if(rec.genres&&rec.genres.length)
     h+='<div class="am-genres">'+rec.genres.slice(0,4).map(function(g){return'<span class="am-genre">'+amEsc(g)+'</span>';}).join('')+'</div>';
@@ -388,11 +389,47 @@ function amFrom(){
   if(c.note)h+=' \u00b7 '+amEsc(c.note);
   return h+'</div>';
 }
+// Map settlement line: the plate's own "where" readout, with the settlement glyph drawn
+// the way the map draws it - filled tinted dot (plus ring for a capital), hollow dashed
+// for never-visited. The modal agrees with the canvas rather than restating it in words.
+// Driven entirely by ctx.settlement, so this module never learns map internals.
+// The map passes its own region tint (a hex, or a var() naming a :root custom property the
+// host defines). Whitelisted rather than escaped: this lands in a style attribute, where
+// amEsc's entity escaping would not make an arbitrary string safe.
+function amTintStyle(){
+  var t=amCtx&&amCtx.settlement&&amCtx.settlement.tint;
+  if(!t||!/^(#[0-9a-f]{3,8}|var\(--[a-z0-9-]+\)|[a-z]+)$/i.test(String(t)))return'';
+  return' style="--tint:'+t+'"';
+}
+function amSettlement(){
+  var c=amCtx,st=c&&c.settlement;if(!st)return'';
+  var unv=!!(st.flags&&st.flags.unvisited),cap=st.size==='capital';
+  var g='<svg class="am-stl-mark" viewBox="-8 -8 16 16" aria-hidden="true">';
+  g+=unv
+    ?'<circle r="4.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.8 1.6"/>'
+    :'<circle r="4.6" fill="currentColor" stroke="var(--text)" stroke-width="1"/>';
+  if(cap)g+='<circle r="7" fill="none" stroke="currentColor" stroke-width="1.2"/>';
+  g+='</svg>';
+  var where=[st.region_label||st.region,st.size].filter(Boolean).join(' \u2014 ');
+  return'<div class="am-stl">'+g+'<span>'+amEsc(where)+'</span></div>';
+}
+// Why a never-visited settlement is on the map at all: the builder's own src string.
+function amMapWhy(){
+  var c=amCtx,st=c&&c.settlement;
+  if(!st||!st.src)return'';
+  return'<div class="am-stl-why">on the map because: '+amEsc(st.src)+'</div>';
+}
+// The map's phrasing for a settlement nobody has visited, in place of the bare badge.
+function amNeverText(){
+  var st=amCtx&&amCtx.settlement;
+  return st?'never seen \u2014 a rumor on the map':'never seen';
+}
 function amUnknown(displayName,key){
-  return'<div class="am-card" data-am-theme="'+amEsc(AM.theme)+'"><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
+  return'<div class="am-card" data-am-theme="'+amEsc(AM.theme)+'"'+amTintStyle()+'><button class="am-close" onclick="closeArtistModal()" aria-label="Close">\u2715</button>'
     +'<div class="am-head"><div class="am-avatar">'+amHatImg('am-hat-fallback')+'</div>'
     +'<div class="am-id"><div class="am-name">'+amEsc(displayName||'Unknown')+'</div>'
     +amStatusLine(displayName||'')
+    +amSettlement()
     +amFrom()
     +'<div class="am-none">No details on file yet.</div></div></div>'
     +amRowOnly(key)
@@ -502,14 +539,14 @@ function amYou(rec,key){
   var rows=amRowContext(key),considering=rows.considering;
   if(!(n>0||considering||hatEligible||rec.affinity)){
     // 1e edge case: hat-ineligible, never seen, not considering -> no personal panel
-    return'<div class="am-minimal">Never seen \u2014 no personal panel yet.</div>';
+    return'<div class="am-minimal">'+amCap(amNeverText())+' \u2014 no personal panel yet.</div>'+amMapWhy();
   }
   var head='<div class="am-you-head"><span class="am-you-dot"></span>'
     +'<span class="am-you-lbl">'+amEsc('@'+amOwnerName())+' &amp; this artist</span><span class="am-rule"></span>'
     +amTierMeter(rec.tier)+'</div>';
   var main='<div class="am-you-main">'+amYouBadges(rec,rows,hatEligible)+amYouHistory(rec,rows)+'</div>';
   var gauge=rec.affinity?amGauge(rec.affinity,rec,key):'';
-  return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div></div>';
+  return'<div class="am-you">'+head+'<div class="am-you-body">'+main+gauge+'</div>'+((s.count||0)?'':amMapWhy())+'</div>';
 }
 // Personal-footer badge strip: seen count, hat/book/VIP/photo, next-show countdown, fast-track.
 function amYouBadges(rec,rows,hatEligible){
@@ -536,7 +573,7 @@ function amYouBadges(rec,rows,hatEligible){
   if(rows.upcoming){var d=amDays(rows.upcoming.date);out.push('<span class="am-b-next">next: '+(d!=null&&d>=0?('in '+d+' day'+(d===1?'':'s')):'upcoming')+'</span>');}
   if(rec.fast_track&&n===0)out.push('<span class="am-b-fast">\u2605 fast-track \u00b7 1st show</span>');
   else if(rec.fast_track&&viaOnly)out.push('<span class="am-b-fast">\u2605 fast-track</span>');
-  if(n===0&&!rec.fast_track&&!rows.considering)out.push('<span class="am-never">never seen</span>');
+  if(n===0&&!rec.fast_track&&!rows.considering)out.push('<span class="am-never">'+amEsc(amNeverText())+'</span>');
   return'<div class="am-you-badges">'+out.join('')+'</div>';
 }
 // History block — renders one of: combined-bill note, considering card, or the seen timeline.
