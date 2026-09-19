@@ -59,6 +59,7 @@ and date pruning (Routine 3).
 | `ticket-sold` | Gmail filter (forwards from dan2bit@gmail.com with `sold` in subject — covers AXS resales, StubHub, Ticketmaster resales) | Routine 6 |
 | `hftb-diff` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[hftb]`) | Routine 7 |
 | `show-reminders` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[potentials]`) | Routine 8 |
+| `releases-digest` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[releases]`) | Routine 4 |
 | `processed` | Claude at end of each routine | All routines (excluded via `-label:processed`) |
 
 **Label IDs:**
@@ -68,6 +69,7 @@ and date pruning (Routine 3).
 - `ticket-receipt` = `Label_8008139800288276097`
 - `hftb-diff` = `Label_6917329658463339331`
 - `show-reminders` = `Label_6890844345333686816`
+- `releases-digest` = `Label_1`
 
 **Search patterns:**
 
@@ -76,7 +78,7 @@ and date pruning (Routine 3).
 | 1 — Ticket purchase | `label:ticket-receipt -label:processed` |
 | 2 — Post-show notes | `label:show-notes -label:processed` |
 | 3 — On-sale alert | `label:ticket-alert -label:processed` |
-| 4 — Artist newsletter | `label:artist-mail -label:processed` |
+| 4 — Artist newsletter | `label:artist-mail -label:processed` (also `label:releases-digest -label:processed`, see Routine 4) |
 | 5 — Artist follow / signup | `label:artist-follow -label:processed` |
 | 6 — Ticket sold | `label:ticket-sold -label:processed` |
 | 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
@@ -345,7 +347,7 @@ Source binding syntax:
 - self-signing → `self` or blank
 - band member signing → `of <band>` (credits both signer AND band)
 - opener / guest / co-bill → `w/ <band>` or `co-bill w/ <band>` (credits signer only)
-- alias case (book printed under a different name) → `<name> entry` (credits both)
+- alias case (book printed under a different name) → `<n> entry` (credits both)
 
 If the signer is not yet in `autograph_books_eligibility.tsv`, that means the physical
 book has an entry for them that's not tracked yet — add a row with `In APS`/`APS Page`/
@@ -629,6 +631,30 @@ as Routine 3 Step 1). Then:
 - Tour announcements / new shows → buy recommendation or on-sale calendar event
 - Pre-sale codes → on-sale calendar event with code in description
 - New music releases → surface in conversation; no file action
+
+**Step 2b — `[releases]` weekly digest (`label:releases-digest -label:processed`)**
+
+Produced by `refresh-releases.yml`, sender `alerts@redhat-bootlegs.net`, subject
+prefixed `[releases]` with the new-release count. Plain text in the mail body — no
+fetching, no parsing. Each entry is `Artist - single/album/etc - "Title"`, a date
+range, a Spotify link, and a `tier:` line (an already-tracked artist's follow tier, or
+`untracked - no DMV date on file` for an artist not in `follows_master.tsv`).
+
+Handle each entry per the Step 2 rule directly above (surface in conversation; no file
+action) — this digest is just a batched, scheduled source for that same rule, not a
+different rule. The one thing worth checking before treating an entry as pure FYI: if
+the artist is untracked and the release digest is the first time they've surfaced,
+that is itself research-queue material — check `artists.tsv`, `follows_master.tsv`,
+and `new_artist_research.tsv` per the Routine 3 NAR-triage logic, and propose adding
+them to `new_artist_research.tsv` if absent from all three. A release with a DMV date
+already on file is a tour announcement, not a release, and gets Step 2's "new shows"
+branch instead.
+
+**First-run note (2026-09-19):** this is a first-ever digest category — the Gmail
+filter had not been created yet, so mail could arrive unlabeled and sit invisible to
+every routine's search. If a `[releases]`-subject thread turns up unlabeled in a
+general inbox sweep, apply `releases-digest` by hand and proceed as above; that gap
+is now closed by the standing filter (see `EMAIL_SETUP.md`).
 
 **Step 3 — Autograph book check**
 
