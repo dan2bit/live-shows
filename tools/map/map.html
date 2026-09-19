@@ -1011,8 +1011,23 @@
     const t=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
     if(t){vb.x=+t[1]-vb.w/2;vb.y=+t[2]-vb.h/2;apply();}
   }
-  window.addEventListener('hashchange',amRecentre);
-  amRecentre();
+  // Only a hash arriving while the card is SHUT recentres the map.
+  //
+  // Opening a card writes #artist/<slug>, so it fires hashchange itself - and recentring on
+  // that panned the map out from under the reader on every click, with no way back, since
+  // closing uses replaceState and fires no event to undo it. A click must not move the map;
+  // only arriving at a hash from outside should.
+  //
+  // The open-state test is sufficient on its own: openArtistModal() calls amShow() before
+  // its first await, so any hashchange we cause is guaranteed to land with the overlay
+  // already open. That also covers navigation from inside the card (a Similar chip), which
+  // would otherwise slide the map silently behind the overlay.
+  window.addEventListener('hashchange',()=>{
+    const am=document.getElementById('artistModal');
+    if(am&&am.classList.contains('open'))return;
+    amRecentre();
+  });
+  amRecentre();   // a real deep link on load: nothing is open yet
   apply();
 
   // the plate drags by its title bar
