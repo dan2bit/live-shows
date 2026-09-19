@@ -90,7 +90,12 @@
           "stage": 2,
           "time": "6:00",
           "artist": "Robert Jon & The Wreck",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "short": "Robert Jon",
+            "medium": "Robert Jon",
+            "poster": "Robert Jon & The Wreck"
+          }
         },
         {
           "stage": 1,
@@ -122,7 +127,8 @@
           "artist": "Christone \"Kingfish\" Ingram",
           "favorite": true,
           "display": {
-            "short": "Kingfish Ingram"
+            "short": "Kingfish",
+            "medium": "Kingfish Ingram"
           }
         },
         {
@@ -190,25 +196,42 @@
           "stage": 1,
           "time": "4:30",
           "artist": "The War and Treaty",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "medium": "War and Treaty",
+            "poster": "The War and Treaty"
+          }
         },
         {
           "stage": 2,
           "time": "4:00",
           "artist": "The Bros. Landreth",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "medium": "Bros. Landreth",
+            "poster": "The Bros. Landreth"
+          }
         },
         {
           "stage": 1,
           "time": "5:30",
           "artist": "The Avett Brothers",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "medium": "Avett Brothers",
+            "poster": "The Avett Brothers"
+          }
         },
         {
           "stage": 2,
           "time": "5:00",
           "artist": "JJ Grey & Mofro",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "short": "JJ Grey",
+            "medium": "JJ Grey",
+            "poster": "JJ Grey & Mofro"
+          }
         },
         {
           "stage": 1,
@@ -220,25 +243,42 @@
           "stage": 2,
           "time": "6:00",
           "artist": "James Hunter Six",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "short": "James Hunter",
+            "medium": "James Hunter Six"
+          }
         },
         {
           "stage": 1,
           "time": "7:30",
           "artist": "The Wood Brothers",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "medium": "Wood Brothers",
+            "poster": "The Wood Brothers"
+          }
         },
         {
           "stage": 2,
           "time": "7:00",
           "artist": "St. Paul & The Broken Bones",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "short": "Broken Bones",
+            "medium": "Broken Bones",
+            "poster": "St. Paul & The Broken Bones"
+          }
         },
         {
           "stage": 1,
           "time": "8:30",
           "artist": "The Lone Bellow",
-          "favorite": true
+          "favorite": true,
+          "display": {
+            "medium": "Lone Bellow",
+            "poster": "The Lone Bellow"
+          }
         },
         {
           "stage": 2,
@@ -259,7 +299,8 @@
           "favorite": true,
           "display": {
             "short": "Trombone Shorty",
-            "medium": "Trombone Shorty & Orleans Ave."
+            "medium": "Trombone Shorty & Orleans Ave.",
+            "poster": "Trombone Shorty"
           }
         }
       ]
@@ -303,7 +344,11 @@
           "stage": 2,
           "time": "2:00",
           "artist": "Caitlin Krisko & The Broadcast",
-          "favorite": false
+          "favorite": false,
+          "display": {
+            "medium": "Caitlin Krisko",
+            "poster": "Caitlin Krisko & The Broadcast"
+          }
         },
         {
           "stage": 1,
@@ -393,12 +438,249 @@
     }
   ],
   "display_overrides": {
-    "Christone \"Kingfish\" Ingram": {
-      "short": "Kingfish Ingram"
+    "Allman Betts Family Revival: A Decade of Revival": {
+      "medium": "Allman Betts Family Revival"
+    },
+    "Alsarah & the Nubatones": {
+      "short": "Nubatones",
+      "medium": "Nubatones"
+    },
+    "Anthony Rosano and The Conqueroos": {
+      "medium": "Anthony Rosano"
+    },
+    "BEAT (Belew/Vai/Levin/Bozzio)": {
+      "short": "BEAT",
+      "medium": "BEAT"
+    },
+    "Big Sandy & His Fly-Rite Boys": {
+      "short": "Big Sandy",
+      "medium": "Big Sandy"
+    },
+    "Caitlin Krisko & The Broadcast": {
+      "medium": "Caitlin Krisko",
+      "poster": "Caitlin Krisko & The Broadcast"
+    },
+    "Chris Jacobs & Friends": {
+      "medium": "Chris Jacobs"
+    },
+    "Christone 'Kingfish' Ingram": {
+      "short": "Kingfish",
+      "medium": "Kingfish Ingram"
+    },
+    "Dale Watson & His Lonestars": {
+      "medium": "Dale Watson"
+    },
+    "Derrick Dove & The Peacekeepers": {
+      "medium": "Derrick Dove"
+    },
+    "Dior Ashley Brown and the Filthy Animals": {
+      "short": "Dior Brown",
+      "medium": "Dior Ashley Brown"
+    },
+    "Elvis Costello & The Imposters": {
+      "medium": "Elvis Costello"
+    },
+    "George Clinton & Parliament-Funkadelic": {
+      "short": "Parliament",
+      "medium": "Parliament"
+    },
+    "J & The Causeways": {
+      "short": "Causeways",
+      "medium": "Causeways"
+    },
+    "JJ Grey & Mofro": {
+      "short": "JJ Grey",
+      "medium": "JJ Grey",
+      "poster": "JJ Grey & Mofro"
+    },
+    "Joan Jett & The Blackhearts": {
+      "medium": "Joan Jett"
+    },
+    "Josh Hoyer & Soul Colossal": {
+      "medium": "Josh Hoyer"
+    },
+    "Kelli Baker Band": {
+      "short": "Baker",
+      "medium": "Kelli Baker"
+    },
+    "Larry Keel Duo": {
+      "short": "Keel",
+      "medium": "Larry Keel"
+    },
+    "Lil' Ed & the Blues Imperials": {
+      "short": "Blues Imperials",
+      "medium": "Blues Imperials"
+    },
+    "Marty Stuart and His Fabulous Superlatives": {
+      "medium": "Marty Stuart"
+    },
+    "Mike Campbell & The Dirty Knobs": {
+      "medium": "Mike Campbell"
+    },
+    "National Symphony Orchestra": {
+      "short": "NSO",
+      "medium": "NSO"
+    },
+    "Nick Lowe & Los Straitjackets": {
+      "medium": "Nick Lowe"
+    },
+    "North Mississippi Allstars": {
+      "short": "NMAS",
+      "medium": "N. Miss. Allstars"
+    },
+    "Piper & The Hard Times": {
+      "short": "Piper",
+      "medium": "Piper"
+    },
+    "Rebirth Brass Band": {
+      "short": "Rebirth",
+      "medium": "Rebirth Brass Band"
+    },
+    "Robert Cray Band": {
+      "short": "Robert Cray",
+      "medium": "Robert Cray Band"
+    },
+    "Robert Jon & The Wreck": {
+      "short": "Robert Jon",
+      "medium": "Robert Jon",
+      "poster": "Robert Jon & The Wreck"
+    },
+    "Sarah Borges & Eric Ambel": {
+      "short": "Borges & Ambel",
+      "medium": "Borges & Ambel"
+    },
+    "SatchVai Band": {
+      "short": "SatchVai",
+      "medium": "SatchVai Band"
+    },
+    "Shaw Davis & The Black Ties": {
+      "short": "Black Ties",
+      "medium": "Black Ties"
+    },
+    "St. Paul & The Broken Bones": {
+      "short": "Broken Bones",
+      "medium": "Broken Bones",
+      "poster": "St. Paul & The Broken Bones"
+    },
+    "TajMo: The Taj Mahal & Keb' Mo' Band": {
+      "short": "TajMo",
+      "medium": "TajMo"
+    },
+    "Tedeschi Trucks Band": {
+      "short": "Tedeschi Trucks",
+      "medium": "Tedeschi Trucks Band"
+    },
+    "The Allman Betts Band": {
+      "short": "Allman Betts",
+      "medium": "Allman Betts Band"
+    },
+    "The Avett Brothers": {
+      "medium": "Avett Brothers",
+      "poster": "The Avett Brothers"
+    },
+    "The Beanstalk Library": {
+      "medium": "Beanstalk Library"
+    },
+    "The Bros. Landreth": {
+      "medium": "Bros. Landreth",
+      "poster": "The Bros. Landreth"
+    },
+    "The Budos Band": {
+      "medium": "Budos Band"
+    },
+    "The Devil Makes Three": {
+      "medium": "Devil Makes Three"
+    },
+    "The Dirty Dozen Brass Band": {
+      "short": "Dirty Dozen",
+      "medium": "Dirty Dozen Brass Band"
+    },
+    "The Fabulous Thunderbirds": {
+      "short": "Thunderbirds",
+      "medium": "Fabulous Thunderbirds"
+    },
+    "The Family Crest": {
+      "medium": "Family Crest"
+    },
+    "The Heavy Heavy": {
+      "medium": "Heavy Heavy"
+    },
+    "The Hip Snacks": {
+      "medium": "Hip Snacks"
+    },
+    "The House You Grew Up In (THYGUI)": {
+      "short": "THYGUI",
+      "medium": "THYGUI"
+    },
+    "The Iguanas": {
+      "medium": "Iguanas"
+    },
+    "The James Hunter Six": {
+      "short": "James Hunter",
+      "medium": "James Hunter Six"
+    },
+    "The Jesse Williams Band": {
+      "short": "Jesse Williams",
+      "medium": "Jesse Williams Band"
+    },
+    "The Lone Bellow": {
+      "medium": "Lone Bellow",
+      "poster": "The Lone Bellow"
+    },
+    "The North Country": {
+      "medium": "North Country"
+    },
+    "The Pietasters": {
+      "medium": "Pietasters"
+    },
+    "The Pinkerton Raid": {
+      "medium": "Pinkerton Raid"
+    },
+    "The Record Company": {
+      "medium": "Record Company"
+    },
+    "The Roots": {
+      "medium": "Roots"
+    },
+    "The Secret Sisters": {
+      "medium": "Secret Sisters"
+    },
+    "The Side Cars Band": {
+      "short": "Side Cars",
+      "medium": "Side Cars Band"
+    },
+    "The Soul Rebels": {
+      "medium": "Soul Rebels"
+    },
+    "The Steepwater Band": {
+      "short": "Steepwater",
+      "medium": "Steepwater Band"
+    },
+    "The Teskey Brothers": {
+      "medium": "Teskey Brothers"
+    },
+    "The War and Treaty": {
+      "medium": "War and Treaty",
+      "poster": "The War and Treaty"
+    },
+    "The Wildmans": {
+      "medium": "Wildmans"
+    },
+    "The Wood Brothers": {
+      "medium": "Wood Brothers",
+      "poster": "The Wood Brothers"
+    },
+    "Tommy Castro & the Painkillers": {
+      "medium": "Tommy Castro"
     },
     "Trombone Shorty & Orleans Avenue": {
       "short": "Trombone Shorty",
-      "medium": "Trombone Shorty & Orleans Ave."
+      "medium": "Trombone Shorty & Orleans Ave.",
+      "poster": "Trombone Shorty"
+    },
+    "Zedicus & Abyssinia Roots": {
+      "short": "Zedicus",
+      "medium": "Zedicus"
     }
   }
 }

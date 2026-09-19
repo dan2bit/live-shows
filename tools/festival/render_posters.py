@@ -44,8 +44,8 @@ happen, leaving the script to fail at runtime instead.
 
 THREE WIDTH CONTEXTS, WHICH IS WHY THE DATA CARRIES ALL THREE FORMS
 
-  crescendo bill      short    type is graded by slot, largest on the page
-  timeline set list   medium   two narrow columns
+  crescendo bill      poster   type is graded by slot, largest on the page
+  timeline set list   poster   two narrow columns
   timeline closer/co  CANONICAL  the headline lines have room for the real name
 
 So `Christone "Kingfish" Ingram` closes day 1 in full on the timeline poster
@@ -205,13 +205,18 @@ def time_key(t):
 
 
 def name_for(slot, width):
-    """width: 'short' | 'medium' | 'canonical'. Falls back canonical-ward."""
+    """width: 'poster' | 'canonical'. Falls back canonical-ward.
+
+    Both posters take the `Poster` column, falling back to `Medium`. They do NOT
+    read `Short`: that column is the map's, where a label sits beside a 3-pixel dot
+    and `St. Paul & The Broken Bones` is cut to `Broken Bones` - a cut that reads as
+    a mistake set in Alfa Slab One. The two surfaces abbreviate for different
+    reasons, which is why they no longer share a column.
+    """
     if width == "canonical":
         return slot["artist"]
     d = slot.get("display") or {}
-    if width == "medium":
-        return d.get("medium") or d.get("short") or slot["artist"]
-    return d.get("short") or slot["artist"]
+    return d.get("poster") or d.get("medium") or slot["artist"]
 
 
 def ordered(day):
@@ -236,7 +241,7 @@ def render_bill(day):
         inner = []
         for slot in block:
             inner.append('<span class="%s s%d">%s</span>'
-                         % (cls, slot["stage"], act_link(slot, esc(name_for(slot, "short")), day)))
+                         % (cls, slot["stage"], act_link(slot, esc(name_for(slot, "poster")), day)))
         parts.append('<span class="sep">&middot;</span>'.join(inner))
     return "".join(parts)
 
@@ -248,7 +253,7 @@ def render_stage(day, stage):
                        key=lambda s: time_key(s["time"])):
         cls = ' class="fav"' if slot["favorite"] else ""
         rows.append('          <li%s>%s<span class="t">%s</span></li>'
-                    % (cls, act_link(slot, esc(name_for(slot, "medium")), day), slot["time"]))
+                    % (cls, act_link(slot, esc(name_for(slot, "poster")), day), slot["time"]))
     return "\n" + "\n".join(rows) + "\n        "
 
 
