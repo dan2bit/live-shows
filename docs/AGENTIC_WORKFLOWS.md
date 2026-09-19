@@ -116,9 +116,19 @@ Each routine follows a strict pre-flight + execute + label + log pattern defined
 
 ### Routine 4 — Artist newsletter
 
-**Trigger:** Email tagged `artist-mail`
-**Data written:** `data/live_shows_potential.tsv` (→ `staging`, after confirmation), Google Calendar
-**Key rules:** Same calendar conflict rule as Routine 3
+**Trigger:** Email tagged `artist-mail`; also the scheduled `[releases]` weekly digest, tagged `releases-digest` (see below)
+**Data written:** `data/live_shows_potential.tsv` (→ `staging`, after confirmation), Google Calendar, occasionally `tools/research/follows/new_artist_research.tsv`
+**Key rules:** Same calendar conflict rule as Routine 3. New-release mentions (no DMV date attached) are surfaced in conversation only — no file write — per `EMAIL_WORKFLOWS.md` → Routine 4 Step 2; the `[releases]` digest (Step 2b) is that same rule applied to a batched, scheduled source, not a separate rule. The one exception: an untracked artist surfacing for the first time via a release digest is research-queue material, triaged into `new_artist_research.tsv` the same way Routine 3's NAR triage handles it.
+
+**`releases-digest` label — first-run gap (2026-09-19).** This label/filter did not
+exist when `refresh-releases.yml` first started sending `[releases]` mail, so the
+first digest (Tyler Ramsey — "Windy and Warm") sat unlabeled in the inbox, invisible
+to every routine's `label:X -label:processed` search across several full inbox
+passes. The label (`Label_1`) now exists and the filter is documented in
+`EMAIL_SETUP.md`; this note is the general case for anyone adding a new scheduled
+mail-to-inbox source: **the label must exist and the filter must be live before the
+first mail of that kind arrives**, or that first instance is unreachable by every
+routine search until someone notices it unlabeled in a general inbox sweep.
 
 ### Routine 5 — Artist follow / signup
 
@@ -242,6 +252,10 @@ Three things about that family are easy to get wrong when adding a fourth:
 - **The digest step runs before the commit step** where a workflow has both.
   `release_digest.py` compares the working copy against `HEAD`, so committing
   first would leave it reporting nothing every time, with no error to notice.
+- **The label and filter must exist before the first mail of a new digest
+  category arrives**, or that first instance sits unlabeled and invisible to
+  every routine's `label:X -label:processed` search — see the `releases-digest`
+  first-run note under Routine 4 above for the concrete incident.
 
 The Resend key can only push mail through Resend and reads no mailbox, so it is
 not a send-as credential for the inbox it writes to — unlike the Gmail app
