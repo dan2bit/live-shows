@@ -905,8 +905,6 @@ construction.
   and `live_shows_potential.tsv` before treating it as new information. If it
   genuinely is new, handle it exactly like a Routine 3 recommendation — calendar
   conflict check, confirm, write.
-  Corrections: **only via the artist's canonical Search & reference-source path**
-  — CQ notice — n/a here.
 - **A booking that scored relevant via genre/taste-graph** (`score: Strong fit`
   or `score: Possible`) — this is real discovery, the kind of signal the old
   raw-diff system had no way to surface. Evaluate per the Routine 3 NAR-triage
