@@ -90,8 +90,15 @@ TODAY = date.today()
 
 
 def fetch(url, retries=3):
-    req = urllib.request.Request(url, headers={"User-Agent": UA,
-                                               "Accept": "text/html,*/*"})
+    # Accept both: an HTML tour page (Blues Alley) and a raw JSON API response
+    # (a Seated widget's own cdn.seated.com/api/... endpoint, discovered by
+    # inspecting network requests rather than fetching the wrapper page - see
+    # tools/playbooks/skills/watch-manager/SKILL.md). Servers of either kind
+    # generally ignore Accept and return their native format regardless, but
+    # there is no reason to bias the header toward HTML only.
+    req = urllib.request.Request(url, headers={
+        "User-Agent": UA,
+        "Accept": "application/json, text/html;q=0.9,*/*;q=0.8"})
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
