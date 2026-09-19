@@ -1,0 +1,137 @@
+name: Daily page watch
+
+# Replaces the changedetection.io pod (history in docs/ISSUE_LOG.md). Runs
+# tools/watch/watch_diff.py once a day; the registry (tools/watch/watches.tsv)
+# decides which rows actually get fetched that day via their own
+# check_every_days cadence - a daily cron does not mean every site is checked
+# daily. No browser, no Playwright, anywhere in this job - a page that needs
+# one to render is out of scope for this system by design and stays on the
+# existing monthly interactive-Chrome pass instead.
+#
+# One [watch] email per site with a real, relevant change - not a batched
+# digest like the weekly HFTB diff, since the whole point here is a specific
+# alert per change, matching the old changedetection system's own subject
+# convention. A "venue"-kind site (multi-act listings) only mails when at
+# least one added/removed booking scores as taste-profile relevant
+# (tools/watch/watch_diff.py + score_candidates.py); an "artist"-kind site
+# (a single-subject tour page) mails on any real change, since the page IS
+# the subject.
+#
+# Quiet days send nothing. A digest that mails to say nothing happened is one
+# you stop reading.
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Check this one slug now, regardless of its cadence (leave blank for a normal run)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-page-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: staging
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run the watch engine
+        id: run
+        env:
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.force }}" ]; then
+            python3 tools/watch/watch_diff.py --force "${{ github.event.inputs.force }}" | tee /tmp/watch_report.txt
+          else
+            python3 tools/watch/watch_diff.py | tee /tmp/watch_report.txt
+          fi
+          {
+            echo '## Daily page watch'
+            echo
+            echo '```'
+            cat /tmp/watch_report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Mail one [watch] message per site with a real change
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -euo pipefail
+          MANIFEST=/tmp/watch_mail_manifest.json
+          if [ ! -f "$MANIFEST" ]; then
+            echo "no manifest produced - nothing to mail."
+            exit 0
+          fi
+          COUNT=$(python3 -c "import json; print(len(json.load(open('$MANIFEST'))))")
+          if [ "$COUNT" = "0" ]; then
+            echo "quiet day - no relevant changes, no mail sent."
+            exit 0
+          fi
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::$COUNT relevant change(s) found but RESEND_API_KEY is unset - not mailed."
+            exit 0
+          fi
+          python3 -c "
+          import json
+          m = json.load(open('$MANIFEST'))
+          for e in m:
+              print(e['subject'] + '|' + e['body_file'])
+          " | while IFS='|' read -r subject body_file; do
+            python3 scripts/notify_email.py --subject "$subject" --body-file "$body_file"
+          done
+
+      - name: Commit the updated registry and snapshots to staging
+        # always(): a partial run (one site failed, others succeeded) still
+        # produced real, worth-keeping state for the sites that did complete -
+        # matches the reasoning already used for the HFTB scrape commit step.
+        if: always()
+        run: |
+          set -euo pipefail
+          git add tools/watch/watches.tsv tools/watch/snapshots/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing changed - nothing to commit."
+            exit 0
+          fi
+
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+          chmod 600 "$HOME/.ssh/promote_key"
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+          git commit -m "ci: daily page watch $(date -u +%Y-%m-%d)"
+          for attempt in 1 2 3 4 5; do
+            git fetch promote staging
+            git rebase promote/staging || {
+              echo "rebase conflict on staging - bailing (not a race, a real conflict)"
+              exit 1
+            }
+            if git push promote HEAD:staging; then
+              echo "push succeeded on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s"
+            sleep "$attempt"
+          done
+          echo "gave up after 5 attempts"
+          exit 1
