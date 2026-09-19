@@ -178,6 +178,66 @@ def blues_alley_offprofile(title):
     return any(marker in low for marker in _OFFPROFILE_MARKERS)
 
 
+# ---- Hamilton Live (calendar page) -----------------------------------------
+#
+# Confirmed against the live page (not just historical evidence, unlike Blues
+# Alley) via Claude-for-Chrome DOM inspection 2026-09-19: real, semantic,
+# class-named markup, fully server-rendered - no JS gap at all. Each event is
+# anchored by a stable class name (detail_seetickets_eventtitle); fields are
+# extracted by their human-readable <div class="label">...</div> text rather
+# than by field position or by the optional-field wrapper's own class name,
+# since not every event carries every field (Loft Late Night shows omit Min
+# Ticket Price; most omit Opener and Age). Cross-checked two independent ways
+# against the real live page (a DOM query walk and this exact regex-chunking
+# approach, run in the browser) - both agreed exactly (48 events, same data)
+# before this was committed.
+
+_HAM_TITLE_RE = re.compile(r'<div class="detail_seetickets_eventtitle">.*?<h1>(.*?)</h1>', re.S)
+_HAM_MONTHS = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+               "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
+_HAM_DATE_RE = re.compile(r"^\w{3}\s+(\w{3})\s+(\d{1,2})$")
+
+
+def _strip_tags(s):
+    return unescape(re.sub(r"<[^>]+>", "", s)).strip()
+
+
+def _hamilton_date(s):
+    m = _HAM_DATE_RE.match(s.strip())
+    if not m:
+        return None
+    mon = _HAM_MONTHS.get(m.group(1))
+    if not mon:
+        return None
+    return "%04d-%02d-%02d" % (_year_for(mon, int(m.group(2))), mon, int(m.group(2)))
+
+
+def hamilton_live(html_text):
+    events = []
+    matches = list(_HAM_TITLE_RE.finditer(html_text))
+    for i, m in enumerate(matches):
+        start = m.start()
+        end = matches[i + 1].start() if i + 1 < len(matches) else start + 6000
+        chunk = html_text[start:end]
+        title = _strip_tags(m.group(1))
+
+        def field(label, chunk=chunk):
+            fm = re.search(
+                r'<div class="label">\s*%s\s*</div>\s*<div class="name">(.*?)</div>'
+                % re.escape(label), chunk, re.S)
+            return _strip_tags(fm.group(1)) if fm else None
+
+        date_str = field("Event Date")
+        if not title or not date_str:
+            continue
+        iso_date = _hamilton_date(date_str)
+        if not iso_date:
+            continue
+        events.append({"date": iso_date, "title": title, "status": field("Status") or ""})
+    return events
+
+
 EXTRACTORS = {
     "blues_alley": {"extract": blues_alley, "offprofile": blues_alley_offprofile},
+    "hamilton_live": {"extract": hamilton_live},
 }
