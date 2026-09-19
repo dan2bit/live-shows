@@ -182,11 +182,6 @@
      "dist": 4.3
     },
     {
-     "name": "Amadou Kouyate",
-     "at": 0.32081194860995776,
-     "dist": 8.3
-    },
-    {
      "name": "Madeleine Roger",
      "at": 0.41874316721488564,
      "dist": 0.7
@@ -464,8 +459,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "452b9cf7fb",
-  "overrides_hash": "0359c4df02",
+  "pins_hash": "79f5f35978",
+  "overrides_hash": "d54720fc6f",
   "counts": {
    "settlements": 403,
    "routes": 480,
@@ -1185,7 +1180,6 @@
     "Henri Brown",
     "J & The Causeways",
     "Jackie Venson",
-    "Jimmy Hall",
     "Kenny Wayne Shepherd",
     "Marcus King",
     "Mato Nanji",
@@ -2349,15 +2343,15 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    424.1,
-    348.6
+    606.1,
+    266.0
    ],
    "region_uv": [
-    0.3375,
-    0.6367
+    0.8666,
+    0.2679
    ],
    "flags": {
-    "unpinned": true
+    "stray": true
    },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
@@ -4180,16 +4174,14 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    572.1,
-    493.7
+    577.9,
+    614.1
    ],
    "region_uv": [
-    0.3966,
-    0.1713
+    0.4196,
+    0.9429
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -5557,21 +5549,19 @@
   {
    "id": 189,
    "name": "Jimmy Hall",
-   "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "region": "slide_foothills",
+   "district": "slide_foothills:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
-    706.5,
-    239.9
+    640.1,
+    384.6
    ],
    "region_uv": [
-    0.2613,
-    0.6397
+    0.4319,
+    0.4432
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -8830,16 +8820,14 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    560.8,
-    499.4
+    588.9,
+    611.6
    ],
    "region_uv": [
-    0.3511,
-    0.2077
+    0.4636,
+    0.9269
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -14228,18 +14216,8 @@
    "a": "Jimmy Hall",
    "b": "The Allman Betts Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Joan Jett & The Blackhearts",
