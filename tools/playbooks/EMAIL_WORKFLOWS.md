@@ -60,6 +60,7 @@ and date pruning (Routine 3).
 | `hftb-diff` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[hftb]`) | Routine 7 |
 | `show-reminders` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[potentials]`) | Routine 8 |
 | `releases-digest` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[releases]`) | Routine 4 |
+| `watch-alert` | Gmail filter — needs a check/update; see Routine 9 | Routine 9 |
 | `processed` | Claude at end of each routine | All routines (excluded via `-label:processed`) |
 
 **Label IDs:**
@@ -70,6 +71,7 @@ and date pruning (Routine 3).
 - `hftb-diff` = `Label_6917329658463339331`
 - `show-reminders` = `Label_6890844345333686816`
 - `releases-digest` = `Label_1`
+- `watch-alert` = `Label_4414465393540001960`
 
 **Search patterns:**
 
@@ -83,6 +85,7 @@ and date pruning (Routine 3).
 | 6 — Ticket sold | `label:ticket-sold -label:processed` |
 | 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
 | 8 — Show reminders | `label:show-reminders -label:processed` |
+| 9 — Page watch alert | `label:watch-alert -label:processed` |
 
 ---
 
@@ -550,6 +553,14 @@ known/expected venue is suspected of having emailed but nothing surfaces under
 before concluding there's nothing new — the absence of the label doesn't mean the
 absence of the email.
 
+**Blues Alley direct-subscription newsletter — superseded for discovery (2026-09-19).**
+The venue's own HTML newsletter subscription sends unparseable image-based mail (no
+extractable text). This is no longer worth troubleshooting or reporting the parse
+failure on — `watch-alert` (Routine 9) now covers Blues Alley's InstantSeats listing
+directly, headless, with taste-profile scoring the newsletter never had. If this
+newsletter surfaces in a Routine 3 sweep and can't be parsed, skip it silently; no
+signal is lost.
+
 **Step 2 — Cross-reference current shows and potentials**
 
 Using Step 0b data, for every artist/show surfaced:
@@ -859,6 +870,67 @@ Check the Actions run history if the silence looks wrong.
 lists rows whose free text the parser could not read. That is expected for prose
 entries; a high count is the argument for making `Watching For` a machine-readable
 column rather than for rewording individual rows.
+
+---
+
+## Routine 9 — Page Watch Alert
+
+**Trigger:** `label:watch-alert -label:processed`
+
+Replaces the retired changedetection.io pod. `[watch] <name>` mail, one per site
+with a real change, produced by `.github/workflows/daily-page-watch.yml` (daily
+cron; each `tools/watch/watches.tsv` row's own `check_every_days` decides whether
+it's actually checked that day). Full design and the `tools/watch/` engine are
+covered by the `watch-manager` skill and its own doc pointers — this routine is
+just the inbox side: read the mail, decide, log, label.
+
+Unlike Routines 7/8 (one digest, many items), each Routine 9 thread is already
+about one site and, for a `venue`-kind site, already pre-filtered to items that
+scored taste-profile relevant — `score_candidates.py` (the same engine HFTB uses)
+ran before the mail was sent, not after. That means a thread reaching this
+routine has already cleared a real bar; treat it as presumptively worth a look,
+not as raw material to re-filter.
+
+**Step 1 — Read the mail.** Each line is tagged `[RELEVANT]` or `[filtered]` with
+its reason (`tracked: <name> [<files>]`, `off-profile marker`, or `score: <bucket>`)
+— for a `venue`-kind site, `[filtered]` lines are shown too, for context, but only
+`[RELEVANT]` lines drove the decision to mail at all. An `artist`-kind site's mail
+has no tags; the whole page is the subject, so every line is relevant by
+construction.
+
+**Step 2 — Act per relevant line.**
+- **A new/changed booking at a tracked artist** (`tracked: ...`) — this is
+  usually a date the calendar/potentials pipeline should already know about
+  from another channel (Routine 3/4/5); cross-check `live_shows_current.tsv`
+  and `live_shows_potential.tsv` before treating it as new information. If it
+  genuinely is new, handle it exactly like a Routine 3 recommendation — calendar
+  conflict check, confirm, write.
+  Corrections: **only via the artist's canonical Search & reference-source path**
+  — CQ notice — n/a here.
+- **A booking that scored relevant via genre/taste-graph** (`score: Strong fit`
+  or `score: Possible`) — this is real discovery, the kind of signal the old
+  raw-diff system had no way to surface. Evaluate per the Routine 3 NAR-triage
+  logic: check all six tracking files, and if genuinely untracked, propose a
+  `new_artist_research.tsv` row (or a potentials row directly, if the show date
+  and calendar clear it and Dan wants to move straight to a decision).
+- **An `artist`-kind site's mail** — read the diff at face value; it's a change
+  on a page Dan chose to watch specifically because any change on it matters
+  (a "No shows announced" placeholder turning into a real date is the classic
+  case). Handle per Routine 3/4's new-show logic.
+
+**Step 3 — Activity log draft** (subject: `[LOG] Routine 9 — [site name] — YYYY-MM-DD`).
+
+**Final:** Apply `processed` label.
+
+**Nothing to do on a quiet day** — most days, most sites are either not due (per
+their own cadence) or due-and-unchanged; both produce no mail at all, which is
+the correct, silent default, same reasoning as every other digest in this repo.
+An empty `watch-alert` label most days is not a sign anything failed.
+
+**Adding, retiring, or force-checking a watch is not this routine's job** — that
+conversational work belongs to the `watch-manager` skill, triggered separately
+("watch this artist's tour page", "retire the X watch", "check Blues Alley now").
+This routine only processes mail the system already sent.
 
 ---
 
