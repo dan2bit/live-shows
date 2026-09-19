@@ -509,6 +509,56 @@ Commits to **`main`** in `dan2bit/live-shows-private`.
 
 ---
 
+## `tools/watch/watches.tsv` write protocol
+
+Registry for the daily page-watch system (replaces the retired changedetection.io
+pod — full design in `docs/AGENTIC_WORKFLOWS.md` → page-watch system design note).
+Schema: `slug | name | url | kind | check_every_days | last_checked |
+ignore_contains | extractor | active | notes` — 10 columns, `-` sentinel for a
+genuinely-empty cell (same convention as potentials, above).
+
+**No browser, no Playwright, ever, for anything in this registry — a hard
+constraint, not a per-site judgment call.** A candidate URL is added only after
+a plain HTTP fetch confirms it renders real content headless. A page that needs
+a live browser session to show anything real stays off this registry entirely
+and stays on the existing monthly interactive-Chrome pass instead — this is the
+lesson the prior pod's retirement exists to encode, not a preference to
+re-litigate per site. See the `watch-manager` skill
+(`tools/playbooks/skills/watch-manager/SKILL.md`) for the required test-fetch-first
+procedure.
+
+**Confirmation gate, always.** Every write here — a new row, a retirement, a
+cadence change — goes through explicit Dan confirmation first, same as any other
+data write in this repo. Adds and retires normally originate from the
+`watch-manager` skill's conversational flow, not from Routine 9 (which only
+reads the mail this system produces) or any other inbox routine.
+
+**`last_checked` and the snapshot files under `tools/watch/snapshots/` are
+CI-owned state.** `daily-page-watch.yml` (via `tools/watch/watch_diff.py`)
+updates `last_checked` and the matching snapshot (`<slug>.txt` for `kind=artist`,
+`<slug>.json` for `kind=venue`) as part of its normal daily run — a session doing
+conversational add/retire work touches the registry row itself, and seeds a
+fresh baseline snapshot when adding a new row, but should not hand-edit
+`last_checked` or an existing snapshot on an active row; that state belongs to
+the daily job.
+
+**Never fabricate a baseline snapshot when adding a new watch.** Leave
+`tools/watch/snapshots/` alone for that slug and let the first real CI run seed
+it from a genuine live fetch, which also correctly sends no mail for that first
+run (nothing to diff against yet). A hand-written guess at "what the page
+currently looks like" risks the very next real run reporting invented changes
+that are really just the guess being wrong.
+
+Commits to **`staging`** in `dan2bit/live-shows` — public-repo, non-sensitive
+data (a URL and a check cadence, no cost or personal information), the same
+tier as `fast_track.tsv`.
+
+Related: conversational add/retire/force-check procedure —
+`tools/playbooks/skills/watch-manager/SKILL.md`. Inbox handling of the mail this
+system produces — `EMAIL_WORKFLOWS.md` → Routine 9.
+
+---
+
 ## `artist_modal_index.json` — frozen schema (issue #107)
 
 Build-time precomputed payload for the artist modal / `#artist/{slug}` route. **Public**,
