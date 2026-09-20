@@ -14,6 +14,37 @@ name: Daily release refresh (spotify_cache)
 # no-op — nothing is re-pulled inside 25 days, so the run does nothing until
 # entries age past the threshold.
 #
+# END-OF-MONTH RAMP. A flat 25/day means a full-roster sweep takes
+# roughly two weeks, so a "New Music [Month]" digest isn't trustworthy until
+# well into the FOLLOWING month — and even then only "probably fine, can't be
+# sure," since an artist checked early in that sweep can still release
+# something later in the same covered month with no second look coming for
+# another ~25 days. The ramp is two DIFFERENT phases, not one bigger number:
+#
+#   - Last 5 days of the month (limit 45, stale-days UNCHANGED): pure
+#     backlog-clear. refresh_releases() already walks oldest-checked-first,
+#     so the extra budget lands on the stalest entries by construction — no
+#     new prioritization logic needed here, just more of it.
+#   - First 3 days of the next month (limit 45, stale-days DROPPED to 5):
+#     a deliberate RE-VERIFY pass, not more backlog-clearing. Dropping
+#     stale-days re-admits whoever the tail-end ramp just checked (6-8 days
+#     old by now) — oldest-first ordering means the entries checked EARLIEST
+#     in the ramp (the ones with the most remaining days in the old month to
+#     have released something new) get re-confirmed first, ahead of the
+#     Sept-30-ish entries that had almost no exposure to begin with. This is
+#     the actual gap-closer: it targets exactly the "checked early, released
+#     late, no one looked again" case a bigger flat limit doesn't touch.
+#
+# --limit 45 (not the old burst's 90) keeps wall-clock exposure low — ~90s of
+# calls at the 2.0s default delay — and isn't remotely the failure mode the
+# incident described above hit, which was a missing always()-guarded commit
+# (fixed below), not the limit value itself.
+#
+# A manual workflow_dispatch NEVER applies this ramp — github.event_name is
+# 'schedule' only for the actual cron, so a person dispatching this by hand
+# always gets exactly the limit/stale-days they typed (or the plain 25/25
+# default), never a calendar-computed override they didn't ask for.
+#
 # The --heal-only portrait step runs on the 1st only, NOT daily. Its set is
 # entries never stamped by a successful pull, and null-preserve means an
 # artist Spotify has no portrait for never leaves it. That set is currently 9
@@ -78,7 +109,28 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           LIMIT: ${{ github.event.inputs.limit || '25' }}
           STALE_DAYS: ${{ github.event.inputs.stale_days || '25' }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          set -euo pipefail
+
+          # End-of-month ramp - schedule-only, see the header comment
+          # above for the full rationale. A manual dispatch keeps exactly the
+          # limit/stale-days it was given, ramp or no ramp.
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DOM=$(date -u +%d)
+            LAST_DAY=$(date -u -d "$(date -u +%Y-%m-01) +1 month -1 day" +%d)
+            DAYS_LEFT=$((10#$LAST_DAY - 10#$DOM))
+            RAMP_LIMIT=45
+            if [ "$DAYS_LEFT" -le 4 ]; then
+              LIMIT=$RAMP_LIMIT
+              echo "eom-ramp: day $DOM, $DAYS_LEFT day(s) left in the month - backlog-clear phase (limit $LIMIT, stale-days unchanged at $STALE_DAYS)"
+            elif [ "$((10#$DOM))" -le 3 ]; then
+              LIMIT=$RAMP_LIMIT
+              STALE_DAYS=5
+              echo "eom-ramp: day $DOM of the new month - re-verify phase (limit $LIMIT, stale-days dropped to $STALE_DAYS)"
+            fi
+          fi
+
           python3 scripts/spotify_cache.py --refresh-releases \
             --stale-days "$STALE_DAYS" --limit "$LIMIT"
 
