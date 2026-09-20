@@ -14,7 +14,7 @@ name: Daily release refresh (spotify_cache)
 # no-op — nothing is re-pulled inside 25 days, so the run does nothing until
 # entries age past the threshold.
 #
-# END-OF-MONTH RAMP (#396). A flat 25/day means a full-roster sweep takes
+# END-OF-MONTH RAMP. A flat 25/day means a full-roster sweep takes
 # roughly two weeks, so a "New Music [Month]" digest isn't trustworthy until
 # well into the FOLLOWING month — and even then only "probably fine, can't be
 # sure," since an artist checked early in that sweep can still release
@@ -37,8 +37,8 @@ name: Daily release refresh (spotify_cache)
 #
 # --limit 45 (not the old burst's 90) keeps wall-clock exposure low — ~90s of
 # calls at the 2.0s default delay — and isn't remotely the failure mode the
-# 2026-08-29 incident hit, which was a missing always()-guarded commit (fixed
-# below), not the limit value itself.
+# incident described above hit, which was a missing always()-guarded commit
+# (fixed below), not the limit value itself.
 #
 # A manual workflow_dispatch NEVER applies this ramp — github.event_name is
 # 'schedule' only for the actual cron, so a person dispatching this by hand
@@ -113,7 +113,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # End-of-month ramp (#396) - schedule-only, see the header comment
+          # End-of-month ramp - schedule-only, see the header comment
           # above for the full rationale. A manual dispatch keeps exactly the
           # limit/stale-days it was given, ramp or no ramp.
           if [ "$EVENT_NAME" = "schedule" ]; then
