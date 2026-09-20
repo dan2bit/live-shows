@@ -70,9 +70,24 @@ says "persist"; until then, don't.
 
 ## Cadence notes
 
-- The cache refresh (`--refresh-releases`) is quota-dripped (~100 calls/day);
-  run `--count-pending` before spending quota. Bare runs self-resume across
-  rate-limit bails (band-aware stale-days inference, oldest-checked-first).
+- The daily `--refresh-releases` cron always passes an **explicit**
+  `--stale-days` — never bare. `_infer_stale_days()`'s band-aware auto-inference
+  exists in the script, but only a manual, bare invocation ever exercises it;
+  the schedule doesn't rely on it. Normal days: `--limit 25`.
+- **End-of-month ramp:** two distinct phases raise the budget to `--limit 45`
+  around the month boundary — the last 5 days of the month (backlog-clear,
+  `--stale-days` unchanged) and the first 3 days of the next month (a
+  deliberate re-verify pass, `--stale-days` dropped to 5 so whoever the
+  tail-end ramp already checked becomes re-checkable in time to catch a
+  release in their last few days of the covered month). Full rationale lives
+  in the workflow's own header comment and `docs/ISSUE_LOG.md`. Schedule-only
+  — a manual `workflow_dispatch` always gets exactly the limit/stale-days
+  typed (or the 25/25 default), ramp or no ramp.
+- `--count-pending` previews how many artists a given `--stale-days` value
+  would actually touch, before spending real quota.
+- A bare (no explicit `--stale-days`) manual run self-resumes across
+  rate-limit bails via that auto-inferred, band-aware heuristic,
+  oldest-checked-first — the ad-hoc path, not what the schedule uses.
 - Bare `--new-artist` populates every cache entry still missing a `spotify_id`
   (known unresolvables excluded); run it before a release sweep so new artists
   get stamped in the same cycle.
