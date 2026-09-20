@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-09-20T21:13:39Z",
+"generated_at":"2026-09-20T21:23:48Z",
 "aliases":{
 "billy f gibbons":"billy gibbons",
 "trombone shorty":"trombone shorty orleans avenue",
@@ -19,7 +19,8 @@
 "eric johansen":"eric johanson",
 "albert castiglia tour schedule page":"albert castiglia",
 "josh hoyer s colossal 4":"josh hoyer soul colossal",
-"josh hoyer":"josh hoyer soul colossal"
+"josh hoyer":"josh hoyer soul colossal",
+"new york s finest":"every breath you take"
 },
 "artists":{
 "aaron lee tasjan":{
@@ -15469,24 +15470,54 @@
 "every breath you take":{
 "name":"Every Breath You Take",
 "slug":"every-breath-you-take",
-"spotify_id":"59JKTjQjIyHF2ZsU8poaxq",
-"mbid":null,
-"image_url":"https://i.scdn.co/image/ab67616d00001e024dd1699427330b35c9310853",
+"spotify_id":"0uSANfVQseqy3o4RIku8TC",
+"mbid":"406f1e0c-f2ac-47a3-b0b5-f21c0228d6d0",
+"image_url":null,
 "banner_url":null,
-"genres":[],
+"genres":[
+"mememarie"
+],
 "listener":{
 "tranche":"niche",
-"raw":4545
+"raw":191
 },
 "tier":null,
 "seen":{
-"count":1,
-"first":"2026-04-18",
-"recent":null,
+"count":5,
+"first":"2024-03-30",
+"recent":"2026-04-18",
 "show_log":[
 {
 "date":"2026-04-18",
 "venue":"The State Theatre",
+"via":null,
+"photo_url":null,
+"goals":[]
+},
+{
+"date":"2025-10-17",
+"venue":"The State Theatre, Falls Church, VA, USA",
+"via":null,
+"photo_url":null,
+"goals":[]
+},
+{
+"date":"2025-01-24",
+"venue":"The Collective Encore, Columbia, MD, USA",
+"via":null,
+"photo_url":null,
+"goals":[]
+},
+{
+"date":"2024-12-07",
+"venue":"The State Theatre, Falls Church, VA, USA",
+"via":null,
+"photo_url":null,
+"goals":[]
+},
+{
+"date":"2024-03-30",
+"venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
 "goals":[]
@@ -15495,8 +15526,8 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.132,
-"band":"low"
+"score":0.346,
+"band":"medium"
 },
 "badges":{
 "hat":"absent",
@@ -15516,18 +15547,12 @@
 "photo":0,
 "photo_album":null
 },
-"latest_release":{
-"name":"Every Breath You Take (乡间小路)",
-"type":"single",
-"date":"2020-10-08",
-"url":"https://open.spotify.com/album/2ArdMFDZT4CRuU3X30qrnC",
-"image_url":"https://i.scdn.co/image/ab67616d00001e02fb710e4a0e2839ba1dda6caf"
-},
+"latest_release":null,
 "links":{
-"spotify":"https://open.spotify.com/artist/59JKTjQjIyHF2ZsU8poaxq",
+"spotify":"https://open.spotify.com/artist/0uSANfVQseqy3o4RIku8TC",
 "youtube":"@everybreathyoutakeband",
-"lastfm":"https://www.last.fm/music/Every+Breath+You+Take",
-"musicbrainz":null,
+"lastfm":"https://www.last.fm/music/New+York%27s+Finest",
+"musicbrainz":"https://musicbrainz.org/artist/406f1e0c-f2ac-47a3-b0b5-f21c0228d6d0",
 "bandsintown":"https://www.bandsintown.com/Every%20Breath%20You%20Take",
 "seated":null,
 "qobuz":"https://www.qobuz.com/us-en/interpreter/every-breath-you-take/download-streaming-albums",
@@ -15535,27 +15560,17 @@
 },
 "similar":[
 {
-"name":"Can't Take My Eyes Off You",
+"name":"Clarisse Muvemba",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"De Do Do Do, De Da Da Da",
+"name":"Serious Intention",
 "in_tracker":false,
 "slug":null
 },
 {
-"name":"Holding Back The Years",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"I Want To Know What Love Is",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Billie Jean",
+"name":"Hifi Sean",
 "in_tracker":false,
 "slug":null
 }
@@ -35554,108 +35569,6 @@
 },
 {
 "name":"Josie de Guzman",
-"in_tracker":false,
-"slug":null
-}
-]
-},
-"new york s finest":{
-"name":"New York's Finest",
-"slug":"new-york-s-finest",
-"spotify_id":"0uSANfVQseqy3o4RIku8TC",
-"mbid":"406f1e0c-f2ac-47a3-b0b5-f21c0228d6d0",
-"image_url":null,
-"banner_url":null,
-"genres":[
-"mememarie"
-],
-"listener":{
-"tranche":"niche",
-"raw":191
-},
-"tier":null,
-"seen":{
-"count":4,
-"first":"2024-03-30",
-"recent":"2025-10-17",
-"show_log":[
-{
-"date":"2025-10-17",
-"venue":"The State Theatre, Falls Church, VA, USA",
-"via":null,
-"photo_url":null,
-"goals":[]
-},
-{
-"date":"2025-01-24",
-"venue":"The Collective Encore, Columbia, MD, USA",
-"via":null,
-"photo_url":null,
-"goals":[]
-},
-{
-"date":"2024-12-07",
-"venue":"The State Theatre, Falls Church, VA, USA",
-"via":null,
-"photo_url":null,
-"goals":[]
-},
-{
-"date":"2024-03-30",
-"venue":"The Collective Encore, Columbia, MD, USA",
-"via":null,
-"photo_url":null,
-"goals":[]
-}
-]
-},
-"fast_track":false,
-"affinity":{
-"score":0.319,
-"band":"medium"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":"https://open.spotify.com/artist/0uSANfVQseqy3o4RIku8TC",
-"youtube":null,
-"lastfm":"https://www.last.fm/music/New+York%27s+Finest",
-"musicbrainz":"https://musicbrainz.org/artist/406f1e0c-f2ac-47a3-b0b5-f21c0228d6d0",
-"bandsintown":"https://www.bandsintown.com/New%20York%27s%20Finest",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/new-york-s-finest/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=New+York's+Finest"
-},
-"similar":[
-{
-"name":"Clarisse Muvemba",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Serious Intention",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Hifi Sean",
 "in_tracker":false,
 "slug":null
 }
