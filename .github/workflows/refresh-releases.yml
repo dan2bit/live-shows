@@ -14,6 +14,37 @@ name: Daily release refresh (spotify_cache)
 # no-op — nothing is re-pulled inside 25 days, so the run does nothing until
 # entries age past the threshold.
 #
+# END-OF-MONTH RAMP (#396). A flat 25/day means a full-roster sweep takes
+# roughly two weeks, so a "New Music [Month]" digest isn't trustworthy until
+# well into the FOLLOWING month — and even then only "probably fine, can't be
+# sure," since an artist checked early in that sweep can still release
+# something later in the same covered month with no second look coming for
+# another ~25 days. The ramp is two DIFFERENT phases, not one bigger number:
+#
+#   - Last 5 days of the month (limit 45, stale-days UNCHANGED): pure
+#     backlog-clear. refresh_releases() already walks oldest-checked-first,
+#     so the extra budget lands on the stalest entries by construction — no
+#     new prioritization logic needed here, just more of it.
+#   - First 3 days of the next month (limit 45, stale-days DROPPED to 5):
+#     a deliberate RE-VERIFY pass, not more backlog-clearing. Dropping
+#     stale-days re-admits whoever the tail-end ramp just checked (6-8 days
+#     old by now) — oldest-first ordering means the entries checked EARLIEST
+#     in the ramp (the ones with the most remaining days in the old month to
+#     have released something new) get re-confirmed first, ahead of the
+#     Sept-30-ish entries that had almost no exposure to begin with. This is
+#     the actual gap-closer: it targets exactly the "checked early, released
+#     late, no one looked again" case a bigger flat limit doesn't touch.
+#
+# --limit 45 (not the old burst's 90) keeps wall-clock exposure low — ~90s of
+# calls at the 2.0s default delay — and isn't remotely the failure mode the
+# 2026-08-29 incident hit, which was a missing always()-guarded commit (fixed
+# below), not the limit value itself.
+#
+# A manual workflow_dispatch NEVER applies this ramp — github.event_name is
+# 'schedule' only for the actual cron, so a person dispatching this by hand
+# always gets exactly the limit/stale-days they typed (or the plain 25/25
+# default), never a calendar-computed override they didn't ask for.
+#
 # The --heal-only portrait step runs on the 1st only, NOT daily. Its set is
 # entries never stamped by a successful pull, and null-preserve means an
 # artist Spotify has no portrait for never leaves it. That set is currently 9
@@ -78,115 +109,22 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           LIMIT: ${{ github.event.inputs.limit || '25' }}
           STALE_DAYS: ${{ github.event.inputs.stale_days || '25' }}
-        run: |
-          python3 scripts/spotify_cache.py --refresh-releases \
-            --stale-days "$STALE_DAYS" --limit "$LIMIT"
-
-      - name: Heal unstamped portraits (1st of the month, or on request)
-        # Guarded in shell rather than in `if:` — Actions expressions have no
-        # access to the current date. Dispatch can force it with heal=true.
-        env:
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          FORCE_HEAL: ${{ github.event.inputs.heal || 'false' }}
-        run: |
-          if [ "$(date -u +%d)" != "01" ] && [ "$FORCE_HEAL" != "true" ]; then
-            echo "Not the 1st and heal not requested - skipping portrait heal."
-            exit 0
-          fi
-          python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
-
-      - name: Mail the release digest
-        # always(): a rate-limit bail exits the refresh step non-zero, but the
-        # entries pulled before it bailed are real and flushed - they deserve
-        # reporting. Mirrors the commit step's reasoning below.
-        #
-        # Reads the flushed cache against HEAD, so it cannot report entries a
-        # bail left unsaved. No API calls: title, type and the Spotify link are
-        # already in the cache.
-        if: always()
-        env:
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          python3 scripts/release_digest.py > /tmp/release_digest.txt || {
-            echo "digest failed - not fatal, the sweep's work is still committed below"
-            exit 0
-          }
-          cat /tmp/release_digest.txt
 
-          # Counts come from --json, not from grepping the rendered report. The
-          # header is presentation and now varies ("NEW RELEASES (3) - 1 worth a
-          # tour-page check"), so a text parse would break on a formatting change
-          # while the JSON carries count and actionable directly. Re-running the
-          # digest is free: it reads committed files and makes no API calls.
-          python3 scripts/release_digest.py --json > /tmp/release_digest.json || true
-
-          jq_count() {
-            python3 -c "import json,sys;print(json.load(open('/tmp/release_digest.json')).get('$1',0))" \
-              2>/dev/null || echo 0
-          }
-          COUNT="$(jq_count count)"
-          ACTIONABLE="$(jq_count actionable)"
-
-          if [ "$COUNT" = "0" ]; then
-            echo "No new releases - no mail sent."
-            exit 0
-          fi
-          if [ -z "${RESEND_API_KEY:-}" ]; then
-            echo "::warning::$COUNT new release(s) found but RESEND_API_KEY is unset - digest not mailed."
-            exit 0
-          fi
-
-          # The subject answers "does this need a look" from the inbox list, so a
-          # digest with nothing actionable can be left unopened.
-          if [ "$COUNT" = "1" ]; then
-            SUBJECT="[releases] 1 new"
-          else
-            SUBJECT="[releases] $COUNT new releases"
-          fi
-          if [ "$ACTIONABLE" != "0" ]; then
-            SUBJECT="$SUBJECT - $ACTIONABLE worth a tour-page check"
-          fi
-          python3 scripts/notify_email.py \
-            --subject "$SUBJECT" \
-            --body-file /tmp/release_digest.txt
-
-      - name: Commit to staging if changed
-        # always(): a real 429 exits the refresh step non-zero, and without
-        # this the runner is destroyed with the flushed checkpoint still on it
-        # — the 2026-08-29 run completed 10 refreshes and lost all of them
-        # because this step was skipped. The job still reports failure; the
-        # work just survives it.
-        if: always()
-        run: |
-          git add data/artist_spotify.json
-          if git diff --cached --quiet; then
-            echo "data/artist_spotify.json unchanged - nothing to commit."
-          else
-            mkdir -p "$HOME/.ssh"
-            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
-            chmod 600 "$HOME/.ssh/promote_key"
-            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
-
-            git config user.name  "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
-
-            git commit -m "ci: daily --refresh-releases sweep (spotify_cache)"
-            for attempt in 1 2 3 4 5; do
-              git fetch promote staging
-              git rebase promote/staging || {
-                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
-                exit 1
-              }
-              if git push promote HEAD:staging; then
-                echo "push succeeded on attempt $attempt"
-                exit 0
-              fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
-              sleep "$attempt"
-            done
-            echo "gave up after 5 attempts"
-            exit 1
-          fi
+          # End-of-month ramp (#396) - schedule-only, see the header comment
+          # above for the full rationale. A manual dispatch keeps exactly the
+          # limit/stale-days it was given, ramp or no ramp.
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DOM=$(date -u +%d)
+            LAST_DAY=$(date -u -d "$(date -u +%Y-%m-01) +1 month -1 day" +%d)
+            DAYS_LEFT=$((10#$LAST_DAY - 10#$DOM))
+            RAMP_LIMIT=45
+            if [ "$DAYS_LEFT" -le 4 ]; then
+              LIMIT=$RAMP_LIMIT
+              echo "eom-ramp: day $DOM, $DAYS_LEFT day(s) left in the month - backlog-clear phase (limit $LIMIT, stale-days unchanged at $STALE_DAYS)"
+            elif [ "$((10#$DOM))" -le 3 ]; then
+              LIMIT=$RAMP_LIMIT
+              STALE_DAYS=5
+              echo "eom-ramp: day $DOM of the new month - re-verify phase (limit $LIMIT, stale-days dropped to $STALE_DAYS)"
