@@ -273,23 +273,95 @@ def load_scrape(source, month):
     return out, path
 
 
+def register(index, name, fname):
+    """Record that `name` appears in tracking file `fname`, under every key it
+    can be spelled by, so all of a name's spellings share one record.
+
+    Order-independent by construction. keys_of() returns a set, and the earlier
+    version of this walked it with setdefault(): when a name's longer spelling
+    ("Ally Venable Band" from artists.tsv) met an index that already held its
+    shorter one from another file, visiting the long key first created a fresh
+    record there, and visiting the short key second then found the old record
+    and quietly kept that one - leaving the long key pointing at an orphan
+    whose files set never filled. Which order happened depended on the
+    process's string hash seed, so the [files] tag in the weekly report came
+    and went between runs. Now every pre-existing record under any of the keys
+    is found first, they are folded into one, and every key is pointed at it.
+
+    An index that already knows the short form, then meets the long one:
+
+    >>> idx = {"ally venable": {"name": "Ally Venable", "files": {"follows"}}}
+    >>> register(idx, "Ally Venable Band", "artists")
+    >>> idx["ally venable"] is idx["ally venable band"]
+    True
+    >>> sorted(idx["ally venable"]["files"])
+    ['artists', 'follows']
+
+    Only the long form carries both keys (surface_forms drops " Band", it never
+    adds it), so a short spelling filed against a long-only index stands on its
+    own until the long form is filed again - which then folds the two, from
+    either direction:
+
+    >>> idx = {"ally venable band": {"name": "Ally Venable Band", "files": {"artists"}}}
+    >>> register(idx, "Ally Venable", "follows")
+    >>> idx["ally venable"] is idx["ally venable band"]
+    False
+    >>> register(idx, "Ally Venable Band", "current")
+    >>> idx["ally venable"] is idx["ally venable band"]
+    True
+    >>> sorted(idx["ally venable band"]["files"])
+    ['artists', 'current', 'follows']
+
+    Two spellings that were each filed alone, then met by a name that carries
+    both: the two records fold into one, and a third key that pointed at the
+    record being folded away follows it:
+
+    >>> idx = {"robert cray": {"name": "Robert Cray", "files": {"follows"}},
+    ...        "robert cray band": {"name": "Robert Cray Band", "files": {"artists"}}}
+    >>> idx["cray"] = idx["robert cray band"]
+    >>> register(idx, "Robert Cray Band", "current")
+    >>> idx["robert cray"] is idx["robert cray band"] is idx["cray"]
+    True
+    >>> sorted(idx["robert cray"]["files"])
+    ['artists', 'current', 'follows']
+
+    A name with no usable key is ignored:
+
+    >>> register(idx, "   ", "artists"); sorted(idx)
+    ['cray', 'robert cray', 'robert cray band']
+    """
+    keys = keys_of(name)
+    if not keys:
+        return
+    existing = []
+    for k in sorted(keys):
+        rec = index.get(k)
+        if rec is not None and not any(rec is e for e in existing):
+            existing.append(rec)
+    slot = existing[0] if existing else {"name": name.strip(), "files": set()}
+    for other in existing[1:]:
+        slot["files"] |= other["files"]
+        for k2, rec in index.items():
+            if rec is other:
+                index[k2] = slot
+    for k in keys:
+        index[k] = slot
+    slot["files"].add(fname)
+
+
 def load_tracking():
     """{normalized name -> {'name': display, 'files': set()}} across the six files.
 
     Potentials contribute their Support column as well as Artist, and both are
     tokenized: a tracked artist filed only as part of a billing string would
-    otherwise read as untracked forever.
+    otherwise read as untracked forever. Every spelling of a name shares one
+    record - see register().
     """
     index = {}
 
     def add(raw, fname):
         for name in (acts(raw) or ([raw] if raw else [])):
-            slot = None
-            for k in keys_of(name):
-                slot = index.setdefault(k, slot or {"name": name.strip(),
-                                                    "files": set()})
-            if slot is not None:
-                slot["files"].add(fname)
+            register(index, name, fname)
 
     for fname, path in TRACKING.items():
         for r in read_rows(path):
