@@ -237,6 +237,35 @@ happens to be carrying that run.
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
 
+**Validation-trust rule (hard constraint, root-caused 2026-09-22).**
+`create_or_update_file` has a proven defect: it can silently drop a tab
+character when writing multi-line TSV content that contains runs of
+consecutive empty/dash fields, so the git blob that actually lands does not
+always match the content passed to the tool. `get_file_contents` does not
+reliably surface this discrepancy on read-back either — reading the file back
+through the same API can return something that looks plausible without
+matching the real object. Practical consequence: "validate a local copy, push
+via `create_or_update_file`, confirm via `get_file_contents`" is NOT a closed
+loop for these two TSVs — it can validate one artifact and confirm a
+different one while the real pushed object stays broken. This produced two
+separate silent corruptions on `live_shows_potential.tsv` in one session
+before being root-caused.
+
+**The only proven-reliable check:** after every push to `live_shows_current.tsv`
+or `live_shows_potential.tsv`, do a real `git fetch <commit-sha>` against
+`https://github.com/dan2bit/live-shows.git` (plain network access to
+github.com works from a sandboxed shell in this environment, confirmed
+2026-09-22 — no repo credentials needed for a fetch) and run the actual
+validator (`validate_current.py` / `validate_potential.py`) against that
+freshly-fetched tree. Not a copy. Not a sibling file believed to be identical.
+Not a `diff` against something else claimed to already be validated — a diff
+only proves two things match each other, not that either one is correct. Do
+this every time, before considering the write done. Real `git push` is not
+available (no push credentials are configured in this environment), so the
+Contents API remains the only write path; this fetch-and-validate step is the
+compensating check for a known-defective write path, not a substitute for
+fixing it.
+
 ### In-page UI writes (authenticated browser)
 
 The in-page editor (`handleDecisionChange`, `handleRevoke`, `saveEdit`, `commitConfig`)
@@ -257,10 +286,27 @@ repo's `main` directly, which has no branch protection.
 
 ## `live_shows_current.tsv` write protocol
 
-**19 columns — no exceptions.** `validate_current.py` enforces this. For upcoming rows,
-cols 13 (Setlist URL) and 16 (Playlist URL) must never be empty — use `-` as a sentinel
-if there is no real value. MCP trailing-tab stripping collapses empty trailing columns
-and shifts content into the wrong column; the sentinel prevents this.
+**19 columns — no exceptions.** `validate_current.py` enforces this.
+
+**SENTINEL RULE (hard constraint, backfilled repo-wide 2026-09-22): every
+empty/unknown cell in this file is a literal `-` character, never a bare
+blank.** There is no semantic distinction between "blank" and "dash" anywhere
+in this schema — both mean "unknown" — so `-` is simply the mandatory
+rendering of that state, not a stricter option alongside blank. This applies
+to every column with one documented exception: `VIP` (col 10) and `Group`
+(col 11) are true boolean flags, `Y` or blank, with no "unknown" state to mark
+— `validate_current.py`'s `VALID_FLAGS = {"", "Y"}` is the authority on this,
+and writing `-` into either of those two columns is a validation error, not a
+stricter sentinel. Cols 13 (Setlist URL) and 16 (Playlist URL) are the ones
+`validate_current.py` actively enforces as `-`-or-blank for upcoming rows, but
+the rule is not limited to those two — every non-flag column follows it.
+Build a new or edited row from a positional field-array (header-name-indexed
+dict → `'\t'.join()`), setting every field explicitly with `'-'` as the
+default for anything not in the flag-column exemption; a field simply omitted
+from the dict silently becomes `''`, which is exactly the defect this rule
+exists to prevent. MCP trailing-tab stripping collapses empty trailing
+columns and shifts content into the wrong column; the sentinel prevents this
+by never leaving a cell for stripping to collapse.
 
 **Public/private split (PR #59):** The public file carries only denormalized flags
 (`Seat Type`: `GA`|`Seated`; `VIP`: `Y`; `Group`: `Y`), show metadata, public Notes /
@@ -354,21 +400,35 @@ field count still looks correct — that is exactly how eight rows were silently
 from `Fees Notes` rightward, with the Notes paragraph rendering inside the Next Show
 bracket. MCP trailing-tab stripping produces the same class of damage from the other end.
 
-**Every column gets a value — `-` for "not applicable / no value exists," never a
-truly empty cell (2026-09-16).** "Write every column even when its value is empty"
-(above) is about *count* — 19 tab-separated fields, always — but it is also about
-*content*: an empty cell between two tabs is not the same thing as a deliberate `-`
-sentinel, even though both can satisfy a naive field-count check. `TBD` and `-` mean
-different things and are not interchangeable:
+**SENTINEL RULE, escalated to a hard constraint (2026-09-22, superseding the
+2026-09-16 note below): every empty/unknown cell in this file is a literal `-`
+character, never a bare blank — no exceptions, no boolean-flag columns exist
+in this schema to exempt.** There is no semantic distinction between "blank"
+and "dash" anywhere in this file; both mean "unknown," so `-` is simply the
+mandatory rendering of that state. "Write every column even when its value is
+empty" is about *count* — 19 tab-separated fields, always — but it is equally
+about *content*: a bare empty cell between two tabs is not an acceptable way
+to satisfy that count, even though it passes the field-count check exactly as
+well as `-` does. This is not a style preference: `create_or_update_file` has
+a proven defect that silently drops a tab in a run of consecutive blank
+fields (root-caused 2026-09-22, see the validation-trust rule above), and a
+visible `-` is what makes such a drop show up in an ordinary diff or read
+instead of vanishing into indistinguishable whitespace. `TBD` remains a
+distinct, non-interchangeable value from `-`:
 - `TBD` — the value is known to exist but hasn't been looked up yet (a price before
   on-sale, fees not yet checked at checkout).
 - `-` — there is no value to fill in at all (no ticket service, no purchase URL, no
   event URL yet, because the show was just announced with no on-sale details).
 
-A run of several genuinely-blank cells in one row — not `-`, not `TBD`, just nothing
-between the tabs — is the shape a stricter validator (or a human reviewer) flags even
-when the raw column count is correct, because it looks identical to a field that got
-silently dropped. Two Choose/Pass rows added 2026-09-16 (Kenny Wayne Shepherd, The
+Build a new or edited row from a positional field-array (header-name-indexed
+dict → `'\t'.join()`), setting every field explicitly with `'-'` as the
+default for any field not otherwise populated — never rely on a dict omission
+defaulting to `''`. Hand-splicing or pasting row text into existing TSV
+content is banned for this reason: it is exactly how a run of blank fields
+gets typed in the first place, and exactly what produced two separate silent
+tab-loss corruptions on this file in one session (2026-09-22) before the full
+repo-wide backfill to `-` closed the gap. History below, preserved for
+context: two Choose/Pass rows added 2026-09-16 (Kenny Wayne Shepherd, The
 James Hunter Six — both "just announced, not yet on sale") left Ticket Service /
 Purchase URL / Event URL as three consecutive truly-empty cells; `validate_potential.py`
 column count was fine at 19, but both rows needed a same-day follow-up commit once
