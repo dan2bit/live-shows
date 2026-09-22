@@ -120,6 +120,16 @@ jobs:
           git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
           git commit -m "ci: daily page watch $(date -u +%Y-%m-%d)"
+
+          # Discard anything left in the working tree beyond what was just
+          # committed - watch_diff.py only ever writes the two paths staged
+          # above, but a stray uncommitted change from any other source (e.g.
+          # checkout-time normalization) makes `git rebase` refuse outright
+          # with "cannot rebase: you have unstaged changes" before it even
+          # gets to evaluate a real conflict. potentials-maintenance.yml hit
+          # this same class of failure first; this mirrors its fix.
+          git checkout -- .
+
           for attempt in 1 2 3 4 5; do
             git fetch promote staging
             git rebase promote/staging || {
