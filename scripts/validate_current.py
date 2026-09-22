@@ -8,8 +8,11 @@ Checks (public, post-privacy-split schema — 19 columns):
   1. Column count — every row must have exactly 19 columns.
   2. Status values — every row must have status 'upcoming' or 'attended'.
   3. Flag columns — Seat Type must be 'GA' or 'Seated'; VIP and Group must be
-     'Y' or blank. (These replace the old Private Notes sentinel, which moved to
-     the live-shows-private sidecar, and catch a column-shift corruption well.)
+     'Y' or 'N' (2026-09-22: tightened from 'Y'-or-blank to close the same blank/
+     dash ambiguity the rest of the schema was already tightened for — see the
+     Sentinel Rule in DATA_WRITE_PROTOCOLS.md). These replace the old Private
+     Notes sentinel, which moved to the live-shows-private sidecar, and catch a
+     column-shift corruption well.
   4. Sentinel values — upcoming rows must have:
        - Setlist.fm URL == '-' (or blank)
        - Playlist URL == '-' (or blank)
@@ -33,7 +36,7 @@ COL_PLAYLIST = 16
 
 VALID_STATUSES = {"upcoming", "attended"}
 VALID_SEAT_TYPES = {"GA", "Seated"}
-VALID_FLAGS = {"", "Y"}
+VALID_FLAGS = {"N", "Y"}
 
 
 def main() -> int:
@@ -95,11 +98,11 @@ def main() -> int:
             )
         if cols[COL_VIP].strip() not in VALID_FLAGS:
             errors.append(
-                f"Row {i} ({row_id}): invalid VIP {cols[COL_VIP]!r} (expected 'Y' or blank)"
+                f"Row {i} ({row_id}): invalid VIP {cols[COL_VIP]!r} (expected 'Y' or 'N')"
             )
         if cols[COL_GROUP].strip() not in VALID_FLAGS:
             errors.append(
-                f"Row {i} ({row_id}): invalid Group {cols[COL_GROUP]!r} (expected 'Y' or blank)"
+                f"Row {i} ({row_id}): invalid Group {cols[COL_GROUP]!r} (expected 'Y' or 'N')"
             )
 
         # 4. Sentinel checks for upcoming rows
