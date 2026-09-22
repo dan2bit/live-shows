@@ -288,29 +288,40 @@ repo's `main` directly, which has no branch protection.
 
 **19 columns — no exceptions.** `validate_current.py` enforces this.
 
-**SENTINEL RULE (hard constraint, backfilled repo-wide 2026-09-22): every
-empty/unknown cell in this file is a literal `-` character, never a bare
-blank.** There is no semantic distinction between "blank" and "dash" anywhere
-in this schema — both mean "unknown" — so `-` is simply the mandatory
-rendering of that state, not a stricter option alongside blank. This applies
-to every column with one documented exception: `VIP` (col 10) and `Group`
-(col 11) are true boolean flags, `Y` or blank, with no "unknown" state to mark
-— `validate_current.py`'s `VALID_FLAGS = {"", "Y"}` is the authority on this,
-and writing `-` into either of those two columns is a validation error, not a
-stricter sentinel. Cols 13 (Setlist URL) and 16 (Playlist URL) are the ones
-`validate_current.py` actively enforces as `-`-or-blank for upcoming rows, but
-the rule is not limited to those two — every non-flag column follows it.
-Build a new or edited row from a positional field-array (header-name-indexed
-dict → `'\t'.join()`), setting every field explicitly with `'-'` as the
-default for anything not in the flag-column exemption; a field simply omitted
-from the dict silently becomes `''`, which is exactly the defect this rule
-exists to prevent. MCP trailing-tab stripping collapses empty trailing
-columns and shifts content into the wrong column; the sentinel prevents this
-by never leaving a cell for stripping to collapse.
+**SENTINEL RULE (hard constraint, backfilled repo-wide 2026-09-22, VIP/Group
+exception closed the same day): every empty/unknown cell in this file is a
+literal `-` character, with ONE exception — `VIP` (col 10) and `Group` (col
+11) use `Y`/`N` instead of `-`/blank, because they are true booleans with no
+"unknown" state, and `N` is exactly as unambiguous a "not this" marker as `-`
+is elsewhere. There is no semantic distinction between "blank" and either
+sentinel anywhere in this schema — all three (`-`, blank, and an omitted
+flag) meant the same "unknown/not set" thing before this rule, which is
+exactly the problem: `validate_current.py`'s `VALID_FLAGS = {"N", "Y"}` now
+makes blank a validation error for those two columns too, matching how every
+other column already treats blank as a defect-shaped state rather than a
+legitimate value. This closes what was originally carved out as a
+documented exception (2026-09-22 morning) once it became clear the same
+reasoning applied: Dan confirmed there's no case-by-case value to preserving
+blank over an explicit flag, and the rare purchase-time change (adding a
+group ticket, upgrading to VIP, selling a spot back down) is fully supported
+by flipping `Y`/`N` in place, same as any other field edit. Cols 13 (Setlist
+URL) and 16 (Playlist URL) remain the two `validate_current.py` actively
+enforces as `-`-or-blank for upcoming rows specifically, but the rule is not
+limited to those two — every column follows it, VIP/Group included, each in
+its own vocabulary (`-` for free-text/reference columns, `Y`/`N` for the two
+booleans). Build a new or edited row from a positional field-array
+(header-name-indexed dict → `'\t'.join()`), setting every field explicitly
+— `'-'` as the default for ordinary columns, `'N'` as the default for VIP
+and Group; a field simply omitted from the dict silently becomes `''`,
+which is exactly the defect this rule exists to prevent. MCP trailing-tab
+stripping collapses empty trailing columns and shifts content into the
+wrong column; the sentinel prevents this by never leaving a cell for
+stripping to collapse.
 
 **Public/private split (PR #59):** The public file carries only denormalized flags
-(`Seat Type`: `GA`|`Seated`; `VIP`: `Y`; `Group`: `Y`), show metadata, public Notes /
-Memories, and Photo URL. All financial and seat detail lives in the private sidecar.
+(`Seat Type`: `GA`|`Seated`; `VIP`: `Y`/`N`; `Group`: `Y`/`N`), show metadata, public
+Notes / Memories, and Photo URL. All financial and seat detail lives in the private
+sidecar.
 
 | Public (`data/live_shows_current.tsv` → `staging`) | Private (`dan2bit/live-shows-private → current_private.tsv`) |
 |---|---|
