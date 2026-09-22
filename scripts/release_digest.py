@@ -50,6 +50,19 @@ The sweep produces several kinds of line and only one is interesting:
 A hit cannot be reported twice: the comparison is cached-vs-pulled and the
 cache is written on the same pass, so the next run sees `unchanged`. Each
 release announces itself exactly once.
+
+DMV DATE VS. PASSED DATE
+
+"no DMV date on file" means "no upcoming, non-Pass/Sell date" - a Pass/Sell
+row is excluded from the join on purpose, so that a passed show doesn't
+suppress the actionable flag on a release that's actually worth a second
+look. But that fallback string alone can't distinguish "never surfaced" from
+"surfaced and declined" - a reader seeing it for an artist who was in fact
+evaluated and passed on would reasonably conclude nothing had ever been
+found. `load_context()` tracks the nearest Pass/Sell date separately
+(`passed`, display-only) alongside `dmv` (what actually drives `actionable`),
+and `render()` surfaces it when there's no live date to show instead of
+falling back to the same string for both cases.
 """
 
 import argparse
@@ -113,13 +126,13 @@ def read_tsv(path):
 
 
 def load_context():
-    """(tier, dmv, tour) keyed on every identity form of each artist.
+    """(tier, dmv, tour, passed) keyed on every identity form of each artist.
 
     Every lookup below goes through identity_keys(), never a raw string compare.
     Skipping the alias table makes long-tracked artists report as untracked - a
     wrong answer that reads like a finding rather than a bug.
     """
-    tier, tour, dmv = {}, {}, {}
+    tier, tour, dmv, passed = {}, {}, {}, {}
 
     for r in read_tsv(ARTISTS):
         seen = (r.get("Times Seen") or "").strip()
@@ -146,29 +159,38 @@ def load_context():
 
     today = date.today().isoformat()
 
-    def note(keys, when, text):
+    def note(target, keys, when, text):
         for k in keys:
-            cur = dmv.get(k)
+            cur = target.get(k)
             if cur is None or when < cur[0]:
-                dmv[k] = (when, text)
+                target[k] = (when, text)
 
     for r in read_tsv(CURRENT):
         d = (r.get("Show Date") or "").strip()
         if r.get("Artist") and d >= today:
-            note(identity_keys(r["Artist"]), d,
+            note(dmv, identity_keys(r["Artist"]), d,
                  "%s at %s (purchased)" % (d, (r.get("Venue Name") or "?").strip()))
 
-    # Pass and Sell rows are deliberately excluded: a passed show is not a date
-    # you would act on, so reporting it as "the next DMV date" would suppress the
-    # actionable flag on exactly the artist worth checking.
+    # Pass and Sell rows are deliberately excluded from `dmv`: a passed show is
+    # not a date you would act on, so reporting it as "the next DMV date" would
+    # suppress the actionable flag on exactly the artist worth checking. They're
+    # tracked separately in `passed` instead - display-only, never read by
+    # annotate()'s "actionable" computation - so the digest can say "a date was
+    # found and declined" rather than reusing the same "no DMV date on file"
+    # string it uses when nothing has ever been surfaced.
     for r in read_tsv(POTENTIAL):
         d = (r.get("Date") or "").strip()[:10]
         dec = (r.get("Decision") or "?").strip()
-        if r.get("Artist") and d >= today and dec not in ("Pass", "Sell"):
-            note(identity_keys(r["Artist"]), d,
+        if not r.get("Artist") or d < today:
+            continue
+        if dec not in ("Pass", "Sell"):
+            note(dmv, identity_keys(r["Artist"]), d,
                  "%s at %s (%s)" % (d, (r.get("Venue") or "?").strip(), dec))
+        else:
+            note(passed, identity_keys(r["Artist"]), d,
+                 "%s at %s" % (d, (r.get("Venue") or "?").strip()))
 
-    return tier, dmv, tour
+    return tier, dmv, tour, passed
 
 
 def annotate(name, ctx):
@@ -181,7 +203,7 @@ def annotate(name, ctx):
     resolves deterministically: the strongest tier, the earliest date, and the
     first tour URL by sorted key.
     """
-    tier_map, dmv_map, tour_map = ctx
+    tier_map, dmv_map, tour_map, passed_map = ctx
     keys = identity_keys(name)
 
     tiers = [tier_map[k] for k in sorted(keys) if k in tier_map]
@@ -190,10 +212,17 @@ def annotate(name, ctx):
     dates = [dmv_map[k] for k in sorted(keys) if k in dmv_map]
     d = min(dates) if dates else None
 
+    # Only consulted for display when there's no live date - it never feeds
+    # "actionable", which is the whole point: a passed date still means the
+    # release is worth a second look, not that the artist is now settled.
+    passed_dates = [passed_map[k] for k in sorted(keys) if k in passed_map]
+    p = min(passed_dates) if passed_dates else None
+
     u = next((tour_map[k] for k in sorted(keys) if k in tour_map), None)
     return {
         "tier": t,
         "dmv": d[1] if d else None,
+        "passed": p[1] if p else None,
         "tour_url": u,
         "actionable": t in ACTIONABLE_TIERS and d is None,
         "_rank": (TIER_RANK.get(t, 9), (d[0] if d else "9999"), name.lower()),
@@ -267,7 +296,13 @@ def render(hits, counts, ctx=None):
                 out.append("  %s" % r["url"])
             if ctx:
                 a = annotate(name, ctx)
-                out.append("  tier: %s - %s" % (a["tier"], a["dmv"] or "no DMV date on file"))
+                if a["dmv"]:
+                    dmv_text = a["dmv"]
+                elif a["passed"]:
+                    dmv_text = "no upcoming DMV date (passed: %s)" % a["passed"]
+                else:
+                    dmv_text = "no DMV date on file"
+                out.append("  tier: %s - %s" % (a["tier"], dmv_text))
                 if a["tour_url"]:
                     out.append("  tour: %s" % a["tour_url"])
     out.append("")
@@ -325,7 +360,8 @@ def main():
             row = {"artist": n, "previous": o, **r}
             if ctx:
                 a = annotate(n, ctx)
-                row.update({k: a[k] for k in ("tier", "dmv", "tour_url", "actionable")})
+                row.update({k: a[k] for k in
+                            ("tier", "dmv", "passed", "tour_url", "actionable")})
             rels.append(row)
         print(json.dumps({
             "count": len(hits),
