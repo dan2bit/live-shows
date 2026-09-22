@@ -185,6 +185,55 @@ git fetch origin && git push origin origin/main:staging
 Sessions should also verify `staging` is not behind `main` before any staging
 write (the API is authoritative — a sandbox `git fetch` can serve stale refs).
 
+---
+
+## Bot-commit deploy-key pattern — `promote` remote, fetch/rebase, and the unstaged-changes trap
+
+Several CI workflows write their own output back to the repo past `main`'s branch
+protection: `daily-page-watch.yml`, `weekly-hftb-diff.yml`, and
+`potentials-maintenance.yml` all follow the same shape — add a deploy-key remote
+named `promote` (`git remote add promote git@github.com:${GITHUB_REPOSITORY}.git`,
+authenticated via the `PROMOTE_DEPLOY_KEY` secret, which bypasses branch protection
+the way the ordinary `GITHUB_TOKEN` cannot), commit the job's own output, then
+`git fetch promote staging` + `git rebase promote/staging` + `git push promote
+HEAD:staging` in a retry loop (5 attempts, backoff) to land cleanly even if another
+writer moved `staging` in the meantime. `auto-promote.yml` uses the same `promote`
+remote for its own `staging` → `main` push, with no fetch/rebase since it only ever
+fast-forwards.
+
+**`promote` is a remote name, not a branch.** `git remote add promote <url>` is
+freshly re-added every job (no state carries between runs), so `git fetch promote
+staging` always reports `* [new branch] staging -> promote/staging` on the first
+fetch of the job — that line is boilerplate on every successful run and is not a
+diagnostic signal for anything. `promote/staging` is the standard git name for
+"the `staging` branch, as seen through the `promote` remote" (the usual
+`<remote>/<branch>` remote-tracking-ref convention), nothing more.
+
+**The real trap: `git rebase` refuses outright on ANY unstaged working-tree
+change, not just a real conflict.** `error: cannot rebase: You have unstaged
+changes` fires before git ever evaluates whether the rebase would actually
+conflict — it is a precondition check on a clean tree, not a conflict report. A
+workflow's own script only ever needs to have written the paths it explicitly
+`git add`s before the commit; anything else left modified-but-uncommitted in the
+working tree (from checkout-time normalization or any other source, not
+necessarily the script) trips this refusal, and the log reads exactly like "a
+real conflict" per the workflow's own `echo` — the message text does not
+distinguish the two cases, so don't take "rebase conflict... bailing" in a log at
+face value as proof of a genuine competing edit.
+
+**The fix, already proven in this repo: `git checkout -- .` immediately after the
+commit, before the fetch/rebase loop.** `potentials-maintenance.yml` has carried
+this line from early on. `daily-page-watch.yml` and `weekly-hftb-diff.yml` were
+both missing it — confirmed as the cause of a `daily-page-watch` run failing
+2026-09-22 with exactly this "unstaged changes" refusal — and were corrected to
+add it in the same position. Any new workflow written against this same
+add-commit-fetch-rebase shape should include this line from the start; a bot
+commit step that stages specific paths and then rebases without discarding
+everything else first is an incident waiting on whatever else the working tree
+happens to be carrying that run.
+
+---
+
 **SHA discipline:** Always fetch a fresh blob SHA immediately before every
 `create_or_update_file` call. Never reuse a SHA from earlier in the session.
 
