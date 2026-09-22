@@ -131,14 +131,25 @@ def notify(title, text):
 
 
 def run(cmd, cwd=SCRIPT_DIR, capture=False, env_extra=None):
-    """Run a stage. Streams output unless capture=True (then returns it)."""
-    env = dict(os.environ, **(env_extra or {}))
-    if capture:
-        p = subprocess.run(cmd, cwd=cwd, env=env, text=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        return p.returncode, p.stdout
-    p = subprocess.run(cmd, cwd=cwd, env=env)
-    return p.returncode, ""
+    """Run a stage. Output always streams to the terminal as it happens; with
+    capture=True it is also returned, so a wrapper can look for a phrase
+    (invalid_grant, a playlist URL) after the fact without going silent
+    during a long upload. PYTHONUNBUFFERED keeps the child from block-
+    buffering its progress lines behind the pipe."""
+    env = dict(os.environ, PYTHONUNBUFFERED="1", **(env_extra or {}))
+    if not capture:
+        p = subprocess.run(cmd, cwd=cwd, env=env)
+        return p.returncode, ""
+    p = subprocess.Popen(cmd, cwd=cwd, env=env, text=True, bufsize=1,
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    lines = []
+    assert p.stdout is not None
+    for line in p.stdout:
+        sys.stdout.write(line)
+        sys.stdout.flush()
+        lines.append(line)
+    p.wait()
+    return p.returncode, "".join(lines)
 
 
 def confirm(prompt):
@@ -434,7 +445,6 @@ def cmd_upload(args):
         print("Not uploaded.")
         return 0
     rc, out = run(base, capture=True)
-    print(out)
     _token_hint(out)
     if rc == 0:
         print("\nNext: give YouTube a while to finish its Content ID scan, then press "
@@ -483,7 +493,6 @@ def cmd_publish(args):
         return 0
     print("\n== apply --publish")
     rc, out = run(base + ["--publish"], capture=True)
-    print(out)
     _token_hint(out)
     if rc != 0:
         print("\nPublish refused or failed - nothing further was run. Fix and press again.")
@@ -496,7 +505,6 @@ def cmd_publish(args):
         return rc
     print("\n== youtube_create_playlists.py --new-show")
     rc, out = run([python(), PLAYLISTS, "--new-show", date, "--update-history"], capture=True)
-    print(out)
     if rc != 0:
         return rc
     urls = PLAYLIST_URL.findall(out)
