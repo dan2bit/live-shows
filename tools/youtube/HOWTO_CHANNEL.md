@@ -5,7 +5,9 @@ and credential configuration.
 
 The per-show pipeline (phone clips → uploaded → identified → titled → public
 → playlist) is `youtube_upload_show.py`; its step-by-step operator guide is
-**OPERATOR_FLOW.md**, next to this file. This document is the reference for
+**OPERATOR_FLOW.md**, next to this file. The Finder-driven version of the same
+pipeline (drop a zip, press buttons) is `yt_drop.py`, described in the
+drop-folder section of OPERATOR_FLOW.md. This document is the reference for
 credentials, environment, the surrounding utility scripts, and conventions.
 
 ---
