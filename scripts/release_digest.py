@@ -51,18 +51,18 @@ A hit cannot be reported twice: the comparison is cached-vs-pulled and the
 cache is written on the same pass, so the next run sees `unchanged`. Each
 release announces itself exactly once.
 
-DMV DATE VS. PASSED DATE (issue #398)
+DMV DATE VS. PASSED DATE
 
-"no DMV date on file" only ever meant "no upcoming, non-Pass/Sell date" - a
-Pass/Sell row was excluded from the join entirely, on purpose, so that a
-passed show doesn't suppress the actionable flag on a release that's actually
-worth a second look. But the fallback string didn't distinguish "never
-surfaced" from "surfaced and declined," so a reader seeing "no DMV date on
-file" for an artist who was in fact evaluated and passed on would reasonably
-conclude nothing had ever been found. `load_context()` now tracks the nearest
-Pass/Sell date separately (`passed`, display-only) alongside `dmv` (unchanged,
-still what drives `actionable`), and `render()` surfaces it when there's no
-live date to show instead of falling back to the same string for both cases.
+"no DMV date on file" means "no upcoming, non-Pass/Sell date" - a Pass/Sell
+row is excluded from the join on purpose, so that a passed show doesn't
+suppress the actionable flag on a release that's actually worth a second
+look. But that fallback string alone can't distinguish "never surfaced" from
+"surfaced and declined" - a reader seeing it for an artist who was in fact
+evaluated and passed on would reasonably conclude nothing had ever been
+found. `load_context()` tracks the nearest Pass/Sell date separately
+(`passed`, display-only) alongside `dmv` (what actually drives `actionable`),
+and `render()` surfaces it when there's no live date to show instead of
+falling back to the same string for both cases.
 """
 
 import argparse
@@ -177,7 +177,7 @@ def load_context():
     # tracked separately in `passed` instead - display-only, never read by
     # annotate()'s "actionable" computation - so the digest can say "a date was
     # found and declined" rather than reusing the same "no DMV date on file"
-    # string it uses when nothing has ever been surfaced (issue #398).
+    # string it uses when nothing has ever been surfaced.
     for r in read_tsv(POTENTIAL):
         d = (r.get("Date") or "").strip()[:10]
         dec = (r.get("Decision") or "?").strip()
