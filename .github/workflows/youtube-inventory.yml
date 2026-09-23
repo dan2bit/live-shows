@@ -1,0 +1,101 @@
+# youtube-inventory - regenerate the channel inventory TSVs headless.
+#
+# youtube_fetch.py needs only the read-only YOUTUBE_API_KEY (no OAuth, no
+# token.json), so the files it writes - tools/youtube/youtube_videos.tsv and
+# youtube_playlists.tsv - and the correlation youtube_correlate.py derives from
+# them can be refreshed and committed by CI like any other generated output.
+# This removes the last by-hand git step in the bootleg upload flow: the
+# publish button still refreshes the local copies (the playlist tool reads
+# them) but nothing on the operator's machine needs committing.
+#
+# Runs nightly and on dispatch; the drop-folder publish step can trigger a
+# dispatch with `gh workflow run youtube-inventory.yml` so the repo catches up
+# minutes after a show goes public rather than overnight.
+#
+# Commits ride the bot pattern: deploy key -> staging -> auto-promote, with the
+# rebase retry loop and the `git checkout -- .` guard the other bots use.
+name: youtube-inventory
+
+on:
+  schedule:
+    - cron: "17 9 * * *"     # 05:17 ET / 04:17 EDT, after the overnight bots
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube-inventory
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: staging
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install the client libraries
+        run: pip install --quiet google-api-python-client python-dotenv
+
+      - name: Fetch the channel inventory
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        working-directory: tools/youtube
+        run: |
+          set -euo pipefail
+          if [ -z "${YOUTUBE_API_KEY:-}" ]; then
+            echo "::error::YOUTUBE_API_KEY is not set as a repository secret"
+            exit 1
+          fi
+          python3 youtube_fetch.py
+          python3 youtube_correlate.py
+
+      - name: Commit the inventory to staging
+        run: |
+          set -euo pipefail
+          for f in youtube_videos.tsv youtube_playlists.tsv \
+                   history_youtube_correlation.tsv shows_current_youtube_correlation.tsv; do
+            [ -f "tools/youtube/$f" ] && git add "tools/youtube/$f"
+          done
+          if git diff --cached --quiet; then
+            echo "Inventory unchanged - nothing to commit."
+            exit 0
+          fi
+
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+          chmod 600 "$HOME/.ssh/promote_key"
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+          git commit -m "ci: refresh YouTube inventory"
+
+          # Anything left modified-but-unstaged makes `git rebase` refuse
+          # outright; discard it before rebasing (same guard as the other bots).
+          git checkout -- .
+
+          for attempt in 1 2 3 4 5; do
+            git fetch promote staging
+            git rebase promote/staging || {
+              echo "rebase conflict on staging - bailing (not a race, a real conflict)"
+              exit 1
+            }
+            if git push promote HEAD:staging; then
+              echo "push succeeded on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s"
+            sleep "$attempt"
+          done
+          echo "gave up after 5 attempts"
+          exit 1
