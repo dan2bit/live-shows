@@ -462,7 +462,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "3e63cb89d6",
-  "overrides_hash": "c6ec3d3a7e",
+  "overrides_hash": "54bfe9c9ce",
   "counts": {
    "settlements": 395,
    "routes": 471,
@@ -1198,6 +1198,7 @@
    "id": "amplified_range:d4",
    "region": "amplified_range",
    "members": [
+    "Blackberry Smoke",
     "Gov't Mule",
     "JJ Grey & Mofro",
     "Robert Jon & The Wreck",
@@ -1703,7 +1704,6 @@
    "members": [
     "Eli Kollman",
     "Nicole Atkins",
-    "Stephen Wilson Jr",
     "Taylor Ashton",
     "The Lone Bellow"
    ],
@@ -1800,7 +1800,6 @@
     "Eric Bibb",
     "Ethel Cain",
     "Fruition",
-    "Jaime Wyatt",
     "Jax Hollow",
     "Josh Ritter",
     "Judy Blank",
@@ -2919,8 +2918,8 @@
   {
    "id": 50,
    "name": "Blackberry Smoke",
-   "region": "heartland",
-   "district": "heartland:override",
+   "region": "amplified_range",
+   "district": "amplified_range:d4",
    "size": "village",
    "score": 1,
    "xy": [
@@ -2928,11 +2927,12 @@
     467.0
    ],
    "region_uv": [
-    0.5871,
-    0.4449
+    -0.4626,
+    1.548
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "stray": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -5209,8 +5209,8 @@
   {
    "id": 171,
    "name": "Jaime Wyatt",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "village",
    "score": 4,
    "xy": [
@@ -5218,10 +5218,12 @@
     253.9
    ],
    "region_uv": [
-    0.6078,
-    0.2138
+    0.7555,
+    -0.4581
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -8664,8 +8666,8 @@
   {
    "id": 359,
    "name": "Stephen Wilson Jr",
-   "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "hamlet",
    "score": 3,
    "xy": [
@@ -8673,10 +8675,12 @@
     381.9
    ],
    "region_uv": [
-    0.2677,
-    0.7853
+    0.4476,
+    0.0843
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -11771,50 +11775,30 @@
    "a": "Blackberry Smoke",
    "b": "Gov't Mule",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     534.5,
-     394.9
-    ],
-    [
-     676.0,
-     289.7
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Blackberry Smoke",
    "b": "Robert Jon & The Wreck",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     534.5,
-     394.9
-    ],
-    [
-     676.0,
-     289.7
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Blackberry Smoke",
    "b": "The Bros. Landreth",
    "cls": "trail",
    "crossRegion": true,
-   "render": "highway",
+   "render": "pass",
    "via": [
     [
-     574.6,
-     424.4
+     713.5,
+     309.0
     ],
     [
-     594.3,
-     417.3
+     693.3,
+     336.4
     ]
    ]
   },
@@ -13731,18 +13715,8 @@
    "a": "Jaime Wyatt",
    "b": "Margo Price",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": false,
+   "render": "trail"
   },
   {
    "a": "Jaime Wyatt",
@@ -13752,12 +13726,12 @@
    "render": "highway",
    "via": [
     [
-     531.8,
-     417.7
+     574.0,
+     536.2
     ],
     [
-     561.7,
-     475.3
+     496.6,
+     508.0
     ]
    ]
   },
@@ -15596,8 +15570,18 @@
    "a": "Stephen Wilson Jr",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": true,
+   "render": "highway",
+   "via": [
+    [
+     460.0,
+     371.9
+    ],
+    [
+     442.1,
+     420.3
+    ]
+   ]
   },
   {
    "a": "Sunny War",
