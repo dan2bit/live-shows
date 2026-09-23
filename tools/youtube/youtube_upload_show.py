@@ -46,7 +46,9 @@ WORKING OUT WHICH SHOW
   with a report rather than a guess. A set running past midnight yields two
   candidate dates and still resolves, because only one of them is a show.
 
-  For the later stages there are no clips to read, so the date comes from the
+  For the later stages there are no clips to read, so the date comes from
+  --clips DIR (each scan records its folder in the manifest's .scan.json
+  sidecar, so a folder identifies its manifest), or, with no --clips, from the
   manifests directory when exactly one manifest is present.
 
   --clips defaults to the working directory when it contains video files, and
@@ -127,6 +129,17 @@ from yt_common import (
 # ── constants ──────────────────────────────────────────────────────────────
 
 MANIFEST_DIR = script_path("manifests")
+
+# --scan resolution failures get distinct exit codes so a wrapper can tell
+# "add the show row / wrong folder" from "two shows in one folder" without
+# parsing the message.
+EXIT_NO_SHOW   = 2
+EXIT_AMBIGUOUS = 3
+
+
+def _fail(message: str, code: int) -> None:
+    print(message, file=sys.stderr)
+    sys.exit(code)
 
 SHOWS_CURRENT_TSV = data_path("live_shows_current.tsv")
 HISTORY_GLOB      = data_path("history", "*.tsv")
@@ -223,7 +236,8 @@ def infer_show_from_clips(clips: list) -> dict:
     dates = sorted({clip.capture_start.date().isoformat()
                     for clip in clips if clip.capture_start})
     if not dates:
-        sys.exit("Could not read a capture date from any clip. Pass --show DATE.")
+        _fail("Could not read a capture date from any clip. Pass --show DATE.",
+              EXIT_NO_SHOW)
 
     index   = shows_by_date()
     matches = [d for d in dates if d in index]
@@ -233,16 +247,45 @@ def infer_show_from_clips(clips: list) -> dict:
 
     span = ", ".join(dates)
     if not matches:
-        sys.exit(
+        _fail(
             f"No show matches the clips' capture date(s): {span}.\n"
             "Either the show row is missing, or these clips are from another "
-            "night. Pass --show DATE to override."
+            "night. Pass --show DATE to override.",
+            EXIT_NO_SHOW,
         )
 
-    sys.exit(
+    _fail(
         f"The clips span more than one known show ({', '.join(matches)}).\n"
-        "Pass --show DATE to say which one this folder is."
+        "Pass --show DATE to say which one this folder is.",
+        EXIT_AMBIGUOUS,
     )
+
+
+def infer_date_from_clip_dir(clip_dir: str) -> str:
+    """Resolve the show for a post-scan stage from the folder the scan recorded.
+
+    Every --scan writes its clip folder into the manifest's .scan.json sidecar,
+    so a folder identifies its manifest without regard to how many other
+    manifests exist. This is what lets two shows be in flight at once, and what
+    a folder-local launcher relies on: it knows its own folder and nothing else.
+    """
+    wanted = os.path.abspath(os.path.expanduser(clip_dir))
+    hits = []
+    for sidecar in sorted(glob.glob(os.path.join(MANIFEST_DIR, "*.scan.json"))):
+        try:
+            with open(sidecar, encoding="utf-8") as f:
+                recorded = json.load(f).get("clip_dir", "")
+        except (OSError, ValueError):
+            continue
+        if recorded and os.path.abspath(recorded) == wanted:
+            hits.append(sidecar)
+    if len(hits) == 1:
+        return os.path.basename(hits[0])[:10]
+    if not hits:
+        sys.exit(f"No manifest was scanned from {wanted}.\n"
+                 "Run --scan on that folder first, or pass --show DATE.")
+    names = "\n  ".join(os.path.basename(h) for h in hits)
+    sys.exit(f"Several manifests record that folder - pass --show DATE:\n  {names}")
 
 
 def infer_date_from_manifests() -> str:
@@ -280,10 +323,27 @@ def sidecar_path(manifest: str) -> str:
     return manifest[:-4] + ".scan.json"
 
 
-def write_sidecar(manifest: str, clip_dir: str) -> None:
-    """Record the scanned folder so later stages need not be told again."""
+def write_sidecar(manifest: str, clip_dir: str, show: dict | None = None,
+                  clips: list | None = None, rows: list[dict] | None = None) -> None:
+    """Record the scanned folder so later stages need not be told again.
+
+    Also records what the scan resolved and found, so a wrapper can name a
+    folder or a notification from structured data instead of parsing stdout.
+    """
     payload = {"clip_dir": os.path.abspath(clip_dir),
-               "scanned_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+               "scanned_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+               "manifest": os.path.basename(manifest)}
+    if show:
+        payload.update({"show_date": show.get("date", ""),
+                        "artist": show.get("artist", ""),
+                        "venue": show.get("venue", ""),
+                        "support": show.get("support", "")})
+    if clips:
+        payload["clips"] = len(clips)
+        payload["segments"] = max((c.segment for c in clips), default=1)
+    if rows:
+        payload["got"] = sum(1 for r in rows if r.get("Decision") == "got")
+        payload["skip"] = sum(1 for r in rows if r.get("Decision") == "skip")
     os.makedirs(os.path.dirname(manifest), exist_ok=True)
     with open(sidecar_path(manifest), "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
@@ -619,7 +679,7 @@ def stage_scan(args) -> None:
         return
 
     yt_manifest.save(path, rows)
-    write_sidecar(path, clip_dir)
+    write_sidecar(path, clip_dir, show=show, clips=clips, rows=rows)
     print(f"\nManifest written: {path}")
     print(f"  machine sidecar: {yt_manifest.machine_path(path)}")
 
@@ -1059,7 +1119,10 @@ def main() -> None:
     parser.add_argument("--clips", metavar="DIR",
                         help="Folder of exported clips. Defaults to the working "
                              "directory when it contains video files; --upload "
-                             "falls back to the folder --scan recorded.")
+                             "falls back to the folder --scan recorded. For any "
+                             "stage after --scan it also identifies the show, via "
+                             "the folder the scan recorded, so --show is not needed "
+                             "even with several manifests present.")
     parser.add_argument("--manifest", metavar="PATH",
                         help="Override the manifest location. Defaults to "
                              "manifests/DATE-artist-slug.tsv.")
@@ -1118,7 +1181,13 @@ def main() -> None:
         stage_scan(args)
         return
 
-    show = load_show(args.show or infer_date_from_manifests())
+    if args.show:
+        date = args.show
+    elif args.clips:
+        date = infer_date_from_clip_dir(args.clips)
+    else:
+        date = infer_date_from_manifests()
+    show = load_show(date)
 
     if args.upload:
         youtube = None if args.dry_run else get_authenticated_service()

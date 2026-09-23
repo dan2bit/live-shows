@@ -5,7 +5,9 @@ and credential configuration.
 
 The per-show pipeline (phone clips → uploaded → identified → titled → public
 → playlist) is `youtube_upload_show.py`; its step-by-step operator guide is
-**OPERATOR_FLOW.md**, next to this file. This document is the reference for
+**OPERATOR_FLOW.md**, next to this file. The Finder-driven version of the same
+pipeline (drop a zip, press buttons) is `yt_drop.py`, described in the
+drop-folder section of OPERATOR_FLOW.md. This document is the reference for
 credentials, environment, the surrounding utility scripts, and conventions.
 
 ---
@@ -141,6 +143,24 @@ written and subsequent runs will work normally.
 
 Common causes: venv was recreated, token expired after extended inactivity,
 or the wrong identity was selected during a previous auth flow.
+
+### 6. setlist.fm API key (optional, recommended)
+
+`--identify`, `--edit` and the playlist tool's ordering read setlists from
+setlist.fm. Fetching the page as a script started drawing `HTTP 202`
+challenge interstitials in 2026-09, which surfaces downstream as a setlist
+with zero songs. The API has no such check:
+
+1. Signed in to setlist.fm (the `dan2bit` account), go to
+   https://www.setlist.fm/settings/api and request a key — it is free and
+   immediate
+2. Add it to `tools/youtube/.env` as `SETLISTFM_API_KEY=...`
+
+With the key set, `yt_setlist.py` reads the API and caches the JSON next to
+the manifest; without it, the page is fetched with a browser User-Agent and
+cached as HTML. Either cache is honoured on the next run, so a page saved
+from a browser under the cache filename (`manifests/setlist-<slug>.html`)
+also works as a by-hand escape hatch.
 
 ---
 

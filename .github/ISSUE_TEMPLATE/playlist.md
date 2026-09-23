@@ -28,20 +28,16 @@ Show note:
      from the manifest thereafter), so an explicit --show is optional.
 -->
 
-Pipeline — two scripts in `tools/youtube/`: `youtube_upload_show.py` (upload + song-ID + apply) and `youtube_create_playlists.py` (build + order + describe the playlist). Run stages from `tools/youtube/`. Manual steps are marked; the scripts do the rest.
+Pipeline — the drop-folder flow in `tools/youtube/` (`yt_drop.py`, see OPERATOR_FLOW.md): drop the zip, then press the buttons it leaves beside the clips. Each button is one of the `youtube_upload_show.py` / `youtube_create_playlists.py` stages, named in parentheses for a by-hand run from `tools/youtube/` with `--clips ~/Bootlegs/{{DATE_ISO}}-<slug>`. Manual steps are marked.
 
 Task List:
 
-- [ ] `youtube_upload_show.py --auth-only` — confirm the token authenticates as the @dan2bit brand channel before anything uploads
-- [ ] **(manual)** search Google Photos for `video {{DATE_ISO}}`, download locally, unzip to a clips folder
-- [ ] `youtube_upload_show.py --scan --clips <clips-dir>` — writes the manifest; auto-flags fragments as skip, orders by capture time. Review it; rotate any mis-oriented clips on mobile first
-- [ ] `youtube_upload_show.py --upload --dry-run` then `youtube_upload_show.py --upload` — resumable; clips land private + addressable (`--limit 1` for a cautious first upload)
+- [ ] **(manual)** search Google Photos for `video {{DATE_ISO}}`, select the clips, Download — two or more selected gives a zip; drop the zip(s) into `~/Bootlegs/inbox/`
+- [ ] wait for the "Bootleg drop: scanned" notification; the folder is now `~/Bootlegs/{{DATE_ISO}}-<slug>/` (intake = unzip, flatten, `--scan`, rename). If it says "needs you", read `SCAN-FAILED.txt` and press `Rescan with a date`
+- [ ] read `SCAN.txt`: segment count, the `[skip]` rows, Set Artist. `Open manifest` to fix any of it. Rotate mis-oriented clips on mobile first
+- [ ] press `1 - Upload` (`--upload --dry-run`, confirm, `--upload`) — resumable; clips land private + addressable. For a cautious first upload set every row but one to `skip`, press, flip them back, press again
 - [ ] **(manual, Studio)** once uploaded: set Monetization on and Submit Rating "none of the above" **per video**. No API for either — this stays manual, permanently (#252)
-- [ ] **(manual, while doing monetization)** each video's copyright/claim details show any Content-ID-detected song title. Capture them — the easiest way to get these into the manifest *before* `--edit` is conversationally: grant the agent access to `tools/youtube/manifests` (under the repo root) and have it write the detected titles in. Cross-check setlist.fm, but the YouTube scan is more definitive than crowdsourced setlist data (#278)
-- [ ] wait for YouTube's Content-ID scan to settle (minutes to hours), then `youtube_upload_show.py --identify` — seeds song titles from Content-ID + the headliner setlist + lyric hydration
-- [ ] **(manual)** `youtube_upload_show.py --edit` — browser correction pass: setlist-song dropdowns, clickable thumbnail to the watch page, Desc Slug field. This is the song-identification step. Mark a genuinely unidentifiable track `unknown` (still publishable)
-- [ ] `youtube_upload_show.py --apply --dry-run` then `youtube_upload_show.py --apply` — writes titles + descriptions (still private)
-- [ ] `youtube_upload_show.py --apply --publish` — flips privacy to public; hard-refuses the whole show if any title still carries a `#song-title` placeholder
-- [ ] `youtube_create_playlists.py --new-show {{DATE_ISO}} --update-history` (`--dry-run` first) — creates the playlist, adds every {{DATE_ISO}} video, orders headliner-first then support (each in setlist.fm order, upload-date fallback), sets the title + setlist-linked description, and writes the URL back to the show row. Refreshes `youtube_videos.tsv` / `youtube_playlists.tsv` automatically at the end (#279) — no separate `youtube_fetch.py` run needed
-- [ ] **(cleanup)** delete this show's manifest files: `rm tools/youtube/manifests/{{DATE_ISO}}-*`
-- [ ] copy the share playlist link as a comment on this issue and close it (picked up by CI for updating the show row)
+- [ ] **(manual, while doing monetization)** each video's copyright/claim details show any Content-ID-detected song title. Capture them — the easiest way to get these into the manifest *before* the edit pass is conversationally: grant the agent access to `tools/youtube/manifests` (under the repo root) and have it write the detected titles in. Cross-check setlist.fm, but the YouTube scan is more definitive than crowdsourced setlist data (#278)
+- [ ] wait for YouTube's Content-ID scan to settle (minutes to hours), then press `2 - Edit setlist` (`--identify`, then `--edit`): seeds song titles from Content-ID + the setlist + lyric hydration, then the browser correction pass — setlist-song dropdowns, a setlist.fm link in each segment header, clickable thumbnail to the watch page, Desc Slug field. Mark a genuinely unidentifiable track `unknown` (still publishable). Needs `SETLISTFM_API_KEY` in `tools/youtube/.env` or the page fetch may come back as a 202 challenge with zero songs
+- [ ] press `3 - Publish everything` (`--apply --dry-run`, confirm, `--apply --publish`, `youtube_fetch.py`, `youtube_create_playlists.py --new-show {{DATE_ISO}}`): writes titles + descriptions, flips privacy to public (hard-refuses the whole show if any title still carries a `#song-title` placeholder), creates the playlist ordered headliner-first then support (setlist.fm order, upload-date fallback), prints the playlist URL and copies it to the clipboard, dispatches the inventory refresh, archives the manifest to `manifests/published/`, trashes the clip folder
+- [ ] paste the playlist URL as a **comment** on this issue — CI writes it to the show row and closes the issue. Nothing on the local machine needs committing: the inventory TSVs are regenerated by `youtube-inventory.yml`
