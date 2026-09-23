@@ -461,8 +461,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "79f5f35978",
-  "overrides_hash": "10b1f54c56",
+  "pins_hash": "50a9e1b28e",
+  "overrides_hash": "c1e6c0c69f",
   "counts": {
    "settlements": 395,
    "routes": 471,
@@ -1911,7 +1911,8 @@
    "id": "river_port:d8",
    "region": "river_port",
    "members": [
-    "Sweet Leda"
+    "Sweet Leda",
+    "Vanessa Collier"
    ],
    "seat": "Sweet Leda",
    "suggested_name": "Leda Bend"
@@ -6029,12 +6030,11 @@
     576.2
    ],
    "region_uv": [
-    0.3146,
+    0.3144,
     0.7
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -9969,7 +9969,7 @@
    "label": "Trombone Shorty",
    "region": "river_port",
    "district": "river_port:d1",
-   "size": "capital",
+   "size": "city",
    "score": 21,
    "xy": [
     639.8,
@@ -10032,17 +10032,17 @@
   {
    "id": 394,
    "name": "Vanessa Collier",
-   "region": "amplified_range",
-   "district": "amplified_range:override",
-   "size": "city",
+   "region": "river_port",
+   "district": "river_port:d8",
+   "size": "capital",
    "score": 24,
    "xy": [
-    862.3,
-    214.6
+    600.3,
+    619.5
    ],
    "region_uv": [
-    0.7066,
-    0.5384
+    0.5092,
+    0.9776
    ],
    "flags": {
     "harbormistress": true
@@ -10429,12 +10429,12 @@
    "size": "city",
    "score": 19,
    "xy": [
-    617.4,
-    555.6
+    615.0,
+    552.6
    ],
    "region_uv": [
-    0.5776,
-    0.5679
+    0.568,
+    0.5487
    ],
    "flags": {
     "harbormistress": true
@@ -13004,15 +13004,15 @@
    "b": "Vanessa Collier",
    "cls": "trail",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     693.3,
-     336.4
+     617.0,
+     489.2
     ],
     [
-     713.5,
-     309.0
+     622.4,
+     473.3
     ]
    ]
   },
@@ -14898,15 +14898,15 @@
    "b": "Vanessa Collier",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     693.3,
-     336.4
+     617.0,
+     489.2
     ],
     [
-     713.5,
-     309.0
+     622.4,
+     473.3
     ]
    ]
   },
@@ -15458,15 +15458,15 @@
    "b": "Vanessa Collier",
    "cls": "bridge",
    "crossRegion": true,
-   "render": "pass",
+   "render": "highway",
    "via": [
     [
-     364.2,
-     552.2
+     446.4,
+     572.7
     ],
     [
-     681.6,
-     293.4
+     485.2,
+     565.6
     ]
    ]
   },
@@ -15639,18 +15639,8 @@
    "a": "Sweet Leda",
    "b": "Vanessa Collier",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Tab Benoit",
