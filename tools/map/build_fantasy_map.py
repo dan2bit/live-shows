@@ -220,11 +220,20 @@ MAP_EXCLUDE = {
     # support. Neither is an act the map should know about.
     "Linwood Taylor & Guy Bouchie", "Still Standing",
 }
-records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
+# Dan's viewer overrides (tools/map/map_overrides.json): {name: {region?, size?,
+# exclude?}}. Read once, here, because "exclude": true has to act before anything
+# is built - it removes the name exactly as MAP_EXCLUDE does. The in-page editor
+# and the map page's staleness banner both write it, so a Pass row's acts can be
+# kept off the map without a code change; MAP_EXCLUDE stays for the cases worth
+# a comment. region and size are applied later, after layout, where they always were.
+_OV_PATH = SCRIPT_DIR / "map_overrides.json"
+_OV = json.loads(_OV_PATH.read_text()) if _OV_PATH.exists() else {}
+EXCLUDED = MAP_EXCLUDE | {nm for nm, ov in _OV.items() if isinstance(ov, dict) and ov.get("exclude")}
+records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in EXCLUDED}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
             for k, v in idx["variants"].items()}
 # variants maps lower-name -> record id; normalize to canonical
-id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
+id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in EXCLUDED}
 variants = {k: id2canon[v] for k, v in idx["variants"].items() if v in id2canon}
 
 def resolve(name):
@@ -805,7 +814,7 @@ if disc_path.exists():
     by_reg = defaultdict(list)
     for a_ in adds:
         nm, reg_, sz = a_["name"], a_["region"], a_["size"]
-        if nm in records:
+        if nm in records or nm in EXCLUDED:   # an exclusion beats a discovered add
             continue
         records[nm] = {"id": next_id, "canonical": nm, "status": "seen-support",
                        "tier": None, "sources": ["seen-support"]}
@@ -991,12 +1000,11 @@ for m in ("Brassie", "Sadurn"):
         if m not in _pins_law:
             UNPLACED.add(m)
 
-# Dan's viewer overrides (map_overrides.json): region and size, position untouched
+# region and size overrides, position untouched (exclude was applied at load, above)
 OVERRIDE_SIZE = {}
-ov_path = SCRIPT_DIR / "map_overrides.json"
-if ov_path.exists():
-    for nm, ov in json.loads(ov_path.read_text()).items():
-        if nm not in records:
+if _OV:
+    for nm, ov in _OV.items():
+        if nm not in records or not isinstance(ov, dict):
             continue
         if ov.get("region") and ov["region"] in REGIONS and ov["region"] != region_of.get(nm):
             old_d = district_of.get(nm)
@@ -1285,7 +1293,7 @@ out = {
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
              # roster names that are NOT settlements on purpose: the map page's
              # staleness banner subtracts these before calling the map "behind"
-             "excluded": sorted(MAP_EXCLUDE),
+             "excluded": sorted(EXCLUDED),
              "merged": dict(sorted(MERGES.items())),
              "suppressed": sorted(SUPPRESSED_CREDIT),
              "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
