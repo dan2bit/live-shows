@@ -177,14 +177,14 @@
      "dist": 2.7
     },
     {
-     "name": "Cicada Rhythm",
-     "at": 0.2667748699530225,
-     "dist": 4.3
-    },
-    {
      "name": "Madeleine Roger",
      "at": 0.41874316721488564,
      "dist": 0.7
+    },
+    {
+     "name": "Cicada Rhythm",
+     "at": 0.47620655974077025,
+     "dist": 5.4
     },
     {
      "name": "Linda Perry",
@@ -230,11 +230,6 @@
      "name": "Josh Ritter",
      "at": 0.10432785196425504,
      "dist": 2.8
-    },
-    {
-     "name": "Stephen Wilson Jr",
-     "at": 0.35263320613158544,
-     "dist": 4.9
     },
     {
      "name": "Patty Griffin",
@@ -461,7 +456,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "3e63cb89d6",
+  "pins_hash": "95d8ae6bbb",
   "overrides_hash": "54bfe9c9ce",
   "counts": {
    "settlements": 395,
@@ -2359,12 +2354,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    341.5,
-    406.7
+    461.9,
+    501.4
    ],
    "region_uv": [
-    0.2934,
-    0.1894
+    0.6103,
+    0.5907
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -2923,16 +2918,15 @@
    "size": "village",
    "score": 1,
    "xy": [
-    453.1,
-    467.0
+    701.1,
+    385.7
    ],
    "region_uv": [
-    -0.4626,
-    1.548
+    0.246,
+    1.2228
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
@@ -3467,12 +3461,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    308.5,
-    432.4
+    479.7,
+    467.8
    ],
    "region_uv": [
-    0.2066,
-    0.2983
+    0.6571,
+    0.4483
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -3530,14 +3524,16 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    332.2,
-    393.4
+    446.2,
+    591.8
    ],
    "region_uv": [
-    0.2689,
-    0.1331
+    0.5689,
+    0.9737
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -3620,15 +3616,16 @@
    "size": "hamlet",
    "score": 0,
    "xy": [
-    428.4,
-    361.0
+    414.0,
+    362.8
    ],
    "region_uv": [
-    0.35,
-    0.692
+    0.3082,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -5214,16 +5211,14 @@
    "size": "village",
    "score": 4,
    "xy": [
-    517.1,
-    253.9
+    342.9,
+    509.3
    ],
    "region_uv": [
-    0.7555,
-    -0.4581
+    0.2971,
+    0.6242
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -5763,12 +5758,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    463.2,
-    427.1
+    450.7,
+    247.3
    ],
    "region_uv": [
-    0.4512,
-    0.9871
+    0.4148,
+    0.1844
    ],
    "flags": {
     "unvisited": true
@@ -6266,12 +6261,12 @@
    "size": "waystation",
    "score": 1,
    "xy": [
-    334.3,
-    377.2
+    353.1,
+    511.6
    ],
    "region_uv": [
-    0.2745,
-    0.0644
+    0.3239,
+    0.6339
    ],
    "flags": {
     "unvisited": true
@@ -7083,15 +7078,16 @@
    "size": "waystation",
    "score": 0,
    "xy": [
-    446.6,
-    355.9
+    407.6,
+    366.1
    ],
    "region_uv": [
-    0.4029,
-    0.6692
+    0.2896,
+    0.7147
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -7786,12 +7782,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    319.0,
-    457.5
+    442.4,
+    451.2
    ],
    "region_uv": [
-    0.2342,
-    0.4047
+    0.5589,
+    0.378
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -8671,16 +8667,14 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    400.1,
-    381.9
+    439.5,
+    510.9
    ],
    "region_uv": [
-    0.4476,
-    0.0843
+    0.5513,
+    0.6309
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -9551,14 +9545,16 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    434.2,
-    368.0
+    559.7,
+    261.4
    ],
    "region_uv": [
-    0.3669,
-    0.7232
+    0.7318,
+    0.2472
    ],
-   "flags": {},
+   "flags": {
+    "unplaced": true
+   },
    "src": "seen as support (history TSVs; no artists.tsv row)",
    "times_seen": 1,
    "vip": 0,
@@ -9819,12 +9815,12 @@
    "size": "hamlet",
    "score": 3,
    "xy": [
-    319.4,
-    355.5
+    435.8,
+    566.6
    ],
    "region_uv": [
-    0.2353,
-    -0.0275
+    0.5416,
+    0.8669
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
