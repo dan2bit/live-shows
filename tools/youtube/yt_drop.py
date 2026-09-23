@@ -8,7 +8,8 @@ double-clickable buttons next to the clips for the steps that need a human
 in between. Every button is a thin wrapper around a stage that already
 exists; nothing here talks to YouTube directly.
 
-  ~/Bootlegs/inbox/                          the watched folder (zips go here)
+  ~/Bootlegs/inbox/                          the watched folder (zips go here;
+                                             trashed once their clips are out)
   ~/Bootlegs/2026-09-19-lake-street-dive/    one folder per show, renamed from
       PXL_*.mp4 ...                          the show the scan resolved
       SCAN.txt                               the scan output to sanity-check
@@ -22,7 +23,9 @@ exists; nothing here talks to YouTube directly.
 
 SUBCOMMANDS
 
-  intake            what launchd runs: process every zip in the inbox
+  intake            what launchd runs: process every zip in the inbox, then
+                    trash the zips (a failed extraction parks them in
+                    inbox/.processed/ instead)
   rescan DIR        re-run the scan on a folder (with --show DATE), then buttons
   buttons DIR       (re)write the .command files and README for a folder
   upload DIR        lint -> --upload --dry-run -> confirm -> --upload
@@ -363,11 +366,17 @@ def cmd_intake(args):
         log(f"extracting {len(zips)} zip(s): {', '.join(zips)}")
         n = extract_all(zips, batch)
         log(f"{n} clip(s) in {batch}")
-        for name in zips:
-            shutil.move(os.path.join(INBOX, name), os.path.join(PROCESSED, name))
         if n == 0:
-            notify("Bootleg drop", "The zip(s) held no video files.")
+            # Keep the archives for inspection, out of the watched folder so
+            # the agent does not loop on them.
+            for name in zips:
+                shutil.move(os.path.join(INBOX, name), os.path.join(PROCESSED, name))
+            notify("Bootleg drop", "The zip(s) held no video files - left in inbox/.processed.")
             return 1
+        # The clips are on disk; the archives are a copy of what Google Photos
+        # still holds, and a night's export can run to tens of GB. Trash them.
+        for name in zips:
+            trash(os.path.join(INBOX, name))
         rc, out = scan(batch)
         if rc == 0:
             folder = settle(batch)

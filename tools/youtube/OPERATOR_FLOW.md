@@ -76,7 +76,8 @@ in the manifest's `.scan.json`, so two shows can be in flight at once. After a
 successful publish the manifest triple moves to `manifests/published/` (a
 published manifest left in `manifests/` would otherwise trip the "several
 manifests" stop for the next show) and the clip folder goes to the Trash. The
-zips are moved to `inbox/.processed/` at intake. The log is `~/Bootlegs/drop.log`.
+zips go to the Trash at intake once their clips are out (a zip that yielded no
+video is parked in `inbox/.processed/` for a look). The log is `~/Bootlegs/drop.log`.
 
 Nothing the buttons do needs a commit from this machine. The playlist step runs
 without `--update-history`: the URL goes on the playlist issue as a comment and
