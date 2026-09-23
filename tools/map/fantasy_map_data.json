@@ -461,8 +461,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "03b7b33e39",
-  "overrides_hash": "c1e6c0c69f",
+  "pins_hash": "3e63cb89d6",
+  "overrides_hash": "c6ec3d3a7e",
   "counts": {
    "settlements": 395,
    "routes": 471,
@@ -1418,9 +1418,7 @@
   {
    "id": "heartland:d12",
    "region": "heartland",
-   "members": [
-    "Every Breath You Take"
-   ],
+   "members": [],
    "seat": "Every Breath You Take",
    "suggested_name": "Take Prairie"
   },
@@ -2264,6 +2262,7 @@
   {
    "id": 14,
    "name": "Ally Venable Band",
+   "label": "Ally Venable",
    "region": "amplified_range",
    "district": "amplified_range:d2",
    "size": "city",
@@ -2309,6 +2308,7 @@
   {
    "id": 16,
    "name": "Altered Five Blues Band",
+   "label": "Altered Five",
    "region": "amplified_range",
    "district": "amplified_range:d1",
    "size": "waystation",
@@ -4357,21 +4357,19 @@
   {
    "id": 126,
    "name": "Every Breath You Take",
-   "region": "heartland",
-   "district": "heartland:d12",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "city",
    "score": 15,
    "xy": [
-    332.3,
-    538.6
+    798.0,
+    44.2
    ],
    "region_uv": [
-    0.2691,
-    0.7484
+    -0.0795,
+    0.3146
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 5,
    "vip": 0,
@@ -13105,18 +13103,8 @@
    "a": "Every Breath You Take",
    "b": "The Side Cars Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     523.7,
-     389.7
-    ],
-    [
-     856.1,
-     100.2
-    ]
-   ]
+   "crossRegion": false,
+   "render": "river"
   },
   {
    "a": "Fantastic Negrito",
