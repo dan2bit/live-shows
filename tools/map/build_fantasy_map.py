@@ -215,6 +215,10 @@ MAP_EXCLUDE = {
     # shape as an "Experience Hendrix"-style all-star tribute show. Same
     # single-incidental-credit signature as the row above.
     "John Prine Celebration",
+    # A hyperlocal bar bill (Hank Dietle's Tavern) that reached the index only
+    # through a potentials row already decided Pass: the headliner and its
+    # support. Neither is an act the map should know about.
+    "Linwood Taylor & Guy Bouchie", "Still Standing",
 }
 records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in MAP_EXCLUDE}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
