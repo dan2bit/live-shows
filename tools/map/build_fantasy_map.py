@@ -538,7 +538,13 @@ def score(c):
 # detection districts as every other region (built by the main loop above);
 # nothing region-specific happens here.
 
-CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR"}
+# The capital is otherwise the region's highest-scoring seen act, which means a
+# strong settlement moving in can take the seat on arrival - Vanessa Collier's
+# score outranked Trombone Shorty's the day she crossed into Secondline. A size
+# override in map_overrides.json can hold the line but is one editor save from
+# being lost; this table cannot be. Everyone else in a listed region caps at city.
+CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR",
+                    "river_port": "Trombone Shorty & Orleans Avenue"}
 
 def size_tier(c, s, regional_max):
     m = seen_meta.get(c, {})
