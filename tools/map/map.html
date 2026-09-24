@@ -196,16 +196,10 @@
     <select id="ovSize" style="width:42%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:3px;">
       <option>hamlet</option><option>waystation</option><option>village</option><option>town</option><option>city</option><option>capital</option>
     </select>
-    <button id="exportOv" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save overrides (0)</button>
-    <span class="save-ind" id="ind-ov" style="font-size:10.5px;margin-left:4px;"></span>
     <button id="exclOv" title="not an act the map should know about - leaves the map on the next rebuild" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">exclude from map</button>
     <label style="display:block;font-size:11.5px;margin-top:5px;"><input type="checkbox" id="showStrays" checked> region strays (amber)</label>
-    <button id="exportLbl" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save labels</button>
-    <span class="save-ind" id="ind-lbl" style="font-size:10.5px;margin-left:4px;"></span>
     <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
       <button id="traceBtn" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">trace waterway</button>
-      <button id="traceExp" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">save waterways (0)</button>
-      <span class="save-ind" id="ind-trace" style="font-size:10.5px;margin-left:4px;"></span>
       <input id="traceName" placeholder="name / note for this waterway &mdash; Enter to save">
       <div id="traceMsg" style="font-size:10.5px;margin-top:3px;min-height:12px;"></div>
     </div>
@@ -224,10 +218,11 @@
     <div id="ownerControls" style="display:none">
       <label><input type="checkbox" id="editMode"> edit</label>
       <label><input type="checkbox" id="traceMode"> trace rivers</label>
-      <button id="exportPins" style="display:none;margin-top:4px;font-family:'Special Elite',monospace;
+      <button id="saveAll" style="margin-top:4px;font-family:'Special Elite',monospace;
         font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
-        save pins (0)</button>
-      <span class="save-ind" id="ind-pins" style="font-size:10.5px;margin-left:4px;"></span>
+        save changes (0)</button>
+      <span class="save-ind" id="ind-save" style="font-size:10.5px;margin-left:4px;"></span>
+      <div id="saveStatus" style="font-size:10.5px;opacity:.85;line-height:1.5;"></div>
     </div>
   </div>
 </div>
@@ -251,8 +246,8 @@
 
   // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
   // store, so a token saved there just works here too — no separate auth surface on
-  // the map. For an authed user this also grants write capability: the four save
-  // buttons below commit straight to staging with this same PAT.
+  // the map. For an authed user this also grants write capability: the save button
+  // below commits straight to staging with this same PAT.
   const PAT_KEY='ghpat_liveshows';
   const authed=!!localStorage.getItem(PAT_KEY);
   if(authed){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
@@ -263,25 +258,33 @@
   // so it's hardcoded here rather than duplicating a config loader for one value.
   const OWNER='dan2bit', REPO='live-shows', BRANCH='staging';
 
-  // Contents-API PUT: fetch a fresh SHA immediately before writing (per the repo's
-  // commit rules — never reuse a SHA from an earlier read), then PUT the full file
-  // content to BRANCH. Mirrors app.js's ghFetchForWrite + raw-fetch-PUT pattern,
-  // inlined here since map.html has no shared script include with the list pages.
-  async function ghCommitJson(path,obj,message){
+  // Contents-API read-merge-write. The GET that fetches the fresh SHA (per the repo's
+  // commit rules - never reuse a SHA from an earlier read) also returns the file's
+  // current content on BRANCH; `merge` is handed that decoded object and returns what
+  // to write. A page holds its copy of these files from load, and several pages can be
+  // open at once, so writing the session's whole snapshot back was last-writer-wins: a
+  // tab opened before someone's save silently reverted it on its own next save. Merging
+  // this session's changes into the file as it is now closes that. Mirrors app.js's
+  // ghFetchForWrite + raw-fetch-PUT pattern otherwise; inlined here since map.html has
+  // no shared script include with the list pages. Returns {result, merged}.
+  async function ghCommitJson(path,merge,message){
     const pat=localStorage.getItem(PAT_KEY);
     if(!pat) throw new Error('no auth');
     const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat};
     const getUrl='https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path+'?ref='+encodeURIComponent(BRANCH);
     const fd=await (await fetch(getUrl,{cache:'no-store',headers})).json();
     if(!fd.sha) throw new Error('could not read current sha for '+path);
-    const body=JSON.stringify(obj,null,1)+'\n';
+    let remote=null;
+    try{ remote=JSON.parse(decodeURIComponent(escape(atob((fd.content||'').replace(/\n/g,''))))); }catch(e){ remote=null; }
+    const merged=merge(remote);
+    const body=JSON.stringify(merged,null,1)+'\n';
     const putRes=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path,{
       method:'PUT',
       headers:Object.assign({'Content-Type':'application/json'},headers),
       body:JSON.stringify({message,content:btoa(unescape(encodeURIComponent(body))),sha:fd.sha,branch:BRANCH})
     });
     if(!putRes.ok) throw new Error(await putRes.text());
-    return putRes.json();
+    return {result:await putRes.json(),merged};
   }
   // Save-indicator: same three-state pattern app.js uses for inline edits
   // ('…' in flight, '✓' ok, '✗ <msg>' err) — inlined here for the same reason
@@ -320,31 +323,84 @@
   try{ PINFILE=await (await fetch(fresh('pins.json'),{cache:'no-store'})).json(); }catch(e){}
 
   // Dan's viewer overrides: {name: {region?, size?, exclude?}}. One object, shared by the
-  // editor panel and the staleness banner below, both of which record decisions into it;
-  // saveOverrides() commits the whole file. Loaded here, ahead of the banner, so a
-  // decision made from the banner lands in the same object the editor will later save.
+  // editor panel and the staleness banner below, both of which record decisions into it.
+  // Loaded here, ahead of the banner, so a decision made from the banner lands in the
+  // same object the editor edits.
   const overrides={};
   const editctl=document.getElementById('editctl'),
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
-        exportOv=document.getElementById('exportOv'), editwho=document.getElementById('editwho');
+        editwho=document.getElementById('editwho');
   if(authed){
   try{ Object.assign(overrides, await (await fetch(fresh('map_overrides.json'),{cache:'no-store'})).json()); }catch(e){}
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
   }
+
+  // ── one save for the four editable files ──
+  // The page tracks WHAT it changed, not just the whole object: pins and overrides by
+  // touched name (an absent name is a deletion), labels by "group:key", traces by how many
+  // it appended. That is what read-merge-write needs - each save fetches the file as it is
+  // now on staging and folds only this session's changes into it - and it is what lets one
+  // button write only the files that actually changed, one Contents-API commit each (a
+  // Git-Data batch would be one commit, but does not fire the push event auto-promote
+  // listens for). A file this page never touched is never written.
+  const dirty={pins:new Set(),overrides:new Set(),labels:new Set(),traces:0};
+  const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus');
+  const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces;
+  function refreshSave(){
+    if(!authed)return;
+    saveAllBtn.textContent=`save changes (${dirtyCount()})`;
+    const part=(n,total,label)=>n?`<b>${label} ${total}</b> (${n} unsaved)`:`${label} ${total}`;
+    saveStatus.innerHTML=[part(dirty.pins.size,Object.keys(pins).length,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
+      part(dirty.labels.size,Object.keys(LBL.regions||{}).length+Object.keys(LBL.islands||{}).length+Object.keys(LBL.waters||{}).length,'labels'),
+      part(dirty.traces,TRACES.length,'waterways')].join(' \u00b7 ');
+  }
+  function touch(kind,key){ if(kind==='traces')dirty.traces++; else dirty[kind].add(key); refreshSave(); }
   function markOv(name,key,val){
     (overrides[name]??={})[key]=val;
-    exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
+    touch('overrides',name);
   }
-  async function saveOverrides(indId){
-    setInd(indId||'ind-ov','pending');
-    exportOv.disabled=true;
+  // Merge helpers: fold this session's touched entries into the file as it is now.
+  const mergeByName=(local,names)=>remote=>{ const out=(remote&&typeof remote==='object'&&!Array.isArray(remote))?remote:{};
+    for(const n of names){ if(n in local)out[n]=local[n]; else delete out[n]; } return out; };
+  const adopt=(local,merged)=>{ for(const k of Object.keys(local))delete local[k]; Object.assign(local,merged); };
+  async function saveAll(indId){
+    const ind=indId||'ind-save';
+    if(typeof tracing!=='undefined'&&tracing)endTrace();
+    setInd(ind,'pending'); saveAllBtn.disabled=true;
+    let ok=true;
     try{
-      await ghCommitJson('tools/map/map_overrides.json',overrides,'map: update overrides ('+Object.keys(overrides).length+') via in-page editor');
-      setInd(indId||'ind-ov','ok');
-      exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
-      return true;
-    }catch(e){ console.error(e); setInd(indId||'ind-ov','err',e.message); return false; }
-    finally{ exportOv.disabled=false; }
+      if(dirty.pins.size){
+        const {merged}=await ghCommitJson('tools/map/pins.json',mergeByName(pins,dirty.pins),`map: update pins (${dirty.pins.size} changed) via in-page editor`);
+        adopt(pins,merged); dirty.pins.clear();
+      }
+      if(dirty.overrides.size){
+        const {merged}=await ghCommitJson('tools/map/map_overrides.json',mergeByName(overrides,dirty.overrides),`map: update overrides (${dirty.overrides.size} changed) via in-page editor`);
+        adopt(overrides,merged); dirty.overrides.clear();
+      }
+      if(dirty.labels.size){
+        const keys=[...dirty.labels];
+        const {merged}=await ghCommitJson('tools/map/labels.json',remote=>{
+          const out=(remote&&typeof remote==='object')?remote:{}; for(const g of ['regions','islands','waters'])out[g]??={};
+          for(const k of keys){ const i=k.indexOf(':'),g=k.slice(0,i),id=k.slice(i+1); if(LBL[g]&&id in LBL[g])out[g][id]=LBL[g][id]; else delete out[g][id]; }
+          return out; },`map: update labels (${keys.length} changed) via in-page editor`);
+        LBL=merged; dirty.labels.clear();
+      }
+      if(dirty.traces){
+        const added=TRACES.slice(TRACES.length-dirty.traces);
+        const {merged}=await ghCommitJson('tools/map/traced_waterways.json',remote=>{
+          const base=Array.isArray(remote)?remote:[];
+          added.forEach((t,i)=>{ t.id=`wway-${base.length+i+1}`; });   // renumber behind whatever landed meanwhile
+          return base.concat(added); },`map: add ${added.length} traced waterway${added.length>1?'s':''} via in-page editor`);
+        TRACES.length=0; TRACES.push(...merged); dirty.traces=0;
+      }
+    }catch(e){ ok=false; console.error(e); setInd(ind,'err',e.message); }
+    if(ok)setInd(ind,'ok');
+    saveAllBtn.disabled=false; refreshSave();
+    return ok;
+  }
+  if(authed){
+    saveAllBtn.addEventListener('click',()=>saveAll('ind-save'));
+    window.addEventListener('beforeunload',e=>{ if(dirtyCount()>0){e.preventDefault();e.returnValue='';} });
   }
 
   // #366: roster staleness — is fantasy_map_data.json behind recommend_index.json?
@@ -405,7 +461,7 @@
     const saveBtn=foot.querySelector('#saveDecisions'),note=foot.querySelector('#decNote');
     let pending=0;
     function refresh(){pending=[...decided].filter(n=>overrides[n]&&(overrides[n].exclude||overrides[n].region)).length;saveBtn.textContent=`save decisions (${pending})`;}
-    saveBtn.addEventListener('click',async()=>{ if(await saveOverrides('ind-dec')) note.textContent='saved \u2014 the rebuild applies them'; });
+    saveBtn.addEventListener('click',async()=>{ if(await saveAll('ind-dec')) note.textContent='saved \u2014 the rebuild applies them'; });
     refresh();
     b.append(list,foot);
     document.getElementById('stage').appendChild(b);
@@ -722,11 +778,10 @@
   document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
   document.getElementById('zfit').onclick=()=>{vb={x:0,y:0,w:W,h:H};apply();};
   // saves are cumulative: seed this session from the committed files
-  const pins={}, editCb=window.editCb=document.getElementById('editMode'), expBtn=document.getElementById('exportPins');
+  const pins={}, editCb=window.editCb=document.getElementById('editMode');
   if(authed){
   try{ const ptxt=await (await fetch(fresh('pins.json'),{cache:'no-store'})).text();
        Object.assign(pins, JSON.parse(ptxt));
-       expBtn.textContent=`save pins (${Object.keys(pins).length})`;
        // freshness check: does the rendered data know about this pins file?
        if(data.meta&&data.meta.pins_hash){
          const buf=await crypto.subtle.digest('MD5'in crypto?'MD5':'SHA-1',new TextEncoder().encode(ptxt)).catch(()=>null);
@@ -736,17 +791,7 @@
        if(stalePins>8){const e=document.getElementById('err');e.style.display='block';
          e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
   }catch(e){}
-  editCb.addEventListener('change',()=>{expBtn.style.display=editCb.checked?'inline-block':'none';editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);});
-  expBtn.addEventListener('click',async()=>{
-    setInd('ind-pins','pending');
-    expBtn.disabled=true;
-    try{
-      await ghCommitJson('tools/map/pins.json',pins,'map: update pins ('+Object.keys(pins).length+') via in-page editor');
-      setInd('ind-pins','ok');
-      expBtn.textContent=`save pins (${Object.keys(pins).length})`;
-    }catch(e){ console.error(e); setInd('ind-pins','err',e.message); }
-    expBtn.disabled=false;
-  });
+  editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);});
   }
   // keep a mark's class list in step with its (live) flags after an edit
   function reflag(g){
@@ -766,7 +811,7 @@
     const h=HULL[st.region];
     if(h&&!inPoly(st.xy[0],st.xy[1],h))st.flags.stray=true;else delete st.flags.stray;
     reflag(g);
-    expBtn.textContent=`save pins (${Object.keys(pins).length})`;
+    touch('pins',g.dataset.name);
   }
   let selected=null;
   function selectStl(g){
@@ -777,7 +822,6 @@
     ovSize.value=(overrides[g.dataset.name]&&overrides[g.dataset.name].size)||st.size;
   }
   if(authed){
-  exportOv.textContent=`save overrides (${Object.keys(overrides).length})`;
   ovRegion.addEventListener('change',()=>{
     if(!selected)return;
     const name=selected.dataset.name, st=S.get(name), reg=data.regions.find(r=>r.id===ovRegion.value);
@@ -786,7 +830,7 @@
     // A pin was made for the old region; it is a well-placed pin in the wrong country now.
     // Drop it and stage the mark near the new region's label, so the next act is the drag.
     st.region=ovRegion.value;
-    if(pins[name]){delete pins[name];expBtn.textContent=`save pins (${Object.keys(pins).length})`;}
+    if(pins[name]){delete pins[name];touch('pins',name);}
     const lx=(LBL.regions[ovRegion.value]||{}).xy||reg.label_xy||reg.anchor;
     st.xy=[lx[0]+14,lx[1]+10];
     selected.setAttribute('transform',`translate(${st.xy[0]},${st.xy[1]})`);
@@ -804,7 +848,6 @@
     selected.classList.add(sz);
     selected.querySelector('.dot').setAttribute('r',{capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7}[sz]||2);
   });
-  exportOv.addEventListener('click',()=>saveOverrides('ind-ov'));
   // exclude the selected settlement: it leaves the map on the next rebuild; hidden now
   // so the decision is visible, and the mark returns on reload until the rebuild lands
   document.getElementById('exclOv').addEventListener('click',()=>{
@@ -812,23 +855,23 @@
     const name=selected.dataset.name;
     markOv(name,'exclude',true);
     selected.style.display='none';
-    findmsg.textContent=`${name} excluded - save overrides, then rebuild`;
+    findmsg.textContent=`${name} excluded - save changes, then rebuild`;
     selected=null;editwho.textContent='select a settlement\u2026';
   });
   }
   // waterway tracing: a full-takeover mode - no other edits while tracing
   let TRACES=[];
   const traceCb=document.getElementById('traceMode');
-  const traceBtn=document.getElementById('traceBtn'), traceExp=document.getElementById('traceExp'),
+  const traceBtn=document.getElementById('traceBtn'),
         traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
   const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
   if(authed){
   try{ TRACES=await (await fetch(fresh('traced_waterways.json'),{cache:'no-store'})).json(); }catch(e){}
   }
-  let tracing=null, unsaved=0, pendingName=null;
-  const traceCount=()=>{traceExp.textContent=`save waterways (${TRACES.length})`+(unsaved?` \u2014 ${unsaved} UNSAVED`:'');};
+  let tracing=null, pendingName=null;
+  const traceCount=()=>refreshSave();
   if(authed){
-  traceCount();
+  refreshSave();
   }
   function segd(p,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],L2=vx*vx+vy*vy||1e-9;
     const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));
@@ -907,7 +950,7 @@
   function endTrace(silent){
     if(tracing&&tracing.settlements.length>=2){
       tracing.captured=tubeCapture(tracing);
-      TRACES.push(tracing);unsaved++;
+      TRACES.push(tracing);touch('traces');
       pendingName=tracing;
       if(!silent){
         traceName.style.display='block';traceName.value='';traceName.focus();
@@ -917,7 +960,7 @@
     } else if(tracing&&!silent){ traceMsg.textContent='trace discarded (needs 2+)'; }
     tracing=null;redrawTrace();
     traceBtn.textContent='trace waterway';traceCount();
-    if(unsaved>=2)traceMsg.textContent+=` \u26a0 ${unsaved} traces unsaved \u2014 save now`;
+    if(dirty.traces>=2)traceMsg.textContent+=` \u26a0 ${dirty.traces} traces unsaved \u2014 save now`;
   }
   if(authed){
   traceName.addEventListener('keydown',e=>{
@@ -933,31 +976,6 @@
     tracing={id:`wway-${TRACES.length+1}`,name:null,settlements:[],points:[],captured:[]};
     traceBtn.textContent='end trace';
     traceMsg.textContent=`${tracing.id}: click settlements source \u2192 mouth (click again to remove)`;
-  });
-  traceExp.addEventListener('click',async()=>{
-    if(tracing)endTrace();
-    setInd('ind-trace','pending');
-    traceExp.disabled=true;
-    try{
-      await ghCommitJson('tools/map/traced_waterways.json',TRACES,'map: update traced waterways ('+TRACES.length+') via in-page editor');
-      setInd('ind-trace','ok');
-      unsaved=0;traceCount();
-    }catch(e){ console.error(e); setInd('ind-trace','err',e.message); }
-    traceExp.disabled=false;
-  });
-  window.addEventListener('beforeunload',e=>{
-    if(unsaved>0){e.preventDefault();e.returnValue='';}
-  });
-  const lblBtn=document.getElementById('exportLbl')||document.createElement('button');
-  lblBtn.addEventListener('click',async()=>{
-    setInd('ind-lbl','pending');
-    lblBtn.disabled=true;
-    try{
-      await ghCommitJson('tools/map/labels.json',LBL,'map: update labels via in-page editor');
-      setInd('ind-lbl','ok');
-      lblBtn.textContent='save labels';
-    }catch(e){ console.error(e); setInd('ind-lbl','err',e.message); }
-    lblBtn.disabled=false;
   });
   }
   let pan=null, dragS=null;
@@ -981,10 +999,9 @@
       dragL.setAttribute('x',mx.toFixed(0));dragL.setAttribute('y',my.toFixed(0));
       dragL.querySelectorAll('tspan').forEach(ts=>ts.setAttribute('x',mx.toFixed(0)));
       const X=+mx.toFixed(0),Y=+my.toFixed(0);
-      if(dragL.dataset.rid) (LBL.regions[dragL.dataset.rid]??={}).xy=[X,Y];
-      else if(dragL.dataset.gkind==='island') LBL.islands[dragL.dataset.gname]=[X,Y];
-      else LBL.waters[dragL.dataset.gname]=[X,Y];
-      lblBtn.textContent='save labels *';
+      if(dragL.dataset.rid){ (LBL.regions[dragL.dataset.rid]??={}).xy=[X,Y]; touch('labels','regions:'+dragL.dataset.rid); }
+      else if(dragL.dataset.gkind==='island'){ LBL.islands[dragL.dataset.gname]=[X,Y]; touch('labels','islands:'+dragL.dataset.gname); }
+      else { LBL.waters[dragL.dataset.gname]=[X,Y]; touch('labels','waters:'+dragL.dataset.gname); }
       readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">(${X}, ${Y}) \u2014 in labels.json</div>`;
       return;
     }
