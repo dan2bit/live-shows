@@ -51,7 +51,7 @@ hover, draw soft hulls around their members, or ignore them entirely at low zoom
 {
   "id": 173, "name": "The Lone Bellow",
   "region": "quiet_woods", "district": "quiet_woods:d1",
-  "size": "capital", "score": 24.0,
+  "size": "capital", "auto_size": "capital", "score": 24.0,
   "xy": [212.4, 187.9],
   "region_uv": [0.4551, 0.4516],
   "flags": {"legacy": true, "faded": true, "unvisited": true},
@@ -83,7 +83,34 @@ meaningless until hand-placed), `unpinned` (builder-positioned with no pins.json
 the position can move on a rebuild), `stray` (pinned, but the pin lies outside the region's
 polygon — advisory, since the polygons are not exact borders). All three are mainland-only.
 `score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus) if you want
-continuous scaling instead of the tier buckets.
+continuous scaling instead of the tier buckets. `auto_size` is the size the builder would
+have given with no override in `map_overrides.json` - equal to `size` unless an override is
+doing something. Renderers use `size`; the editor and the audit use both.
+
+## Overrides and decrees (`map_overrides.json`)
+
+`{name: {region?, size?, exclude?, basis?, why?}}`, written by the in-page editor
+(read-merge-write by touched name) and pruned by the builder under `--prune-overrides`.
+
+- `size` replaces the computed size. `"capital"` is a **decree**: the named settlement is
+  capital regardless of score, and everyone else in its region caps at city, so the seat
+  cannot be taken on score. A region with no decree keeps its computed capital. Two decrees
+  in one region, or a decreed capital that is also `exclude`d, fail the build.
+- `basis` is what the builder said when the override was saved: `{size, score, at}`
+  (`auto_size`, `score`, ISO date), stamped by the editor. It is what makes the override
+  auditable later.
+- `why` is free text for the overrides worth a sentence (the Delta Coast seat swap).
+
+Every rebuild audits each size override against today's `auto_size` and writes the result
+to `meta.override_audit` (rows of `{name, override, auto, score, basis?, class}`) and
+`meta.override_audit_counts`. Classes: `decree`; `unchanged` (auto still equals the
+basis); `still-promotion` / `still-demotion` (score moved, override still on the same side);
+`redundant` (the builder now agrees - the override does nothing); `flipped` (a promotion
+now caps, or a demotion now lifts - the one that needs a decision); `orphan` (matches no
+settlement); `promotion (no basis)` / `demotion (no basis)` for hand-written entries.
+`--prune-overrides` drops the `size` of `redundant` rows (a `region` on the same entry
+stays), deletes `orphan` rows, and backfills a missing `basis` from today's values; it never
+touches a decree or a flipped row. `meta.decreed_capitals` is `{region: name}`.
 
 **routes[]** — `{a, b, cls, crossRegion, render}` with `a`/`b` as canonical names. `cls` is
 provenance (`road` kinship, `river` attended-bill, `bridge` shared-sideman, `trail` taste
@@ -158,8 +185,8 @@ build script pins PYTHONHASHSEED (one self re-exec) because community-detection
 tie-breaking otherwise leaks the per-process hash seed into district and coordinate
 assignments. The knobs worth turning live at the top of build_fantasy_map.py: TAG_VOTES
 (genre-to-terrain gravity - the most taste-sensitive dial), REGIONS, FORCED_REGION /
-CURATED_REGIONS / CAPITAL_OVERRIDE (the Steel Foothills machinery), EDGE_WEIGHT, and the
-size thresholds in size_tier.
+CURATED_REGIONS (the Steel Foothills machinery), EDGE_WEIGHT, and the
+size thresholds in size_tier; capitals and every other size decree are in `map_overrides.json`.
 
 ## Current census (2026-09-18 index)
 
@@ -176,21 +203,22 @@ size thresholds in size_tier.
 | The Outer Isles | 43 | AJR |
 | The Steel Foothills | 24 | Larkin Poe (see below) |
 
-Two capitals are decreed rather than computed: Larkin Poe and AJR hold theirs through
-`CAPITAL_OVERRIDE`, and Shemekia Copeland through `CURATED_SIZE` - an explicit curatorial
-swap with Ana Popovic, independent of either artist's score. The Outer Isles is where the
+Four capitals are decreed rather than computed - Larkin Poe, AJR, Trombone Shorty and
+Shemekia Copeland (an explicit curatorial swap with Ana Popovic, independent of either
+artist's score) - all through `"size": "capital"` in `map_overrides.json`; see Overrides
+and decrees above. The Outer Isles is where the
 tribute acts, the pop outliers and the Celtic bands share ferry service.
 
 ## The Steel Foothills (curated region)
 
 One region is hand-rostered rather than tag-derived: the Steel Foothills, sitting between
 the Amplified Range and the Heartland, home of the slide, lap-steel, and sacred-steel
-players. Larkin Poe governs from Poe Scarp by decree (CAPITAL_OVERRIDE), with Ghalia Volt
+players. Larkin Poe governs from Poe Scarp by decree (a `capital` override), with Ghalia Volt
 and Sonny Landreth up the same ridge; districts below include Landreth Bend (the brothers),
 Birchwood Switchback, Allstars Terrace, and Band Rise (Tedeschi Trucks). Full roster:
 Larkin Poe, Ghalia Volt, Mike Zito, Robert Randolph, Ariel Posen, Sonny Landreth, Selwyn
 Birchwood, The Bros. Landreth, Joey Landreth, Warren Haynes, North Mississippi Allstars,
 Tedeschi Trucks Band. Curated regions never recruit by neighbor vote - edit FORCED_REGION
 to change the roster, CURATED_REGIONS to add another hand-rostered territory, and
-CAPITAL_OVERRIDE to appoint its ruler. Duane Betts, Luther Dickinson, and Jack White would
+`"size": "capital"` in `map_overrides.json` to appoint its ruler. Duane Betts, Luther Dickinson, and Jack White would
 belong here but are not in the recommendation index, so they have no node to place.
