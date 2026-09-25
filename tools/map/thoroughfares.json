@@ -1,5 +1,5 @@
 {
- "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. offmap on a ferry hop gives the exit and entry points at the map edge.",
+ "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. offmap on a ferry hop gives the exit and entry points at the map edge. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing.",
  "routes": [
   {"cls": "road", "chain": ["Judith Hill", "Ruthie Foster", "Danielle Nicole"]},
   {"cls": "road", "chain": ["Valerie June", "The Wood Brothers"]},
@@ -23,7 +23,7 @@
   {"cls": "ferry", "chain": ["Hozier", "Taj Farrant"]},
   {"cls": "ferry", "chain": ["Orianthi", "Samantha Fish"]},
   {"cls": "ferry", "chain": ["Orianthi", "Kate Davis"]},
-  {"cls": "ferry", "chain": ["Samantha Fish", "ZZ Ward", "Vanessa Collier"]},
+  {"cls": "ferry", "chain": ["Samantha Fish", "ZZ Ward", "Vanessa Collier"], "via": {"ZZ Ward>Samantha Fish": [[646, 572], [655, 628], [738, 612], [748, 505]]}},
   {"cls": "ferry", "chain": ["Vanessa Collier", "Southern Avenue"], "offmap": {"exit": [640, 715], "entry": [150, 715]}},
   {"cls": "ferry", "chain": ["Southern Avenue", "Shemekia Copeland"]},
   {"cls": "ferry", "chain": ["Southern Avenue", "Keb' Mo'"]},
