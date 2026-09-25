@@ -1,5 +1,12 @@
 {
- "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. offmap on a ferry hop gives the exit and entry points at the map edge. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing.",
+ "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional.",
+ "harbors": {
+  "Allison Russell": {"quai": [471, 210], "heading": [0, -1], "run": 28},
+  "Sue Foley": {"quai": [624, 236], "heading": [0, -1], "run": 12},
+  "Jackie Venson": {"quai": [737, 148], "heading": [0, -1], "run": 12},
+  "Southern Avenue": {"quai": [212, 533], "heading": [-1, 0], "run": 14},
+  "AJR": {"quai": [946, 246], "heading": [-1, 0.2], "run": 10}
+ },
  "routes": [
   {"cls": "road", "chain": ["Judith Hill", "Ruthie Foster", "Danielle Nicole"]},
   {"cls": "road", "chain": ["Valerie June", "The Wood Brothers"]},
@@ -23,9 +30,7 @@
   {"cls": "ferry", "chain": ["Hozier", "Taj Farrant"]},
   {"cls": "ferry", "chain": ["Orianthi", "Samantha Fish"]},
   {"cls": "ferry", "chain": ["Orianthi", "Kate Davis"]},
-  {"cls": "ferry", "chain": ["Samantha Fish", "ZZ Ward", "Vanessa Collier"], "via": {"ZZ Ward>Samantha Fish": [[646, 572], [655, 628], [738, 612], [748, 505]]}},
-  {"cls": "ferry", "chain": ["Vanessa Collier", "Southern Avenue"], "offmap": {"exit": [640, 715], "entry": [150, 715]}},
-  {"cls": "ferry", "chain": ["Southern Avenue", "Shemekia Copeland"]},
+  {"cls": "ferry", "chain": ["Samantha Fish", "ZZ Ward", "Vanessa Collier"], "via": {"ZZ Ward>Samantha Fish": [[646, 572], [666, 598], [672, 640], [738, 612], [748, 505]]}},
   {"cls": "ferry", "chain": ["Southern Avenue", "Keb' Mo'"]},
   {"cls": "ferry", "chain": ["Southern Avenue", "Buffalo Nichols"]},
   {"cls": "ferry", "chain": ["Southern Avenue", "Valerie June"]},
@@ -33,6 +38,7 @@
   {"cls": "ferry", "chain": ["Allison Russell", "Sue Foley"]},
   {"cls": "ferry", "chain": ["Allison Russell", "Jackie Venson"]},
   {"cls": "ferry", "chain": ["AJR", "Hozier"]},
-  {"cls": "ferry", "chain": ["AJR", "Kate Davis"]}
+  {"cls": "ferry", "chain": ["AJR", "Kate Davis"]},
+  {"cls": "ferry", "chain": ["Vanessa Collier", "Shemekia Copeland"], "offmap": {"exit": [[586, 636], [548, 640], [512, 660], [485, 682], [455, 704]], "entry": [[238, 612], [250, 632], [268, 655], [296, 679], [322, 692], [345, 704]]}}
  ]
 }
