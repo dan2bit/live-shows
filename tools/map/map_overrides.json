@@ -1,210 +1,377 @@
 {
  "The Roots": {
   "size": "city",
-  "region": "outer_isles"
+  "region": "outer_isles",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Every Breath You Take": {
-  "size": "city",
   "region": "outer_isles"
  },
  "Young Dubliners": {
-  "size": "city"
- },
- "Kate Davis": {
-  "size": "city"
- },
- "Juliet Lloyd": {
-  "region": "quiet_woods"
- },
- "Victor Wooten & The Wooten Brothers": {
-  "region": "river_port",
-  "size": "village"
+  "size": "city",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
  },
  "Marshall Crenshaw": {
   "region": "quiet_woods",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "P!nk": {
   "region": "amplified_range",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Angélique Kidjo": {
   "region": "river_port",
-  "size": "village"
- },
- "Allman Betts Family Revival: A Decade of Revival": {
-  "region": "amplified_range",
-  "size": "town"
- },
- "Dale Watson & His Lonestars": {
-  "region": "river_port",
-  "size": "waystation"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 0.5,
+   "at": "2026-09-25"
+  }
  },
  "Queen Latifah": {
   "region": "outer_isles",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Southern Avenue": {
-  "size": "city"
+  "size": "city",
+  "basis": {
+   "size": "town",
+   "score": 9,
+   "at": "2026-09-25"
+  }
  },
  "Mathias Lattin": {
-  "size": "town"
- },
- "Anthony Rosano and The Conqueroos": {
-  "size": "village"
+  "size": "town",
+  "basis": {
+   "size": "village",
+   "score": 4,
+   "at": "2026-09-25"
+  }
  },
  "John Primer": {
   "region": "delta_coast",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "village",
+   "score": 5,
+   "at": "2026-09-25"
+  }
  },
  "Shemekia Copeland": {
-  "size": "capital"
+  "size": "capital",
+  "why": "Delta Coast capital swap with Ana Popovic: an explicit curatorial choice (avoiding a single ethnic reading of the region's capital seat), independent of either artist's score; pins swapped to match"
  },
  "Kingsley Flood": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "city",
+   "score": 18,
+   "at": "2026-09-25"
+  }
  },
  "Stevie Nicks": {
   "region": "quiet_woods",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Eric Clapton": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 2,
+   "at": "2026-09-25"
+  }
  },
  "They Might Be Giants": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Eddie 9V": {
-  "size": "village"
- },
- "Artur Menezes": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Dylan Triplett": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "town",
+   "score": 8,
+   "at": "2026-09-25"
+  }
  },
  "Adia Victoria": {
-  "region": "quiet_woods",
-  "size": "town"
+  "region": "quiet_woods"
  },
  "Gov't Mule": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Mark Knopfler": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Peter Gabriel": {
-  "size": "city"
+  "size": "city",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Blackberry Smoke": {
   "region": "amplified_range",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Joanna Connor": {
-  "size": "village"
- },
- "Lightnin' Malcolm": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Tommy Castro & the Painkillers": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Warren Haynes": {
   "region": "slide_foothills",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Ariel Posen": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "village",
+   "score": 4,
+   "at": "2026-09-25"
+  }
  },
  "Big Boi": {
   "region": "outer_isles"
  },
  "J. P. Soars": {
   "size": "village",
-  "region": "slide_foothills"
+  "region": "slide_foothills",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Soul Coughing": {
   "region": "amplified_range",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "The Pietasters": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
  },
  "Oh He Dead": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "city",
+   "score": 12,
+   "at": "2026-09-25"
+  }
  },
  "Brittany Howard": {
   "region": "river_port"
  },
  "Tal Wilkenfeld": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "village",
+   "score": 3.5,
+   "at": "2026-09-25"
+  }
  },
  "Tab Benoit": {
-  "region": "river_port",
-  "size": "city"
+  "region": "river_port"
  },
  "The Family Crest": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Jake Blount": {
   "size": "village",
-  "region": "quiet_woods"
+  "region": "quiet_woods",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
  },
  "Cowboy Junkies": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Tracy Chapman": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Zach Person": {
   "region": "slide_foothills",
-  "size": "village"
- },
- "Blood Brothers": {
-  "region": "amplified_range",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Brandi Carlile": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 0,
+   "at": "2026-09-25"
+  }
  },
  "Alicia Keys": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Cicada Rhythm": {
-  "size": "hamlet"
+  "size": "hamlet",
+  "basis": {
+   "size": "waystation",
+   "score": 0,
+   "at": "2026-09-25"
+  }
  },
  "Rainbow Kitten Surprise": {
   "size": "hamlet",
-  "region": "outer_isles"
- },
- "Chris Smither": {
-  "region": "delta_coast",
-  "size": "village"
- },
- "Sierra Hull": {
-  "size": "village"
+  "region": "outer_isles",
+  "basis": {
+   "size": "waystation",
+   "score": 0,
+   "at": "2026-09-25"
+  }
  },
  "Billy Strings": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "waystation",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "The Teskey Brothers": {
   "region": "delta_coast",
-  "size": "village"
- },
- "Lynn Hollyfield": {
-  "size": "hamlet"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 1,
+   "at": "2026-09-25"
+  }
  },
  "Chris Jacobs & Friends": {
   "region": "delta_coast",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "waystation",
+   "score": 0,
+   "at": "2026-09-25"
+  }
  },
  "Sona Jobarteh": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Danny Burns": {
   "region": "outer_isles"
  },
  "Steve Earle": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Rhiannon Giddens": {
   "region": "quiet_woods"
@@ -226,18 +393,33 @@
  },
  "Nas": {
   "region": "outer_isles",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "De La Soul": {
   "region": "outer_isles"
  },
  "Wu-Tang Clan": {
   "region": "outer_isles",
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "LL Cool J": {
   "region": "outer_isles",
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Zedicus & Abyssinia Roots": {
   "region": "outer_isles"
@@ -271,9 +453,6 @@
  },
  "Becca Mancari": {
   "region": "river_port"
- },
- "Big Sandy & His Fly-Rite Boys": {
-  "region": "delta_coast"
  },
  "Bill Frisell": {
   "region": "quiet_woods"
@@ -351,10 +530,12 @@
   "region": "quiet_woods"
  },
  "Kent Burnside": {
-  "size": "village"
- },
- "Ana Popović": {
-  "size": "city"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "The Budos Band": {
   "region": "river_port"
@@ -377,50 +558,102 @@
  "Jon Spencer": {
   "region": "slide_foothills"
  },
- "Winston Mitchell": {
-  "region": "heartland"
- },
  "Larry Keel Duo": {
   "region": "heartland"
  },
  "Margaret Glaspy": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "The Iguanas": {
   "region": "slide_foothills"
  },
  "Joe Satriani": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
  },
  "Ziggy Marley": {
-  "size": "town"
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Jimmy Hall": {
   "region": "slide_foothills"
  },
  "Pixies": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "ZZ Top": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Steve Miller Band": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Sarah McLachlan": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Tori Amos": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Willie Nelson": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Violent Femmes": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Barenaked Ladies": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  },
  "Kermit Ruffins": {
   "region": "river_port"
@@ -429,9 +662,79 @@
   "region": "heartland"
  },
  "Jax Hollow": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
  },
  "Liz Phair": {
-  "size": "village"
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
+ },
+ "Larkin Poe": {
+  "size": "capital",
+  "why": "Steel Foothills seat by decree (was CAPITAL_OVERRIDE in the builder)"
+ },
+ "AJR": {
+  "size": "capital",
+  "why": "Outer Isles seat by decree (was CAPITAL_OVERRIDE in the builder)"
+ },
+ "Trombone Shorty & Orleans Avenue": {
+  "size": "capital",
+  "why": "Secondline seat by decree; Vanessa Collier outscores him (was CAPITAL_OVERRIDE in the builder)"
+ },
+ "George Clinton & Parliament-Funkadelic": {
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
+ },
+ "Hozier": {
+  "size": "city",
+  "basis": {
+   "size": "town",
+   "score": 6,
+   "at": "2026-09-25"
+  }
+ },
+ "Enter the Haggis": {
+  "size": "town",
+  "basis": {
+   "size": "city",
+   "score": 12,
+   "at": "2026-09-25"
+  }
+ },
+ "Glen Hansard": {
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
+ },
+ "Līve": {
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
+ },
+ "Joan Jett & The Blackhearts": {
+  "size": "village",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-09-25"
+  }
  }
 }
