@@ -353,6 +353,10 @@
     saveStatus.innerHTML=[part(dirty.pins.size,Object.keys(pins).length,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
       part(dirty.labels.size,Object.keys(LBL.regions||{}).length+Object.keys(LBL.islands||{}).length+Object.keys(LBL.waters||{}).length,'labels'),
       part(dirty.traces,TRACES.length,'waterways')].join(' \u00b7 ');
+    // the builder's override audit (meta.override_audit_counts): only the classes that ask for a hand
+    const ac=(data.meta&&data.meta.override_audit_counts)||{};
+    const asks=['flipped','redundant','orphan'].filter(k=>ac[k]).map(k=>`${ac[k]} ${k}`);
+    if(asks.length)saveStatus.innerHTML+=` \u00b7 <b>audit:</b> ${asks.join(', ')}`;
   }
   function touch(kind,key){ if(kind==='traces')dirty.traces++; else dirty[kind].add(key); refreshSave(); }
   function markOv(name,key,val){
@@ -817,7 +821,10 @@
   function selectStl(g){
     selected=g;
     const st=S.get(g.dataset.name);
-    editwho.textContent=g.dataset.name;
+    // auto_size is what the builder would say with no override; show it when an override
+    // is doing something, so the reason for the override is visible at the point of editing
+    const ov=overrides[g.dataset.name]||{};
+    editwho.textContent=g.dataset.name+(st.auto_size&&ov.size&&ov.size!==st.auto_size?` (auto: ${st.auto_size}${ov.basis?`, basis ${ov.basis.size} @ ${ov.basis.at}`:''})`:'');
     ovRegion.value=(overrides[g.dataset.name]&&overrides[g.dataset.name].region)||st.region;
     ovSize.value=(overrides[g.dataset.name]&&overrides[g.dataset.name].size)||st.size;
   }
@@ -840,10 +847,24 @@
   });
   document.getElementById('showStrays').addEventListener('change',e=>document.body.classList.toggle('strays',e.target.checked));
   document.body.classList.add('strays');
+  const isDecree=name=>overrides[name]&&overrides[name].size==='capital';
   ovSize.addEventListener('change',()=>{
     if(!selected)return;
-    const name=selected.dataset.name, sz=ovSize.value;
-    markOv(name,'size',sz);
+    const name=selected.dataset.name, sz=ovSize.value, st=S.get(name);
+    if(isDecree(name)&&sz!=='capital'&&!confirm(`${name} is a decreed capital - changing the size hands the seat back to the highest score. Continue?`)){
+      ovSize.value='capital';return;
+    }
+    if(st.auto_size&&sz===st.auto_size){
+      // the builder already says this: an override here would be redundant on the next audit
+      if(overrides[name]){delete overrides[name].size;delete overrides[name].basis;delete overrides[name].why;
+        if(!Object.keys(overrides[name]).length)delete overrides[name];}
+      touch('overrides',name);
+    }else{
+      markOv(name,'size',sz);
+      // basis: what the builder said when this override was made, so a later rebuild can
+      // tell whether the override is still a promotion/demotion or has flipped
+      if(st.auto_size)markOv(name,'basis',{size:st.auto_size,score:st.score,at:new Date().toLocaleDateString('sv')});
+    }
     ['capital','city','town','village','hamlet','waystation'].forEach(c=>selected.classList.remove(c));
     selected.classList.add(sz);
     selected.querySelector('.dot').setAttribute('r',{capital:5.2,city:4,town:3,village:2.2,hamlet:1.6,waystation:1.7}[sz]||2);
@@ -853,6 +874,8 @@
   document.getElementById('exclOv').addEventListener('click',()=>{
     if(!selected)return;
     const name=selected.dataset.name;
+    if(isDecree(name)&&!confirm(`${name} is a decreed capital - the builder refuses a capital that is also excluded. Exclude anyway (and clear the decree)?`))return;
+    if(isDecree(name)){delete overrides[name].size;delete overrides[name].basis;delete overrides[name].why;}
     markOv(name,'exclude',true);
     selected.style.display='none';
     findmsg.textContent=`${name} excluded - save changes, then rebuild`;
