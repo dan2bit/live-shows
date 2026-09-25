@@ -81,7 +81,12 @@ jobs:
             echo "heightmap=false" >> "$GITHUB_OUTPUT"; echo "heightmap: no (data only)"
           fi
       - name: Rebuild map data
-        run: python3 tools/map/build_fantasy_map.py
+        # --prune-overrides lets the builder drop size overrides it now agrees
+        # with, delete entries that match no settlement, and backfill a missing
+        # basis - so map_overrides.json is a written path of this job too. It
+        # is a watched path, so a pruned file retriggers one rebuild after
+        # promotion; the second run finds nothing to prune and no-ops.
+        run: python3 tools/map/build_fantasy_map.py --prune-overrides
       - name: Rebuild heightmap
         if: steps.hm.outputs.heightmap == 'true'
         run: python3 tools/map/emit_heightmap.py
@@ -89,7 +94,7 @@ jobs:
         env:
           HEIGHTMAP: ${{ steps.hm.outputs.heightmap }}
         run: |
-          git add tools/map/fantasy_map_data.json
+          git add tools/map/fantasy_map_data.json tools/map/map_overrides.json
           if [ "$HEIGHTMAP" = "true" ]; then git add tools/map/heightmap.png; fi
           if git diff --cached --quiet; then
             echo "map artifacts unchanged - nothing to commit."
@@ -108,6 +113,7 @@ jobs:
             else
               git commit -m "ci: regenerate fantasy map data"
             fi
+            git checkout -- .
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
