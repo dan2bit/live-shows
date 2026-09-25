@@ -607,7 +607,7 @@
       way.push(pb);
       stroke(gCore,pathD(catmull(way,8)),'#2f7d4f',3.6,{'stroke-dasharray':'0.1 7'});
     }
-    const FERRY_INK='var(--ink)',FERRY={'stroke-dasharray':'13 9'};
+    const FERRY_INK='var(--ink)',FERRY_W=2.0,FERRY={'stroke-dasharray':'8 6'};
     const bowPts=(pa,pb,side,n)=>{   // sample the spec's cubic (control points 0.2 x chord off the perpendicular)
       const [nx,ny,L]=perp(pa,pb),o=0.2*L*side,c1=lerp(pa,pb,1/3),c2=lerp(pa,pb,2/3);
       const q1=[c1[0]+nx*o,c1[1]+ny*o],q2=[c2[0]+nx*o,c2[1]+ny*o],out=[];
@@ -616,23 +616,36 @@
       return out;
     };
     const landHits=pts=>isLand?pts.slice(3,-3).filter(p=>isLand(p[0],p[1])).length:0;   // ignore the harbour ends
-    function ferry(pa,pb,prefer,via){
-      // hand waypoints win outright; otherwise bow to whichever side crosses less land
-      // (the chain's alternation only breaks a tie)
-      if(via&&via.length){stroke(gCore,pathD(catmull([pa,...via,pb],10)),FERRY_INK,2.6,FERRY);return prefer;}
-      const A=bowPts(pa,pb,prefer,24),B=bowPts(pa,pb,-prefer,24);
-      const side=landHits(B)<landHits(A)?-prefer:prefer;
-      stroke(gCore,pathD(side===prefer?A:B),FERRY_INK,2.6,FERRY);return side;
+    // A harbor (thoroughfares.json -> harbors) is the settlement's own bit of coast: the
+    // quai is where the line leaves the mark and meets the water, and heading x run is
+    // the stretch it steams straight out before it is allowed to turn. Both optional.
+    const HARB=THOR.harbors||{};
+    const harborLeg=n=>{const h=HARB[n];if(!h)return[];const out=[];
+      if(h.quai)out.push(h.quai);
+      if(h.heading&&h.run){const q=h.quai||pos(n),L=Math.hypot(h.heading[0],h.heading[1])||1;
+        out.push([q[0]+h.heading[0]/L*h.run,q[1]+h.heading[1]/L*h.run]);}
+      return out;};
+    function ferry(a,b,pa,pb,prefer,via){
+      // hand waypoints win outright. Otherwise the bow (between the two harbor exits, if
+      // any) goes to whichever side crosses less land; the chain's alternation breaks ties.
+      const legA=harborLeg(a),legB=harborLeg(b).reverse();
+      if(via&&via.length){stroke(gCore,pathD(catmull([pa,...legA,...via,...legB,pb],10)),FERRY_INK,FERRY_W,FERRY);return prefer;}
+      const ea=legA.length?legA[legA.length-1]:pa,eb=legB.length?legB[0]:pb;
+      const A=bowPts(ea,eb,prefer,24),B=bowPts(ea,eb,-prefer,24);
+      const side=landHits(B)<landHits(A)?-prefer:prefer,bow=side===prefer?A:B;
+      if(!legA.length&&!legB.length){stroke(gCore,pathD(bow),FERRY_INK,FERRY_W,FERRY);return side;}
+      stroke(gCore,pathD(catmull([pa,...legA,bow[12],...legB,pb],10)),FERRY_INK,FERRY_W,FERRY);return side;
     }
     let fadeN=0;
-    function ferryOff(pa,edge,side){
-      // one leg of the off-map hop: a bow toward the map edge that fades out over its last
-      // half (a gradient in map units from the settlement's y to the edge point's y)
-      const id=`thor-fade-${fadeN++}`;
+    function ferryOff(n,pa,leg){
+      // one leg of the off-map hop: the settlement, its harbor, then the hand waypoints out
+      // to the map edge, fading over the last stretch (a gradient in map units from the
+      // settlement's y to the edge point's y - these legs run toward the south edge)
+      const id=`thor-fade-${fadeN++}`,edge=leg[leg.length-1];
       const grad=mk('linearGradient',{id,gradientUnits:'userSpaceOnUse',x1:0,x2:0,y1:pa[1],y2:edge[1]});
-      grad.append(mk('stop',{offset:'0','stop-color':'#221A12','stop-opacity':'1'}),mk('stop',{offset:'0.5','stop-color':'#221A12','stop-opacity':'1'}),mk('stop',{offset:'1','stop-color':'#221A12','stop-opacity':'0'}));
+      grad.append(mk('stop',{offset:'0','stop-color':'#221A12','stop-opacity':'1'}),mk('stop',{offset:'0.7','stop-color':'#221A12','stop-opacity':'1'}),mk('stop',{offset:'1','stop-color':'#221A12','stop-opacity':'0'}));
       map.querySelector('defs').appendChild(grad);
-      stroke(gCore,pathD(bowPts(pa,edge,side,24)),`url(#${id})`,2.6,FERRY);
+      stroke(gCore,pathD(catmull([pa,...harborLeg(n),...leg],10)),`url(#${id})`,FERRY_W,FERRY);
     }
     for(const r of THOR.routes||[]){
       const chain=r.chain||[];
@@ -646,9 +659,9 @@
         else if(r.cls==='pass')pass(pa,pb,hs);
         else if(r.cls==='trail')trail(pa,pb,hs);
         else if(r.cls==='ferry'){
-          if(r.offmap){ferryOff(pa,r.offmap.exit,side);ferryOff(pb,r.offmap.entry,-side);}
+          if(r.offmap){ferryOff(a,pa,r.offmap.exit);ferryOff(b,pb,r.offmap.entry);}
           else{const v=r.via||{},via=v[`${a}>${b}`]||(v[`${b}>${a}`]||[]).slice().reverse();
-            side=-ferry(pa,pb,side,via);}   // next hop prefers the other side, so a chain reads as an S
+            side=-ferry(a,b,pa,pb,side,via);}   // next hop prefers the other side, so a chain reads as an S
         }
       }
     }
