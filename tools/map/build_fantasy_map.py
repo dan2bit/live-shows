@@ -43,6 +43,9 @@ ap.add_argument("--repo-root", type=Path, default=None,
                 help="live-shows checkout root (default: auto-detect above this script)")
 ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "fantasy_map_data.json",
                 help="output JSON path (default: fantasy_map_data.json beside this script)")
+ap.add_argument("--prune-overrides", action="store_true",
+                help="rewrite map_overrides.json: drop size overrides the builder now agrees "
+                     "with and entries that match no settlement; backfill a missing basis")
 args = ap.parse_args()
 
 ROOT = args.repo_root or find_repo_root(SCRIPT_DIR) or find_repo_root(Path.cwd())
@@ -228,6 +231,9 @@ MAP_EXCLUDE = {
 # a comment. region and size are applied later, after layout, where they always were.
 _OV_PATH = SCRIPT_DIR / "map_overrides.json"
 _OV = json.loads(_OV_PATH.read_text()) if _OV_PATH.exists() else {}
+for _nm, _o in _OV.items():
+    if isinstance(_o, dict) and _o.get("exclude") and _o.get("size") == "capital":
+        sys.exit(f"map_overrides.json: {_nm} is a decreed capital and excluded - pick one")
 EXCLUDED = MAP_EXCLUDE | {nm for nm, ov in _OV.items() if isinstance(ov, dict) and ov.get("exclude")}
 records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in EXCLUDED}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
@@ -540,17 +546,18 @@ def score(c):
 
 # The capital is otherwise the region's highest-scoring seen act, which means a
 # strong settlement moving in can take the seat on arrival - Vanessa Collier's
-# score outranked Trombone Shorty's the day she crossed into Secondline. A size
-# override in map_overrides.json can hold the line but is one editor save from
-# being lost; this table cannot be. Everyone else in a listed region caps at city.
-CAPITAL_OVERRIDE = {"slide_foothills": "Larkin Poe", "outer_isles": "AJR",
-                    "river_port": "Trombone Shorty & Orleans Avenue"}
+# score outranked Trombone Shorty's the day she crossed into Secondline. A
+# decree holds the seat: "size": "capital" in map_overrides.json names the
+# capital AND caps everyone else in that region at city, so the seat cannot be
+# taken on score. DECREED ({region: name}) is derived from the file once region
+# overrides have been applied, further down; undecreed regions stay computed.
+DECREED = {}
 
 def size_tier(c, s, regional_max):
     m = seen_meta.get(c, {})
     reg = region_of[c]
-    if reg in CAPITAL_OVERRIDE:
-        if c == CAPITAL_OVERRIDE[reg]:
+    if reg in DECREED:
+        if c == DECREED[reg]:
             return "capital"
         regional_max = float("inf")  # nobody else in this region auto-promotes
     if m.get("times_seen", 0) == 0:
@@ -937,20 +944,9 @@ def source_ref(c):
 _pins_law = (json.loads((SCRIPT_DIR / "pins.json").read_text())
              if (SCRIPT_DIR / "pins.json").exists() else {})
 MAP_RENAME = {"New York's Finest": "Every Breath You Take"}   # current performing name
-CURATED_SIZE = {
-    "George Clinton & Parliament-Funkadelic": "town",
-    "Hozier": "city", "Every Breath You Take": "town",
-    "Enter the Haggis": "town", "Kate Davis": "town",
-    "Glen Hansard": "town", "L\u012bve": "village",
-    "Joan Jett & The Blackhearts": "village",
-    "Danny Burns": "town",
-    # Delta Coast capital swap: Shemekia Copeland promoted, Ana Popović
-    # demoted -- an explicit curatorial choice (avoiding a single ethnic
-    # reading of the region's capital seat), independent of either artist's
-    # computed score. Positions swapped correspondingly in pins.json.
-    "Shemekia Copeland": "capital",
-    "Ana Popović": "city",
-}
+# Curated sizes (including the Delta Coast capital swap) used to be a table
+# here; they now live in map_overrides.json with a basis and, where it matters,
+# a why - one place for size decrees, one audit over all of them.
 RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
                     "Jackie Venson", "Orianthi", "Queen Latifah",
@@ -1037,6 +1033,14 @@ if _OV:
                     UNPLACED.add(nm)
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
+for nm, sz in OVERRIDE_SIZE.items():
+    if sz != "capital":
+        continue
+    reg_ = region_of[nm]
+    if reg_ in DECREED:
+        sys.exit(f"map_overrides.json: two decreed capitals in {reg_}: "
+                 f"{DECREED[reg_]} and {nm} - the file has to say which")
+    DECREED[reg_] = nm
 
 _decree_pins = (set(json.loads((SCRIPT_DIR / "pins.json").read_text()))
                 if (SCRIPT_DIR / "pins.json").exists() else set())
@@ -1071,11 +1075,13 @@ for c in sorted(records):
     spec = REGIONS[reg]
     x, y = xy[c]
     m = seen_meta.get(c, {})
+    auto_size = SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg])
     settlements.append({
         "id": records[c]["id"], "name": c,
         **({"label": DISPLAY[c]} if c in DISPLAY else {}),
         "region": reg, "district": district_of.get(c),
-        "size": OVERRIDE_SIZE.get(c) or CURATED_SIZE.get(c) or SIZE_OVERRIDE.get(c) or size_tier(c, s, reg_max[reg]),
+        "size": OVERRIDE_SIZE.get(c) or auto_size,
+        "auto_size": auto_size,   # what the builder would say with no override
         "score": round(s, 1),
         "xy": [round(x, 1), round(y, 1)],
         "region_uv": [round((x - (spec["anchor"][0]-spec["rx"])) / (2*spec["rx"]), 4),
@@ -1092,6 +1098,79 @@ for c in sorted(records):
         "times_seen": m.get("times_seen", 0), "vip": m.get("vip", 0),
         "tier": records[c].get("tier"),
     })
+
+# ---- override audit: is each size override still doing what it was saved to do? ----
+# An override records a target; its basis records what the builder said at the
+# time (auto_size, score, date - stamped by the editor). Comparing today's
+# auto_size to both answers the question a bare target cannot: a promotion whose
+# artist has since been seen enough to earn the size on their own is redundant;
+# one whose artist has grown past it has flipped into a cap; a demotion whose
+# artist has slipped below it has flipped into a lift. Decrees are exempt - a
+# capital override IS the decree, and the region cap is derived from it.
+SIZE_RANK = {"waystation": 0, "hamlet": 1, "village": 2, "town": 3, "city": 4, "capital": 5}
+_auto_of = {st["name"]: st["auto_size"] for st in settlements}
+_score_of = {st["name"]: st["score"] for st in settlements}
+override_audit = []
+for nm, ov in sorted(_OV.items()):
+    if not isinstance(ov, dict) or ov.get("exclude"):
+        continue
+    if nm not in records:
+        override_audit.append({"name": nm, "class": "orphan",
+                               "override": ov.get("size"), "region": ov.get("region")})
+        continue
+    if not ov.get("size"):
+        continue
+    want, auto = ov["size"], _auto_of[nm]
+    basis = ov.get("basis") if isinstance(ov.get("basis"), dict) else None
+    row = {"name": nm, "override": want, "auto": auto, "score": _score_of[nm]}
+    if basis:
+        row["basis"] = basis
+    if want == "capital":
+        cls = "decree"
+    elif want == auto:
+        cls = "redundant"
+    elif basis and basis.get("size") in SIZE_RANK:
+        then = (SIZE_RANK[want] > SIZE_RANK[basis["size"]]) - (SIZE_RANK[want] < SIZE_RANK[basis["size"]])
+        now = (SIZE_RANK[want] > SIZE_RANK[auto]) - (SIZE_RANK[want] < SIZE_RANK[auto])
+        if auto == basis["size"]:
+            cls = "unchanged"
+        elif now == then:
+            cls = "still-promotion" if now > 0 else "still-demotion"
+        else:
+            cls = "flipped"
+    else:
+        cls = ("promotion" if SIZE_RANK[want] > SIZE_RANK[auto] else "demotion") + " (no basis)"
+    row["class"] = cls
+    override_audit.append(row)
+_audit_counts = Counter(r["class"] for r in override_audit)
+for cls_ in ("flipped", "redundant", "orphan"):
+    for r in override_audit:
+        if r["class"] == cls_:
+            print(f"  override {cls_:9s} {r['name']}: override={r['override']} auto={r.get('auto')}"
+                  + (f" basis={r['basis'].get('size')}" if r.get("basis") else ""))
+
+if args.prune_overrides and _OV:
+    _today = __import__("datetime").date.today().isoformat()
+    changed = []
+    for r in override_audit:
+        ov = _OV[r["name"]]
+        if r["class"] == "orphan":
+            del _OV[r["name"]]; changed.append(f"dropped {r['name']} (orphan)")
+        elif r["class"] == "redundant":
+            for k in ("size", "basis", "why"):
+                ov.pop(k, None)
+            changed.append(f"dropped size on {r['name']} (redundant: {r['auto']})")
+            if not ov:
+                del _OV[r["name"]]
+        elif r["class"] != "decree" and not r.get("basis"):
+            ov["basis"] = {"size": r["auto"], "score": r["score"], "at": _today}
+            changed.append(f"backfilled basis on {r['name']} ({r['auto']}, {r['score']})")
+    if changed:
+        # same shape the in-page editor writes: JSON.stringify(x, null, 1) + newline
+        _OV_PATH.write_text(json.dumps(_OV, indent=1, ensure_ascii=False) + "\n")
+        print(f"pruned map_overrides.json ({len(changed)} changes):")
+        for ch in changed:
+            print("  " + ch)
 
 # A capital stranded in an outskirts district renames it as its own seat.
 cap_by_reg = {st["region"]: st["name"] for st in settlements if st["size"] == "capital"}
@@ -1306,6 +1385,9 @@ out = {
                           if (SCRIPT_DIR / "pins.json").exists() else None,
              "overrides_hash": hashlib.md5((SCRIPT_DIR / "map_overrides.json").read_bytes()).hexdigest()[:10]
                           if (SCRIPT_DIR / "map_overrides.json").exists() else None,
+             "decreed_capitals": dict(sorted(DECREED.items())),
+             "override_audit": override_audit,
+             "override_audit_counts": dict(sorted(_audit_counts.items())),
              "counts": {"settlements": len(settlements), "routes": len(routes),
                         "districts": len(districts)}},
     "canvas": CANVAS,
