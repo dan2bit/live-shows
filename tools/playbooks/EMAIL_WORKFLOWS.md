@@ -392,6 +392,31 @@ private-repo commits (`current_private.tsv`, `spending.tsv`) stay separate — t
 public/private split is still two repos, two commits, never one — but everything
 landing in `dan2bit/live-shows` for this show goes together.
 
+**High-footprint shows — consider a PR branch instead of sequential staging
+pushes (2026-09-25).** The rule above bundles everything available in ONE
+pass into ONE commit, but it doesn't cover a show whose processing genuinely
+spans more than one commit in time - most commonly a brand-new headliner
+(first `artists.tsv` row) with real artist interaction (both `hat_signatures.tsv`
+and `book_signatures.tsv` touched), followed later in the same session by a
+supplemental correction (Dan supplying a verified Spotify URL / YouTube handle
+after the fact, once the routine had already committed without one rather than
+guess). Each of those is a separate push to `staging`, and each independently
+triggers `artist-modal-index.yml` via its `artists.tsv` input - a workflow that
+fully regenerates and rewrites the derived index file rather than patching it.
+Two such regenerations racing (one still mid-flight when the next commit's own
+promote-and-regenerate cycle starts) produces a genuine, unresolvable git
+conflict in that file - not a bug in the retry logic, which correctly bails
+rather than guessing, but real lost wall-clock time and a failed CI run
+needing a human look. Nothing in the source data is ever at risk (the
+conflict is confined to a 100% regenerable artifact), but it's still worth
+avoiding: if a supplemental correction arrives before you've committed, fold
+it into the same bundled commit rather than following up separately. If the
+show's own footprint is large enough that more touches are clearly still
+coming, do the whole show on its own branch and hand Dan one PR to
+squash-merge - that collapses however many commits happen along the way into
+exactly one push to `staging`, so the regeneration pipeline only fires once
+no matter how the work was paced.
+
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
 **Step 5b — Times Seen reconciliation (MANDATORY, blocking)**
