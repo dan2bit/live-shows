@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-09-29T13:24:31Z",
+"generated_at":"2026-09-29T16:18:17Z",
 "aliases":{
 "billy f gibbons":"billy gibbons",
 "trombone shorty":"trombone shorty orleans avenue",
@@ -34412,7 +34412,10 @@
 "tranche":"emerging",
 "raw":13268
 },
-"tier":null,
+"tier":{
+"label":"Medium-Strong",
+"rank":3
+},
 "seen":{
 "count":0,
 "first":null,
@@ -34420,7 +34423,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.245,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -38333,7 +38339,10 @@
 "tranche":"mid",
 "raw":114254
 },
-"tier":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
 "seen":{
 "count":0,
 "first":null,
@@ -38341,7 +38350,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.35,
+"band":"medium"
+},
 "badges":{
 "hat":"absent",
 "book":"not_yet",
@@ -40836,7 +40848,10 @@
 "tranche":"popular",
 "raw":262493
 },
-"tier":null,
+"tier":{
+"label":"Medium",
+"rank":2
+},
 "seen":{
 "count":0,
 "first":null,
@@ -40844,7 +40859,10 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.158,
+"band":"low"
+},
 "badges":{
 "hat":"absent",
 "book":"absent",
