@@ -44,7 +44,7 @@ def load_tsv(path):
 def load_config():
     with open(CONFIG_YAML, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
-    for key in ("banner_svg", "playlist_qr"):
+    for key in ("banner_svg", "playlist_qr", "site_qr"):
         asset_path = REPO_ROOT / cfg[key]
         if not asset_path.is_file():
             # A silently-missing banner is exactly the Chrome bug this page
@@ -132,12 +132,13 @@ def render():
 
     substitutions = {
         "TITLE": html.escape(cfg["title"]),
-        "TAGLINE": html.escape(cfg["tagline"]),
+        "BANNER_ALT": html.escape(cfg["banner_alt"]),
         "COUNT": str(len(rows)),
         "FIRST_DATE": fmt_date(rows[0]["show_date"]),
-        "LATEST_NAME": html.escape(latest["signer"]),
+        "LATEST_NAME": html.escape(latest["signer"]),  # used in <meta description> only
         "LATEST_DATE": fmt_date(latest["show_date"]),
         "BANNER_SVG": cfg["banner_svg"],
+        "SITE_QR": cfg["site_qr"],
         "PLAYLIST_URL": html.escape(cfg["playlist_url"]),
         "PLAYLIST_URL_SHORT": html.escape(playlist_url_short),
         "PLAYLIST_QR": cfg["playlist_qr"],

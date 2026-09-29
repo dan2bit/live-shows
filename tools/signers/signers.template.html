@@ -11,7 +11,10 @@
     Palette copied from styles.css's :root (not linked live) so this page
     stays standalone and shareable without the SPA's ~30KB of unrelated
     rules (#412, open decision 2b). If the main site's palette changes,
-    resync the values below by hand.
+    resync the values below by hand. The one exception is --accent: that
+    is deliberately NOT the site's own --hat token (an orange, #d08040,
+    used for the SPA's hat-related badges) - it's sampled directly from
+    the banner artwork's own fill colors instead (2026-09-29 change).
   */
   :root{
     --bg:#0f0f0f;
@@ -21,9 +24,8 @@
     --text:#e8e4dc;
     --text-muted:#9a928a;
     --text-dim:#8e8a7a;
-    --hat:#d08040;
-    --hat-dim:#3a2010;
-    --hat-bg:#1a0e08;
+    --accent:#da0000;
+    --accent-dim:#5c1410;
     --mono:'IBM Plex Mono',monospace;
     --sans:'IBM Plex Sans',sans-serif;
     --print-content-width:{{PRINT_CONTENT_WIDTH_IN}}in;
@@ -42,23 +44,29 @@
 
   .page{max-width:640px;margin:0 auto;padding:0 20px 48px;}
 
-  .masthead{padding-top:20px;}
-  .banner{display:block;width:100%;max-width:420px;margin:0 auto 18px;}
+  .masthead{padding-top:20px;text-align:center;}
+  .masthead-top{text-align:center;}
+  .banner-link{display:inline-block;}
+  .banner{display:block;width:100%;max-width:420px;margin:0 auto;}
+  .site-qr{display:none;}
   h1{
     font-family:var(--mono);
     font-weight:700;
     font-size:22px;
     letter-spacing:.01em;
-    color:var(--hat);
+    color:var(--accent);
     text-align:center;
+    margin-top:14px;
   }
-  .tagline{
+  .listen-top{margin-top:8px;text-align:center;}
+  .listen-top a{
     font-family:var(--mono);
     font-size:13px;
-    color:var(--text-muted);
-    text-align:center;
-    margin-top:4px;
+    color:var(--accent);
+    text-decoration:none;
+    border-bottom:1px solid var(--accent-dim);
   }
+  .listen-top a:hover{border-bottom-color:var(--accent);}
   .stat-line{
     font-family:var(--mono);
     font-size:13px;
@@ -68,48 +76,32 @@
     padding-bottom:18px;
     border-bottom:1px solid var(--border);
   }
-  .stat-line strong{color:var(--hat);font-weight:500;}
+  .stat-line strong{color:var(--accent);font-weight:700;}
 
+  /* Entry list - one line per signer, no dividers, "@" between attribution
+     and venue, in both screen and print (2026-09-29 unification). Only
+     font sizes differ by mode; the structure is shared. */
   .entries{margin-top:8px;}
   .year-group + .year-group{margin-top:22px;}
-  .year{
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:.06em;
-    color:var(--text-dim);
-    padding-bottom:6px;
-    margin-bottom:8px;
-    border-bottom:1px solid var(--border);
-  }
+  .year{display:none;}
   .entry-list{list-style:none;}
-  .entry{padding:7px 0;}
-  .entry + .entry{border-top:1px solid var(--border);}
-  .signer{font-size:15px;color:var(--text);}
-  .attribution{font-size:13px;color:var(--text-muted);font-style:italic;}
-  .meta{
-    display:block;
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--text-dim);
-    margin-top:1px;
-  }
+  .entry{padding:4px 0;}
+  .signer{font-size:15px;font-weight:700;color:var(--text);}
+  .attribution{font-size:13px;color:var(--text-muted);font-style:italic;margin-left:.2em;}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+  .meta::before{content:" @ ";color:var(--text-dim);}
 
-  .page-footer{
-    margin-top:28px;
-    padding-top:18px;
-    border-top:1px solid var(--border);
-    text-align:center;
-  }
+  .page-footer{display:none;}
   .listen-link{
     font-family:var(--mono);
     font-size:13px;
-    color:var(--hat);
+    color:var(--accent);
     text-decoration:none;
-    border-bottom:1px solid var(--hat-dim);
+    border-bottom:1px solid var(--accent-dim);
   }
-  .listen-link:hover{border-bottom-color:var(--hat);}
 
   .print-only{display:none;}
+  .screen-only{display:block;}
 
   @media print{
     @page{size:{{PRINT_PAGE_SIZE}} portrait;margin:0.25in;}
@@ -124,8 +116,8 @@
       --text:#1a1410;
       --text-muted:#55493c;
       --text-dim:#6b5f50;
-      --hat:#a5321c;
-      --hat-dim:#c8b8a0;
+      --accent:#ac0404;
+      --accent-dim:#c8a090;
     }
     .page{
       max-width:none;
@@ -134,48 +126,39 @@
       padding:0;
     }
     .masthead{padding-top:0;}
-    .banner{max-width:46%;margin-bottom:5pt;}
-    h1{font-size:12pt;}
-    .tagline{font-size:7.5pt;}
+    .masthead-top{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10pt;
+    }
+    .banner{max-width:100%;width:2.6in;margin:0;}
+    .site-qr.print-only{display:block;width:0.7in;height:0.7in;flex:none;}
+    h1{font-size:12pt;margin-top:6pt;}
     .stat-line{font-size:7.5pt;padding-bottom:4pt;margin-top:3pt;}
 
-    /* One line per entry, no divider, no year label - the whole point of
-       this pass (2026-09-29) is fitting all 54 rows on a single sheet.
-       Screen mode is untouched: it keeps the multi-line list with
-       dividers and year headers, which is fine when nobody is fitting it
-       on paper. Column count is set by the generator (PRINT_COLUMN_COUNT)
-       after actually measuring whether one column fits - not guessed here. */
-    .entries{column-count:{{PRINT_COLUMN_COUNT}};column-gap:16pt;}
-    .year-group{margin-top:2pt;}
-    .year-group:first-child{margin-top:0;}
-    .year{display:none;}
-    .entry-list{list-style:none;}
     .entry{
       padding:0;
       line-height:1.12;
       break-inside:avoid;
       page-break-inside:avoid;
     }
-    .entry + .entry{border-top:none;}  /* screen's divider rule, explicitly off for print */
-    .signer,.attribution,.meta{display:inline;font-size:8pt;}
-    .attribution{margin-left:2pt;}
-    .meta{
-      font-family:var(--mono);
-      color:var(--text-dim);
-      margin-top:0;
-    }
-    .meta::before{content:" \2014 ";color:var(--text-dim);}  /* em dash: the only separator once venue/date share the name's line */
+    .signer,.attribution,.meta{font-size:8pt;}
+    .year-group{margin-top:2pt;}
+    .year-group:first-child{margin-top:0;}
 
-    .listen-link{color:#a5321c;font-size:7.5pt;}
     .print-only{display:block;}
-    .page-footer{margin-top:4pt;padding-top:3pt;break-inside:avoid;display:flex;align-items:center;gap:7pt;justify-content:center;}
-    .qr-block{
-      margin-top:0;
+    .screen-only{display:none;}
+    .page-footer{
       display:flex;
       align-items:center;
-      gap:6pt;
       justify-content:center;
+      gap:7pt;
+      margin-top:6pt;
+      padding-top:5pt;
+      break-inside:avoid;
     }
+    .listen-link{font-size:7.5pt;color:var(--accent);}
     .qr{width:0.5in;height:0.5in;flex:none;}
     .qr-caption{font-family:var(--mono);font-size:6pt;color:var(--text-dim);text-align:left;}
   }
@@ -184,10 +167,15 @@
 <body>
 <div class="page">
   <header class="masthead">
-    <img class="banner" src="../{{BANNER_SVG}}" alt="Dan's red hat">
+    <div class="masthead-top">
+      <a class="banner-link" href="/index.html">
+        <img class="banner" src="../{{BANNER_SVG}}" alt="{{BANNER_ALT}}" title="{{BANNER_ALT}}">
+      </a>
+      <img class="site-qr print-only" src="../{{SITE_QR}}" alt="QR code for redhat-bootlegs.net">
+    </div>
     <h1>{{TITLE}}</h1>
-    <p class="tagline">{{TAGLINE}}</p>
-    <p class="stat-line"><strong>{{COUNT}}</strong> signers &middot; latest: {{LATEST_NAME}}, {{LATEST_DATE}}</p>
+    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the playlist</a></p>
+    <p class="stat-line"><strong>{{COUNT}}</strong> signers, {{FIRST_DATE}} - {{LATEST_DATE}}</p>
   </header>
 
   <main class="entries">
@@ -196,10 +184,8 @@
 
   <footer class="page-footer">
     <a class="listen-link" href="{{PLAYLIST_URL}}">Listen to the playlist</a>
-    <div class="qr-block print-only">
-      <img class="qr" src="../{{PLAYLIST_QR}}" alt="QR code for the playlist">
-      <span class="qr-caption">{{PLAYLIST_URL_SHORT}}</span>
-    </div>
+    <img class="qr" src="../{{PLAYLIST_QR}}" alt="QR code for the playlist">
+    <span class="qr-caption">{{PLAYLIST_URL_SHORT}}</span>
   </footer>
 </div>
 </body>
