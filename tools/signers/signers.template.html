@@ -26,7 +26,7 @@
     --text-dim:#8e8a7a;
     --accent:#da0000;
     --accent-dim:#5c1410;
-    --mono:'IBM Plex Mono',monospace;
+    --mono:'IBM Plex Mono','SF Mono',Menlo,Consolas,'Liberation Mono','Courier New',monospace;
     --sans:'IBM Plex Sans',sans-serif;
     --print-content-width:{{PRINT_CONTENT_WIDTH_IN}}in;
   }
@@ -86,7 +86,7 @@
   .year{display:none;}
   .entry-list{list-style:none;}
   .entry{padding:4px 0;}
-  .signer{font-size:15px;font-weight:700;color:var(--text);}
+  .signer{font-size:15px;font-weight:700;color:var(--accent);}
   .attribution{font-size:13px;color:var(--text-muted);font-style:italic;margin-left:.2em;}
   .meta{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
   .meta::before{content:" @ ";color:var(--text-dim);}
@@ -149,18 +149,22 @@
 
     .print-only{display:block;}
     .screen-only{display:none;}
+    /* QR on the left, two stacked lines on the right (link above URL) -
+       replaces an earlier three-item row (link, QR, caption) that didn't
+       reliably fit the 4.3in content width (2026-09-29 fix). */
     .page-footer{
       display:flex;
       align-items:center;
-      justify-content:center;
-      gap:7pt;
+      justify-content:flex-start;
+      gap:8pt;
       margin-top:6pt;
       padding-top:5pt;
       break-inside:avoid;
     }
-    .listen-link{font-size:7.5pt;color:var(--accent);}
     .qr{width:0.5in;height:0.5in;flex:none;}
-    .qr-caption{font-family:var(--mono);font-size:6pt;color:var(--text-dim);text-align:left;}
+    .qr-text{display:flex;flex-direction:column;gap:2pt;}
+    .listen-link{font-size:8pt;color:var(--accent);}
+    .qr-caption{font-family:var(--mono);font-size:7pt;color:var(--text-dim);}
   }
 </style>
 </head>
@@ -174,7 +178,7 @@
       <img class="site-qr print-only" src="../{{SITE_QR}}" alt="QR code for redhat-bootlegs.net">
     </div>
     <h1>{{TITLE}}</h1>
-    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the playlist</a></p>
+    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the Playlist</a></p>
     <p class="stat-line"><strong>{{COUNT}}</strong> signers, {{FIRST_DATE}} - {{LATEST_DATE}}</p>
   </header>
 
@@ -183,9 +187,11 @@
   </main>
 
   <footer class="page-footer">
-    <a class="listen-link" href="{{PLAYLIST_URL}}">Listen to the playlist</a>
     <img class="qr" src="../{{PLAYLIST_QR}}" alt="QR code for the playlist">
-    <span class="qr-caption">{{PLAYLIST_URL_SHORT}}</span>
+    <div class="qr-text">
+      <a class="listen-link" href="{{PLAYLIST_URL}}">Listen to the Playlist</a>
+      <span class="qr-caption">{{PLAYLIST_URL_SHORT}}</span>
+    </div>
   </footer>
 </div>
 </body>
