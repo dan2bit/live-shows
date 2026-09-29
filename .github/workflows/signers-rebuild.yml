@@ -1,0 +1,100 @@
+name: Rebuild signers page
+
+# Closes the hat_signatures.tsv -> signers/index.html loop: every hat
+# signing lands in the TSV via Routine 2, and this regenerates the built
+# page from it, so there is nothing left to hand-maintain (the old Google
+# Doc drifted from the TSV specifically because its per-signing append was
+# a manual, skippable step, and was in fact skipped for the show that
+# prompted this fix). Full design history: docs/ISSUE_LOG.md.
+#
+# main requires the `guard` status check, so this commits to `staging` via
+# the promote deploy key (which also makes the staging push trigger
+# auto-promote - GITHUB_TOKEN pushes would not).
+#
+# The build runs on a checkout of `staging`, not `main`, even though the
+# trigger is a push to main - deliberately, not by oversight. This is the
+# fix for the failure class artist-modal-index.yml hit on 2026-09-25/26:
+# that workflow checks out main with no ref, so a second run queued behind
+# a first can build from a tree that does not yet have the first run's own
+# output promoted into it, rebuild the same bytes, see them as a change
+# against its stale tree, and hit an unresolvable rebase conflict when it
+# tries to push - two independently-computed full rewrites of the same
+# generated file cannot be 3-way merged. Building from staging instead
+# means the rebase onto staging is a no-op unless staging genuinely moved
+# mid-build, which the retry loop below already handles. See map-rebuild.yml
+# for the same pattern applied to the fantasy-map data, and its own header
+# comment for the fuller incident writeup this is adapted from.
+#
+# render_signers.py is deterministic (plain string templating, no
+# timestamps, no randomness) - identical inputs produce byte-identical
+# output, so an unrelated push that does not actually change any watched
+# input's content never produces a diff, and the commit step below no-ops.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/show_goals/hat_signatures.tsv
+      - data/venues.tsv
+      - tools/signers/signers.yaml
+      - tools/signers/signers.template.html
+      - tools/signers/render_signers.py
+      - static/hat-banner.svg
+      - static/hat-playlist-qr.svg
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: signers-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: staging
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Rebuild signers/index.html
+        run: python3 tools/signers/render_signers.py
+      - name: Commit to staging if changed
+        run: |
+          git add signers/index.html
+          if git diff --cached --quiet; then
+            echo "signers/index.html unchanged - nothing to commit."
+          else
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
+            chmod 600 "$HOME/.ssh/promote_key"
+            export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/promote_key -o StrictHostKeyChecking=accept-new"
+
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
+
+            git commit -m "ci: regenerate signers/index.html"
+            git checkout -- .
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging - only this job writes signers/index.html and it is serialised, so staging moved under it in a way a retry will not fix"
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
+          fi

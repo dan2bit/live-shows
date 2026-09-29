@@ -363,9 +363,10 @@ If hat autograph:
    backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
    (materialized-exception rule, #115). Basis records membership facts only — never
    signature assertions; completion lives in `hat_signatures.tsv` alone.
-3. Remind Dan to manually append to the hat autograph Google Doc
-   (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
-   Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
+3. Nothing further to do — `signers/index.html` rebuilds automatically from
+   `hat_signatures.tsv` via `.github/workflows/signers-rebuild.yml` once Step 5's
+   commit promotes. The hand-maintained Google Doc this replaced is retired
+   (2026-09-29, #412) — no manual append.
 
 **Step 5 — Commit public file changes to `staging` — bundle same-show files, don't sequence them (2026-07-19)**
 
@@ -962,9 +963,11 @@ This routine only processes mail the system already sent.
 **Inbox monitoring is not automatic.** Trigger routines by saying "there's a ticket
 email", "process the inbox", "run Routine 3", etc.
 
-**`data/show_goals/hat_signatures.tsv` is the authority for hat signers.** The gdoc is
-the public-facing version (linked from the about modal in `index.html`); on any
-discrepancy, reconcile the gdoc to the TSV.
+**`data/show_goals/hat_signatures.tsv` is the authority for hat signers**, and
+`signers/index.html` (built by `tools/signers/render_signers.py`) rebuilds from it
+automatically via `.github/workflows/signers-rebuild.yml` — nothing to hand-maintain.
+The Google Doc this replaced is retired (2026-09-29, #412); the about-modal link and
+the `signers.` redirect still point to it until that cutover lands separately.
 
 **Google Calendar MCP fails on Android.** Switch to macOS desktop before retrying
 calendar operations.

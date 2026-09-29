@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{COUNT}} signatures on Dan's red concert hat, {{LATEST_NAME}} most recent, {{FIRST_DATE}} to {{LATEST_DATE}}.">
+<link rel="icon" type="image/png" sizes="32x32" href="../static/favicon.png">
+<style>
+  /*
+    Palette copied from styles.css's :root (not linked live) so this page
+    stays standalone and shareable without the SPA's ~30KB of unrelated
+    rules (#412, open decision 2b). If the main site's palette changes,
+    resync the values below by hand. The one exception is --accent: that
+    is deliberately NOT the site's own --hat token (an orange, #d08040,
+    used for the SPA's hat-related badges) - it's sampled directly from
+    the banner artwork's own fill colors instead (2026-09-29 change).
+  */
+  :root{
+    --bg:#0f0f0f;
+    --surface:#1a1a1a;
+    --border:#2e2e2e;
+    --border-bright:#3a3a3a;
+    --text:#e8e4dc;
+    --text-muted:#9a928a;
+    --text-dim:#8e8a7a;
+    --accent:#da0000;
+    --accent-dim:#5c1410;
+    --mono:'IBM Plex Mono','SF Mono',Menlo,Consolas,'Liberation Mono','Courier New',monospace;
+    --sans:'IBM Plex Sans',sans-serif;
+    --print-content-width:{{PRINT_CONTENT_WIDTH_IN}}in;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--text);
+    font-size:15px;
+    line-height:1.5;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  .page{max-width:640px;margin:0 auto;padding:0 20px 48px;}
+
+  .masthead{padding-top:20px;text-align:center;}
+  .masthead-top{text-align:center;}
+  .banner-link{display:inline-block;}
+  .banner{display:block;width:100%;max-width:420px;margin:0 auto;}
+  .site-qr{display:none;}
+  h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:.01em;
+    color:var(--accent);
+    text-align:center;
+    margin-top:14px;
+  }
+  .listen-top{margin-top:8px;text-align:center;}
+  .listen-top a{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    text-decoration:none;
+    border-bottom:1px solid var(--accent-dim);
+  }
+  .listen-top a:hover{border-bottom-color:var(--accent);}
+  .stat-line{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+    text-align:center;
+    margin-top:10px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--border);
+  }
+  .stat-line strong{color:var(--accent);font-weight:700;}
+
+  /* Entry list - one line per signer, no dividers, "@" between attribution
+     and venue, in both screen and print (2026-09-29 unification). Only
+     font sizes differ by mode; the structure is shared. */
+  .entries{margin-top:8px;}
+  .year-group + .year-group{margin-top:22px;}
+  .year{display:none;}
+  .entry-list{list-style:none;}
+  .entry{padding:4px 0;}
+  .signer{font-size:15px;font-weight:700;color:var(--accent);}
+  .attribution{font-size:13px;color:var(--text-muted);font-style:italic;margin-left:.2em;}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+  .meta::before{content:" @ ";color:var(--text-dim);}
+
+  .page-footer{display:none;}
+  .listen-link{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    text-decoration:none;
+    border-bottom:1px solid var(--accent-dim);
+  }
+
+  .print-only{display:none;}
+  .screen-only{display:block;}
+
+  @media print{
+    @page{size:{{PRINT_PAGE_SIZE}} portrait;margin:0.25in;}
+    html,body{background:#faf6ee;color:#1a1410;font-size:8pt;line-height:1.2;}
+    *{
+      print-color-adjust:exact;
+      -webkit-print-color-adjust:exact;
+      color-adjust:exact;
+    }
+    :root{
+      --border:#d8cfc0;
+      --text:#1a1410;
+      --text-muted:#55493c;
+      --text-dim:#6b5f50;
+      --accent:#ac0404;
+      --accent-dim:#c8a090;
+    }
+    .page{
+      max-width:none;
+      width:var(--print-content-width);
+      margin:0;
+      padding:0;
+    }
+    .masthead{padding-top:0;}
+    .masthead-top{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10pt;
+    }
+    .banner{max-width:100%;width:2.6in;margin:0;}
+    .site-qr.print-only{display:block;width:0.7in;height:0.7in;flex:none;}
+    h1{font-size:12pt;margin-top:6pt;}
+    .stat-line{font-size:7.5pt;padding-bottom:4pt;margin-top:3pt;}
+
+    .entry{
+      padding:0;
+      line-height:1.12;
+      break-inside:avoid;
+      page-break-inside:avoid;
+    }
+    .signer,.attribution,.meta{font-size:8pt;}
+    .year-group{margin-top:2pt;}
+    .year-group:first-child{margin-top:0;}
+
+    .print-only{display:block;}
+    .screen-only{display:none;}
+    /* QR on the left, two stacked lines on the right (link above URL) -
+       replaces an earlier three-item row (link, QR, caption) that didn't
+       reliably fit the 4.3in content width (2026-09-29 fix). */
+    .page-footer{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:8pt;
+      margin-top:6pt;
+      padding-top:5pt;
+      break-inside:avoid;
+    }
+    .qr{width:0.5in;height:0.5in;flex:none;}
+    .qr-text{display:flex;flex-direction:column;gap:2pt;}
+    .listen-link{font-size:8pt;color:var(--accent);}
+    .qr-caption{font-family:var(--mono);font-size:7pt;color:var(--text-dim);}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <div class="masthead-top">
+      <a class="banner-link" href="/index.html">
+        <img class="banner" src="../{{BANNER_SVG}}" alt="{{BANNER_ALT}}" title="{{BANNER_ALT}}">
+      </a>
+      <img class="site-qr print-only" src="../{{SITE_QR}}" alt="QR code for redhat-bootlegs.net">
+    </div>
+    <h1>{{TITLE}}</h1>
+    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the Playlist</a></p>
+    <p class="stat-line"><strong>{{COUNT}}</strong> signers, {{FIRST_DATE}} - {{LATEST_DATE}}</p>
+  </header>
+
+  <main class="entries">
+{{ENTRIES}}
+  </main>
+
+  <footer class="page-footer">
+    <img class="qr" src="../{{PLAYLIST_QR}}" alt="QR code for the playlist">
+    <div class="qr-text">
+      <a class="listen-link" href="{{PLAYLIST_URL}}">Listen to the Playlist</a>
+      <span class="qr-caption">{{PLAYLIST_URL_SHORT}}</span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
