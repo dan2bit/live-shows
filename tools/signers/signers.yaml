@@ -29,4 +29,8 @@ banner_png: static/hat-banner.png
 # and foldable. Change this if the actual fold differs (#412, open decision 4).
 print_page_size: letter
 print_fold: vertical
-print_content_width_in: 4.0
+print_content_width_in: 4.3
+# 1 unless the entry count no longer fits a single sheet at the template's
+# print font size - checked with an actual weasyprint render, not guessed.
+# Bump this (and re-check) if hat_signatures.tsv grows enough to overflow.
+print_column_count: 1
