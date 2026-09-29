@@ -4,8 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{TITLE}}</title>
-<meta name="description" content="{{COUNT}} signatures on Dan's red concert hat, {{LATEST_NAME}} most recent, {{FIRST_DATE}} to {{LATEST_DATE}}.">
+<link rel="canonical" href="{{CANONICAL_URL}}">
+<meta name="description" content="{{DESCRIPTION}}">
+<!-- Same browser-chrome tint as index.html; deliberately separate from the page accent below. -->
+<meta name="theme-color" content="#b3242b">
+
+<!-- Open Graph (Facebook, LinkedIn, Slack, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_TITLE}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL_URL}}">
+<meta property="og:image" content="{{OG_IMAGE_URL}}">
+<meta property="og:image:alt" content="{{BANNER_ALT}}">
+<meta property="og:image:width" content="{{OG_IMAGE_WIDTH}}">
+<meta property="og:image:height" content="{{OG_IMAGE_HEIGHT}}">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{TITLE}}">
+<meta name="twitter:description" content="{{DESCRIPTION}}">
+<meta name="twitter:image" content="{{OG_IMAGE_URL}}">
+
 <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon.png">
+<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+<!-- Artist modal (same module index.html and the artist graph host). Screen-only, so the
+     print PDF never loads it; the script is synchronous so amInit() below runs during
+     parse, ahead of the module's own DOMContentLoaded self-init. -->
+<link rel="stylesheet" href="../artist-modal.css" media="screen">
+<script src="../artist-modal.js"></script>
 <style>
   /*
     Palette copied from styles.css's :root (not linked live) so this page
@@ -29,6 +56,18 @@
     --mono:'IBM Plex Mono','SF Mono',Menlo,Consolas,'Liberation Mono','Courier New',monospace;
     --sans:'IBM Plex Sans',sans-serif;
     --print-content-width:{{PRINT_CONTENT_WIDTH_IN}}in;
+
+    /* Semantic palette, also copied from styles.css: artist-modal.css is written
+       against these names, so the card renders as it does on the main site. */
+    --surface-bright:#222;
+    --amber:#c83020; --amber-dim:#7a1a10; --amber-bg:#1e0808;
+    --green:#4a9a5a; --green-dim:#1e4a28; --green-bg:#0e1e12;
+    --yellow:#c8a830; --yellow-dim:#5a4a10; --yellow-bg:#181408;
+    --red:#d05555; --red-dim:#5a1a1a; --red-bg:#180e0e;
+    --gray:#878380; --gray-dim:#3a3530; --gray-bg:#141414;
+    --sell:#40a0a0; --sell-dim:#1a4a4a; --sell-bg:#0e1a1a;
+    --hat:#d08040; --hat-dim:#3a2010; --hat-bg:#1a0e08;
+    --book:#a080c0; --book-dim:#3a2a50; --book-bg:#1a1420;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
@@ -67,6 +106,7 @@
     border-bottom:1px solid var(--accent-dim);
   }
   .listen-top a:hover{border-bottom-color:var(--accent);}
+  .listen-sep{font-family:var(--mono);font-size:13px;color:var(--text-dim);padding:0 .35em;}
   .stat-line{
     font-family:var(--mono);
     font-size:13px;
@@ -90,6 +130,13 @@
   .attribution{font-size:13px;color:var(--text-muted);font-style:italic;margin-left:.2em;}
   .meta{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
   .meta::before{content:" @ ";color:var(--text-dim);}
+
+  /* Names that open the artist modal. A signer anchor keeps its .signer color and
+     weight (no color set here); a band anchor inside the attribution inherits the
+     muted italic. The class is signer-link, not am-link - am-link is the modal's own. */
+  a.signer-link{text-decoration:none;border-bottom:1px dotted var(--accent-dim);}
+  .attribution a.signer-link{color:inherit;border-bottom-color:var(--border-bright);}
+  a.signer-link:hover,a.signer-link:focus-visible{border-bottom-style:solid;border-bottom-color:var(--accent);}
 
   .page-footer{display:none;}
   .listen-link{
@@ -146,6 +193,8 @@
     .signer,.attribution,.meta{font-size:8pt;}
     .year-group{margin-top:2pt;}
     .year-group:first-child{margin-top:0;}
+    a.signer-link{border-bottom:0;}
+    .am-overlay{display:none !important;}
 
     .print-only{display:block;}
     .screen-only{display:none;}
@@ -178,7 +227,7 @@
       <img class="site-qr print-only" src="../{{SITE_QR}}" alt="QR code for redhat-bootlegs.net">
     </div>
     <h1>{{TITLE}}</h1>
-    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the Playlist</a></p>
+    <p class="listen-top screen-only"><a href="{{PLAYLIST_URL}}">Listen to the Playlist</a><span class="listen-sep">&middot;</span><a href="{{PRINT_PDF}}" target="_blank" rel="noopener" title="Single-page printable PDF">Print</a></p>
     <p class="stat-line"><strong>{{COUNT}}</strong> signers, {{FIRST_DATE}} - {{LATEST_DATE}}</p>
   </header>
 
@@ -194,5 +243,17 @@
     </div>
   </footer>
 </div>
+
+<!-- Artist modal mount: the .am-overlay shell from artist-modal.css. Ids match the
+     AM.mount default. Names in the list are #artist/<slug> anchors; the module's hash
+     router opens the card and loads the (~1 MB) index only on the first click. -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
+<script>
+amInit({basePath:'../',configUrl:'../config.yaml',mount:'artistModal',theme:'site'});
+</script>
 </body>
 </html>
