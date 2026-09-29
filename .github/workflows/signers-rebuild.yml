@@ -1,11 +1,11 @@
 name: Rebuild signers page
 
-# Closes the hat_signatures.tsv -> signers/index.html loop (#412): every
-# hat signing lands in the TSV via Routine 2, and this regenerates the
-# built page from it, so there is nothing left to hand-maintain (the old
-# Google Doc drifted from the TSV specifically because its per-signing
-# append was a manual, skippable step - see #412's own writeup for the
-# 2026-09-24 Carolyn Wonderland show that skipped it).
+# Closes the hat_signatures.tsv -> signers/index.html loop: every hat
+# signing lands in the TSV via Routine 2, and this regenerates the built
+# page from it, so there is nothing left to hand-maintain (the old Google
+# Doc drifted from the TSV specifically because its per-signing append was
+# a manual, skippable step, and was in fact skipped for the show that
+# prompted this fix). Full design history: docs/ISSUE_LOG.md.
 #
 # main requires the `guard` status check, so this commits to `staging` via
 # the promote deploy key (which also makes the staging push trigger
