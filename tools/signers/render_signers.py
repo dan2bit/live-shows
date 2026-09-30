@@ -159,6 +159,22 @@ def resolve_slug(name, artists, aliases):
     return rec.get("slug") or key.replace(" ", "-")
 
 
+def lookup_slug(name, artists, aliases):
+    """(slug, folded). The modal's own lookup first; only when that misses, the
+    equivalence recommend_aliases.tsv documents as automatic - "drop a trailing
+    ' Band'" - tried in the other direction: 'Jesse Williams' finds the record
+    'The Jesse Williams Band'. build_artist_index.py does not apply that rule (it
+    keeps 'X' and 'X Band' as separate records, or only the Band form), so a
+    bandleader whose act is named for them would otherwise get no link. The slug
+    returned is the real record's, so the modal opens exactly that card; `folded`
+    tells the caller the plain name was not what matched."""
+    slug = resolve_slug(name, artists, aliases)
+    if slug is not None:
+        return slug, False
+    slug = resolve_slug(name + " Band", artists, aliases)
+    return (slug, True) if slug is not None else (None, False)
+
+
 def build_entries_html(rows, venue_short, artists, aliases):
     """Group by year (in seq/ledger order, which is already chronological
     in the data) and render each entry. The `notes` column is deliberately
@@ -173,12 +189,16 @@ def build_entries_html(rows, venue_short, artists, aliases):
     plain "#artist/<slug>" anchor - the modal module's hash router opens it - and
     only when the target resolves in the index, so nothing opens an empty
     "unknown artist" card. An unresolved target stays plain text.
-    Returns (markup, names that could not be linked).
+    Returns (markup, names that could not be linked, {name: slug} for names that
+    matched only through the trailing-Band equivalence).
     """
     unlinked = []
+    folded = {}
 
     def target(label, cls=None):
-        slug = resolve_slug(label, artists, aliases)
+        slug, via_band = lookup_slug(label, artists, aliases)
+        if via_band:
+            folded[label] = slug
         text = html.escape(label)
         if slug is None:
             if label not in unlinked:
@@ -211,7 +231,7 @@ def build_entries_html(rows, venue_short, artists, aliases):
                 f'<span class="meta">{venue} &middot; {when}</span></li>'
             )
         out.append("      </ul>\n    </section>")
-    return "\n".join(out), unlinked
+    return "\n".join(out), unlinked, folded
 
 
 def render():
@@ -227,7 +247,10 @@ def render():
     template = TEMPLATE_HTML.read_text(encoding="utf-8")
     playlist_url_short = re.sub(r"^https?://", "", cfg["playlist_url"])
     og_w, og_h = png_size(REPO_ROOT / cfg["og_image"])
-    entries_html, unlinked = build_entries_html(rows, venue_short, artists, aliases)
+    entries_html, unlinked, folded = build_entries_html(rows, venue_short, artists, aliases)
+    if folded:
+        print("signers: linked through the trailing-Band equivalence: "
+              + ", ".join(f"{n} -> {s}" for n, s in folded.items()), file=sys.stderr)
     if unlinked and artists:
         print(f"signers: no artist-modal record for {len(unlinked)} name(s), left as plain "
               f"text: {', '.join(unlinked)}", file=sys.stderr)
