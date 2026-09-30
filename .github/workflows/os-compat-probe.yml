@@ -1,0 +1,135 @@
+name: os-compat-probe
+
+# Temporary and manual: run it, read the two job summaries, then delete it.
+#
+# A static audit of a runner-image change can read the image's documentation and the
+# package archive, but it cannot see the image itself. This runs the few things that
+# decide whether the scheduled and gating workflows survive a move of ubuntu-latest to
+# a newer Ubuntu, on the current image and the next one side by side:
+#
+#   - which coreutils implementation provides `date`, and whether the two date
+#     expressions the scheduled workflows depend on give the right answer
+#   - the steps of the gate workflows that run on the image's own system Python,
+#     under `-W error` so a deprecation fails here instead of later
+#   - actions/setup-python resolving the pinned 3.12
+#   - the signers print PDF: its hash and the library versions behind it. The PDF is
+#     byte-reproducible only on one stack of system libraries, so two images that
+#     hash it differently mean a workflow that builds it must not float between them.
+#
+# The system-Python steps run before setup-python on purpose: setup-python replaces
+# python3 on the PATH, which would hide the image's own interpreter.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Image facts
+        shell: bash
+        run: |
+          . /etc/os-release
+          {
+            echo "## ${{ matrix.os }}"
+            echo
+            echo '```'
+            echo "os:                  $PRETTY_NAME"
+            echo "bash:                $(bash --version | head -1)"
+            echo "git:                 $(git --version)"
+            echo "ssh:                 $(ssh -V 2>&1)"
+            echo "python3 (system):    $(python3 --version)"
+            echo "date:                $(date --version | head -1)"
+            echo "date resolves to:    $(readlink -f "$(command -v date)")"
+            echo "coreutils provider:  $(dpkg-query -W -f='${Package} ${Status}\n' coreutils-from-uutils coreutils-from-gnu 2>/dev/null | grep 'install ok installed' | cut -d' ' -f1 | tr '\n' ' ')"
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Date expressions used by the scheduled workflows
+        shell: bash
+        run: |
+          python3 - <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import calendar, datetime as dt, subprocess, sys
+
+          def date(expr, fmt):
+              return subprocess.run(["date", "-u", "-d", expr, fmt], capture_output=True, text=True)
+
+          def last_day(first):
+              return f"{calendar.monthrange(first.year, first.month)[1]:02d}"
+
+          def prev_month(today):
+              # GNU semantics: the same day one month back, overflowing forward when it does not exist.
+              y, m = (today.year - 1, 12) if today.month == 1 else (today.year, today.month - 1)
+              last = calendar.monthrange(y, m)[1]
+              back = dt.date(y, m, min(today.day, last)) + dt.timedelta(days=max(0, today.day - last))
+              return back.strftime("%Y-%m")
+
+          wrong, cases = [], 0
+          for y in (2026, 2027):
+              for m in range(1, 13):
+                  first = dt.date(y, m, 1)
+                  got = date(f"{first.isoformat()} +1 month -1 day", "+%d")
+                  cases += 1
+                  if got.returncode or got.stdout.strip() != last_day(first):
+                      wrong.append(("last day of month", first.isoformat(), got.stdout.strip() or got.stderr.strip()))
+          for n in range(730):
+              day = dt.date(2026, 1, 1) + dt.timedelta(n)
+              got = date(f"{day.isoformat()} 1 month ago", "+%Y-%m")
+              cases += 1
+              if got.returncode or got.stdout.strip() != prev_month(day):
+                  wrong.append(("previous month", day.isoformat(), got.stdout.strip() or got.stderr.strip()))
+          print(f"**date expressions: {'PASS' if not wrong else 'FAIL'}** ({cases} cases, {len(wrong)} wrong)")
+          for item in wrong[:5]:
+              print("  ", item)
+          sys.exit(1 if wrong else 0)
+          EOF
+
+      - name: System-Python steps of the gate workflows
+        shell: bash
+        run: |
+          python3 --version
+          python3 -W error scripts/validate_potential.py
+          python3 - <<'EOF'
+          import re, subprocess, sys, textwrap
+          text = open(".github/workflows/private-data-guard.yml", encoding="utf-8").read()
+          body = re.search(r"python3 - <<'EOF'\n(.*?)\n\s*EOF", text, re.S).group(1)
+          sys.exit(subprocess.run([sys.executable, "-W", "error", "-c", textwrap.dedent(body)]).returncode)
+          EOF
+          echo "**gate steps under the system Python with -W error: PASS**" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Pinned Python
+        shell: bash
+        run: |
+          echo "**setup-python 3.12 resolved to $(python --version) at $(command -v python): PASS**" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Signers print PDF on this image
+        shell: bash
+        run: |
+          if [ ! -f tools/signers/render_signers_pdf.py ]; then
+            echo "signers PDF tooling is not in this checkout: skipped" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fonts-liberation
+          pip install --quiet pyyaml "weasyprint==70.0"
+          python tools/signers/render_signers.py
+          python tools/signers/render_signers_pdf.py
+          {
+            echo "signers PDF sha256: $(sha256sum signers/hat-signers.pdf | cut -c1-16)  ($(wc -c < signers/hat-signers.pdf) bytes)"
+            echo "pango $(dpkg-query -W -f='${Version}' libpango-1.0-0), harfbuzz-subset $(dpkg-query -W -f='${Version}' libharfbuzz-subset0), fonts-liberation $(dpkg-query -W -f='${Version}' fonts-liberation)"
+            echo "Compare the hash with the other job: a different hash means the PDF is stack-dependent."
+          } | tee -a "$GITHUB_STEP_SUMMARY"

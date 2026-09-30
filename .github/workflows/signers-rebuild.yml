@@ -2,10 +2,11 @@ name: Rebuild signers page
 
 # Closes the hat_signatures.tsv -> signers/index.html loop: every hat
 # signing lands in the TSV via Routine 2, and this regenerates the built
-# page from it, so there is nothing left to hand-maintain (the old Google
-# Doc drifted from the TSV specifically because its per-signing append was
-# a manual, skippable step, and was in fact skipped for the show that
-# prompted this fix). Full design history: docs/ISSUE_LOG.md.
+# page and its single-page print PDF from it, so there is nothing left to
+# hand-maintain (the old Google Doc drifted from the TSV specifically
+# because its per-signing append was a manual, skippable step, and was in
+# fact skipped for the show that prompted this fix). Full design history:
+# docs/ISSUE_LOG.md.
 #
 # main requires the `guard` status check, so this commits to `staging` via
 # the promote deploy key (which also makes the staging push trigger
@@ -29,6 +30,23 @@ name: Rebuild signers page
 # timestamps, no randomness) - identical inputs produce byte-identical
 # output, so an unrelated push that does not actually change any watched
 # input's content never produces a diff, and the commit step below no-ops.
+# The PDF is reproducible by construction too: render_signers_pdf.py pins
+# SOURCE_DATE_EPOCH to the newest signature date (WeasyPrint would otherwise
+# stamp the current time and commit a new binary on every run), and the
+# WeasyPrint version is pinned below so a library upgrade cannot change the
+# bytes unannounced. Bump the pin on purpose, and expect one PDF commit.
+#
+# data/artist_modal_index.json and config.yaml are watched because the page
+# reads them: a name links into the artist modal only when the index has a
+# record for it, and the head URLs come from config.yaml's site block. A
+# newly resolvable artist therefore gets linked on the next run with no
+# manual rebuild. Most runs started that way change nothing and commit
+# nothing.
+#
+# A print overflow must never block the web page. The PDF dependencies and
+# the PDF step are allowed to fail; the commit step still lands the
+# refreshed page, and the last step then fails the run so the problem is
+# visible instead of quietly leaving a stale PDF behind.
 
 on:
   push:
@@ -36,11 +54,16 @@ on:
     paths:
       - data/show_goals/hat_signatures.tsv
       - data/venues.tsv
+      - data/artist_modal_index.json
+      - config.yaml
       - tools/signers/signers.yaml
       - tools/signers/signers.template.html
       - tools/signers/render_signers.py
+      - tools/signers/render_signers_pdf.py
       - static/hat-banner.svg
+      - static/hat-banner.png
       - static/hat-playlist-qr.svg
+      - static/redhat-bootlegs-qr.svg
   workflow_dispatch:
 
 permissions:
@@ -52,7 +75,13 @@ concurrency:
 
 jobs:
   rebuild:
-    runs-on: ubuntu-latest
+    # Pinned rather than ubuntu-latest, on purpose. The print PDF is byte-reproducible
+    # only on one stack of system libraries (pango, harfbuzz, freetype and the fonts),
+    # and a floating label lets two images take turns building it, which would commit a
+    # different PDF each time. Move the pin deliberately: build the PDF on the new image
+    # first, compare it with the committed one, then change this line and expect one PDF
+    # commit.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -63,13 +92,25 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install pyyaml
+      - name: Install PDF dependencies
+        id: pdfdeps
+        continue-on-error: true
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fonts-liberation
+          pip install "weasyprint==70.0"
       - name: Rebuild signers/index.html
         run: python3 tools/signers/render_signers.py
+      - name: Rebuild the print PDF
+        id: pdf
+        if: steps.pdfdeps.outcome == 'success'
+        continue-on-error: true
+        run: python3 tools/signers/render_signers_pdf.py
       - name: Commit to staging if changed
         run: |
-          git add signers/index.html
+          git add signers/
           if git diff --cached --quiet; then
-            echo "signers/index.html unchanged - nothing to commit."
+            echo "signers/ unchanged - nothing to commit."
           else
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
@@ -80,21 +121,26 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
-            git commit -m "ci: regenerate signers/index.html"
+            git commit -m "ci: regenerate signers page and print PDF"
             git checkout -- .
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
-                echo "rebase conflict on staging - only this job writes signers/index.html and it is serialised, so staging moved under it in a way a retry will not fix"
+                echo "rebase conflict on staging - only this job writes signers/ and it is serialised, so staging moved under it in a way a retry will not fix"
                 exit 1
               }
               if git push promote HEAD:staging; then
                 echo "push succeeded on attempt $attempt"
                 exit 0
               fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
               sleep "$attempt"
             done
             echo "gave up after 5 attempts"
             exit 1
           fi
+      - name: Fail the run if the print PDF could not be built
+        if: steps.pdfdeps.outcome == 'failure' || steps.pdf.outcome == 'failure'
+        run: |
+          echo "::error::signers/index.html was refreshed, but the print PDF was not (dependencies failed to install, or the list no longer fits one page). See the two PDF steps above."
+          exit 1
