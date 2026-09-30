@@ -4,8 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Who Has Signed This Hat?</title>
-<meta name="description" content="54 signatures on Dan's red concert hat, Carolyn Wonderland most recent, 9/8/23 to 9/24/26.">
+<link rel="canonical" href="https://redhat-bootlegs.net/signers/">
+<meta name="description" content="The musicians who have signed my red concert hat at live shows around DC, Maryland and Virginia - a running list, one line per signature.">
+<!-- Same browser-chrome tint as index.html; deliberately separate from the page accent below. -->
+<meta name="theme-color" content="#b3242b">
+
+<!-- Open Graph (Facebook, LinkedIn, Slack, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="live-shows">
+<meta property="og:title" content="Who Has Signed This Hat?">
+<meta property="og:description" content="The musicians who have signed my red concert hat at live shows around DC, Maryland and Virginia - a running list, one line per signature.">
+<meta property="og:url" content="https://redhat-bootlegs.net/signers/">
+<meta property="og:image" content="https://redhat-bootlegs.net/static/hat-banner.png">
+<meta property="og:image:alt" content="Life is Short, Buy the Tickets">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="800">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Who Has Signed This Hat?">
+<meta name="twitter:description" content="The musicians who have signed my red concert hat at live shows around DC, Maryland and Virginia - a running list, one line per signature.">
+<meta name="twitter:image" content="https://redhat-bootlegs.net/static/hat-banner.png">
+
 <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon.png">
+<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+<!-- Artist modal (same module index.html and the artist graph host). Screen-only, so the
+     print PDF never loads it; the script is synchronous so amInit() below runs during
+     parse, ahead of the module's own DOMContentLoaded self-init. The ?v= tokens are
+     rewritten by cache-bust.yml in this template and in signers/index.html together. -->
+<link rel="stylesheet" href="../artist-modal.css?v=85ebf388" media="screen">
+<script src="../artist-modal.js?v=85ebf388"></script>
 <style>
   /*
     Palette copied from styles.css's :root (not linked live) so this page
@@ -29,6 +57,18 @@
     --mono:'IBM Plex Mono','SF Mono',Menlo,Consolas,'Liberation Mono','Courier New',monospace;
     --sans:'IBM Plex Sans',sans-serif;
     --print-content-width:4.3in;
+
+    /* Semantic palette, also copied from styles.css: artist-modal.css is written
+       against these names, so the card renders as it does on the main site. */
+    --surface-bright:#222;
+    --amber:#c83020; --amber-dim:#7a1a10; --amber-bg:#1e0808;
+    --green:#4a9a5a; --green-dim:#1e4a28; --green-bg:#0e1e12;
+    --yellow:#c8a830; --yellow-dim:#5a4a10; --yellow-bg:#181408;
+    --red:#d05555; --red-dim:#5a1a1a; --red-bg:#180e0e;
+    --gray:#878380; --gray-dim:#3a3530; --gray-bg:#141414;
+    --sell:#40a0a0; --sell-dim:#1a4a4a; --sell-bg:#0e1a1a;
+    --hat:#d08040; --hat-dim:#3a2010; --hat-bg:#1a0e08;
+    --book:#a080c0; --book-dim:#3a2a50; --book-bg:#1a1420;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
@@ -67,6 +107,7 @@
     border-bottom:1px solid var(--accent-dim);
   }
   .listen-top a:hover{border-bottom-color:var(--accent);}
+  .listen-sep{font-family:var(--mono);font-size:13px;color:var(--text-dim);padding:0 .35em;}
   .stat-line{
     font-family:var(--mono);
     font-size:13px;
@@ -91,6 +132,13 @@
   .meta{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
   .meta::before{content:" @ ";color:var(--text-dim);}
 
+  /* Names that open the artist modal. A signer anchor keeps its .signer color and
+     weight (no color set here); a band anchor inside the attribution inherits the
+     muted italic. The class is signer-link, not am-link - am-link is the modal's own. */
+  a.signer-link{text-decoration:none;border-bottom:1px dotted var(--accent-dim);}
+  .attribution a.signer-link{color:inherit;border-bottom-color:var(--border-bright);}
+  a.signer-link:hover,a.signer-link:focus-visible{border-bottom-style:solid;border-bottom-color:var(--accent);}
+
   .page-footer{display:none;}
   .listen-link{
     font-family:var(--mono);
@@ -105,7 +153,7 @@
 
   @media print{
     @page{size:letter portrait;margin:0.25in;}
-    html,body{background:#faf6ee;color:#1a1410;font-size:8pt;line-height:1.2;}
+    html,body{background:#fff;color:#1a1410;font-size:8pt;line-height:1.2;}
     *{
       print-color-adjust:exact;
       -webkit-print-color-adjust:exact;
@@ -146,6 +194,8 @@
     .signer,.attribution,.meta{font-size:8pt;}
     .year-group{margin-top:2pt;}
     .year-group:first-child{margin-top:0;}
+    a.signer-link{border-bottom:0;}
+    .am-overlay{display:none !important;}
 
     .print-only{display:block;}
     .screen-only{display:none;}
@@ -178,7 +228,7 @@
       <img class="site-qr print-only" src="../static/redhat-bootlegs-qr.svg" alt="QR code for redhat-bootlegs.net">
     </div>
     <h1>Who Has Signed This Hat?</h1>
-    <p class="listen-top screen-only"><a href="https://open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK">Listen to the Playlist</a></p>
+    <p class="listen-top screen-only"><a href="https://open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK">Listen to the Playlist</a><span class="listen-sep">&middot;</span><a href="hat-signers.pdf" target="_blank" rel="noopener" title="Single-page printable PDF">Print</a></p>
     <p class="stat-line"><strong>54</strong> signers, 9/8/23 - 9/24/26</p>
   </header>
 
@@ -186,75 +236,75 @@
     <section class="year-group">
       <h2 class="year">2023</h2>
       <ul class="entry-list">
-        <li class="entry"><span class="signer">ZZ Ward</span><span class="meta">9:30 Club &middot; 9/8/23</span></li>
-        <li class="entry"><span class="signer">Kanene Pipkin</span> <span class="attribution">of The Lone Bellow</span><span class="meta">Wolf Trap &middot; 11/26/23</span></li>
-        <li class="entry"><span class="signer">Samantha Fish</span><span class="meta">Fillmore Silver Spring &middot; 12/3/23</span></li>
-        <li class="entry"><span class="signer">Allison Russell</span><span class="meta">Birchmere &middot; 12/10/23</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/zz-ward">ZZ Ward</a><span class="meta">9:30 Club &middot; 9/8/23</span></li>
+        <li class="entry"><span class="signer">Kanene Pipkin</span> <span class="attribution">of <a class="signer-link" href="#artist/lone-bellow">The Lone Bellow</a></span><span class="meta">Wolf Trap &middot; 11/26/23</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/samantha-fish">Samantha Fish</a><span class="meta">Fillmore Silver Spring &middot; 12/3/23</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/allison-russell">Allison Russell</a><span class="meta">Birchmere &middot; 12/10/23</span></li>
       </ul>
     </section>
     <section class="year-group">
       <h2 class="year">2024</h2>
       <ul class="entry-list">
-        <li class="entry"><span class="signer">Poliana &quot;Pops&quot; Magalhães</span> <span class="attribution">of Artur Menezes</span><span class="meta">Hamilton Live &middot; 2/20/24</span></li>
-        <li class="entry"><span class="signer">Charly Lowry</span> <span class="attribution">w/ Rhiannon Giddens</span><span class="meta">Strathmore &middot; 3/18/24</span></li>
+        <li class="entry"><span class="signer">Poliana &quot;Pops&quot; Magalhães</span> <span class="attribution">of <a class="signer-link" href="#artist/artur-menezes">Artur Menezes</a></span><span class="meta">Hamilton Live &middot; 2/20/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/charly-lowry">Charly Lowry</a> <span class="attribution">w/ Rhiannon Giddens</span><span class="meta">Strathmore &middot; 3/18/24</span></li>
         <li class="entry"><span class="signer">Al Olender</span> <span class="attribution">w/ Shovels &amp; Rope</span><span class="meta">Rams Head &middot; 4/10/24</span></li>
-        <li class="entry"><span class="signer">Danielle Nicole</span><span class="meta">Hamilton Live &middot; 4/12/24</span></li>
-        <li class="entry"><span class="signer">Judith Hill</span><span class="meta">Fillmore Silver Spring &middot; 4/13/24</span></li>
-        <li class="entry"><span class="signer">Vanessa Collier</span><span class="meta">Collective Encore &middot; 4/19/24</span></li>
-        <li class="entry"><span class="signer">Joanne Shaw Taylor</span><span class="meta">The Maryland Theatre &middot; 4/26/24</span></li>
-        <li class="entry"><span class="signer">Jackie Venson</span><span class="meta">Color Burst Park &middot; 6/6/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/danielle-nicole">Danielle Nicole</a><span class="meta">Hamilton Live &middot; 4/12/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/judith-hill">Judith Hill</a><span class="meta">Fillmore Silver Spring &middot; 4/13/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/vanessa-collier">Vanessa Collier</a><span class="meta">Collective Encore &middot; 4/19/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/joanne-shaw-taylor">Joanne Shaw Taylor</a><span class="meta">The Maryland Theatre &middot; 4/26/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/jackie-venson">Jackie Venson</a><span class="meta">Color Burst Park &middot; 6/6/24</span></li>
         <li class="entry"><span class="signer">Rebecca Porter</span> <span class="attribution">w/ John Hiatt</span><span class="meta">Birchmere &middot; 6/10/24</span></li>
-        <li class="entry"><span class="signer">Mikaela Davis</span><span class="meta">Pearl Street Warehouse &middot; 6/25/24</span></li>
-        <li class="entry"><span class="signer">Sue Foley</span><span class="meta">Hamilton Live &middot; 8/23/24</span></li>
-        <li class="entry"><span class="signer">Laura Chavez</span> <span class="attribution">w/ Vanessa Collier</span><span class="meta">Rams Head &middot; 9/8/24</span></li>
-        <li class="entry"><span class="signer">Carly Harvey</span> <span class="attribution">w/ Selwyn Birchwood</span><span class="meta">Capital One Hall &middot; 9/18/24</span></li>
-        <li class="entry"><span class="signer">Suzanne Vega</span><span class="meta">Birchmere &middot; 9/25/24</span></li>
-        <li class="entry"><span class="signer">Valerie June</span><span class="meta">Publick Playhouse &middot; 10/5/24</span></li>
-        <li class="entry"><span class="signer">Talia Segal</span><span class="meta">DC9 &middot; 10/8/24</span></li>
-        <li class="entry"><span class="signer">Ana Popović</span><span class="meta">Hamilton Live &middot; 10/16/24</span></li>
-        <li class="entry"><span class="signer">Shemekia Copeland</span><span class="meta">Rams Head &middot; 10/19/24</span></li>
-        <li class="entry"><span class="signer">Mali Obomsawin</span> <span class="attribution">co-bill w/ Jake Blount</span><span class="meta">Kennedy Center &middot; 11/9/24</span></li>
-        <li class="entry"><span class="signer">Lindsay Lou</span> <span class="attribution">w/ Wood Brothers</span><span class="meta">Strathmore &middot; 11/16/24</span></li>
-        <li class="entry"><span class="signer">Ghalia Volt</span> <span class="attribution">w/ Samantha Fish</span><span class="meta">Warner Theatre &middot; 11/20/24</span></li>
-        <li class="entry"><span class="signer">CJ Johnson</span> <span class="attribution">of Oh He Dead</span><span class="meta">Capital One Hall &middot; 12/6/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/mikaela-davis">Mikaela Davis</a><span class="meta">Pearl Street Warehouse &middot; 6/25/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/sue-foley">Sue Foley</a><span class="meta">Hamilton Live &middot; 8/23/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/laura-chavez">Laura Chavez</a> <span class="attribution">w/ Vanessa Collier</span><span class="meta">Rams Head &middot; 9/8/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/carly-harvey">Carly Harvey</a> <span class="attribution">w/ Selwyn Birchwood</span><span class="meta">Capital One Hall &middot; 9/18/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/suzanne-vega">Suzanne Vega</a><span class="meta">Birchmere &middot; 9/25/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/valerie-june">Valerie June</a><span class="meta">Publick Playhouse &middot; 10/5/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/talia-segal">Talia Segal</a><span class="meta">DC9 &middot; 10/8/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/ana-popovic">Ana Popović</a><span class="meta">Hamilton Live &middot; 10/16/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/shemekia-copeland">Shemekia Copeland</a><span class="meta">Rams Head &middot; 10/19/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/mali-obomsawin">Mali Obomsawin</a> <span class="attribution">co-bill w/ Jake Blount</span><span class="meta">Kennedy Center &middot; 11/9/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/lindsay-lou">Lindsay Lou</a> <span class="attribution">w/ Wood Brothers</span><span class="meta">Strathmore &middot; 11/16/24</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/ghalia-volt">Ghalia Volt</a> <span class="attribution">w/ Samantha Fish</span><span class="meta">Warner Theatre &middot; 11/20/24</span></li>
+        <li class="entry"><span class="signer">CJ Johnson</span> <span class="attribution">of <a class="signer-link" href="#artist/oh-he-dead">Oh He Dead</a></span><span class="meta">Capital One Hall &middot; 12/6/24</span></li>
       </ul>
     </section>
     <section class="year-group">
       <h2 class="year">2025</h2>
       <ul class="entry-list">
-        <li class="entry"><span class="signer">Yasmin Williams</span><span class="meta">Birchmere &middot; 2/7/25</span></li>
-        <li class="entry"><span class="signer">Rose Baldino</span> <span class="attribution">of Enter the Haggis</span><span class="meta">Wolf Trap &middot; 2/26/25</span></li>
-        <li class="entry"><span class="signer">Caroline Browning</span> <span class="attribution">of Enter the Haggis</span><span class="meta">Wolf Trap &middot; 2/26/25</span></li>
-        <li class="entry"><span class="signer">Tierinii Jackson</span> <span class="attribution">of Southern Avenue</span><span class="meta">Rams Head &middot; 3/21/25</span></li>
-        <li class="entry"><span class="signer">Tikyra Jackson</span> <span class="attribution">of Southern Avenue</span><span class="meta">Rams Head &middot; 3/21/25</span></li>
-        <li class="entry"><span class="signer">Ava Jackson</span> <span class="attribution">of Southern Avenue</span><span class="meta">Rams Head &middot; 3/21/25</span></li>
-        <li class="entry"><span class="signer">Muireann Bradley</span><span class="meta">Kennedy Center &middot; 4/24/25</span></li>
-        <li class="entry"><span class="signer">Rebecca Lovell</span> <span class="attribution">of Larkin Poe</span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
-        <li class="entry"><span class="signer">Megan Lovell</span> <span class="attribution">of Larkin Poe</span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
-        <li class="entry"><span class="signer">Amythyst Kiah</span> <span class="attribution">w/ Larkin Poe</span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
-        <li class="entry"><span class="signer">Ally Venable</span><span class="meta">Rams Head &middot; 5/14/25</span></li>
-        <li class="entry"><span class="signer">Georgie Fuller</span> <span class="attribution">of The Heavy Heavy</span><span class="meta">The Atlantis &middot; 6/13/25</span></li>
-        <li class="entry"><span class="signer">Judy Blank</span> <span class="attribution">w/ The Heavy Heavy</span><span class="meta">The Atlantis &middot; 6/13/25</span></li>
-        <li class="entry"><span class="signer">Jax Hollow</span><span class="meta">Rams Head &middot; 7/17/25</span></li>
-        <li class="entry"><span class="signer">Meghan Parnell</span> <span class="attribution">of Bywater Call</span><span class="meta">Pearl Street Warehouse &middot; 9/23/25</span></li>
-        <li class="entry"><span class="signer">Ruthie Foster</span><span class="meta">Hamilton Live &middot; 10/26/25</span></li>
-        <li class="entry"><span class="signer">Aila Wildman</span> <span class="attribution">of the Wildmans</span><span class="meta">9:30 Club &middot; 12/4/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/yasmin-williams">Yasmin Williams</a><span class="meta">Birchmere &middot; 2/7/25</span></li>
+        <li class="entry"><span class="signer">Rose Baldino</span> <span class="attribution">of <a class="signer-link" href="#artist/enter-the-haggis">Enter the Haggis</a></span><span class="meta">Wolf Trap &middot; 2/26/25</span></li>
+        <li class="entry"><span class="signer">Caroline Browning</span> <span class="attribution">of <a class="signer-link" href="#artist/enter-the-haggis">Enter the Haggis</a></span><span class="meta">Wolf Trap &middot; 2/26/25</span></li>
+        <li class="entry"><span class="signer">Tierinii Jackson</span> <span class="attribution">of <a class="signer-link" href="#artist/southern-avenue">Southern Avenue</a></span><span class="meta">Rams Head &middot; 3/21/25</span></li>
+        <li class="entry"><span class="signer">Tikyra Jackson</span> <span class="attribution">of <a class="signer-link" href="#artist/southern-avenue">Southern Avenue</a></span><span class="meta">Rams Head &middot; 3/21/25</span></li>
+        <li class="entry"><span class="signer">Ava Jackson</span> <span class="attribution">of <a class="signer-link" href="#artist/southern-avenue">Southern Avenue</a></span><span class="meta">Rams Head &middot; 3/21/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/muireann-bradley">Muireann Bradley</a><span class="meta">Kennedy Center &middot; 4/24/25</span></li>
+        <li class="entry"><span class="signer">Rebecca Lovell</span> <span class="attribution">of <a class="signer-link" href="#artist/larkin-poe">Larkin Poe</a></span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
+        <li class="entry"><span class="signer">Megan Lovell</span> <span class="attribution">of <a class="signer-link" href="#artist/larkin-poe">Larkin Poe</a></span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/amythyst-kiah">Amythyst Kiah</a> <span class="attribution">w/ Larkin Poe</span><span class="meta">9:30 Club &middot; 5/9/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/ally-venable">Ally Venable</a><span class="meta">Rams Head &middot; 5/14/25</span></li>
+        <li class="entry"><span class="signer">Georgie Fuller</span> <span class="attribution">of <a class="signer-link" href="#artist/heavy-heavy">The Heavy Heavy</a></span><span class="meta">The Atlantis &middot; 6/13/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/judy-blank">Judy Blank</a> <span class="attribution">w/ The Heavy Heavy</span><span class="meta">The Atlantis &middot; 6/13/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/jax-hollow">Jax Hollow</a><span class="meta">Rams Head &middot; 7/17/25</span></li>
+        <li class="entry"><span class="signer">Meghan Parnell</span> <span class="attribution">of <a class="signer-link" href="#artist/bywater-call">Bywater Call</a></span><span class="meta">Pearl Street Warehouse &middot; 9/23/25</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/ruthie-foster">Ruthie Foster</a><span class="meta">Hamilton Live &middot; 10/26/25</span></li>
+        <li class="entry"><span class="signer">Aila Wildman</span> <span class="attribution">of <a class="signer-link" href="#artist/wildmans">the Wildmans</a></span><span class="meta">9:30 Club &middot; 12/4/25</span></li>
       </ul>
     </section>
     <section class="year-group">
       <h2 class="year">2026</h2>
       <ul class="entry-list">
-        <li class="entry"><span class="signer">Mohini Dey</span><span class="meta">Birchmere &middot; 2/19/26</span></li>
-        <li class="entry"><span class="signer">Jesse Williams</span> <span class="attribution">w/ ZZ Ward</span><span class="meta">Birchmere &middot; 3/21/26</span></li>
-        <li class="entry"><span class="signer">Margaret Glaspy</span> <span class="attribution">w/ Glen Hansard</span><span class="meta">9:30 Club &middot; 4/12/26</span></li>
-        <li class="entry"><span class="signer">Orianthi</span><span class="meta">Rams Head &middot; 6/11/26</span></li>
-        <li class="entry"><span class="signer">Cary Ann Hearst</span> <span class="attribution">of Shovels &amp; Rope</span><span class="meta">Birchmere &middot; 7/11/26</span></li>
-        <li class="entry"><span class="signer">Laura Bergmann</span> <span class="attribution">of The Family Crest</span><span class="meta">DC9 &middot; 8/1/26</span></li>
-        <li class="entry"><span class="signer">Anna Moss</span><span class="meta">Jammin&#x27; Java &middot; 8/8/26</span></li>
-        <li class="entry"><span class="signer">Sabine McCalla</span><span class="meta">Jammin&#x27; Java &middot; 8/8/26</span></li>
-        <li class="entry"><span class="signer">Whitney Mongé</span><span class="meta">Concerts at The Sevareid House &middot; 8/22/26</span></li>
-        <li class="entry"><span class="signer">Bella McCormick</span><span class="meta">Birchmere &middot; 9/21/26</span></li>
-        <li class="entry"><span class="signer">Carolyn Wonderland</span><span class="meta">Live at Hub City Vinyl &middot; 9/24/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/mohini-dey">Mohini Dey</a><span class="meta">Birchmere &middot; 2/19/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/jesse-williams-band">Jesse Williams</a> <span class="attribution">w/ ZZ Ward</span><span class="meta">Birchmere &middot; 3/21/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/margaret-glaspy">Margaret Glaspy</a> <span class="attribution">w/ Glen Hansard</span><span class="meta">9:30 Club &middot; 4/12/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/orianthi">Orianthi</a><span class="meta">Rams Head &middot; 6/11/26</span></li>
+        <li class="entry"><span class="signer">Cary Ann Hearst</span> <span class="attribution">of <a class="signer-link" href="#artist/shovels-rope">Shovels &amp; Rope</a></span><span class="meta">Birchmere &middot; 7/11/26</span></li>
+        <li class="entry"><span class="signer">Laura Bergmann</span> <span class="attribution">of <a class="signer-link" href="#artist/family-crest">The Family Crest</a></span><span class="meta">DC9 &middot; 8/1/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/anna-moss">Anna Moss</a><span class="meta">Jammin&#x27; Java &middot; 8/8/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/sabine-mccalla">Sabine McCalla</a><span class="meta">Jammin&#x27; Java &middot; 8/8/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/whitney-monge">Whitney Mongé</a><span class="meta">Concerts at The Sevareid House &middot; 8/22/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/bella-mccormick">Bella McCormick</a><span class="meta">Birchmere &middot; 9/21/26</span></li>
+        <li class="entry"><a class="signer signer-link" href="#artist/carolyn-wonderland">Carolyn Wonderland</a><span class="meta">Live at Hub City Vinyl &middot; 9/24/26</span></li>
       </ul>
     </section>
   </main>
@@ -267,5 +317,17 @@
     </div>
   </footer>
 </div>
+
+<!-- Artist modal mount: the .am-overlay shell from artist-modal.css. Ids match the
+     AM.mount default. Names in the list are #artist/<slug> anchors; the module's hash
+     router opens the card and loads the (~1 MB) index only on the first click. -->
+<div class="am-overlay" id="artistModal">
+  <div class="artist-modal" role="dialog" aria-label="Artist">
+    <div id="artistModalBody"></div>
+  </div>
+</div>
+<script>
+amInit({basePath:'../',configUrl:'../config.yaml',mount:'artistModal',theme:'site'});
+</script>
 </body>
 </html>

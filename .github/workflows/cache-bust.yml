@@ -4,11 +4,16 @@ name: Cache-bust static assets
 # artist-modal.css and styles.css to the current commit SHA whenever any of those
 # files change, forcing browsers/CDN to fetch the new versions immediately.
 # Host pages carrying these references: index.html (all five); the artist-graph
-# research page (artist-modal.js/.css via a ../../../ prefix); and the festival
+# research page (artist-modal.js/.css via a ../../../ prefix); the festival
 # posters (artist-modal.js/.css via a ../ prefix) - both the templates under
-# tools/festival/ and the rendered pages under festival/, kept in step here so
-# `render_posters.py --check` stays clean after a bump. The sed patterns capture
-# any leading path, so one pass covers every host.
+# tools/festival/ and the rendered pages under festival/; and the signers page
+# (artist-modal.js/.css via a ../ prefix) - the template under tools/signers/ and
+# its rendered signers/index.html. Each template and rendered page is kept in step
+# here so `render_posters.py --check` and `render_signers.py --check` stay clean
+# after a bump. The sed patterns capture any leading path, so one pass covers every
+# host. The signers template is also a watched path of signers-rebuild.yml, so a
+# bump starts that rebuild too; it finds the page already up to date and commits
+# nothing.
 #
 # main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
@@ -48,7 +53,8 @@ jobs:
           SHORT="${SHA:0:8}"
           HOSTS="index.html tools/research/graph/artist-graph.html \
                  tools/festival/poster_timeline.template.html tools/festival/poster_crescendo.template.html \
-                 festival/festival_poster.html festival/index.html"
+                 festival/festival_poster.html festival/index.html \
+                 tools/signers/signers.template.html signers/index.html"
 
           # Replace any existing ?v=... or no version at all, for each asset.
           # Patterns handle both: href="styles.css" and href="styles.css?v=abc123",
@@ -69,7 +75,8 @@ jobs:
         run: |
           git add index.html tools/research/graph/artist-graph.html \
                   tools/festival/poster_timeline.template.html tools/festival/poster_crescendo.template.html \
-                  festival/festival_poster.html festival/index.html
+                  festival/festival_poster.html festival/index.html \
+                  tools/signers/signers.template.html signers/index.html
           if git diff --cached --quiet; then
             echo "host pages unchanged — nothing to commit."
           else

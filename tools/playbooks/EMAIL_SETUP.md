@@ -207,9 +207,11 @@ Google Drive ID: `1ENPcmHxrbdMfJNuDlqy-RRBHkGm8Onyy`
 
 **Hat signers page:** `signers/index.html`, built by `tools/signers/render_signers.py`
 from `data/show_goals/hat_signatures.tsv` and rebuilt automatically by
-`.github/workflows/signers-rebuild.yml` whenever that TSV changes - nothing to
-hand-maintain. Live at the `signers.redhat-bootlegs.net` vanity redirect (retargeted
-2026-09-29, #412) and linked from the about modal.
+`.github/workflows/signers-rebuild.yml` whenever that TSV (or any other input)
+changes - nothing to hand-maintain. The same run rebuilds `signers/hat-signers.pdf`,
+the single-page printable behind the page's `Print` link
+(`tools/signers/render_signers_pdf.py`). Live at the `signers.redhat-bootlegs.net`
+vanity redirect (retargeted 2026-09-29, #412) and linked from the about modal.
 
 The Google Doc this replaced (formerly the completeness authority, with a
 hand-copied `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]` entry per

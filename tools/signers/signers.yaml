@@ -10,6 +10,11 @@
 
 title: "Who Has Signed This Hat?"
 
+# Static on purpose: it does not name anyone or count anything, so the generated page
+# only changes when the data does. Feeds <meta name="description"> and the og:/twitter:
+# description tags.
+description: "The musicians who have signed my red concert hat at live shows around DC, Maryland and Virginia - a running list, one line per signature."
+
 # The tagline itself ("Life is short. Buy the tickets.") is baked into the
 # banner artwork - it is never rendered as separate text (2026-09-29 change).
 # banner_alt is the exact alt/title text for that image.
@@ -28,6 +33,16 @@ playlist_qr: static/hat-playlist-qr.svg
 
 banner_svg: static/hat-banner.svg
 banner_png: static/hat-banner.png
+
+# Link-preview image (og:image / twitter:image). Must be a PNG - crawlers do not render
+# SVG. Its pixel size is read from the file header at build time.
+og_image: static/hat-banner.png
+
+# Filename of the single-page print PDF, written next to index.html by
+# tools/signers/render_signers_pdf.py and linked from the web page as "Print". CI builds
+# it after the page, so unlike the assets above it is not required to exist for the page
+# to build.
+print_pdf: hat-signers.pdf
 
 # Print-only: the site QR (with the brand-hat logo reserved in its center)
 # sits to the right of the banner in the print masthead. Not used on screen.
