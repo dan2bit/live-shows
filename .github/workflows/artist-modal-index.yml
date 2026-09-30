@@ -24,8 +24,11 @@ on:
       - data/show_goals/artist-albums.tsv
       - data/artist_spotify.json
       - data/recommend_aliases.tsv
+      - data/artist_relations.tsv
+      - data/bill_annotations.tsv
       - tools/research/follows/follows_master.tsv
       - scripts/build_artist_index.py
+      - scripts/name_forms.py
   workflow_dispatch:
 
 permissions:
