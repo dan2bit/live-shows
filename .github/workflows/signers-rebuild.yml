@@ -36,6 +36,11 @@ name: Rebuild signers page
 # WeasyPrint version is pinned below so a library upgrade cannot change the
 # bytes unannounced. Bump the pin on purpose, and expect one PDF commit.
 #
+# This file is a watched path too, so changing it (moving the runner pin, say) rebuilds
+# the page and the PDF at once. Without that, a workflow edit that touches no other
+# watched file starts nothing, and the new version sits unexercised until some data
+# change happens to trigger it.
+#
 # data/artist_modal_index.json and config.yaml are watched because the page
 # reads them: a name links into the artist modal only when the index has a
 # record for it, and the head URLs come from config.yaml's site block. A
@@ -52,6 +57,7 @@ on:
   push:
     branches: [main]
     paths:
+      - .github/workflows/signers-rebuild.yml
       - data/show_goals/hat_signatures.tsv
       - data/venues.tsv
       - data/artist_modal_index.json
