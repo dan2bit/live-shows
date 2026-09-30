@@ -253,6 +253,12 @@ def selftest(failures):
     expect("member-of", w.canonical("Mando Example"), "Example Duo")
     expect("not-an-artist", w.is_non_artist("Example Tribute Night"), True)
 
+    # a derived fold into a group with an explicit target keeps that target
+    w = world(names=["Lead Example", "Lead Example & Crew", "Crew Tour Name"],
+              appearances=["Lead Example & Crew"],
+              aliases=[("Lead Example & Crew", "Lead Example Crew")])
+    expect("derived fold keeps alias target", w.canonical("Lead Example"), "Lead Example Crew")
+
     # a bill with no annotation credits nobody beyond the ledger's own reading
     counts = {}
     for d in ("2099-01-01", "2099-02-01"):
