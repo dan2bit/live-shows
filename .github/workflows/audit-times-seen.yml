@@ -14,8 +14,11 @@ on:
       - data/live_shows_current.tsv
       - data/seen_with.tsv
       - data/recommend_aliases.tsv
+      - data/artist_relations.tsv
+      - data/bill_annotations.tsv
       - scripts/build_artist_index.py
       - scripts/audit_times_seen.py
+      - scripts/name_forms.py
   workflow_dispatch:
 
 permissions:

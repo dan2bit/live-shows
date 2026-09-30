@@ -161,6 +161,13 @@ jobs:
       - name: Artist-name drift scan
         run: python scripts/check_name_drift.py
 
+      # Identity data lint (artist_relations.tsv, bill_annotations.tsv), the shared
+      # identity fixture against the resolver and the artist modal index, and the
+      # resolver self-tests. A lint error or fixture failure is a real break in any
+      # context; the non-canonical map-key and past-review notices are warnings only.
+      - name: Artist identity
+        run: python scripts/check_identity.py
+
       - name: Evergreen scan
         shell: bash
         run: |
