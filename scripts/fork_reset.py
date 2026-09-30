@@ -51,6 +51,7 @@ SAMPLE_MAP = {
     "sample-files/related_acts-sample.tsv": "data/related_acts.tsv",
     "sample-files/artist_relations-sample.tsv": "data/artist_relations.tsv",
     "sample-files/bill_annotations-sample.tsv": "data/bill_annotations.tsv",
+    "sample-files/hydration_watch-sample.tsv": "data/hydration_watch.tsv",
     "sample-files/seen_with-sample.tsv": "data/seen_with.tsv",
     "sample-files/show_goals/hat_eligibility-sample.tsv": "data/show_goals/hat_eligibility.tsv",
     "sample-files/show_goals/autograph_books_eligibility-sample.tsv": "data/show_goals/autograph_books_eligibility.tsv",
