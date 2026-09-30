@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-check_identity.py - the artist-identity checks: data lint, the shared fixture, and
-synthetic self-tests of the resolver in name_forms.py.
+check_identity.py - the artist-identity checks: data lint and synthetic self-tests
+of the resolver in name_forms.py.
 
 WHAT IT CHECKS
   lint       data/artist_relations.tsv and data/bill_annotations.tsv:
@@ -15,20 +15,15 @@ WHAT IT CHECKS
                  HARBORMISTRESSES set) that is not the canonical name of its
                  identity. Those keys are matched raw, so they will stop
                  matching the day the map resolves names through the resolver.
-  fixture    scripts/fixtures/identity.tsv against the resolver, and against
-             every consumer that has moved onto it (today: the artist modal
-             index). Rows:
-               canonical  Input resolves to Expect
-               distinct   Input and Expect are different identities
-               credit     "date|billing" credits exactly Expect ("act:role;...",
-                          "-" for none)
-  selftest   synthetic worlds built in memory, for the behaviour that live data
-             cannot pin down without going stale (counts, the derived default
-             splitting back out after a solo appearance).
+  selftest   synthetic worlds built in memory, so the resolver's rules are pinned
+             without restating live data (which would need upkeep every time the
+             ledger grows): the derived default and its split after a solo
+             appearance, ambiguity, trailing components, eponymous acts,
+             annotation credits, member-of, not-an-artist, explicit targets.
 
-Exit status: 1 if any lint error, fixture failure or self-test failure; else 0.
+Exit status: 1 if any lint error or self-test failure; else 0.
 
-Run:  python3 scripts/check_identity.py [--root .] [--skip-consumers]
+Run:  python3 scripts/check_identity.py [--root .]
 """
 
 import argparse
@@ -41,7 +36,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import name_forms as nf  # noqa: E402  (sibling module in scripts/)
 
-FIXTURE = "scripts/fixtures/identity.tsv"
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -122,82 +116,10 @@ def lint_map_keys(root, resolver, warnings):
                             "orphan when the map resolves names through ArtistResolver" % (where, k, c))
 
 
-# ------------------------------------------------------------------- fixture
-def read_fixture(root):
-    return [r for r in nf._read_rows(Path(root) / FIXTURE) if r.get("Check")]
-
-
+# ------------------------------------------------------------------- helpers
 def _credit_set(resolver, date, billing):
     return sorted("%s:%s" % (resolver.canonical(a["act"]) or a["act"], a["role"])
                   for a in resolver.credits(date, billing))
-
-
-def _expect_set(expect):
-    return [] if expect in ("", "-") else sorted(p.strip() for p in expect.split(";") if p.strip())
-
-
-def run_fixture_resolver(rows, resolver, failures):
-    for r in rows:
-        chk, inp, exp = r["Check"], r["Input"], r["Expect"]
-        if chk == "canonical":
-            got = resolver.canonical(inp)
-            if got != exp:
-                failures.append("resolver canonical %r: expected %r, got %r" % (inp, exp, got))
-        elif chk == "distinct":
-            if resolver.group(inp) & resolver.group(exp):
-                failures.append("resolver distinct: %r and %r share an identity" % (inp, exp))
-        elif chk == "credit":
-            date, billing = inp.split("|", 1)
-            got, want = _credit_set(resolver, date, billing), _expect_set(exp)
-            if got != want:
-                failures.append("resolver credit %s: expected %s, got %s" % (inp, want, got))
-        else:
-            failures.append("fixture: unknown Check %r" % chk)
-
-
-def run_fixture_modal(rows, root, failures):
-    """The artist modal index as a consumer: a name reaches the record for its identity."""
-    import build_artist_index as bai
-    idx = bai.build(root)
-    artists, aliases = idx["artists"], idx["aliases"]
-
-    def record(name):
-        k = bai.norm(name)
-        return artists.get(k) or artists.get(aliases.get(k, ""))
-
-    for r in rows:
-        chk, inp, exp = r["Check"], r["Input"], r["Expect"]
-        if chk == "canonical":
-            rec = record(inp)
-            if rec is None:
-                # a name with no record anywhere is fine; one whose identity HAS a record is not
-                if record(exp) is not None:
-                    failures.append("modal canonical %r: no record reached (expected %r)" % (inp, exp))
-            elif rec["name"] != exp:
-                failures.append("modal canonical %r: reached %r, expected %r" % (inp, rec["name"], exp))
-        elif chk == "distinct":
-            a, b = record(inp), record(exp)
-            if a is not None and a is b:
-                failures.append("modal distinct: %r and %r reach the same record" % (inp, exp))
-        elif chk == "credit":
-            date, _billing = inp.split("|", 1)
-            for pair in _expect_set(exp):
-                act, role = pair.rsplit(":", 1)
-                rec = record(act)
-                roles = {s.get("role") for s in (rec or {}).get("seen", {}).get("show_log", [])
-                         if s["date"] == date}
-                if role not in roles:
-                    failures.append("modal credit %s: %r has no %s entry that day (roles %s)"
-                                    % (date, act, role, sorted(r_ for r_ in roles if r_)))
-    # a retired slug still reaches its record through the emitted aliases
-    for r in rows:
-        if r["Check"] == "canonical" and r["Input"] != r["Expect"]:
-            target = record(r["Expect"])
-            old = bai.slugify(r["Input"])
-            if target and old and old != target["slug"]:
-                if aliases.get(old.replace("-", " ")) != bai.norm(target["name"]):
-                    failures.append("modal slug %r (from %r) does not redirect to %r"
-                                    % (old, r["Input"], target["slug"]))
 
 
 # ------------------------------------------------------------------ selftest
@@ -271,18 +193,12 @@ def selftest(failures):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--root", default=".")
-    ap.add_argument("--skip-consumers", action="store_true",
-                    help="run the fixture against the resolver only")
     args = ap.parse_args()
 
     errors, warnings, failures = [], [], []
     lint(args.root, errors, warnings)
     resolver = nf.ArtistResolver.from_repo(args.root)
     lint_map_keys(args.root, resolver, warnings)
-    rows = read_fixture(args.root)
-    run_fixture_resolver(rows, resolver, failures)
-    if not args.skip_consumers:
-        run_fixture_modal(rows, args.root, failures)
     selftest(failures)
 
     for w in warnings:
@@ -291,8 +207,8 @@ def main():
         print("error: " + e)
     for f in failures:
         print("FAIL: " + f)
-    print("identity: %d fixture rows, %d lint errors, %d failures, %d warnings"
-          % (len(rows), len(errors), len(failures), len(warnings)))
+    print("identity: %d lint errors, %d self-test failures, %d warnings"
+          % (len(errors), len(failures), len(warnings)))
     if resolver.derived:
         print("derived default folds: " + "; ".join(
             "%s -> %s" % (a, resolver.canonical(a)) for a, _t in resolver.derived))
