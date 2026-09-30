@@ -52,3 +52,8 @@ produce a clean, working, empty fork — see `docs/FORK_SETUP.md`.
   `guest` (Shape `-`), `Status` `confirmed` or `assumed` (an upcoming show,
   reviewed after its `Review After` date). A fork can start both empty; the
   derived defaults cover most eponymous and leader-named acts with no rows.
+- `hydration_watch-sample.tsv` is the one sample with **no synthetic row**, on
+  purpose: `check_hydration_watch.py` fails loudly on a watched name that matches
+  no Spotify cache entry, so an example row would fail the weekly job in a fresh
+  fork. A row is `Artist`, `Action` (free text - what to do once the artist is on
+  Spotify, reported verbatim), `Date Noted`, `Notes`; remove it once acted on.
