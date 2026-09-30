@@ -1,26 +1,36 @@
 {
 "schema_version":1,
-"generated_at":"2026-09-30T19:57:13Z",
+"generated_at":"2026-09-30T22:24:57Z",
 "aliases":{
+"albert castiglia tour schedule page":"albert castiglia",
+"allman betts family revival a decade of revival":"allman betts band",
+"ally venable band":"ally venable",
+"bill murray and his blood brothers":"blood brothers",
 "billy f gibbons":"billy gibbons",
+"daniel donato s cosmic country":"daniel donato",
+"danielle nicole band":"danielle nicole",
+"eric johansen":"eric johanson",
+"experience hendrix kenny wayne shepherd":"kenny wayne shepherd",
+"gillian welch david rawlings":"gillian welch",
+"james hunter":"james hunter six",
+"jesse williams band":"jesse williams",
+"jj grey":"jj grey mofro",
+"john primer the real deal blues band":"john primer",
+"josh hoyer":"josh hoyer soul colossal",
+"josh hoyer s colossal 4":"josh hoyer soul colossal",
+"kingfish":"christone kingfish ingram",
+"mr sipp the mississippi blues child":"mr sipp",
+"new york s finest":"every breath you take",
+"nick lowe":"nick lowe los straitjackets",
+"robert randolph band":"robert randolph",
+"robert randolph the family band":"robert randolph",
+"shaw davis":"shaw davis the black ties",
+"taj mahal and the phantom blues band":"taj mahal",
+"tommy castro":"tommy castro the painkillers",
 "trombone shorty":"trombone shorty orleans avenue",
 "trombone shorty and orleans avenue":"trombone shorty orleans avenue",
-"kingfish":"christone kingfish ingram",
-"daniel donato s cosmic country":"daniel donato",
-"robert randolph the family band":"robert randolph",
-"mr sipp the mississippi blues child":"mr sipp",
-"taj mahal and the phantom blues band":"taj mahal",
-"john primer the real deal blues band":"john primer",
 "victor wooten the wooten brothers":"victor wooten",
-"experience hendrix kenny wayne shepherd":"kenny wayne shepherd",
-"bill murray and his blood brothers":"blood brothers",
-"tommy castro":"tommy castro the painkillers",
-"shaw davis":"shaw davis the black ties",
-"eric johansen":"eric johanson",
-"albert castiglia tour schedule page":"albert castiglia",
-"josh hoyer s colossal 4":"josh hoyer soul colossal",
-"josh hoyer":"josh hoyer soul colossal",
-"new york s finest":"every breath you take"
+"winston mitchell":"larry keel duo"
 },
 "artists":{
 "aaron lee tasjan":{
@@ -200,6 +210,7 @@
 "venue":"The Clarice Smith Performing Arts Center, College Park, MD, USA",
 "via":"Rhiannon Giddens",
 "photo_url":"https://photos.redhat-bootlegs.net/share/5_ypQhXIFQvtwyCqBl5aV74vZHffGsbOHkkliJobcR6i5zOFmvD_7p_ADtBFCsjURgc",
+"role":"support",
 "goals":[]
 }
 ]
@@ -400,6 +411,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -502,6 +514,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -702,6 +715,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/fHla1J1ewVN4JNBGjMXPL73nvRI_xP1e13Vu5nDi87B5nGahBPSzFO8RHBN_gIvQSR4",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -709,6 +723,7 @@
 "venue":"JV's Restaurant, Falls Church, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/RwGzthwUyrXvfFfADl8DqDLk9pq9-IHrSQSBx-CIOd3u8jgxsTrKgx3uWXRSbBeCuCQ",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -811,6 +826,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/y50nRGS0dXRV_C7TKvXcBKXRjsauM6koxYYogXBCVTBBpIbBXtVxox0q2LFP1w1hSZY",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -818,6 +834,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/UQ-0EUnphJYiKctFj4PyCG3OaRVhX36HwOIjT-Iyxy-0ymWWrDNFUG9aFh51Je0efa4",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -1303,6 +1320,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Sarah McLachlan",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -1310,6 +1328,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -1317,6 +1336,7 @@
 "venue":"Lincoln Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -1326,6 +1346,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/YyXGRDJVxqtPD6oYzKCUHMR0vVfEc-4pFKgMB8lEn_tNePMr1h4AV17GB6jMYbnw37U",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -1416,7 +1437,10 @@
 "tranche":"emerging",
 "raw":13261
 },
-"tier":null,
+"tier":{
+"label":"Strong",
+"rank":4
+},
 "seen":{
 "count":1,
 "first":"2023-12-05",
@@ -1427,14 +1451,15 @@
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
 },
 "fast_track":false,
 "affinity":{
-"score":0.132,
-"band":"low"
+"score":0.482,
+"band":"medium"
 },
 "badges":{
 "hat":"absent",
@@ -1498,64 +1523,6 @@
 "slug":null
 }
 ]
-},
-"allman betts family revival a decade of revival":{
-"name":"Allman Betts Family Revival: A Decade of Revival",
-"slug":"allman-betts-family-revival-a-decade-of-revival",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":{
-"tranche":"niche",
-"raw":7
-},
-"tier":{
-"label":"Strong",
-"rank":4
-},
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":{
-"score":0.35,
-"band":"medium"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":"https://www.last.fm/music/Allman+Betts+Family+Revival",
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Allman%20Betts%20Family%20Revival%3A%20A%20Decade%20of%20Revival",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/allman-betts-family-revival-a-decade-of-revival/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Allman+Betts+Family+Revival:+A+Decade+of+Revival"
-},
-"similar":[]
 },
 "allman family revival":{
 "name":"Allman Family Revival",
@@ -1627,22 +1594,67 @@
 "rank":4
 },
 "seen":{
-"count":1,
-"first":"2023-12-05",
-"recent":null,
+"count":6,
+"first":"2021-11-18",
+"recent":"2026-04-20",
 "show_log":[
+{
+"date":"2026-04-20",
+"venue":"Rams Head On Stage",
+"via":null,
+"photo_url":"https://photos.redhat-bootlegs.net/share/1DC8caHNvoFLkNELx03ufYhDBdjFsMlLdIGivkLlpkrqXXvM2t42qvdvgCV0fs2Tmkg",
+"role":"headliner",
+"goals":[
+"book"
+]
+},
+{
+"date":"2025-05-14",
+"venue":"Rams Head On Stage, Annapolis, MD, USA",
+"via":null,
+"photo_url":"https://photos.redhat-bootlegs.net/share/4oStZRsZHLgJhFpfvTyjMJU4cn4xDNyk3-N2Bhh2h-eeq61jIHpM2LvNrFuEwuGr72Q",
+"role":"headliner",
+"goals":[
+"hat"
+]
+},
+{
+"date":"2025-04-05",
+"venue":"Warner Theatre, Washington, DC, USA",
+"via":"Experience Hendrix (Kenny Wayne Shepherd)",
+"photo_url":null,
+"role":"support",
+"goals":[]
+},
 {
 "date":"2023-12-05",
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"guest",
+"goals":[]
+},
+{
+"date":"2023-06-28",
+"venue":"Rams Head On Stage, Annapolis, MD, USA",
+"via":null,
+"photo_url":"https://photos.redhat-bootlegs.net/share/mk7h_85WXnImAER4BwI7H2_mEiftzHV-BwDSNc7fFwFNGy5oOy9IEc8XQ5iA4muU9Ls",
+"role":"headliner",
+"goals":[]
+},
+{
+"date":"2021-11-18",
+"venue":"Sixth & I Historic Synagogue, Washington, DC, USA",
+"via":"Christone 'Kingfish' Ingram",
+"photo_url":"https://photos.redhat-bootlegs.net/share/7dBixzuNh8PngiV3laL4X20mNIlFzfg4rv3xvVKKgGfeG1kYFJrPWYhZtemCVzWbl5E",
+"role":"support",
 "goals":[]
 }
 ]
 },
 "fast_track":false,
 "affinity":{
-"score":0.692,
+"score":0.963,
 "band":"high"
 },
 "badges":{
@@ -1660,8 +1672,8 @@
 }
 },
 "vip":0,
-"photo":0,
-"photo_album":null
+"photo":4,
+"photo_album":"https://photos.redhat-bootlegs.net/share/afBGX7vuEPY4Ua9MyLOcnVWxBRm0itrvef0Vl_WTDAiN7B3-JUm-jY6ECekV7Dzv8ZY"
 },
 "latest_release":{
 "name":"Money & Power",
@@ -1672,7 +1684,7 @@
 },
 "links":{
 "spotify":"https://open.spotify.com/artist/6aQSBUOuFKlxJYrBWI5gVM",
-"youtube":null,
+"youtube":"@allyvenableband",
 "lastfm":"https://www.last.fm/music/Ally+Venable",
 "musicbrainz":"https://musicbrainz.org/artist/86d89182-9364-4e05-a5af-d69639ba2c73",
 "bandsintown":"https://www.bandsintown.com/Ally%20Venable",
@@ -1707,96 +1719,6 @@
 "slug":"muireann-bradley"
 }
 ]
-},
-"ally venable band":{
-"name":"Ally Venable Band",
-"slug":"ally-venable-band",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":5,
-"first":"2021-11-18",
-"recent":"2026-04-20",
-"show_log":[
-{
-"date":"2026-04-20",
-"venue":"Rams Head On Stage",
-"via":null,
-"photo_url":"https://photos.redhat-bootlegs.net/share/1DC8caHNvoFLkNELx03ufYhDBdjFsMlLdIGivkLlpkrqXXvM2t42qvdvgCV0fs2Tmkg",
-"goals":[
-"book"
-]
-},
-{
-"date":"2025-05-14",
-"venue":"Rams Head On Stage, Annapolis, MD, USA",
-"via":null,
-"photo_url":"https://photos.redhat-bootlegs.net/share/4oStZRsZHLgJhFpfvTyjMJU4cn4xDNyk3-N2Bhh2h-eeq61jIHpM2LvNrFuEwuGr72Q",
-"goals":[]
-},
-{
-"date":"2025-04-05",
-"venue":"Warner Theatre, Washington, DC, USA",
-"via":"Experience Hendrix (Kenny Wayne Shepherd)",
-"photo_url":null,
-"goals":[]
-},
-{
-"date":"2023-06-28",
-"venue":"Rams Head On Stage, Annapolis, MD, USA",
-"via":null,
-"photo_url":"https://photos.redhat-bootlegs.net/share/mk7h_85WXnImAER4BwI7H2_mEiftzHV-BwDSNc7fFwFNGy5oOy9IEc8XQ5iA4muU9Ls",
-"goals":[]
-},
-{
-"date":"2021-11-18",
-"venue":"Sixth & I Historic Synagogue, Washington, DC, USA",
-"via":"Christone 'Kingfish' Ingram",
-"photo_url":"https://photos.redhat-bootlegs.net/share/7dBixzuNh8PngiV3laL4X20mNIlFzfg4rv3xvVKKgGfeG1kYFJrPWYhZtemCVzWbl5E",
-"goals":[]
-}
-]
-},
-"fast_track":false,
-"affinity":{
-"score":0.593,
-"band":"medium"
-},
-"badges":{
-"hat":"not_yet",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":true
-}
-},
-"vip":0,
-"photo":4,
-"photo_album":"https://photos.redhat-bootlegs.net/share/afBGX7vuEPY4Ua9MyLOcnVWxBRm0itrvef0Vl_WTDAiN7B3-JUm-jY6ECekV7Dzv8ZY"
-},
-"latest_release":null,
-"links":{
-"spotify":"https://open.spotify.com/artist/4H5adufzqTl6F1VQbfD8qh",
-"youtube":"@allyvenableband",
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Ally%20Venable%20Band",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/ally-venable-band/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Ally+Venable+Band"
-},
-"similar":[]
 },
 "altered five blues band":{
 "name":"Altered Five Blues Band",
@@ -2243,6 +2165,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/0CXXbL426rRzw1rg08RzBmgLybQAR5hUYNIcs7qNEIMwEkkyPJv23Fg4caVVVI31dsQ",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -2252,6 +2175,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":"Larkin Poe",
 "photo_url":"https://photos.redhat-bootlegs.net/share/mD2wOWzaZacfIEwOEUqHq4igjQQIL-YYeKQeX2sRA_02tNK0xBoixavNWCuLuPvGtDM",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -2356,6 +2280,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -2363,6 +2288,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/4bfnX6LtkfDGjz7va9ze8vCiMTS8a4wpDD8GZlGfTe6sHLTrCi5aN1cUGPsTj-kE7zg",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -2372,6 +2298,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/EV1gUv2esEeDHM_jPlbbdf5hPZAybk3uPZVmARusxZOpMlUJZUbIfLsf4wH9Q4CvlZw",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -2379,6 +2306,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/7leBWKard1HTreNzs4h-mT85WC5vMiUrn6RCdeeZM0benS42dvbAueWC6Udpx53I4MU",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -2481,6 +2409,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Tab Benoit & Anders Osborne",
 "photo_url":"https://photos.redhat-bootlegs.net/share/WToffWne1fonAQ2qQ4OMotEV-OPOfN5SvGVb79qvPN_C_c8VXefs844-x99stHm0zbA",
+"role":"principal",
 "goals":[]
 }
 ]
@@ -2817,6 +2746,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"SatchVai Band",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -2916,6 +2846,7 @@
 "venue":"Jammin' Java",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/uy3vpDgDQ7s-Sld-lf-FC_w9qkeyl_ILE8MSsE6CHO6e3wOxJeG72h7lR4mBqF9CW9c",
+"role":"principal",
 "goals":[
 "hat"
 ]
@@ -3020,6 +2951,7 @@
 "venue":"Maryland Hall for the Creative Arts, Annapolis, MD, USA",
 "via":"Keb' Mo'",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -3208,6 +3140,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Tab Benoit",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -3404,6 +3337,7 @@
 "venue":"Hamilton Live",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/6iqmLF90t3aQgk0Gm8XBE8gxlM0RE6O9LsoPcQP73sgQT65Z14blVRvGeD_xYOEkxDg",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -3503,6 +3437,7 @@
 "venue":null,
 "via":"Vanessa Collier",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -3510,6 +3445,7 @@
 "venue":null,
 "via":"Shemekia Copeland",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -3606,6 +3542,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":"Eric Gales",
 "photo_url":"https://photos.redhat-bootlegs.net/share/WF1TRaFKUaAMebYEAsUD-J_DluhKuEWxaSxvb5DjqD5LeTvkdEZ6Z5MMyh83XbnWeE0",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -3798,6 +3735,7 @@
 "venue":null,
 "via":"Jake Blount",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -3858,6 +3796,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -3865,6 +3804,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "hat"
 ]
@@ -3937,6 +3877,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -3944,6 +3885,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":"Willie Nelson",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -3951,6 +3893,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -4236,6 +4179,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -4475,6 +4419,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -4567,6 +4512,7 @@
 "venue":"The Birchmere",
 "via":"Sierra Hull",
 "photo_url":null,
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -4734,6 +4680,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Samantha Fish",
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZwMQiWdrKY3e4EgMQgpdnVdYSirElOBnmcyt-8InY1IrWkg9g8Ow6a18FcOd0B6scgw",
+"role":"support",
 "goals":[]
 }
 ]
@@ -5302,6 +5249,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/iy-8lsDrMzHaT-hBikmwC5psrHsROjFY0-S_ElBrPVmvh1uXsfEIcNYH7gPI_IIMX7A",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -6113,6 +6061,7 @@
 "venue":null,
 "via":"Albert Castiglia",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -6352,6 +6301,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -6629,6 +6579,7 @@
 "venue":null,
 "via":"Danielle Nicole",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -6636,6 +6587,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":"Danielle Nicole",
 "photo_url":"https://photos.redhat-bootlegs.net/share/Dzf-Z71ZygEg2L2UfWF2ryM2lRlKiyqKqsTgrUrB7dWtJnm8OHD0DXIUPzXv54qXuKQ",
+"role":"support",
 "goals":[]
 },
 {
@@ -6643,6 +6595,7 @@
 "venue":null,
 "via":"Danielle Nicole",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -6838,6 +6791,7 @@
 "venue":null,
 "via":"The Lone Bellow",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -6940,6 +6894,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":"The Devil Makes Three",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -7042,6 +6997,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -7141,6 +7097,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Marcus King",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -7148,6 +7105,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":"Willie Nelson",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -7243,6 +7201,7 @@
 "venue":"Hamilton Live",
 "via":"Danielle Nicole",
 "photo_url":"https://photos.redhat-bootlegs.net/share/WY7Poydq9h1zsTQWuezfsWaWOaTRzZ0T3eN0fAkOiGrMg0YgY4uPPOmXyWNSMY139Uw",
+"role":"support",
 "goals":[]
 }
 ]
@@ -7586,6 +7545,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -7593,6 +7553,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -7744,6 +7705,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/iDM5g9uHfdgVpfrci20CVuVAO8nxYDHNa3nhM21cQ1-pLiJzlkH3v2iWi6sKk5WNQaU",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -7751,6 +7713,7 @@
 "venue":"Millennium Stage, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -7758,6 +7721,7 @@
 "venue":"Columbia Art Center, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -7909,6 +7873,7 @@
 "venue":"Collective Encore",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/HutizhdghRkG7hoTNORLOG88pzcw0fEmjwQh630nAXAvW3T5z58-uNcC3i3ttrzL3IM",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -7916,6 +7881,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/5VVLxG7qsOZ8dpi-P89LseN7AoD9mSoszu1LNHmxP5lCi4KKP3u1zRQbshHQ-fAJOrk",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -8477,6 +8443,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":"Ana Popović",
 "photo_url":"https://photos.redhat-bootlegs.net/share/4bfnX6LtkfDGjz7va9ze8vCiMTS8a4wpDD8GZlGfTe6sHLTrCi5aN1cUGPsTj-kE7zg",
+"role":"support",
 "goals":[]
 },
 {
@@ -8484,6 +8451,7 @@
 "venue":"The Vault at Capital One Hall, Tysons Corner, VA, USA",
 "via":"Selwyn Birchwood",
 "photo_url":"https://photos.redhat-bootlegs.net/share/jwS0QkC_NTeCsB6KaUBa7H169EXa6ejIhZYi-SyHVJPKSjSTYqNRa-Xq8jZ08XhwDdQ",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -8493,6 +8461,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":"Ana Popović",
 "photo_url":"https://photos.redhat-bootlegs.net/share/7leBWKard1HTreNzs4h-mT85WC5vMiUrn6RCdeeZM0benS42dvbAueWC6Udpx53I4MU",
+"role":"support",
 "goals":[]
 }
 ]
@@ -8592,6 +8561,7 @@
 "venue":"Live at Hub City Vinyl",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book",
 "hat"
@@ -8921,6 +8891,7 @@
 "venue":null,
 "via":"Tommy Castro & the Painkillers",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -9196,6 +9167,7 @@
 "venue":"The Music Center at Strathmore, North Bethesda, MD, USA",
 "via":"Rhiannon Giddens",
 "photo_url":null,
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -9290,6 +9262,7 @@
 "venue":null,
 "via":"Young Dubliners",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -9993,6 +9966,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Gary Clark Jr.",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -10000,6 +9974,7 @@
 "venue":"Baltimore Soundstage, Baltimore, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -10007,6 +9982,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Buddy Guy",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -10014,6 +9990,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Experience Hendrix (Kenny Wayne Shepherd)",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -10021,6 +9998,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -10028,6 +10006,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Steve Miller Band",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -10035,6 +10014,7 @@
 "venue":"The 8x10, Baltimore, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -10042,6 +10022,7 @@
 "venue":"Sixth & I Historic Synagogue, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/7dBixzuNh8PngiV3laL4X20mNIlFzfg4rv3xvVKKgGfeG1kYFJrPWYhZtemCVzWbl5E",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -10601,6 +10582,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -10885,6 +10867,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/98BcVxttnwMNkx_IEaOW-loE__dmp290B-FZAKiL537B8WPRP9xrQXt1rwvxXb_frf8",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -11247,6 +11230,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11254,6 +11238,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11261,6 +11246,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/nUineo_I_i6ok1nbE8dfuGkjtgSDailSeW3rfgt-7K8wCfsMnicXtf9-tBVADiCr2G0",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11268,6 +11254,7 @@
 "venue":"The 8x10, Baltimore, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11275,6 +11262,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":"Greensky Bluegrass",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -11282,6 +11270,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11289,6 +11278,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -11440,6 +11430,7 @@
 "venue":"Hamilton Live",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/WY7Poydq9h1zsTQWuezfsWaWOaTRzZ0T3eN0fAkOiGrMg0YgY4uPPOmXyWNSMY139Uw",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -11449,6 +11440,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Dzf-Z71ZygEg2L2UfWF2ryM2lRlKiyqKqsTgrUrB7dWtJnm8OHD0DXIUPzXv54qXuKQ",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -11456,6 +11448,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/nQC1bsy72OQ_hSsnwshhfim_k-OeE8y-lL1APFoLVhYR0CgyxKZVSQ4xT7vn73hyxUQ",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -11530,55 +11523,6 @@
 }
 ]
 },
-"danielle nicole band":{
-"name":"Danielle Nicole Band",
-"slug":"danielle-nicole-band",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"not_yet",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":true,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Danielle%20Nicole%20Band",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/danielle-nicole-band/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Danielle+Nicole+Band"
-},
-"similar":[]
-},
 "danielle ponder":{
 "name":"Danielle Ponder",
 "slug":"danielle-ponder",
@@ -11609,6 +11553,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -11711,6 +11656,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Steve Earle",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -11957,6 +11903,7 @@
 "venue":null,
 "via":"Bywater Call",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -12242,6 +12189,7 @@
 "venue":"Songbyrd Music House, Washington, DC, USA",
 "via":"Jake Xerxes Fussell",
 "photo_url":"https://photos.redhat-bootlegs.net/share/tQiMgSCzcAaNXf3P0NcFQQnhn-pp-l6eAKd62QHtA6F4JGsPHLER-dDNSs66NZ91XpU",
+"role":"support",
 "goals":[]
 }
 ]
@@ -12527,6 +12475,7 @@
 "venue":"JV's Restaurant",
 "via":"Gabe Stillman",
 "photo_url":"https://photos.redhat-bootlegs.net/share/JMZlCTFQv8ZBsyODILhT-HymccY5jStfyRa6D3NAUHrcGLRtNyAnc5oDrOfcz0_KPug",
+"role":"support",
 "goals":[]
 },
 {
@@ -12534,6 +12483,7 @@
 "venue":null,
 "via":"Tommy Castro & the Painkillers",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -13002,6 +12952,7 @@
 "venue":null,
 "via":"Gary Clark Jr.",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -13009,6 +12960,7 @@
 "venue":null,
 "via":"Christone 'Kingfish' Ingram",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -13016,6 +12968,7 @@
 "venue":null,
 "via":"Buddy Guy",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -13023,6 +12976,7 @@
 "venue":null,
 "via":"Christone 'Kingfish' Ingram",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -13030,6 +12984,7 @@
 "venue":null,
 "via":"Steve Miller Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -13037,6 +12992,7 @@
 "venue":null,
 "via":"Christone 'Kingfish' Ingram",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -13107,6 +13063,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -13206,6 +13163,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Experience Hendrix (Kenny Wayne Shepherd)",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -13213,6 +13171,7 @@
 "venue":null,
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -13449,6 +13408,7 @@
 "venue":"Pier Six Pavilion",
 "via":"Lake Street Dive",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -13551,6 +13511,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":"Tab Benoit",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -13614,7 +13575,7 @@
 {
 "name":"Trombone Shorty",
 "in_tracker":true,
-"slug":"trombone-shorty"
+"slug":"trombone-shorty-orleans-avenue"
 },
 {
 "name":"Hot 8 Brass Band",
@@ -13979,6 +13940,7 @@
 "venue":null,
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -14081,6 +14043,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -14176,6 +14139,7 @@
 "venue":"Gateway Park, Arlington, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -14274,6 +14238,7 @@
 "venue":"Baltimore Soundstage, Baltimore, MD, USA",
 "via":"Christone 'Kingfish' Ingram",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -14281,6 +14246,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Experience Hendrix (Kenny Wayne Shepherd)",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -14467,6 +14433,7 @@
 "venue":"The Birchmere",
 "via":"The Lone Bellow",
 "photo_url":"https://photos.redhat-bootlegs.net/share/3AYFoumPmYFVVqVeuVosymMPzs1o1Ft43UZNv9CSXcdDEK0K9xQPhjyBLYetwGMYMFw",
+"role":"support",
 "goals":[]
 }
 ]
@@ -14583,6 +14550,7 @@
 "venue":"Lyric Performing Arts Center, Baltimore, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -14641,7 +14609,7 @@
 {
 "name":"Nick Lowe",
 "in_tracker":true,
-"slug":"nick-lowe"
+"slug":"nick-lowe-los-straitjackets"
 },
 {
 "name":"Elvis Costello with Burt Bacharach",
@@ -14682,6 +14650,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -14781,6 +14750,7 @@
 "venue":"Wolf Trap Farm Park (The Barns), Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/e8EgGmM991kC4CVt4CUfRjMWsruJYUA9HJbvGqrKZ2vkK4Be1Oa9myvggGDiSi_B18Y",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -14790,6 +14760,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -14797,6 +14768,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -14804,6 +14776,7 @@
 "venue":"City Winery, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -15094,6 +15067,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15101,6 +15075,7 @@
 "venue":null,
 "via":"Slash",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -15108,6 +15083,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/WF1TRaFKUaAMebYEAsUD-J_DluhKuEWxaSxvb5DjqD5LeTvkdEZ6Z5MMyh83XbnWeE0",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15115,6 +15091,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/bIJnKrwBclw79WBzVEtDTqmgix518blmgAE4sAY4sI1kWRPuJaka5n44Fr0VwrClaXY",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -15217,6 +15194,7 @@
 "venue":"Jammin' Java, Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/MvC4uDeq-bGdKhr0EvvzC2nPXErfzOhmNWE975GTnLIHFEyWztFSaR_ntaDKqurBClc",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15224,6 +15202,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":"Samantha Fish & Jesse Dayton",
 "photo_url":"https://photos.redhat-bootlegs.net/share/_vDbxBlj22-64v2P1cpwUjCK4_ctfifqb6tAqAnVHnXkjecDDTQ_ffMz0J6ncpcbn_k",
+"role":"support",
 "goals":[]
 }
 ]
@@ -15593,6 +15572,7 @@
 "venue":"The State Theatre",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15600,6 +15580,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15607,6 +15588,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15614,6 +15596,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -15621,6 +15604,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -15857,6 +15841,7 @@
 "venue":"DC9",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -15958,6 +15943,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -16540,6 +16526,7 @@
 "venue":"JV's Restaurant",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/JMZlCTFQv8ZBsyODILhT-HymccY5jStfyRa6D3NAUHrcGLRtNyAnc5oDrOfcz0_KPug",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -16639,6 +16626,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -16741,6 +16729,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -16937,6 +16926,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -16944,6 +16934,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -17133,6 +17124,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -17333,6 +17325,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/oK2lUjyI5FI0HL6UdbMY57IrrDTI1GD2Zxg8JnlWzktdGvo_vo4SdUTBU4LYoDTbiUs",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -17340,6 +17333,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Samantha Fish",
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZwMQiWdrKY3e4EgMQgpdnVdYSirElOBnmcyt-8InY1IrWkg9g8Ow6a18FcOd0B6scgw",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -17349,6 +17343,7 @@
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"guest",
 "goals":[]
 }
 ]
@@ -17496,7 +17491,7 @@
 {
 "name":"Gillian Welch & David Rawlings",
 "in_tracker":true,
-"slug":"gillian-welch-david-rawlings"
+"slug":"gillian-welch"
 },
 {
 "name":"Lucinda Williams",
@@ -17512,94 +17507,6 @@
 "name":"Justin Townes Earle",
 "in_tracker":true,
 "slug":"justin-townes-earle"
-}
-]
-},
-"gillian welch david rawlings":{
-"name":"Gillian Welch & David Rawlings",
-"slug":"gillian-welch-david-rawlings",
-"spotify_id":"2fUnpA1PTMeS9Z8pvhEUJA",
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[
-"alt-country",
-"folk",
-"americana"
-],
-"listener":{
-"tranche":"emerging",
-"raw":21585
-},
-"tier":{
-"label":"Strong",
-"rank":4
-},
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":{
-"score":0.35,
-"band":"medium"
-},
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":"https://open.spotify.com/artist/2fUnpA1PTMeS9Z8pvhEUJA",
-"youtube":null,
-"lastfm":"https://www.last.fm/music/Gillian+Welch+&+David+Rawlings",
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Gillian%20Welch%20%26%20David%20Rawlings",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/gillian-welch-david-rawlings/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Gillian+Welch+&+David+Rawlings"
-},
-"similar":[
-{
-"name":"Gillian Welch",
-"in_tracker":true,
-"slug":"gillian-welch"
-},
-{
-"name":"Dave Rawlings Machine",
-"in_tracker":false,
-"slug":null
-},
-{
-"name":"Patty Griffin",
-"in_tracker":true,
-"slug":"patty-griffin"
-},
-{
-"name":"Jason Isbell",
-"in_tracker":true,
-"slug":"jason-isbell"
-},
-{
-"name":"Lucinda Williams",
-"in_tracker":true,
-"slug":"lucinda-williams"
 }
 ]
 },
@@ -17630,6 +17537,7 @@
 "venue":"9:30 Club",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Qc-XES3w9diniTNj9V81PjubA1EsWQy2zGJesccmdQXc4P7lvGLvFzGhp_y4laN4Zqw",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -17830,6 +17738,7 @@
 "venue":"Allianz Amphitheater at Riverfront",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -18071,6 +17980,7 @@
 "venue":"9:30 Club",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -18078,6 +17988,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -18452,6 +18363,7 @@
 "venue":"Jammin' Java",
 "via":"Kingsley Flood",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -18525,6 +18437,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -18764,6 +18677,7 @@
 "venue":"The Atlantis, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/1veLx44iNeI5VWA2SjTn_oKUjVIOjoeUpKmoKNHG8-uo2-A99ghiqA1AMetSubSfzIM",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -18865,6 +18779,7 @@
 "venue":null,
 "via":"Robert Jon & The Wreck",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -18960,6 +18875,7 @@
 "venue":"Bethesda Theater, Bethesda, MD, USA",
 "via":"Maggie Rose",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -19049,6 +18965,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -19365,6 +19282,7 @@
 "venue":"Jiffy Lube Live, Bristow, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -19467,6 +19385,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -19569,6 +19488,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":"Sonny Landreth",
 "photo_url":"https://photos.redhat-bootlegs.net/share/gK_Ts4ApL79Y5iEl7OCcnLcznPzTOV0jiAVM_CCHJFwc8H48_nG0fYx0Fza_QpjgS70",
+"role":"support",
 "goals":[]
 }
 ]
@@ -19905,6 +19825,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -20147,6 +20068,7 @@
 "venue":"JV's Restaurant, Falls Church, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/nuoLMH751RF6dcfBOF2nM474Uo7aVPxupNtoVcL14qSpILHLHkYZzK8ehDJJSd1glQ0",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -20519,6 +20441,7 @@
 "venue":"New Spire Arts",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/23FT3aolC7xwc8xbtG1CDCYci7h8B-i53fMOXT_2aCi1WoDHQgdnseTf9-EIIqhOelo",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -20526,6 +20449,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/w3p3Z7R-yb8j9cUPasotn_5UGyYNUM0ynJd1yCiHg0y8fyazbArYEa62YheUz56hNnk",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -20533,6 +20457,7 @@
 "venue":"Color Burst Park, Columbia, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZjuVmgZz0mrBVTcDli_GfEUU1Q4cbQtiL78nVlSppqRx9jaU8xnd8rpz-lbxQxh6Ihw",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -20774,6 +20699,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":"ZZ Ward",
 "photo_url":"https://photos.redhat-bootlegs.net/share/Wyx3Yyi2cHeGqjlpO1CTXSOj5kTHzPnpN_6J58dnPJIzMH1-_omh1U-FU1dhhFwH3I8",
+"role":"support",
 "goals":[]
 }
 ]
@@ -20925,6 +20851,7 @@
 "venue":"Millennium Stage, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/c88ZR_Eg2baXyOkVL_1sZonOYveyNHVu5NRnlS1ardjpOWiPATg6HMXJc6IuN3AOvMs",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -21027,6 +20954,7 @@
 "venue":"Union Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/kyDbpC0SBNZckrLtUktLwGDET5jhYZ6E3V-3Ut8Kguko3JHedfXUM6-eMLRFK-NF-rI",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -21034,6 +20962,7 @@
 "venue":"Songbyrd Music House, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/tQiMgSCzcAaNXf3P0NcFQQnhn-pp-l6eAKd62QHtA6F4JGsPHLER-dDNSs66NZ91XpU",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -21106,55 +21035,6 @@
 }
 ]
 },
-"james hunter":{
-"name":"James Hunter",
-"slug":"james-hunter",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"not_yet",
-"book_detail":{
-"aps":{
-"in":true,
-"signed":false,
-"page":"89"
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/James%20Hunter",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/james-hunter/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=James+Hunter"
-},
-"similar":[]
-},
 "james hunter six":{
 "name":"The James Hunter Six",
 "slug":"james-hunter-six",
@@ -21185,6 +21065,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Bonnie Raitt",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -21196,12 +21077,12 @@
 },
 "badges":{
 "hat":"absent",
-"book":"absent",
+"book":"not_yet",
 "book_detail":{
 "aps":{
-"in":false,
+"in":true,
 "signed":false,
-"page":null
+"page":"89"
 },
 "rhbs":{
 "in":false,
@@ -21233,7 +21114,7 @@
 {
 "name":"James Hunter",
 "in_tracker":true,
-"slug":"james-hunter"
+"slug":"james-hunter-six"
 },
 {
 "name":"Sharon Jones and the Dap-Kings",
@@ -21714,6 +21595,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Z8lKFQUfvjdwG5Ot-YvBDuAvQeoR0js2mziMtAcfNuhloYe5e6ifvr-H2DeAr2Zpd8I",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -21895,6 +21777,7 @@
 "venue":null,
 "via":"Galactic",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -22076,23 +21959,40 @@
 "rank":2
 },
 "seen":{
-"count":1,
-"first":"2024-12-17",
-"recent":null,
+"count":3,
+"first":"2023-06-11",
+"recent":"2024-12-17",
 "show_log":[
 {
 "date":"2024-12-17",
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Tab Benoit",
 "photo_url":null,
+"role":"support",
+"goals":[]
+},
+{
+"date":"2023-12-03",
+"venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
+"via":"Samantha Fish & Jesse Dayton",
+"photo_url":"https://photos.redhat-bootlegs.net/share/_vDbxBlj22-64v2P1cpwUjCK4_ctfifqb6tAqAnVHnXkjecDDTQ_ffMz0J6ncpcbn_k",
+"role":"principal",
+"goals":[]
+},
+{
+"date":"2023-06-11",
+"venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
+"via":"Buddy Guy",
+"photo_url":null,
+"role":"principal",
 "goals":[]
 }
 ]
 },
 "fast_track":false,
 "affinity":{
-"score":0.289,
-"band":"low"
+"score":0.587,
+"band":"medium"
 },
 "badges":{
 "hat":"absent",
@@ -22109,7 +22009,7 @@
 }
 },
 "vip":0,
-"photo":0,
+"photo":1,
 "photo_album":null
 },
 "latest_release":{
@@ -22157,9 +22057,9 @@
 }
 ]
 },
-"jesse williams band":{
-"name":"The Jesse Williams Band",
-"slug":"jesse-williams-band",
+"jesse williams":{
+"name":"Jesse Williams",
+"slug":"jesse-williams",
 "spotify_id":"25bTqoUyhe5jwszJNB4zwo",
 "mbid":null,
 "image_url":"https://i.scdn.co/image/ab6761610000517422c5722b57b073437a14a8c8",
@@ -22180,17 +22080,20 @@
 "venue":"The Birchmere",
 "via":"ZZ Ward",
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZT1wXODQYF-TityjB92wbUYeMZQETr7z32wsfm2OA6x3Uc4qoO5SiYZjWgWnfTmUiMY",
-"goals":[]
+"role":"support",
+"goals":[
+"hat"
+]
 }
 ]
 },
 "fast_track":false,
 "affinity":{
-"score":0.282,
-"band":"low"
+"score":0.342,
+"band":"medium"
 },
 "badges":{
-"hat":"absent",
+"hat":"completed",
 "book":"absent",
 "book_detail":{
 "aps":{
@@ -22219,10 +22122,10 @@
 "youtube":null,
 "lastfm":"https://www.last.fm/music/The+Jesse+Williams+Band",
 "musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/The%20Jesse%20Williams%20Band",
+"bandsintown":"https://www.bandsintown.com/Jesse%20Williams",
 "seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/jesse-williams-band/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=The+Jesse+Williams+Band"
+"qobuz":"https://www.qobuz.com/us-en/interpreter/jesse-williams/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=Jesse+Williams"
 },
 "similar":[
 {
@@ -22275,6 +22178,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -22475,6 +22379,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/OrxPezjiWIz7aokFx0nlr6BMVzcZF6Ofk5SYzDXw_lV9KKxLJCRzZdUW-YDtOaLiqyE",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -22574,6 +22479,7 @@
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"guest",
 "goals":[]
 }
 ]
@@ -22695,55 +22601,6 @@
 },
 "similar":[]
 },
-"jj grey":{
-"name":"JJ Grey",
-"slug":"jj-grey",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"not_yet",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":true,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/JJ%20Grey",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/jj-grey/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=JJ+Grey"
-},
-"similar":[]
-},
 "jj grey mofro":{
 "name":"JJ Grey & Mofro",
 "slug":"jj-grey-mofro",
@@ -22774,6 +22631,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -22781,6 +22639,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/0mQ0mYbN6FjFdjhhA6x-OPsDQxywYvEv7EH-zKy5GOsXM5xxGsAC61IM4hO0fe2h2Ds",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -22880,6 +22739,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -23125,6 +22985,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/_JdQFEZZjoWZESyua3JejchllBHe71zTy6p6-F1OiPgjCETzsODWbY_O4iQpfo5E4Bo",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -23132,6 +22993,7 @@
 "venue":"Maryland Theatre, Hagerstown, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -23233,6 +23095,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -23335,6 +23198,7 @@
 "venue":"The Theater at MGM National Harbor, National Harbor, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -23430,6 +23294,7 @@
 "venue":null,
 "via":"Sonny Landreth",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -23543,9 +23408,10 @@
 "show_log":[
 {
 "date":"2026-05-30",
-"venue":null,
+"venue":"Wolf Trap Filene Center",
 "via":"SatchVai Band",
 "photo_url":null,
+"role":"principal",
 "goals":[]
 }
 ]
@@ -23791,6 +23657,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -24154,8 +24021,8 @@
 "similar":[]
 },
 "john primer":{
-"name":"John Primer & The Real Deal Blues Band",
-"slug":"john-primer-the-real-deal-blues-band",
+"name":"John Primer",
+"slug":"john-primer",
 "spotify_id":"1CePnHlc38UfIQovWgyzKP",
 "mbid":"3de2fcfc-0b36-4106-b234-e13db03aa775",
 "image_url":"https://i.scdn.co/image/ab67616100005174076b7bf31ea26aed3e42d716",
@@ -24183,6 +24050,7 @@
 "venue":"Hank Dietle's Tavern",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/BUO6WTeW2u7eVAPrUdu_iuNXFWSjea-uZVyLxHp9eSILJ99cR-fl6sl4zCoInwH7rFI",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -24222,10 +24090,10 @@
 "youtube":"@johnprimerblues3503",
 "lastfm":"https://www.last.fm/music/John+Primer",
 "musicbrainz":"https://musicbrainz.org/artist/3de2fcfc-0b36-4106-b234-e13db03aa775",
-"bandsintown":"https://www.bandsintown.com/John%20Primer%20%26%20The%20Real%20Deal%20Blues%20Band",
+"bandsintown":"https://www.bandsintown.com/John%20Primer",
 "seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/john-primer-the-real-deal-blues-band/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=John+Primer+&+The+Real+Deal+Blues+Band"
+"qobuz":"https://www.qobuz.com/us-en/interpreter/john-primer/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=John+Primer"
 },
 "similar":[
 {
@@ -24432,6 +24300,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -24439,6 +24308,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/9kH83yWodWCN_cstP6mxA1pXDL4W5_66DLABQaDM89jBkrZdcOeyTTM3AtP2yp0QqNc",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -24446,6 +24316,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -25472,6 +25343,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/1zcV-JDKROzCLdfD0Qn1TJY1IAPbfalILSAQX5_fyqqqpRsOZ9abTWvXsiwj6MQ1Zaw",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -25479,6 +25351,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Buddy Guy",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -25486,6 +25359,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":"JJ Grey & Mofro",
 "photo_url":"https://photos.redhat-bootlegs.net/share/0mQ0mYbN6FjFdjhhA6x-OPsDQxywYvEv7EH-zKy5GOsXM5xxGsAC61IM4hO0fe2h2Ds",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -25587,6 +25461,7 @@
 "venue":"The Atlantis, Washington, DC, USA",
 "via":"The Heavy Heavy",
 "photo_url":"https://photos.redhat-bootlegs.net/share/1veLx44iNeI5VWA2SjTn_oKUjVIOjoeUpKmoKNHG8-uo2-A99ghiqA1AMetSubSfzIM",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -25960,6 +25835,7 @@
 "venue":null,
 "via":"The Lone Bellow",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -26218,6 +26094,7 @@
 "venue":"Songbyrd Music House, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -26225,6 +26102,7 @@
 "venue":"Songbyrd Music House, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -26232,6 +26110,7 @@
 "venue":"Songbyrd Music House, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -26481,15 +26360,17 @@
 "venue":"Maryland Hall for the Creative Arts, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book"
 ]
 },
 {
 "date":"2025-06-08",
-"venue":null,
+"venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"TajMo: The Taj Mahal & Keb' Mo' Band",
 "photo_url":null,
+"role":"principal",
 "goals":[]
 },
 {
@@ -26497,6 +26378,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -26559,8 +26441,8 @@
 },
 {
 "name":"Robert Cray",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"robert-cray-band"
 },
 {
 "name":"Buddy Guy",
@@ -26645,6 +26527,7 @@
 "venue":null,
 "via":"Young Dubliners",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -26845,6 +26728,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -26852,6 +26736,7 @@
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -26950,6 +26835,7 @@
 "venue":"Rams Head On Stage",
 "via":"Ghalia Volt",
 "photo_url":"https://photos.redhat-bootlegs.net/share/oK2lUjyI5FI0HL6UdbMY57IrrDTI1GD2Zxg8JnlWzktdGvo_vo4SdUTBU4LYoDTbiUs",
+"role":"support",
 "goals":[]
 }
 ]
@@ -27112,7 +26998,7 @@
 {
 "name":"Trombone Shorty",
 "in_tracker":true,
-"slug":"trombone-shorty"
+"slug":"trombone-shorty-orleans-avenue"
 }
 ]
 },
@@ -27438,6 +27324,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":"Jimmie Vaughan",
 "photo_url":"https://photos.redhat-bootlegs.net/share/OrxPezjiWIz7aokFx0nlr6BMVzcZF6Ofk5SYzDXw_lV9KKxLJCRzZdUW-YDtOaLiqyE",
+"role":"support",
 "goals":[]
 }
 ]
@@ -27589,6 +27476,7 @@
 "venue":"Jammin' Java",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -27596,6 +27484,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -27603,6 +27492,7 @@
 "venue":"Millennium Stage, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -27610,6 +27500,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -27617,6 +27508,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -28136,6 +28028,7 @@
 "venue":"Pier Six Pavilion",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -28420,6 +28313,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZMEdMK5xWEBHCDyZhoaiKO33pB__C2Yv1xvYBRznxM1Gjmzy64jr_CFHq_eJOT2Q4gc",
+"role":"principal",
 "goals":[
 "book"
 ]
@@ -28524,6 +28418,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/mD2wOWzaZacfIEwOEUqHq4igjQQIL-YYeKQeX2sRA_02tNK0xBoixavNWCuLuPvGtDM",
+"role":"headliner",
 "goals":[
 "book",
 "hat"
@@ -28534,6 +28429,7 @@
 "venue":"Koka Booth Amphitheatre, Cary, NC, USA",
 "via":"Slash",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -28541,6 +28437,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Indigo Girls",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -28548,6 +28445,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Mr2Qj6l6sJHzikpbVhgDtrLEA4OQcfs6UaUFTydxjX2CKT5a3JaLx5_tz1YKSnYmS4g",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -28555,6 +28453,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":"Willie Nelson",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -28562,6 +28461,7 @@
 "venue":"The Recher, Towson, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/wbBHbgKRfR6-Ah84CUR3hJADqpfcpxDk2b-5RZ4e3C2mftzq0eLktMnigt2ilFIbT-M",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -28957,6 +28857,7 @@
 "venue":null,
 "via":"Vanessa Collier",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "book"
 ]
@@ -28966,6 +28867,7 @@
 "venue":null,
 "via":"Vanessa Collier",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "hat"
 ]
@@ -28975,6 +28877,7 @@
 "venue":null,
 "via":"Vanessa Collier",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -29070,6 +28973,7 @@
 "venue":null,
 "via":"The Secret Sisters",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -29440,6 +29344,7 @@
 "venue":null,
 "via":"John Primer & The Real Deal Blues Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -29702,6 +29607,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":"Tab Benoit",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -30218,6 +30124,7 @@
 "venue":"The Music Center at Strathmore, North Bethesda, MD, USA",
 "via":"The Wood Brothers",
 "photo_url":"https://photos.redhat-bootlegs.net/share/6uFW_O1AJHsK54Fuz6oDyJYbNTIZ3eoCcPFCVWuLOBncK3snZ_kHViBB9xhOBdKZSKI",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -30227,6 +30134,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"The Lone Bellow",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -30324,6 +30232,7 @@
 "venue":null,
 "via":"Albert Castiglia",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -30542,6 +30451,7 @@
 "venue":"Lincoln Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -30641,6 +30551,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -30740,6 +30651,7 @@
 "venue":"Capital One Arena, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -30842,6 +30754,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/3AYFoumPmYFVVqVeuVosymMPzs1o1Ft43UZNv9CSXcdDEK0K9xQPhjyBLYetwGMYMFw",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -30849,6 +30762,7 @@
 "venue":"Union Stage, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/TPP2GeBBE2wK4vCnHUkstrDsttptbw0iHOKC1bzV-hk27deUeKkcC2S8lZHyHHT_woA",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -30858,6 +30772,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -30865,6 +30780,7 @@
 "venue":"Wolf Trap Farm Park (The Barns), Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/yNZmZGF3M7JWHMvZ_3nejW8yqyy3h2n7caI_jq1IbWMvyjtDoXgIK20fUYrJj-x52Nc",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -30874,6 +30790,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -30973,6 +30890,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -31312,6 +31230,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -31411,6 +31330,7 @@
 "venue":"Union Stage, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/bgscNYp5XDwiJW0mF2tBdidqOYdL8MCEEr3Ucl50eT9nRcShD_zCCjGtB9mia5zZhtc",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -31469,7 +31389,7 @@
 {
 "name":"Trombone Shorty",
 "in_tracker":true,
-"slug":"trombone-shorty"
+"slug":"trombone-shorty-orleans-avenue"
 },
 {
 "name":"Rebirth Brass Band",
@@ -31604,6 +31524,7 @@
 "venue":null,
 "via":"North Mississippi Allstars",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "book"
 ]
@@ -31698,6 +31619,7 @@
 "venue":null,
 "via":"The Secret Sisters",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -31768,6 +31690,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -31775,6 +31698,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -31870,6 +31794,7 @@
 "venue":"Concerts at The Sevareid House",
 "via":"Whitney Mongé",
 "photo_url":"https://photos.redhat-bootlegs.net/share/q4vtC6E2cdFMfr3h6fOzSnA-DW5H3QZ04BR7zOC0O_H1nZyxv5CCUFnI5Gv-e9HKAuk",
+"role":"support",
 "goals":[]
 }
 ]
@@ -32055,6 +31980,7 @@
 "venue":"Bethesda Theater, Bethesda, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -32154,6 +32080,7 @@
 "venue":null,
 "via":"Jake Blount",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "hat"
 ]
@@ -32251,6 +32178,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":"Danielle Nicole",
 "photo_url":"https://photos.redhat-bootlegs.net/share/nQC1bsy72OQ_hSsnwshhfim_k-OeE8y-lL1APFoLVhYR0CgyxKZVSQ4xT7vn73hyxUQ",
+"role":"support",
 "goals":[]
 }
 ]
@@ -32545,6 +32473,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -32644,6 +32573,7 @@
 "venue":"9:30 Club",
 "via":"Glen Hansard",
 "photo_url":"https://photos.redhat-bootlegs.net/share/Qc-XES3w9diniTNj9V81PjubA1EsWQy2zGJesccmdQXc4P7lvGLvFzGhp_y4laN4Zqw",
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -32745,6 +32675,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -33001,7 +32932,7 @@
 {
 "name":"Nick Lowe",
 "in_tracker":true,
-"slug":"nick-lowe"
+"slug":"nick-lowe-los-straitjackets"
 }
 ]
 },
@@ -33272,6 +33203,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":"Christone 'Kingfish' Ingram",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -33462,6 +33394,7 @@
 "venue":"Hamilton Live",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/tXFeHf91PBMb_xeSwdkWyheWNthAioTpwBXu0qRvs1QlVnosA9Iy0gOttI6zm5XdYMM",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -33554,6 +33487,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -33679,6 +33613,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":"https://photos.redhat-bootlegs.net/share/qphzH5LAGen3UDlR8ygoWedVhtgOLH9dt_OcrvslysYKJ9kb-gJGv8623CHCGKX31eY",
+"role":"support",
 "goals":[]
 },
 {
@@ -33686,6 +33621,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -33928,6 +33864,7 @@
 "venue":null,
 "via":"Bywater Call",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -34081,6 +34018,7 @@
 "venue":null,
 "via":"John Primer & The Real Deal Blues Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -34281,6 +34219,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/_Zo6jAXZFgQfST7jm3M6xZcIk7axn-UwWmY5YN0lj60nx30wCp2HbkPFo6jfyui-jCU",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -34571,6 +34510,7 @@
 "venue":"Hub City Vinyl, Hagerstown, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Bh-8AfkYE75EHnxYFs9v6B2SbIssITxdme_vpGyo7xZzaqPVdfJaXeI1rFyqEODB9Ls",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -34578,6 +34518,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Tab Benoit & Anders Osborne",
 "photo_url":"https://photos.redhat-bootlegs.net/share/WToffWne1fonAQ2qQ4OMotEV-OPOfN5SvGVb79qvPN_C_c8VXefs844-x99stHm0zbA",
+"role":"support",
 "goals":[]
 }
 ]
@@ -34820,6 +34761,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Samantha Fish",
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZwMQiWdrKY3e4EgMQgpdnVdYSirElOBnmcyt-8InY1IrWkg9g8Ow6a18FcOd0B6scgw",
+"role":"support",
 "goals":[]
 }
 ]
@@ -35010,6 +34952,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/W_hgt_vzHhI4vju6QA8DpeZbL1Gh4MczXNvlmt7j3kT3UPhXKoBkpTF4PBM6yMYPLhw",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -35163,6 +35106,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Daniel Donato's Cosmic Country",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -35407,6 +35351,7 @@
 "venue":"Millennium Stage, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -35700,6 +35645,7 @@
 "venue":"Capital One Arena, Washington, DC, USA",
 "via":"Wu-Tang Clan",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -35893,6 +35839,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Jon Batiste",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -36014,55 +35961,6 @@
 },
 "similar":[]
 },
-"nick lowe":{
-"name":"Nick Lowe",
-"slug":"nick-lowe",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"not_yet",
-"book_detail":{
-"aps":{
-"in":true,
-"signed":false,
-"page":"60"
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Nick%20Lowe",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/nick-lowe/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Nick+Lowe"
-},
-"similar":[]
-},
 "nick lowe los straitjackets":{
 "name":"Nick Lowe & Los Straitjackets",
 "slug":"nick-lowe-los-straitjackets",
@@ -36086,6 +35984,7 @@
 "venue":"Lyric Performing Arts Center, Baltimore, MD, USA",
 "via":"Elvis Costello & The Imposters",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -36097,12 +35996,12 @@
 },
 "badges":{
 "hat":"absent",
-"book":"absent",
+"book":"not_yet",
 "book_detail":{
 "aps":{
-"in":false,
+"in":true,
 "signed":false,
-"page":null
+"page":"60"
 },
 "rhbs":{
 "in":false,
@@ -36134,7 +36033,7 @@
 {
 "name":"Nick Lowe",
 "in_tracker":true,
-"slug":"nick-lowe"
+"slug":"nick-lowe-los-straitjackets"
 },
 {
 "name":"Los Straitjackets",
@@ -36325,6 +36224,7 @@
 "venue":"Union Stage, Washington, DC, USA",
 "via":"The Lone Bellow",
 "photo_url":"https://photos.redhat-bootlegs.net/share/TPP2GeBBE2wK4vCnHUkstrDsttptbw0iHOKC1bzV-hk27deUeKkcC2S8lZHyHHT_woA",
+"role":"support",
 "goals":[]
 }
 ]
@@ -36756,6 +36656,7 @@
 "venue":"Wolf Trap Farm Park (The Barns), Vienna, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/arhmeCdLUZXyqKTTVZtr-mGxapAoHiErlmGbN6ba1-PIMBRCpDkUm9MMzm6K1d7q2Rw",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -36765,6 +36666,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -36916,6 +36818,7 @@
 "venue":"The Vault at Capital One Hall, Tysons Corner, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -36923,6 +36826,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -36930,6 +36834,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -37032,6 +36937,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Langhorne Slim",
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZMEdMK5xWEBHCDyZhoaiKO33pB__C2Yv1xvYBRznxM1Gjmzy64jr_CFHq_eJOT2Q4gc",
+"role":"principal",
 "goals":[
 "book"
 ]
@@ -37041,6 +36947,7 @@
 "venue":"Millennium Stage, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -37048,6 +36955,7 @@
 "venue":"The Patio Stage at Strathmore, North Bethesda, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -37202,6 +37110,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -37209,6 +37118,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -37311,6 +37221,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -37555,6 +37466,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -37650,6 +37562,7 @@
 "venue":null,
 "via":"Orianthi",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -38174,6 +38087,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -38363,6 +38277,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -38599,6 +38514,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -39251,6 +39167,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":"Victor Wooten",
 "photo_url":"https://photos.redhat-bootlegs.net/share/g2QqtH07jek63SJFNgUqNdZPNK1qlFpgIF3AnzVfU-yft0JC3cyTXGOEEq1luzqb4O0",
+"role":"support",
 "goals":[]
 }
 ]
@@ -39319,7 +39236,7 @@
 {
 "name":"Trombone Shorty",
 "in_tracker":true,
-"slug":"trombone-shorty"
+"slug":"trombone-shorty-orleans-avenue"
 }
 ]
 },
@@ -39486,6 +39403,7 @@
 "venue":null,
 "via":"Selwyn Birchwood",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "book"
 ]
@@ -39495,6 +39413,7 @@
 "venue":null,
 "via":"Selwyn Birchwood",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -39502,6 +39421,7 @@
 "venue":null,
 "via":"Selwyn Birchwood",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -39509,6 +39429,7 @@
 "venue":null,
 "via":"Selwyn Birchwood",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -39814,6 +39735,7 @@
 "venue":"The Music Center at Strathmore, North Bethesda, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -39821,6 +39743,7 @@
 "venue":"The Clarice Smith Performing Arts Center, College Park, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/5_ypQhXIFQvtwyCqBl5aV74vZHffGsbOHkkliJobcR6i5zOFmvD_7p_ADtBFCsjURgc",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -40259,6 +40182,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -40518,8 +40442,8 @@
 },
 {
 "name":"Robert Cray",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"robert-cray-band"
 }
 ]
 },
@@ -40550,6 +40474,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -40602,8 +40527,8 @@
 },
 {
 "name":"Robert Cray",
-"in_tracker":false,
-"slug":null
+"in_tracker":true,
+"slug":"robert-cray-band"
 },
 {
 "name":"Jimmie Vaughan",
@@ -40701,6 +40626,7 @@
 "venue":"Hamilton Live",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -40803,6 +40729,7 @@
 "venue":"The Atlantis, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -40810,6 +40737,7 @@
 "venue":"Koka Booth Amphitheatre, Cary, NC, USA",
 "via":"Slash",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -40817,6 +40745,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Buddy Guy",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -40888,55 +40817,6 @@
 "slug":null
 }
 ]
-},
-"robert randolph band":{
-"name":"Robert Randolph Band",
-"slug":"robert-randolph-band",
-"spotify_id":null,
-"mbid":null,
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":null,
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"not_yet",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":true,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":null,
-"musicbrainz":null,
-"bandsintown":"https://www.bandsintown.com/Robert%20Randolph%20Band",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/robert-randolph-band/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Robert+Randolph+Band"
-},
-"similar":[]
 },
 "robin trower":{
 "name":"Robin Trower",
@@ -41200,6 +41080,7 @@
 "venue":"Capital One Arena, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -41625,6 +41506,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book",
 "hat"
@@ -41730,6 +41612,7 @@
 "venue":"Jammin' Java",
 "via":"Anna Moss",
 "photo_url":"https://photos.redhat-bootlegs.net/share/uy3vpDgDQ7s-Sld-lf-FC_w9qkeyl_ILE8MSsE6CHO6e3wOxJeG72h7lR4mBqF9CW9c",
+"role":"principal",
 "goals":[
 "hat"
 ]
@@ -41824,6 +41707,7 @@
 "venue":"Rams Head On Stage",
 "via":"Southern Avenue",
 "photo_url":"https://photos.redhat-bootlegs.net/share/BYGoUhLtlgC4OC92f7Rpkj5c7nDoKscVJqwX6IK5_Wb6UiVeG0cJPuT6a-FF9yPLu_4",
+"role":"support",
 "goals":[]
 }
 ]
@@ -41894,6 +41778,7 @@
 "venue":"The Atlantis, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -41901,6 +41786,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":"Shakey Graves",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -42000,6 +41886,7 @@
 "venue":"Union Stage",
 "via":"Jake Xerxes Fussell",
 "photo_url":"https://photos.redhat-bootlegs.net/share/kyDbpC0SBNZckrLtUktLwGDET5jhYZ6E3V-3Ut8Kguko3JHedfXUM6-eMLRFK-NF-rI",
+"role":"support",
 "goals":[]
 }
 ]
@@ -42191,8 +42078,8 @@
 "rank":4
 },
 "seen":{
-"count":2,
-"first":"2024-11-20",
+"count":4,
+"first":"2023-06-11",
 "recent":"2025-04-05",
 "show_log":[
 {
@@ -42200,6 +42087,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":"Experience Hendrix (Kenny Wayne Shepherd)",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -42207,13 +42095,32 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZwMQiWdrKY3e4EgMQgpdnVdYSirElOBnmcyt-8InY1IrWkg9g8Ow6a18FcOd0B6scgw",
+"role":"headliner",
+"goals":[]
+},
+{
+"date":"2023-12-03",
+"venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
+"via":"Samantha Fish & Jesse Dayton",
+"photo_url":"https://photos.redhat-bootlegs.net/share/_vDbxBlj22-64v2P1cpwUjCK4_ctfifqb6tAqAnVHnXkjecDDTQ_ffMz0J6ncpcbn_k",
+"role":"principal",
+"goals":[
+"hat"
+]
+},
+{
+"date":"2023-06-11",
+"venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
+"via":"Buddy Guy",
+"photo_url":null,
+"role":"principal",
 "goals":[]
 }
 ]
 },
 "fast_track":false,
 "affinity":{
-"score":0.78,
+"score":0.903,
 "band":"high"
 },
 "badges":{
@@ -42231,7 +42138,7 @@
 }
 },
 "vip":0,
-"photo":1,
+"photo":2,
 "photo_album":null
 },
 "latest_release":{
@@ -42306,6 +42213,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/_vDbxBlj22-64v2P1cpwUjCK4_ctfifqb6tAqAnVHnXkjecDDTQ_ffMz0J6ncpcbn_k",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -42313,6 +42221,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Buddy Guy",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -42376,7 +42285,7 @@
 {
 "name":"Ally Venable Band",
 "in_tracker":true,
-"slug":"ally-venable-band"
+"slug":"ally-venable"
 },
 {
 "name":"The Blues Mystery",
@@ -42570,6 +42479,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -42665,6 +42575,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -42728,6 +42639,7 @@
 "venue":null,
 "via":"Mike Zito",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -42735,6 +42647,7 @@
 "venue":null,
 "via":"Vanessa Collier",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -42851,6 +42764,7 @@
 "venue":"Hamilton Live",
 "via":"Sue Foley",
 "photo_url":"https://photos.redhat-bootlegs.net/share/4-skDHlzoCUOnzBchIQdY_XHnrzUxT20eY4Q_M50PPFDICtJVkFUZICXBCbb1Nljtwo",
+"role":"support",
 "goals":[]
 }
 ]
@@ -42999,6 +42913,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/2O9-fKfitKOMMR7-wFgwxmeGhsiuYaxHlJPkI4ku4LhFyd3fkjQEIeJXeacdesad0sQ",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -43101,6 +43016,7 @@
 "venue":"Collective Encore",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/xJ4g2h23qyAKNF3kXPV4tHuPWfPgb1uindm7xKmbcaI9AbTRtFZHCYQCISXb6-ucTZM",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -43110,6 +43026,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -43117,6 +43034,7 @@
 "venue":"The Vault at Capital One Hall, Tysons Corner, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/jwS0QkC_NTeCsB6KaUBa7H169EXa6ejIhZYi-SyHVJPKSjSTYqNRa-Xq8jZ08XhwDdQ",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -43124,6 +43042,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/5_QKvQL1yukQAcLDXudiKwQ37TskqnU16IymPOpvcB-Jj5-VMNZI9gIhIqbyP_P7slw",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -43275,6 +43194,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -43426,6 +43346,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Rl-qenWLfStf81ArCDtbQ_LGyprpVqOFlhC7E7-aTZwWH17abVAywiW1us8nSJuVYyI",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -43577,6 +43498,7 @@
 "venue":"Black Cat (Mainstage), Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -43822,6 +43744,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/cr9-qN1hChgjzsWZMKjuMTnL2hAM5-UjYIE3mqtHQ0BRCYEuYqwXwLFFja0nYvrVf6E",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -44024,6 +43947,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -44033,6 +43957,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -44040,6 +43965,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":"The Wood Brothers",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -44132,6 +44058,7 @@
 "venue":"The State Theatre",
 "via":"Every Breath You Take",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -44251,6 +44178,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -44402,7 +44330,7 @@
 {
 "name":"JJ Grey",
 "in_tracker":true,
-"slug":"jj-grey"
+"slug":"jj-grey-mofro"
 },
 {
 "name":"Love in Stockholm",
@@ -44438,6 +44366,7 @@
 "venue":"Koka Booth Amphitheatre, Cary, NC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -44684,6 +44613,7 @@
 "venue":"The Howard Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -44786,6 +44716,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/gK_Ts4ApL79Y5iEl7OCcnLcznPzTOV0jiAVM_CCHJFwc8H48_nG0fYx0Fza_QpjgS70",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -44793,6 +44724,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/wEhMd1NfZYz52zQyUn0iH3mwn6hlM0wUk3ps8JN3_MPJPWS-Akdg_Y-ZQpJEh5z6zBs",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -44892,6 +44824,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -44994,6 +44927,7 @@
 "venue":"The Event Center at Hollywood Casino, Ranson, WV, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -45096,6 +45030,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/BYGoUhLtlgC4OC92f7Rpkj5c7nDoKscVJqwX6IK5_Wb6UiVeG0cJPuT6a-FF9yPLu_4",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -45103,6 +45038,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/mXWwAJKnAFg5jOXLsNZNywrlP87oBgHyhwWswO3Dp0Av6KXj8lGYlPLQ1uw5yQihm1s",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -45207,6 +45143,7 @@
 "venue":"Richmond Music Hall, Richmond, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -45449,6 +45386,7 @@
 "venue":"Hamilton Live",
 "via":"Robert Jon & The Wreck",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -45597,6 +45535,7 @@
 "venue":null,
 "via":"John Primer & The Real Deal Blues Band",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -45745,6 +45684,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -45991,6 +45931,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -46139,9 +46080,10 @@
 "show_log":[
 {
 "date":"2026-05-30",
-"venue":null,
+"venue":"Wolf Trap Filene Center",
 "via":"SatchVai Band",
 "photo_url":null,
+"role":"principal",
 "goals":[]
 }
 ]
@@ -46290,6 +46232,7 @@
 "venue":"CFG Bank Arena, Baltimore, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -46529,6 +46472,7 @@
 "venue":"Hamilton Live",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/4-skDHlzoCUOnzBchIQdY_XHnrzUxT20eY4Q_M50PPFDICtJVkFUZICXBCbb1Nljtwo",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -46538,6 +46482,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -46545,6 +46490,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/acC-PG8AcJ4jgrxpMFyPYMJ3sALWU7i37uPvRn2bnGOoZ1GuAZrRUj20cCRqqJw1uSA",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -46552,6 +46498,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/QC-PyA6oZ_vDg9jcz_0U2EjF7FBMfksfF91nWWMLM7xNx_4SMnoyyV0yXRZZ4TpKwUo",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -47088,6 +47035,7 @@
 "venue":"Lincoln Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -47095,6 +47043,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -47104,6 +47053,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -47255,6 +47205,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -47262,6 +47213,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"Tab Benoit & Anders Osborne",
 "photo_url":"https://photos.redhat-bootlegs.net/share/WToffWne1fonAQ2qQ4OMotEV-OPOfN5SvGVb79qvPN_C_c8VXefs844-x99stHm0zbA",
+"role":"principal",
 "goals":[]
 },
 {
@@ -47269,6 +47221,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -47276,6 +47229,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -47283,6 +47237,7 @@
 "venue":"The State Theatre, Falls Church, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -47378,6 +47333,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/WToffWne1fonAQ2qQ4OMotEV-OPOfN5SvGVb79qvPN_C_c8VXefs844-x99stHm0zbA",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -47452,6 +47408,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -47556,13 +47513,15 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
 "date":"2025-06-08",
-"venue":null,
+"venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"TajMo: The Taj Mahal & Keb' Mo' Band",
 "photo_url":null,
+"role":"principal",
 "goals":[]
 }
 ]
@@ -47658,6 +47617,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -47760,6 +47720,7 @@
 "venue":"Capital One Hall, Tysons Corner, VA, USA",
 "via":"The Allman Betts Band",
 "photo_url":null,
+"role":"guest",
 "goals":[]
 }
 ]
@@ -47855,6 +47816,7 @@
 "venue":"DC9, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -47926,6 +47888,7 @@
 "venue":null,
 "via":"Robert Randolph",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -47933,6 +47896,7 @@
 "venue":null,
 "via":"Slash",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -48035,6 +47999,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":"The Lone Bellow",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -48186,6 +48151,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -48193,6 +48159,7 @@
 "venue":"Warner Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -48435,6 +48402,7 @@
 "venue":"Lincoln Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -48583,6 +48551,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -48590,6 +48559,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "hat"
 ]
@@ -48678,6 +48648,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -48685,6 +48656,7 @@
 "venue":null,
 "via":"Southern Avenue",
 "photo_url":null,
+"role":"seen_with",
 "goals":[
 "hat"
 ]
@@ -48890,6 +48862,7 @@
 "venue":null,
 "via":"Young Dubliners",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -48897,6 +48870,7 @@
 "venue":null,
 "via":"Selwyn Birchwood",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -48904,6 +48878,7 @@
 "venue":null,
 "via":"Ana Popović",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -49069,6 +49044,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/UrnVM1RowjK_JtQn35Nvbr6lP54PEab_6iDRbwT0-QIxMOwRqlGid1gXQdns5xnkGRY",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -49171,6 +49147,7 @@
 "venue":"Lincoln Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -49270,6 +49247,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"John Prine Celebration",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -49418,6 +49396,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -49744,6 +49723,7 @@
 "venue":null,
 "via":"Enter the Haggis",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -49933,6 +49913,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/qphzH5LAGen3UDlR8ygoWedVhtgOLH9dt_OcrvslysYKJ9kb-gJGv8623CHCGKX31eY",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -49940,6 +49921,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -49947,6 +49929,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -49954,6 +49937,7 @@
 "venue":null,
 "via":"Jon Batiste",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 },
 {
@@ -49961,6 +49945,7 @@
 "venue":"The Event Center at Hollywood Casino, Ranson, WV, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -49968,6 +49953,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -50475,6 +50461,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/t0EVLI5jyNvT5piGXwycEUt3UAwmJDwVdan9jQ4N9XyfMxZ7BSrHkx5w73KmVTRx8zU",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -50482,6 +50469,7 @@
 "venue":"Publick Playhouse, Landover, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/BufryhmQ41-u26xOchm1be4jGHz7v_i8o60rIDHAh3LvMe2TlZanYjB61wWzs5uLVpE",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -50586,6 +50574,7 @@
 "venue":"Collective Encore",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/EjrfjGyVF_WHmy0GJnzIhu75YLJhp3ZXny-opBjJV8eiLvvYR9_GIethdQGKy6vYJ9Y",
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -50595,6 +50584,7 @@
 "venue":"Rams Head On Stage",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -50604,6 +50594,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -50611,6 +50602,7 @@
 "venue":"The Hamilton Live, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/PjCHxEuctayjtOrtYvQhW9QltSYykBZpRdnl-t2UQRg20uYLc-0sftuA54_KFD-nZgo",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -50618,6 +50610,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/IYbjB3SNUfybe3rFKbS7CdRM7G64Qqjbdbr5f_yjmI47IHkrQ9-mkKIVe3wvYUCUpAc",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -50625,6 +50618,7 @@
 "venue":"The Collective Encore, Columbia, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/NFeuUXFm1-hZL5TFkAMrQhO-OS_ouji2fqe1jWxmZk2yt-vXBOum1rUs0xPP03R_a38",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -50634,6 +50628,7 @@
 "venue":"AMP by Strathmore, North Bethesda, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/_J00JrSq_0W6CLQejp6IQW3EkiRP4rnrm8BtDUwYZiOzEDRihC78V3IrALLIxPBuKDA",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -50827,6 +50822,7 @@
 "venue":"The Fillmore Silver Spring, Silver Spring, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/g2QqtH07jek63SJFNgUqNdZPNK1qlFpgIF3AnzVfU-yft0JC3cyTXGOEEq1luzqb4O0",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -51118,6 +51114,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -51308,6 +51305,7 @@
 "venue":"Rams Head On Stage, Annapolis, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -51459,6 +51457,7 @@
 "venue":"Wolf Trap Filene Center",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":"https://photos.redhat-bootlegs.net/share/qphzH5LAGen3UDlR8ygoWedVhtgOLH9dt_OcrvslysYKJ9kb-gJGv8623CHCGKX31eY",
+"role":"support",
 "goals":[]
 },
 {
@@ -51466,6 +51465,7 @@
 "venue":"The Howard Theatre, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[
 "book"
 ]
@@ -52077,6 +52077,7 @@
 "venue":"Concerts at The Sevareid House",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/q4vtC6E2cdFMfr3h6fOzSnA-DW5H3QZ04BR7zOC0O_H1nZyxv5CCUFnI5Gv-e9HKAuk",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -52279,6 +52280,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":"The Wood Brothers",
 "photo_url":null,
+"role":"support",
 "goals":[
 "hat"
 ]
@@ -52478,6 +52480,7 @@
 "venue":"Merriweather Post Pavilion, Columbia, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -52550,58 +52553,6 @@
 }
 ]
 },
-"winston mitchell":{
-"name":"Winston Mitchell",
-"slug":"winston-mitchell",
-"spotify_id":null,
-"mbid":"06d80d58-acaa-4737-8022-355ca66c4707",
-"image_url":null,
-"banner_url":null,
-"genres":[],
-"listener":{
-"tranche":"niche",
-"raw":1
-},
-"tier":null,
-"seen":{
-"count":0,
-"first":null,
-"recent":null,
-"show_log":[]
-},
-"fast_track":false,
-"affinity":null,
-"badges":{
-"hat":"absent",
-"book":"absent",
-"book_detail":{
-"aps":{
-"in":false,
-"signed":false,
-"page":null
-},
-"rhbs":{
-"in":false,
-"signed":false
-}
-},
-"vip":0,
-"photo":0,
-"photo_album":null
-},
-"latest_release":null,
-"links":{
-"spotify":null,
-"youtube":null,
-"lastfm":"https://www.last.fm/music/Winston+Mitchell",
-"musicbrainz":"https://musicbrainz.org/artist/06d80d58-acaa-4737-8022-355ca66c4707",
-"bandsintown":"https://www.bandsintown.com/Winston%20Mitchell",
-"seated":null,
-"qobuz":"https://www.qobuz.com/us-en/interpreter/winston-mitchell/download-streaming-albums",
-"setlistfm":"https://www.setlist.fm/search?query=Winston+Mitchell"
-},
-"similar":[]
-},
 "wood brothers":{
 "name":"The Wood Brothers",
 "slug":"wood-brothers",
@@ -52632,6 +52583,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -52639,6 +52591,7 @@
 "venue":"The Music Center at Strathmore, North Bethesda, MD, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/6uFW_O1AJHsK54Fuz6oDyJYbNTIZ3eoCcPFCVWuLOBncK3snZ_kHViBB9xhOBdKZSKI",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -52646,6 +52599,7 @@
 "venue":"The Anthem, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -52794,6 +52748,7 @@
 "venue":"Capital One Arena, Washington, DC, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -52896,6 +52851,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Kro_0D6oz1wHZxc9q1MGS94xulTjONj8wpQcCNlWmHG_jqwSIrq8kGGCGBjIZdotbp0",
+"role":"headliner",
 "goals":[
 "hat"
 ]
@@ -52990,6 +52946,7 @@
 "venue":null,
 "via":"Gov't Mule",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -53057,6 +53014,7 @@
 "venue":"Allianz Amphitheater at Riverfront",
 "via":"Gov't Mule",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -53153,6 +53111,7 @@
 "venue":"Pearl Street Warehouse, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/F1f2kGJyUlvnwcC3QlY3pYbLaTpxCjpA1qVwHBtLu93K7oHlc0oN9MXuVNjlui_mvQc",
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -53252,6 +53211,7 @@
 "venue":"Hamilton Live",
 "via":"Ariel Posen",
 "photo_url":"https://photos.redhat-bootlegs.net/share/6iqmLF90t3aQgk0Gm8XBE8gxlM0RE6O9LsoPcQP73sgQT65Z14blVRvGeD_xYOEkxDg",
+"role":"support",
 "goals":[]
 }
 ]
@@ -53351,6 +53311,7 @@
 "venue":null,
 "via":"The Lone Bellow",
 "photo_url":null,
+"role":"seen_with",
 "goals":[]
 }
 ]
@@ -53619,6 +53580,7 @@
 "venue":"Allianz Amphitheater at Riverfront",
 "via":"Gov't Mule",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -53626,6 +53588,7 @@
 "venue":"Wolf Trap Farm Park (Filene Center), Vienna, VA, USA",
 "via":"Trombone Shorty & Orleans Avenue",
 "photo_url":null,
+"role":"support",
 "goals":[]
 }
 ]
@@ -53725,6 +53688,7 @@
 "venue":"The Theater at MGM National Harbor, National Harbor, MD, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 }
 ]
@@ -53827,6 +53791,7 @@
 "venue":"The Birchmere",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/ZT1wXODQYF-TityjB92wbUYeMZQETr7z32wsfm2OA6x3Uc4qoO5SiYZjWgWnfTmUiMY",
+"role":"headliner",
 "goals":[]
 },
 {
@@ -53834,6 +53799,7 @@
 "venue":"The Birchmere, Alexandria, VA, USA",
 "via":null,
 "photo_url":null,
+"role":"headliner",
 "goals":[]
 },
 {
@@ -53841,6 +53807,7 @@
 "venue":"Koka Booth Amphitheatre, Cary, NC, USA",
 "via":"Slash",
 "photo_url":null,
+"role":"support",
 "goals":[]
 },
 {
@@ -53848,6 +53815,7 @@
 "venue":"9:30 Club, Washington, DC, USA",
 "via":null,
 "photo_url":"https://photos.redhat-bootlegs.net/share/Wyx3Yyi2cHeGqjlpO1CTXSOj5kTHzPnpN_6J58dnPJIzMH1-_omh1U-FU1dhhFwH3I8",
+"role":"headliner",
 "goals":[
 "hat"
 ]
