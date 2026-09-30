@@ -504,7 +504,9 @@ nothing, a missing one loses the reminder entirely.
 
 **MULTI shows (two or more setlist.fm links provided):**
 
-1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
+A show with exactly one setlist.fm link is not a MULTI show, even when several acts appeared in that setlist (a sit-in covered by the headliner's setlist, for example): write the URL directly in `Setlist.fm URL`, with no marker and no sidecar entry.
+
+1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date). This marker and the sidecar entry in item 3 are one change; never write one without the other.
 2. Open **one combined playlist issue** via the same fetch-then-fill procedure —
    title as above; include all setlist.fm links plus each artist's YouTube channel
    handle (support acts first, headliner last), each handle sourced and
@@ -522,7 +524,7 @@ nothing, a missing one loses the reminder entirely.
 }
 ```
 
-   Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
+   Order: support acts first (in bill order), headliner last. Write the marker (item 1) and this entry in the same commit as the other Routine 2 changes, as one multi-file commit to `staging`, fetching a fresh SHA for each file first. A marker with no entry leaves the show's setlist button empty on the site. If Dan says "make only one playlist issue for the combined show," that is this step.
 
 **Step 6b — Open ONE `Photos:` issue for the show (when any photo was taken)**
 
@@ -537,6 +539,8 @@ Memorabilia photographed at the show is filed through the same issue, but the *i
 Include explicit confirmation in the log body that the Step 6 playlist issue (and Step
 6b photos issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
 file (`playlist.md` / `photo.md`), not reconstructed from memory.
+
+Also confirm the setlist step in the log body: for a MULTI show, that the `MULTI:` marker and its `data/setlists/<year>.json` entry (name the date key) were written in the same commit; for a show with a single setlist.fm link, that the URL was written directly with no marker.
 
 **Final:** Apply `processed` label.
 
