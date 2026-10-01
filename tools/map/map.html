@@ -147,6 +147,22 @@
   #zoomer button:hover{background:#f5ecd6;}
   #err{position:absolute;top:16px;left:16px;right:64px;color:var(--paper);
     font-family:'Special Elite',monospace;font-size:14px;line-height:1.7;display:none;}
+  /* #406 routes layer: one hairline weight for every class, colours kept, pattern per class -
+     dots for trails and passes, dashes for ferries, solid for roads and the autobahn (a hair
+     heavier). The layer sits at .9 so rivers and lakes stay the primary features under it. */
+  #routes{opacity:.9;}
+  #routes .core{stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;}
+  #routes .core.autobahn{stroke-width:1.5;}
+  #routes .core.trail,#routes .core.pass{stroke-dasharray:0.1 3.2;}
+  #routes .core.ferry{stroke-dasharray:5 3.5;}
+  /* route editor: a wide invisible hit stroke per ferry hop, live only in edit mode; the
+     selected route reads heavier; yellow handles are the hand waypoints (drag; alt-click
+     removes), the small white ones in the gaps insert a waypoint where clicked */
+  #routes .hit{stroke-width:9;pointer-events:none;}
+  body.editing #routes .hit{pointer-events:stroke;cursor:pointer;}
+  body.editing #routes .route.sel .core{stroke-width:2;}
+  #routeEdit .vh{fill:#FFDD35;stroke:var(--ink);stroke-width:.7;cursor:grab;vector-effect:non-scaling-stroke;}
+  #routeEdit .vh.add{fill:#fff;opacity:.85;cursor:copy;}
   .save-ind{font-family:'Special Elite',monospace;}
   .save-ind.ok{color:#2e6b3d;}
   .save-ind.err{color:#a63d2f;}
@@ -209,6 +225,7 @@
     <label><input type="checkbox" data-t="waystation" checked> unvisited</label>
     <label><input type="checkbox" data-t="labels" checked> names</label>
     <label><input type="checkbox" data-t="geo" checked> geo names</label>
+    <label><input type="checkbox" data-t="routes"> routes</label>
     <div style="margin-top:6px;font-size:10px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
       <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="rgba(237,224,194,.9)" stroke="#3d6b45" stroke-width="1.2" stroke-dasharray="1.6 1.4"/></svg> unvisited</span>
       <span><svg width="12" height="14"><path d="M6 1 L8.4 4.6 L3.6 4.6 Z" fill="#3d6b45" stroke="#221A12" stroke-width=".5"/><circle cx="6" cy="9" r="4" fill="#C9962E" stroke="#221A12"/></svg> legend</span>
@@ -267,7 +284,7 @@
   // this session's changes into the file as it is now closes that. Mirrors app.js's
   // ghFetchForWrite + raw-fetch-PUT pattern otherwise; inlined here since map.html has
   // no shared script include with the list pages. Returns {result, merged}.
-  async function ghCommitJson(path,merge,message){
+  async function ghCommitJson(path,merge,message,fmt){
     const pat=localStorage.getItem(PAT_KEY);
     if(!pat) throw new Error('no auth');
     const headers={'Accept':'application/vnd.github.v3+json','Authorization':'token '+pat};
@@ -277,7 +294,7 @@
     let remote=null;
     try{ remote=JSON.parse(decodeURIComponent(escape(atob((fd.content||'').replace(/\n/g,''))))); }catch(e){ remote=null; }
     const merged=merge(remote);
-    const body=JSON.stringify(merged,null,1)+'\n';
+    const body=fmt?fmt(merged):JSON.stringify(merged,null,1)+'\n';
     const putRes=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path,{
       method:'PUT',
       headers:Object.assign({'Content-Type':'application/json'},headers),
@@ -311,7 +328,9 @@
 
   const gRegions=document.createElementNS(NS,'g');
   const gStl=document.createElementNS(NS,'g');
-  map.append(gRegions,gStl);
+  const gRoutes=document.createElementNS(NS,'g');   // #406 thoroughfares test layer: under the marks, over the hulls
+  gRoutes.setAttribute('id','routes');
+  map.append(gRegions,gRoutes,gStl);
 
   const TINT={delta_coast:'var(--coast)',amplified_range:'var(--range)',slide_foothills:'var(--foothills)',
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
@@ -327,6 +346,7 @@
   // Loaded here, ahead of the banner, so a decision made from the banner lands in the
   // same object the editor edits.
   const overrides={};
+  let THOR={routes:[]},COAST;   // thoroughfares.json and coast.json, fetched with the routes block below
   const editctl=document.getElementById('editctl'),
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
         editwho=document.getElementById('editwho');
@@ -343,16 +363,16 @@
   // button write only the files that actually changed, one Contents-API commit each (a
   // Git-Data batch would be one commit, but does not fire the push event auto-promote
   // listens for). A file this page never touched is never written.
-  const dirty={pins:new Set(),overrides:new Set(),labels:new Set(),traces:0};
+  const dirty={pins:new Set(),overrides:new Set(),labels:new Set(),traces:0,thor:new Set()};
   const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus');
-  const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces;
+  const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces+dirty.thor.size;
   function refreshSave(){
     if(!authed)return;
     saveAllBtn.textContent=`save changes (${dirtyCount()})`;
     const part=(n,total,label)=>n?`<b>${label} ${total}</b> (${n} unsaved)`:`${label} ${total}`;
     saveStatus.innerHTML=[part(dirty.pins.size,Object.keys(pins).length,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
       part(dirty.labels.size,Object.keys(LBL.regions||{}).length+Object.keys(LBL.islands||{}).length+Object.keys(LBL.waters||{}).length,'labels'),
-      part(dirty.traces,TRACES.length,'waterways')].join(' \u00b7 ');
+      part(dirty.traces,TRACES.length,'waterways'),part(dirty.thor.size,(THOR.routes||[]).length,'routes')].join(' \u00b7 ');
     // the builder's override audit (meta.override_audit_counts): only the classes that ask for a hand
     const ac=(data.meta&&data.meta.override_audit_counts)||{};
     const asks=['flipped','redundant','orphan'].filter(k=>ac[k]).map(k=>`${ac[k]} ${k}`);
@@ -396,6 +416,15 @@
           added.forEach((t,i)=>{ t.id=`wway-${base.length+i+1}`; });   // renumber behind whatever landed meanwhile
           return base.concat(added); },`map: add ${added.length} traced waterway${added.length>1?'s':''} via in-page editor`);
         TRACES.length=0; TRACES.push(...merged); dirty.traces=0;
+      }
+      if(dirty.thor.size){
+        const keys=[...dirty.thor];
+        const {merged}=await ghCommitJson('tools/map/thoroughfares.json',remote=>{
+          const out=(remote&&typeof remote==='object'&&!Array.isArray(remote))?remote:{routes:[]}; out.routes??=[];
+          for(const k of keys){ const mine=THOR.routes.find(r=>routeKey(r)===k),j=out.routes.findIndex(r=>routeKey(r)===k);
+            if(mine){ if(j>=0)out.routes[j]=mine; else out.routes.push(mine); } else if(j>=0)out.routes.splice(j,1); }
+          return out; },`map: update thoroughfares (${keys.length} route${keys.length>1?'s':''}) via in-page editor`,fmtThor);
+        THOR=merged; dirty.thor.clear(); drawThoroughfares(); drawHandles();
       }
     }catch(e){ ok=false; console.error(e); setInd(ind,'err',e.message); }
     if(ok)setInd(ind,'ok');
@@ -486,6 +515,194 @@
       if(h&&!inPoly(st.xy[0],st.xy[1],h))st.flags.stray=true;else delete st.flags.stray;}
     else if(!st.flags.unplaced)st.flags.unpinned=true;
   }
+
+  // ── #406 thoroughfares (roads, autobahn, passes, trails, ferries) ──
+  // Hand-owned pairings, harbors and waypoints in thoroughfares.json; geometry is
+  // procedural per hop from the live positions (pins applied) plus whatever the file
+  // says. Off by default: the legend's "routes" box shows it. Style is the CSS under
+  // #routes - one hairline weight, colours by class, pattern by class - so the paths
+  // here carry colour and a class and nothing else. coast.json (extract_coast.py, from
+  // map.svg's feature paths) is the painted coast; ferries use it to bow over water.
+  COAST=null;
+  try{ THOR=await (await fetch(fresh('thoroughfares.json'),{cache:'no-store'})).json(); }catch(e){}
+  try{ COAST=await (await fetch(fresh('coast.json'),{cache:'no-store'})).json(); }catch(e){}
+  const routeKey=r=>r.cls+':'+(r.chain||[]).join('>');
+  const hopKey=(a,b)=>`${a}>${b}`;
+  // the editable polyline of a ferry hop lives in r.via under one of the two hop keys;
+  // this returns it in a->b order, and (when asked) normalises the file to the a->b key
+  const hopVia=(r,a,b,ensure)=>{const v=r.via||(ensure?(r.via={}):{});
+    if(v[hopKey(a,b)])return v[hopKey(a,b)];
+    if(v[hopKey(b,a)]){const rev=v[hopKey(b,a)].slice().reverse();if(ensure){delete v[hopKey(b,a)];v[hopKey(a,b)]=rev;}return rev;}
+    return ensure?(v[hopKey(a,b)]=[]):[];};
+  const hash32=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+  const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+  const mkEl=(tag,attrs)=>{const el=document.createElementNS(NS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;};
+  const pathD=pts=>'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
+  const perp=(a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1;return [-dy/L,dx/L,L];};
+  const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+  const isLand=COAST?(x,y)=>(inPoly(x,y,COAST.mainland)||COAST.islands.some(p=>inPoly(x,y,p)))&&!COAST.lakes.some(p=>inPoly(x,y,p)):null;
+  function roundCorners(pts,r){   // every interior corner rounded (quadratic, radius capped by the shorter leg), densified
+    if(pts.length<3)return pts.slice();
+    const out=[pts[0]];
+    for(let i=1;i<pts.length-1;i++){
+      const a=pts[i-1],b=pts[i],c=pts[i+1];
+      const d1=Math.hypot(b[0]-a[0],b[1]-a[1])||1,d2=Math.hypot(c[0]-b[0],c[1]-b[1])||1;
+      const rr=Math.min(r,d1/2,d2/2);
+      const p1=[b[0]+(a[0]-b[0])*rr/d1,b[1]+(a[1]-b[1])*rr/d1],p2=[b[0]+(c[0]-b[0])*rr/d2,b[1]+(c[1]-b[1])*rr/d2];
+      out.push(p1);
+      for(let k=1;k<6;k++){const t=k/6,u=1-t;out.push([u*u*p1[0]+2*u*t*b[0]+t*t*p2[0],u*u*p1[1]+2*u*t*b[1]+t*t*p2[1]]);}
+      out.push(p2);
+    }
+    out.push(pts[pts.length-1]);return out;
+  }
+  function catmull(pts,n,g0,g3){   // Catmull-Rom through the waypoints, densified; g0/g3 are ghost points that set the end tangents
+    n=n||8;const out=[];
+    for(let i=0;i<pts.length-1;i++){
+      const p0=i?pts[i-1]:(g0||pts[0]),p1=pts[i],p2=pts[i+1],p3=i+2<pts.length?pts[i+2]:(g3||pts[pts.length-1]);
+      for(let k=0;k<n;k++){const t=k/n,t2=t*t,t3=t2*t;
+        out.push([0.5*(2*p1[0]+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+                  0.5*(2*p1[1]+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)]);}
+    }
+    out.push(pts[pts.length-1]);return out;
+  }
+  const bent=(a,b,off,r)=>{const [nx,ny]=perp(a,b);return roundCorners([a,[(a[0]+b[0])/2+nx*off,(a[1]+b[1])/2+ny*off],b],r);};
+  function splitAtHull(pts,poly){   // where a polyline first enters the destination region's hull; midpoint if never
+    let i=poly?pts.findIndex(p=>inPoly(p[0],p[1],poly)):-1;
+    if(i<=0||i>=pts.length-1)i=Math.floor(pts.length/2);
+    return [pts.slice(0,i+1),pts.slice(i)];
+  }
+  const rpos=n=>{const st=S.get(n);return st?st.xy:null;};
+  const rreg=n=>{const st=S.get(n);return st?st.region:null;};
+  const cubic=(pa,q1,q2,pb,n)=>{const out=[];for(let k=0;k<=n;k++){const t=k/n,u=1-t;
+    out.push([u*u*u*pa[0]+3*u*u*t*q1[0]+3*u*t*t*q2[0]+t*t*t*pb[0],u*u*u*pa[1]+3*u*u*t*q1[1]+3*u*t*t*q2[1]+t*t*t*pb[1]]);}return out;};
+  const landHits=pts=>isLand?pts.slice(3,-3).filter(p=>isLand(p[0],p[1])).length:0;   // ignore the harbour ends
+
+  // Harbors. A harbor (thoroughfares.json -> harbors) is the settlement's own bit of
+  // coast: the quai is where the line meets the water, and heading x run is the stretch
+  // it steams straight out before it may turn. When several ferries share a harbor they
+  // fan: each gets a lane, ordered by which side of the heading its far end lies, and
+  // the quai and run-end slide sideways by lane (2.5 and 4.5 units per lane), so the
+  // lines leave in parallel and never cross each other on the way out.
+  let LANE={};
+  function planLanes(){
+    LANE={};const H=THOR.harbors||{};const at={};
+    const add=(n,key,other)=>{if(H[n]&&other)(at[n]??=[]).push({key,other});};
+    for(const r of THOR.routes||[]){
+      if(r.cls!=='ferry')continue;const ch=r.chain||[];
+      for(let i=0;i<ch.length-1;i++){
+        const a=ch[i],b=ch[i+1],k=routeKey(r)+'#'+i;
+        if(r.offmap){add(a,k+'x',r.offmap.exit[r.offmap.exit.length-1]);add(b,k+'e',r.offmap.entry[r.offmap.entry.length-1]);continue;}
+        const via=hopVia(r,a,b);
+        add(a,k,via.length?via[0]:rpos(b));add(b,k,via.length?via[via.length-1]:rpos(a));
+      }
+    }
+    for(const n in at){
+      const h=H[n],q=h.quai||rpos(n),p0=rpos(n);
+      let d=h.heading?[h.heading[0],h.heading[1]]:[q[0]-p0[0],q[1]-p0[1]];const L=Math.hypot(d[0],d[1])||1;d=[d[0]/L,d[1]/L];
+      const px=-d[1],py=d[0];
+      const hops=at[n].map(x=>({key:x.key,side:(x.other[0]-q[0])*px+(x.other[1]-q[1])*py})).sort((u,v)=>u.side-v.side);
+      LANE[n]={px,py,lane:Object.fromEntries(hops.map((x,i)=>[x.key,i-(hops.length-1)/2]))};
+    }
+  }
+  const harborLeg=(n,key)=>{const h=(THOR.harbors||{})[n];if(!h)return[];const ln=LANE[n],k=ln?ln.lane[key]||0:0,px=ln?ln.px:0,py=ln?ln.py:0;
+    const out=[];const q=h.quai?[h.quai[0]+px*k*2.5,h.quai[1]+py*k*2.5]:null;if(q)out.push(q);
+    if(h.heading&&h.run){const b=h.quai||rpos(n),L=Math.hypot(h.heading[0],h.heading[1])||1;
+      out.push([b[0]+h.heading[0]/L*h.run+px*k*4.5,b[1]+h.heading[1]/L*h.run+py*k*4.5]);}
+    return out;};
+  // A ferry hop in three parts: the harbor run out (settlement, quai, run-end - straight),
+  // the open-water curve, and the far harbor run in. The curve leaves and arrives along
+  // the harbor headings: with no hand waypoints it is one cubic whose control points
+  // continue each heading (an end with no harbor gets the spec's 0.2-chord bow control
+  // instead, on whichever side crosses less water); with waypoints it is a Catmull-Rom
+  // through them whose ghost endpoints set the same tangents. So a northbound harbor
+  // always reads as "out to sea, then turn", and nothing curls back on itself.
+  const harborExit=(n,key)=>{const leg=harborLeg(n,key),p=rpos(n);
+    if(!leg.length)return {leg,E:p,T:null};
+    const E=leg[leg.length-1],prev=leg.length>1?leg[0]:p,dx=E[0]-prev[0],dy=E[1]-prev[1],L=Math.hypot(dx,dy)||1;
+    return {leg,E,T:[dx/L,dy/L]};};
+  function ferryCtl(r,i,a,b,prefer){
+    const pa=rpos(a),pb=rpos(b),k=routeKey(r)+'#'+i,A=harborExit(a,k),B=harborExit(b,k),via=hopVia(r,a,b);
+    const head=[pa,...A.leg],tail=[...B.leg.slice().reverse().slice(1),...(B.leg.length?[pb]:[])];
+    const L=Math.hypot(B.E[0]-A.E[0],B.E[1]-A.E[1])||1;
+    const ghost=(E,T)=>[E[0]-T[0]*L*0.3,E[1]-T[1]*L*0.3];
+    if(via.length){
+      const cm=catmull([A.E,...via,B.E],10,A.T?ghost(A.E,A.T):null,B.T?ghost(B.E,B.T):null);
+      return {dense:[...head,...cm.slice(1),...tail],side:prefer};
+    }
+    const [nx,ny]=perp(A.E,B.E);
+    const cp=(E,T,t,side)=>T?[E[0]+T[0]*L*0.4,E[1]+T[1]*L*0.4]:(()=>{const m=lerp(A.E,B.E,t);return [m[0]+nx*0.2*L*side,m[1]+ny*0.2*L*side];})();
+    const curve=side=>cubic(A.E,cp(A.E,A.T,1/3,side),cp(B.E,B.T,2/3,side),B.E,24);
+    let side=prefer;
+    if(!A.T||!B.T){const P=curve(prefer),Q=curve(-prefer);if(landHits(Q)<landHits(P))side=-prefer;}
+    return {dense:[...head,...curve(side).slice(1),...tail],side};
+  }
+  let selRoute=null;   // {r, i} - the ferry hop the editor has selected
+  function drawThoroughfares(){
+    gRoutes.replaceChildren();planLanes();
+    const missing=new Set();
+    const path=(g,d,color,cls,extra)=>g.appendChild(mkEl('path',Object.assign({class:cls,d,fill:'none',stroke:color},extra||{})));
+    let fadeN=0;
+    for(const [ri,r] of (THOR.routes||[]).entries()){
+      const chain=r.chain||[];
+      if(chain.some(n=>!rpos(n))){chain.filter(n=>!rpos(n)).forEach(n=>missing.add(n));continue;}
+      const g=mkEl('g',{class:'route '+r.cls,'data-key':routeKey(r)});gRoutes.appendChild(g);
+      const seed=hash32(routeKey(r));
+      if(r.cls==='autobahn'){
+        const R=rng(seed);const way=[];
+        for(let i=0;i<chain.length-1;i++){
+          const pa=rpos(chain[i]),pb=rpos(chain[i+1]);const [nx,ny]=perp(pa,pb);
+          const off=(4+R()*5)*(R()<.5?-1:1);
+          way.push(pa,[(pa[0]+pb[0])/2+nx*off,(pa[1]+pb[1])/2+ny*off]);
+        }
+        way.push(rpos(chain[chain.length-1]));
+        path(g,pathD(roundCorners(way,50)),'#8a5a2a','core autobahn');   // Range tint the whole run, no seam switch
+        continue;
+      }
+      const R=rng(seed);let side=R()<.5?-1:1;
+      for(let i=0;i<chain.length-1;i++){
+        const a=chain[i],b=chain[i+1],pa=rpos(a),pb=rpos(b),hs=hash32(`${r.cls}:${a}>${b}`);
+        if(r.cls==='road'){
+          const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb);
+          const off=Math.min(8+Rh()*12,L*0.2)*(Rh()<.5?-1:1),pts=bent(pa,pb,off,14);
+          if(rreg(a)===rreg(b)){path(g,pathD(pts),TINT[rreg(a)]||'var(--ink)','core road');continue;}
+          const [p1,p2]=splitAtHull(pts,HULL[rreg(b)]);   // interstate: origin tint until it enters the destination's hull
+          path(g,pathD(p1),TINT[rreg(a)]||'var(--ink)','core road');path(g,pathD(p2),TINT[rreg(b)]||'var(--ink)','core road');
+        }else if(r.cls==='pass'){
+          // switchbacks that follow the land: a turn every ~16 units, a few units of amplitude mid-climb, tapering at both ends
+          const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/16)),way=[];
+          for(let k=0;k<=n;k++){const t=k/n,amp=9*Math.pow(Math.sin(Math.PI*t),0.7)*(k%2?1:-1),bs=lerp(pa,pb,t);way.push([bs[0]+nx*amp,bs[1]+ny*amp]);}
+          path(g,pathD(roundCorners(way,5)),'#44525c','core pass');
+        }else if(r.cls==='trail'){
+          // a meander that follows the land: alternating ~7-12 unit offsets every ~34 units, smoothed
+          const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/34)),way=[pa];
+          for(let k=1;k<n;k++){const off=(7+Rh()*5)*(k%2?1:-1),bs=lerp(pa,pb,k/n);way.push([bs[0]+nx*off,bs[1]+ny*off]);}
+          way.push(pb);path(g,pathD(catmull(way,8)),'#2f7d4f','core trail');
+        }else if(r.cls==='ferry'){
+          const ink='var(--ink)';
+          if(r.offmap){
+            // the off-map hop: each leg is settlement, harbor, then hand waypoints to past the
+            // edge, fading over the last stretch (a gradient from the settlement's y to the edge's)
+            for(const [n,leg,sfx] of [[a,r.offmap.exit,'x'],[b,r.offmap.entry,'e']]){
+              const p0=rpos(n),edge=leg[leg.length-1],id=`thor-fade-${fadeN++}`;
+              const grad=mkEl('linearGradient',{id,gradientUnits:'userSpaceOnUse',x1:0,x2:0,y1:p0[1],y2:edge[1]});
+              grad.append(mkEl('stop',{offset:'0','stop-color':'#221A12','stop-opacity':'1'}),mkEl('stop',{offset:'0.7','stop-color':'#221A12','stop-opacity':'1'}),mkEl('stop',{offset:'1','stop-color':'#221A12','stop-opacity':'0'}));
+              map.querySelector('defs').appendChild(grad);
+              const X=harborExit(n,routeKey(r)+'#'+i+sfx),Lg=Math.hypot(leg[0][0]-X.E[0],leg[0][1]-X.E[1])||1;
+              const d=pathD([p0,...X.leg,...catmull([X.E,...leg],10,X.T?[X.E[0]-X.T[0]*Lg*0.3,X.E[1]-X.T[1]*Lg*0.3]:null).slice(1)]);
+              path(g,d,`url(#${id})`,'core ferry');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i,'data-leg':sfx});
+            }
+            continue;
+          }
+          const c=ferryCtl(r,i,a,b,side);side=-c.side;   // the next hop prefers the other side, so a chain reads as an S
+          const d=pathD(c.dense);
+          path(g,d,ink,'core ferry');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i});
+        }
+      }
+    }
+    if(selRoute)gRoutes.querySelectorAll(`.route[data-key="${selRoute.key}"]`).forEach(x=>x.classList.add('sel'));
+    if(missing.size)console.warn('thoroughfares: no settlement for',[...missing]);
+  }
+  drawThoroughfares();
 
   data.regions.forEach(r=>{
     if(/<br\s*\/?>/i.test(r.label)){
@@ -726,6 +943,7 @@
       if(t==='labels')       show([...gStl.querySelectorAll('text')],on);
       else if(t==='waystation') show([...gStl.querySelectorAll('.stl.unvisited')],on);
       else if(t==='geo') gGeo.style.display=on?'':'none';
+      else if(t==='routes') gRoutes.style.display=on?'':'none';
       else if(t==='regions') gRegions.style.display=on?'':'none';
     });
   });
@@ -1004,10 +1222,55 @@
   let pan=null, dragS=null;
   const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
+  // ── route editor: drag and add ferry waypoints (edit mode only) ──
+  // Click a ferry to select it: its hand waypoints get handles (drag to move, alt-click to
+  // remove) and each gap between control points gets a small white one that inserts a
+  // waypoint where it is clicked. The off-map legs edit the same way. A hop with no
+  // waypoints left falls back to the automatic bow. Saves land in thoroughfares.json by
+  // route identity (class + chain), through the same read-merge-write as the other files.
+  const gRouteEdit=document.createElementNS(NS,'g');gRouteEdit.setAttribute('id','routeEdit');map.appendChild(gRouteEdit);
+  const routeViaRef=sel=>{const r=THOR.routes[sel.r];
+    return sel.leg?r.offmap[sel.leg==='x'?'exit':'entry']:hopVia(r,r.chain[sel.h],r.chain[sel.h+1],true);};
+  function drawHandles(){
+    gRouteEdit.replaceChildren();
+    if(!selRoute)return;
+    const r=THOR.routes[selRoute.r],a=r.chain[selRoute.h],b=r.chain[selRoute.h+1],k=routeKey(r)+'#'+selRoute.h,arr=routeViaRef(selRoute);
+    let before,after=null;
+    if(selRoute.leg){before=harborExit(selRoute.leg==='x'?a:b,k+selRoute.leg).E;}
+    else{before=harborExit(a,k).E;after=harborExit(b,k).E;}
+    const ctl=[before,...arr,...(after?[after]:[])];
+    for(let i=0;i<ctl.length-1;i++){const m=lerp(ctl[i],ctl[i+1],.5);gRouteEdit.appendChild(mkEl('circle',{class:'vh add',cx:m[0].toFixed(1),cy:m[1].toFixed(1),r:2.4,'data-at':i}));}
+    arr.forEach((p,i)=>gRouteEdit.appendChild(mkEl('circle',{class:'vh',cx:p[0],cy:p[1],r:3.2,'data-i':i})));
+  }
+  let dragV=null;
+  function routeChanged(){touch('thor',selRoute.key);drawThoroughfares();drawHandles();}
+  function routeDown(el,e){
+    if(el.classList.contains('hit')){
+      selRoute={r:+el.dataset.r,h:+el.dataset.h,leg:el.dataset.leg||null};selRoute.key=routeKey(THOR.routes[selRoute.r]);
+      const r=THOR.routes[selRoute.r];
+      findmsg.textContent=`${r.chain[selRoute.h]} \u2192 ${r.chain[selRoute.h+1]}${selRoute.leg?' (off-map leg)':''}: drag a point, click a white one to add, alt-click to remove, Esc to deselect`;
+      drawThoroughfares();drawHandles();return;
+    }
+    if(!selRoute)return;
+    const arr=routeViaRef(selRoute);
+    if(el.classList.contains('add')){const [mx,my]=toMap(e.clientX,e.clientY),at=+el.dataset.at;arr.splice(at,0,[+mx.toFixed(1),+my.toFixed(1)]);dragV={arr,i:at};drawThoroughfares();drawHandles();return;}
+    const i=+el.dataset.i;
+    if(e.altKey){if(selRoute.leg&&arr.length<2)return;arr.splice(i,1);routeChanged();return;}   // an off-map leg keeps its edge point
+    dragV={arr,i};
+  }
+  // the file's own layout: one harbor per line, one route per line, so a hand edit and a
+  // page save read the same in a diff (mirrors how the file was first written)
+  const fmtThor=o=>{const j=v=>Array.isArray(v)?'['+v.map(j).join(', ')+']':(v&&typeof v==='object')?'{'+Object.entries(v).map(([k,x])=>JSON.stringify(k)+': '+j(x)).join(', ')+'}':JSON.stringify(v);
+    const L=['{'];for(const k of Object.keys(o))if(k!=='harbors'&&k!=='routes')L.push(' '+JSON.stringify(k)+': '+JSON.stringify(o[k])+',');
+    L.push(' "harbors": {',Object.entries(o.harbors||{}).map(([k,v])=>'  '+JSON.stringify(k)+': '+j(v)).join(',\n'),' },');
+    L.push(' "routes": [',(o.routes||[]).map(r=>'  '+j(r)).join(',\n'),' ]','}');return L.join('\n')+'\n';};
+
   let dragL=null, downAt=null;
   stage.addEventListener('pointerdown',e=>{
     if(e.target.closest('#rose-home')){return;}  // let the anchor's native click/nav fire uncaptured (#363 follow-up)
     downAt=[e.clientX,e.clientY];
+    const rh=(authed&&window.editCb&&editCb.checked)?e.target.closest('#routes .hit,#routeEdit .vh'):null;
+    if(rh){stage.setPointerCapture(e.pointerId);routeDown(rh,e);e.preventDefault();return;}
     const rl=(authed&&window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
     const g=(authed&&window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
@@ -1017,6 +1280,7 @@
     pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
   });
   stage.addEventListener('pointermove',e=>{
+    if(dragV){const [mx,my]=toMap(e.clientX,e.clientY);dragV.arr[dragV.i]=[+mx.toFixed(1),+my.toFixed(1)];drawThoroughfares();drawHandles();return;}
     if(dragL){
       const [mx,my]=toMap(e.clientX,e.clientY);
       dragL.setAttribute('x',mx.toFixed(0));dragL.setAttribute('y',my.toFixed(0));
@@ -1040,6 +1304,7 @@
     pan={x:e.clientX,y:e.clientY};apply();
   });
   stage.addEventListener('pointerup',e=>{
+    if(dragV){routeChanged();dragV=null;return;}
     if(dragS&&dragS.moved)placeLabels();   // a moved mark changes its neighbours' best slots too
     // click (not drag) in edit mode on an unpinned settlement pins it where it stands
     if(dragS&&!dragS.moved&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4){
@@ -1083,6 +1348,7 @@
     // dismissing the card does not also wipe the labels the reader just set up.
     const am=document.getElementById('artistModal');
     if(am&&am.classList.contains('open')){closeArtistModal();return;}
+    if(selRoute){selRoute=null;drawThoroughfares();drawHandles();return;}
     document.querySelectorAll('.stl.pinlabel').forEach(g=>g.classList.remove('pinlabel'));
   });
   // Deep link: #artist/<slug> on this page opens the card AND recentres on that settlement
