@@ -109,6 +109,7 @@ Everything the site shows lives in TSVs under `data/`:
 | `history/<year>.tsv` | Past-year archives (list the years in config `history_years`) |
 | `venues.tsv` + `venue_aliases.tsv` | Venue facts + name-variant resolution |
 | `recommend_aliases.tsv` | Artist name variants → canonical names (drives several joins) |
+| `artist_relations.tsv` + `bill_annotations.tsv` | Artist identity: merges and non-artist billings, plus per-show co-bill and guest credits (see `sample-files/README.md`) |
 | `show_goals/` | Optional achievement logs (signatures, photos) — delete along with config `show_goals` for a badge-free site |
 
 `fork_reset.py` (above) empties these for you from `sample-files/` — each

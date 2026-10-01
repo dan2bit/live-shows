@@ -80,6 +80,7 @@ reporting nothing, every time, with no error.
 | `validate-current.yml` | push to `main` touching `live_shows_current.tsv` | `scripts/validate_current.py` — 19-column count and sentinel validation. |
 | `audit-times-seen.yml` | push to `main` touching ledger sources | `scripts/audit_times_seen.py` — blocking check that artists.tsv "Times Seen" equals the canonical ledger count from the artist-index builder. |
 | `reconcile-photos.yml` | push to `main` touching show TSVs or the album TSVs | `scripts/reconcile_photos.py`: offline lint of every photo link — MALFORMED or DUPLICATE share key fails; OFF-HOST (a retired Google link) only reports. Server-side invariants are `tools/photos/show_photos.py audit`, run locally with the automation key. |
+| `data-hygiene.yml` | push to `main` or `staging`, PR into either, weekly (Wednesday 08:37 UTC), manual | Drift scans that also run as a gate: ASCII punctuation, artist-name drift, evergreen comments, follows invariants, and `scripts/check_setlists.py`. Blocking on a `staging` push or a PR: ASCII punctuation, evergreen (for the files the change touched) and MULTI-marker pairing. Advisory everywhere: name drift, follows invariants, setlist link sanity, and setlist.fm verification, which needs the `SETLISTFM_API_KEY` secret, skips without it, and checks only the links a push or PR added (the weekly run checks everything not verified in the last 45 days, reusing an Actions cache). A direct push to `main` is advisory throughout. |
 
 ## Conventions
 

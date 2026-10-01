@@ -363,9 +363,10 @@ If hat autograph:
    backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
    (materialized-exception rule, #115). Basis records membership facts only — never
    signature assertions; completion lives in `hat_signatures.tsv` alone.
-3. Remind Dan to manually append to the hat autograph Google Doc
-   (https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit)
-   Format: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
+3. Nothing further to do — `signers/index.html` rebuilds automatically from
+   `hat_signatures.tsv` via `.github/workflows/signers-rebuild.yml` once Step 5's
+   commit promotes. The hand-maintained Google Doc this replaced is retired
+   (2026-09-29, #412) — no manual append.
 
 **Step 5 — Commit public file changes to `staging` — bundle same-show files, don't sequence them (2026-07-19)**
 
@@ -391,6 +392,31 @@ artists as overcounts against a ledger that hadn't counted the new show yet. The
 private-repo commits (`current_private.tsv`, `spending.tsv`) stay separate — the
 public/private split is still two repos, two commits, never one — but everything
 landing in `dan2bit/live-shows` for this show goes together.
+
+**High-footprint shows — consider a PR branch instead of sequential staging
+pushes (2026-09-25).** The rule above bundles everything available in ONE
+pass into ONE commit, but it doesn't cover a show whose processing genuinely
+spans more than one commit in time - most commonly a brand-new headliner
+(first `artists.tsv` row) with real artist interaction (both `hat_signatures.tsv`
+and `book_signatures.tsv` touched), followed later in the same session by a
+supplemental correction (Dan supplying a verified Spotify URL / YouTube handle
+after the fact, once the routine had already committed without one rather than
+guess). Each of those is a separate push to `staging`, and each independently
+triggers `artist-modal-index.yml` via its `artists.tsv` input - a workflow that
+fully regenerates and rewrites the derived index file rather than patching it.
+Two such regenerations racing (one still mid-flight when the next commit's own
+promote-and-regenerate cycle starts) produces a genuine, unresolvable git
+conflict in that file - not a bug in the retry logic, which correctly bails
+rather than guessing, but real lost wall-clock time and a failed CI run
+needing a human look. Nothing in the source data is ever at risk (the
+conflict is confined to a 100% regenerable artifact), but it's still worth
+avoiding: if a supplemental correction arrives before you've committed, fold
+it into the same bundled commit rather than following up separately. If the
+show's own footprint is large enough that more touches are clearly still
+coming, do the whole show on its own branch and hand Dan one PR to
+squash-merge - that collapses however many commits happen along the way into
+exactly one push to `staging`, so the regeneration pipeline only fires once
+no matter how the work was paced.
 
 Commit message: `post-show: [Artist] [YYYY-MM-DD]`
 
@@ -478,7 +504,9 @@ nothing, a missing one loses the reminder entirely.
 
 **MULTI shows (two or more setlist.fm links provided):**
 
-1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date).
+A show with exactly one setlist.fm link is not a MULTI show, even when several acts appeared in that setlist (a sit-in covered by the headliner's setlist, for example): write the URL directly in `Setlist.fm URL`, with no marker and no sidecar entry.
+
+1. Set `Setlist.fm URL` in `live_shows_current.tsv` to `MULTI:YYYY-MM-DD` (the show date). This marker and the sidecar entry in item 3 are one change; never write one without the other.
 2. Open **one combined playlist issue** via the same fetch-then-fill procedure —
    title as above; include all setlist.fm links plus each artist's YouTube channel
    handle (support acts first, headliner last), each handle sourced and
@@ -496,7 +524,7 @@ nothing, a missing one loses the reminder entirely.
 }
 ```
 
-   Order: support acts first (in bill order), headliner last. Fetch a fresh SHA for the year file and commit to `staging` alongside the other Routine 2 changes. If Dan says "make only one playlist issue for the combined show," that is this step.
+   Order: support acts first (in bill order), headliner last. Write the marker (item 1) and this entry in the same commit as the other Routine 2 changes, as one multi-file commit to `staging`, fetching a fresh SHA for each file first. A marker with no entry leaves the show's setlist button empty on the site. If Dan says "make only one playlist issue for the combined show," that is this step.
 
 **Step 6b — Open ONE `Photos:` issue for the show (when any photo was taken)**
 
@@ -511,6 +539,8 @@ Memorabilia photographed at the show is filed through the same issue, but the *i
 Include explicit confirmation in the log body that the Step 6 playlist issue (and Step
 6b photos issue, if any) was built from a live fetch of its `.github/ISSUE_TEMPLATE/`
 file (`playlist.md` / `photo.md`), not reconstructed from memory.
+
+Also confirm the setlist step in the log body: for a MULTI show, that the `MULTI:` marker and its `data/setlists/<year>.json` entry (name the date key) were written in the same commit; for a show with a single setlist.fm link, that the URL was written directly with no marker.
 
 **Final:** Apply `processed` label.
 
@@ -937,9 +967,11 @@ This routine only processes mail the system already sent.
 **Inbox monitoring is not automatic.** Trigger routines by saying "there's a ticket
 email", "process the inbox", "run Routine 3", etc.
 
-**`data/show_goals/hat_signatures.tsv` is the authority for hat signers.** The gdoc is
-the public-facing version (linked from the about modal in `index.html`); on any
-discrepancy, reconcile the gdoc to the TSV.
+**`data/show_goals/hat_signatures.tsv` is the authority for hat signers**, and
+`signers/index.html` (built by `tools/signers/render_signers.py`) rebuilds from it
+automatically via `.github/workflows/signers-rebuild.yml` — nothing to hand-maintain.
+The Google Doc this replaced is retired (2026-09-29, #412); the about-modal link and
+the `signers.` redirect still point to it until that cutover lands separately.
 
 **Google Calendar MCP fails on Android.** Switch to macOS desktop before retrying
 calendar operations.

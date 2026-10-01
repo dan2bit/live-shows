@@ -156,7 +156,10 @@ async function openArtistBySlug(slug){
   await amLoadFavorites();
   await amLoadStatus();
   await amLoadRelated();
-  var key=(amSlugMap||{})[slug]||null,rec=key?data.artists[key]:null;
+  var key=(amSlugMap||{})[slug]||null;
+  // A retired slug (a record merged into another identity) reads back as its alias key.
+  if(!key&&data.aliases){var ak=data.aliases[slug.replace(/-/g,' ')];if(ak&&data.artists[ak])key=ak;}
+  var rec=key?data.artists[key]:null;
   amOpenRec(rec,rec?rec.name:slug.replace(/-/g,' '),key||slug);
 }
 function amOpenRec(rec,displayName,key){

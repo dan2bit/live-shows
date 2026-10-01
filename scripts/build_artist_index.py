@@ -19,11 +19,15 @@ import json
 import math
 import os
 import re
+import sys
 import unicodedata
 from datetime import datetime, timezone
 from urllib.parse import quote
 
 import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from name_forms import ArtistResolver  # noqa: E402  (sibling module in scripts/)
 
 SCHEMA_VERSION = 1
 
@@ -167,6 +171,26 @@ def load_config(root):
     }
 
 
+def make_canon(root):
+    """(canon, resolver): canon(name) -> the index key for name's identity.
+
+    Identity comes from name_forms.ArtistResolver (alias rows, artist_relations.tsv,
+    the eponymous-act and derived defaults). A name the resolver has never seen
+    falls back to the plain alias table, then to its own normalized form.
+    """
+    resolver = ArtistResolver.from_repo(root)
+    aliases = load_aliases(root)
+
+    def canon(name):
+        c = resolver.canonical(name)
+        if c:
+            return norm(c)
+        n = norm(name)
+        return aliases.get(n, n)
+
+    return canon, resolver
+
+
 def load_aliases(root):
     """recommend_aliases.tsv: extra alias -> canonical mappings (normalized)."""
     out = {}
@@ -179,11 +203,15 @@ def load_aliases(root):
 
 
 # ------------------------------------------------------------------------------- sightings
-def build_sightings(root, canon):
+def build_sightings(root, canon, resolver=None):
     """Return {artist_key: [ {date, venue, via, photo_url, role} ]} from the canonical
     ledger: history/*.tsv + current.tsv (attended) + seen_with.tsv. Keyed by the
-    alias-aware canonical form so variant spellings attach to one artist. Combined-bill
-    components are attributed via the artists.tsv Via column."""
+    identity-aware canonical form so variant spellings attach to one artist.
+
+    Per-show exceptions come from data/bill_annotations.tsv through the resolver: each
+    annotated act on a bill entry gets a sighting in its annotated role (principal of a
+    co-bill, or guest). Combined-bill components without an annotation are still
+    attributed via the artists.tsv Via column, in build()."""
     sight = {}
 
     def add(key, date, venue, via, photo, role):
@@ -192,6 +220,14 @@ def build_sightings(root, canon):
         sight.setdefault(key, []).append(
             {"date": date, "venue": venue, "via": via, "photo_url": photo, "role": role}
         )
+
+    def annotated(date, entry, head, venue, photo):
+        if resolver is None:
+            return
+        for a in resolver.credits(date, entry):
+            k = canon(a["act"])
+            via = None if k == canon(head) else head
+            add(k, date, venue, via, photo, a["role"])
 
     def split_support(s):
         s = clean(s)
@@ -209,8 +245,11 @@ def build_sightings(root, canon):
             head = clean(r.get("Artist"))
             if head:
                 add(canon(head), date, venue, None, photo, "headliner")
+                annotated(date, head, head, venue, photo)
             for sup in split_support(r.get("Supporting Acts")):
                 add(canon(sup), date, venue, head, photo, "support")
+                if head:
+                    annotated(date, sup, head, venue, photo)
 
     # current.tsv — attended rows only (2026 shows live here, not in history/)
     for r in read_tsv(os.path.join(root, "data/live_shows_current.tsv")):
@@ -222,8 +261,11 @@ def build_sightings(root, canon):
         head = clean(r.get("Artist"))
         if head:
             add(canon(head), date, venue, None, photo, "headliner")
+            annotated(date, head, head, venue, photo)
         for sup in split_support(r.get("Supporting Artist")):
             add(canon(sup), date, venue, head, photo, "support")
+            if head:
+                annotated(date, sup, head, venue, photo)
 
     # seen_with.tsv — sidemen / component sightings (no venue/photo of their own)
     for r in read_tsv(os.path.join(root, "data/seen_with.tsv")):
@@ -237,9 +279,10 @@ def build_sightings(root, canon):
 
 
 def dedup_log(rows):
-    """Collapse to one entry per date; prefer the richest (headliner > support > via >
-    seen_with) and any row that carries a photo."""
-    role_pri = {"headliner": 3, "support": 2, "seen_with": 1}
+    """Collapse to one entry per date; prefer the most specific role (an annotated
+    co-bill principal > headliner > guest > support > seen_with > via) and any row that
+    carries a photo. An annotation outranks the ledger's own reading of the same show."""
+    role_pri = {"principal": 5, "headliner": 4, "guest": 3, "support": 2, "seen_with": 1}
     by_date = {}
     for r in rows:
         d = r["date"]
@@ -266,10 +309,7 @@ def build(root):
     cfg = load_config(root)
     validate_goals_config(cfg)
     aliases = load_aliases(root)
-
-    def canon(name):
-        n = norm(name)
-        return aliases.get(n, n)
+    canon, resolver = make_canon(root)
 
     # --- source tables keyed by normalized/canonical name ---
     artists = {}
@@ -379,9 +419,15 @@ def build(root):
 
     with open(os.path.join(root, "data/artist_spotify.json"), encoding="utf-8") as fh:
         spotify_raw = json.load(fh)
-    spotify = {canon(name): entry for name, entry in spotify_raw.items()}
+    # Several cache keys can resolve to one identity (a band-named and a plain-named
+    # entry); keep the one Spotify actually resolved, then the first in file order.
+    spotify = {}
+    for name, entry in spotify_raw.items():
+        k = canon(name)
+        if k not in spotify or (entry.get("spotify_id") and not spotify[k].get("spotify_id")):
+            spotify[k] = entry
 
-    sightings = build_sightings(root, canon)
+    sightings = build_sightings(root, canon, resolver)
 
     # --- display-name resolution + universe ---
     display = {}
@@ -389,7 +435,10 @@ def build(root):
     def see(name):
         k = canon(name)
         if k and k not in display and clean(name):
-            display[k] = name.strip()
+            # A name that IS its identity keeps this source's own spelling; one that
+            # resolves elsewhere ("Ally Venable Band") takes the canonical name.
+            same = norm(name) == k
+            display[k] = name.strip() if same else (resolver.canonical(name) or name.strip())
         return k
 
     for r in read_tsv(os.path.join(root, "data/artists.tsv")):
@@ -571,6 +620,9 @@ def build(root):
                     {
                         "date": r["date"], "venue": r["venue"], "via": r["via"],
                         "photo_url": r["photo_url"],
+                        # headliner / support / principal / guest / seen_with / via.
+                        # Additive to the frozen schema.
+                        "role": r["role"],
                         # Event_log goal completions at this show for this artist,
                         # baked so app.js row badges can join without extra fetches.
                         # Column/interaction goals stay per-row (not baked here).
@@ -606,17 +658,27 @@ def build(root):
         for nm in obj.pop("_similar_names"):
             sk = canon(nm)
             here = sk in keys
-            sims.append({"name": nm, "in_tracker": here, "slug": slugify(nm) if here else None})
+            # the record's own slug: a similar name can resolve to a record spelled
+            # differently ("Robert Cray" -> The Robert Cray Band)
+            sims.append({"name": nm, "in_tracker": here, "slug": index[sk]["slug"] if here else None})
         obj["similar"] = sims
+
+    client_aliases = {a: c for a, c in aliases.items() if c in index}
+    for sp in resolver.spellings():
+        ck, nk = canon(sp), norm(sp)
+        if nk and ck in index and nk != ck and nk not in index:
+            client_aliases.setdefault(nk, ck)
+    client_aliases = dict(sorted(client_aliases.items()))
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         # Alias lookup for the client (norm-space alias -> canonical index key), so
         # openArtistModal resolves alias-form names ("Trombone Shorty", "X and Y")
-        # the same way the builder's canon() does. Only aliases that resolve to a
-        # built record are emitted. Additive to the frozen schema.
-        "aliases": {a: c for a, c in aliases.items() if c in index},
+        # the same way the builder's canon() does, and a retired slug (its hyphens
+        # read as spaces) still reaches the record that absorbed it. Only aliases
+        # that resolve to a built record are emitted. Additive to the frozen schema.
+        "aliases": client_aliases,
         "artists": index,
     }
 

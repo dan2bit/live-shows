@@ -47,11 +47,7 @@ def main() -> int:
 
     # Canonical ledger seen counts, straight from the modal-index builder.
     index = bai.build(root)["artists"]
-    aliases = bai.load_aliases(root)
-
-    def canon(name):
-        n = bai.norm(name)
-        return aliases.get(n, n)
+    canon, _resolver = bai.make_canon(root)
 
     notes_ok = {canon(name): extra for name, extra in NOTES_ONLY_OK_RAW.items()}
 

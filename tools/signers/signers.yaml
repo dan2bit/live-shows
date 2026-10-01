@@ -1,0 +1,60 @@
+# Config for tools/signers/render_signers.py.
+#
+# Kept separate from the repo-root config.yaml on purpose: config.yaml is
+# fetched by app.js on every site visit and rewritten in place by the
+# in-page config editor (site.* / merch.* / goals: block etc.) — nothing in
+# that pipeline needs to know about this page, and this page has no reason
+# to be exposed to that editor. If a value below genuinely belongs to the
+# site's own identity (not just this one page) rather than this generator,
+# move it to config.yaml's `site:` block instead. See #412, open decision 1.
+
+title: "Who Has Signed This Hat?"
+
+# Static on purpose: it does not name anyone or count anything, so the generated page
+# only changes when the data does. Feeds <meta name="description"> and the og:/twitter:
+# description tags.
+description: "The musicians who have signed my red concert hat at live shows around DC, Maryland and Virginia - a running list, one line per signature."
+
+# The tagline itself ("Life is short. Buy the tickets.") is baked into the
+# banner artwork - it is never rendered as separate text (2026-09-29 change).
+# banner_alt is the exact alt/title text for that image.
+banner_alt: "Life is Short, Buy the Tickets"
+
+# Rendered as "<count> signers, <first date> - <newest date>" - all three
+# values are always computed from hat_signatures.tsv at build time, never
+# edited here.
+
+playlist_url: "https://open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK"
+# The checked-in QR (static/hat-playlist-qr.svg) encodes this same URL with
+# its `?si=` share token stripped. render_signers.py --check reads that
+# SVG's <desc> and fails with "regenerate the QR" if this URL and the QR's
+# encoded URL disagree — see tools/signers/make_qr.py.
+playlist_qr: static/hat-playlist-qr.svg
+
+banner_svg: static/hat-banner.svg
+banner_png: static/hat-banner.png
+
+# Link-preview image (og:image / twitter:image). Must be a PNG - crawlers do not render
+# SVG. Its pixel size is read from the file header at build time.
+og_image: static/hat-banner.png
+
+# Filename of the single-page print PDF, written next to index.html by
+# tools/signers/render_signers_pdf.py and linked from the web page as "Print". CI builds
+# it after the page, so unlike the assets above it is not required to exist for the page
+# to build.
+print_pdf: hat-signers.pdf
+
+# Print-only: the site QR (with the brand-hat logo reserved in its center)
+# sits to the right of the banner in the print masthead. Not used on screen.
+site_qr: static/redhat-bootlegs-qr.svg
+
+# Tent-fold print layout: content confined to the left panel of a US Letter
+# sheet folded vertically down the middle, so the right panel stays blank
+# and foldable. Change this if the actual fold differs (#412, open decision 4).
+print_page_size: letter
+print_fold: vertical
+print_content_width_in: 4.3
+# 1 unless the entry count no longer fits a single sheet at the template's
+# print font size - checked with an actual weasyprint render, not guessed.
+# Bump this (and re-check) if hat_signatures.tsv grows enough to overflow.
+print_column_count: 1

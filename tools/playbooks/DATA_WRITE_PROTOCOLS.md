@@ -689,7 +689,9 @@ the whole index is public-safe; the only personal signal (⭐ favorite, #116) is
 here — it merges client-side from the private repo when authed.
 
 ### Top level
-Name-keyed dict (key = normalized name, post-`recommend_aliases.tsv`):
+Name-keyed dict (key = the normalized CANONICAL name of the artist's identity, as
+resolved by `ArtistResolver` in `scripts/name_forms.py` from `recommend_aliases.tsv`,
+`artist_relations.tsv` and the derived defaults):
 
 ```jsonc
 {
@@ -701,10 +703,13 @@ Name-keyed dict (key = normalized name, post-`recommend_aliases.tsv`):
 ```
 
 **`aliases` (additive top-level key):** `{norm-space alias → canonical artist key}`,
-emitted by `build_artist_index.py` from `recommend_aliases.tsv` and consumed by
-`openArtistModal`'s fallback in `artist-modal.js`, so alias-form names (bare
-"Trombone Shorty", "X and Y" billings) resolve to the canonical record. Three facts
-worth knowing:
+emitted by `build_artist_index.py` from `recommend_aliases.tsv` plus every attested
+spelling the resolver folds into another identity, and consumed by `openArtistModal`'s
+fallback in `artist-modal.js`, so alias-form names (bare "Trombone Shorty", "X and Y"
+billings) resolve to the canonical record. `openArtistBySlug` reads the same map for a
+slug it does not know (hyphens read as spaces), so the slug of a record that was merged
+into another identity (`#artist/ally-venable-band`) still opens the surviving record.
+Three facts worth knowing:
 - **Additive only** — the `artists` contract is unchanged. A fork regenerating the
   index gets the key automatically; an index without it degrades gracefully (the
   client fallback is null-guarded).
@@ -739,9 +744,13 @@ worth knowing:
     "first": "2023-10-14",
     "recent": "2026-05-03",
     "show_log": [                       // BAKED (bounded ~1-7 rows/artist; self-contained modal)
-      {"date":"2026-05-03","venue":"The Hamilton","via":null,"photo_url":"https://…"},
-      {"date":"2024-…","venue":"…","via":"SatchVai Band","photo_url":null}  // via = headliner for seen_with
+      {"date":"2026-05-03","venue":"The Hamilton","via":null,"photo_url":"https://…","role":"headliner"},
+      {"date":"2024-…","venue":"…","via":"SatchVai Band","photo_url":null,"role":"principal"}  // via = headliner for seen_with
     ]
+    // role (additive): headliner | support | principal | guest | seen_with | via.
+    // principal and guest come from data/bill_annotations.tsv and outrank the ledger's
+    // own reading of the same date (a co-bill principal the ledger lists as support
+    // shows as principal). via = credited through the artists.tsv Via column.
   },
   "fast_track": false,                  // fast_track.tsv membership (affinity floor + "1st" framing)
 

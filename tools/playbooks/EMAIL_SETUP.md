@@ -205,12 +205,17 @@ last one went stale (it named Hub City Vinyl as pending long after
 Source file: `autograph_books_combined.tsv`
 Google Drive ID: `1ENPcmHxrbdMfJNuDlqy-RRBHkGm8Onyy`
 
-**Hat autograph Google Doc:**
-https://docs.google.com/document/d/1haKMpfwPWosdPnZXBAAlLUzj3926hoTEH7icg6gTRA8/edit
+**Hat signers page:** `signers/index.html`, built by `tools/signers/render_signers.py`
+from `data/show_goals/hat_signatures.tsv` and rebuilt automatically by
+`.github/workflows/signers-rebuild.yml` whenever that TSV (or any other input)
+changes - nothing to hand-maintain. The same run rebuilds `signers/hat-signers.pdf`,
+the single-page printable behind the page's `Print` link
+(`tools/signers/render_signers_pdf.py`). Live at the `signers.redhat-bootlegs.net`
+vanity redirect (retargeted 2026-09-29, #412) and linked from the about modal.
 
-Format for hat entries: `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]`
-Hat signatures TSV: `data/show_goals/hat_signatures.tsv` (per-signature; `seq` matches the gdoc order).
-
-No write connector exists for Google Docs — all hat autograph gdoc updates are manual.
-The gdoc is the completeness authority for hat signers; TSV files are the authority
-for show dates.
+The Google Doc this replaced (formerly the completeness authority, with a
+hand-copied `**[Name]** [*of/w/ Act*] @ [Venue short name] [M/D/YY]` entry per
+signing) is retired - no further updates, manual or otherwise.
+`data/show_goals/hat_signatures.tsv` is now the sole completeness authority for hat
+signers; `seq` still reflects the gdoc's original chronological order, carried
+forward rather than re-derived.

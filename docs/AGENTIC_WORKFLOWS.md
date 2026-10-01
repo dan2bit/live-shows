@@ -236,7 +236,7 @@ The full, current catalog — triggers, behavior, and conventions — lives in
 | Group | Workflows |
 |---|---|
 | Pipeline & gating | `private-data-guard`, `auto-promote` |
-| Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance` |
+| Generated-output bots | `artist-modal-index`, `recommend-index`, `cache-bust`, `potentials-maintenance`, `signers-rebuild` |
 | Issue-driven bots | `close-playlist-issue`, `close-photo-issue` |
 | Read-only checks | `validate-current`, `audit-times-seen`, `reconcile-photos`, `data-hygiene`, `follows-watch` |
 | Scheduled digests | `refresh-releases`, `weekly-hftb-diff`, `weekly-potentials-digest`, `daily-page-watch` |

@@ -41,3 +41,19 @@ produce a clean, working, empty fork — see `docs/FORK_SETUP.md`.
   need no row at all. Keep typography out of it — an em dash or a curly
   apostrophe is the renderer's job, and putting those here fills the file with
   variants of names that were already fine.
+- `artist_relations-sample.tsv` and `bill_annotations-sample.tsv` feed the
+  artist-identity resolver (`ArtistResolver` in `scripts/name_forms.py`).
+  Relations are timeless facts about identities: `same-as` (fold Name into
+  Target), `member-of` (fold a band member into the act), `not-an-artist` (an
+  event billing, Target `-`). Annotations are facts about ONE show and exist
+  only where the ledger's headliner/support reading is wrong: one row per act,
+  `Billing` equal to that date's headliner cell or one support entry, `Role`
+  `principal` (with a `Shape`: `joint-set`, `alternating`, `separate-sets`) or
+  `guest` (Shape `-`), `Status` `confirmed` or `assumed` (an upcoming show,
+  reviewed after its `Review After` date). A fork can start both empty; the
+  derived defaults cover most eponymous and leader-named acts with no rows.
+- `hydration_watch-sample.tsv` is the one sample with **no synthetic row**, on
+  purpose: `check_hydration_watch.py` fails loudly on a watched name that matches
+  no Spotify cache entry, so an example row would fail the weekly job in a fresh
+  fork. A row is `Artist`, `Action` (free text - what to do once the artist is on
+  Spotify, reported verbatim), `Date Noted`, `Notes`; remove it once acted on.

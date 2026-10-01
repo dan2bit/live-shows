@@ -13,6 +13,20 @@
 #     docs/ISSUE_LOG.md). BLOCKING on a staging push and on any PR into
 #     main/staging, but only for the files the change touched; the full-repo
 #     scan stays advisory.
+#   - check_setlists.py — the setlist.fm links every show carries. Three checks in
+#     one script. PAIRING (a MULTI marker has its data/setlists entry and the
+#     reverse; a marker's date is its row's date; every entry lists acts with
+#     URLs) is mechanical and BLOCKING on a staging push and on any PR into
+#     main/staging. LINK SANITY (a URL's year and venue against the show; one
+#     setlist filed under two shows; a MULTI entry with a single setlist) is a
+#     heuristic and ADVISORY permanently. VERIFICATION asks the setlist.fm API for
+#     the date, venue and artist behind each link and is ADVISORY permanently: it
+#     depends on an outside service and on data anyone can edit. It needs the
+#     SETLISTFM_API_KEY secret and skips, without failing, when the secret is
+#     absent, which is always the case on a PR from a fork. A push or a PR
+#     verifies only the links it added or changed. The weekly run and a manual
+#     dispatch verify every link not verified in the last 45 days, inside a
+#     request budget, reusing the facts kept in the Actions cache.
 #   - reconcile_follows.py --hygiene — the follows-pipeline invariants that need
 #     only the repo (NAR/follows_master overlap, NAR/artists overlap, fast_track
 #     rows with no follows_master row). ADVISORY everywhere: a violation is a
@@ -23,7 +37,7 @@
 # contexts. A direct push to main runs everything advisory, so a pre-existing
 # finding elsewhere in the repo never fails an unrelated run (the PR that
 # introduced a change is where it gets caught; the post-merge main push is a
-# backstop, not the gate). All three write a $GITHUB_STEP_SUMMARY section every
+# backstop, not the gate). Every check writes a $GITHUB_STEP_SUMMARY section every
 # run, clean or not, so the findings are readable without opening a job log.
 #
 # WHAT "BLOCKING" MEANS HERE:
@@ -69,6 +83,10 @@ on:
       - "*.html"
       - "tools/research/**"
       - ".github/workflows/**"
+  schedule:
+    # Weekly sweep of the setlist.fm verification. A scheduled run is on the
+    # default branch, so every check is advisory here (see WHERE IT BLOCKS).
+    - cron: "37 8 * * 3"
   workflow_dispatch:
 
 permissions:
@@ -77,6 +95,7 @@ permissions:
 jobs:
   hygiene:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
         with:
@@ -142,6 +161,13 @@ jobs:
       - name: Artist-name drift scan
         run: python scripts/check_name_drift.py
 
+      # Identity data lint (artist_relations.tsv, bill_annotations.tsv), the shared
+      # identity fixture against the resolver and the artist modal index, and the
+      # resolver self-tests. A lint error or fixture failure is a real break in any
+      # context; the non-canonical map-key and past-review notices are warnings only.
+      - name: Artist identity
+        run: python scripts/check_identity.py
+
       - name: Evergreen scan
         shell: bash
         run: |
@@ -155,6 +181,48 @@ jobs:
           else
             python scripts/check_evergreen.py
           fi
+
+      - name: Restore setlist.fm verification cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/setlistfm-verified.json
+          key: setlistfm-verified-${{ github.run_id }}
+          restore-keys: |
+            setlistfm-verified-
+
+      - name: Setlist pairing, link sanity and setlist.fm verification
+        shell: bash
+        env:
+          SETLISTFM_API_KEY: ${{ secrets.SETLISTFM_API_KEY }}
+        run: |
+          set -euo pipefail
+          args=(--api --cache .cache/setlistfm-verified.json)
+          if [ '${{ steps.diff.outputs.blocking }}' = 'true' ]; then
+            args+=(--strict)
+          fi
+          # A push or a PR verifies only the links it added or changed. The
+          # scheduled run and a manual dispatch have no range, so they verify
+          # every link that has not been verified recently.
+          before=""
+          head='${{ github.sha }}'
+          case '${{ github.event_name }}' in
+            pull_request)
+              before='${{ github.event.pull_request.base.sha }}'
+              head='${{ github.event.pull_request.head.sha }}'
+              ;;
+            push)
+              before='${{ github.event.before }}'
+              if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+                # A new branch has no previous tip; compare with the first parent
+                # rather than sweeping the whole ledger on a push.
+                before='HEAD~1'
+              fi
+              ;;
+          esac
+          if [ -n "$before" ]; then
+            args+=(--changed "$before" "$head")
+          fi
+          python scripts/check_setlists.py "${args[@]}"
 
       - name: Follows-pipeline invariants
         run: python tools/research/reconcile_follows.py --hygiene

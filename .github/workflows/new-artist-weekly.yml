@@ -15,6 +15,11 @@ name: Weekly new-artist resolve (spotify_cache)
 #
 # Quota: a typical week adds 0-5 artists ≈ ≤15 calls; --limit 30 caps a
 # surprise backlog at ~10 artists and rolls the rest to next week, exit 0.
+#
+# The hydration watch runs LAST, after the commit. It reads the cache this job
+# just resolved and mails a notice for any artist in data/hydration_watch.tsv that
+# now has a spotify_id. Last so that its loud failure on a watched name matching no
+# cache entry can never skip the commit and lose the week's resolves.
 
 on:
   schedule:
@@ -82,3 +87,28 @@ jobs:
             echo "gave up after 5 attempts"
             exit 1
           fi
+
+      - name: Hydration watch
+        # always(): a resolve that bailed part-way still flushed what it resolved,
+        # and those are exactly the entries worth a notice. Exit 2 (a watched name
+        # matching no cache entry) fails the job on purpose; the report is empty
+        # when nothing hydrated, and notify_email.py sends nothing for an empty body.
+        if: always()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -euo pipefail
+          python3 scripts/check_hydration_watch.py > /tmp/hydration_watch.txt
+          cat /tmp/hydration_watch.txt
+          if [ ! -s /tmp/hydration_watch.txt ]; then
+            echo "No watched artist has hydrated - no mail sent."
+            exit 0
+          fi
+          COUNT="$(python3 scripts/check_hydration_watch.py --json | python3 -c 'import json,sys;print(json.load(sys.stdin)["count"])')"
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::$COUNT watched artist(s) hydrated but RESEND_API_KEY is unset - notice not mailed."
+            exit 0
+          fi
+          python3 scripts/notify_email.py \
+            --subject "[hydration] $COUNT watched artist(s) now on Spotify" \
+            --body-file /tmp/hydration_watch.txt
