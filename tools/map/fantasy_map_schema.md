@@ -15,14 +15,15 @@ river port, folk/singer-songwriter in the forest, and genre outliers plus Celtic
 on the isles. Within a region, graph community detection groups settlements into **districts**
 (neighborhoods), each with a seat (its best-connected member) and a procedurally suggested
 toponym you are free to rename. Engagement depth (times seen, VIP count, follow tier) sets
-settlement **size** from capital down to waystation. Graph edges become **routes**, classed by
-provenance: hand-curated kinship is a road, your own attendance history is a river-road, shared
-sidemen are bridges, and Last.fm taste similarity is a trail. Cross-region routes are re-classed
-for rendering as ferries (to the isles), passes (into the mountains), or highways.
+settlement **size** from capital down to waystation. Graph edges are carried as **graph_edges**,
+classed by provenance: hand-curated kinship (`road`), your own attendance history (`river`),
+shared sidemen (`bridge`), Last.fm taste similarity (`trail`). They are data for analysis, not
+lines to draw: the drawn **routes** (roads, the autobahn, passes, trails, ferries) are hand-owned
+in `thoroughfares.json` and rendered by `map.html` from that file alone.
 
 ## File contract
 
-Top level: `meta`, `canvas`, `regions`, `waterways`, `districts`, `settlements`, `routes`.
+Top level: `meta`, `canvas`, `regions`, `waterways`, `districts`, `settlements`, `graph_edges`.
 
 **canvas** — `{w:1000, h:700}`. All `xy` coordinates and waterway points are in this space.
 Treat it as a viewBox: `<svg viewBox="0 0 1000 700">` over the background image, or scale by
@@ -112,13 +113,18 @@ settlement); `promotion (no basis)` / `demotion (no basis)` for hand-written ent
 stays), deletes `orphan` rows, and backfills a missing `basis` from today's values; it never
 touches a decree or a flipped row. `meta.decreed_capitals` is `{region: name}`.
 
-**routes[]** — `{a, b, cls, crossRegion, render}` with `a`/`b` as canonical names. `cls` is
+**graph_edges[]** — `{a, b, cls, crossRegion}` with `a`/`b` as canonical names. `cls` is
 provenance (`road` kinship, `river` attended-bill, `bridge` shared-sideman, `trail` taste
-similarity); `render` equals `cls` within a region and is upgraded across regions to `ferry`,
-`pass`, or `highway`. Suggested visual weight: roads and river-roads solid, bridges distinct
-(they are rare and interesting — nine exist), trails faint/dashed, ferries as dotted arcs over
-water. Current census: 480 routes — 285 trails, 172 river-roads, 14 roads, 9 bridges; after the
-cross-region re-class, 99 render as passes, 85 as highways and 8 as ferries.
+similarity). This is the artist graph's edge list in map terms, kept for the corridor analysis
+and the water-adjacency census; a renderer should not draw it. The earlier `render` class
+(ferry / pass / highway) and the gateway `via` corridors are gone - that vocabulary now belongs
+to the thoroughfares.
+
+**Thoroughfares** are not in this file. `tools/map/thoroughfares.json` holds the hand-owned
+routes (`road / autobahn / pass / trail / ferry` chains, harbors with quai + heading, hand
+waypoints, off-map legs); `map.html` reads it beside this JSON and draws the `routes` layer from
+it, with `coast.json` (the painted coast, from `map.svg` via `extract_coast.py`) deciding which
+side of a ferry is water.
 
 ## What the artist card consumes
 
@@ -150,10 +156,10 @@ so the two surfaces never contradict each other about what a settlement is.
 
 ## Suggested render order
 
-Background image, then waterways (if drawn live), then region labels, then trails, then
-roads/rivers/bridges, then ferry/pass/highway arcs, then district hulls (hover-only), then
-settlements smallest-to-largest so capitals sit on top, then settlement labels gated by zoom
-(capitals always, cities > 0.6×, towns > 1.2×, the rest on hover).
+Background image, then waterways (if drawn live), then region labels, then the thoroughfares
+layer (from `thoroughfares.json`), then district hulls (hover-only), then settlements
+smallest-to-largest so capitals sit on top, then settlement labels gated by zoom (capitals
+always, cities > 0.6×, towns > 1.2×, the rest on hover).
 
 ## Minimal JS binding sketch
 
@@ -161,16 +167,14 @@ settlements smallest-to-largest so capitals sit on top, then settlement labels g
 const map = await (await fetch('fantasy_map_data.json')).json();
 const svg = d3.select('#map').attr('viewBox', `0 0 ${map.canvas.w} ${map.canvas.h}`);
 const S = new Map(map.settlements.map(s => [s.name, s]));
-svg.selectAll('path.route').data(map.routes).join('path')
-   .attr('class', r => `route ${r.render}`)
-   .attr('d', r => arc(S.get(r.a).xy, S.get(r.b).xy, r.crossRegion ? 0.25 : 0));
 svg.selectAll('g.settlement').data(map.settlements).join('g')
    .attr('class', s => `settlement ${s.size} ${Object.keys(s.flags||{}).join(' ')}`)
    .attr('transform', s => `translate(${s.xy})`);
 ```
 
-CSS then owns everything: `.settlement.capital`, `.settlement.waystation`, `.route.ferry`,
-`.settlement.faded`, per-region tints via a `data-region` attribute, and so on.
+CSS then owns everything: `.settlement.capital`, `.settlement.waystation`, `.settlement.faded`,
+per-region tints via a `data-region` attribute, and so on. Routes come from `thoroughfares.json`,
+not from this file.
 
 ## Regenerating
 
@@ -190,7 +194,7 @@ size thresholds in size_tier; capitals and every other size decree are in `map_o
 
 ## Current census (2026-09-18 index)
 
-403 settlements, 480 routes, 78 districts across seven regions - by size: 7 capitals,
+403 settlements, 480 graph edges, 78 districts across seven regions - by size: 7 capitals,
 29 cities, 99 towns, 46 villages, 141 hamlets, 81 waystations.
 
 | region | settlements | capital |
