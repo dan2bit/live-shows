@@ -317,15 +317,15 @@
   {
    "name": "Fempop Skree",
    "xy": [
-    913,
-    241
+    927,
+    280
    ]
   },
   {
    "name": "Indiesoul Isle",
    "xy": [
-    964,
-    178
+    969,
+    218
    ]
   },
   {
@@ -451,8 +451,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "10616ad21d",
-  "overrides_hash": "6efbdbe4fa",
+  "pins_hash": "899de1922e",
+  "overrides_hash": "eb444f6322",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -536,6 +536,18 @@
      "size": "waystation",
      "score": 1,
      "at": "2026-09-25"
+    },
+    "class": "unchanged"
+   },
+   {
+    "name": "Carolyn Wonderland",
+    "override": "town",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-01"
     },
     "class": "unchanged"
    },
@@ -1211,7 +1223,7 @@
   ],
   "override_audit_counts": {
    "decree": 4,
-   "unchanged": 60
+   "unchanged": 61
   },
   "counts": {
    "settlements": 388,
@@ -2042,7 +2054,6 @@
     "Rival Sons",
     "Shawn Pittman",
     "Slash",
-    "Sugaray Rayford",
     "Taj Farrant",
     "The Heavy Heavy",
     "They Might Be Giants",
@@ -2708,12 +2719,12 @@
    "auto_size": "capital",
    "score": 6,
    "xy": [
-    960.7,
-    240.3
+    955.1,
+    236.8
    ],
    "region_uv": [
-    0.8449,
-    2.3573
+    0.8131,
+    2.3208
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -4137,20 +4148,18 @@
    "name": "Carolyn Wonderland",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
-   "size": "hamlet",
+   "size": "town",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    663.1,
-    337.2
+    666.9,
+    435.1
    ],
    "region_uv": [
-    0.6298,
-    0.2422
+    0.6629,
+    0.6572
    ],
-   "flags": {
-    "unplaced": true
-   },
+   "flags": {},
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -5647,16 +5656,15 @@
    "auto_size": "town",
    "score": 3,
    "xy": [
-    639.3,
-    257.4
+    523.5,
+    507.6
    ],
    "region_uv": [
-    0.6652,
-    -1.3436
+    0.202,
+    0.2603
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "fast track: 2024 Americana Music Association Instrumentalist of the…",
    "times_seen": 0,
@@ -5830,12 +5838,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    971.0,
-    193.2
+    969.8,
+    192.2
    ],
    "region_uv": [
-    0.9034,
-    1.8667
+    0.8966,
+    1.8562
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9680,22 +9688,21 @@
   {
    "id": 364,
    "name": "Sugaray Rayford",
-   "region": "amplified_range",
-   "district": "amplified_range:outskirts",
+   "region": "river_port",
+   "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
    "score": 3,
    "xy": [
-    548.0,
-    594.3
+    549.0,
+    596.4
    ],
    "region_uv": [
-    -0.1914,
-    2.0572
+    0.304,
+    0.8295
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "fast track: Grammy-nominated; 2x BB King Entertainer of the Year;…",
    "times_seen": 0,
@@ -12014,7 +12021,7 @@
    "a": "Angelique Francis",
    "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Anna Moss",
@@ -13700,7 +13707,7 @@
    "a": "King Solomon Hicks",
    "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Kingsley Flood",
