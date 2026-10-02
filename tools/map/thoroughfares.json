@@ -8,7 +8,7 @@
   "AJR": [{"quai": [960, 228], "heading": [0.1, -1], "run": 8, "for": ["Hozier"]}, {"quai": [949, 242], "heading": [-1, -0.15], "run": 8}],
   "Valerie June": {"quai": [306, 358], "heading": [-1, 0], "run": 14},
   "Samantha Fish": {"quai": [722, 441], "heading": [1, 0], "run": 12},
-  "Hozier": [{"quai": [974, 208], "heading": [0, 1], "run": 6, "for": ["AJR"]}, {"quai": [961, 193], "heading": [-1, 0], "run": 10}],
+  "Hozier": [{"quai": [978.0, 183.0], "heading": [0.6, -0.8], "run": 10, "for": ["Taj Farrant"]}, {"quai": [986.6, 185.2], "heading": [0.98, -0.17], "run": 8, "for": ["Ally Venable Band"]}, {"quai": [991.2, 202.2], "heading": [0.97, -0.26], "run": 12, "for": ["AJR"]}],
   "Kate Davis": [{"quai": [899, 257], "heading": [-1, 0.3], "run": 10, "for": ["Orianthi"]}, {"quai": [906, 246], "heading": [-0.3, -1], "run": 9}]
  },
  "routes": [
@@ -31,7 +31,7 @@
   {"cls": "ferry", "chain": ["Queen Latifah", "The Roots"]},
   {"cls": "ferry", "chain": ["Ally Venable Band", "Kate Davis"]},
   {"cls": "ferry", "chain": ["Ally Venable Band", "AJR"]},
-  {"cls": "ferry", "chain": ["Ally Venable Band", "Hozier"]},
+  {"cls": "ferry", "chain": ["Ally Venable Band", "Hozier"], "via": {"Ally Venable Band>Hozier": [[950, 178]]}},
   {"cls": "ferry", "chain": ["Hozier", "Taj Farrant"]},
   {"cls": "ferry", "chain": ["Orianthi", "Samantha Fish"]},
   {"cls": "ferry", "chain": ["Orianthi", "Kate Davis"]},
@@ -42,7 +42,7 @@
   {"cls": "ferry", "chain": ["Valerie June", "Allison Russell"]},
   {"cls": "ferry", "chain": ["Allison Russell", "Sue Foley"]},
   {"cls": "ferry", "chain": ["Allison Russell", "Jackie Venson"]},
-  {"cls": "ferry", "chain": ["AJR", "Hozier"], "via": {"AJR>Hozier": [[945.4, 219.3], [958, 218.1], [950.5, 206.5]]}},
+  {"cls": "ferry", "chain": ["AJR", "Hozier"], "via": {"AJR>Hozier": [[985, 219]]}},
   {"cls": "ferry", "chain": ["AJR", "Kate Davis"]},
   {"cls": "ferry", "chain": ["Vanessa Collier", "Shemekia Copeland"], "offmap": {"exit": [[586, 636], [548, 640], [512, 660], [485, 682], [455, 704]], "entry": [[225.2, 603.7], [237.5, 639], [268, 655], [296, 679], [322, 692], [345, 704]]}},
   {"cls": "ferry", "chain": ["Vanessa Collier", "George Clinton & Parliament-Funkadelic"]},
