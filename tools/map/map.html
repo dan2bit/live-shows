@@ -170,7 +170,7 @@
   #routes .core.autobahn{stroke-width:1.5;}
   #routes .core.trail,#routes .core.pass{stroke-dasharray:0.1 3.2;}
   #routes .core.ferry{stroke-dasharray:5 3.5;}
-  /* route editor: a wide invisible hit stroke per ferry hop, live only in edit mode; the
+  /* route editor: a wide invisible hit stroke per hop, live only in edit mode; the
      selected route reads heavier; yellow handles are the hand waypoints (drag; alt-click
      removes), the small white ones in the gaps insert a waypoint where clicked */
   #routes .hit{stroke-width:9;pointer-events:none;}
@@ -711,23 +711,29 @@
       }
       const R=rng(seed);let side=R()<.5?-1:1;
       for(let i=0;i<chain.length-1;i++){
-        const a=chain[i],b=chain[i+1],pa=rpos(a),pb=rpos(b),hs=hash32(`${r.cls}:${a}>${b}`);
+        const a=chain[i],b=chain[i+1],pa=rpos(a),pb=rpos(b),hs=hash32(`${r.cls}:${a}>${b}`),via=hopVia(r,a,b);
+        // Land hops take hand waypoints too: with any, the hop is a smooth run through them
+        // (around a lake, say) instead of its procedural bend, switchbacks or meander, and
+        // the editor's hit stroke lets the waypoints be dragged like a ferry's.
         if(r.cls==='road'){
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb);
-          const off=Math.min(8+Rh()*12,L*0.2)*(Rh()<.5?-1:1),pts=bent(pa,pb,off,14);
-          if(rreg(a)===rreg(b)){path(g,pathD(pts),TINT[rreg(a)]||'var(--ink)','core road');continue;}
-          const [p1,p2]=splitAtHull(pts,HULL[rreg(b)]);   // interstate: origin tint until it enters the destination's hull
-          path(g,pathD(p1),TINT[rreg(a)]||'var(--ink)','core road');path(g,pathD(p2),TINT[rreg(b)]||'var(--ink)','core road');
+          const off=Math.min(8+Rh()*12,L*0.2)*(Rh()<.5?-1:1),pts=via.length?catmull([pa,...via,pb],8):bent(pa,pb,off,14);
+          if(rreg(a)===rreg(b))path(g,pathD(pts),TINT[rreg(a)]||'var(--ink)','core road');
+          else{const [p1,p2]=splitAtHull(pts,HULL[rreg(b)]);   // interstate: origin tint until it enters the destination's hull
+            path(g,pathD(p1),TINT[rreg(a)]||'var(--ink)','core road');path(g,pathD(p2),TINT[rreg(b)]||'var(--ink)','core road');}
+          path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='pass'){
           // switchbacks that follow the land: a turn every ~16 units, a few units of amplitude mid-climb, tapering at both ends
           const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/16)),way=[];
           for(let k=0;k<=n;k++){const t=k/n,amp=9*Math.pow(Math.sin(Math.PI*t),0.7)*(k%2?1:-1),bs=lerp(pa,pb,t);way.push([bs[0]+nx*amp,bs[1]+ny*amp]);}
-          path(g,pathD(roundCorners(way,5)),'#44525c','core pass');
+          const d=pathD(via.length?catmull([pa,...via,pb],8):roundCorners(way,5));
+          path(g,d,'#44525c','core pass');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='trail'){
           // a meander that follows the land: alternating ~7-12 unit offsets every ~34 units, smoothed
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/34)),way=[pa];
           for(let k=1;k<n;k++){const off=(7+Rh()*5)*(k%2?1:-1),bs=lerp(pa,pb,k/n);way.push([bs[0]+nx*off,bs[1]+ny*off]);}
-          way.push(pb);path(g,pathD(catmull(way,8)),'#2f7d4f','core trail');
+          way.push(pb);const d=pathD(catmull(via.length?[pa,...via,pb]:way,8));
+          path(g,d,'#2f7d4f','core trail');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='ferry'){
           const ink='var(--ink)';
           if(r.offmap){
@@ -1308,8 +1314,9 @@
   let pan=null, dragS=null;
   const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
-  // ── route editor: drag and add ferry waypoints (edit mode only) ──
-  // Click a ferry to select it: its hand waypoints get handles (drag to move, alt-click to
+  // ── route editor: drag and add route waypoints (edit mode only) ──
+  // Click a ferry, road, pass or trail hop (the autobahn excepted) to select it: its hand
+  // waypoints get handles (drag to move, alt-click to
   // remove) and each gap between control points gets a small white one that inserts a
   // waypoint where it is clicked. The off-map legs edit the same way. A hop with no
   // waypoints left falls back to the automatic bow. Saves land in thoroughfares.json by
@@ -1334,7 +1341,7 @@
     if(el.classList.contains('hit')){
       selRoute={r:+el.dataset.r,h:+el.dataset.h,leg:el.dataset.leg||null};selRoute.key=routeKey(THOR.routes[selRoute.r]);
       const r=THOR.routes[selRoute.r];
-      findmsg.textContent=`${r.chain[selRoute.h]} \u2192 ${r.chain[selRoute.h+1]}${selRoute.leg?' (off-map leg)':''}: drag a point, click a white one to add, alt-click to remove, Esc to deselect`;
+      findmsg.textContent=`${r.cls}: ${r.chain[selRoute.h]} \u2192 ${r.chain[selRoute.h+1]}${selRoute.leg?' (off-map leg)':''}: drag a point, click a white one to add, alt-click to remove, Esc to deselect`;
       drawThoroughfares();drawHandles();return;
     }
     if(!selRoute)return;
