@@ -407,7 +407,7 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-09-29",
+  "generated_from": "2026-10-02",
   "seed": 2026,
   "excluded": [
    "Alexia Gabriella",
@@ -447,7 +447,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "10616ad21d",
-  "overrides_hash": "cb029802a2",
+  "overrides_hash": "eba3112547",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -633,14 +633,14 @@
    {
     "name": "Gov't Mule",
     "override": "town",
-    "auto": "waystation",
-    "score": 3,
+    "auto": "town",
+    "score": 6,
     "basis": {
      "size": "waystation",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "Hozier",
@@ -1218,23 +1218,24 @@
    {
     "name": "Ziggy Marley",
     "override": "town",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "town",
+    "score": 6,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    }
   ],
   "override_audit_counts": {
    "decree": 4,
-   "unchanged": 62
+   "redundant": 2,
+   "unchanged": 60
   },
   "counts": {
-   "settlements": 386,
-   "routes": 480,
+   "settlements": 393,
+   "graph_edges": 481,
    "districts": 72
   }
  },
@@ -2183,12 +2184,22 @@
   {
    "id": "heartland:d10",
    "region": "heartland",
-   "members": [],
-   "seat": "Wu-Tang Clan",
-   "suggested_name": "Clan Hollow"
+   "members": [
+    "Cris Jacobs",
+    "Lynn Hollyfield"
+   ],
+   "seat": "Whitney Mongé",
+   "suggested_name": "Mong Hollow"
   },
   {
    "id": "heartland:d11",
+   "region": "heartland",
+   "members": [],
+   "seat": "Wu-Tang Clan",
+   "suggested_name": "Clan Fields"
+  },
+  {
+   "id": "heartland:d12",
    "region": "heartland",
    "members": [
     "Billy Strings",
@@ -2196,23 +2207,14 @@
     "Greensky Bluegrass"
    ],
    "seat": "Billy Strings",
-   "suggested_name": "Strings Fields"
-  },
-  {
-   "id": "heartland:d12",
-   "region": "heartland",
-   "members": [],
-   "seat": "Every Breath You Take",
-   "suggested_name": "Take Prairie"
+   "suggested_name": "Strings Prairie"
   },
   {
    "id": "heartland:d13",
    "region": "heartland",
-   "members": [
-    "Lynn Hollyfield"
-   ],
-   "seat": "Lynn Hollyfield",
-   "suggested_name": "Hollyfield Crossing"
+   "members": [],
+   "seat": "Every Breath You Take",
+   "suggested_name": "Take Crossing"
   },
   {
    "id": "heartland:d14",
@@ -2387,11 +2389,17 @@
    "id": "outer_isles:outskirts",
    "region": "outer_isles",
    "members": [
+    "A Musical Celebration of John Prine",
+    "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
     "Danny Burns",
+    "Fred Eaglesmith & The Full Band",
     "Jessie's Girl",
+    "Joe Pug",
+    "On A Winter's Night",
     "Talia Segal",
     "Zara Phillips",
-    "kitchen"
+    "kitchen",
+    "members of The Bridge, Smooth Kentucky & others"
    ],
    "seat": null,
    "suggested_name": "Outer Isles Outskirts"
@@ -2718,6 +2726,30 @@
  ],
  "settlements": [
   {
+   "id": 275,
+   "name": "A Musical Celebration of John Prine",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 0.5,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": "Lower"
+  },
+  {
    "id": 2,
    "name": "AJR",
    "region": "outer_isles",
@@ -2995,7 +3027,7 @@
    "district": "amplified_range:d2",
    "size": "city",
    "auto_size": "city",
-   "score": 18,
+   "score": 21,
    "xy": [
     880.0,
     197.1
@@ -3008,7 +3040,7 @@
     "harbormistress": true
    },
    "src": "history pass: seen as support",
-   "times_seen": 5,
+   "times_seen": 6,
    "vip": 0,
    "tier": "Strong"
   },
@@ -3652,7 +3684,7 @@
    "id": 49,
    "name": "Billy Strings",
    "region": "heartland",
-   "district": "heartland:d11",
+   "district": "heartland:d12",
    "size": "town",
    "auto_size": "waystation",
    "score": 3,
@@ -4426,6 +4458,30 @@
   },
   {
    "id": 87,
+   "name": "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 0,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": null
+  },
+  {
+   "id": 88,
    "name": "Cole Larravide",
    "region": "delta_coast",
    "district": "delta_coast:d2",
@@ -4447,7 +4503,7 @@
    "tier": null
   },
   {
-   "id": 88,
+   "id": 89,
    "name": "Cowboy Junkies",
    "region": "heartland",
    "district": "heartland:d7",
@@ -4471,7 +4527,32 @@
    "tier": null
   },
   {
-   "id": 89,
+   "id": 90,
+   "name": "Cris Jacobs",
+   "region": "heartland",
+   "district": "heartland:d10",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 1,
+   "xy": [
+    347.6,
+    527.2
+   ],
+   "region_uv": [
+    0.3096,
+    0.7
+   ],
+   "flags": {
+    "unvisited": true,
+    "unplaced": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": "Medium"
+  },
+  {
+   "id": 91,
    "name": "D.K. Harrell",
    "region": "delta_coast",
    "district": "delta_coast:d3",
@@ -4493,7 +4574,7 @@
    "tier": "Strong"
   },
   {
-   "id": 106,
+   "id": 108,
    "name": "DJ Jazzy Jeff",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -4515,10 +4596,10 @@
    "tier": null
   },
   {
-   "id": 91,
+   "id": 93,
    "name": "Daniel Donato",
    "region": "heartland",
-   "district": "heartland:d11",
+   "district": "heartland:d12",
    "size": "capital",
    "auto_size": "capital",
    "score": 27,
@@ -4537,7 +4618,7 @@
    "tier": "Strong"
   },
   {
-   "id": 93,
+   "id": 95,
    "name": "Danielle Nicole",
    "region": "delta_coast",
    "district": "delta_coast:d4",
@@ -4559,7 +4640,7 @@
    "tier": "Strong"
   },
   {
-   "id": 94,
+   "id": 96,
    "name": "Danielle Ponder",
    "region": "delta_coast",
    "district": "river_port:d1",
@@ -4581,7 +4662,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 95,
+   "id": 97,
    "name": "Danny Burns",
    "region": "outer_isles",
    "district": "outer_isles:outskirts",
@@ -4603,7 +4684,7 @@
    "tier": "Strong"
   },
   {
-   "id": 96,
+   "id": 98,
    "name": "David Moore",
    "region": "quiet_woods",
    "district": "quiet_woods:d3",
@@ -4625,7 +4706,7 @@
    "tier": null
   },
   {
-   "id": 97,
+   "id": 99,
    "name": "De La Soul",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -4647,7 +4728,7 @@
    "tier": null
   },
   {
-   "id": 98,
+   "id": 100,
    "name": "Deanna Bogart",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -4669,7 +4750,7 @@
    "tier": null
   },
   {
-   "id": 99,
+   "id": 101,
    "name": "Derrick Dove & The Peacekeepers",
    "label": "Derrick Dove",
    "region": "delta_coast",
@@ -4694,7 +4775,7 @@
    "tier": "Medium"
   },
   {
-   "id": 101,
+   "id": 103,
    "name": "Devon Allman",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -4716,7 +4797,7 @@
    "tier": null
   },
   {
-   "id": 102,
+   "id": 104,
    "name": "Diana Silvers",
    "region": "river_port",
    "district": "river_port:d1",
@@ -4738,7 +4819,7 @@
    "tier": null
   },
   {
-   "id": 103,
+   "id": 105,
    "name": "Dior Ashley Brown and the Filthy Animals",
    "label": "Dior Brown",
    "region": "river_port",
@@ -4761,7 +4842,7 @@
    "tier": null
   },
   {
-   "id": 107,
+   "id": 109,
    "name": "Dominique Fils-Aimé",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -4785,7 +4866,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 109,
+   "id": 111,
    "name": "DuPont Brass",
    "region": "river_port",
    "district": "river_port:arrivals",
@@ -4807,7 +4888,7 @@
    "tier": null
   },
   {
-   "id": 108,
+   "id": 110,
    "name": "Dumpstaphunk",
    "region": "river_port",
    "district": "river_port:d4",
@@ -4829,7 +4910,7 @@
    "tier": "Lower"
   },
   {
-   "id": 110,
+   "id": 112,
    "name": "Dylan Triplett",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -4851,7 +4932,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 111,
+   "id": 113,
    "name": "Eastern Standard Time",
    "region": "river_port",
    "district": "river_port:d5",
@@ -4873,7 +4954,7 @@
    "tier": null
   },
   {
-   "id": 112,
+   "id": 114,
    "name": "Eddie 9V",
    "region": "amplified_range",
    "district": "amplified_range:d4",
@@ -4897,7 +4978,7 @@
    "tier": "Medium"
   },
   {
-   "id": 113,
+   "id": 115,
    "name": "Eli Kollman",
    "region": "quiet_woods",
    "district": "quiet_woods:d2",
@@ -4919,7 +5000,7 @@
    "tier": null
   },
   {
-   "id": 114,
+   "id": 116,
    "name": "Elvis Costello & The Imposters",
    "label": "Elvis Costello",
    "region": "quiet_woods",
@@ -4942,7 +5023,7 @@
    "tier": null
   },
   {
-   "id": 115,
+   "id": 117,
    "name": "Emmylou Harris",
    "region": "heartland",
    "district": "heartland:d7",
@@ -4966,7 +5047,7 @@
    "tier": null
   },
   {
-   "id": 116,
+   "id": 118,
    "name": "Enter the Haggis",
    "region": "outer_isles",
    "district": "outer_isles:d2",
@@ -4990,7 +5071,7 @@
    "tier": null
   },
   {
-   "id": 117,
+   "id": 119,
    "name": "Eric Bibb",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -5014,7 +5095,7 @@
    "tier": "Medium"
   },
   {
-   "id": 118,
+   "id": 120,
    "name": "Eric Clapton",
    "region": "amplified_range",
    "district": "amplified_range:d15",
@@ -5039,7 +5120,7 @@
    "tier": "Legacy"
   },
   {
-   "id": 119,
+   "id": 121,
    "name": "Eric Gales",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -5061,7 +5142,7 @@
    "tier": "Strong"
   },
   {
-   "id": 120,
+   "id": 122,
    "name": "Eric Johanson",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -5083,7 +5164,7 @@
    "tier": "Strong"
   },
   {
-   "id": 121,
+   "id": 123,
    "name": "Eric Johnson",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -5105,7 +5186,7 @@
    "tier": null
   },
   {
-   "id": 122,
+   "id": 124,
    "name": "Eric Lindell",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -5129,7 +5210,7 @@
    "tier": "Medium"
   },
   {
-   "id": 124,
+   "id": 126,
    "name": "Evan Nicole Bell",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -5153,7 +5234,7 @@
    "tier": "Strong"
   },
   {
-   "id": 125,
+   "id": 127,
    "name": "Every Breath You Take",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -5175,7 +5256,7 @@
    "tier": null
   },
   {
-   "id": 128,
+   "id": 130,
    "name": "Fancy Hagood",
    "region": "heartland",
    "district": "heartland:override",
@@ -5197,7 +5278,7 @@
    "tier": null
   },
   {
-   "id": 129,
+   "id": 131,
    "name": "Fantastic Negrito",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -5221,7 +5302,7 @@
    "tier": "Medium"
   },
   {
-   "id": 130,
+   "id": 132,
    "name": "Fastball",
    "region": "amplified_range",
    "district": "amplified_range:d11",
@@ -5243,7 +5324,31 @@
    "tier": null
   },
   {
-   "id": 131,
+   "id": 133,
+   "name": "Fred Eaglesmith & The Full Band",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 1,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": "Medium"
+  },
+  {
+   "id": 134,
    "name": "Free Nationals",
    "region": "river_port",
    "district": "river_port:override",
@@ -5265,7 +5370,7 @@
    "tier": null
   },
   {
-   "id": 132,
+   "id": 135,
    "name": "Fruition",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -5289,7 +5394,7 @@
    "tier": "Medium"
   },
   {
-   "id": 133,
+   "id": 136,
    "name": "GA-20",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -5313,7 +5418,7 @@
    "tier": "Medium"
   },
   {
-   "id": 134,
+   "id": 137,
    "name": "Gabe Stillman",
    "region": "amplified_range",
    "district": "amplified_range:d14",
@@ -5335,7 +5440,7 @@
    "tier": null
   },
   {
-   "id": 135,
+   "id": 138,
    "name": "Gaelic Storm",
    "region": "outer_isles",
    "district": "outer_isles:d4",
@@ -5357,7 +5462,7 @@
    "tier": null
   },
   {
-   "id": 136,
+   "id": 139,
    "name": "Galactic",
    "region": "river_port",
    "district": "river_port:d4",
@@ -5379,7 +5484,7 @@
    "tier": "Strong"
   },
   {
-   "id": 137,
+   "id": 140,
    "name": "Garret T. Willie",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -5403,7 +5508,7 @@
    "tier": "Strong"
   },
   {
-   "id": 138,
+   "id": 141,
    "name": "Gary Clark Jr.",
    "region": "amplified_range",
    "district": "amplified_range:d4",
@@ -5425,7 +5530,7 @@
    "tier": "Strong"
   },
   {
-   "id": 139,
+   "id": 142,
    "name": "Gary Hoey",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -5449,7 +5554,7 @@
    "tier": "Medium"
   },
   {
-   "id": 140,
+   "id": 143,
    "name": "George Clinton & Parliament-Funkadelic",
    "label": "Parliament",
    "region": "river_port",
@@ -5474,7 +5579,7 @@
    "tier": null
   },
   {
-   "id": 141,
+   "id": 144,
    "name": "Ghalia Volt",
    "region": "slide_foothills",
    "district": "slide_foothills:outskirts",
@@ -5496,7 +5601,7 @@
    "tier": "Medium"
   },
   {
-   "id": 142,
+   "id": 145,
    "name": "Gigi Perez",
    "region": "outer_isles",
    "district": "outer_isles:d5",
@@ -5518,7 +5623,7 @@
    "tier": null
   },
   {
-   "id": 143,
+   "id": 146,
    "name": "Gillian Welch",
    "region": "heartland",
    "district": "heartland:d7",
@@ -5542,7 +5647,7 @@
    "tier": "Medium"
   },
   {
-   "id": 145,
+   "id": 148,
    "name": "Glen Hansard",
    "region": "quiet_woods",
    "district": "quiet_woods:d6",
@@ -5566,7 +5671,7 @@
    "tier": null
   },
   {
-   "id": 146,
+   "id": 149,
    "name": "Glenn Yoder",
    "region": "quiet_woods",
    "district": "quiet_woods:d4",
@@ -5588,7 +5693,7 @@
    "tier": null
   },
   {
-   "id": 147,
+   "id": 150,
    "name": "Glom",
    "region": "quiet_woods",
    "district": "quiet_woods:d5",
@@ -5610,13 +5715,13 @@
    "tier": null
   },
   {
-   "id": 148,
+   "id": 151,
    "name": "Gov't Mule",
    "region": "amplified_range",
    "district": "amplified_range:d5",
    "size": "town",
-   "auto_size": "waystation",
-   "score": 3,
+   "auto_size": "town",
+   "score": 6,
    "xy": [
     794.3,
     220.1
@@ -5625,16 +5730,14 @@
     0.5123,
     0.5604
    ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "follow (Strong)",
-   "times_seen": 0,
+   "flags": {},
+   "src": "",
+   "times_seen": 1,
    "vip": 0,
    "tier": "Strong"
   },
   {
-   "id": 149,
+   "id": 152,
    "name": "Grace Bowers",
    "region": "river_port",
    "district": "river_port:d3",
@@ -5659,10 +5762,10 @@
    "tier": "Strong"
   },
   {
-   "id": 150,
+   "id": 153,
    "name": "Greensky Bluegrass",
    "region": "heartland",
-   "district": "heartland:d11",
+   "district": "heartland:d12",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -5681,7 +5784,7 @@
    "tier": "Strong"
   },
   {
-   "id": 151,
+   "id": 154,
    "name": "Haggis X-1",
    "region": "outer_isles",
    "district": "outer_isles:d2",
@@ -5705,7 +5808,7 @@
    "tier": "Strong"
   },
   {
-   "id": 152,
+   "id": 155,
    "name": "Hannah Honeycutt",
    "region": "quiet_woods",
    "district": "quiet_woods:d4",
@@ -5727,7 +5830,7 @@
    "tier": null
   },
   {
-   "id": 153,
+   "id": 156,
    "name": "Hayes Carll",
    "region": "heartland",
    "district": "heartland:d1",
@@ -5749,7 +5852,7 @@
    "tier": null
   },
   {
-   "id": 155,
+   "id": 158,
    "name": "Henri Brown",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -5771,7 +5874,7 @@
    "tier": null
   },
   {
-   "id": 157,
+   "id": 160,
    "name": "Honeyfunk",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -5793,7 +5896,7 @@
    "tier": null
   },
   {
-   "id": 158,
+   "id": 161,
    "name": "House of Hamill",
    "region": "outer_isles",
    "district": "outer_isles:d2",
@@ -5817,7 +5920,7 @@
    "tier": "Medium"
   },
   {
-   "id": 160,
+   "id": 163,
    "name": "Hozier",
    "region": "outer_isles",
    "district": "outer_isles:d5",
@@ -5839,7 +5942,7 @@
    "tier": "Strong"
   },
   {
-   "id": 161,
+   "id": 164,
    "name": "I'm With Her",
    "region": "quiet_woods",
    "district": "quiet_woods:d9",
@@ -5861,7 +5964,7 @@
    "tier": "Medium"
   },
   {
-   "id": 163,
+   "id": 166,
    "name": "Indigo Girls",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -5883,7 +5986,7 @@
    "tier": "Strong"
   },
   {
-   "id": 164,
+   "id": 167,
    "name": "Ivan Neville",
    "region": "river_port",
    "district": "river_port:d4",
@@ -5907,7 +6010,7 @@
    "tier": "Lower"
   },
   {
-   "id": 166,
+   "id": 169,
    "name": "J & The Causeways",
    "label": "Causeways",
    "region": "amplified_range",
@@ -5930,7 +6033,7 @@
    "tier": null
   },
   {
-   "id": 165,
+   "id": 168,
    "name": "J. P. Soars",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -5952,7 +6055,7 @@
    "tier": null
   },
   {
-   "id": 182,
+   "id": 185,
    "name": "JJ Grey & Mofro",
    "label": "JJ Grey",
    "region": "amplified_range",
@@ -5975,7 +6078,7 @@
    "tier": "Strong"
   },
   {
-   "id": 167,
+   "id": 170,
    "name": "Jackie Venson",
    "region": "amplified_range",
    "district": "amplified_range:d4",
@@ -5999,7 +6102,7 @@
    "tier": "Strong"
   },
   {
-   "id": 168,
+   "id": 171,
    "name": "Jah Works",
    "region": "river_port",
    "district": "river_port:d4",
@@ -6021,7 +6124,7 @@
    "tier": null
   },
   {
-   "id": 169,
+   "id": 172,
    "name": "Jaime Wyatt",
    "region": "heartland",
    "district": "heartland:d2",
@@ -6043,7 +6146,7 @@
    "tier": "Medium"
   },
   {
-   "id": 170,
+   "id": 173,
    "name": "Jake Blount",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -6065,7 +6168,7 @@
    "tier": "Strong"
   },
   {
-   "id": 171,
+   "id": 174,
    "name": "Jake Xerxes Fussell",
    "region": "quiet_woods",
    "district": "quiet_woods:d3",
@@ -6087,7 +6190,7 @@
    "tier": "Strong"
   },
   {
-   "id": 173,
+   "id": 176,
    "name": "Jared James Nichols",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -6111,7 +6214,7 @@
    "tier": "Medium"
   },
   {
-   "id": 175,
+   "id": 178,
    "name": "Jax Hollow",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -6133,7 +6236,7 @@
    "tier": "Strong"
   },
   {
-   "id": 176,
+   "id": 179,
    "name": "Jesse Dayton",
    "region": "river_port",
    "district": "river_port:override",
@@ -6155,7 +6258,7 @@
    "tier": "Medium"
   },
   {
-   "id": 178,
+   "id": 181,
    "name": "Jessie Baylin",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -6177,7 +6280,7 @@
    "tier": null
   },
   {
-   "id": 179,
+   "id": 182,
    "name": "Jessie's Girl",
    "region": "outer_isles",
    "district": "outer_isles:outskirts",
@@ -6199,7 +6302,7 @@
    "tier": null
   },
   {
-   "id": 180,
+   "id": 183,
    "name": "Jimmie Vaughan",
    "region": "amplified_range",
    "district": "amplified_range:d6",
@@ -6223,7 +6326,7 @@
    "tier": "Strong"
   },
   {
-   "id": 181,
+   "id": 184,
    "name": "Jimmy Hall",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -6245,7 +6348,7 @@
    "tier": null
   },
   {
-   "id": 183,
+   "id": 186,
    "name": "Joan Jett & The Blackhearts",
    "label": "Joan Jett",
    "region": "amplified_range",
@@ -6270,7 +6373,7 @@
    "tier": null
   },
   {
-   "id": 184,
+   "id": 187,
    "name": "Joanna Connor",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -6294,7 +6397,7 @@
    "tier": "Strong"
   },
   {
-   "id": 185,
+   "id": 188,
    "name": "Joanne Shaw Taylor",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -6316,7 +6419,7 @@
    "tier": "Strong"
   },
   {
-   "id": 186,
+   "id": 189,
    "name": "Jobi Riccio",
    "region": "heartland",
    "district": "heartland:d2",
@@ -6338,7 +6441,7 @@
    "tier": null
   },
   {
-   "id": 187,
+   "id": 190,
    "name": "Joe Bonamassa",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -6360,7 +6463,31 @@
    "tier": "Strong"
   },
   {
-   "id": 188,
+   "id": 191,
+   "name": "Joe Pug",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 0,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": null
+  },
+  {
+   "id": 192,
    "name": "Joe Satriani",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -6382,7 +6509,7 @@
    "tier": null
   },
   {
-   "id": 189,
+   "id": 193,
    "name": "Joey Landreth",
    "region": "slide_foothills",
    "district": "slide_foothills:d2",
@@ -6406,7 +6533,7 @@
    "tier": "Medium"
   },
   {
-   "id": 190,
+   "id": 194,
    "name": "John Hiatt",
    "region": "heartland",
    "district": "heartland:d4",
@@ -6430,7 +6557,7 @@
    "tier": "Strong"
   },
   {
-   "id": 191,
+   "id": 195,
    "name": "John Nemeth",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -6454,7 +6581,7 @@
    "tier": "Medium"
   },
   {
-   "id": 192,
+   "id": 196,
    "name": "John Primer",
    "region": "delta_coast",
    "district": "delta_coast:override",
@@ -6478,7 +6605,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 195,
+   "id": 199,
    "name": "Jon Batiste",
    "region": "river_port",
    "district": "river_port:d1",
@@ -6500,7 +6627,7 @@
    "tier": "Strong"
   },
   {
-   "id": 196,
+   "id": 200,
    "name": "Jon Muq",
    "region": "river_port",
    "district": "river_port:override",
@@ -6522,7 +6649,7 @@
    "tier": null
   },
   {
-   "id": 197,
+   "id": 201,
    "name": "Jon Spencer",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -6544,7 +6671,7 @@
    "tier": null
   },
   {
-   "id": 198,
+   "id": 202,
    "name": "Josh Hoyer & Soul Colossal",
    "label": "Josh Hoyer",
    "region": "river_port",
@@ -6569,7 +6696,7 @@
    "tier": "Medium"
   },
   {
-   "id": 199,
+   "id": 203,
    "name": "Josh Ritter",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -6593,7 +6720,7 @@
    "tier": "Medium"
   },
   {
-   "id": 200,
+   "id": 204,
    "name": "Joy Oladokun",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -6617,7 +6744,7 @@
    "tier": "Medium"
   },
   {
-   "id": 201,
+   "id": 205,
    "name": "Judith Hill",
    "region": "river_port",
    "district": "river_port:d1",
@@ -6639,7 +6766,7 @@
    "tier": "Strong"
   },
   {
-   "id": 202,
+   "id": 206,
    "name": "Judy Blank",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -6661,7 +6788,7 @@
    "tier": null
   },
   {
-   "id": 204,
+   "id": 208,
    "name": "Kaia Kater",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -6685,7 +6812,7 @@
    "tier": "Medium"
   },
   {
-   "id": 205,
+   "id": 209,
    "name": "Kara Jackson",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -6707,7 +6834,7 @@
    "tier": null
   },
   {
-   "id": 206,
+   "id": 210,
    "name": "Kashus Culpepper",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -6731,7 +6858,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 207,
+   "id": 211,
    "name": "Kat Riggins",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -6755,7 +6882,7 @@
    "tier": "Strong"
   },
   {
-   "id": 208,
+   "id": 212,
    "name": "Kate Davis",
    "region": "outer_isles",
    "district": "outer_isles:d3",
@@ -6777,7 +6904,7 @@
    "tier": "Strong"
   },
   {
-   "id": 209,
+   "id": 213,
    "name": "Keb' Mo'",
    "region": "delta_coast",
    "district": "delta_coast:d1",
@@ -6801,7 +6928,7 @@
    "tier": "Strong"
   },
   {
-   "id": 210,
+   "id": 214,
    "name": "Kelli Baker Band",
    "label": "Baker",
    "region": "amplified_range",
@@ -6824,7 +6951,7 @@
    "tier": null
   },
   {
-   "id": 211,
+   "id": 215,
    "name": "Kenny Wayne Shepherd",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -6846,7 +6973,7 @@
    "tier": "Strong"
   },
   {
-   "id": 212,
+   "id": 216,
    "name": "Kent Burnside",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -6868,7 +6995,7 @@
    "tier": null
   },
   {
-   "id": 213,
+   "id": 217,
    "name": "Kermit Ruffins",
    "region": "river_port",
    "district": "river_port:d3",
@@ -6892,7 +7019,7 @@
    "tier": "Lower"
   },
   {
-   "id": 214,
+   "id": 218,
    "name": "Kim Wilson",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -6916,7 +7043,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 215,
+   "id": 219,
    "name": "King Solomon Hicks",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -6938,7 +7065,7 @@
    "tier": "Medium"
   },
   {
-   "id": 216,
+   "id": 220,
    "name": "Kingsley Flood",
    "region": "quiet_woods",
    "district": "quiet_woods:d4",
@@ -6960,7 +7087,7 @@
    "tier": "Strong"
   },
   {
-   "id": 217,
+   "id": 221,
    "name": "Kirk Fletcher",
    "region": "amplified_range",
    "district": "amplified_range:d6",
@@ -6984,7 +7111,7 @@
    "tier": "Medium"
   },
   {
-   "id": 235,
+   "id": 239,
    "name": "LL Cool J",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -7006,7 +7133,7 @@
    "tier": null
   },
   {
-   "id": 219,
+   "id": 223,
    "name": "La Unica",
    "region": "outer_isles",
    "district": "outer_isles:d4",
@@ -7028,7 +7155,7 @@
    "tier": null
   },
   {
-   "id": 220,
+   "id": 224,
    "name": "Lake Street Dive",
    "region": "river_port",
    "district": "river_port:d2",
@@ -7050,7 +7177,7 @@
    "tier": "Medium"
   },
   {
-   "id": 221,
+   "id": 225,
    "name": "Lalah Hathaway",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -7074,7 +7201,7 @@
    "tier": "Medium"
   },
   {
-   "id": 222,
+   "id": 226,
    "name": "Langhorne Slim",
    "region": "heartland",
    "district": "heartland:d6",
@@ -7096,7 +7223,7 @@
    "tier": "Strong"
   },
   {
-   "id": 223,
+   "id": 227,
    "name": "Larkin Poe",
    "region": "slide_foothills",
    "district": "slide_foothills:outskirts",
@@ -7118,7 +7245,7 @@
    "tier": "Strong"
   },
   {
-   "id": 224,
+   "id": 228,
    "name": "Larry Keel Duo",
    "label": "Keel",
    "region": "heartland",
@@ -7143,7 +7270,7 @@
    "tier": "Medium"
   },
   {
-   "id": 225,
+   "id": 229,
    "name": "Larry McCray",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -7167,7 +7294,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 226,
+   "id": 230,
    "name": "Last Train Home",
    "region": "heartland",
    "district": "heartland:outskirts",
@@ -7191,7 +7318,7 @@
    "tier": "Medium"
   },
   {
-   "id": 227,
+   "id": 231,
    "name": "Leyla McCalla",
    "region": "quiet_woods",
    "district": "quiet_woods:d7",
@@ -7215,7 +7342,7 @@
    "tier": "Medium"
   },
   {
-   "id": 228,
+   "id": 232,
    "name": "Liam St. John",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -7237,7 +7364,7 @@
    "tier": null
   },
   {
-   "id": 229,
+   "id": 233,
    "name": "Lightnin' Malcolm",
    "region": "amplified_range",
    "district": "amplified_range:d8",
@@ -7259,7 +7386,7 @@
    "tier": "Medium"
   },
   {
-   "id": 230,
+   "id": 234,
    "name": "Lil' Ed & the Blues Imperials",
    "label": "Blues Imperials",
    "region": "amplified_range",
@@ -7284,7 +7411,7 @@
    "tier": "Strong"
   },
   {
-   "id": 231,
+   "id": 235,
    "name": "Linda Perry",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -7308,7 +7435,7 @@
    "tier": null
   },
   {
-   "id": 232,
+   "id": 236,
    "name": "Lindsay Lou",
    "region": "heartland",
    "district": "heartland:d1",
@@ -7330,7 +7457,7 @@
    "tier": null
   },
   {
-   "id": 234,
+   "id": 238,
    "name": "Liz Phair",
    "region": "quiet_woods",
    "district": "quiet_woods:d13",
@@ -7352,7 +7479,7 @@
    "tier": null
   },
   {
-   "id": 237,
+   "id": 241,
    "name": "Los Lobos",
    "region": "heartland",
    "district": "heartland:d4",
@@ -7376,7 +7503,7 @@
    "tier": null
   },
   {
-   "id": 239,
+   "id": 243,
    "name": "Lucero",
    "region": "delta_coast",
    "district": "delta_coast:override",
@@ -7400,7 +7527,7 @@
    "tier": "Strong"
   },
   {
-   "id": 240,
+   "id": 244,
    "name": "Lucinda Williams",
    "region": "heartland",
    "district": "heartland:d7",
@@ -7418,13 +7545,13 @@
    "flags": {
     "unvisited": true
    },
-   "src": "on the potentials list",
+   "src": "follow (Strong)",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
   },
   {
-   "id": 241,
+   "id": 245,
    "name": "Lucius",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -7446,7 +7573,7 @@
    "tier": "Strong"
   },
   {
-   "id": 242,
+   "id": 246,
    "name": "Lucky Chops",
    "region": "river_port",
    "district": "river_port:d3",
@@ -7468,7 +7595,7 @@
    "tier": null
   },
   {
-   "id": 243,
+   "id": 247,
    "name": "Lucy Dacus",
    "region": "quiet_woods",
    "district": "quiet_woods:d12",
@@ -7492,7 +7619,7 @@
    "tier": "Medium"
   },
   {
-   "id": 244,
+   "id": 248,
    "name": "Lyle Lovett",
    "region": "heartland",
    "district": "heartland:d4",
@@ -7516,10 +7643,10 @@
    "tier": "Strong"
   },
   {
-   "id": 245,
+   "id": 249,
    "name": "Lynn Hollyfield",
    "region": "heartland",
-   "district": "heartland:d13",
+   "district": "heartland:d10",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -7538,7 +7665,7 @@
    "tier": null
   },
   {
-   "id": 233,
+   "id": 237,
    "name": "Līve",
    "region": "amplified_range",
    "district": "amplified_range:arrivals",
@@ -7560,7 +7687,7 @@
    "tier": null
   },
   {
-   "id": 246,
+   "id": 250,
    "name": "Maggie Rose",
    "region": "heartland",
    "district": "heartland:d2",
@@ -7582,7 +7709,7 @@
    "tier": "Strong"
   },
   {
-   "id": 247,
+   "id": 251,
    "name": "Mallow Hill",
    "region": "delta_coast",
    "district": "delta_coast:override",
@@ -7604,7 +7731,7 @@
    "tier": null
   },
   {
-   "id": 248,
+   "id": 252,
    "name": "Marc Broussard",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -7628,7 +7755,7 @@
    "tier": "Medium"
   },
   {
-   "id": 249,
+   "id": 253,
    "name": "Marcus King",
    "region": "amplified_range",
    "district": "amplified_range:d4",
@@ -7650,7 +7777,7 @@
    "tier": "Strong"
   },
   {
-   "id": 250,
+   "id": 254,
    "name": "Margaret Glaspy",
    "region": "quiet_woods",
    "district": "quiet_woods:d6",
@@ -7672,7 +7799,7 @@
    "tier": null
   },
   {
-   "id": 251,
+   "id": 255,
    "name": "Margo Price",
    "region": "heartland",
    "district": "heartland:d2",
@@ -7694,7 +7821,7 @@
    "tier": null
   },
   {
-   "id": 252,
+   "id": 256,
    "name": "Mark Knopfler",
    "region": "amplified_range",
    "district": "amplified_range:d15",
@@ -7718,7 +7845,7 @@
    "tier": "Strong"
   },
   {
-   "id": 253,
+   "id": 257,
    "name": "Marshall Crenshaw",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -7742,7 +7869,7 @@
    "tier": "Medium"
   },
   {
-   "id": 254,
+   "id": 258,
    "name": "Marty Stuart and His Fabulous Superlatives",
    "label": "Marty Stuart",
    "region": "delta_coast",
@@ -7767,7 +7894,7 @@
    "tier": "Medium"
   },
   {
-   "id": 255,
+   "id": 259,
    "name": "Mathias Lattin",
    "region": "delta_coast",
    "district": "delta_coast:d3",
@@ -7789,7 +7916,7 @@
    "tier": "Medium"
   },
   {
-   "id": 256,
+   "id": 260,
    "name": "Mato Nanji",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -7811,7 +7938,7 @@
    "tier": null
   },
   {
-   "id": 257,
+   "id": 261,
    "name": "Matteo Mancuso",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -7833,7 +7960,7 @@
    "tier": "Strong"
   },
   {
-   "id": 258,
+   "id": 262,
    "name": "Mavis Staples",
    "region": "river_port",
    "district": "river_port:d1",
@@ -7857,7 +7984,7 @@
    "tier": "Strong"
   },
   {
-   "id": 259,
+   "id": 264,
    "name": "Mikaela Davis",
    "region": "quiet_woods",
    "district": "quiet_woods:d11",
@@ -7879,7 +8006,7 @@
    "tier": "Strong"
   },
   {
-   "id": 260,
+   "id": 265,
    "name": "Mike Zito",
    "region": "slide_foothills",
    "district": "slide_foothills:outskirts",
@@ -7901,7 +8028,7 @@
    "tier": "Strong"
   },
   {
-   "id": 261,
+   "id": 266,
    "name": "Miko Marks",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -7925,7 +8052,7 @@
    "tier": "Strong"
   },
   {
-   "id": 262,
+   "id": 267,
    "name": "Mitch Ryder",
    "region": "amplified_range",
    "district": "amplified_range:d3",
@@ -7949,7 +8076,7 @@
    "tier": null
   },
   {
-   "id": 263,
+   "id": 268,
    "name": "Modest Mouse",
    "region": "amplified_range",
    "district": "amplified_range:d7",
@@ -7971,7 +8098,7 @@
    "tier": null
   },
   {
-   "id": 264,
+   "id": 269,
    "name": "Mohini Dey",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -7993,7 +8120,7 @@
    "tier": "Strong"
   },
   {
-   "id": 265,
+   "id": 270,
    "name": "Molly Tuttle",
    "region": "heartland",
    "district": "heartland:d2",
@@ -8015,7 +8142,7 @@
    "tier": "Lower"
   },
   {
-   "id": 266,
+   "id": 271,
    "name": "MonoNeon",
    "region": "river_port",
    "district": "river_port:override",
@@ -8037,7 +8164,7 @@
    "tier": null
   },
   {
-   "id": 267,
+   "id": 272,
    "name": "Morgan Wade",
    "region": "heartland",
    "district": "heartland:override",
@@ -8059,7 +8186,7 @@
    "tier": null
   },
   {
-   "id": 268,
+   "id": 273,
    "name": "Mr. Sipp",
    "region": "delta_coast",
    "district": "delta_coast:outskirts",
@@ -8083,7 +8210,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 269,
+   "id": 274,
    "name": "Muireann Bradley",
    "region": "delta_coast",
    "district": "delta_coast:d2",
@@ -8105,7 +8232,7 @@
    "tier": "Strong"
   },
   {
-   "id": 271,
+   "id": 277,
    "name": "Mystery Friends",
    "region": "outer_isles",
    "district": "outer_isles:d3",
@@ -8127,7 +8254,7 @@
    "tier": null
   },
   {
-   "id": 272,
+   "id": 278,
    "name": "Nas",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -8149,7 +8276,7 @@
    "tier": null
   },
   {
-   "id": 273,
+   "id": 279,
    "name": "Nat Myers",
    "region": "delta_coast",
    "district": "delta_coast:d1",
@@ -8173,7 +8300,7 @@
    "tier": "Medium"
   },
   {
-   "id": 275,
+   "id": 281,
    "name": "Nick Lowe & Los Straitjackets",
    "label": "Nick Lowe",
    "region": "quiet_woods",
@@ -8196,7 +8323,7 @@
    "tier": null
   },
   {
-   "id": 276,
+   "id": 282,
    "name": "Nicole Atkins",
    "region": "quiet_woods",
    "district": "quiet_woods:d2",
@@ -8218,7 +8345,7 @@
    "tier": "Medium"
   },
   {
-   "id": 277,
+   "id": 283,
    "name": "Nikki Hill",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -8242,7 +8369,7 @@
    "tier": "Strong"
   },
   {
-   "id": 280,
+   "id": 286,
    "name": "North Mississippi Allstars",
    "label": "NMAS",
    "region": "slide_foothills",
@@ -8265,7 +8392,7 @@
    "tier": "Strong"
   },
   {
-   "id": 281,
+   "id": 287,
    "name": "Oh He Dead",
    "region": "river_port",
    "district": "river_port:d2",
@@ -8287,7 +8414,7 @@
    "tier": "Strong"
   },
   {
-   "id": 282,
+   "id": 288,
    "name": "Oliver Wood",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -8309,7 +8436,31 @@
    "tier": "Strong"
   },
   {
-   "id": 283,
+   "id": 289,
+   "name": "On A Winter's Night",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 1,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": "Medium"
+  },
+  {
+   "id": 290,
    "name": "Orianthi",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -8333,7 +8484,7 @@
    "tier": "Strong"
   },
   {
-   "id": 284,
+   "id": 291,
    "name": "P!nk",
    "region": "amplified_range",
    "district": "amplified_range:override",
@@ -8357,7 +8508,7 @@
    "tier": "Medium"
   },
   {
-   "id": 285,
+   "id": 292,
    "name": "Patty Griffin",
    "region": "heartland",
    "district": "heartland:d7",
@@ -8379,7 +8530,7 @@
    "tier": null
   },
   {
-   "id": 286,
+   "id": 293,
    "name": "Peter Case",
    "region": "amplified_range",
    "district": "amplified_range:override",
@@ -8401,7 +8552,7 @@
    "tier": null
   },
   {
-   "id": 287,
+   "id": 294,
    "name": "Peter Gabriel",
    "region": "amplified_range",
    "district": "amplified_range:d13",
@@ -8425,7 +8576,7 @@
    "tier": "Strong"
   },
   {
-   "id": 288,
+   "id": 295,
    "name": "Phoenix",
    "region": "amplified_range",
    "district": "amplified_range:d9",
@@ -8447,7 +8598,7 @@
    "tier": null
   },
   {
-   "id": 291,
+   "id": 298,
    "name": "Piper & The Hard Times",
    "label": "Piper",
    "region": "delta_coast",
@@ -8472,7 +8623,7 @@
    "tier": "Medium"
   },
   {
-   "id": 292,
+   "id": 299,
    "name": "Pixies",
    "region": "amplified_range",
    "district": "amplified_range:d7",
@@ -8494,7 +8645,7 @@
    "tier": null
   },
   {
-   "id": 293,
+   "id": 300,
    "name": "Pretenders",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -8516,7 +8667,7 @@
    "tier": null
   },
   {
-   "id": 294,
+   "id": 301,
    "name": "Punch Brothers",
    "region": "heartland",
    "district": "heartland:d2",
@@ -8540,7 +8691,7 @@
    "tier": "Strong"
   },
   {
-   "id": 295,
+   "id": 302,
    "name": "Queen Latifah",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -8564,7 +8715,7 @@
    "tier": null
   },
   {
-   "id": 296,
+   "id": 303,
    "name": "Rachael & Vilray",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -8588,7 +8739,7 @@
    "tier": "Medium"
   },
   {
-   "id": 298,
+   "id": 305,
    "name": "Rebecca Porter",
    "region": "heartland",
    "district": "heartland:d4",
@@ -8610,7 +8761,7 @@
    "tier": null
   },
   {
-   "id": 299,
+   "id": 306,
    "name": "Rebirth Brass Band",
    "label": "Rebirth",
    "region": "river_port",
@@ -8633,7 +8784,7 @@
    "tier": "Lower"
   },
   {
-   "id": 301,
+   "id": 308,
    "name": "Rhiannon Giddens",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -8655,7 +8806,7 @@
    "tier": "Strong"
   },
   {
-   "id": 302,
+   "id": 309,
    "name": "Rich Ruth",
    "region": "quiet_woods",
    "district": "quiet_woods:d11",
@@ -8677,7 +8828,7 @@
    "tier": null
   },
   {
-   "id": 303,
+   "id": 310,
    "name": "Richard Thompson",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -8701,7 +8852,7 @@
    "tier": "Strong"
   },
   {
-   "id": 304,
+   "id": 311,
    "name": "Rival Sons",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -8723,7 +8874,7 @@
    "tier": null
   },
   {
-   "id": 305,
+   "id": 312,
    "name": "Robben Ford",
    "region": "amplified_range",
    "district": "amplified_range:d6",
@@ -8747,7 +8898,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 306,
+   "id": 313,
    "name": "Robert Cray Band",
    "label": "Robert Cray",
    "region": "amplified_range",
@@ -8772,7 +8923,7 @@
    "tier": null
   },
   {
-   "id": 307,
+   "id": 314,
    "name": "Robert Jon & The Wreck",
    "label": "Robert Jon",
    "region": "amplified_range",
@@ -8795,7 +8946,7 @@
    "tier": "Strong"
   },
   {
-   "id": 308,
+   "id": 315,
    "name": "Robert Randolph",
    "region": "slide_foothills",
    "district": "slide_foothills:d1",
@@ -8817,7 +8968,7 @@
    "tier": "Strong"
   },
   {
-   "id": 310,
+   "id": 317,
    "name": "Roger Waters",
    "region": "amplified_range",
    "district": "amplified_range:d13",
@@ -8839,7 +8990,7 @@
    "tier": null
   },
   {
-   "id": 312,
+   "id": 319,
    "name": "Ruthie Foster",
    "region": "delta_coast",
    "district": "delta_coast:d2",
@@ -8861,7 +9012,7 @@
    "tier": "Strong"
   },
   {
-   "id": 313,
+   "id": 320,
    "name": "Sabine McCalla",
    "region": "quiet_woods",
    "district": "quiet_woods:d7",
@@ -8883,7 +9034,7 @@
    "tier": "Medium"
   },
   {
-   "id": 314,
+   "id": 321,
    "name": "Sadia Bangura",
    "region": "delta_coast",
    "district": "delta_coast:d7",
@@ -8905,7 +9056,7 @@
    "tier": null
   },
   {
-   "id": 315,
+   "id": 322,
    "name": "Sadurn",
    "region": "outer_isles",
    "district": "outer_isles:arrivals",
@@ -8927,7 +9078,7 @@
    "tier": "Medium"
   },
   {
-   "id": 317,
+   "id": 324,
    "name": "Sam Amidon",
    "region": "quiet_woods",
    "district": "quiet_woods:d3",
@@ -8949,13 +9100,13 @@
    "tier": null
   },
   {
-   "id": 318,
+   "id": 325,
    "name": "Samantha Fish",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 21,
    "xy": [
     710.9,
     441.1
@@ -8968,12 +9119,12 @@
     "harbormistress": true
    },
    "src": "history pass: seen as support",
-   "times_seen": 4,
+   "times_seen": 6,
    "vip": 0,
    "tier": "Strong"
   },
   {
-   "id": 321,
+   "id": 328,
    "name": "Sarah Borges & Eric Ambel",
    "label": "Borges & Ambel",
    "region": "heartland",
@@ -8998,7 +9149,7 @@
    "tier": null
   },
   {
-   "id": 322,
+   "id": 329,
    "name": "Sarah McLachlan",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -9020,7 +9171,7 @@
    "tier": null
   },
   {
-   "id": 324,
+   "id": 331,
    "name": "Scott Tournet",
    "region": "amplified_range",
    "district": "amplified_range:d8",
@@ -9042,7 +9193,7 @@
    "tier": null
   },
   {
-   "id": 327,
+   "id": 334,
    "name": "Selwyn Birchwood",
    "region": "slide_foothills",
    "district": "slide_foothills:d1",
@@ -9064,7 +9215,7 @@
    "tier": "Strong"
   },
   {
-   "id": 328,
+   "id": 335,
    "name": "Shakey Graves",
    "region": "quiet_woods",
    "district": "quiet_woods:d5",
@@ -9086,7 +9237,7 @@
    "tier": "Strong"
   },
   {
-   "id": 329,
+   "id": 336,
    "name": "Shaw Davis & The Black Ties",
    "label": "Black Ties",
    "region": "amplified_range",
@@ -9109,7 +9260,7 @@
    "tier": "Strong"
   },
   {
-   "id": 330,
+   "id": 337,
    "name": "Shawn James",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
@@ -9131,7 +9282,7 @@
    "tier": "Strong"
   },
   {
-   "id": 331,
+   "id": 338,
    "name": "Shawn Pittman",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -9155,7 +9306,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 332,
+   "id": 339,
    "name": "Shemekia Copeland",
    "region": "delta_coast",
    "district": "delta_coast:d2",
@@ -9177,7 +9328,7 @@
    "tier": "Strong"
   },
   {
-   "id": 333,
+   "id": 340,
    "name": "Shovels & Rope",
    "region": "heartland",
    "district": "heartland:d1",
@@ -9199,7 +9350,7 @@
    "tier": "Strong"
   },
   {
-   "id": 335,
+   "id": 342,
    "name": "Sierra Hull",
    "region": "heartland",
    "district": "heartland:d2",
@@ -9221,7 +9372,7 @@
    "tier": "Medium"
   },
   {
-   "id": 336,
+   "id": 343,
    "name": "Sir Chloe",
    "region": "amplified_range",
    "district": "amplified_range:d9",
@@ -9243,7 +9394,7 @@
    "tier": null
   },
   {
-   "id": 337,
+   "id": 344,
    "name": "Skribe",
    "region": "delta_coast",
    "district": "delta_coast:d5",
@@ -9265,7 +9416,7 @@
    "tier": null
   },
   {
-   "id": 338,
+   "id": 345,
    "name": "Slash",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -9287,7 +9438,7 @@
    "tier": null
   },
   {
-   "id": 339,
+   "id": 346,
    "name": "Sona Jobarteh",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -9309,7 +9460,7 @@
    "tier": null
   },
   {
-   "id": 340,
+   "id": 347,
    "name": "Sonny Landreth",
    "region": "slide_foothills",
    "district": "slide_foothills:outskirts",
@@ -9331,7 +9482,7 @@
    "tier": "Strong"
   },
   {
-   "id": 341,
+   "id": 348,
    "name": "Soul Coughing",
    "region": "amplified_range",
    "district": "amplified_range:override",
@@ -9353,7 +9504,7 @@
    "tier": null
   },
   {
-   "id": 342,
+   "id": 349,
    "name": "Soul Miners Union",
    "region": "amplified_range",
    "district": "amplified_range:d5",
@@ -9375,7 +9526,7 @@
    "tier": null
   },
   {
-   "id": 344,
+   "id": 351,
    "name": "Southern Avenue",
    "region": "delta_coast",
    "district": "delta_coast:d7",
@@ -9399,7 +9550,7 @@
    "tier": "Strong"
   },
   {
-   "id": 345,
+   "id": 352,
    "name": "Sparkbird",
    "region": "quiet_woods",
    "district": "quiet_woods:d8",
@@ -9421,7 +9572,7 @@
    "tier": "Strong"
   },
   {
-   "id": 346,
+   "id": 353,
    "name": "Spartan Jet-Plex",
    "region": "quiet_woods",
    "district": "quiet_woods:d8",
@@ -9443,7 +9594,7 @@
    "tier": null
   },
   {
-   "id": 347,
+   "id": 354,
    "name": "Spring Heeled Jack",
    "region": "river_port",
    "district": "river_port:d5",
@@ -9465,7 +9616,7 @@
    "tier": null
   },
   {
-   "id": 348,
+   "id": 355,
    "name": "St. Paul & The Broken Bones",
    "label": "Broken Bones",
    "region": "river_port",
@@ -9490,7 +9641,7 @@
    "tier": "Medium"
   },
   {
-   "id": 350,
+   "id": 357,
    "name": "Stephen Wilson Jr",
    "region": "heartland",
    "district": "heartland:override",
@@ -9512,7 +9663,7 @@
    "tier": null
   },
   {
-   "id": 351,
+   "id": 358,
    "name": "Steve Earle",
    "region": "heartland",
    "district": "heartland:d4",
@@ -9534,7 +9685,7 @@
    "tier": null
   },
   {
-   "id": 352,
+   "id": 359,
    "name": "Steve Miller Band",
    "region": "amplified_range",
    "district": "amplified_range:d4",
@@ -9558,7 +9709,7 @@
    "tier": null
   },
   {
-   "id": 353,
+   "id": 360,
    "name": "Steve Vai",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -9580,7 +9731,7 @@
    "tier": "Strong"
   },
   {
-   "id": 354,
+   "id": 361,
    "name": "Stevie Nicks",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -9602,7 +9753,7 @@
    "tier": null
   },
   {
-   "id": 355,
+   "id": 362,
    "name": "Sue Foley",
    "region": "amplified_range",
    "district": "amplified_range:d8",
@@ -9626,7 +9777,7 @@
    "tier": "Strong"
   },
   {
-   "id": 356,
+   "id": 363,
    "name": "Sugar Ray",
    "region": "amplified_range",
    "district": "amplified_range:d11",
@@ -9648,7 +9799,7 @@
    "tier": null
   },
   {
-   "id": 357,
+   "id": 364,
    "name": "Sugaray Rayford",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -9673,7 +9824,7 @@
    "tier": "Strong"
   },
   {
-   "id": 358,
+   "id": 365,
    "name": "Sunny War",
    "region": "delta_coast",
    "district": "delta_coast:override",
@@ -9697,7 +9848,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 359,
+   "id": 366,
    "name": "Sushi Soucy",
    "region": "quiet_woods",
    "district": "quiet_woods:d8",
@@ -9719,7 +9870,7 @@
    "tier": null
   },
   {
-   "id": 360,
+   "id": 367,
    "name": "Suzanne Vega",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -9741,7 +9892,7 @@
    "tier": "Strong"
   },
   {
-   "id": 361,
+   "id": 368,
    "name": "Sweet Leda",
    "region": "amplified_range",
    "district": "amplified_range:d3",
@@ -9765,7 +9916,7 @@
    "tier": null
   },
   {
-   "id": 362,
+   "id": 369,
    "name": "Tab Benoit",
    "region": "river_port",
    "district": "river_port:override",
@@ -9787,7 +9938,7 @@
    "tier": "Strong"
   },
   {
-   "id": 364,
+   "id": 371,
    "name": "Taj Farrant",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -9809,7 +9960,7 @@
    "tier": "Strong"
   },
   {
-   "id": 365,
+   "id": 372,
    "name": "Taj Mahal",
    "region": "delta_coast",
    "district": "delta_coast:d1",
@@ -9833,7 +9984,7 @@
    "tier": "Strong"
   },
   {
-   "id": 366,
+   "id": 373,
    "name": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "label": "TajMo",
    "region": "delta_coast",
@@ -9856,7 +10007,7 @@
    "tier": null
   },
   {
-   "id": 367,
+   "id": 374,
    "name": "Tal Wilkenfeld",
    "region": "river_port",
    "district": "river_port:d3",
@@ -9878,7 +10029,7 @@
    "tier": "Lower"
   },
   {
-   "id": 368,
+   "id": 375,
    "name": "Talia Segal",
    "region": "outer_isles",
    "district": "outer_isles:outskirts",
@@ -9902,7 +10053,7 @@
    "tier": null
   },
   {
-   "id": 369,
+   "id": 376,
    "name": "Tall Heights",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -9924,7 +10075,7 @@
    "tier": null
   },
   {
-   "id": 370,
+   "id": 377,
    "name": "Taylor Ashton",
    "region": "quiet_woods",
    "district": "quiet_woods:d2",
@@ -9946,7 +10097,7 @@
    "tier": "Medium"
   },
   {
-   "id": 371,
+   "id": 378,
    "name": "Tedeschi Trucks Band",
    "label": "Tedeschi Trucks",
    "region": "slide_foothills",
@@ -10086,7 +10237,7 @@
    "tier": null
   },
   {
-   "id": 100,
+   "id": 102,
    "name": "The Devil Makes Three",
    "label": "Devil Makes Three",
    "region": "heartland",
@@ -10109,7 +10260,7 @@
    "tier": "Strong"
   },
   {
-   "id": 104,
+   "id": 106,
    "name": "The Dip",
    "region": "river_port",
    "district": "river_port:d2",
@@ -10131,7 +10282,7 @@
    "tier": null
   },
   {
-   "id": 105,
+   "id": 107,
    "name": "The Dirty Dozen Brass Band",
    "label": "Dirty Dozen",
    "region": "river_port",
@@ -10154,7 +10305,7 @@
    "tier": "Medium"
   },
   {
-   "id": 126,
+   "id": 128,
    "name": "The Fabulous Thunderbirds",
    "label": "Thunderbirds",
    "region": "amplified_range",
@@ -10179,7 +10330,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 127,
+   "id": 129,
    "name": "The Family Crest",
    "label": "Family Crest",
    "region": "quiet_woods",
@@ -10202,7 +10353,7 @@
    "tier": null
   },
   {
-   "id": 154,
+   "id": 157,
    "name": "The Heavy Heavy",
    "label": "Heavy Heavy",
    "region": "amplified_range",
@@ -10225,7 +10376,7 @@
    "tier": "Strong"
   },
   {
-   "id": 156,
+   "id": 159,
    "name": "The Hip Snacks",
    "label": "Hip Snacks",
    "region": "heartland",
@@ -10248,7 +10399,7 @@
    "tier": null
   },
   {
-   "id": 159,
+   "id": 162,
    "name": "The House You Grew Up In (THYGUI)",
    "label": "THYGUI",
    "region": "outer_isles",
@@ -10271,7 +10422,7 @@
    "tier": null
   },
   {
-   "id": 162,
+   "id": 165,
    "name": "The Iguanas",
    "label": "Iguanas",
    "region": "slide_foothills",
@@ -10294,7 +10445,7 @@
    "tier": "Medium"
   },
   {
-   "id": 172,
+   "id": 175,
    "name": "The James Hunter Six",
    "label": "James Hunter",
    "region": "river_port",
@@ -10317,7 +10468,7 @@
    "tier": "Medium"
   },
   {
-   "id": 177,
+   "id": 180,
    "name": "The Jesse Williams Band",
    "label": "Jesse Williams",
    "region": "delta_coast",
@@ -10340,7 +10491,7 @@
    "tier": null
   },
   {
-   "id": 236,
+   "id": 240,
    "name": "The Lone Bellow",
    "label": "Lone Bellow",
    "region": "quiet_woods",
@@ -10363,7 +10514,7 @@
    "tier": "Strong"
   },
   {
-   "id": 279,
+   "id": 285,
    "name": "The North Country",
    "label": "North Country",
    "region": "river_port",
@@ -10386,7 +10537,7 @@
    "tier": null
   },
   {
-   "id": 289,
+   "id": 296,
    "name": "The Pietasters",
    "label": "Pietasters",
    "region": "river_port",
@@ -10409,7 +10560,7 @@
    "tier": "Strong"
   },
   {
-   "id": 290,
+   "id": 297,
    "name": "The Pinkerton Raid",
    "label": "Pinkerton Raid",
    "region": "quiet_woods",
@@ -10432,7 +10583,7 @@
    "tier": null
   },
   {
-   "id": 300,
+   "id": 307,
    "name": "The Record Company",
    "label": "Record Company",
    "region": "amplified_range",
@@ -10457,7 +10608,7 @@
    "tier": "Medium"
   },
   {
-   "id": 311,
+   "id": 318,
    "name": "The Roots",
    "label": "Roots",
    "region": "outer_isles",
@@ -10480,7 +10631,7 @@
    "tier": null
   },
   {
-   "id": 326,
+   "id": 333,
    "name": "The Secret Sisters",
    "label": "Secret Sisters",
    "region": "heartland",
@@ -10503,7 +10654,7 @@
    "tier": null
   },
   {
-   "id": 334,
+   "id": 341,
    "name": "The Side Cars Band",
    "label": "Side Cars",
    "region": "outer_isles",
@@ -10526,7 +10677,7 @@
    "tier": null
   },
   {
-   "id": 343,
+   "id": 350,
    "name": "The Soul Rebels",
    "label": "Soul Rebels",
    "region": "river_port",
@@ -10549,7 +10700,7 @@
    "tier": "Medium"
   },
   {
-   "id": 349,
+   "id": 356,
    "name": "The Steepwater Band",
    "label": "Steepwater",
    "region": "slide_foothills",
@@ -10572,7 +10723,7 @@
    "tier": null
   },
   {
-   "id": 372,
+   "id": 379,
    "name": "The Teskey Brothers",
    "label": "Teskey Brothers",
    "region": "delta_coast",
@@ -10597,7 +10748,7 @@
    "tier": "Medium"
   },
   {
-   "id": 391,
+   "id": 398,
    "name": "The War and Treaty",
    "label": "War and Treaty",
    "region": "heartland",
@@ -10620,7 +10771,7 @@
    "tier": "Strong"
   },
   {
-   "id": 396,
+   "id": 403,
    "name": "The Wildmans",
    "label": "Wildmans",
    "region": "heartland",
@@ -10643,7 +10794,7 @@
    "tier": "Medium"
   },
   {
-   "id": 399,
+   "id": 406,
    "name": "The Wood Brothers",
    "label": "Wood Brothers",
    "region": "heartland",
@@ -10666,7 +10817,7 @@
    "tier": "Strong"
   },
   {
-   "id": 373,
+   "id": 380,
    "name": "They Might Be Giants",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -10688,7 +10839,7 @@
    "tier": null
   },
   {
-   "id": 374,
+   "id": 381,
    "name": "Tiera Kennedy",
    "region": "heartland",
    "district": "heartland:d8",
@@ -10710,7 +10861,7 @@
    "tier": null
   },
   {
-   "id": 375,
+   "id": 382,
    "name": "Tinsley Ellis",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -10734,7 +10885,7 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 376,
+   "id": 383,
    "name": "Tommy Castro & the Painkillers",
    "label": "Tommy Castro",
    "region": "amplified_range",
@@ -10759,7 +10910,7 @@
    "tier": null
   },
   {
-   "id": 377,
+   "id": 384,
    "name": "Tommy Emmanuel",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
@@ -10781,7 +10932,7 @@
    "tier": "Strong"
   },
   {
-   "id": 378,
+   "id": 385,
    "name": "Tommy Prine",
    "region": "heartland",
    "district": "heartland:outskirts",
@@ -10803,7 +10954,7 @@
    "tier": null
   },
   {
-   "id": 379,
+   "id": 386,
    "name": "Tori Amos",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -10825,7 +10976,7 @@
    "tier": null
   },
   {
-   "id": 380,
+   "id": 387,
    "name": "Tracy Chapman",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -10849,7 +11000,7 @@
    "tier": "Medium"
   },
   {
-   "id": 381,
+   "id": 388,
    "name": "Trombone Shorty & Orleans Avenue",
    "label": "Trombone Shorty",
    "region": "river_port",
@@ -10872,7 +11023,7 @@
    "tier": "Strong"
   },
   {
-   "id": 382,
+   "id": 389,
    "name": "Valerie June",
    "region": "heartland",
    "district": "heartland:d3",
@@ -10896,7 +11047,7 @@
    "tier": "Strong"
   },
   {
-   "id": 383,
+   "id": 390,
    "name": "Valley",
    "region": "outer_isles",
    "district": "outer_isles:d1",
@@ -10918,7 +11069,7 @@
    "tier": null
   },
   {
-   "id": 384,
+   "id": 391,
    "name": "Vanessa Collier",
    "region": "river_port",
    "district": "river_port:override",
@@ -10942,7 +11093,7 @@
    "tier": "Strong"
   },
   {
-   "id": 385,
+   "id": 392,
    "name": "Venna",
    "region": "river_port",
    "district": "river_port:outskirts",
@@ -10966,7 +11117,7 @@
    "tier": "Low"
   },
   {
-   "id": 389,
+   "id": 396,
    "name": "ViRG",
    "region": "river_port",
    "district": "river_port:d2",
@@ -10988,7 +11139,7 @@
    "tier": null
   },
   {
-   "id": 386,
+   "id": 393,
    "name": "Victor Wooten",
    "region": "river_port",
    "district": "river_port:d3",
@@ -11010,7 +11161,7 @@
    "tier": null
   },
   {
-   "id": 387,
+   "id": 394,
    "name": "Vienna Teng",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
@@ -11034,7 +11185,7 @@
    "tier": "Medium"
   },
   {
-   "id": 388,
+   "id": 395,
    "name": "Violent Femmes",
    "region": "amplified_range",
    "district": "amplified_range:d7",
@@ -11056,7 +11207,7 @@
    "tier": null
   },
   {
-   "id": 390,
+   "id": 397,
    "name": "Walter Trout",
    "region": "amplified_range",
    "district": "amplified_range:d1",
@@ -11080,7 +11231,7 @@
    "tier": "Strong"
   },
   {
-   "id": 392,
+   "id": 399,
    "name": "Warren Haynes",
    "region": "slide_foothills",
    "district": "slide_foothills:d1",
@@ -11104,7 +11255,7 @@
    "tier": "Medium"
   },
   {
-   "id": 393,
+   "id": 400,
    "name": "Waxahatchee",
    "region": "quiet_woods",
    "district": "quiet_woods:d6",
@@ -11128,7 +11279,7 @@
    "tier": "Medium"
   },
   {
-   "id": 394,
+   "id": 401,
    "name": "Weyes Blood",
    "region": "amplified_range",
    "district": "amplified_range:d9",
@@ -11150,7 +11301,7 @@
    "tier": null
   },
   {
-   "id": 395,
+   "id": 402,
    "name": "Whitney Mongé",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
@@ -11172,7 +11323,7 @@
    "tier": "Medium"
   },
   {
-   "id": 397,
+   "id": 404,
    "name": "Willie Nelson",
    "region": "heartland",
    "district": "heartland:d6",
@@ -11196,7 +11347,7 @@
    "tier": null
   },
   {
-   "id": 400,
+   "id": 407,
    "name": "Wu-Tang Clan",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -11218,7 +11369,7 @@
    "tier": null
   },
   {
-   "id": 402,
+   "id": 409,
    "name": "Yasmin Williams",
    "region": "quiet_woods",
    "district": "quiet_woods:d3",
@@ -11240,7 +11391,7 @@
    "tier": "Strong"
   },
   {
-   "id": 403,
+   "id": 410,
    "name": "Young Dubliners",
    "region": "outer_isles",
    "district": "outer_isles:d4",
@@ -11262,7 +11413,7 @@
    "tier": "Strong"
   },
   {
-   "id": 404,
+   "id": 411,
    "name": "Yutzi",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -11284,7 +11435,7 @@
    "tier": null
   },
   {
-   "id": 405,
+   "id": 412,
    "name": "Z-Trip",
    "region": "outer_isles",
    "district": "outer_isles:override",
@@ -11306,7 +11457,7 @@
    "tier": null
   },
   {
-   "id": 412,
+   "id": 419,
    "name": "ZZ Top",
    "region": "amplified_range",
    "district": "amplified_range:d17",
@@ -11328,7 +11479,7 @@
    "tier": null
   },
   {
-   "id": 413,
+   "id": 420,
    "name": "ZZ Ward",
    "region": "river_port",
    "district": "river_port:d6",
@@ -11352,7 +11503,7 @@
    "tier": "Strong"
   },
   {
-   "id": 406,
+   "id": 413,
    "name": "Zach Bryan",
    "region": "heartland",
    "district": "heartland:d6",
@@ -11374,7 +11525,7 @@
    "tier": null
   },
   {
-   "id": 407,
+   "id": 414,
    "name": "Zach Person",
    "region": "slide_foothills",
    "district": "slide_foothills:override",
@@ -11396,7 +11547,7 @@
    "tier": null
   },
   {
-   "id": 408,
+   "id": 415,
    "name": "Zakk Wylde",
    "region": "amplified_range",
    "district": "amplified_range:d2",
@@ -11418,7 +11569,7 @@
    "tier": null
   },
   {
-   "id": 409,
+   "id": 416,
    "name": "Zara Phillips",
    "region": "outer_isles",
    "district": "outer_isles:outskirts",
@@ -11442,7 +11593,7 @@
    "tier": null
   },
   {
-   "id": 410,
+   "id": 417,
    "name": "Zedicus & Abyssinia Roots",
    "label": "Zedicus",
    "region": "outer_isles",
@@ -11465,13 +11616,13 @@
    "tier": null
   },
   {
-   "id": 411,
+   "id": 418,
    "name": "Ziggy Marley",
    "region": "river_port",
    "district": "river_port:d1",
    "size": "town",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "town",
+   "score": 6,
    "xy": [
     648.5,
     612.2
@@ -11481,8 +11632,8 @@
     0.9308
    ],
    "flags": {},
-   "src": "seen as support (history TSVs; no artists.tsv row)",
-   "times_seen": 1,
+   "src": "history pass: seen as support",
+   "times_seen": 2,
    "vip": 0,
    "tier": null
   },
@@ -11511,7 +11662,7 @@
    "tier": "Strong"
   },
   {
-   "id": 218,
+   "id": 222,
    "name": "kitchen",
    "region": "outer_isles",
    "district": "outer_isles:outskirts",
@@ -11533,5308 +11684,2918 @@
    "times_seen": 0,
    "vip": 0,
    "tier": null
+  },
+  {
+   "id": 263,
+   "name": "members of The Bridge, Smooth Kentucky & others",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 0,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "on the potentials list",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": null
   }
  ],
- "routes": [
+ "graph_edges": [
   {
    "a": "AJR",
    "b": "Benjamin Steer",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "AJR",
    "b": "Cavetown",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "AJR",
    "b": "Chelsea Cutler",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "AJR",
    "b": "Valley",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "AZTEC SUN",
    "b": "Oh He Dead",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Abraham Alexander",
    "b": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Adia Victoria",
    "b": "Allison Russell",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Adia Victoria",
    "b": "Amythyst Kiah",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Adia Victoria",
    "b": "Buffalo Nichols",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Adia Victoria",
    "b": "Larkin Poe",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     610.5,
-     380.1
-    ],
-    [
-     594.9,
-     372.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Adia Victoria",
    "b": "Rhiannon Giddens",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Adia Victoria",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Al Olender",
    "b": "Shovels & Rope",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Alabama Shakes",
    "b": "Brittany Howard",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Alabama Shakes",
    "b": "The Budos Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Alanis Morissette",
    "b": "Joan Jett & The Blackhearts",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Albert Castiglia",
    "b": "Albert Cummings",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Albert Castiglia",
    "b": "Altered Five Blues Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Albert Castiglia",
    "b": "Devon Allman",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Albert Castiglia",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Albert Cummings",
    "b": "Ally Venable Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Albert Cummings",
    "b": "Devon Allman",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Albert Cummings",
    "b": "Tinsley Ellis",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Albert Cummings",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Amythyst Kiah",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Joy Oladokun",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Kaia Kater",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Kara Jackson",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Leyla McCalla",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Sarah McLachlan",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Allison Russell",
    "b": "Sunny War",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Allison Russell",
    "b": "The Secret Sisters",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Allison Russell",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ally Venable Band",
    "b": "Christone 'Kingfish' Ingram",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ally Venable Band",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Ally Venable Band",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ally Venable Band",
    "b": "Muireann Bradley",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ally Venable Band",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ally Venable Band",
    "b": "The Allman Betts Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ally Venable Band",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Alsarah & the Nubatones",
    "b": "Violent Femmes",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Ana Popović",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Bernard Allison",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Altered Five Blues Band",
    "b": "GA-20",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Garret T. Willie",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Altered Five Blues Band",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Amadou Kouyate",
    "b": "Yasmin Williams",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Amy Stroup",
    "b": "The Secret Sisters",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Amythyst Kiah",
    "b": "Larkin Poe",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     610.5,
-     380.1
-    ],
-    [
-     594.9,
-     372.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Amythyst Kiah",
    "b": "Sunny War",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Amythyst Kiah",
    "b": "The Pinkerton Raid",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Amythyst Kiah",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Amythyst Kiah",
    "b": "Yasmin Williams",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Bernard Allison",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Carly Harvey",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Joanna Connor",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Piper & The Hard Times",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     381.9,
-     554.5
-    ],
-    [
-     595.6,
-     428.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Selwyn Birchwood",
    "cls": "bridge",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     381.9,
-     554.5
-    ],
-    [
-     595.6,
-     428.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Skribe",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Young Dubliners",
    "cls": "bridge",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     359.2,
-     551.6
-    ],
-    [
-     857.3,
-     100.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anders Osborne",
    "b": "JJ Grey & Mofro",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anders Osborne",
    "b": "North Mississippi Allstars",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anders Osborne",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anders Osborne",
    "b": "Tab Benoit",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Angelique Francis",
    "b": "D.K. Harrell",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Angelique Francis",
    "b": "Evan Nicole Bell",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Angelique Francis",
    "b": "Kat Riggins",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Angelique Francis",
    "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anna Moss",
    "b": "Sabine McCalla",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Anthony D'Amato",
    "b": "Keb' Mo'",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     329.3,
-     575.6
-    ],
-    [
-     352.6,
-     551.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Anthony Rosano and The Conqueroos",
    "b": "Tab Benoit",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     446.4,
-     572.7
-    ],
-    [
-     485.2,
-     565.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Aoife O'Donovan",
    "b": "I'm With Her",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Ariel Posen",
    "b": "Gary Clark Jr.",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ariel Posen",
    "b": "Robben Ford",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ariel Posen",
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Ariel Posen",
    "b": "Zach Person",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Artur Menezes",
    "b": "Eric Gales",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Austin Meade",
    "b": "ZZ Top",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Barenaked Ladies",
    "b": "Fastball",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Barenaked Ladies",
    "b": "Sugar Ray",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Becca Mancari",
    "b": "Brittany Howard",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Beck",
    "b": "Phoenix",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Beck",
    "b": "Sir Chloe",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Beck",
    "b": "Weyes Blood",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Bernard Allison",
    "b": "Kirk Fletcher",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Bernard Allison",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Beth Hart",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Beth Hart",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Beth Hart",
    "b": "Linda Perry",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     643.5,
-     258.4
-    ],
-    [
-     621.1,
-     266.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Beth Hart",
    "b": "Orianthi",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Beth Hart",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Big Boi",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     873.3,
-     104.7
-    ],
-    [
-     640.7,
-     476.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bill Frisell",
    "b": "The Avett Brothers",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Billy Gibbons",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Billy Gibbons",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Billy Gibbons",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Billy Gibbons",
    "b": "ZZ Top",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Billy Strings",
    "b": "Daniel Donato",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Billy Strings",
    "b": "Greensky Bluegrass",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Billy Strings",
    "b": "Lindsay Lou",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Blackberry Smoke",
    "b": "Gov't Mule",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Blackberry Smoke",
    "b": "Robert Jon & The Wreck",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Blackberry Smoke",
    "b": "The Bros. Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Blessing Offor",
    "b": "Robert Randolph",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Blondshell",
    "b": "Liz Phair",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     844.8,
-     95.6
-    ],
-    [
-     598.0,
-     246.1
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Blu Eye Extinction",
    "b": "George Clinton & Parliament-Funkadelic",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Bobby Rush",
    "b": "Cedric Burnside",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bobby Rush",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bobby Rush",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bobby Rush",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bone Thugs-n-Harmony",
    "b": "LL Cool J",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Bonerama",
    "b": "Tab Benoit",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Bonerama",
    "b": "The Soul Rebels",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Bonnie Raitt",
    "b": "John Hiatt",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bonnie Raitt",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bonnie Raitt",
    "b": "The James Hunter Six",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     531.8,
-     417.7
-    ],
-    [
-     561.7,
-     475.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Brandon Miller",
    "b": "Danielle Nicole",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Brassie",
    "b": "Sadurn",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Bridge City Sinners",
    "b": "The Devil Makes Three",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Brittany Howard",
    "b": "St. Paul & The Broken Bones",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Brittney Spencer",
    "b": "Marcus King",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     534.5,
-     394.9
-    ],
-    [
-     676.0,
-     289.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Brittney Spencer",
    "b": "Tiera Kennedy",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Brittney Spencer",
    "b": "Willie Nelson",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Brody Buster",
    "b": "Danielle Nicole",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Christone 'Kingfish' Ingram",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Eric Bibb",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     643.5,
-     258.4
-    ],
-    [
-     621.1,
-     266.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buddy Guy",
    "b": "Eric Gales",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Gary Clark Jr.",
    "cls": "bridge",
-   "crossRegion": false,
-   "render": "bridge"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Jackie Venson",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Judith Hill",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buddy Guy",
    "b": "Keb' Mo'",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buddy Guy",
    "b": "Robert Randolph",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buddy Guy",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buddy Guy",
    "b": "Steve Miller Band",
    "cls": "bridge",
-   "crossRegion": false,
-   "render": "bridge"
+   "crossRegion": false
   },
   {
    "a": "Buddy Guy",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buffalo Nichols",
    "b": "Carolyn Wonderland",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     381.9,
-     554.5
-    ],
-    [
-     595.6,
-     428.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Buffalo Nichols",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     381.9,
-     554.5
-    ],
-    [
-     595.6,
-     428.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Bywater Call",
    "b": "Eddie 9V",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Bywater Call",
    "b": "Gov't Mule",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Bywater Call",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Bywater Call",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Caitlin Krisko & The Broadcast",
    "b": "Eric Johanson",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Caitlin Krisko & The Broadcast",
    "b": "Mallow Hill",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Canned Heat",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carly Harvey",
    "b": "Selwyn Birchwood",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     381.9,
-     554.5
-    ],
-    [
-     595.6,
-     428.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carolyn Wonderland",
    "b": "Ruthie Foster",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carolyn Wonderland",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carolyn Wonderland",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carolyn Wonderland",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Carolyn Wonderland",
    "b": "Tab Benoit",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Cassie & Maggie",
    "b": "Enter the Haggis",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Cat Power",
    "b": "Pixies",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Cedric Burnside",
    "b": "GA-20",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Cedric Burnside",
    "b": "Lightnin' Malcolm",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Cedric Burnside",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Chad Hollister",
    "b": "Los Lobos",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Charly Lowry",
    "b": "Rhiannon Giddens",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Chelsey Green",
    "b": "The War and Treaty",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Chris Cain",
    "b": "D.K. Harrell",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Dylan Triplett",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Gary Clark Jr.",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Jackie Venson",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Mathias Lattin",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Steve Miller Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Yutzi",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Cole Larravide",
    "b": "Ruthie Foster",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Cowboy Junkies",
    "b": "Lucinda Williams",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Cowboy Junkies",
    "b": "Patty Griffin",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
+  },
+  {
+   "a": "Cris Jacobs",
+   "b": "Whitney Mongé",
+   "cls": "trail",
+   "crossRegion": true
   },
   {
    "a": "D.K. Harrell",
    "b": "Kent Burnside",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     446.4,
-     572.7
-    ],
-    [
-     485.2,
-     565.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "D.K. Harrell",
    "b": "Larry McCray",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "D.K. Harrell",
    "b": "Mathias Lattin",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "D.K. Harrell",
    "b": "The Jesse Williams Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "DJ Jazzy Jeff",
    "b": "LL Cool J",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Daniel Donato",
    "b": "Greensky Bluegrass",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Danielle Nicole",
    "b": "Jackie Venson",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Danielle Nicole",
    "b": "Joanna Connor",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Danielle Nicole",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Danielle Nicole",
    "b": "Mallow Hill",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Danielle Nicole",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Danielle Ponder",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     446.4,
-     572.7
-    ],
-    [
-     485.2,
-     565.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Danny Burns",
    "b": "Steve Earle",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     856.1,
-     100.2
-    ],
-    [
-     523.7,
-     389.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "David Moore",
    "b": "Jake Xerxes Fussell",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "De La Soul",
    "b": "Wu-Tang Clan",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Deanna Bogart",
    "b": "Gabe Stillman",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Derrick Dove & The Peacekeepers",
    "b": "John Primer",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Devon Allman",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Devon Allman",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Devon Allman",
    "b": "Larry McCray",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Devon Allman",
    "b": "Piper & The Hard Times",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Devon Allman",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Diana Silvers",
    "b": "Jon Batiste",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Dior Ashley Brown and the Filthy Animals",
    "b": "Oh He Dead",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Dumpstaphunk",
    "b": "Galactic",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Dumpstaphunk",
    "b": "Ivan Neville",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Dumpstaphunk",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Dylan Triplett",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Eastern Standard Time",
    "b": "The Pietasters",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Eddie 9V",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eli Kollman",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Elvis Costello & The Imposters",
    "b": "Nick Lowe & Los Straitjackets",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Emmylou Harris",
    "b": "Lucinda Williams",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Emmylou Harris",
    "b": "Willie Nelson",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Enter the Haggis",
    "b": "Gaelic Storm",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Enter the Haggis",
    "b": "Haggis X-1",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Enter the Haggis",
    "b": "House of Hamill",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Eric Bibb",
    "b": "Garret T. Willie",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Bibb",
    "b": "Keb' Mo'",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Bibb",
    "b": "Nat Myers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Bibb",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Clapton",
    "b": "Mark Knopfler",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eric Gales",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eric Gales",
    "b": "Kirk Fletcher",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eric Gales",
    "b": "Larry McCray",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eric Gales",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Eric Johanson",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Eric Johanson",
    "b": "Vanessa Collier",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Johnson",
    "b": "Joe Satriani",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Johnson",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Eric Johnson",
    "b": "Steve Vai",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Evan Nicole Bell",
    "b": "Jax Hollow",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     337.5,
-     549.9
-    ],
-    [
-     420.0,
-     415.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Every Breath You Take",
    "b": "The Side Cars Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Fantastic Negrito",
    "b": "Gary Clark Jr.",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fantastic Negrito",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fantastic Negrito",
    "b": "Larkin Poe",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fantastic Negrito",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fantastic Negrito",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Free Nationals",
    "b": "Gary Clark Jr.",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fruition",
    "b": "Greensky Bluegrass",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Fruition",
    "b": "Lindsay Lou",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "GA-20",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gabe Stillman",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gabe Stillman",
    "b": "Tommy Castro & the Painkillers",
    "cls": "bridge",
-   "crossRegion": false,
-   "render": "bridge"
+   "crossRegion": false
   },
   {
    "a": "Gaelic Storm",
    "b": "Young Dubliners",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Galactic",
    "b": "Jah Works",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Garret T. Willie",
    "b": "Tinsley Ellis",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gary Clark Jr.",
    "b": "Jackie Venson",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gary Clark Jr.",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gary Clark Jr.",
    "b": "Steve Miller Band",
    "cls": "bridge",
-   "crossRegion": false,
-   "render": "bridge"
+   "crossRegion": false
   },
   {
    "a": "Gary Clark Jr.",
    "b": "The Record Company",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gary Hoey",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gary Hoey",
    "b": "Joe Satriani",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "George Clinton & Parliament-Funkadelic",
    "b": "MonoNeon",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ghalia Volt",
    "b": "Kent Burnside",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ghalia Volt",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Ghalia Volt",
    "b": "The Allman Betts Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Gigi Perez",
    "b": "Hozier",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Gillian Welch",
    "b": "Lucinda Williams",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gillian Welch",
    "b": "Patty Griffin",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Glen Hansard",
    "b": "Margaret Glaspy",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Glenn Yoder",
    "b": "Kingsley Flood",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Glom",
    "b": "Sadurn",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     598.0,
-     246.1
-    ],
-    [
-     844.8,
-     95.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "JJ Grey & Mofro",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "North Mississippi Allstars",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Robert Jon & The Wreck",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "Selwyn Birchwood",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Shaw Davis & The Black Ties",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "The Bros. Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Warren Haynes",
    "cls": "road",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Ziggy Marley",
-   "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "cls": "road",
+   "crossRegion": true
   },
   {
    "a": "Grace Bowers",
    "b": "Tal Wilkenfeld",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Hannah Honeycutt",
    "b": "Kingsley Flood",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Hayes Carll",
    "b": "Shovels & Rope",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Henri Brown",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Honeyfunk",
    "b": "Zedicus & Abyssinia Roots",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "I'm With Her",
    "b": "Molly Tuttle",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "I'm With Her",
    "b": "Punch Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Indigo Girls",
    "b": "Larkin Poe",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     610.5,
-     380.1
-    ],
-    [
-     594.9,
-     372.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Indigo Girls",
    "b": "Patty Griffin",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Indigo Girls",
    "b": "Tracy Chapman",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "J & The Causeways",
    "b": "Jackie Venson",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "Judith Hill",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "North Mississippi Allstars",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "Robert Randolph",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "JJ Grey & Mofro",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jackie Venson",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jaime Wyatt",
    "b": "Jobi Riccio",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jaime Wyatt",
    "b": "Margo Price",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jaime Wyatt",
    "b": "ZZ Ward",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     574.0,
-     536.2
-    ],
-    [
-     496.6,
-     508.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jake Blount",
    "b": "Jake Xerxes Fussell",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jake Blount",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jake Xerxes Fussell",
    "b": "Sam Amidon",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Jake Xerxes Fussell",
    "b": "Yasmin Williams",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jared James Nichols",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jax Hollow",
    "b": "Zach Person",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     610.5,
-     380.1
-    ],
-    [
-     594.9,
-     372.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jesse Dayton",
    "b": "Tab Benoit",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Jessie Baylin",
    "b": "Stevie Nicks",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Jimmie Vaughan",
    "b": "King Solomon Hicks",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jimmie Vaughan",
    "b": "Robert Cray Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jimmie Vaughan",
    "b": "The Fabulous Thunderbirds",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jimmy Hall",
    "b": "The Allman Betts Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Joan Jett & The Blackhearts",
    "b": "Morgan Wade",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     676.0,
-     289.7
-    ],
-    [
-     534.5,
-     394.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanna Connor",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanna Connor",
    "b": "Piper & The Hard Times",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanna Connor",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanna Connor",
    "b": "Tab Benoit",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanna Connor",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Kenny Wayne Shepherd",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Larkin Poe",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Larry McCray",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Selwyn Birchwood",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joanne Shaw Taylor",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jobi Riccio",
    "b": "Margo Price",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joe Bonamassa",
    "b": "Kenny Wayne Shepherd",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joe Bonamassa",
    "b": "Marc Broussard",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     643.5,
-     258.4
-    ],
-    [
-     621.1,
-     266.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joe Bonamassa",
    "b": "Robben Ford",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joe Bonamassa",
    "b": "Robert Cray Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joe Bonamassa",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Joe Bonamassa",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joe Satriani",
    "b": "Steve Vai",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Joey Landreth",
    "b": "The Bros. Landreth",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "John Hiatt",
    "b": "Los Lobos",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "John Hiatt",
    "b": "Lyle Lovett",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "John Hiatt",
    "b": "Rebecca Porter",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "John Hiatt",
    "b": "Steve Earle",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "John Primer",
    "b": "Mr. Sipp",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Jon Batiste",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Jon Muq",
    "b": "Valerie June",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     496.6,
-     508.0
-    ],
-    [
-     574.0,
-     536.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Jon Spencer",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Josh Ritter",
    "b": "Langhorne Slim",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Josh Ritter",
    "b": "The Avett Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Judith Hill",
    "b": "Mavis Staples",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Judy Blank",
    "b": "The Heavy Heavy",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Kaia Kater",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Kat Riggins",
    "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Kate Davis",
    "b": "Mystery Friends",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Kate Davis",
    "b": "The House You Grew Up In (THYGUI)",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Keb' Mo'",
    "b": "Nat Myers",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Keb' Mo'",
    "b": "Robert Cray Band",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Keb' Mo'",
    "b": "Ruthie Foster",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Keb' Mo'",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Keb' Mo'",
    "b": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Kelli Baker Band",
    "b": "Mike Zito",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Kenny Wayne Shepherd",
    "b": "Mato Nanji",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Kenny Wayne Shepherd",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Kenny Wayne Shepherd",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Kenny Wayne Shepherd",
    "b": "Zakk Wylde",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Kermit Ruffins",
    "b": "Rebirth Brass Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Kermit Ruffins",
    "b": "The Dirty Dozen Brass Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Kermit Ruffins",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Kim Wilson",
    "b": "The Fabulous Thunderbirds",
    "cls": "road",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "King Solomon Hicks",
    "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     637.1,
-     475.8
-    ],
-    [
-     728.5,
-     314.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Kingsley Flood",
    "b": "The Beanstalk Library",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Kirk Fletcher",
    "b": "Robben Ford",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "LL Cool J",
    "b": "Queen Latifah",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "LL Cool J",
    "b": "The Roots",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "LL Cool J",
    "b": "Z-Trip",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "La Unica",
    "b": "Young Dubliners",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Lake Street Dive",
    "b": "Oh He Dead",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lake Street Dive",
    "b": "St. Paul & The Broken Bones",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lake Street Dive",
    "b": "The Dip",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Langhorne Slim",
    "b": "Oliver Wood",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Langhorne Slim",
    "b": "Sabine McCalla",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Langhorne Slim",
    "b": "The Avett Brothers",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Larkin Poe",
    "b": "Samantha Fish",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Larkin Poe",
    "b": "Slash",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Larkin Poe",
    "b": "Tall Heights",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Larkin Poe",
    "b": "Willie Nelson",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     594.3,
-     417.3
-    ],
-    [
-     574.6,
-     424.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Larkin Poe",
    "b": "ZZ Ward",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Leyla McCalla",
    "b": "Rhiannon Giddens",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Leyla McCalla",
    "b": "Sabine McCalla",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Liam St. John",
    "b": "ZZ Ward",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     531.8,
-     417.7
-    ],
-    [
-     561.7,
-     475.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Lightnin' Malcolm",
    "b": "Tab Benoit",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Lindsay Lou",
    "b": "Sierra Hull",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lindsay Lou",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Lindsay Lou",
    "b": "The Wood Brothers",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Lucinda Williams",
    "b": "Steve Earle",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lucky Chops",
    "b": "Rebirth Brass Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lucky Chops",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lucy Dacus",
    "b": "boygenius",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lyle Lovett",
    "b": "Steve Earle",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Lynn Hollyfield",
    "b": "Whitney Mongé",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Maggie Rose",
    "b": "Margo Price",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Maggie Rose",
    "b": "The Hip Snacks",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Marc Broussard",
    "b": "Marcus King",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     621.1,
-     266.6
-    ],
-    [
-     643.5,
-     258.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Marc Broussard",
    "b": "The Teskey Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     420.0,
-     415.8
-    ],
-    [
-     337.5,
-     549.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Marc Broussard",
    "b": "The War and Treaty",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Marcus King",
    "b": "The Teskey Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     681.6,
-     293.4
-    ],
-    [
-     364.2,
-     552.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Margaret Glaspy",
    "b": "Nicole Atkins",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Margaret Glaspy",
    "b": "Waxahatchee",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Margo Price",
    "b": "Molly Tuttle",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Mavis Staples",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Mavis Staples",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     496.6,
-     508.0
-    ],
-    [
-     574.0,
-     536.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Mikaela Davis",
    "b": "Rich Ruth",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Mike Zito",
    "b": "Piper & The Hard Times",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Mike Zito",
    "b": "Tab Benoit",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Mike Zito",
    "b": "Vanessa Collier",
    "cls": "bridge",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     617.0,
-     489.2
-    ],
-    [
-     622.4,
-     473.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Mike Zito",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Mitch Ryder",
    "b": "Samantha Fish",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Modest Mouse",
    "b": "Pixies",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Molly Tuttle",
    "b": "Sierra Hull",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Muireann Bradley",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Muireann Bradley",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Nas",
    "b": "Wu-Tang Clan",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Nat Myers",
    "b": "Taj Mahal",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Nicole Atkins",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "North Mississippi Allstars",
    "b": "Robert Randolph",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "North Mississippi Allstars",
    "b": "Selwyn Birchwood",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "North Mississippi Allstars",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "North Mississippi Allstars",
    "b": "Warren Haynes",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Oh He Dead",
    "b": "The Dip",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Oh He Dead",
    "b": "The North Country",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Oh He Dead",
    "b": "ViRG",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Oliver Wood",
    "b": "The Wood Brothers",
    "cls": "road",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Peter Case",
    "b": "Sonny Landreth",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Peter Gabriel",
    "b": "Roger Waters",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Pixies",
    "b": "Violent Femmes",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Punch Brothers",
    "b": "Sierra Hull",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Rebirth Brass Band",
    "b": "The Dirty Dozen Brass Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Rebirth Brass Band",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Rebirth Brass Band",
    "b": "Victor Wooten",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Rhiannon Giddens",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Robben Ford",
    "b": "Robert Cray Band",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Robben Ford",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Robert Jon & The Wreck",
    "b": "The Steepwater Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     713.5,
-     309.0
-    ],
-    [
-     693.3,
-     336.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Robert Randolph",
    "b": "Slash",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Robert Randolph",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Ruthie Foster",
    "b": "Shemekia Copeland",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Sadia Bangura",
    "b": "Southern Avenue",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Sadurn",
    "b": "Shakey Graves",
    "cls": "river",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     844.8,
-     95.6
-    ],
-    [
-     598.0,
-     246.1
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Samantha Fish",
    "b": "Sonny Landreth",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Samantha Fish",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Samantha Fish",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Sarah McLachlan",
    "b": "Tori Amos",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Sarah McLachlan",
    "b": "Tracy Chapman",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Sarah McLachlan",
    "b": "Vienna Teng",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Scott Tournet",
    "b": "Sue Foley",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Selwyn Birchwood",
    "b": "Southern Avenue",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     595.6,
-     428.8
-    ],
-    [
-     381.9,
-     554.5
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Selwyn Birchwood",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Selwyn Birchwood",
    "b": "Young Dubliners",
    "cls": "bridge",
-   "crossRegion": true,
-   "render": "ferry",
-   "via": [
-    [
-     693.6,
-     337.2
-    ],
-    [
-     868.7,
-     103.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Shakey Graves",
    "b": "The Wood Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     442.1,
-     420.3
-    ],
-    [
-     460.0,
-     371.9
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Shaw Davis & The Black Ties",
    "b": "Soul Miners Union",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Shemekia Copeland",
    "b": "Sue Foley",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     364.2,
-     552.2
-    ],
-    [
-     681.6,
-     293.4
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Shemekia Copeland",
    "b": "Vanessa Collier",
    "cls": "bridge",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     446.4,
-     572.7
-    ],
-    [
-     485.2,
-     565.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Shovels & Rope",
    "b": "The Avett Brothers",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Shovels & Rope",
    "b": "The Secret Sisters",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Shovels & Rope",
    "b": "The Wood Brothers",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Slash",
    "b": "ZZ Ward",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Sonny Landreth",
    "b": "The Iguanas",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Sonny Landreth",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     693.3,
-     336.4
-    ],
-    [
-     713.5,
-     309.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Southern Avenue",
    "b": "The War and Treaty",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     352.6,
-     551.0
-    ],
-    [
-     329.3,
-     575.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Sparkbird",
    "b": "Spartan Jet-Plex",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Sparkbird",
    "b": "Sushi Soucy",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Spring Heeled Jack",
    "b": "The Pietasters",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "St. Paul & The Broken Bones",
    "b": "The Dip",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "St. Paul & The Broken Bones",
    "b": "The Teskey Brothers",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     485.2,
-     565.6
-    ],
-    [
-     446.4,
-     572.7
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Stephen Wilson Jr",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     460.0,
-     371.9
-    ],
-    [
-     442.1,
-     420.3
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Sunny War",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     352.6,
-     551.0
-    ],
-    [
-     329.3,
-     575.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Suzanne Vega",
    "b": "Tori Amos",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Sweet Leda",
    "b": "Vanessa Collier",
    "cls": "river",
-   "crossRegion": true,
-   "render": "pass",
-   "via": [
-    [
-     728.5,
-     314.0
-    ],
-    [
-     637.1,
-     475.8
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Tab Benoit",
    "b": "The Dirty Dozen Brass Band",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Taj Mahal",
    "b": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "cls": "road",
-   "crossRegion": false,
-   "render": "road"
+   "crossRegion": false
   },
   {
    "a": "Tal Wilkenfeld",
    "b": "The Allman Betts Band",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     622.4,
-     473.3
-    ],
-    [
-     617.0,
-     489.2
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "Tal Wilkenfeld",
    "b": "Victor Wooten",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Taylor Ashton",
    "b": "The Lone Bellow",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "The Avett Brothers",
    "b": "Willie Nelson",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "The Dirty Dozen Brass Band",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "The Jesse Williams Band",
    "b": "ZZ Ward",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     446.4,
-     572.7
-    ],
-    [
-     485.2,
-     565.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "The Soul Rebels",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "The Teskey Brothers",
    "b": "The War and Treaty",
    "cls": "trail",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     352.6,
-     551.0
-    ],
-    [
-     329.3,
-     575.6
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "The War and Treaty",
    "b": "Tiera Kennedy",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "The War and Treaty",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": true,
-   "render": "highway",
-   "via": [
-    [
-     574.0,
-     536.2
-    ],
-    [
-     496.6,
-     508.0
-    ]
-   ]
+   "crossRegion": true
   },
   {
    "a": "The War and Treaty",
    "b": "Valerie June",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "The Wildmans",
    "b": "The Wood Brothers",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Tinsley Ellis",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false,
-   "render": "trail"
+   "crossRegion": false
   },
   {
    "a": "Trombone Shorty & Orleans Avenue",
    "b": "Ziggy Marley",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   },
   {
    "a": "Willie Nelson",
    "b": "Zach Bryan",
    "cls": "river",
-   "crossRegion": false,
-   "render": "river"
+   "crossRegion": false
   }
  ]
 }
