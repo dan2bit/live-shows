@@ -2,7 +2,10 @@
 """
 build_fantasy_map.py — reshape the artist-graph data into a speculative-fiction
 map model: regions (terrain), districts (neighborhoods), settlements (artists),
-and routes (edges), with normalized coordinates for a JS/CSS overlay layer.
+and graph edges (kinship, bills, sidemen, taste), with normalized coordinates for a
+JS/CSS overlay layer. Routes are NOT derived here: the drawn thoroughfares are hand-
+owned in tools/map/thoroughfares.json and rendered by map.html; the graph edges are
+emitted as data (graph_edges) for analysis and never as something to draw.
 
 Reads the same sources as tools/research/graph/artist-graph.html:
   recommend_index.json   nodes + name-variant resolver
@@ -120,7 +123,7 @@ REGIONS = {
 }
 
 # Waterway suggestions (polylines, canvas units). The design layer may redraw;
-# routes reference these only thematically.
+# nothing downstream references these by id.
 WATERWAYS = [
     {"id": "the_bigmuddy", "label": "The Big Muddy",
      "points": [(672, 306), (640, 348), (618, 422), (612, 478), (628, 546), (642, 606)],
@@ -1288,44 +1291,18 @@ for st in settlements:
     elif region_hulls.get(st["region"]) and not point_in_poly(*st["xy"], region_hulls[st["region"]]):
         st["flags"]["stray"] = True
 
-# gateways: each ordered region pair gets one crossing point per side, so
-# cross-region routes bundle into shared corridors instead of great circles
-def edge_point(reg, toward):
-    ax, ay = REGIONS[reg]["anchor"]; rx_, ry_ = REGIONS[reg]["rx"], REGIONS[reg]["ry"]
-    dx, dy = toward[0] - ax, toward[1] - ay
-    d = math.hypot(dx, dy) or 1; ux_, uy_ = dx / d, dy / d
-    er = (rx_ * ry_) / math.hypot(ry_ * ux_, rx_ * uy_)
-    return (ax + ux_ * er * 0.94, ay + uy_ * er * 0.94)
-
-gates = {}
-def gate_pair(ra, rb):
-    key = (ra, rb) if ra < rb else (rb, ra)
-    if key not in gates:
-        pa = edge_point(key[0], REGIONS[key[1]]["anchor"])
-        pb = edge_point(key[1], REGIONS[key[0]]["anchor"])
-        gates[key] = (pa, pb)
-    pa, pb = gates[key]
-    return (pa, pb) if (ra, rb) == key else (pb, pa)
-
-routes = []
+# Graph edges, as data. These used to be emitted as "routes" with a render class
+# (ferry / pass / highway, plus gateway corridor points) for an overlay to draw;
+# that vocabulary now belongs to the hand-owned thoroughfares, and the painted map
+# draws those instead. The edges stay in the file as graph_edges so the corridor
+# analysis and anything else that asks "who is connected to whom, and how" keeps
+# its source - provenance only, nothing about how to draw a line.
+graph_edges = []
 for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
     a, b = sorted(key)
     if a not in region_of or b not in region_of:
         continue
-    cross = region_of[a] != region_of[b]
-    render = cls
-    if cross:
-        if "outer_isles" in (region_of[a], region_of[b]):
-            render = "ferry"
-        elif "amplified_range" in (region_of[a], region_of[b]):
-            render = "pass"
-        else:
-            render = "highway"
-    entry = {"a": a, "b": b, "cls": cls, "crossRegion": cross, "render": render}
-    if cross:
-        ga, gb = gate_pair(region_of[a], region_of[b])
-        entry["via"] = [[round(ga[0], 1), round(ga[1], 1)], [round(gb[0], 1), round(gb[1], 1)]]
-    routes.append(entry)
+    graph_edges.append({"a": a, "b": b, "cls": cls, "crossRegion": region_of[a] != region_of[b]})
 
 # ---- labels.json is the single authority for every label placement ----
 # {"regions": {id: {xy, size, lines?}}, "islands": {name: xy}, "waters": {name: xy}}
@@ -1388,7 +1365,7 @@ out = {
              "decreed_capitals": dict(sorted(DECREED.items())),
              "override_audit": override_audit,
              "override_audit_counts": dict(sorted(_audit_counts.items())),
-             "counts": {"settlements": len(settlements), "routes": len(routes),
+             "counts": {"settlements": len(settlements), "graph_edges": len(graph_edges),
                         "districts": len(districts)}},
     "canvas": CANVAS,
     "regions": [{"id": rid, **{k: v for k, v in spec.items()
@@ -1407,10 +1384,10 @@ out = {
               for w in WATERWAYS if w["id"] in LAKE_R for n_, p_ in zip(w["names"], w["points"])],
     "districts": [{"id": did, **d} for did, d in sorted(districts.items())],
     "settlements": settlements,
-    "routes": routes,
+    "graph_edges": graph_edges,
 }
 OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False))
-print(f"wrote {OUT}: {len(settlements)} settlements, {len(routes)} routes, "
+print(f"wrote {OUT}: {len(settlements)} settlements, {len(graph_edges)} graph edges, "
       f"{len(districts)} districts")
 for reg in REGIONS:
     n = sum(1 for s in settlements if s["region"] == reg)
