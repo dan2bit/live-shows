@@ -631,18 +631,6 @@
     "class": "unchanged"
    },
    {
-    "name": "Gov't Mule",
-    "override": "town",
-    "auto": "town",
-    "score": 6,
-    "basis": {
-     "size": "waystation",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
     "name": "Hozier",
     "override": "city",
     "auto": "town",
@@ -1214,23 +1202,10 @@
      "at": "2026-09-25"
     },
     "class": "unchanged"
-   },
-   {
-    "name": "Ziggy Marley",
-    "override": "town",
-    "auto": "town",
-    "score": 6,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
    }
   ],
   "override_audit_counts": {
    "decree": 4,
-   "redundant": 2,
    "unchanged": 60
   },
   "counts": {
