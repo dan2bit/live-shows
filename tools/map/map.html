@@ -129,6 +129,21 @@
     font-family:'Special Elite',monospace;font-size:15px;letter-spacing:.14em;
     text-transform:uppercase;border-bottom:2px solid var(--ink);
     padding:13px 0 7px;cursor:move;user-select:none;
+    display:flex;align-items:baseline;gap:8px;justify-content:space-between;
+  }
+  #plate h1 .shaded-name{
+    font-size:11px;letter-spacing:.04em;text-transform:none;opacity:.75;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none;
+  }
+  /* Windowshade: collapsed hides every child but the grip bar. The grip's own hovered-name
+     span is the exception (shows only while collapsed) so the one thing the plate is open
+     for mid-edit - what you're hovering - survives the collapse that was hiding it. */
+  #plate.shaded > :not(#plateGrip){display:none;}
+  #plate.shaded #plateGrip .shaded-name{display:inline;}
+  #plate.shaded{padding-bottom:0;}
+  #shadeBtn{
+    font-family:'Special Elite',monospace;font-size:13px;line-height:1;background:none;border:none;
+    color:var(--ink);cursor:pointer;padding:2px 4px;flex:none;
   }
   #readout{min-height:74px;padding:9px 0 7px;border-bottom:1px solid rgba(34,26,18,.35);}
   #readout .name{font-size:18px;font-weight:600;line-height:1.15;}
@@ -166,6 +181,20 @@
   .save-ind{font-family:'Special Elite',monospace;}
   .save-ind.ok{color:#2e6b3d;}
   .save-ind.err{color:#a63d2f;}
+  #plateFoot{
+    margin-top:9px;padding-top:7px;border-top:1px solid rgba(34,26,18,.35);
+    font-family:'Special Elite',monospace;font-size:11.5px;letter-spacing:.1em;
+    text-transform:uppercase;text-align:center;opacity:.8;
+  }
+  #rosterBanner{transition:none;}
+  #rosterBanner.shaded{padding-bottom:7px;}
+  #rosterBanner.shaded>:not(.rb-head){display:none;}
+  .rb-head{display:flex;align-items:center;gap:8px;justify-content:space-between;}
+  .rb-head>b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #rbShadeBtn{
+    font-family:'Special Elite',monospace;font-size:13px;line-height:1;background:none;border:none;
+    color:#EDE0C2;cursor:pointer;padding:0 2px;flex:none;
+  }
 </style>
 </head>
 <body>
@@ -202,7 +231,7 @@
   <button id="zfit" title="Fit map">&#8962;</button>
 </div>
 <div id="plate">
-  <h1 id="plateGrip">Guitarlandria - Red Hat Atlas</h1>
+  <h1 id="plateGrip"><span>Atlas</span><span class="shaded-name" id="shadedName"></span><button id="shadeBtn" type="button" title="Collapse">&#9650;</button></h1>
   <div id="readout" class="idle"><div class="name">Hover a settlement to read the plate.</div></div>
   <input id="finder" type="search" placeholder="find a settlement&hellip;" autocomplete="off" spellcheck="false">
   <div id="findmsg"></div>
@@ -235,13 +264,16 @@
     <div id="ownerControls" style="display:none">
       <label><input type="checkbox" id="editMode"> edit</label>
       <label><input type="checkbox" id="traceMode"> trace rivers</label>
-      <button id="saveAll" style="margin-top:4px;font-family:'Special Elite',monospace;
-        font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
-        save changes (0)</button>
-      <span class="save-ind" id="ind-save" style="font-size:10.5px;margin-left:4px;"></span>
-      <div id="saveStatus" style="font-size:10.5px;opacity:.85;line-height:1.5;"></div>
+      <div id="saveBlock" style="display:none">
+        <button id="saveAll" style="margin-top:4px;font-family:'Special Elite',monospace;
+          font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
+          save changes (0)</button>
+        <span class="save-ind" id="ind-save" style="font-size:10.5px;margin-left:4px;"></span>
+        <div id="saveStatus" style="font-size:10.5px;opacity:.85;line-height:1.5;"></div>
+      </div>
     </div>
   </div>
+  <div id="plateFoot">Guitarlandria Atlas</div>
 </div>
 <script>
 (async function(){
@@ -461,11 +493,22 @@
     const b=document.createElement('div');
     b.id='rosterBanner';
     b.style.cssText='position:absolute;top:8px;left:8px;max-width:340px;background:rgba(166,61,47,.93);color:#EDE0C2;font-family:Oswald;font-size:12px;padding:7px 10px;border:1.5px solid #221A12;z-index:9;';
-    b.innerHTML=`<b>${missing.length} roster artist${missing.length>1?'s':''} not on the map</b>`
-      +clause(unplaced.length,'awaiting hand placement (haloed)',unplaced)
+    const head=document.createElement('div');
+    head.className='rb-head';
+    head.innerHTML=`<b>${missing.length} roster artist${missing.length>1?'s':''} not on the map</b>`
+      +`<button id="rbShadeBtn" type="button" title="Collapse">&#9650;</button>`;
+    b.appendChild(head);
+    const body=document.createElement('div');
+    body.innerHTML=clause(unplaced.length,'awaiting hand placement (haloed)',unplaced)
       +clause(nopin.length,'builder-placed, no pin',nopin)
       +` — map data is behind recommend_index.<br>`
       +`<span style="font-size:10.5px;opacity:.9">rebuild: GitHub → Actions → “Rebuild fantasy map data” → Run workflow · or: <code>gh workflow run map-rebuild.yml</code></span>`;
+    head.querySelector('#rbShadeBtn').addEventListener('click',()=>{
+      const sh=b.classList.toggle('shaded');
+      head.querySelector('#rbShadeBtn').innerHTML=sh?'&#9660;':'&#9650;';
+      head.querySelector('#rbShadeBtn').title=sh?'Expand':'Collapse';
+    });
+    b.appendChild(body);
     // The names have no mark to click yet, so the decisions a new name needs - which region,
     // or none at all - are taken here, ahead of its first placement. Each row writes into
     // the same overrides object the editor saves; the builder honours both keys.
@@ -496,7 +539,7 @@
     function refresh(){pending=[...decided].filter(n=>overrides[n]&&(overrides[n].exclude||overrides[n].region)).length;saveBtn.textContent=`save decisions (${pending})`;}
     saveBtn.addEventListener('click',async()=>{ if(await saveAll('ind-dec')) note.textContent='saved \u2014 the rebuild applies them'; });
     refresh();
-    b.append(list,foot);
+    body.append(list,foot);
     document.getElementById('stage').appendChild(b);
   })();
   // point-in-polygon for the stray flag (same ray cast as the builder's point_in_poly)
@@ -891,6 +934,7 @@
       readout.innerHTML=`<div class="name am-open" title="Open the artist card">${s.name}</div>
         <div class="where">${RLABEL[s.region]||s.region} \u2014 ${s.size}</div>
         <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}${s.src?`<br><span style="font-family:'Special Elite';font-size:10.5px;opacity:.8">${s.src}</span>`:''}</div>`;
+      document.getElementById('shadedName').textContent=s.name;
     });
     gStl.appendChild(g);
   }
@@ -906,9 +950,25 @@
   // its side. Bigger settlements place first so a capital is never pushed aside by a hamlet.
   // Legends keep the north slot clear for their tick; harbormistresses now carry their
   // anchor on the dot, so they place like anyone else. Ties go east, so nothing moves
-  // without cause.
+  // without cause. A settlement with a harbor also keeps its label off its own harbor
+  // legs - the straight segments settlement -> quai -> run-end, padded by the lane
+  // spread - at lake cost, whether or not the routes layer is showing: those two
+  // segments are known from thoroughfares.json alone, so the test never depends on
+  // curve geometry and the layout does not jump when routes are toggled. A label under
+  // someone else's ferry mid-route is not covered; that is a waypoint drag.
   const CHAR_W=3.5,LBL_H=5.5,DOT_TOL=1.5,LAKE_COST=3;   // 7px Oswald 500 in map units, roughly
   const LAKES=(data.lakes||[]).map(l=>({x0:l.xy[0]-l.r,x1:l.xy[0]+l.r,y0:l.xy[1]-l.r,y1:l.xy[1]+l.r}));
+  const harborSegs=n=>{const h=(THOR.harbors||{})[n];if(!h)return[];const out=[],p=rpos(n);
+    (Array.isArray(h)?h:[h]).forEach((e,i)=>{const ln=LANE[n+'@'+i],spread=ln?Math.max(0,...Object.values(ln.lane).map(Math.abs))*4.5:0;
+      const q=e.quai||p;if(e.quai)out.push({a:p,b:q,pad:3+spread});
+      if(e.heading&&e.run){const L=Math.hypot(e.heading[0],e.heading[1])||1;out.push({a:q,b:[q[0]+e.heading[0]/L*e.run,q[1]+e.heading[1]/L*e.run],pad:3+spread});}});
+    return out;};
+  const segHitsBox=(sg,bx)=>{const x0=bx.x0-sg.pad,x1=bx.x1+sg.pad,y0=bx.y0-sg.pad,y1=bx.y1+sg.pad;   // Liang-Barsky clip of the segment against the padded box
+    let t0=0,t1=1;const dx=sg.b[0]-sg.a[0],dy=sg.b[1]-sg.a[1];
+    for(const [pp,qq] of [[-dx,sg.a[0]-x0],[dx,x1-sg.a[0]],[-dy,sg.a[1]-y0],[dy,y1-sg.a[1]]]){
+      if(pp===0){if(qq<0)return false;continue;}const t=qq/pp;
+      if(pp<0){if(t>t1)return false;if(t>t0)t0=t;}else{if(t<t0)return false;if(t<t1)t1=t;}}
+    return true;};
   function placeLabels(){
     const marks=[...gStl.querySelectorAll('.stl')].map(g=>{
       const st=S.get(g.dataset.name),m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
@@ -917,7 +977,7 @@
     const placed=[];
     const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
     for(const m of marks){
-      const gap=m.r+3;
+      const gap=m.r+3,hsegs=harborSegs(m.st.name);
       const slots=[
         {k:'e',x:gap,y:3,a:'start', box:{x0:m.x+gap,x1:m.x+gap+m.w,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
         {k:'w',x:-gap,y:3,a:'end',  box:{x0:m.x-gap-m.w,x1:m.x-gap,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
@@ -933,6 +993,7 @@
           if(ox>DOT_TOL&&oy>DOT_TOL)cost+=1; }
         for(const o of placed){ if(hit(sl.box,o.box))cost+=o.lt<=m.lt?2:1; }
         for(const l of LAKES){ if(hit(sl.box,l))cost+=LAKE_COST; }
+        for(const sg of hsegs){ if(segHitsBox(sg,sl.box))cost+=LAKE_COST; }
         if(!best||cost<best.cost)best={sl,cost};
       }
       const t=m.g.querySelector('.lbl');
@@ -1021,7 +1082,8 @@
        if(stalePins>8){const e=document.getElementById('err');e.style.display='block';
          e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
   }catch(e){}
-  editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);});
+  const saveBlock=document.getElementById('saveBlock');
+  editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);saveBlock.style.display=editCb.checked?'block':'none';});
   }
   // keep a mark's class list in step with its (live) flags after an edit
   function reflag(g){
@@ -1399,7 +1461,18 @@
   // the plate drags by its title bar
   const plate=document.getElementById('plate'),grip=document.getElementById('plateGrip');
   let pd=null;
+  // windowshade: collapse the plate to just its title bar. The hovered name is fed into
+  // #shadedName from the same mouseenter handler readout already uses, so the one thing
+  // the plate is for mid-hover survives the collapse that hides the readout itself.
+  const shadeBtn=document.getElementById('shadeBtn');
+  shadeBtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const sh=plate.classList.toggle('shaded');
+    shadeBtn.innerHTML=sh?'&#9660;':'&#9650;';
+    shadeBtn.title=sh?'Expand':'Collapse';
+  });
   grip.addEventListener('pointerdown',e=>{
+    if(e.target.closest('#shadeBtn'))return;
     const b=plate.getBoundingClientRect();
     plate.style.top=b.top+'px';plate.style.left=b.left+'px';plate.style.transform='none';
     pd={dx:e.clientX-b.left,dy:e.clientY-b.top};grip.setPointerCapture(e.pointerId);e.preventDefault();
