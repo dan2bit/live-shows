@@ -890,7 +890,7 @@ DECREE_MOVES = {
     "Ziggy Marley": ("river_port", (651.0, 611.0)),       # Reggae Isle (Mavis's old ground)
     "Jah Works": ("river_port", (655.5, 617.5)),
 }
-DECREE_ASHORE = {"Mavis Staples": "river_port"}           # back to the mainland, staged
+DECREE_ASHORE = {}   # Mavis Staples used to be held ashore in Secondline here; she lives on the Delta shore now, by override and pin
 
 # Dan's pins are law: name -> [x, y], applied verbatim, never clamped
 pins_path = SCRIPT_DIR / "pins.json"
