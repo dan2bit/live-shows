@@ -71,7 +71,13 @@
      380.9
     ]
    ],
-   "captured": []
+   "captured": [
+    {
+     "name": "Jaime Wyatt",
+     "at": 0.0,
+     "dist": 2.5
+    }
+   ]
   },
   {
    "id": "wway-2",
@@ -224,7 +230,7 @@
     {
      "name": "Valerie June",
      "at": 1.0,
-     "dist": 3.4
+     "dist": 1.4
     }
    ]
   },
@@ -451,7 +457,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "899de1922e",
+  "pins_hash": "518ea71f8d",
   "overrides_hash": "eb444f6322",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
@@ -4264,12 +4270,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    479.7,
-    467.8
+    469.0,
+    470.5
    ],
    "region_uv": [
-    0.6571,
-    0.4483
+    0.6289,
+    0.4597
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -4470,16 +4476,15 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    347.6,
-    527.2
+    461.1,
+    465.5
    ],
    "region_uv": [
-    0.3096,
-    0.7
+    0.6082,
+    0.4386
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -6042,12 +6047,12 @@
    "auto_size": "village",
    "score": 4,
    "xy": [
-    342.9,
-    509.3
+    344.0,
+    407.2
    ],
    "region_uv": [
-    0.2971,
-    0.6242
+    0.3,
+    0.1915
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -7165,12 +7170,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    353.1,
-    511.6
+    375.2,
+    537.8
    ],
    "region_uv": [
-    0.3239,
-    0.6339
+    0.3821,
+    0.7449
    ],
    "flags": {
     "unvisited": true
@@ -7213,12 +7218,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    360.9,
-    517.3
+    363.6,
+    516.2
    ],
    "region_uv": [
-    0.3445,
-    0.6581
+    0.3516,
+    0.6534
    ],
    "flags": {
     "unvisited": true
@@ -9245,12 +9250,12 @@
    "auto_size": "village",
    "score": 4,
    "xy": [
-    377.7,
-    523.9
+    381.5,
+    523.4
    ],
    "region_uv": [
-    0.3887,
-    0.686
+    0.3987,
+    0.6839
    ],
    "flags": {},
    "src": "",
@@ -9536,12 +9541,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    439.5,
-    510.9
+    438.4,
+    494.3
    ],
    "region_uv": [
-    0.5513,
-    0.6309
+    0.5484,
+    0.5606
    ],
    "flags": {},
    "src": "seen as support (history TSVs; no artists.tsv row)",
@@ -10917,12 +10922,12 @@
    "auto_size": "town",
    "score": 9,
    "xy": [
-    317.9,
-    358.6
+    318.4,
+    356.5
    ],
    "region_uv": [
-    0.2313,
-    -0.0144
+    0.2326,
+    -0.0233
    ],
    "flags": {
     "harbormistress": true
