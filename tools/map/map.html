@@ -583,28 +583,36 @@
   // fan: each gets a lane, ordered by which side of the heading its far end lies, and
   // the quai and run-end slide sideways by lane (2.5 and 4.5 units per lane), so the
   // lines leave in parallel and never cross each other on the way out.
+  // A settlement may have more than one harbor (a capital on a small isle, say): the
+  // file's entry is then a list, and an entry's `for` names the far ends it serves; the
+  // entry with no `for` is the default. Lanes are planned per harbor entry.
+  const harborFor=(n,other)=>{let h=(THOR.harbors||{})[n];if(!h)return null;
+    const list=Array.isArray(h)?h:[h];
+    const i=list.findIndex(e=>e.for&&e.for.includes(other));
+    const j=i>=0?i:list.findIndex(e=>!e.for);
+    return j>=0?{h:list[j],id:n+'@'+j}:null;};
   let LANE={};
   function planLanes(){
-    LANE={};const H=THOR.harbors||{};const at={};
-    const add=(n,key,other)=>{if(H[n]&&other)(at[n]??=[]).push({key,other});};
+    LANE={};const at={};
+    const add=(n,other,key,pt)=>{const hb=harborFor(n,other);if(hb&&pt)(at[hb.id]??={n,h:hb.h,hops:[]}).hops.push({key,pt});};
     for(const r of THOR.routes||[]){
       if(r.cls!=='ferry')continue;const ch=r.chain||[];
       for(let i=0;i<ch.length-1;i++){
         const a=ch[i],b=ch[i+1],k=routeKey(r)+'#'+i;
-        if(r.offmap){add(a,k+'x',r.offmap.exit[r.offmap.exit.length-1]);add(b,k+'e',r.offmap.entry[r.offmap.entry.length-1]);continue;}
+        if(r.offmap){add(a,b,k+'x',r.offmap.exit[r.offmap.exit.length-1]);add(b,a,k+'e',r.offmap.entry[r.offmap.entry.length-1]);continue;}
         const via=hopVia(r,a,b);
-        add(a,k,via.length?via[0]:rpos(b));add(b,k,via.length?via[via.length-1]:rpos(a));
+        add(a,b,k,via.length?via[0]:rpos(b));add(b,a,k,via.length?via[via.length-1]:rpos(a));
       }
     }
-    for(const n in at){
-      const h=H[n],q=h.quai||rpos(n),p0=rpos(n);
+    for(const id in at){
+      const {n,h,hops}=at[id],q=h.quai||rpos(n),p0=rpos(n);
       let d=h.heading?[h.heading[0],h.heading[1]]:[q[0]-p0[0],q[1]-p0[1]];const L=Math.hypot(d[0],d[1])||1;d=[d[0]/L,d[1]/L];
       const px=-d[1],py=d[0];
-      const hops=at[n].map(x=>({key:x.key,side:(x.other[0]-q[0])*px+(x.other[1]-q[1])*py})).sort((u,v)=>u.side-v.side);
-      LANE[n]={px,py,lane:Object.fromEntries(hops.map((x,i)=>[x.key,i-(hops.length-1)/2]))};
+      const sorted=hops.map(x=>({key:x.key,side:(x.pt[0]-q[0])*px+(x.pt[1]-q[1])*py})).sort((u,v)=>u.side-v.side);
+      LANE[id]={px,py,lane:Object.fromEntries(sorted.map((x,i)=>[x.key,i-(sorted.length-1)/2]))};
     }
   }
-  const harborLeg=(n,key)=>{const h=(THOR.harbors||{})[n];if(!h)return[];const ln=LANE[n],k=ln?ln.lane[key]||0:0,px=ln?ln.px:0,py=ln?ln.py:0;
+  const harborLeg=(n,key,other)=>{const hb=harborFor(n,other);if(!hb)return[];const h=hb.h,ln=LANE[hb.id],k=ln?ln.lane[key]||0:0,px=ln?ln.px:0,py=ln?ln.py:0;
     const out=[];const q=h.quai?[h.quai[0]+px*k*2.5,h.quai[1]+py*k*2.5]:null;if(q)out.push(q);
     if(h.heading&&h.run){const b=h.quai||rpos(n),L=Math.hypot(h.heading[0],h.heading[1])||1;
       out.push([b[0]+h.heading[0]/L*h.run+px*k*4.5,b[1]+h.heading[1]/L*h.run+py*k*4.5]);}
@@ -616,12 +624,12 @@
   // instead, on whichever side crosses less water); with waypoints it is a Catmull-Rom
   // through them whose ghost endpoints set the same tangents. So a northbound harbor
   // always reads as "out to sea, then turn", and nothing curls back on itself.
-  const harborExit=(n,key)=>{const leg=harborLeg(n,key),p=rpos(n);
+  const harborExit=(n,key,other)=>{const leg=harborLeg(n,key,other),p=rpos(n);
     if(!leg.length)return {leg,E:p,T:null};
     const E=leg[leg.length-1],prev=leg.length>1?leg[0]:p,dx=E[0]-prev[0],dy=E[1]-prev[1],L=Math.hypot(dx,dy)||1;
     return {leg,E,T:[dx/L,dy/L]};};
   function ferryCtl(r,i,a,b,prefer){
-    const pa=rpos(a),pb=rpos(b),k=routeKey(r)+'#'+i,A=harborExit(a,k),B=harborExit(b,k),via=hopVia(r,a,b);
+    const pa=rpos(a),pb=rpos(b),k=routeKey(r)+'#'+i,A=harborExit(a,k,b),B=harborExit(b,k,a),via=hopVia(r,a,b);
     const head=[pa,...A.leg],tail=[...B.leg.slice().reverse().slice(1),...(B.leg.length?[pb]:[])];
     const L=Math.hypot(B.E[0]-A.E[0],B.E[1]-A.E[1])||1;
     const ghost=(E,T)=>[E[0]-T[0]*L*0.3,E[1]-T[1]*L*0.3];
@@ -682,12 +690,12 @@
           if(r.offmap){
             // the off-map hop: each leg is settlement, harbor, then hand waypoints to past the
             // edge, fading over the last stretch (a gradient from the settlement's y to the edge's)
-            for(const [n,leg,sfx] of [[a,r.offmap.exit,'x'],[b,r.offmap.entry,'e']]){
+            for(const [n,o,leg,sfx] of [[a,b,r.offmap.exit,'x'],[b,a,r.offmap.entry,'e']]){
               const p0=rpos(n),edge=leg[leg.length-1],id=`thor-fade-${fadeN++}`;
               const grad=mkEl('linearGradient',{id,gradientUnits:'userSpaceOnUse',x1:0,x2:0,y1:p0[1],y2:edge[1]});
               grad.append(mkEl('stop',{offset:'0','stop-color':'#221A12','stop-opacity':'1'}),mkEl('stop',{offset:'0.7','stop-color':'#221A12','stop-opacity':'1'}),mkEl('stop',{offset:'1','stop-color':'#221A12','stop-opacity':'0'}));
               map.querySelector('defs').appendChild(grad);
-              const X=harborExit(n,routeKey(r)+'#'+i+sfx),Lg=Math.hypot(leg[0][0]-X.E[0],leg[0][1]-X.E[1])||1;
+              const X=harborExit(n,routeKey(r)+'#'+i+sfx,o),Lg=Math.hypot(leg[0][0]-X.E[0],leg[0][1]-X.E[1])||1;
               const d=pathD([p0,...X.leg,...catmull([X.E,...leg],10,X.T?[X.E[0]-X.T[0]*Lg*0.3,X.E[1]-X.T[1]*Lg*0.3]:null).slice(1)]);
               path(g,d,`url(#${id})`,'core ferry');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i,'data-leg':sfx});
             }
@@ -1236,8 +1244,8 @@
     if(!selRoute)return;
     const r=THOR.routes[selRoute.r],a=r.chain[selRoute.h],b=r.chain[selRoute.h+1],k=routeKey(r)+'#'+selRoute.h,arr=routeViaRef(selRoute);
     let before,after=null;
-    if(selRoute.leg){before=harborExit(selRoute.leg==='x'?a:b,k+selRoute.leg).E;}
-    else{before=harborExit(a,k).E;after=harborExit(b,k).E;}
+    if(selRoute.leg){before=harborExit(selRoute.leg==='x'?a:b,k+selRoute.leg,selRoute.leg==='x'?b:a).E;}
+    else{before=harborExit(a,k,b).E;after=harborExit(b,k,a).E;}
     const ctl=[before,...arr,...(after?[after]:[])];
     for(let i=0;i<ctl.length-1;i++){const m=lerp(ctl[i],ctl[i+1],.5);gRouteEdit.appendChild(mkEl('circle',{class:'vh add',cx:m[0].toFixed(1),cy:m[1].toFixed(1),r:2.4,'data-at':i}));}
     arr.forEach((p,i)=>gRouteEdit.appendChild(mkEl('circle',{class:'vh',cx:p[0],cy:p[1],r:3.2,'data-i':i})));
