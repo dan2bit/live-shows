@@ -934,13 +934,12 @@ def source_ref(c):
             shown = ", ".join(f"{h} ({d})" for d, h in bills[:2])
             more = f" +{len(bills) - 2} more" if len(bills) > 2 else ""
             return _trim(f"seen as support for {shown}{more}", 96)
-        return "seen as support (history TSVs; no artists.tsv row)"
+        # credited from the Artist column only: a headline bill with no artists.tsv row
+        return "seen as headliner (history TSVs; no artists.tsv row)"
     if seen_meta.get(c, {}).get("times_seen") and "seen-support" not in srcs:
         return ""
     if "seen-support" in srcs or records[c].get("status") == "seen-support":
         return "history pass: seen as support"
-    if seen_meta.get(c, {}).get("via_history"):
-        return "seen as support (history TSVs; no artists.tsv row)"
     if "fast_track" in srcs:
         why = _ft_why.get(c, "")
         return _trim(("fast track: " + why) if why else "fast track list")
