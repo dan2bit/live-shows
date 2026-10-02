@@ -17,9 +17,6 @@
   {"cls": "road", "chain": ["Oliver Wood", "The Wood Brothers"]},
   {"cls": "road", "chain": ["Larkin Poe", "Sue Foley"]},
   {"cls": "road", "chain": ["Tab Benoit", "Sonny Landreth"]},
-  {"cls": "road", "chain": ["Christone 'Kingfish' Ingram", "Robert Randolph"]},
-  {"cls": "autobahn", "chain": ["Buddy Guy", "Eric Gales", "Christone 'Kingfish' Ingram", "Larkin Poe"]},
-  {"cls": "pass", "chain": ["Sue Foley", "Christone 'Kingfish' Ingram"]},
   {"cls": "pass", "chain": ["Ally Venable Band", "Buddy Guy"]},
   {"cls": "pass", "chain": ["Eric Gales", "Jackie Venson"]},
   {"cls": "road", "chain": ["The Lone Bellow", "Oliver Wood"]},
@@ -46,6 +43,12 @@
   {"cls": "ferry", "chain": ["AJR", "Kate Davis"]},
   {"cls": "ferry", "chain": ["Vanessa Collier", "Shemekia Copeland"], "offmap": {"exit": [[586, 636], [548, 640], [512, 660], [485, 682], [455, 704]], "entry": [[225.2, 603.7], [237.5, 639], [268, 655], [296, 679], [322, 692], [345, 704]]}},
   {"cls": "ferry", "chain": ["Vanessa Collier", "George Clinton & Parliament-Funkadelic"]},
-  {"cls": "ferry", "chain": ["Jon Batiste", "Ziggy Marley"]}
+  {"cls": "ferry", "chain": ["Jon Batiste", "Ziggy Marley"]},
+  {"cls": "autobahn", "chain": ["Buddy Guy", "Eric Clapton", "Mark Knopfler", "Walter Trout", "Tommy Emmanuel", "Jimmie Vaughan", "Kenny Wayne Shepherd", "Gary Clark Jr.", "Ana Popović"]},
+  {"cls": "road", "chain": ["Christone 'Kingfish' Ingram", "Eric Gales", "Joe Bonamassa"]},
+  {"cls": "road", "chain": ["Ana Popović", "Selwyn Birchwood", "Larkin Poe"]},
+  {"cls": "road", "chain": ["Christone 'Kingfish' Ingram", "Selwyn Birchwood"]},
+  {"cls": "road", "chain": ["Selwyn Birchwood", "Robert Randolph"]},
+  {"cls": "pass", "chain": ["Sue Foley", "Ana Popović"]}
  ]
 }
