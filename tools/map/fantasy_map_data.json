@@ -457,8 +457,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "518ea71f8d",
-  "overrides_hash": "eb444f6322",
+  "pins_hash": "6298714b0a",
+  "overrides_hash": "f9014019cf",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -2121,7 +2121,6 @@
    "id": "delta_coast:d5",
    "region": "delta_coast",
    "members": [
-    "Ana Popović",
     "Carly Harvey",
     "Skribe"
    ],
@@ -2574,7 +2573,6 @@
     "Diana Silvers",
     "Jon Batiste",
     "Judith Hill",
-    "Mavis Staples",
     "The Soul Rebels",
     "Trombone Shorty & Orleans Avenue",
     "Ziggy Marley"
@@ -3128,18 +3126,18 @@
   {
    "id": 20,
    "name": "Ana Popović",
-   "region": "delta_coast",
-   "district": "delta_coast:d5",
+   "region": "amplified_range",
+   "district": "amplified_range:override",
    "size": "city",
    "auto_size": "city",
    "score": 15,
    "xy": [
-    306.6,
-    575.0
+    668.0,
+    306.0
    ],
    "region_uv": [
-    0.4959,
-    0.2788
+    0.1514,
+    0.904
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -4408,12 +4406,12 @@
    "auto_size": "capital",
    "score": 27,
    "xy": [
-    720.8,
-    316.4
+    746.0,
+    318.0
    ],
    "region_uv": [
-    0.3023,
-    0.9456
+    0.3743,
+    0.952
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -5408,12 +5406,12 @@
    "auto_size": "town",
    "score": 3,
    "xy": [
-    738.1,
-    275.5
+    753.0,
+    268.0
    ],
    "region_uv": [
-    0.3517,
-    0.782
+    0.3943,
+    0.752
    ],
    "flags": {
     "unvisited": true
@@ -6364,12 +6362,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    668.4,
-    305.7
+    704.0,
+    187.0
    ],
    "region_uv": [
-    0.1526,
-    0.9028
+    0.2543,
+    0.428
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -7878,18 +7876,18 @@
   {
    "id": 262,
    "name": "Mavis Staples",
-   "region": "river_port",
-   "district": "river_port:d1",
+   "region": "delta_coast",
+   "district": "delta_coast:override",
    "size": "town",
    "auto_size": "town",
    "score": 9,
    "xy": [
-    475.0,
-    593.4
+    255.0,
+    622.0
    ],
    "region_uv": [
-    0.008,
-    0.8103
+    0.3459,
+    0.7308
    ],
    "flags": {
     "legacy": true
@@ -8846,12 +8844,12 @@
    "auto_size": "city",
    "score": 12,
    "xy": [
-    629.9,
-    370.6
+    599.5,
+    407.5
    ],
    "region_uv": [
-    0.344,
-    0.3839
+    0.0819,
+    0.5403
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9093,12 +9091,12 @@
    "auto_size": "city",
    "score": 15,
    "xy": [
-    599.5,
-    407.5
+    629.9,
+    370.6
    ],
    "region_uv": [
-    0.0819,
-    0.5403
+    0.344,
+    0.3839
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11834,7 +11832,7 @@
    "a": "Altered Five Blues Band",
    "b": "Ana Popović",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Altered Five Blues Band",
@@ -11918,37 +11916,37 @@
    "a": "Ana Popović",
    "b": "Bernard Allison",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Carly Harvey",
    "cls": "river",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Joanna Connor",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Joe Bonamassa",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
    "b": "Piper & The Hard Times",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
@@ -11966,13 +11964,13 @@
    "a": "Ana Popović",
    "b": "Skribe",
    "cls": "river",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Ana Popović",
    "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Ana Popović",
@@ -13592,7 +13590,7 @@
    "a": "Judith Hill",
    "b": "Mavis Staples",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Judy Blank",
@@ -13952,7 +13950,7 @@
    "a": "Mavis Staples",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Mavis Staples",
