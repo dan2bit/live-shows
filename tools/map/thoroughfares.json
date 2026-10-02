@@ -1,13 +1,15 @@
 {
- "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional.",
+ "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional. A harbor may be a list of entries, each optionally with `for` (the far ends it serves); the entry without `for` is the default.",
  "harbors": {
   "Allison Russell": {"quai": [471, 210], "heading": [0, -1], "run": 28},
   "Sue Foley": {"quai": [624, 236], "heading": [0, -1], "run": 12},
   "Jackie Venson": {"quai": [737, 148], "heading": [0, -1], "run": 12},
   "Southern Avenue": {"quai": [212, 533], "heading": [-1, 0], "run": 14},
-  "AJR": {"quai": [946, 246], "heading": [-1, 0.2], "run": 10},
+  "AJR": [{"quai": [960, 228], "heading": [0.1, -1], "run": 8, "for": ["Hozier"]}, {"quai": [949, 242], "heading": [-1, -0.15], "run": 8}],
   "Valerie June": {"quai": [306, 358], "heading": [-1, 0], "run": 14},
-  "Samantha Fish": {"quai": [722, 441], "heading": [1, 0], "run": 12}
+  "Samantha Fish": {"quai": [722, 441], "heading": [1, 0], "run": 12},
+  "Hozier": [{"quai": [974, 208], "heading": [0, 1], "run": 6, "for": ["AJR"]}, {"quai": [961, 193], "heading": [-1, 0], "run": 10}],
+  "Kate Davis": [{"quai": [899, 257], "heading": [-1, 0.3], "run": 10, "for": ["Orianthi"]}, {"quai": [906, 246], "heading": [-0.3, -1], "run": 9}]
  },
  "routes": [
   {"cls": "road", "chain": ["Judith Hill", "Ruthie Foster", "Danielle Nicole"]},
