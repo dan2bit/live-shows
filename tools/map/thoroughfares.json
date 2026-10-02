@@ -1,5 +1,5 @@
 {
- "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the ferry threads through instead of bowing. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional. A harbor may be a list of entries, each optionally with `for` (the far ends it serves); the entry without `for` is the default.",
+ "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the hop threads through instead of its procedural shape (bow, bend, switchbacks or meander); any class but the autobahn. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional. A harbor may be a list of entries, each optionally with `for` (the far ends it serves); the entry without `for` is the default.",
  "harbors": {
   "Allison Russell": {"quai": [471, 210], "heading": [0, -1], "run": 28},
   "Sue Foley": {"quai": [624, 236], "heading": [0, -1], "run": 12},
@@ -21,8 +21,8 @@
   {"cls": "pass", "chain": ["Eric Gales", "Jackie Venson"]},
   {"cls": "road", "chain": ["The Lone Bellow", "Oliver Wood"]},
   {"cls": "trail", "chain": ["Oliver Wood", "Stevie Nicks"]},
-  {"cls": "trail", "chain": ["The Lone Bellow", "Allison Russell"]},
-  {"cls": "trail", "chain": ["Stevie Nicks", "Whitney Mongé", "Rhiannon Giddens", "Allison Russell"]},
+  {"cls": "trail", "chain": ["The Lone Bellow", "Allison Russell"], "via": {"The Lone Bellow>Allison Russell": [[496, 264], [498, 244], [490, 229]]}},
+  {"cls": "trail", "chain": ["Stevie Nicks", "Whitney Mongé", "Rhiannon Giddens", "Allison Russell"], "via": {"Rhiannon Giddens>Allison Russell": [[493, 252], [491, 233]]}},
   {"cls": "trail", "chain": ["John Hiatt", "Bonnie Raitt"]},
   {"cls": "ferry", "chain": ["Sue Foley", "Jackie Venson", "Young Dubliners", "Every Breath You Take"]},
   {"cls": "ferry", "chain": ["Queen Latifah", "The Roots"]},
@@ -49,6 +49,11 @@
   {"cls": "road", "chain": ["Ana Popović", "Selwyn Birchwood", "Larkin Poe"]},
   {"cls": "road", "chain": ["Christone 'Kingfish' Ingram", "Selwyn Birchwood"]},
   {"cls": "road", "chain": ["Selwyn Birchwood", "Robert Randolph"]},
-  {"cls": "pass", "chain": ["Sue Foley", "Ana Popović"]}
+  {"cls": "pass", "chain": ["Sue Foley", "Ana Popović"]},
+  {"cls": "trail", "chain": ["Sparkbird", "Liz Phair"]},
+  {"cls": "trail", "chain": ["Lucius", "I'm With Her"]},
+  {"cls": "trail", "chain": ["Shakey Graves", "Shawn James"]},
+  {"cls": "trail", "chain": ["Glen Hansard", "Allison Russell"]},
+  {"cls": "road", "chain": ["Kingsley Flood", "The Lone Bellow"], "via": {"Kingsley Flood>The Lone Bellow": [[566, 305], [553, 338], [555, 366]]}}
  ]
 }
