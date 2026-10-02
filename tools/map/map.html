@@ -1268,6 +1268,10 @@
   let dragL=null, downAt=null;
   stage.addEventListener('pointerdown',e=>{
     if(e.target.closest('#rose-home')){return;}  // let the anchor's native click/nav fire uncaptured (#363 follow-up)
+    // The roster banner is an HTML control panel inside the stage: capturing the pointer
+    // here retargets pointerup to the stage, so the click lands on the stage instead of
+    // the banner's button and its listener never fires. Leave banner input alone.
+    if(e.target.closest('#rosterBanner')){return;}
     downAt=[e.clientX,e.clientY];
     const rh=(authed&&window.editCb&&editCb.checked)?e.target.closest('#routes .hit,#routeEdit .vh'):null;
     if(rh){stage.setPointerCapture(e.pointerId);routeDown(rh,e);e.preventDefault();return;}
