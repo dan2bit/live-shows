@@ -12,7 +12,7 @@
   "Kate Davis": [{"quai": [899, 257], "heading": [-1, 0.3], "run": 10, "for": ["Orianthi"]}, {"quai": [906, 246], "heading": [-0.3, -1], "run": 9}]
  },
  "routes": [
-  {"cls": "road", "chain": ["Judith Hill", "Ruthie Foster", "Danielle Nicole"]},
+  {"cls": "road", "chain": ["Judith Hill", "Ruthie Foster", "Danielle Nicole"], "via": {"Ruthie Foster>Danielle Nicole": [[381, 621.8], [337.1, 617.2]]}},
   {"cls": "road", "chain": ["Valerie June", "The Wood Brothers"], "via": {"Valerie June>The Wood Brothers": [[373.2, 378.8], [404.1, 398]]}},
   {"cls": "road", "chain": ["Oliver Wood", "The Wood Brothers"]},
   {"cls": "road", "chain": ["Larkin Poe", "Sue Foley"]},
