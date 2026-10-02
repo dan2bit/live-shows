@@ -1004,6 +1004,20 @@
   }
   placeLabels();
 
+  // Plate footer count: the literal number of recorded pins, not the roster size. MAP_EXCLUDE
+  // names are already off data.settlements (the builder drops them before publishing), so
+  // they're never counted here. Ruins and unvisited settlements DO draw a <g class="stl">
+  // (styled, not hidden) and stay counted even when the legend's "unvisited" box hides them -
+  // that box is a display preference (uses style.display, toggled back and forth), not a
+  // change to the roster, so the count keys off the .excluded CLASS instead, which only
+  // exclOv's in-session "exclude from map" click sets. refreshPinCount() runs again from
+  // that handler to keep the count live without being fooled by the legend toggle.
+  const refreshPinCount=()=>{
+    const n=gStl.querySelectorAll('.stl:not(.excluded)').length;
+    document.getElementById('plateFoot').textContent=`${n} Recorded Settlements`;
+  };
+  refreshPinCount();
+
   // toggles: regions / unvisited / names / geo names
   const show=(nodes,on)=>nodes.forEach(n=>n.style.display=on?'':'none');
   document.querySelectorAll('#legend input[data-t]').forEach(cb=>{
@@ -1166,6 +1180,8 @@
     if(isDecree(name)){delete overrides[name].size;delete overrides[name].basis;delete overrides[name].why;}
     markOv(name,'exclude',true);
     selected.style.display='none';
+    selected.classList.add('excluded');
+    refreshPinCount();
     findmsg.textContent=`${name} excluded - save changes, then rebuild`;
     selected=null;editwho.textContent='select a settlement\u2026';
   });
