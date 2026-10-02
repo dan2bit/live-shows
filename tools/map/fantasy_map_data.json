@@ -410,12 +410,15 @@
   "generated_from": "2026-10-02",
   "seed": 2026,
   "excluded": [
+   "A Musical Celebration of John Prine",
    "Alexia Gabriella",
    "Antoñio Villaronga",
    "Bev Stanton",
    "Christian Crowley",
+   "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
    "Damien Bethel",
    "Erin Frisby",
+   "Fred Eaglesmith & The Full Band",
    "Jasper Hobbs",
    "John Prine Celebration",
    "Juels Bland",
@@ -424,13 +427,15 @@
    "Mx. Mundy",
    "National Symphony Orchestra",
    "Nina Goodman",
+   "On A Winter's Night",
    "Rebecca Berlin",
    "Robzie Trulove",
    "Safety Bear",
    "Sanjay Arora",
    "Sea Griffin",
    "Still Standing",
-   "Wytold"
+   "Wytold",
+   "members of The Bridge, Smooth Kentucky & others"
   ],
   "merged": {
    "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
@@ -447,7 +452,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "10616ad21d",
-  "overrides_hash": "eba3112547",
+  "overrides_hash": "6efbdbe4fa",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1209,7 +1214,7 @@
    "unchanged": 60
   },
   "counts": {
-   "settlements": 393,
+   "settlements": 388,
    "graph_edges": 481,
    "districts": 72
   }
@@ -2364,17 +2369,11 @@
    "id": "outer_isles:outskirts",
    "region": "outer_isles",
    "members": [
-    "A Musical Celebration of John Prine",
-    "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
     "Danny Burns",
-    "Fred Eaglesmith & The Full Band",
     "Jessie's Girl",
-    "Joe Pug",
-    "On A Winter's Night",
     "Talia Segal",
     "Zara Phillips",
-    "kitchen",
-    "members of The Bridge, Smooth Kentucky & others"
+    "kitchen"
    ],
    "seat": null,
    "suggested_name": "Outer Isles Outskirts"
@@ -2700,30 +2699,6 @@
   }
  ],
  "settlements": [
-  {
-   "id": 275,
-   "name": "A Musical Celebration of John Prine",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.5,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Lower"
-  },
   {
    "id": 2,
    "name": "AJR",
@@ -4432,30 +4407,6 @@
    "tier": "Strong"
   },
   {
-   "id": 87,
-   "name": "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 88,
    "name": "Cole Larravide",
    "region": "delta_coast",
@@ -5297,30 +5248,6 @@
    "times_seen": 1,
    "vip": 0,
    "tier": null
-  },
-  {
-   "id": 133,
-   "name": "Fred Eaglesmith & The Full Band",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 1,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Medium"
   },
   {
    "id": 134,
@@ -6440,21 +6367,22 @@
   {
    "id": 191,
    "name": "Joe Pug",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
    "xy": [
-    900.0,
-    62.0
+    498.6,
+    423.6
    ],
    "region_uv": [
-    0.5,
-    0.5
+    0.7068,
+    0.2612
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -8409,30 +8337,6 @@
    "times_seen": 3,
    "vip": 0,
    "tier": "Strong"
-  },
-  {
-   "id": 289,
-   "name": "On A Winter's Night",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 1,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Medium"
   },
   {
    "id": 290,
@@ -11651,30 +11555,6 @@
    "region_uv": [
     0.5653,
     2.4417
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
-  {
-   "id": 263,
-   "name": "members of The Bridge, Smooth Kentucky & others",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
    ],
    "flags": {
     "unvisited": true
