@@ -906,9 +906,25 @@
   // its side. Bigger settlements place first so a capital is never pushed aside by a hamlet.
   // Legends keep the north slot clear for their tick; harbormistresses now carry their
   // anchor on the dot, so they place like anyone else. Ties go east, so nothing moves
-  // without cause.
+  // without cause. A settlement with a harbor also keeps its label off its own harbor
+  // legs - the straight segments settlement -> quai -> run-end, padded by the lane
+  // spread - at lake cost, whether or not the routes layer is showing: those two
+  // segments are known from thoroughfares.json alone, so the test never depends on
+  // curve geometry and the layout does not jump when routes are toggled. A label under
+  // someone else's ferry mid-route is not covered; that is a waypoint drag.
   const CHAR_W=3.5,LBL_H=5.5,DOT_TOL=1.5,LAKE_COST=3;   // 7px Oswald 500 in map units, roughly
   const LAKES=(data.lakes||[]).map(l=>({x0:l.xy[0]-l.r,x1:l.xy[0]+l.r,y0:l.xy[1]-l.r,y1:l.xy[1]+l.r}));
+  const harborSegs=n=>{const h=(THOR.harbors||{})[n];if(!h)return[];const out=[],p=rpos(n);
+    (Array.isArray(h)?h:[h]).forEach((e,i)=>{const ln=LANE[n+'@'+i],spread=ln?Math.max(0,...Object.values(ln.lane).map(Math.abs))*4.5:0;
+      const q=e.quai||p;if(e.quai)out.push({a:p,b:q,pad:3+spread});
+      if(e.heading&&e.run){const L=Math.hypot(e.heading[0],e.heading[1])||1;out.push({a:q,b:[q[0]+e.heading[0]/L*e.run,q[1]+e.heading[1]/L*e.run],pad:3+spread});}});
+    return out;};
+  const segHitsBox=(sg,bx)=>{const x0=bx.x0-sg.pad,x1=bx.x1+sg.pad,y0=bx.y0-sg.pad,y1=bx.y1+sg.pad;   // Liang-Barsky clip of the segment against the padded box
+    let t0=0,t1=1;const dx=sg.b[0]-sg.a[0],dy=sg.b[1]-sg.a[1];
+    for(const [pp,qq] of [[-dx,sg.a[0]-x0],[dx,x1-sg.a[0]],[-dy,sg.a[1]-y0],[dy,y1-sg.a[1]]]){
+      if(pp===0){if(qq<0)return false;continue;}const t=qq/pp;
+      if(pp<0){if(t>t1)return false;if(t>t0)t0=t;}else{if(t<t0)return false;if(t<t1)t1=t;}}
+    return true;};
   function placeLabels(){
     const marks=[...gStl.querySelectorAll('.stl')].map(g=>{
       const st=S.get(g.dataset.name),m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute('transform'));
@@ -917,7 +933,7 @@
     const placed=[];
     const hit=(a,b)=>a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0;
     for(const m of marks){
-      const gap=m.r+3;
+      const gap=m.r+3,hsegs=harborSegs(m.st.name);
       const slots=[
         {k:'e',x:gap,y:3,a:'start', box:{x0:m.x+gap,x1:m.x+gap+m.w,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
         {k:'w',x:-gap,y:3,a:'end',  box:{x0:m.x-gap-m.w,x1:m.x-gap,y0:m.y-LBL_H/2,y1:m.y+LBL_H/2}},
@@ -933,6 +949,7 @@
           if(ox>DOT_TOL&&oy>DOT_TOL)cost+=1; }
         for(const o of placed){ if(hit(sl.box,o.box))cost+=o.lt<=m.lt?2:1; }
         for(const l of LAKES){ if(hit(sl.box,l))cost+=LAKE_COST; }
+        for(const sg of hsegs){ if(segHitsBox(sg,sl.box))cost+=LAKE_COST; }
         if(!best||cost<best.cost)best={sl,cost};
       }
       const t=m.g.querySelector('.lbl');
