@@ -21,8 +21,7 @@
   {"cls": "pass", "chain": ["Eric Gales", "Jackie Venson"]},
   {"cls": "road", "chain": ["The Lone Bellow", "Oliver Wood"], "via": {"The Lone Bellow>Oliver Wood": [[545.2, 387.1], [509, 381.5]]}},
   {"cls": "trail", "chain": ["Oliver Wood", "Stevie Nicks"]},
-  {"cls": "trail", "chain": ["The Lone Bellow", "Allison Russell"], "via": {"The Lone Bellow>Allison Russell": [[496, 264], [498, 244], [490, 229]]}},
-  {"cls": "trail", "chain": ["Stevie Nicks", "Whitney Mongé", "Rhiannon Giddens", "Allison Russell"], "via": {"Rhiannon Giddens>Allison Russell": [[493, 252], [491, 233]]}},
+  {"cls": "trail", "chain": ["Stevie Nicks", "Whitney Mongé", "Rhiannon Giddens"]},
   {"cls": "trail", "chain": ["John Hiatt", "Bonnie Raitt"]},
   {"cls": "ferry", "chain": ["Sue Foley", "Jackie Venson", "Young Dubliners", "Every Breath You Take"]},
   {"cls": "ferry", "chain": ["Queen Latifah", "The Roots"]},
@@ -54,6 +53,7 @@
   {"cls": "trail", "chain": ["Lucius", "I'm With Her"], "via": {"Lucius>I'm With Her": [[420.9, 239.4]]}},
   {"cls": "trail", "chain": ["Shakey Graves", "Shawn James"], "via": {"Shakey Graves>Shawn James": [[562.4, 264.6]]}},
   {"cls": "trail", "chain": ["Allison Russell", "Glen Hansard", "The Family Crest"]},
-  {"cls": "road", "chain": ["Kingsley Flood", "The Lone Bellow"], "via": {"Kingsley Flood>The Lone Bellow": [[566, 305], [553, 338], [555, 366]]}}
+  {"cls": "trail", "chain": ["Kingsley Flood", "The Lone Bellow"], "via": {"Kingsley Flood>The Lone Bellow": [[566, 305], [553, 338], [555, 366]]}},
+  {"cls": "trail", "chain": ["Allison Russell", "Rhiannon Giddens", "The Lone Bellow"], "via": {"Allison Russell>Rhiannon Giddens": [[491, 233], [493, 252]]}}
  ]
 }
