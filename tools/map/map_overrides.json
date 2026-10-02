@@ -694,7 +694,13 @@
   }
  },
  "Carolyn Wonderland": {
-  "region": "slide_foothills"
+  "region": "slide_foothills",
+  "size": "town",
+  "basis": {
+   "size": "hamlet",
+   "score": 3,
+   "at": "2026-10-01"
+  }
  },
  "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin": {
   "exclude": true
@@ -716,5 +722,8 @@
  },
  "Joe Pug": {
   "region": "heartland"
+ },
+ "Sugaray Rayford": {
+  "region": "river_port"
  }
 }
