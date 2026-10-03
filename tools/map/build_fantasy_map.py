@@ -313,20 +313,25 @@ def _hist_tokens(cell):
         else:
             yield tok
 
-_hist_seen = defaultdict(lambda: {"n": 0, "last": ""})
+# bills: (date, headliner) for every support credit, so a support-only settlement's
+# source line can say whose bill it was, not just that there was one
+_hist_seen = defaultdict(lambda: {"n": 0, "last": "", "bills": []})
 for _hp in sorted((DATA / "history").glob("*.tsv")):
     for _hr in tsv_rows(_hp):
         _hd = (_hr.get("Show Date") or "")[:10]
-        for _cell in (_hr.get("Artist"), _hr.get("Supporting Acts")):
+        _head = (_hr.get("Artist") or "").strip()
+        for _cell, _support in ((_hr.get("Artist"), False), (_hr.get("Supporting Acts"), True)):
             for _tok in _hist_tokens(_cell):
                 _c = resolve(_tok)
                 if _c:
                     _hist_seen[_c]["n"] += 1
                     _hist_seen[_c]["last"] = max(_hist_seen[_c]["last"], _hd)
+                    if _support and _head:
+                        _hist_seen[_c]["bills"].append((_hd, _head))
 for _c, _hv in _hist_seen.items():
     if _c not in seen_meta:
         seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,
-                         "most_recent": _hv["last"], "via_history": True}
+                         "most_recent": _hv["last"], "via_history": True, "bills": _hv["bills"]}
 
 # audit dedupe: merges and co-bill suppressions
 MERGES = {   # absorbed -> survivor (survivor inherits seen history)
@@ -923,13 +928,18 @@ def _trim(t, n=70):
 def source_ref(c):
     srcs = records[c].get("sources", [])
     if seen_meta.get(c, {}).get("via_history"):
-        return "seen as support (history TSVs; no artists.tsv row)"
+        # whose bill: newest first, two shown, the rest counted
+        bills = sorted(set(seen_meta[c].get("bills") or []), reverse=True)
+        if bills:
+            shown = ", ".join(f"{h} ({d})" for d, h in bills[:2])
+            more = f" +{len(bills) - 2} more" if len(bills) > 2 else ""
+            return _trim(f"seen as support for {shown}{more}", 96)
+        # credited from the Artist column only: a headline bill with no artists.tsv row
+        return "seen as headliner (history TSVs; no artists.tsv row)"
     if seen_meta.get(c, {}).get("times_seen") and "seen-support" not in srcs:
         return ""
     if "seen-support" in srcs or records[c].get("status") == "seen-support":
         return "history pass: seen as support"
-    if seen_meta.get(c, {}).get("via_history"):
-        return "seen as support (history TSVs; no artists.tsv row)"
     if "fast_track" in srcs:
         why = _ft_why.get(c, "")
         return _trim(("fast track: " + why) if why else "fast track list")
