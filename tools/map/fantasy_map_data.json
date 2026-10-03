@@ -386,15 +386,15 @@
   {
    "name": "Working Blues Coast",
    "xy": [
-    678,
+    638,
     198
    ]
   },
   {
    "name": "Nineties Coast",
    "xy": [
-    850,
-    296
+    860,
+    287
    ]
   },
   {
@@ -457,8 +457,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "c428350d32",
-  "overrides_hash": "f9014019cf",
+  "pins_hash": "3c65c03f38",
+  "overrides_hash": "3fce5b776f",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1962,8 +1962,7 @@
     "Bernard Allison",
     "Caitlin Krisko & The Broadcast",
     "Canned Heat",
-    "Mitch Ryder",
-    "Sweet Leda"
+    "Mitch Ryder"
    ],
    "seat": "Samantha Fish",
    "suggested_name": "Fish Overdrive"
@@ -9782,22 +9781,20 @@
   {
    "id": 368,
    "name": "Sweet Leda",
-   "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "region": "river_port",
+   "district": "river_port:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    655.3,
-    536.8
+    566.0,
+    600.1
    ],
    "region_uv": [
-    0.1151,
-    1.8272
+    0.372,
+    0.8532
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Vanessa Collier (2024-10-09)",
    "times_seen": 1,
    "vip": 0,
@@ -14357,7 +14354,7 @@
    "a": "Sweet Leda",
    "b": "Vanessa Collier",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Tab Benoit",
