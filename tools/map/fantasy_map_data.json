@@ -469,7 +469,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "0b26ac72a5",
+  "pins_hash": "4c610d384a",
   "overrides_hash": "a1d25fd588",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
@@ -5696,14 +5696,16 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    796.1,
-    219.0
+    648.8,
+    347.0
    ],
    "region_uv": [
-    0.5174,
-    0.556
+    0.0966,
+    1.068
    ],
-   "flags": {},
+   "flags": {
+    "stray": true
+   },
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -11184,15 +11186,16 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    648.8,
-    347.0
+    628.4,
+    445.2
    ],
    "region_uv": [
-    0.5069,
-    0.2839
+    0.3314,
+    0.7
    ],
    "flags": {
-    "unvisited": true
+    "unvisited": true,
+    "unplaced": true
    },
    "src": "follow (Medium)",
    "times_seen": 0,
