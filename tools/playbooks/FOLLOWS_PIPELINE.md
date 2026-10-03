@@ -13,7 +13,7 @@ Three ledgers, one direction of travel:
 |---|---|---|
 | `tools/research/follows/new_artist_research.tsv` (NAR) | precursor set - candidates under research | **never** |
 | `tools/research/follows/follows_master.tsv` | approved to follow; the platform flags say where | yes, as flagged |
-| `data/fast_track.tsv` | pre-authorised buy; jumps the queue | yes, both platforms |
+| `data/fast_track.tsv` | pre-authorised buy; jumps the queue | yes, both platforms - **and a daily `tools/watch/watches.tsv` row on the tour page** (`DATA_WRITE_PROTOCOLS.md → fast_track.tsv protocol → Adding a row`) |
 
 Songkick is frozen: the `follows_master` flag is historical and is never reconciled.
 
@@ -28,6 +28,7 @@ platform exports.
 3. `fast_track` ⊂ `follows_master`. Tier is **not** constrained - fast track means a strong buy, not automatically Strong tier.
 4. Every artist the rhbl account follows has a `follows_master` row, and every row flagged Y is actually followed. NAR gets no platform columns; a followed artist with only a NAR row is drift, resolved by promoting or unfollowing.
 5. `NOT ON SEATED` / `not on Seated service` in a `follows_master` note marks an expected gap, never drift. A note that says so for an artist who is in fact followed is a note to fix.
+6. Every `fast_track` row has an active `watches.tsv` row (`kind artist`, `check_every_days 1`). Not yet checked by `reconcile_follows.py` - as of 2026-10-03 all ten fast-track artists are watched; a new fast-track row without a watch is drift until the check exists.
 
 ## Promotion: delete on promotion, with a condensed carry-over
 
