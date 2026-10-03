@@ -410,6 +410,13 @@
     433,
     661
    ]
+  },
+  {
+   "name": "Prine Fields",
+   "xy": [
+    315,
+    420
+   ]
   }
  ],
  "meta": {
@@ -457,8 +464,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "3c65c03f38",
-  "overrides_hash": "3fce5b776f",
+  "pins_hash": "6eed5d153f",
+  "overrides_hash": "a1d25fd588",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -602,6 +609,18 @@
      "size": "waystation",
      "score": 1,
      "at": "2026-09-25"
+    },
+    "class": "unchanged"
+   },
+   {
+    "name": "Emmylou Harris",
+    "override": "town",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-02"
     },
     "class": "unchanged"
    },
@@ -829,6 +848,18 @@
     "class": "unchanged"
    },
    {
+    "name": "Margo Price",
+    "override": "village",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-02"
+    },
+    "class": "unchanged"
+   },
+   {
     "name": "Mark Knopfler",
     "override": "town",
     "auto": "waystation",
@@ -897,6 +928,18 @@
      "size": "waystation",
      "score": 1,
      "at": "2026-09-25"
+    },
+    "class": "unchanged"
+   },
+   {
+    "name": "Patty Griffin",
+    "override": "village",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-02"
     },
     "class": "unchanged"
    },
@@ -1112,6 +1155,18 @@
     "class": "unchanged"
    },
    {
+    "name": "Tommy Prine",
+    "override": "village",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-02"
+    },
+    "class": "unchanged"
+   },
+   {
     "name": "Tori Amos",
     "override": "village",
     "auto": "hamlet",
@@ -1229,7 +1284,7 @@
   ],
   "override_audit_counts": {
    "decree": 4,
-   "unchanged": 61
+   "unchanged": 65
   },
   "counts": {
    "settlements": 388,
@@ -4964,7 +5019,7 @@
    "name": "Emmylou Harris",
    "region": "heartland",
    "district": "heartland:d7",
-   "size": "hamlet",
+   "size": "town",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
@@ -7715,7 +7770,7 @@
    "name": "Margo Price",
    "region": "heartland",
    "district": "heartland:d2",
-   "size": "hamlet",
+   "size": "village",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
@@ -8400,7 +8455,7 @@
    "name": "Patty Griffin",
    "region": "heartland",
    "district": "heartland:d7",
-   "size": "hamlet",
+   "size": "village",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
@@ -10821,16 +10876,16 @@
    "name": "Tommy Prine",
    "region": "heartland",
    "district": "heartland:outskirts",
-   "size": "hamlet",
+   "size": "village",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    387.1,
-    501.8
+    335.0,
+    428.0
    ],
    "region_uv": [
-    0.4134,
-    0.5924
+    0.2763,
+    0.2797
    ],
    "flags": {},
    "src": "seen as support for John Prine Celebration (2026-06-09)",
