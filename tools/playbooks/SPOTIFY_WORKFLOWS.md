@@ -34,6 +34,14 @@ new-release adds follow the one-representative-track-per-release convention
 (singles: the title track; albums: opener or focus track; avoid duplicating a
 track already carried by an earlier month's list).
 
+**Choosing a "New Music <Month>" list from the cache:** an artist belongs to the
+month when `latest_release.date` **or** `previous_release.date` falls in it. A
+refresh in the first days of the next month can replace a late-month release
+with an early-next-month one; the replaced release moves to `previous_release`
+rather than disappearing, so reading `latest_release` alone silently drops those
+artists. Build after the month-end re-verify pass (the first days of the next
+month), so every entry has been checked after the month's last release Friday.
+
 ## Workflow B — Multi-artist bill top tracks
 
 "The most-played songs from all the artists who played the John Prine show."
