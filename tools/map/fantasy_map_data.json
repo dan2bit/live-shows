@@ -470,7 +470,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "4c610d384a",
-  "overrides_hash": "a1d25fd588",
+  "overrides_hash": "9ef091d465",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1215,18 +1215,6 @@
     "class": "unchanged"
    },
    {
-    "name": "Warren Haynes",
-    "override": "town",
-    "auto": "waystation",
-    "score": 1,
-    "basis": {
-     "size": "waystation",
-     "score": 1,
-     "at": "2026-09-25"
-    },
-    "class": "unchanged"
-   },
-   {
     "name": "Willie Nelson",
     "override": "village",
     "auto": "hamlet",
@@ -1289,7 +1277,7 @@
   ],
   "override_audit_counts": {
    "decree": 4,
-   "unchanged": 65
+   "unchanged": 64
   },
   "counts": {
    "settlements": 388,
@@ -2048,7 +2036,6 @@
    "region": "amplified_range",
    "members": [
     "Blackberry Smoke",
-    "Gov't Mule",
     "JJ Grey & Mofro",
     "Robert Jon & The Wreck",
     "Shaw Davis & The Black Ties",
@@ -5690,8 +5677,8 @@
   {
    "id": 151,
    "name": "Gov't Mule",
-   "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "region": "slide_foothills",
+   "district": "slide_foothills:override",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -5700,12 +5687,10 @@
     347.0
    ],
    "region_uv": [
-    0.0966,
-    1.068
+    0.5069,
+    0.2839
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -11182,7 +11167,7 @@
    "name": "Warren Haynes",
    "region": "slide_foothills",
    "district": "slide_foothills:d1",
-   "size": "town",
+   "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
    "xy": [
@@ -12287,7 +12272,7 @@
    "a": "Blackberry Smoke",
    "b": "Gov't Mule",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Blackberry Smoke",
@@ -12515,7 +12500,7 @@
    "a": "Bywater Call",
    "b": "Gov't Mule",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Bywater Call",
@@ -13211,49 +13196,49 @@
    "a": "Gov't Mule",
    "b": "JJ Grey & Mofro",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "North Mississippi Allstars",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "Robert Jon & The Wreck",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Selwyn Birchwood",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "Shaw Davis & The Black Ties",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Gov't Mule",
    "b": "Tedeschi Trucks Band",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "The Bros. Landreth",
    "cls": "trail",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
    "b": "Warren Haynes",
    "cls": "road",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Gov't Mule",
