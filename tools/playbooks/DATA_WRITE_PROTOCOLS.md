@@ -568,6 +568,33 @@ line-preserving, keeping the leading `#` comment block intact.
 **Never reintroduce `#` comment blocks** into `fast_track.tsv` — same in-page-editor
 hazard as potentials (issue #80).
 
+### Adding a row (every time, no exceptions)
+
+A fast-track row is a pre-authorised buy, so the point is to hear about the DMV
+date before the presale closes. The row alone does not do that; the watcher does.
+
+1. Append the `fast_track.tsv` row (public, `staging`), with the artist's own Tour URL.
+2. Append the private `dan2bit/live-shows-private → fast_track_caps.tsv` twin.
+3. Follow on BIT and Seated (the `follows-watch` mail will remind; Songkick is frozen).
+4. **Add a `tools/watch/watches.tsv` row for the tour page, `kind artist`,
+   `check_every_days 1`** - every fast-track artist is on the daily cadence (set
+   2026-10-03), because a week's lag can be the whole presale window. Use the
+   `watch-manager` skill, which starts with the plain-fetch test. Which URL to watch
+   depends on how the page is built, and the page itself is often the wrong answer:
+
+   | what the Tour URL turns out to be | watch this instead |
+   |---|---|
+   | server-rendered list (WordPress, Bandzoogle, a plain theme) | the page |
+   | Seated widget (`widget.seated.com/app.js`, `data-artist-id` in the embed) | `https://cdn.seated.com/api/tour/<data-artist-id>?include=tour-events` - the artist id is the tour uuid (Miko Marks, Danielle Ponder) |
+   | Bandsintown widget, or Squarespace's built-in Tour Dates block (`sqs-block-tourdates`) | `https://rest.bandsintown.com/artists/<id_NNN or URL-encoded name>/events?app_id=js_<site domain>` - BIT's public endpoint, no session (Sugaray Rayford, Grace Bowers, Garret T. Willie) |
+   | nothing in the HTML and no recognisable widget | not watchable headless; say so, and leave it on the interactive Chrome pass |
+
+   A watched tour page that mails is a fast-track buy signal; the cap check is still
+   the human's, per "When Fast Track applies" below.
+5. When the row is retired (ticket bought, reconciler removes it), set the watch row's
+   `active` to `N` rather than deleting it - the snapshot is cheap and the next DMV
+   date is still worth hearing about.
+
 ### Cap defaults
 
 | Cap | Default | Narrower options |
