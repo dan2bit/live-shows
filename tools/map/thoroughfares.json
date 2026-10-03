@@ -1,4 +1,3 @@
-
 {
  "_note": "Hand-owned route list for the Guitarlandria map (issue 406 pairings). Classes: road, autobahn, pass, trail, ferry. A chain is drawn hop by hop; a ferry chain alternates its bow per hop. Regions are read live from fantasy_map_data.json, so local vs interstate is never stored here. via, keyed \"A>B\" per hop (either direction), is a list of hand waypoints the hop threads through instead of its procedural shape (bow, bend, switchbacks or meander); any class but the autobahn. offmap on a ferry hop gives exit and entry waypoint lists, each from its settlement outward to a point past the map edge; the line fades over the last stretch. harbors, keyed by settlement: quai is where the ferry line meets the water, heading x run is how far it steams straight out before turning; both optional. A harbor may be a list of entries, each optionally with `for` (the far ends it serves); the entry without `for` is the default.",
  "harbors": {
@@ -57,6 +56,9 @@
   {"cls": "trail", "chain": ["Shakey Graves", "Shawn James"], "via": {"Shakey Graves>Shawn James": [[562.4, 264.6]]}},
   {"cls": "trail", "chain": ["Allison Russell", "Glen Hansard", "The Family Crest"]},
   {"cls": "trail", "chain": ["Kingsley Flood", "Mikaela Davis"], "via": {"Kingsley Flood>Mikaela Davis": [[566, 305], [553, 338]]}},
-  {"cls": "trail", "chain": ["Allison Russell", "Rhiannon Giddens", "Mikaela Davis", "The Lone Bellow"], "via": {"Allison Russell>Rhiannon Giddens": [[491, 233], [493, 252]]}}
+  {"cls": "trail", "chain": ["Allison Russell", "Rhiannon Giddens", "Mikaela Davis", "The Lone Bellow"], "via": {"Allison Russell>Rhiannon Giddens": [[491, 233], [493, 252]]}},
+  {"cls": "trail", "chain": ["Valerie June", "Patty Griffin", "Emmylou Harris", "Hayes Carll", "Jaime Wyatt", "Tommy Prine"], "via": {"Hayes Carll>Jaime Wyatt": [[352, 396]]}},
+  {"cls": "trail", "chain": ["Tommy Prine", "Fancy Hagood", "Jobi Riccio", "Willie Nelson", "Daniel Donato"]},
+  {"cls": "trail", "chain": ["Margo Price", "Zach Bryan", "Al Olender", "Fancy Hagood"], "via": {"Margo Price>Zach Bryan": [[271, 416]]}}
  ]
 }
