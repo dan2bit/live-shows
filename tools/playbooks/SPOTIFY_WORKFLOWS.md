@@ -91,3 +91,18 @@ says "persist"; until then, don't.
 - Bare `--new-artist` populates every cache entry still missing a `spotify_id`
   (known unresolvables excluded); run it before a release sweep so new artists
   get stamped in the same cycle.
+- **Where names come from:** `collect_artists()` reads a fixed list of
+  `(file, columns)` pairs in `_tsv_sources()`, matched by **exact** column name
+  with no fallback. The support column is named differently in each file:
+  `Supporting Artist` (current), `Support` (potentials), `Supporting Acts`
+  (history). A wrong name drops that column silently. Fixing one, or adding a
+  source, seeds every newly collected name as a null-id skeleton on the next
+  `--refresh-lastfm`, and the weekly `--new-artist` pass then resolves them by
+  name, ~3 Spotify calls each.
+- **Before a source change lands,** list the names it adds and park the ones a
+  name-only search would mis-resolve (hyperlocal acts, one-off benefit bills,
+  short or common names) in `data/spotify_unresolvable.tsv` as `no_presence`,
+  in a `staging` commit that lands first. Parked names are dropped before
+  seeding, so they never become skeletons. Size the weekly `--limit` to the
+  backlog (about 3 calls per name), finish it before the month-end ramp starts,
+  then put the limit back.
