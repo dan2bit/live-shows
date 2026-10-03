@@ -375,7 +375,11 @@ def _tsv_sources():
         # who is also a tracked headliner (first-wins in collect_artists' add()).
         (os.path.join(DATA_DIR, "seen_with.tsv"),             ["Seen With"], ["Spotify URL"]),
     ]
-    sources += [(p, ["Artist", "Supporting Artist"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "history", "*.tsv")))]
+    # History files name their support column "Supporting Acts" (current.tsv says
+    # "Supporting Artist", potentials say "Support"). Columns are matched by exact
+    # name with no fallback, so the wrong name here silently drops every act seen
+    # only as support on a show that has already rolled into history.
+    sources += [(p, ["Artist", "Supporting Acts"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "history", "*.tsv")))]
     # Multi-artist setlist files: read an "Artist" column if one exists, else skip.
     # (Setlist schema isn't fixed; refine here if a dedicated bill format lands.)
     sources += [(p, ["Artist"], []) for p in sorted(glob.glob(os.path.join(DATA_DIR, "setlists", "*.tsv")))]
@@ -539,8 +543,8 @@ _BILL_MORE_RE = re.compile(r"\s*\+\s*\d*\s*more$", re.IGNORECASE)
 
 
 def _split_support(cell: str):
-    """Yield the individual acts on a support bill. A Support / Supporting Artist
-    cell can list several acts on one '/'-separated line ("A / B / C + more");
+    """Yield the individual acts on a support bill. A Support / Supporting Artist /
+    Supporting Acts cell can list several acts on one '/'-separated line ("A / B / C + more");
     collected whole it becomes a single bogus cache key that resolves to nothing.
     Splits on '/' and trims a trailing '+ N more', mirroring the support-harvest in
     scripts/build_recommend_index.py so both consumers read bills the same way."""
