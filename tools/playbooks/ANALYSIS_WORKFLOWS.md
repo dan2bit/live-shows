@@ -240,29 +240,51 @@ NAR rows are candidates, not follows - see `FOLLOWS_PIPELINE.md` for what a prom
 
 ---
 
-## Workflow 3 — Fast Track Artist Tour Monitoring
+## Workflow 3 — Fast Track Watch Alerts
 
-**Frequency:** Weekly or on-demand (when expecting tour announcement)
-**Sources:** `tools/research/follows/fast-track-artist-tour-pages.tsv`
+**Frequency:** On alert. The checking is automated; the decision is not.
+**Sources:** `[watch]` mail from `daily-page-watch.yml`; registry `tools/watch/watches.tsv`
 
 ### Purpose
 
-Monitor tour page URLs for Fast Track artists — artists who would be immediate buys for any DMV date but whose shows don’t reliably surface via BIT/Seated/venue newsletters in time.
+Every artist in `data/fast_track.tsv` has a `watches.tsv` row on the surface that
+actually carries their dates, checked daily (`check_every_days 1`, set 2026-10-03,
+because a presale window is shorter than a week). This replaced the manual weekly
+tab-opening pass and the consolidated `fast-track-tour-dates.tsv` refresh, both
+retired 2026-10-03; the file still exists as a September snapshot and is no longer
+written. What arrives now is one `[watch]` mail per artist per real change.
 
-### Steps
+Which URL is watched depends on how the artist's page is built, and it is often not
+the page: see `DATA_WRITE_PROTOCOLS.md → fast_track.tsv protocol → Adding a row` for
+the surface table (server-rendered page / Seated API / Bandsintown public endpoint).
 
-1. Open all tour page URLs from `tools/research/follows/fast-track-artist-tour-pages.tsv`. Open all tabs at once before handing off to Claude in Chrome for review.
-2. For each artist in `tools/research/follows/fast-track-artist-tour-pages.tsv`:
-   a. Check the artist’s official tour page URL
-   b. Look for DC/MD/VA dates not yet in `live_shows_potential.tsv` or `live_shows_current.tsv`
-   c. If a new DMV date is found, surface it as a fast-track buy
-3. Update the consolidated tour dates file:
-   - Overwrite `tools/research/web-src/fast-track-tour-dates.tsv` — one file for all
-     fast-track artists, keyed by an `Artist` column (consolidated 2026-07-23; replaced
-     the former per-artist `fast-track-<artist>-tour-dates.tsv` files). Schema:
-     `Artist | Date | Day | Time | Event/Venue | Venue | City | State`.
-   - The scrape produces the whole file in one pass (per `web-src/scraping_tasks.md` →
-     Fast track tour pages scrape); this step just confirms it landed and diffs it.
+### Steps (per `[watch]` mail for a fast-track artist)
+
+1. Read the diff in the mail. A whole-page `artist` watch mails on any change, so
+   first decide whether the change is a date at all (a new row, a changed venue) or
+   page chrome (a merch banner, a reworded bio) - the latter is a no-op, and a
+   repeat offender gets an `ignore_contains` substring on its row.
+2. If it is a date: is it DC/MD/VA (or inside the row's Distance Cap)? Then check it
+   against `live_shows_current.tsv` and `live_shows_potential.tsv` - it may already
+   be there from a newsletter.
+3. New DMV date → run the three-cap check from `DATA_WRITE_PROTOCOLS.md →
+   When Fast Track applies`. All caps satisfied → **fast-track buy**, no potentials
+   row. Any cap exceeded → Choose row in potentials, noting the cap, after the
+   per-artist calendar check that Routine 3 requires.
+4. A date outside the region is noted and nothing is written; the row's own notes
+   are the place for "touring the West Coast, no East leg yet" if that is worth
+   remembering.
+
+### Keeping the watch honest
+
+- A new `fast_track.tsv` row gets its watch row in the same session (invariant 6 in
+  `FOLLOWS_PIPELINE.md`; not yet checked by `reconcile_follows.py`).
+- When the fast-track row is reconciled away after a purchase, the watch is
+  soft-retired (`active` to `N`), not deleted - the next DMV date is still worth
+  hearing about.
+- A watch that has not mailed in months is not evidence the artist is idle. Check
+  `last_checked` in `watches.tsv`; a stale value means the fetch is failing and the
+  job summary will say why.
 
 ### Fast Track cap override
 
@@ -279,7 +301,9 @@ Fast Track Artists data is stored in data/fast_track.tsv and loaded on demand on
 3. FIRST TOUR: Y = artist has not yet toured DC/MD/VA region at all 
 - (festivals, cruises, and award shows don't count).
 -  Blank = has played the region, just haven't caught them.
-4. Tour URL: artist's own tour page preferred; use BIT URL if no dedicated page.
+4. Tour URL: artist's own tour page preferred; use BIT URL if no dedicated page. The
+   `watches.tsv` row may watch a different URL than this one (an API behind the page)
+   - that is expected; the Tour URL is for humans, the watch URL is for the fetcher.
 
 
 ---
@@ -307,7 +331,7 @@ Review the `pending-review` rows in NAR and assign follow tiers or mark as pass.
 
 ### Tier guidelines
 
-- **Strong:** automatic buy for any DMV date at any in-scope venue; add to fast_track if not yet seen live
+- **Strong:** automatic buy for any DMV date at any in-scope venue; add to fast_track if not yet seen live - and a daily `watches.tsv` row on the tour page with it (`DATA_WRITE_PROTOCOLS.md → fast_track.tsv protocol → Adding a row`)
 - **Medium-Strong:** buy for DC/MD/VA core venues; Hub City only if no closer date expected
 - **Medium:** regional cap — pass on Hub City, wait for Rams Head/Hamilton/Birchmere/9:30
 - **Low:** watch only; no active purchase intent
