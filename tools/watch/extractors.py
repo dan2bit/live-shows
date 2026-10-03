@@ -247,6 +247,102 @@ def hamilton_live(html_text):
     return events
 
 
+# ---- Hub City Vinyl (all-events page) --------------------------------------
+#
+# WordPress + the "Import Eventbrite Events" plugin, confirmed against the
+# live page 2026-10-03 (curl with this system's own UA; saved copy inspected
+# offline): fully server-rendered. The shortcode on the page is
+# posts_per_page 50 with ajaxpagi "no", so one GET carries the whole upcoming
+# list - the iee-ajax-pagi.js the page also loads is inert for this layout
+# (a /page/2/ URL returns an empty body). Each event is one
+# <div class="iee_event"> holding <span class="month">Oct</span>
+# <span class="date"> 03 </span> and <div class="event_title">...</div>; no
+# year anywhere, so the year is inferred the same way as Blues Alley's. No
+# status markup at all (sold-out is not shown on this list view), so status
+# is always "". Site robots.txt disallows only /wp-json/ and ?rest_route=,
+# neither of which this fetch touches.
+
+_HCV_EVENT_RE = re.compile(r'<div class="iee_event"\s*>(.*?)<div style="clear: both">', re.S)
+_HCV_MONTH_RE = re.compile(r'<span class="month">\s*(\w{3})\s*</span>\s*<span class="date">\s*(\d{1,2})\s*</span>', re.S)
+_HCV_TITLE_RE = re.compile(r'<div class="event_title">(.*?)</div>', re.S)
+# the venue's own non-music nights, by its own labeling (the Sep 2026 Chrome
+# pass flagged trivia, record shows, comedy and karaoke on this list)
+_HCV_OFFPROFILE = ("trivia", "record show", "comedy", "karaoke", "bingo", "open mic")
+
+
+def hub_city_vinyl(html_text):
+    events = []
+    for m in _HCV_EVENT_RE.finditer(html_text):
+        chunk = m.group(1)
+        dm = _HCV_MONTH_RE.search(chunk)
+        tm = _HCV_TITLE_RE.search(chunk)
+        if not dm or not tm:
+            continue
+        mon = _HAM_MONTHS.get(dm.group(1).title())
+        if not mon:
+            continue
+        day = int(dm.group(2))
+        title = _strip_tags(tm.group(1))
+        if not title:
+            continue
+        events.append({"date": "%04d-%02d-%02d" % (_year_for(mon, day), mon, day),
+                       "title": title, "status": ""})
+    return events
+
+
+def hub_city_vinyl_offprofile(title):
+    low = title.lower()
+    return any(marker in low for marker in _HCV_OFFPROFILE)
+
+
+# ---- Collective Encore (calendar-list page) --------------------------------
+#
+# WordPress + the "Widget for Eventbrite API" plugin (wfea), confirmed against
+# the live page 2026-10-03 the same way as Hub City: server-rendered, 52
+# events in one GET, no pagination. Each event is an <article> whose class
+# list carries the plugin's own availability flag (event__available /
+# event__unavailable - the latter is sold out or not yet on sale, the page
+# does not say which) and whose <time class="wfea-short-date-item-datetime">
+# text is a full "October 3, 2026 @ 08:00 pm", so no year inference is needed.
+# Title is the <h3 class="eaw-title"> link text. Robots.txt disallows only
+# /wp-admin/.
+
+_CE_ARTICLE_RE = re.compile(r'<article\s+class="([^"]*wfea-short-date-item[^"]*)">(.*?)</article>', re.S)
+_CE_TIME_RE = re.compile(r'<time class="wfea-short-date-item-datetime">\s*(\w+)\s+(\d{1,2}),\s*(\d{4})', re.S)
+_CE_TITLE_RE = re.compile(r'<h3 class="eaw-title[^"]*">\s*<a[^>]*>(.*?)</a>', re.S)
+_CE_MONTHS = {name: num for name, num in zip(
+    ("January", "February", "March", "April", "May", "June", "July", "August",
+     "September", "October", "November", "December"), range(1, 13))}
+# the room's own non-music programming, by its own labeling
+_CE_OFFPROFILE = ("historians on tap", "trivia", "comedy", "bingo", "karaoke", "open mic",
+                  "market", "yoga", "paint", "drag brunch")
+
+
+def collective_encore(html_text):
+    events = []
+    for m in _CE_ARTICLE_RE.finditer(html_text):
+        classes, chunk = m.group(1), m.group(2)
+        dm = _CE_TIME_RE.search(chunk)
+        tm = _CE_TITLE_RE.search(chunk)
+        if not dm or not tm:
+            continue
+        mon = _CE_MONTHS.get(dm.group(1))
+        if not mon:
+            continue
+        title = _strip_tags(tm.group(1))
+        if not title:
+            continue
+        status = "unavailable" if "event__unavailable" in classes else ""
+        events.append({"date": "%s-%02d-%02d" % (dm.group(3), mon, int(dm.group(2))),
+                       "title": title, "status": status})
+    return events
+
+
+def collective_encore_offprofile(title):
+    low = title.lower()
+    return any(marker in low for marker in _CE_OFFPROFILE)
+
+
 # ---- Generic: image URLs on a page, as pseudo-text-lines -------------------
 #
 # For an "artist"-kind watch whose real signal lives in which image is
@@ -273,5 +369,7 @@ def image_urls(html_text):
 EXTRACTORS = {
     "blues_alley": {"extract": blues_alley, "offprofile": blues_alley_offprofile},
     "hamilton_live": {"extract": hamilton_live},
+    "hub_city_vinyl": {"extract": hub_city_vinyl, "offprofile": hub_city_vinyl_offprofile},
+    "collective_encore": {"extract": collective_encore, "offprofile": collective_encore_offprofile},
     "image_urls": {"lines": image_urls},
 }
