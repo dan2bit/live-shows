@@ -18,8 +18,21 @@ search `label:watch-alert` mail or `docs/ISSUE_LOG.md` if the history is needed.
 pod was retired specifically because interactive Claude-for-Chrome or Desktop
 reads a page fine - real browser session, no bot check - but the same page
 checked unattended (no session, no browser) hits 403s or crashes outright.
-InstantSeats (Blues Alley) is the one surface confirmed to work headless; that
-is exactly why it's in the registry and nothing else is yet.
+Surfaces confirmed to work headless, as of 2026-10-03 (15 rows): InstantSeats
+(Blues Alley); server-rendered venue calendars on WordPress Eventbrite plugins
+(Hub City Vinyl, Collective Encore - each needs an extractor); server-rendered
+artist tour pages (Nikki Hill, Beth Hart, and Bandzoogle sites such as Angelique
+Francis and Kat Riggins); the Seated tour API (`cdn.seated.com/api/tour/<id>`,
+where `<id>` is the `data-artist-id` in the site's `widget.seated.com` embed -
+Danielle Ponder, Miko Marks); and Bandsintown's public events endpoint
+(`rest.bandsintown.com/artists/<id_NNN or name>/events?app_id=js_<domain>`),
+which is what a Bandsintown widget or Squarespace's built-in Tour Dates block
+(`sqs-block-tourdates`) fetches in the browser (Sugaray Rayford, Grace Bowers,
+Garret T. Willie). The BIT endpoint is public and unpersonalised - it is NOT the
+rhbl recommends view, which still needs the logged-in Chrome session.
+Surfaces confirmed NOT watchable: a page whose shows are only an image (JV's -
+watched coarsely via `image_urls`), and any site whose robots.txt names AI
+agents with Disallow (Bethesda Theater) - honored, not worked around.
 
 **Before proposing a row, test-fetch the candidate URL with a plain HTTP
 fetch** (the `web_fetch` tool if the URL already appears in this conversation
