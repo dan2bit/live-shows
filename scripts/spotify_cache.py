@@ -88,6 +88,20 @@ LATEST RELEASE
     later --refresh-releases would self-correct. (Sample across the cache once it
     exists to confirm 10 never misses; bump to pagination only if it does.)
 
+    PREVIOUS RELEASE
+        Only the newest release is kept, so an artist who releases early in a
+        month loses the release from the month before as soon as a refresh sees
+        the new one - and a "new music in <month>" query of the cache silently
+        drops them. When a refresh or rebuild replaces latest_release with a
+        DIFFERENT release dated the same day or later, the replaced object moves
+        to `previous_release` (same shape). One level is enough: two new releases
+        inside one re-check gap is rare. A same-release metadata update, a null
+        pull, or a date regression never shifts it, and every rebuild path carries
+        an existing previous_release forward. A month's releases are the entries
+        whose latest_release OR previous_release date falls in that month.
+        release_digest.py compares latest_release only, so the shift is never
+        reported as a new release.
+
     The "most recent" pick pads partial dates to the *start* of their period for
     comparison only (a year-only 2026 sorts as 2026-01-01, so a dated 2026-06-19
     in the same year correctly outranks it); the original release_date + precision
@@ -970,6 +984,32 @@ def _infer_stale_days(cache: dict) -> int:
 
 # ── Latest-release-only refresh ───────────────────────────────────────────────
 
+def _shift_previous(entry: dict, old_rel, rel) -> None:
+    """Keep a replaced latest_release as previous_release (see PREVIOUS RELEASE).
+
+    Shifts only when the new release is a different one (by spotify_id) dated the
+    same day or later; a metadata update of the same release, a null pull, or a
+    date regression leaves previous_release as it is."""
+    if not old_rel or not rel:
+        return
+    oid, nid = old_rel.get("spotify_id"), rel.get("spotify_id")
+    if oid and nid and oid == nid:
+        return
+    od, nd = old_rel.get("date"), rel.get("date")
+    if not od or not nd or _release_sort_key(nd) < _release_sort_key(od):
+        return
+    entry["previous_release"] = old_rel
+
+
+def _carry_previous(entry: dict, prev) -> None:
+    """For the rebuild paths, which start a fresh entry: keep any existing
+    previous_release, then shift the prior latest_release if it was replaced."""
+    prev = prev or {}
+    if prev.get("previous_release"):
+        entry["previous_release"] = prev["previous_release"]
+    _shift_previous(entry, prev.get("latest_release"), entry.get("latest_release"))
+
+
 def refresh_releases(cache: dict, creds, args) -> None:
     """Re-pull ONLY latest_release for already-cached artists; leave the rest of
     each entry untouched. Honors --artist, --start-after, --stale-days, --dry-run.
@@ -1110,6 +1150,7 @@ def refresh_releases(cache: dict, creds, args) -> None:
             print(f"[{i}/{len(todo)}] {name}  → {change}")
             continue
 
+        _shift_previous(entry, old_rel, rel)
         entry["latest_release"] = rel
         entry["latest_release_checked"] = date.today().isoformat()
         if old != new:
@@ -1820,6 +1861,7 @@ def _populate_new_artist(name: str, sources: set, url_hint: str | None,
         entry["latest_release"] = prev_rel
         entry["latest_release_checked"] = prev.get("latest_release_checked")
         print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
+    _carry_previous(entry, prev)
 
     # Pass 2 — portrait. Mirrors refresh_images' empty-pull rule: an empty pull
     # never wipes a cached portrait and never stamps images_checked, so the next sweep
@@ -2457,6 +2499,7 @@ def main() -> None:
             entry["latest_release"] = prev_rel
             entry["latest_release_checked"] = prev.get("latest_release_checked")
             print(f"    ⚠ null pull for {name}; kept cached {prev_rel.get('date')}", file=sys.stderr)
+        _carry_previous(entry, prev)
         cache[name] = entry
         rel = entry.get("latest_release") or {}
         print(f"[{i}/{len(names)}] {name}  → {aid}  latest {rel.get('date') or '—'}")
