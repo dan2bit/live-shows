@@ -12,6 +12,11 @@ Buy/Choose rows pruned without being downgraded first are flagged in the
 NAR Source field as 'pruned-potentials-buy' or 'pruned-potentials-choose'
 for future triage. Sell rows are also pruned but not added to NAR.
 
+The NAR Overview carries the potentials row's whole Notes cell, joined with a
+plain " - " (TSV values are ASCII punctuation only). The pruned potentials row
+is deleted, and the reason for a pass usually sits at the end of its Notes, so
+the Overview must not cut the cell short.
+
 An artist already in artists.tsv (seen live) or follows_master.tsv (approved
 to follow) never gets a NAR row: NAR is the precursor set, and a known artist
 re-entering it through the prune path is the drift this script must not
@@ -105,7 +110,7 @@ def nar_row_for(pruned: dict, nar_headers: list[str]) -> dict:
     tier = pruned.get("Tier", "")
     decision = pruned.get("Decision", "")
     notes = pruned.get("Notes", "")
-    note_str = f" — {notes[:120]}" if notes and notes != "-" else ""
+    note_str = f" - {notes}" if notes and notes != "-" else ""
     overview = f"Pruned {TODAY.strftime('%b %Y')} ({decision}){note_str}"
     row = {h: "" for h in nar_headers}
     row["Artist"] = artist
