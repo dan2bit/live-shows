@@ -1,12 +1,14 @@
 """
 extractors.py - per-site page parsing for the watch system.
 
-Three things live here: a small dependency-free HTML-to-visible-text helper
+Four things live here: a small dependency-free HTML-to-visible-text helper
 (visible_lines), used by every "artist"-kind watch by default and by any
 "venue"-kind extractor that wants a starting point; a generic image-URL
 extractor (image_urls) for the rare "artist"-kind site whose real signal is
-which image is referenced rather than any visible text; and the EXTRACTORS
-registry, keyed by the string a watches.tsv row's `extractor` column names.
+which image is referenced rather than any visible text; two generic tour-event
+extractors (seated_events, bandsintown_events) for an artist whose tour page is
+a widget backed by a JSON API; and the EXTRACTORS registry, keyed by the string
+a watches.tsv row's `extractor` column names.
 
 An EXTRACTORS entry is a dict with either or both of:
     {
@@ -16,6 +18,12 @@ An EXTRACTORS entry is a dict with either or both of:
                                             # specific negative signal, checked
                                             # before any scoring API call
         "lines": fn(html_text) -> [str, ...],
+        "dated_lines": True, # optional, alongside "lines" - every line starts with an
+                             # ISO date (YYYY-MM-DD). The engine then treats a line
+                             # whose date has passed as expired: it dropping off the
+                             # list is not news, so a change made only of past dates
+                             # refreshes the snapshot without a mail, and a line for
+                             # a DC, MD or VA event is flagged in the mail.
         "url_lines": True,   # optional, alongside "lines" - the lines are URLs
                              # as the page wrote them (often site-relative).
                              # The mail body resolves each against the watched
@@ -38,6 +46,7 @@ watches.tsv - see tools/playbooks/skills/watch-manager/SKILL.md for the
 conversational path.
 """
 
+import json
 import re
 from datetime import date
 from html import unescape
@@ -378,10 +387,100 @@ def image_urls(html_text):
     return re.findall(r'<img[^>]+src="([^"]+)"', html_text)
 
 
+# ---- Generic: tour events from a Seated or Bandsintown JSON API ------------
+#
+# A fast-track artist whose tour page is a widget has no dates in its HTML, so
+# the row watches the widget's own JSON endpoint instead. A whole-page text diff
+# over that JSON is useless: the document is a single line, so any change - even
+# an event simply passing - prints the entire document twice. These two parse the
+# response into one sorted line per event, which is what the diff compares.
+#
+# Every line begins with the event's local date (YYYY-MM-DD). The registry entries
+# below set "dated_lines" so the engine can tell a date that has passed (an event
+# dropping off the list on its own, which is not news) from a future date that was
+# cancelled (which is). A response that is not the expected JSON raises instead of
+# returning no lines, so a bad fetch is reported as a failed check and leaves the
+# snapshot alone, rather than reading as "every event was removed".
+
+def _clean(value):
+    return " ".join(str(value).split()) if value else ""
+
+
+def _json_doc(text, source):
+    try:
+        return json.loads(text)
+    except ValueError:
+        raise ValueError("%s response was not JSON (starts: %r)" % (source, (text or "")[:60])) from None
+
+
+def _event_line(*fields):
+    return " | ".join(f for f in fields if f)
+
+
+def seated_events(text):
+    doc = _json_doc(text, "Seated API")
+    if not isinstance(doc, dict):
+        raise ValueError("Seated API response was not a tour object (starts: %r)" % (text or "")[:60])
+    lines = []
+    for ev in doc.get("included") or []:
+        if ev.get("type") != "tour-events":
+            continue
+        a = ev.get("attributes") or {}
+        day = a.get("starts-at-date-local")
+        if not day:
+            continue
+        lines.append(_event_line(
+            day,
+            _clean(a.get("venue-name")),
+            _clean(a.get("formatted-address")),
+            _clean(a.get("details")),
+            "SOLD OUT" if a.get("is-sold-out") else "",
+            "" if a.get("is-starts-at-known", True) else "date TBA",
+            ("https://go.seated.com/tour-events/%s" % ev["id"]) if ev.get("id") else "",
+        ))
+    return sorted(lines)
+
+
+def bandsintown_events(text):
+    doc = _json_doc(text, "Bandsintown API")
+    if not isinstance(doc, list):
+        raise ValueError("Bandsintown API response was not an event list (starts: %r)" % (text or "")[:60])
+    lines = []
+    for ev in doc:
+        when = ev.get("datetime") or ""
+        if len(when) < 10:
+            continue
+        v = ev.get("venue") or {}
+        country = _clean(v.get("country"))
+        # The region is only a usable two-letter code for the US and Canada; elsewhere
+        # the API leaves it blank, so the country names the place instead.
+        region = _clean(v.get("region")) if country in ("United States", "Canada") else ""
+        where = ", ".join(p for p in (_clean(v.get("city")), region,
+                                      "" if country == "United States" else country) if p)
+        offers = ev.get("offers") or []
+        sold = bool(ev.get("sold_out")) or any(o.get("type") == "Sold Out" for o in offers)
+        unavailable = [o.get("status") for o in offers if o.get("status") not in (None, "", "available")]
+        on_sale = _clean(ev.get("on_sale_datetime"))
+        lines.append(_event_line(
+            (when[:10] + " " + when[11:16]).strip(),
+            _clean(v.get("name")),
+            where,
+            _clean(ev.get("title")),
+            _clean(ev.get("description")),
+            "SOLD OUT" if sold else ("tickets " + unavailable[0] if unavailable else ""),
+            "presale" if ev.get("presale") else "",
+            ("on sale " + on_sale[:16].replace("T", " ")) if on_sale else "",
+            ("https://www.bandsintown.com/e/%s" % ev["id"]) if ev.get("id") else "",
+        ))
+    return sorted(lines)
+
+
 EXTRACTORS = {
     "blues_alley": {"extract": blues_alley, "offprofile": blues_alley_offprofile},
     "hamilton_live": {"extract": hamilton_live},
     "hub_city_vinyl": {"extract": hub_city_vinyl, "offprofile": hub_city_vinyl_offprofile},
     "collective_encore": {"extract": collective_encore, "offprofile": collective_encore_offprofile},
     "image_urls": {"lines": image_urls, "url_lines": True},
+    "seated_events": {"lines": seated_events, "dated_lines": True},
+    "bandsintown_events": {"lines": bandsintown_events, "dated_lines": True},
 }

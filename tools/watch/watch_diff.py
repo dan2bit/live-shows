@@ -24,7 +24,12 @@ TWO WATCH KINDS
 
   artist  a single-subject page (an artist's own tour page). Whole-page
           cleaned-text diff. Any change is relevant by construction - the page
-          IS the subject, so a change always mails.
+          IS the subject, so a change always mails. The exception is an
+          extractor that sets "dated_lines" (the Seated and Bandsintown API
+          extractors): an event whose date has passed dropping off the list is
+          not news, so a change made only of past dates refreshes the snapshot
+          without a mail, and a line for a DC, MD or VA event is flagged in the
+          mail and named in the subject.
 
   venue   a multi-act listings page. Needs an extractor in extractors.py that
           turns the page into {date, title} event records, so the diff is a
@@ -59,6 +64,7 @@ last_checked only; no mail, no snapshot rewrite, no scoring call at all.
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 import time
@@ -84,6 +90,10 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
 
 HEADER = ["slug", "name", "url", "kind", "check_every_days", "last_checked",
           "ignore_contains", "extractor", "active", "notes"]
+
+# A DC, MD or VA date on a fast-track artist's tour is the event that watch exists to
+# catch, so the mail marks it. Matches the place field of a "dated_lines" event line.
+DMV_RE = re.compile(r", (?:DC|MD|VA)(?: \||$)")
 
 EVENT_FLOOR = 3  # fewer than this from a venue-kind page reads as extractor drift, not a quiet calendar
 
@@ -171,6 +181,12 @@ def extractor_spec(name):
     return EXTRACTORS.get(name, {})
 
 
+def snapshot_text(lines):
+    """A snapshot file's text: one line per entry, or an empty file for none, so an
+    empty list does not read back as a single blank line."""
+    return ("\n".join(lines) + "\n") if lines else ""
+
+
 def process_artist(row):
     html_text = fetch(row["url"])
     new_lines = clean_lines(html_text, row.get("ignore_contains", "-"), row.get("extractor"))
@@ -179,7 +195,7 @@ def process_artist(row):
 
     if not snap_path.exists():
         snap_path.parent.mkdir(parents=True, exist_ok=True)
-        snap_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+        snap_path.write_text(snapshot_text(new_lines), encoding="utf-8")
         summary.append("  no prior snapshot - baseline seeded, nothing to diff yet")
         return summary, None
 
@@ -191,22 +207,40 @@ def process_artist(row):
         summary.append("  unchanged")
         return summary, None
 
+    # A "dated_lines" extractor starts every line with an ISO date. A line whose date
+    # has passed that is missing now just dropped off the list on its own, and one
+    # that appears already past is not worth a mail either - only a current or
+    # future date changing is news. If nothing else changed, the snapshot is
+    # refreshed so the same past dates are not diffed again tomorrow.
+    spec = extractor_spec(row.get("extractor"))
+    dated = bool(spec.get("dated_lines"))
+    if dated:
+        today = TODAY.isoformat()
+        changed = len(added) + len(removed)
+        added = [ln for ln in added if ln[:10] >= today]
+        removed = [ln for ln in removed if ln[:10] >= today]
+        if not added and not removed:
+            snap_path.write_text(snapshot_text(new_lines), encoding="utf-8")
+            summary.append("  %d past date(s) dropped off the list - not mailed" % changed)
+            return summary, None
+
     # An extractor whose lines are URLs (spec "url_lines") gets them resolved
     # against the watched page's URL in the mail only, so a site-relative src is
     # clickable. It also gets a CURRENT block: the diff shows what changed, but a
     # page often carries several related images and the reader wants all of them
     # in one place. The snapshot below is written from the raw lines either way.
-    url_lines = bool(extractor_spec(row.get("extractor")).get("url_lines"))
+    url_lines = bool(spec.get("url_lines"))
     show = (lambda ln: urljoin(row["url"], ln)) if url_lines else (lambda ln: ln)
+    tag = (lambda ln: "[DMV] " if DMV_RE.search(ln) else "") if dated else (lambda ln: "")
 
     body = []
     if added:
         body.append("ADDED")
-        body.extend("  + " + show(ln) for ln in added)
+        body.extend("  + " + tag(ln) + show(ln) for ln in added)
         body.append("")
     if removed:
         body.append("REMOVED")
-        body.extend("  - " + show(ln) for ln in removed)
+        body.extend("  - " + tag(ln) + show(ln) for ln in removed)
         body.append("")
     if url_lines and new_lines:
         body.append("CURRENT")
@@ -214,9 +248,14 @@ def process_artist(row):
         body.append("")
     summary.extend(body)
 
-    snap_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
-    return summary, {"subject": "[watch] %s" % row["name"],
-                      "body": "\n".join(body).rstrip() + "\n"}
+    snap_path.write_text(snapshot_text(new_lines), encoding="utf-8")
+    subject = "[watch] %s" % row["name"]
+    if dated:
+        if any(DMV_RE.search(ln) for ln in added):
+            subject += " - DMV date added"
+        elif any(DMV_RE.search(ln) for ln in removed):
+            subject += " - DMV date removed"
+    return summary, {"subject": subject, "body": "\n".join(body).rstrip() + "\n"}
 
 
 # ---- venue-kind: structured event diff -------------------------------------

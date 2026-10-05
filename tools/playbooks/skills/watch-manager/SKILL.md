@@ -34,6 +34,15 @@ Surfaces confirmed NOT watchable: a page whose shows are only an image (JV's -
 watched coarsely via `image_urls`), and any site whose robots.txt names AI
 agents with Disallow (Bethesda Theater) - honored, not worked around.
 
+A row on either API names its extractor in the registry (`seated_events` or
+`bandsintown_events`). Without one the response is diffed as a single line, so
+every change, even an event simply passing, prints the whole document twice. With
+one the diff is per event, a date that has passed dropping off the list is not
+mailed, and a DC, MD or VA date is flagged in the mail and named in the subject.
+Switching an existing row to an extractor changes its snapshot format, so convert
+the stored snapshot in the same commit (run the extractor over the old snapshot's
+text) or the first run mails every event as new.
+
 **Before proposing a row, test-fetch the candidate URL with a plain HTTP
 fetch** (the `web_fetch` tool if the URL already appears in this conversation
 or a search result; otherwise `web_search` for it first) or, from Desktop
