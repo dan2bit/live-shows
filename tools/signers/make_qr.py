@@ -3,10 +3,11 @@
 
 A QR code is a pure function of the encoded string plus the encoder
 settings (error-correction level, quiet-zone width) - identical inputs
-always produce an identical matrix, so both QR files this repo ships
-(static/hat-playlist-qr.svg, static/redhat-bootlegs-qr.svg) are stored
-outputs of this script, not hand-maintained. Regenerate only when the
-encoded URL changes, and re-run the decode check below afterward.
+always produce an identical matrix, so the QR files this repo ships
+(static/hat-playlist-qr.svg, static/redhat-bootlegs-qr.svg,
+static/signers-page-qr.svg) are stored outputs of this script, not
+hand-maintained. Regenerate only when the encoded URL changes, and
+re-run the decode check below afterward.
 
 Plain QR (no logo), error correction M:
     python3 tools/signers/make_qr.py \\

@@ -66,7 +66,7 @@ def load_site_config():
 def load_config():
     with open(CONFIG_YAML, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
-    for key in ("banner_svg", "playlist_qr", "site_qr", "og_image"):
+    for key in ("banner_svg", "playlist_qr", "site_qr", "page_qr", "og_image"):
         asset_path = REPO_ROOT / cfg[key]
         if not asset_path.is_file():
             # A silently-missing banner is exactly the Chrome bug this page
@@ -74,17 +74,19 @@ def load_config():
             sys.exit(f"signers.yaml -> {key}: {cfg[key]} does not exist at "
                       f"{asset_path} - the build refuses to ship a missing asset.")
 
-    # The stored QR's <desc> records the URL it was generated from
-    # (tools/signers/make_qr.py). Compare that against playlist_url so a
+    # A stored QR's <desc> records the URL it was generated from
+    # (tools/signers/make_qr.py). Compare that against the configured URL so a
     # config edit that forgets to regenerate the QR fails loudly here
-    # instead of shipping a QR that points somewhere else.
-    qr_svg = (REPO_ROOT / cfg["playlist_qr"]).read_text(encoding="utf-8")
-    m = re.search(r"<desc>(.*?)</desc>", qr_svg, re.DOTALL)
-    qr_url = m.group(1).strip() if m else None
-    if qr_url != cfg["playlist_url"]:
-        sys.exit(f"{cfg['playlist_qr']} encodes {qr_url!r} but signers.yaml's "
-                  f"playlist_url is {cfg['playlist_url']!r} - regenerate the QR: "
-                  f"python3 tools/signers/make_qr.py '{cfg['playlist_url']}' {cfg['playlist_qr']}")
+    # instead of shipping a QR that points somewhere else. The site QR is not
+    # checked: it carries a logo and encodes the site root, not a config value.
+    for qr_key, url_key in (("playlist_qr", "playlist_url"), ("page_qr", "page_url")):
+        qr_svg = (REPO_ROOT / cfg[qr_key]).read_text(encoding="utf-8")
+        m = re.search(r"<desc>(.*?)</desc>", qr_svg, re.DOTALL)
+        qr_url = m.group(1).strip() if m else None
+        if qr_url != cfg[url_key]:
+            sys.exit(f"{cfg[qr_key]} encodes {qr_url!r} but signers.yaml's "
+                      f"{url_key} is {cfg[url_key]!r} - regenerate the QR: "
+                      f"python3 tools/signers/make_qr.py '{cfg[url_key]}' {cfg[qr_key]}")
     return cfg
 
 
@@ -246,6 +248,7 @@ def render():
 
     template = TEMPLATE_HTML.read_text(encoding="utf-8")
     playlist_url_short = re.sub(r"^https?://", "", cfg["playlist_url"])
+    page_url_short = re.sub(r"^https?://", "", cfg["page_url"])
     og_w, og_h = png_size(REPO_ROOT / cfg["og_image"])
     entries_html, unlinked, folded = build_entries_html(rows, venue_short, artists, aliases)
     if folded:
@@ -272,6 +275,8 @@ def render():
         "PLAYLIST_URL": html.escape(cfg["playlist_url"]),
         "PLAYLIST_URL_SHORT": html.escape(playlist_url_short),
         "PLAYLIST_QR": cfg["playlist_qr"],
+        "PAGE_QR": cfg["page_qr"],
+        "PAGE_URL_SHORT": html.escape(page_url_short),
         "PRINT_PDF": html.escape(cfg["print_pdf"]),
         "PRINT_PAGE_SIZE": cfg["print_page_size"],
         "PRINT_CONTENT_WIDTH_IN": str(cfg["print_content_width_in"]),

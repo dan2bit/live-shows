@@ -48,6 +48,15 @@ print_pdf: hat-signers.pdf
 # sits to the right of the banner in the print masthead. Not used on screen.
 site_qr: static/redhat-bootlegs-qr.svg
 
+# Screen-only: a QR for this page itself, shown in the web footer so someone
+# can open the list from a phone that is being shown to them. It encodes the
+# short redirect the About modal already links to. Never printed - the print
+# footer carries the playlist QR instead. render_signers.py --check reads the
+# SVG's <desc> and fails with "regenerate the QR" if page_url and the QR's
+# encoded URL disagree - see tools/signers/make_qr.py.
+page_url: "https://signers.redhat-bootlegs.net"
+page_qr: static/signers-page-qr.svg
+
 # Tent-fold print layout: content confined to the left panel of a US Letter
 # sheet folded vertically down the middle, so the right panel stays blank
 # and foldable. Change this if the actual fold differs (#412, open decision 4).
