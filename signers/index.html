@@ -148,6 +148,21 @@
     border-bottom:1px solid var(--accent-dim);
   }
 
+  /* Screen-only: a QR for this page itself, so the list can be opened from a phone
+     that is being shown to someone. Hidden in print by .screen-only below - the print
+     footer above carries its own QR, for the playlist. The element's display comes
+     from .screen-only, so nothing here may set display on .share-footer itself. */
+  .share-footer{
+    margin-top:28px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+  .share-qr{display:block;margin:0 auto;max-width:100%;height:auto;}
+  .share-text{margin-top:10px;display:flex;flex-direction:column;gap:2px;}
+  .share-label{font-family:var(--mono);font-size:13px;color:var(--text-muted);}
+  .share-url{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+
   .print-only{display:none;}
   .screen-only{display:block;}
 
@@ -314,6 +329,13 @@
     <div class="qr-text">
       <a class="listen-link" href="https://open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK">Listen to the Playlist</a>
       <span class="qr-caption">open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK</span>
+    </div>
+  </footer>
+
+  <footer class="share-footer screen-only">
+    <img class="share-qr" src="../static/signers-page-qr.svg" width="185" height="185" alt="QR code for this page">
+    <div class="share-text">
+      <span class="share-url">signers.redhat-bootlegs.net</span>
     </div>
   </footer>
 </div>
