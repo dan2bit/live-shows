@@ -66,6 +66,7 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+from urllib.parse import urljoin
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "research"))
@@ -161,6 +162,15 @@ def clean_lines(html_text, ignore_contains, extractor_name=None):
     return lines
 
 
+def extractor_spec(name):
+    """The EXTRACTORS entry a row names, or {} if it names none (unset or "-")
+    or one that does not exist."""
+    if not name or name == "-":
+        return {}
+    from extractors import EXTRACTORS
+    return EXTRACTORS.get(name, {})
+
+
 def process_artist(row):
     html_text = fetch(row["url"])
     new_lines = clean_lines(html_text, row.get("ignore_contains", "-"), row.get("extractor"))
@@ -181,14 +191,26 @@ def process_artist(row):
         summary.append("  unchanged")
         return summary, None
 
+    # An extractor whose lines are URLs (spec "url_lines") gets them resolved
+    # against the watched page's URL in the mail only, so a site-relative src is
+    # clickable. It also gets a CURRENT block: the diff shows what changed, but a
+    # page often carries several related images and the reader wants all of them
+    # in one place. The snapshot below is written from the raw lines either way.
+    url_lines = bool(extractor_spec(row.get("extractor")).get("url_lines"))
+    show = (lambda ln: urljoin(row["url"], ln)) if url_lines else (lambda ln: ln)
+
     body = []
     if added:
         body.append("ADDED")
-        body.extend("  + " + ln for ln in added)
+        body.extend("  + " + show(ln) for ln in added)
         body.append("")
     if removed:
         body.append("REMOVED")
-        body.extend("  - " + ln for ln in removed)
+        body.extend("  - " + show(ln) for ln in removed)
+        body.append("")
+    if url_lines and new_lines:
+        body.append("CURRENT")
+        body.extend("  " + show(ln) for ln in new_lines)
         body.append("")
     summary.extend(body)
 

@@ -16,6 +16,13 @@ An EXTRACTORS entry is a dict with either or both of:
                                             # specific negative signal, checked
                                             # before any scoring API call
         "lines": fn(html_text) -> [str, ...],
+        "url_lines": True,   # optional, alongside "lines" - the lines are URLs
+                             # as the page wrote them (often site-relative).
+                             # The mail body resolves each against the watched
+                             # page's URL so it renders as a clickable link, and
+                             # adds a CURRENT block listing every line the page
+                             # references now, not only the ones that changed.
+                             # The snapshot and the diff stay on the raw lines.
     }
 
 "extract" (+ optional "offprofile") is read by watch_diff.py for a
@@ -356,6 +363,11 @@ def collective_encore_offprofile(title):
 # static image on the same page that never signals anything (a logo, a "how
 # to book us" flyer) and would otherwise fire a spurious mail if it changed.
 #
+# Returns each src exactly as the page wrote it, which on many sites is a
+# site-relative path. The registry entry below sets "url_lines" so the mail
+# resolves those against the watched page's URL; the stored snapshot stays on
+# the raw values, so changing how the mail renders never perturbs the diff.
+#
 # Reads the raw HTML only - not visible_lines() output, since some sites swap
 # an <img> tag's src to an inline data: URI via client-side JS after load
 # (confirmed on JV's Restaurant's own calendar page, 2026-09-19); that JS
@@ -371,5 +383,5 @@ EXTRACTORS = {
     "hamilton_live": {"extract": hamilton_live},
     "hub_city_vinyl": {"extract": hub_city_vinyl, "offprofile": hub_city_vinyl_offprofile},
     "collective_encore": {"extract": collective_encore, "offprofile": collective_encore_offprofile},
-    "image_urls": {"lines": image_urls},
+    "image_urls": {"lines": image_urls, "url_lines": True},
 }
