@@ -267,6 +267,26 @@
   .about-modal .about-links{display:flex;flex-direction:column;gap:7px;list-style:none;margin:0;padding:0;}
   .about-modal .about-link{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--amber);text-decoration:none;padding:6px 10px;border:1px solid var(--amber-dim);border-radius:3px;background:var(--amber-bg);display:block;}
   .about-modal .about-link:hover{background:#2a1c08;}
+  .modal .about-footer{margin:14px 0 0;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);}
+  /* About modal, phone: a full-screen sheet. The desktop card is taller than a phone
+     viewport, so centering it pushed the close button and footer off-screen. Here the
+     hero is a fixed band, the handle and tagline stack top-left instead of overlapping,
+     each link is one line, the link list scrolls, and the footer stays pinned. */
+  @media(max-width:600px){
+    #aboutModal{align-items:stretch;justify-content:stretch;}
+    .about-modal{width:100%;max-width:none;height:100vh;height:100dvh;border:0;border-radius:0;display:flex;flex-direction:column;}
+    .about-hero{flex:none;height:clamp(150px,30dvh,220px);}
+    .about-hero-overlay{background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,rgba(0,0,0,.45) 40%,rgba(0,0,0,0) 75%);}
+    .about-hero-text{padding:12px 64px 0 16px;}
+    .about-hero-handle{font-size:16px;margin:0 0 6px 0;}
+    .modal .about-hero-tagline{position:static;text-align:left;font-size:15px;line-height:1.3;}
+    .about-close-btn{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:1;font-size:16px;min-width:40px;min-height:40px;padding:0;}
+    .about-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:12px 16px max(12px,env(safe-area-inset-bottom));}
+    .about-body p{flex:none;margin-bottom:12px;}
+    .about-modal .about-links{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;gap:6px;}
+    .about-modal .about-link{font-size:14px;padding:10px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .modal .about-footer{flex:none;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+  }
   .modal-intro{font-family:var(--sans);font-size:13px;line-height:1.4;color:var(--text-muted);margin:2px 0 14px;}
   .empty-state{font-family:var(--mono);font-size:12px;color:var(--text-dim);padding:20px 0;text-align:center;}
   .visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
