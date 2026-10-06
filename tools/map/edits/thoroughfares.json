@@ -58,7 +58,7 @@
   {"cls": "trail", "chain": ["Kingsley Flood", "Mikaela Davis"], "via": {"Kingsley Flood>Mikaela Davis": [[566, 305], [553, 338]]}},
   {"cls": "trail", "chain": ["Allison Russell", "Rhiannon Giddens", "Mikaela Davis", "The Lone Bellow"], "via": {"Allison Russell>Rhiannon Giddens": [[491, 233], [493, 252]]}},
   {"cls": "trail", "chain": ["Valerie June", "Patty Griffin", "Emmylou Harris", "Hayes Carll", "Jaime Wyatt", "Tommy Prine"], "via": {"Hayes Carll>Jaime Wyatt": [[352, 396]]}},
-  {"cls": "trail", "chain": ["Tommy Prine", "Fancy Hagood", "Jobi Riccio", "Willie Nelson", "Daniel Donato"]},
-  {"cls": "trail", "chain": ["Margo Price", "Zach Bryan", "Al Olender", "Fancy Hagood"], "via": {"Margo Price>Zach Bryan": [[271, 416]]}}
+  {"cls": "trail", "chain": ["Tommy Prine", "Fancy Hagood", "Jobi Riccio", "Willie Nelson", "Daniel Donato"], "via": {"Willie Nelson>Daniel Donato": [[362.9, 482.2]]}},
+  {"cls": "trail", "chain": ["Margo Price", "Zach Bryan", "Al Olender", "Fancy Hagood"], "via": {"Margo Price>Zach Bryan": [[271, 416]], "Zach Bryan>Al Olender": [[270.9, 426.3]], "Al Olender>Fancy Hagood": []}}
  ]
 }
