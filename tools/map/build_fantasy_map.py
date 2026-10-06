@@ -226,7 +226,7 @@ MAP_EXCLUDE = {
     # support. Neither is an act the map should know about.
     "Linwood Taylor & Guy Bouchie", "Still Standing",
 }
-# Dan's viewer overrides (tools/map/map_overrides.json): {name: {region?, size?,
+# Dan's viewer overrides (tools/map/edits/map_overrides.json): {name: {region?, size?,
 # exclude?}}. Read once, here, because "exclude": true has to act before anything
 # is built - it removes the name exactly as MAP_EXCLUDE does. The in-page editor
 # and the map page's staleness banner both write it, so a Pass row's acts can be
@@ -689,7 +689,7 @@ for reg, spec in REGIONS.items():
             xy[m] = clamp_to_land(cxd + rr * math.cos(ang), cyd + rr * math.sin(ang), (cxd, cyd))
     continue
 
-# ---- canonical pins and Dan's hand pins (tools/map/pins.json wins last) ----
+# ---- canonical pins and Dan's hand pins (tools/map/edits/pins.json wins last) ----
 CANON_PINS = {                                # first pin moves the whole district
     "Larkin Poe": (608, 373),                 # east shore of the source lake
     "The Lone Bellow": (562, 366),            # west shore of the source lake
@@ -914,13 +914,21 @@ def _read_tsv(p):
         return []
 _ft_why = {r["Artist"]: (r.get("Why Fast Track") or "").strip()
            for r in _read_tsv(ROOT / "data" / "fast_track.tsv")}
+# The follow note and the potentials row are read from the tracking files themselves - the
+# same files the rest of this script reads from ROOT - not from a local copy. (Two
+# SCRIPT_DIR-relative "cache" TSVs were named here originally; neither ever existed, so these
+# two lines of provenance were never produced and every follow read as a bare tier.)
 _fm_note = {r["Artist"]: (r.get("Notes") or "").strip()
-            for r in _read_tsv(SCRIPT_DIR / "follows_master_cache.tsv")}
+            for r in _read_tsv(ROOT / "tools" / "research" / "follows" / "follows_master.tsv")}
+# One potentials row per artist, the first in file order (Buy, Choose, Sell, Pass, dated
+# ascending), as "potential: <venue> <date>". The row's Decision is deliberately left out:
+# this file is regenerated only when a map input changes, so a decision copied here would
+# lag the live potentials file for days - the venue and date are the stable facts.
 _pot = {}
-for r in _read_tsv(SCRIPT_DIR / "potential_cache.tsv"):
+for r in _read_tsv(ROOT / "data" / "live_shows_potential.tsv"):
     a_ = r.get("Artist", "").strip()
     if a_ and a_ not in _pot:
-        _pot[a_] = f"potential: {r.get('Decision','?')} @ {r.get('Venue','?')} {r.get('Date','')}".strip()
+        _pot[a_] = f"potential: {r.get('Venue','?')} {(r.get('Date','') or '')[:10]}".strip()
 
 def _trim(t, n=70):
     return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "\u2026"
