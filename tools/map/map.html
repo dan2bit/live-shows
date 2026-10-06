@@ -191,6 +191,11 @@
   #rosterBanner.shaded>:not(.rb-head){display:none;}
   .rb-head{display:flex;align-items:center;gap:8px;justify-content:space-between;}
   .rb-head>b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #rosterBanner .rb-name{all:unset;cursor:pointer;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #rosterBanner .rb-name:hover{text-decoration:underline;}
+  #rosterBanner .rb-prov{display:block;font-size:10px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #rosterBanner .rb-links{font-size:9.5px;display:flex;gap:4px;opacity:.85;flex:none;}
+  #rosterBanner .rb-links a{color:#EDE0C2;text-decoration:underline dotted;}
   #rbShadeBtn{
     font-family:'Special Elite',monospace;font-size:13px;line-height:1;background:none;border:none;
     color:#EDE0C2;cursor:pointer;padding:0 2px;flex:none;
@@ -483,6 +488,7 @@
     const meta=data.meta||{};
     const notRoster=new Set([...(meta.excluded||[]),...Object.keys(meta.merged||{}),...(meta.suppressed||[])]);
     const missing=idx.records.map(r=>r.canonical).filter(n=>!onMap.has(n)&&!PINFILE[n]&&!notRoster.has(n));
+    const recByName=new Map(idx.records.map(r=>[r.canonical,r]));
     // Two different facts, kept apart: "unplaced" is the builder's flag and is what the
     // pink halo shows; "no pin" is a builder-positioned settlement with no pins.json
     // entry (Outer Isles sits on fixed pegs and is left out of that count).
@@ -516,14 +522,34 @@
     list.style.cssText='margin-top:5px;border-top:1px solid rgba(237,224,194,.35);padding-top:4px;max-height:220px;overflow:auto;';
     const decided=new Set();
     const ctl='font-family:Oswald;font-size:11px;border:1px solid #EDE0C2;background:rgba(237,224,194,.12);color:#EDE0C2;padding:1px 4px;';
+    // A name alone assumes the reader knows every act on the roster, which stops being true
+    // the moment a support act is harvested from someone else's bill. Each row therefore says
+    // how the name got onto the roster (from the record the panel already holds), opens the
+    // artist card on the name, and offers two research links for a name the card does not know.
+    const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    const prov=r=>{ if(!r)return''; const s=r.status||'';
+      if(s==='seen')         return `seen ${r.times_seen||'?'}x \u00b7 ${r.first_seen||'?'}${r.most_recent_seen&&r.most_recent_seen!==r.first_seen?'\u2013'+r.most_recent_seen:''}`;
+      if(s==='seen-support') return `support act \u00b7 ${r.appearances||1} bill${+(r.appearances||1)>1?'s':''}${r.bill?' \u00b7 with '+r.bill:''}${r.first_seen?' \u00b7 '+r.first_seen:''}`;
+      if(s==='potential')    return `potential${r.decision?' \u00b7 '+r.decision:''}${r.bill?' \u00b7 on '+r.bill+'\u2019s bill':''}`;
+      if(s==='fast_track')   return 'fast track';
+      if(s==='follow')       return `follow${r.tier?' \u00b7 '+r.tier:''}`;
+      return s; };
+    const links=n=>`<a href="https://www.last.fm/music/${encodeURIComponent(n)}" target="_blank" rel="noopener" title="Last.fm">lfm</a>`
+      +`<a href="https://www.bandsintown.com/?q=${encodeURIComponent(n)}" target="_blank" rel="noopener" title="Bandsintown">bit</a>`;
     for(const n of missing.slice(0,40)){
-      const row=document.createElement('div');
+      const rec=recByName.get(n),row=document.createElement('div');
       row.style.cssText='display:flex;gap:5px;align-items:center;margin:2px 0;';
       const ov=overrides[n]||{};
-      row.innerHTML=`<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${n.replace(/"/g,'&quot;')}">${n}</span>`
+      row.innerHTML=`<span style="flex:1;min-width:0;overflow:hidden;line-height:1.15">`
+        +`<button class="rb-name" type="button" title="open the artist card">${esc(n)}</button>`
+        +`<span class="rb-prov" title="${esc(prov(rec))}">${esc(prov(rec))}</span></span>`
+        +`<span class="rb-links">${links(n)}</span>`
         +`<select style="${ctl}"><option value="">region\u2026</option>${data.regions.map(r=>`<option value="${r.id}"${ov.region===r.id?' selected':''}>${r.label}</option>`).join('')}</select>`
         +`<button style="${ctl};cursor:pointer" title="not an act the map should know about">exclude</button>`;
-      const sel=row.querySelector('select'),btn=row.querySelector('button');
+      row.querySelector('.rb-name').addEventListener('click',()=>{
+        if(typeof openArtistModal==='function')openArtistModal(n,{surface:'the roster panel',label:n,note:prov(rec)||null});
+      });
+      const sel=row.querySelector('select'),btn=row.querySelector('select+button');
       const done=txt=>{decided.add(n);row.style.opacity='.55';sel.disabled=btn.disabled=true;btn.textContent=txt;refresh();};
       sel.addEventListener('change',()=>{ if(!sel.value)return; markOv(n,'region',sel.value); if(overrides[n])delete overrides[n].exclude; done('\u2713 region'); });
       btn.addEventListener('click',()=>{ markOv(n,'exclude',true); done('\u2713 excluded'); });

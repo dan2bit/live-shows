@@ -114,7 +114,7 @@ def yt_url(v):
 def blank_rec(name, status, **kw):
     rec = dict(name=name, status=status, decision="", tier="",
                times_seen="", first_seen="", most_recent_seen="",
-               appearances="", spotify="", youtube="")
+               appearances="", spotify="", youtube="", bill="", role="")
     rec.update(kw)
     return rec
 
@@ -153,26 +153,46 @@ def load_history():
         return []
 
     aliases = alias_targets()
-    agg = {}  # raw name -> [appearances, first_year, last_year]
+    # raw name -> [appearances, first_year, last_year, headliner_count, [(date, headliner)]]
+    # The bill list is support slots only: who the act opened for, so a name that was
+    # never a headliner can be introduced by the bill it was on.
+    agg = {}
     for path in sorted(HISTORY.glob("*.tsv")):
         for r in read_tsv(path):
-            year = (r.get("Show Date", "") or "")[:4]
-            names = [r.get("Artist", "")]
+            date = r.get("Show Date", "") or ""
+            year = date[:4]
+            head = (r.get("Artist", "") or "").strip()
+            names = [head]
             names += HISTORY_SUPPORT_SEP.split(r.get("Supporting Acts", "") or "")
-            for raw in names:
+            for i, raw in enumerate(names):
                 raw = raw.strip()
                 if len(raw) < 2 or raw == "-" or SKIP_AGGREGATE.search(raw):
                     continue
                 raw = aliases.get(norm(raw), raw)
-                slot = agg.setdefault(raw, [0, year, year])
+                slot = agg.setdefault(raw, [0, year, year, 0, []])
                 slot[0] += 1
                 if year:
                     slot[1] = min(slot[1] or year, year)
                     slot[2] = max(slot[2] or year, year)
+                if i == 0:
+                    slot[3] += 1
+                elif head:
+                    slot[4].append((date, head))
 
-    return [blank_rec(name, "seen-support", appearances=str(count),
-                      first_seen=first, most_recent_seen=last)
-            for name, (count, first, last) in agg.items()]
+    out = []
+    for name, (count, first, last, headlined, bills) in agg.items():
+        bill = ""
+        if not headlined and bills:
+            seen, heads = set(), []
+            for _, h in sorted(bills, reverse=True):
+                if h not in seen:
+                    seen.add(h)
+                    heads.append(h)
+            bill = ", ".join(heads[:2]) + (" +%d more" % (len(heads) - 2) if len(heads) > 2 else "")
+        out.append(blank_rec(name, "seen-support", appearances=str(count),
+                             first_seen=first, most_recent_seen=last,
+                             bill=bill, role="support" if bill else ""))
+    return out
 
 
 def load_records():
@@ -204,7 +224,8 @@ def load_records():
             for tok in r.get("Support", "").split("/"):
                 tok = re.sub(r"\s*\+\s*\d*\s*more$", "", tok.strip(), flags=re.I).strip()
                 if len(tok) > 2 and not re.fullmatch(r"more", tok, re.I):
-                    recs.append(blank_rec(tok, "potential", decision=decision))
+                    recs.append(blank_rec(tok, "potential", decision=decision,
+                                          bill=name, role="support"))
 
     for r in read_tsv(FOLLOWS):
         name = r.get("Artist", "")
@@ -337,6 +358,16 @@ def build():
             rec["spotify"] = sp
         if yt:
             rec["youtube"] = yt
+        # bill (additive, optional): the headliner(s) a support-only act was seen or
+        # listed with - the fact that introduces a name nobody recognises on its own.
+        # Withheld when any member is the act's own row or a headlining sighting.
+        own_row = any(m["status"] in ("seen", "fast_track", "follow") or
+                      (m["status"] == "potential" and m.get("role") != "support") or
+                      (m["status"] == "seen-support" and not m.get("role"))
+                      for m in members)
+        bl = "" if own_row else pick(members, "bill")
+        if bl:
+            rec["bill"] = bl
         rec["sources"] = sorted({m["status"] for m in members},
                                 key=STATUS_ORDER.index)
         records.append(rec)
