@@ -95,7 +95,7 @@ function applyConfig(cfg){
   if(s.about_text)_txt('#aboutModal .about-body p',s.about_text);
   if(s.about_hero_image)_attr('.about-hero-img','src',_asset(s.about_hero_image));
   if(s.about_hero_alt)_attr('.about-hero-img','alt',s.about_hero_alt);
-  if(s.about_footer)_txt('#aboutModal .modal-actions span',s.about_footer);
+  if(s.about_footer)_txt('#aboutModal .about-footer',s.about_footer);
   // about_links: list of {url,label} objects. Rebuilt dynamically so a fork can add
   // or remove links by editing config alone. The static anchors in index.html are the
   // pre-JS fallback shown if config.yaml is absent or about_links is not a list.
