@@ -605,6 +605,14 @@ Using Step 0b data, for every artist/show surfaced:
 **Confirmation required before any potentials write.** Present the full proposed set
 (new rows, updates, date-pruning removals) and wait for explicit confirmation.
 
+**Write the reason, not the status (#440).** When the confirmed row is written, its
+`Notes` and `Availability Notes` carry why - fit, bill, source, and any collision named
+by artist, venue and date - and never the decision itself or Dan's say-so (`Choose per
+Dan`, `upgraded to`, `see Pass entry`, `already purchased`). The `Decision` column is
+the status; prose that copies it goes stale the first time the row is changed on the
+web. `DATA_WRITE_PROTOCOLS.md` → potentials write protocol has the full convention;
+`check_potential_status_notes.py` reports drift after the fact.
+
 **Date pruning:** Identify past-dated rows in `live_shows_potential.tsv` using the Step
 0a date. Include in the confirmation step. After removing a past-dated row, check
 `artists.tsv`, `follows_master.tsv`, and `new_artist_research.tsv` — if absent from

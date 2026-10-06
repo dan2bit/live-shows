@@ -161,6 +161,13 @@ jobs:
       - name: Artist-name drift scan
         run: python scripts/check_name_drift.py
 
+      # Potentials prose that records a decision or purchase state goes stale the
+      # moment the Decision column changes on the web, and nothing else re-reads it.
+      # Text heuristic with real false positives, so advisory in every context; the
+      # cross-row Decision disagreements it reports are the ones worth acting on.
+      - name: Potentials status-wording scan
+        run: python scripts/check_potential_status_notes.py
+
       # Identity data lint (artist_relations.tsv, bill_annotations.tsv), the shared
       # identity fixture against the resolver and the artist modal index, and the
       # resolver self-tests. A lint error or fixture failure is a real break in any

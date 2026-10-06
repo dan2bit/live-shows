@@ -469,6 +469,28 @@ The sequence for every write:
 box-office tips) go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by
 `Artist` + `Date` — not a column in the public file (removed in PR #59).
 
+**Notes records facts and reasons, never status (#440).** The `Decision` column is
+the only place a row's status lives. Decisions change on the web - the in-page editor,
+or off-site while buying a ticket - and nobody edits `Notes` when they do, so any prose
+that says what the decision is or was contradicts the row the moment it changes, and
+nothing re-validates it. `Notes` and `Availability Notes` carry:
+- OK: why the show does or does not fit (genre, tier, distance, density, calendar
+  block, venue preference), who is on the bill, how it surfaced, and what other show
+  it collides with - named by **artist, venue and date**, so the reader looks up that
+  row's state rather than trusting a copy of it.
+- Not OK: the row's own decision or any change to it (`upgraded to`, `added as
+  Choose`, `Pass per Dan`, `left as Choose`, `once purchased`), and the decision or
+  purchase state of other rows (`see Choose entry above`, `already purchased`,
+  `(Pass)`).
+- "Same band as the Oct 9 Hamilton Live show" survives a decision change. "Pass per
+  Dan, already purchased the Oct 9 show" does not.
+
+`scripts/check_potential_status_notes.py` scans both prose columns for status wording
+(advisory, exit 0; findings in the data-hygiene job summary) and reports a cited
+decision that disagrees with the referenced row's actual `Decision` as its own section.
+It is a text heuristic with false positives, which is why it warns rather than blocks -
+the same split as `check_name_drift.py` (#220).
+
 **Prev/Next Show bracket rule:** Brackets are only calculated for Buy and Choose rows.
 Sell and Pass rows always have empty (`-`) Prev/Next columns. Brackets represent the
 surrounding purchased upcoming shows to help evaluate density.
