@@ -31,3 +31,17 @@ point the page at alternative files for a repaint preview.
 
 Not kept here: Azgaar's PNG exports. They are re-exportable from the `.map` at any
 resolution and were 8.5 MB in every Pages deploy; the `.map` is the source.
+
+## The plate's view toggles
+
+Four boxes in two rows, all on by default:
+
+| row | box | shows |
+|---|---|---|
+| features | labels | region hulls and their labels, plus geo names (islands, waters) |
+| features | routes | the thoroughfares layer from `edits/thoroughfares.json` |
+| settlements | names | settlement name labels |
+| settlements | unvisited | the dashed, paper-filled dots for acts not yet seen |
+
+The boxes are display preferences only: they set `style.display` on a layer and
+never change the data, the settlement count, or what the editor saves.
