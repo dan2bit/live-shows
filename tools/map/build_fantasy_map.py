@@ -4,7 +4,7 @@ build_fantasy_map.py — reshape the artist-graph data into a speculative-fictio
 map model: regions (terrain), districts (neighborhoods), settlements (artists),
 and graph edges (kinship, bills, sidemen, taste), with normalized coordinates for a
 JS/CSS overlay layer. Routes are NOT derived here: the drawn thoroughfares are hand-
-owned in tools/map/thoroughfares.json and rendered by map.html; the graph edges are
+owned in tools/map/edits/thoroughfares.json and rendered by map.html; the graph edges are
 emitted as data (graph_edges) for analysis and never as something to draw.
 
 Reads the same sources as tools/research/graph/artist-graph.html:
@@ -44,7 +44,7 @@ def find_repo_root(start):
 ap = argparse.ArgumentParser(description="Reshape artist-graph data into the fantasy-map model.")
 ap.add_argument("--repo-root", type=Path, default=None,
                 help="live-shows checkout root (default: auto-detect above this script)")
-ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "fantasy_map_data.json",
+ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "build" / "fantasy_map_data.json",
                 help="output JSON path (default: fantasy_map_data.json beside this script)")
 ap.add_argument("--prune-overrides", action="store_true",
                 help="rewrite map_overrides.json: drop size overrides the builder now agrees "
@@ -232,7 +232,7 @@ MAP_EXCLUDE = {
 # and the map page's staleness banner both write it, so a Pass row's acts can be
 # kept off the map without a code change; MAP_EXCLUDE stays for the cases worth
 # a comment. region and size are applied later, after layout, where they always were.
-_OV_PATH = SCRIPT_DIR / "map_overrides.json"
+_OV_PATH = SCRIPT_DIR / "edits" / "map_overrides.json"
 _OV = json.loads(_OV_PATH.read_text()) if _OV_PATH.exists() else {}
 for _nm, _o in _OV.items():
     if isinstance(_o, dict) and _o.get("exclude") and _o.get("size") == "capital":
@@ -828,7 +828,7 @@ def staging_ring(members, sx_, sy_):
         rr = (4 + 1.15 * math.sqrt(len(members))) * math.sqrt((j + 0.5) / len(members))
         xy[m] = (sx_ + rr * math.cos(ang), sy_ + rr * math.sin(ang))
 
-disc_path = SCRIPT_DIR / "discovered_adds.json"
+disc_path = SCRIPT_DIR / "edits" / "discovered_adds.json"
 if disc_path.exists():
     adds = json.loads(disc_path.read_text())
     next_id = max(r["id"] for r in records.values()) + 1
@@ -863,7 +863,7 @@ if disc_path.exists():
             district_of[m] = f"{reg_}:arrivals"
 
 # every unpinned never-seen mainlander stages with the arrivals for hand placement
-_pins_now = json.loads((SCRIPT_DIR / "pins.json").read_text()) if (SCRIPT_DIR / "pins.json").exists() else {}
+_pins_now = json.loads((SCRIPT_DIR / "edits" / "pins.json").read_text()) if (SCRIPT_DIR / "edits" / "pins.json").exists() else {}
 _stage = defaultdict(list)
 for c in records:
     if (seen_meta.get(c, {}).get("times_seen") or c in _pins_now or c in UNPLACED
@@ -898,7 +898,7 @@ DECREE_MOVES = {
 DECREE_ASHORE = {}   # Mavis Staples used to be held ashore in Secondline here; she lives on the Delta shore now, by override and pin
 
 # Dan's pins are law: name -> [x, y], applied verbatim, never clamped
-pins_path = SCRIPT_DIR / "pins.json"
+pins_path = SCRIPT_DIR / "edits" / "pins.json"
 if pins_path.exists():
     for nm, p_ in json.loads(pins_path.read_text()).items():
         if nm in xy:
@@ -954,8 +954,8 @@ def source_ref(c):
     return ", ".join(srcs)
 
 # ---- curated adjustments: islands sorted, ruins fall, harbormistresses appointed ----
-_pins_law = (json.loads((SCRIPT_DIR / "pins.json").read_text())
-             if (SCRIPT_DIR / "pins.json").exists() else {})
+_pins_law = (json.loads((SCRIPT_DIR / "edits" / "pins.json").read_text())
+             if (SCRIPT_DIR / "edits" / "pins.json").exists() else {})
 MAP_RENAME = {"New York's Finest": "Every Breath You Take"}   # current performing name
 # Curated sizes (including the Delta Coast capital swap) used to be a table
 # here; they now live in map_overrides.json with a basis and, where it matters,
@@ -1055,8 +1055,8 @@ for nm, sz in OVERRIDE_SIZE.items():
                  f"{DECREED[reg_]} and {nm} - the file has to say which")
     DECREED[reg_] = nm
 
-_decree_pins = (set(json.loads((SCRIPT_DIR / "pins.json").read_text()))
-                if (SCRIPT_DIR / "pins.json").exists() else set())
+_decree_pins = (set(json.loads((SCRIPT_DIR / "edits" / "pins.json").read_text()))
+                if (SCRIPT_DIR / "edits" / "pins.json").exists() else set())
 for nm, (reg_, pt_) in DECREE_MOVES.items():
     if nm in records:
         region_of[nm] = reg_
@@ -1318,7 +1318,7 @@ for key, cls in sorted(edges.items(), key=lambda kv: sorted(kv[0])):
 # {"regions": {id: {xy, size, lines?}}, "islands": {name: xy}, "waters": {name: xy}}
 # Edit by hand, or drag labels in map.html edit mode and export the file.
 # Regions fall back to spec/anchor; islands and waters not in the file are not drawn.
-_traced_path = SCRIPT_DIR / "traced_waterways.json"
+_traced_path = SCRIPT_DIR / "edits" / "traced_waterways.json"
 TRACED = json.loads(_traced_path.read_text()) if _traced_path.exists() else []
 # sparse-trace expansion: settlements within the corridor of the traced polyline
 # are captured (ordered by projection along the course) into trace["captured"]
@@ -1349,7 +1349,7 @@ for _tr in TRACED:
             caps.append((tt_, _c, round(dd_, 1)))
     caps.sort()
     _tr["captured"] = [{"name": n_, "at": t_, "dist": d_} for t_, n_, d_ in caps]
-_labels_path = SCRIPT_DIR / "labels.json"
+_labels_path = SCRIPT_DIR / "edits" / "labels.json"
 LABELS = (json.loads(_labels_path.read_text())
           if _labels_path.exists() else {"regions": {}, "islands": {}, "waters": {}})
 
@@ -1368,10 +1368,10 @@ out = {
              "excluded": sorted(EXCLUDED),
              "merged": dict(sorted(MERGES.items())),
              "suppressed": sorted(SUPPRESSED_CREDIT),
-             "pins_hash": hashlib.md5((SCRIPT_DIR / "pins.json").read_bytes()).hexdigest()[:10]
-                          if (SCRIPT_DIR / "pins.json").exists() else None,
-             "overrides_hash": hashlib.md5((SCRIPT_DIR / "map_overrides.json").read_bytes()).hexdigest()[:10]
-                          if (SCRIPT_DIR / "map_overrides.json").exists() else None,
+             "pins_hash": hashlib.md5((SCRIPT_DIR / "edits" / "pins.json").read_bytes()).hexdigest()[:10]
+                          if (SCRIPT_DIR / "edits" / "pins.json").exists() else None,
+             "overrides_hash": hashlib.md5((SCRIPT_DIR / "edits" / "map_overrides.json").read_bytes()).hexdigest()[:10]
+                          if (SCRIPT_DIR / "edits" / "map_overrides.json").exists() else None,
              "decreed_capitals": dict(sorted(DECREED.items())),
              "override_audit": override_audit,
              "override_audit_counts": dict(sorted(_audit_counts.items())),

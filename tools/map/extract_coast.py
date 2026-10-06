@@ -16,8 +16,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ap = argparse.ArgumentParser()
-ap.add_argument("--svg", type=Path, default=HERE / "map.svg")
-ap.add_argument("--out", type=Path, default=HERE / "coast.json")
+ap.add_argument("--svg", type=Path, default=HERE / "art" / "map.svg")
+ap.add_argument("--out", type=Path, default=HERE / "build" / "coast.json")
 ap.add_argument("--eps", type=float, default=0.8, help="simplification tolerance, canvas units")
 args = ap.parse_args()
 

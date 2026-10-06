@@ -1,8 +1,8 @@
 name: Rebuild fantasy map data
 
 # Closes the pins -> data loop: when the map's inputs change on main
-# (pins, overrides, labels, discovered adds, or the two generator scripts),
-# regenerate fantasy_map_data.json and heightmap.png and commit them.
+# (anything under tools/map/edits/, or the two generator scripts),
+# regenerate build/fantasy_map_data.json and build/heightmap.png and commit them.
 #
 # main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
@@ -24,7 +24,7 @@ name: Rebuild fantasy map data
 # The heightmap is optional. It does depend on settlement positions (the
 # emitter keeps inhabited ground above water and pulls lake shores back
 # from anyone standing near them), so every pin save would change it a
-# little - but nothing live reads it: the page's background is map.svg, and
+# little - but nothing live reads it: the page's background is art/map.svg, and
 # heightmap.png is the input to the occasional FMG repaint. Committing a
 # large PNG on every save is repo weight in the one file git cannot merge.
 # So the data rebuilds on every input push; the PNG only when the emitter
@@ -35,11 +35,7 @@ on:
   push:
     branches: [main]
     paths:
-      - tools/map/pins.json
-      - tools/map/map_overrides.json
-      - tools/map/labels.json
-      - tools/map/traced_waterways.json
-      - tools/map/discovered_adds.json
+      - tools/map/edits/**
       - tools/map/build_fantasy_map.py
       - tools/map/emit_heightmap.py
   workflow_dispatch:
@@ -83,7 +79,7 @@ jobs:
       - name: Rebuild map data
         # --prune-overrides lets the builder drop size overrides it now agrees
         # with, delete entries that match no settlement, and backfill a missing
-        # basis - so map_overrides.json is a written path of this job too. It
+        # basis - so edits/map_overrides.json is a written path of this job too. It
         # is a watched path, so a pruned file retriggers one rebuild after
         # promotion; the second run finds nothing to prune and no-ops.
         run: python3 tools/map/build_fantasy_map.py --prune-overrides
@@ -94,8 +90,8 @@ jobs:
         env:
           HEIGHTMAP: ${{ steps.hm.outputs.heightmap }}
         run: |
-          git add tools/map/fantasy_map_data.json tools/map/map_overrides.json
-          if [ "$HEIGHTMAP" = "true" ]; then git add tools/map/heightmap.png; fi
+          git add tools/map/build/fantasy_map_data.json tools/map/edits/map_overrides.json
+          if [ "$HEIGHTMAP" = "true" ]; then git add tools/map/build/heightmap.png; fi
           if git diff --cached --quiet; then
             echo "map artifacts unchanged - nothing to commit."
           else

@@ -20,9 +20,9 @@ from PIL import Image, ImageFilter
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 ap = argparse.ArgumentParser(description="Render the FMG heightmap seed from the fantasy-map JSON.")
-ap.add_argument("--data", type=Path, default=SCRIPT_DIR / "fantasy_map_data.json",
+ap.add_argument("--data", type=Path, default=SCRIPT_DIR / "build" / "fantasy_map_data.json",
                 help="fantasy_map_data.json path (default: beside this script)")
-ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "heightmap.png",
+ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "build" / "heightmap.png",
                 help="output PNG path (default: heightmap.png beside this script)")
 ap.add_argument("--scale", type=int, default=2,
                 help="canvas multiplier; 2 -> 2000x1400 (default 2)")
