@@ -9,7 +9,7 @@ the freshwater group references. All of it is already in the 1000x700 canvas
 frame the map page draws in, so nothing is rescaled - the curves are flattened
 and simplified (Douglas-Peucker) so a page can do point-in-polygon on them.
 
-Run it again after an FMG repaint; map.html reads coast.json beside itself.
+Run it again after an FMG repaint; map.html reads build/coast.json.
 """
 import argparse, json, re
 from pathlib import Path
