@@ -120,10 +120,11 @@ and the water-adjacency census; a renderer should not draw it. The earlier `rend
 (ferry / pass / highway) and the gateway `via` corridors are gone - that vocabulary now belongs
 to the thoroughfares.
 
-**Thoroughfares** are not in this file. `tools/map/thoroughfares.json` holds the hand-owned
+**Thoroughfares** are not in this file. `tools/map/edits/thoroughfares.json` holds the hand-owned
 routes (`road / autobahn / pass / trail / ferry` chains, harbors with quai + heading, hand
-waypoints, off-map legs); `map.html` reads it beside this JSON and draws the `routes` layer from
-it, with `coast.json` (the painted coast, from `map.svg` via `extract_coast.py`) deciding which
+waypoints, off-map legs); `map.html` reads it alongside this JSON and draws the `routes` layer
+from it, with `build/coast.json` (the painted coast, from `art/map.svg` via `extract_coast.py`)
+deciding which
 side of a ferry is water.
 
 ## What the artist card consumes
@@ -199,12 +200,13 @@ not from this file.
 
 ## Regenerating
 
-Both scripts live in `tools/map/` and run from anywhere:
+Both scripts live at the root of `tools/map/` and run from anywhere:
 `python3 tools/map/build_fantasy_map.py` auto-detects the repo root by walking up from
-the script (override with `--repo-root`), reads everything from `data/`, and writes
-`fantasy_map_data.json` beside itself (`--out` to redirect). Then
-`python3 tools/map/emit_heightmap.py` reads that JSON from beside itself (`--data`) and
-writes `heightmap.png` next to it (`--out`, `--scale`; scale 2 = 2000x1400). Dependencies:
+the script (override with `--repo-root`), reads the tracking data from `data/` and the
+hand-owned state from `tools/map/edits/`, and writes `tools/map/build/fantasy_map_data.json`
+(`--out` to redirect). Then `python3 tools/map/emit_heightmap.py` reads that JSON from
+`build/` (`--data`) and writes `build/heightmap.png` (`--out`, `--scale`; scale 2 =
+2000x1400). The folder roles are in `tools/map/README.md`. Dependencies:
 networkx, numpy, pillow. Output is fully deterministic: the layout seed is 2026 and the
 build script pins PYTHONHASHSEED (one self re-exec) because community-detection
 tie-breaking otherwise leaks the per-process hash seed into district and coordinate
