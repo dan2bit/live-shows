@@ -109,8 +109,8 @@
     },
     {
      "name": "Al Olender",
-     "at": 0.3855897313545272,
-     "dist": 3.1
+     "at": 0.5145341904647825,
+     "dist": 8.2
     },
     {
      "name": "Tommy Prine",
@@ -188,14 +188,9 @@
    ],
    "captured": [
     {
-     "name": "Houndmouth",
-     "at": 0.48151931176421536,
-     "dist": 5.4
-    },
-    {
-     "name": "Lilly Hiatt",
-     "at": 0.5064671457566998,
-     "dist": 0.1
+     "name": "The Wailin' Jennys",
+     "at": 0.5429109911756206,
+     "dist": 1.6
     },
     {
      "name": "Tori Amos",
@@ -238,9 +233,14 @@
      "dist": 2.8
     },
     {
-     "name": "Bella McCormick",
-     "at": 0.32376346511742904,
-     "dist": 9.1
+     "name": "Amy Stroup",
+     "at": 0.34140882426586294,
+     "dist": 4.8
+    },
+    {
+     "name": "Chad Hollister",
+     "at": 0.6023605345603085,
+     "dist": 6.4
     },
     {
      "name": "Valerie June",
@@ -467,6 +467,7 @@
    "Sea Griffin",
    "Still Standing",
    "The Nighthawks w",
+   "Warren Haynes",
    "William Matheny",
    "Wytold",
    "members of The Bridge, Smooth Kentucky & others"
@@ -485,8 +486,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "4c610d384a",
-  "overrides_hash": "0c9039d18d",
+  "pins_hash": "4f9d4bc82a",
+  "overrides_hash": "dca54b9d35",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1104,6 +1105,18 @@
     "class": "unchanged"
    },
    {
+    "name": "The California Honeydrops",
+    "override": "village",
+    "auto": "hamlet",
+    "score": 3,
+    "basis": {
+     "size": "hamlet",
+     "score": 3,
+     "at": "2026-10-06"
+    },
+    "class": "unchanged"
+   },
+   {
     "name": "The Family Crest",
     "override": "village",
     "auto": "hamlet",
@@ -1294,11 +1307,11 @@
   "override_audit_counts": {
    "decree": 4,
    "flipped": 1,
-   "unchanged": 63
+   "unchanged": 64
   },
   "counts": {
-   "settlements": 396,
-   "graph_edges": 496,
+   "settlements": 395,
+   "graph_edges": 491,
    "districts": 68
   }
  },
@@ -2347,7 +2360,6 @@
     "Last Train Home",
     "Morgan Wade",
     "Sarah Borges & Eric Ambel",
-    "The Beanstalk Library",
     "The Devil Makes Three",
     "Tommy Prine"
    ],
@@ -2558,13 +2570,11 @@
    "id": "quiet_woods:outskirts",
    "region": "quiet_woods",
    "members": [
-    "Al Olender",
     "Alicia Keys",
     "Amy Stroup",
     "Benjamin Steer",
     "Bonnie Raitt",
     "Bridge City Sinners",
-    "Cat Power",
     "Chad Hollister",
     "Chris Smither",
     "Eric Bibb",
@@ -2727,29 +2737,28 @@
     "Robert Randolph",
     "Selwyn Birchwood"
    ],
-   "seat": "North Mississippi Allstars",
-   "suggested_name": "Allstars Terrace"
+   "seat": "Selwyn Birchwood",
+   "suggested_name": "Birchwood Terrace"
   },
   {
    "id": "slide_foothills:d2",
-   "region": "slide_foothills",
-   "members": [
-    "Ariel Posen",
-    "Tedeschi Trucks Band",
-    "Warren Haynes"
-   ],
-   "seat": "Warren Haynes",
-   "suggested_name": "Haynes Rise"
-  },
-  {
-   "id": "slide_foothills:d3",
    "region": "slide_foothills",
    "members": [
     "Joey Landreth",
     "The Bros. Landreth"
    ],
    "seat": "The Bros. Landreth",
-   "suggested_name": "Landreth Switchback"
+   "suggested_name": "Landreth Rise"
+  },
+  {
+   "id": "slide_foothills:d3",
+   "region": "slide_foothills",
+   "members": [
+    "Ariel Posen",
+    "Tedeschi Trucks Band"
+   ],
+   "seat": "Ariel Posen",
+   "suggested_name": "Posen Switchback"
   },
   {
    "id": "slide_foothills:outskirts",
@@ -2855,22 +2864,20 @@
   {
    "id": 3,
    "name": "Al Olender",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "region": "heartland",
+   "district": "heartland:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    292.9,
-    443.5
+    284.8,
+    436.9
    ],
    "region_uv": [
-    -0.0439,
-    1.0603
+    0.1442,
+    0.3174
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Shovels & Rope (2024-04-10)",
    "times_seen": 1,
    "vip": 0,
@@ -2973,16 +2980,15 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    565.6,
-    259.6
+    602.1,
+    278.9
    ],
    "region_uv": [
-    0.7488,
-    0.2393
+    0.8549,
+    0.3254
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong): Promoted from pruned-potentials 2026-10-03…",
    "times_seen": 0,
@@ -3022,12 +3028,12 @@
    "auto_size": "waystation",
    "score": 0.5,
    "xy": [
-    394.6,
-    489.5
+    396.7,
+    488.8
    ],
    "region_uv": [
-    0.4332,
-    0.5403
+    0.4387,
+    0.5373
    ],
    "flags": {
     "unvisited": true
@@ -3165,16 +3171,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    461.9,
-    501.4
+    401.3,
+    382.8
    ],
    "region_uv": [
-    0.4474,
-    1.3187
+    0.2712,
+    0.7893
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for The Secret Sisters (2023-10-22)",
    "times_seen": 1,
    "vip": 0,
@@ -3411,7 +3415,7 @@
    "id": 31,
    "name": "Ariel Posen",
    "region": "slide_foothills",
-   "district": "slide_foothills:d2",
+   "district": "slide_foothills:d3",
    "size": "town",
    "auto_size": "village",
    "score": 4,
@@ -3460,16 +3464,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    811.3,
-    260.1
+    441.7,
+    482.5
    ],
    "region_uv": [
-    1.5297,
-    -0.4318
+    0.5571,
+    0.5106
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for ZZ Top (2022-10-22)",
    "times_seen": 1,
    "vip": 0,
@@ -3575,16 +3577,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    395.9,
-    395.8
+    389.1,
+    501.3
    ],
    "region_uv": [
-    0.4367,
-    0.1433
+    0.4187,
+    0.5903
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support for Sierra Hull (2026-09-21)",
    "times_seen": 1,
    "vip": 0,
@@ -4299,22 +4299,20 @@
   {
    "id": 79,
    "name": "Cat Power",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "region": "amplified_range",
+   "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    805.1,
-    292.9
+    802.7,
+    293.3
    ],
    "region_uv": [
-    1.4451,
-    0.3879
+    0.5363,
+    0.8532
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Pixies (2024-06-14)",
    "times_seen": 1,
    "vip": 0,
@@ -4375,16 +4373,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    469.0,
-    470.5
+    372.7,
+    363.0
    ],
    "region_uv": [
-    0.468,
-    1.1808
+    0.1881,
+    0.7009
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Los Lobos (2024-07-10)",
    "times_seen": 1,
    "vip": 0,
@@ -5954,16 +5950,15 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    413.6,
-    362.8
+    584.3,
+    251.6
    ],
    "region_uv": [
-    0.3071,
-    0.7
+    0.8032,
+    0.2036
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong): Promoted from pruned-potentials 2026-10-03…",
    "times_seen": 0,
@@ -6161,16 +6156,15 @@
    "auto_size": "waystation",
    "score": 3,
    "xy": [
-    861.1,
-    144.8
+    786.9,
+    253.2
    ],
    "region_uv": [
-    0.7033,
-    0.259
+    0.4911,
+    0.6928
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Strong): Promoted from pruned-potentials 2026-10-03 (Pass was…",
    "times_seen": 0,
@@ -6322,16 +6316,14 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    418.7,
-    300.2
+    637.6,
+    258.0
    ],
    "region_uv": [
-    -0.5609,
-    0.8808
+    0.0646,
+    0.712
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -6614,7 +6606,7 @@
    "id": 202,
    "name": "Joey Landreth",
    "region": "slide_foothills",
-   "district": "slide_foothills:d3",
+   "district": "slide_foothills:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -6715,12 +6707,12 @@
    "auto_size": "city",
    "score": 14,
    "xy": [
-    601.8,
-    570.0
+    637.1,
+    549.0
    ],
    "region_uv": [
-    0.5152,
-    0.6603
+    0.6564,
+    0.5256
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -6944,16 +6936,15 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    550.3,
-    435.7
+    369.3,
+    524.8
    ],
    "region_uv": [
-    0.8429,
-    0.3123
+    0.3666,
+    0.6898
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong): src: Americana 2026 emerging nominee,…",
    "times_seen": 0,
@@ -7497,16 +7488,15 @@
    "auto_size": "waystation",
    "score": 3,
    "xy": [
-    411.7,
-    357.4
+    449.3,
+    453.5
    ],
    "region_uv": [
-    0.4781,
-    -0.0197
+    0.5771,
+    0.3877
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Strong): Promoted from pruned-potentials 2026-10-03 (Rams…",
    "times_seen": 0,
@@ -8664,16 +8654,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    847.6,
-    240.9
+    584.9,
+    321.0
    ],
    "region_uv": [
-    1.5686,
-    0.1558
+    0.8049,
+    0.5134
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Beck (2023-09-10)",
    "times_seen": 1,
    "vip": 0,
@@ -8735,16 +8723,15 @@
    "auto_size": "waystation",
    "score": 3,
    "xy": [
-    409.6,
-    393.6
+    422.8,
+    394.9
    ],
    "region_uv": [
-    0.2953,
-    0.8375
+    0.3337,
+    0.8433
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "follow (Strong): Promoted from pruned-potentials 2026-10-03 (Sep 2026…",
    "times_seen": 0,
@@ -8921,16 +8908,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    553.1,
-    396.8
+    524.0,
+    519.0
    ],
    "region_uv": [
-    0.3204,
-    -0.45
+    0.204,
+    0.3333
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Mikaela Davis (2024-06-25)",
    "times_seen": 1,
    "vip": 0,
@@ -9711,12 +9696,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    588.9,
-    611.6
+    590.6,
+    610.0
    ],
    "region_uv": [
-    0.4636,
-    0.9269
+    0.4704,
+    0.9167
    ],
    "flags": {},
    "src": "seen as support for The Pietasters (2022-12-29)",
@@ -10008,12 +9993,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    566.0,
-    600.1
+    564.6,
+    597.8
    ],
    "region_uv": [
-    0.372,
-    0.8532
+    0.3664,
+    0.8385
    ],
    "flags": {},
    "src": "seen as support for Vanessa Collier (2024-10-09)",
@@ -10030,12 +10015,12 @@
    "auto_size": "city",
    "score": 21,
    "xy": [
-    661.1,
-    557.9
+    666.4,
+    558.4
    ],
    "region_uv": [
-    0.7524,
-    0.5827
+    0.7736,
+    0.5859
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -10207,7 +10192,7 @@
    "name": "Tedeschi Trucks Band",
    "label": "Tedeschi Trucks",
    "region": "slide_foothills",
-   "district": "slide_foothills:d2",
+   "district": "slide_foothills:d3",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -10275,22 +10260,20 @@
    "id": 37,
    "name": "The Beanstalk Library",
    "label": "Beanstalk Library",
-   "region": "heartland",
-   "district": "heartland:outskirts",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    534.0,
-    236.9
+    533.9,
+    238.6
    ],
    "region_uv": [
-    0.8,
-    -0.5301
+    0.6567,
+    0.1455
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Kingsley Flood (2024-09-07)",
    "times_seen": 1,
    "vip": 0,
@@ -10301,7 +10284,7 @@
    "name": "The Bros. Landreth",
    "label": "Bros. Landreth",
    "region": "slide_foothills",
-   "district": "slide_foothills:d3",
+   "district": "slide_foothills:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -10349,20 +10332,18 @@
    "name": "The California Honeydrops",
    "region": "river_port",
    "district": "river_port:d2",
-   "size": "hamlet",
+   "size": "village",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    702.4,
-    470.2
+    599.3,
+    603.8
    ],
    "region_uv": [
-    0.9178,
-    0.0205
+    0.5052,
+    0.8769
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -10655,16 +10636,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    487.4,
-    554.6
+    546.9,
+    433.6
    ],
    "region_uv": [
-    0.5215,
-    1.5563
+    0.6945,
+    1.0161
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Oh He Dead (2024-05-15)",
    "times_seen": 1,
    "vip": 0,
@@ -10680,12 +10659,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    588.7,
-    616.7
+    588.4,
+    615.5
    ],
    "region_uv": [
-    0.4628,
-    0.9596
+    0.4616,
+    0.9519
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -10890,16 +10869,15 @@
    "auto_size": "waystation",
    "score": 3,
    "xy": [
-    328.9,
-    341.4
+    409.1,
+    356.0
    ],
    "region_uv": [
-    0.0608,
-    0.6045
+    0.2939,
+    0.6696
    ],
    "flags": {
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "follow (Strong): Promoted from pruned-potentials 2026-10-03…",
    "times_seen": 0,
@@ -11168,12 +11146,12 @@
    "auto_size": "capital",
    "score": 21,
    "xy": [
-    639.8,
-    545.8
+    598.1,
+    569.4
    ],
    "region_uv": [
-    0.6672,
-    0.5051
+    0.5004,
+    0.6564
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11390,31 +11368,6 @@
    "tier": "Strong"
   },
   {
-   "id": 412,
-   "name": "Warren Haynes",
-   "region": "slide_foothills",
-   "district": "slide_foothills:d2",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 1,
-   "xy": [
-    628.4,
-    445.2
-   ],
-   "region_uv": [
-    0.3314,
-    0.7
-   ],
-   "flags": {
-    "unvisited": true,
-    "unplaced": true
-   },
-   "src": "follow (Medium): in books; Gov't Mule",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Medium"
-  },
-  {
    "id": 413,
    "name": "Waxahatchee",
    "region": "quiet_woods",
@@ -11447,16 +11400,14 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    829.6,
-    226.9
+    584.4,
+    245.9
    ],
    "region_uv": [
-    1.5163,
-    0.0933
+    0.8035,
+    0.1781
    ],
-   "flags": {
-    "stray": true
-   },
+   "flags": {},
    "src": "seen as support for Beck (2023-09-10)",
    "times_seen": 1,
    "vip": 0,
@@ -11931,7 +11882,7 @@
    "a": "Al Olender",
    "b": "Shovels & Rope",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Alabama Shakes",
@@ -12825,7 +12776,7 @@
    "a": "Cat Power",
    "b": "Pixies",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Cedric Burnside",
@@ -13060,12 +13011,6 @@
    "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": true
-  },
-  {
-   "a": "Devon Allman",
-   "b": "Warren Haynes",
-   "cls": "trail",
-   "crossRegion": false
   },
   {
    "a": "Diana Silvers",
@@ -13473,12 +13418,6 @@
    "a": "Gov't Mule",
    "b": "The Bros. Landreth",
    "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "Gov't Mule",
-   "b": "Warren Haynes",
-   "cls": "road",
    "crossRegion": false
   },
   {
@@ -13995,7 +13934,7 @@
    "a": "Kingsley Flood",
    "b": "The Beanstalk Library",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Kirk Fletcher",
@@ -14370,12 +14309,6 @@
    "crossRegion": true
   },
   {
-   "a": "North Mississippi Allstars",
-   "b": "Warren Haynes",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
    "a": "Oh He Dead",
    "b": "The Dip",
    "cls": "trail",
@@ -14730,21 +14663,9 @@
    "crossRegion": false
   },
   {
-   "a": "Tedeschi Trucks Band",
-   "b": "Warren Haynes",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
    "a": "The Avett Brothers",
    "b": "Willie Nelson",
    "cls": "river",
-   "crossRegion": false
-  },
-  {
-   "a": "The Bros. Landreth",
-   "b": "Warren Haynes",
-   "cls": "trail",
    "crossRegion": false
   },
   {
