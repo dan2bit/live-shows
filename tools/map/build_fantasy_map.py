@@ -343,6 +343,9 @@ MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     # Winston Mitchell is the mandolin half of the Larry Keel Duo (the same
     # Sevareid House bill listed him as support); one act, one settlement.
     "Winston Mitchell": "Larry Keel Duo",
+    # Warren Haynes leads Gov't Mule; his solo work does not get a settlement of
+    # its own on the map, and the band's settlement carries his follow.
+    "Warren Haynes": "Gov't Mule",
 }
 SUPPRESSED_CREDIT = {   # co-bill -> principals; each principal gains the co-bill's seen count
     "Samantha Fish & Jesse Dayton": ["Samantha Fish", "Jesse Dayton"],
@@ -359,12 +362,20 @@ def _fold_seen(dst, src_meta):
     m_["vip"] = m_.get("vip", 0) + src_meta.get("vip", 0)
     m_["most_recent"] = max(m_.get("most_recent", ""), src_meta.get("most_recent", ""))
 for _gone, _keep in MERGES.items():
-    if _gone in records:
-        if _keep in records:
-            _fold_seen(_keep, seen_meta.get(_gone, {}))
-            records[_keep]["sources"] = sorted(set(records[_keep].get("sources", []))
-                                               | set(records[_gone].get("sources", [])))
-        records.pop(_gone); seen_meta.pop(_gone, None)
+    if _gone not in records:
+        continue
+    if _keep not in records:
+        # The survivor is off the roster (a pruned potentials row, a lapsed follow).
+        # Folding into it would remove the absorbed name from the map with nothing
+        # to show for it, so the absorbed name stands on its own until the survivor
+        # returns.
+        print(f"merge skipped: {_gone} -> {_keep} is not on the roster; "
+              f"{_gone} stays a settlement of its own", file=sys.stderr)
+        continue
+    _fold_seen(_keep, seen_meta.get(_gone, {}))
+    records[_keep]["sources"] = sorted(set(records[_keep].get("sources", []))
+                                       | set(records[_gone].get("sources", [])))
+    records.pop(_gone); seen_meta.pop(_gone, None)
 for _gone, _kin in SUPPRESSED_CREDIT.items():
     if _gone in records:
         for _k in _kin:

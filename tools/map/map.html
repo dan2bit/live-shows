@@ -443,7 +443,12 @@
     if(!authed)return;
     saveAllBtn.textContent=`save changes (${dirtyCount()})`;
     const part=(n,total,label)=>n?`<b>${label} ${total}</b> (${n} unsaved)`:`${label} ${total}`;
-    saveStatus.innerHTML=[part(dirty.pins.size,Object.keys(pins).length,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
+    // pins: drawn/undrawn. Undrawn entries are pins for names the map does not draw
+    // (merged, excluded, or off the roster); they stay so a returning act lands where
+    // it was last placed.
+    const pinNames=Object.keys(pins),pinDrawn=pinNames.filter(n=>S.has(n)).length;
+    const pinTotal=`<span title="pins on drawn settlements / pins for names not drawn (merged, excluded or off the roster)">${pinDrawn}/${pinNames.length-pinDrawn}</span>`;
+    saveStatus.innerHTML=[part(dirty.pins.size,pinTotal,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
       part(dirty.labels.size,Object.keys(LBL.regions||{}).length+Object.keys(LBL.islands||{}).length+Object.keys(LBL.waters||{}).length,'labels'),
       part(dirty.traces,TRACES.length,'waterways'),part(dirty.thor.size,(THOR.routes||[]).length,'routes')].join(' \u00b7 ');
     // the builder's override audit (meta.override_audit_counts): only the classes that ask for a hand
