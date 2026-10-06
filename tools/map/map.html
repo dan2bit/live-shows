@@ -139,7 +139,13 @@
      span is the exception (shows only while collapsed) so the one thing the plate is open
      for mid-edit - what you're hovering - survives the collapse that was hiding it. */
   #plate.shaded > :not(#plateGrip){display:none;}
-  #plate.shaded #plateGrip .shaded-name{display:inline;}
+  /* Collapsed, the bar is the settlement's name and nothing else: the title gives up its
+     width (the page is already identified by the rose and the footer), and the name is the
+     link to the card - the one thing a collapsed plate is for, on a phone especially. */
+  #plate.shaded #plateGrip > span:first-child{display:none;}
+  #plate.shaded #plateGrip .shaded-name{display:inline;flex:1;min-width:0;font-size:14px;letter-spacing:0;opacity:1;cursor:pointer;}
+  #plate.shaded #plateGrip .shaded-name:not(:empty):hover{text-decoration:underline dotted;text-underline-offset:3px;}
+  #plate.shaded #plateGrip .shaded-name:empty::before{content:'\2014';opacity:.45;}
   #plate.shaded{padding-bottom:0;}
   #shadeBtn{
     font-family:'Special Elite',monospace;font-size:13px;line-height:1;background:none;border:none;
@@ -155,6 +161,22 @@
   #legend input{accent-color:var(--ink);}
 
   #zoomer{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:6px;}
+  /* Coarse-pointer devices (phones, tablets): the plate sits top-left where the eye lands and
+     starts collapsed, the stage owns every touch so pinch and drag reach the map instead of
+     the page's own zoom, and the step buttons give way to pinch - only the fit button stays.
+     Edit and trace are never offered here; they are a desktop job. */
+  body.device #plate{left:8px;top:8px;transform:none;width:min(262px,70vw);}
+  body.device #stage{touch-action:none;}
+  body.device #zoomer #zin,body.device #zoomer #zout{display:none;}
+  body.device #ownerControls{display:none !important;}
+  /* The portrait nudge: the map is a landscape thing, and letterboxed across a portrait
+     screen it reads as broken. One line, shown only on a device held upright; the button
+     beside it appears only where the browser can actually rotate the display. */
+  #rotateHint{display:none;position:absolute;left:50%;bottom:10px;transform:translateX(-50%);max-width:92vw;
+    background:rgba(34,26,18,.88);color:var(--paper);font-family:'Special Elite',monospace;font-size:12px;
+    letter-spacing:.04em;padding:6px 12px;border:1px solid var(--paper);align-items:center;gap:10px;white-space:nowrap;z-index:8;}
+  body.device.portrait #rotateHint{display:flex;}
+  #rotateHint button{font-family:'Special Elite',monospace;font-size:12px;border:1px solid var(--paper);background:var(--paper);color:var(--ink);padding:3px 8px;cursor:pointer;}
   #zoomer button{
     width:34px;height:34px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
     font-family:'Special Elite',monospace;font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.4);
@@ -230,6 +252,7 @@
     <div id="artistModalBody"></div>
   </div>
 </div>
+<div id="rotateHint"><span>rotate your phone for the full map</span><button id="goLandscape" type="button" hidden>go landscape</button></div>
 <div id="zoomer">
   <button id="zin" title="Zoom in">+</button>
   <button id="zout" title="Zoom out">&minus;</button>
@@ -304,7 +327,15 @@
   // below commits straight to staging with this same PAT.
   const PAT_KEY='ghpat_liveshows';
   const authed=!!localStorage.getItem(PAT_KEY);
-  if(authed){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
+  // A coarse pointer is the honest test for "a device": true on phones and tablets whatever
+  // their width, false on a narrow desktop window where hover and the editor still make sense.
+  // Edit and trace are desktop-only; a device gets the viewing surface and the card.
+  const DEVICE=matchMedia('(pointer: coarse)').matches;
+  if(DEVICE)document.body.classList.add('device');
+  const portraitQ=matchMedia('(orientation: portrait)');
+  const setPortrait=()=>document.body.classList.toggle('portrait',DEVICE&&portraitQ.matches);
+  setPortrait();portraitQ.addEventListener('change',setPortrait);
+  if(authed&&!DEVICE){const oc=document.getElementById('ownerControls');if(oc)oc.style.display='';}
 
   // Repo + branch this page commits to. map.html has no config.yaml of its own
   // (unlike app.js's dataBranch(), which reads site.data_branch) — this fork's
@@ -476,7 +507,7 @@
   // #366: roster staleness — is fantasy_map_data.json behind recommend_index.json?
   // (async: its first await yields, so the synchronous flag refresh below runs before it reads flags)
   (async()=>{
-    if(!authed) return;   // decision: staleness banner is for authed users only
+    if(!authed||DEVICE) return;   // the panel is an editing aid: authed, desktop, and (below) edit mode only
     let idx=null;
     for(const p of ['/data/recommend_index.json','../../data/recommend_index.json']){
       try{ idx=await (await fetch(fresh(p),{cache:'no-store'})).json(); if(idx) break; }catch(e){}
@@ -566,6 +597,9 @@
     saveBtn.addEventListener('click',async()=>{ if(await saveAll('ind-dec')) note.textContent='saved \u2014 the rebuild applies them'; });
     refresh();
     body.append(list,foot);
+    // Built once, shown only while the editor is open - the decisions it takes are editor
+    // decisions, and a viewer with a token in storage is not necessarily here to edit.
+    b.style.display=(window.editCb&&editCb.checked)?'':'none';
     document.getElementById('stage').appendChild(b);
   })();
   // point-in-polygon for the stray flag (same ray cast as the builder's point_in_poly)
@@ -959,7 +993,7 @@
     g._amCtx=()=>({surface:'the map',label:(s.label&&s.label!==s.name)?s.label:null,
       settlement:{region:s.region,region_label:RLABEL[s.region]||s.region,size:s.size,
         tint:TINT[s.region]||null,flags:s.flags||{},src:s.src||null}});
-    g.addEventListener('mouseenter',()=>{
+    g._readout=()=>{
       readout.classList.remove('idle');
       const seen=s.times_seen?`seen ${s.times_seen}\u00d7${s.vip?` \u00b7 VIP ${s.vip}`:''}`:'never seen \u2014 a rumor on the map';
       readoutFor=g;
@@ -967,9 +1001,13 @@
         <div class="where">${RLABEL[s.region]||s.region} \u2014 ${s.size}</div>
         <div class="stats">${seen}<br>${s.tier||''} ${flags?'\u00b7 '+flags:''}${s.src?`<br><span style="font-family:'Special Elite';font-size:10.5px;opacity:.8">${s.src}</span>`:''}</div>`;
       document.getElementById('shadedName').textContent=s.name;
-    });
+    };
+    // Hover fills the plate on desktop; on touch there is no hover, so a tap on the dot does
+    // the same (see the view-mode click branch in pointerup).
+    g.addEventListener('mouseenter',g._readout);
     gStl.appendChild(g);
   }
+  if(DEVICE)readout.querySelector('.name').textContent='Tap a settlement to read the plate.';
 
   // Label placement. Every label defaults to the east of its mark; where that would print
   // over a neighbour, it moves to the least crowded of four slots (east, west, north, south).
@@ -1129,7 +1167,8 @@
          e.textContent=`${stalePins} pins are not reflected in fantasy_map_data.json — rerun build_fantasy_map.py and recommit the JSON.`;}
   }catch(e){}
   const saveBlock=document.getElementById('saveBlock');
-  editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);saveBlock.style.display=editCb.checked?'block':'none';});
+  editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);saveBlock.style.display=editCb.checked?'block':'none';
+    const rb=document.getElementById('rosterBanner');if(rb)rb.style.display=editCb.checked?'':'none';});
   }
   // keep a mark's class list in step with its (live) flags after an edit
   function reflag(g){
@@ -1340,6 +1379,11 @@
   let pan=null, dragS=null;
   const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
     return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
+  // Pinch: the stage owns its touches (touch-action:none on a device), so two pointers are a
+  // zoom about their midpoint plus a pan by the midpoint's travel - the viewBox does both,
+  // the browser's page zoom never fires. A second finger ends any pan or drag in progress.
+  const touches=new Map();let pinch=null;
+  const pinchGeom=()=>{const [a,b]=[...touches.values()];return{d:Math.hypot(a[0]-b[0],a[1]-b[1])||1,mx:(a[0]+b[0])/2,my:(a[1]+b[1])/2};};
   // ── route editor: drag and add route waypoints (edit mode only) ──
   // Click a ferry, road, pass or trail hop (the autobahn excepted) to select it: its hand
   // waypoints get handles (drag to move, alt-click to
@@ -1391,6 +1435,10 @@
     // here retargets pointerup to the stage, so the click lands on the stage instead of
     // the banner's button and its listener never fires. Leave banner input alone.
     if(e.target.closest('#rosterBanner')){return;}
+    if(e.pointerType==='touch'){
+      touches.set(e.pointerId,[e.clientX,e.clientY]);
+      if(touches.size===2){stage.setPointerCapture(e.pointerId);pinch=pinchGeom();pan=null;dragS=null;dragL=null;downAt=null;stage.classList.add('panning');return;}
+    }
     downAt=[e.clientX,e.clientY];
     const rh=(authed&&window.editCb&&editCb.checked)?e.target.closest('#routes .hit,#routeEdit .vh'):null;
     if(rh){stage.setPointerCapture(e.pointerId);routeDown(rh,e);e.preventDefault();return;}
@@ -1403,6 +1451,14 @@
     pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
   });
   stage.addEventListener('pointermove',e=>{
+    if(pinch&&touches.has(e.pointerId)){
+      touches.set(e.pointerId,[e.clientX,e.clientY]);
+      if(touches.size<2)return;
+      const g=pinchGeom(),r=map.getBoundingClientRect();
+      zoomAt(vb.x+(g.mx-r.left)/r.width*vb.w, vb.y+(g.my-r.top)/r.height*vb.h, pinch.d/g.d);
+      vb.x-=(g.mx-pinch.mx)/r.width*vb.w;vb.y-=(g.my-pinch.my)/r.height*vb.h;apply();
+      pinch=g;return;
+    }
     if(dragV){const [mx,my]=toMap(e.clientX,e.clientY);dragV.arr[dragV.i]=[+mx.toFixed(1),+my.toFixed(1)];drawThoroughfares();drawHandles();return;}
     if(dragL){
       const [mx,my]=toMap(e.clientX,e.clientY);
@@ -1426,7 +1482,11 @@
     vb.x-=(e.clientX-pan.x)/r.width*vb.w;vb.y-=(e.clientY-pan.y)/r.height*vb.h;
     pan={x:e.clientX,y:e.clientY};apply();
   });
+  const endTouch=e=>{touches.delete(e.pointerId);if(touches.size<2)pinch=null;};
+  stage.addEventListener('pointercancel',e=>{endTouch(e);pan=null;dragS=null;dragL=null;downAt=null;stage.classList.remove('panning');});
   stage.addEventListener('pointerup',e=>{
+    if(pinch||(e.pointerType==='touch'&&!downAt)){endTouch(e);if(!pinch)stage.classList.remove('panning');return;}
+    endTouch(e);
     if(dragV){routeChanged();dragV=null;return;}
     if(dragS&&dragS.moved)placeLabels();   // a moved mark changes its neighbours' best slots too
     // click (not drag) in edit mode on an unpinned settlement pins it where it stands
@@ -1440,7 +1500,7 @@
        &&!(authed&&window.editCb&&editCb.checked)&&!document.body.classList.contains('tracing')){
       const g=e.target.closest&&e.target.closest('.stl');
       if(g&&e.target.closest('text.lbl'))openSettlementCard(g);
-      else if(g)g.classList.toggle('pinlabel');
+      else if(g){g.classList.toggle('pinlabel');if(g._readout)g._readout();}
     }
     pan=null;dragS=null;dragL=null;downAt=null;stage.classList.remove('panning');
   });
@@ -1514,12 +1574,25 @@
   // #shadedName from the same mouseenter handler readout already uses, so the one thing
   // the plate is for mid-hover survives the collapse that hides the readout itself.
   const shadeBtn=document.getElementById('shadeBtn');
-  shadeBtn.addEventListener('click',e=>{
-    e.stopPropagation();
-    const sh=plate.classList.toggle('shaded');
-    shadeBtn.innerHTML=sh?'&#9660;':'&#9650;';
-    shadeBtn.title=sh?'Expand':'Collapse';
-  });
+  const setShade=sh=>{plate.classList.toggle('shaded',sh);shadeBtn.innerHTML=sh?'&#9660;':'&#9650;';shadeBtn.title=sh?'Expand':'Collapse';};
+  shadeBtn.addEventListener('click',e=>{e.stopPropagation();setShade(!plate.classList.contains('shaded'));});
+  // Collapsed, the name in the bar is the card link - tap a dot, tap the name.
+  document.getElementById('shadedName').addEventListener('click',e=>{e.stopPropagation();if(readoutFor)openSettlementCard(readoutFor);});
+  if(DEVICE)setShade(true);
+  // Landscape on demand. Fullscreen plus an orientation lock rotates the whole display -
+  // map, plate, controls, pointer math all untouched - so it is the only path offered; the
+  // button exists only where both APIs do (feature-detected, never shown-and-failing). The
+  // text beside it stands on its own as the nudge everywhere else.
+  const goL=document.getElementById('goLandscape');
+  const canLock=!!(document.documentElement.requestFullscreen&&screen.orientation&&screen.orientation.lock);
+  if(DEVICE&&canLock){
+    goL.hidden=false;
+    goL.addEventListener('click',async()=>{
+      try{await document.documentElement.requestFullscreen();await screen.orientation.lock('landscape');}
+      catch(err){goL.hidden=true;}
+    });
+    document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&screen.orientation.unlock)try{screen.orientation.unlock();}catch(err){}});
+  }
   grip.addEventListener('pointerdown',e=>{
     if(e.target.closest('#shadeBtn'))return;
     const b=plate.getBoundingClientRect();

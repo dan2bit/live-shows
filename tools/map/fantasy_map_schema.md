@@ -161,6 +161,27 @@ layer (from `thoroughfares.json`), then district hulls (hover-only), then settle
 smallest-to-largest so capitals sit on top, then settlement labels gated by zoom (capitals
 always, cities > 0.6×, towns > 1.2×, the rest on hover).
 
+## The viewer on a device
+
+`map.html` is one page for every pointer, and it tells them apart by one test: a coarse
+pointer (`matchMedia('(pointer: coarse)')`) is a device - a phone or a tablet, whatever its
+width - and anything else is a desktop, even a narrow window. The split is behavioural, not
+visual; the data contract above is identical on both.
+
+On a device: the plate sits top-left and starts collapsed, and the collapsed bar is the
+last tapped settlement's name, which opens its card - tapping a dot fills the readout the
+way hovering does on a desktop, since touch has no hover. The stage owns every touch
+(`touch-action: none`), so a pinch zooms the viewBox about the fingers and a drag pans it;
+the step buttons are hidden and only the fit button remains. A one-line nudge at the foot
+of a portrait screen says the map wants landscape; where the browser can rotate the display
+(fullscreen plus `screen.orientation.lock`) a button beside it does so, and where it cannot
+the line stands alone and the map letterboxes until the phone is turned. Edit mode, trace
+mode and the roster panel are never offered on a device.
+
+On a desktop: edit and trace appear for an authed viewer as before, and the roster "not on
+the map" panel appears only while edit mode is on - it is an editor's worklist, not a
+viewer's banner. The collapsed plate renders the same way on both.
+
 ## Minimal JS binding sketch
 
 ```js
