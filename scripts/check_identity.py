@@ -11,7 +11,7 @@ WHAT IT CHECKS
                  happened; an assumed row may join an upcoming current row.
              Warnings (never fail the run):
                - an assumed row whose Review After date has passed
-               - a hand-keyed map name (tools/map/pins.json, the builder's
+               - a hand-keyed map name (tools/map/edits/pins.json, the builder's
                  HARBORMISTRESSES set) that is not the canonical name of its
                  identity. Those keys are matched raw, so they will stop
                  matching the day the map resolves names through the resolver.
@@ -94,10 +94,10 @@ def lint(root, errors, warnings, today=None):
 
 
 def map_keys(root):
-    """Hand-keyed settlement names in the map: pins.json keys and HARBORMISTRESSES."""
+    """Hand-keyed settlement names in the map: edits/pins.json keys and HARBORMISTRESSES."""
     root = Path(root)
     keys = []
-    pins = root / "tools" / "map" / "pins.json"
+    pins = root / "tools" / "map" / "edits" / "pins.json"
     if pins.exists():
         keys += [("pins.json", k) for k in json.loads(pins.read_text(encoding="utf-8"))]
     builder = root / "tools" / "map" / "build_fantasy_map.py"

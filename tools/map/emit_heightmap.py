@@ -10,8 +10,8 @@ north reach with a NE gulf, southern sound, a fjordy west water, and an east
 shore that makes the massif a coastal cordillera. The sheltered bay is not
 stamped: the river-mouth lowland floods naturally between two spit ridges.
 
-Lives in tools/map/; by default it reads fantasy_map_data.json beside itself
-(the build_fantasy_map.py output) and writes heightmap.png next to it.
+Lives at the root of tools/map/; by default it reads build/fantasy_map_data.json
+(the build_fantasy_map.py output) and writes build/heightmap.png.
 """
 import argparse, json, sys
 from pathlib import Path
@@ -21,9 +21,9 @@ from PIL import Image, ImageFilter
 SCRIPT_DIR = Path(__file__).resolve().parent
 ap = argparse.ArgumentParser(description="Render the FMG heightmap seed from the fantasy-map JSON.")
 ap.add_argument("--data", type=Path, default=SCRIPT_DIR / "build" / "fantasy_map_data.json",
-                help="fantasy_map_data.json path (default: beside this script)")
+                help="fantasy_map_data.json path (default: build/ under this script)")
 ap.add_argument("--out", type=Path, default=SCRIPT_DIR / "build" / "heightmap.png",
-                help="output PNG path (default: heightmap.png beside this script)")
+                help="output PNG path (default: build/heightmap.png under this script)")
 ap.add_argument("--scale", type=int, default=2,
                 help="canvas multiplier; 2 -> 2000x1400 (default 2)")
 args = ap.parse_args()
