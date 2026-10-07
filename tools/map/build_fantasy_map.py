@@ -1216,70 +1216,80 @@ for did, d in districts.items():
 
 # Region ghost boundaries are hand-built polygons, one per mainland region.
 # They began as generated convex hulls clipped against every neighbor's
-# bisector, but the member clouds along some boundaries (Amplified Range's
-# north shelf, Quiet Woods' southeast kink against Heartland and Steel
-# Foothills) are too intermixed for any bisector position to serve both
-# sides, so each was worked out by hand against live settlement data in the
-# hull/misfit review session. Outer Isles has no polygon by decision: its
+# bisector, but the member clouds along some boundaries are too intermixed for
+# any bisector position to serve both sides, so each was worked out by hand
+# against live settlement data. Outer Isles has no polygon by decision: its
 # settlements sit on the pegs off the headstock, and the sea around them
-# already reads as the boundary; the label alone marks the region. A member
-# whose position sits past its own polygon (a real outlier, not a hull
-# artifact) renders outside its ghost boundary - expected per the schema doc
-# ("these are not meant as exact borders"), not a bug to chase here.
-# Coverage and known trade-offs, checked against live data:
-#   delta_coast       41/43   (Mallow Hill, The Jesse Williams Band outside)
-#   amplified_range  100/101  (the north edge sits 12px above where it was
-#                              first traced, which ran straight through the
-#                              pins of Ally Venable Band and Jackie Venson at
-#                              its two corners; the northeast corner is also
-#                              out to [941,144] so Jackie clears the east edge.
-#                              Queen Latifah stays north of it on the pegs.
-#                              Taj Farrant is outside by decree - see
+# already reads as the boundary; the label alone marks the region.
+#
+# Neighbors share their borders vertex for vertex, so no land sits between
+# two regions and no two regions overlap. Where a region meets the sea
+# its edge runs a few units offshore: those runs are the mainland outline
+# (build/coast.json) offset 5 units out and simplified at 2.5, so they follow
+# the coast without crossing it. Two stretches are unclaimed on purpose -
+# the Gospel Desert south of the Judith Hill -> Ruthie Foster -> Danielle Nicole
+# road (Delta Coast's south edge dips only far enough to take in that road's
+# bend), and the fretboard north of the Amplified Range. The shared points:
+#   [620, 292]        Range / Quiet Woods / Steel Foothills, just east of the
+#                     Larkin Poe -> Sue Foley road; the Woods/Foothills border
+#                     runs east of that road, passing north of Larkin Poe
+#   [713.1, 400]      Range / Steel Foothills, at the coast
+#   [593.8, 470.4]    Quiet Woods / Steel Foothills / Secondline
+#   [508, 457.2]      Quiet Woods / Heartland / Secondline
+#   [463.2, 591.1]    Heartland / Secondline at the desert's edge, south of Volume
+#   [438.3, 600.4]    Heartland / Delta Coast at the desert's edge; the two share
+#                     one straight border from here to the west coast
+# A member whose position sits past its own polygon (a real outlier, not a
+# hull artifact) renders outside its ghost boundary - expected per the schema
+# doc ("these are not meant as exact borders"), not a bug to chase here.
+# Coverage, checked against live data:
+#   delta_coast       40/40
+#   amplified_range   94/95   (Taj Farrant is outside by decree - see
 #                              STRAY_EXEMPT below)
-#   slide_foothills   17/19   (Joey Landreth, The Bros. Landreth outside --
-#                              see river_port note below)
-#   heartland         50/50
-#   river_port        61/61   (its north edge east of King Solomon Hicks IS
-#                              the Steel Foothills' southern edge, vertex for
-#                              vertex, so the two share a true border - the
-#                              earlier shape turned south at x=700 and left
-#                              Alabama Shakes and Brittany Howard in a notch
-#                              outside both. It still captures Joey Landreth
-#                              and The Bros. Landreth, both tagged
-#                              slide_foothills -- an accepted, deliberate
-#                              trade-off: King Solomon Hicks and the two
-#                              Landreths sit close enough together that no
-#                              polygon boundary separates them cleanly
-#                              without either dropping King Solomon Hicks or
-#                              self-intersecting; capturing all three was the
-#                              chosen trade over leaving King Solomon Hicks out)
-#   quiet_woods       77/79   (Oliver Wood, The Wildmans outside)
+#   slide_foothills   25/25   (Joey Landreth and The Bros. Landreth sit just
+#                              inside its corner against Secondline)
+#   heartland         54/54
+#   river_port        63/63
+#   quiet_woods       76/77   (Chris Smither outside)
 MANUAL_HULL = {
     "delta_coast": [
-        [124.6, 587.1], [157.8, 537.6], [232.5, 479.6], [335.8, 507.8],
-        [434.3, 596.8], [388.3, 607.3], [244.3, 632.1], [161.1, 609.7],
+        [124.6, 587.1], [157.8, 537.6], [241.5, 422.5], [438.3, 600.4],
+        [388.3, 607.3], [363.2, 619.0], [331.9, 621.5], [300.0, 622.5],
+        [244.3, 632.1], [161.1, 609.7],
     ],
     "amplified_range": [
-        [606.7, 290.4], [592.3, 206.9], [751.6, 138.6], [834.75, 133.6],
-        [941.0, 144.0], [863.6, 254.6], [713.1, 400.0],
+        [620.0, 292.0], [603.0, 250.0], [592.3, 206.9], [751.6, 138.6],
+        [834.75, 133.6], [941.0, 144.0], [863.6, 254.6], [726.0, 398.0],
+        [713.1, 400.0],
     ],
     "slide_foothills": [
-        [585.4, 358.9], [596.0, 342.3], [651.1, 331.2], [688.7, 364.1],
-        [728.4, 444.7], [635.9, 493.1], [595.5, 475.9], [593.8, 470.4],
+        [620.0, 292.0], [713.1, 400.0], [726.0, 398.0], [724.4, 422.0],
+        [720.7, 435.4], [728.1, 445.0], [635.9, 493.1], [595.5, 475.9],
+        [593.8, 470.4], [584.0, 360.0], [590.0, 351.0], [601.0, 346.0],
+        [612.0, 318.0],
     ],
     "heartland": [
-        [243.7, 424.5], [258.8, 405.0], [304.5, 349.6], [319.4, 334.5],
-        [508.0, 457.2], [440.0, 587.1], [420.1, 583.9],
+        [241.5, 422.5], [250.2, 411.6], [249.9, 398.9], [263.5, 390.7],
+        [270.4, 380.3], [289.0, 376.7], [294.5, 367.3], [309.0, 364.9],
+        [307.7, 342.2], [303.4, 337.6], [304.3, 324.7], [319.4, 334.5],
+        [508.0, 457.2], [462.2, 544.7], [463.2, 591.1], [438.3, 600.4],
     ],
     "river_port": [
-        [463.2, 591.1], [462.2, 544.7], [516.0, 442.1], [603.1, 482.0],
-        [635.9, 493.1], [728.4, 444.7], [723.5, 530.4], [715.4, 587.7],
-        [665.6, 693.5], [647.2, 699.5],
+        [463.2, 591.1], [462.2, 544.7], [508.0, 457.2], [593.8, 470.4],
+        [595.5, 475.9], [635.9, 493.1], [728.1, 445.0], [728.4, 462.6],
+        [733.3, 467.7], [732.1, 533.3], [728.0, 543.9], [733.9, 553.2],
+        [730.9, 564.8], [733.1, 572.0], [723.9, 581.2], [715.4, 583.6],
+        [715.4, 587.7], [665.6, 693.5], [647.2, 699.5],
     ],
     "quiet_woods": [
-        [493.8, 447.9], [321.2, 335.7], [363.1, 239.1], [382.0, 228.0],
-        [470.2, 207.2], [528.6, 201.2], [595.3, 224.0], [611.5, 318.2],
-        [582.0, 358.0], [582.0, 450.0],
+        [304.3, 324.7], [313.7, 294.3], [327.0, 272.8], [344.7, 258.5],
+        [346.1, 247.4], [382.8, 229.3], [400.9, 229.5], [404.5, 217.2],
+        [416.0, 206.6], [461.7, 203.1], [472.6, 211.1], [484.0, 200.2],
+        [490.7, 198.8], [509.6, 203.1], [513.6, 208.2], [533.9, 208.3],
+        [537.7, 212.2], [560.5, 208.6], [568.0, 216.3], [592.3, 206.9],
+        [603.0, 250.0], [620.0, 292.0], [612.0, 318.0], [601.0, 346.0],
+        [590.0, 351.0], [584.0, 360.0], [593.8, 470.4], [508.0, 457.2],
+        [319.4, 334.5],
     ],
 }
 
