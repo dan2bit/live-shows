@@ -681,9 +681,24 @@
     out.push(pts[pts.length-1]);return out;
   }
   const bent=(a,b,off,r)=>{const [nx,ny]=perp(a,b);return roundCorners([a,[(a[0]+b[0])/2+nx*off,(a[1]+b[1])/2+ny*off],b],r);};
-  function splitAtHull(pts,poly){   // where a polyline first enters the destination region's hull; midpoint if never
-    let i=poly?pts.findIndex(p=>inPoly(p[0],p[1],poly)):-1;
-    if(i<=0||i>=pts.length-1)i=Math.floor(pts.length/2);
+  function splitAtHull(pts,poly){   // where a polyline first crosses into the destination region's hull; midpoint if never
+    // The split lands on the hull edge itself, not on the next vertex inside it: a hop drawn
+    // with few vertices (a road's long straight run) would otherwise switch tint well past
+    // the border, or never find a vertex inside and fall back to the midpoint.
+    if(poly)for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1];
+      if(inPoly(a[0],a[1],poly)||!inPoly(b[0],b[1],poly))continue;
+      let t=1;   // the nearest crossing of segment a-b with any hull edge
+      for(let k=0;k<poly.length;k++){
+        const c=poly[k?k-1:poly.length-1],d=poly[k];
+        const den=(b[0]-a[0])*(d[1]-c[1])-(b[1]-a[1])*(d[0]-c[0]);if(!den)continue;
+        const u=((c[0]-a[0])*(d[1]-c[1])-(c[1]-a[1])*(d[0]-c[0]))/den,v=((c[0]-a[0])*(b[1]-a[1])-(c[1]-a[1])*(b[0]-a[0]))/den;
+        if(u>=0&&u<=1&&v>=0&&v<=1&&u<t)t=u;
+      }
+      const x=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+      return [[...pts.slice(0,i+1),x],[x,...pts.slice(i+1)]];
+    }
+    const i=Math.floor(pts.length/2);
     return [pts.slice(0,i+1),pts.slice(i)];
   }
   const rpos=n=>{const st=S.get(n);return st?st.xy:null;};
