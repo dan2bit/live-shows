@@ -32,6 +32,23 @@ point the page at alternative files for a repaint preview.
 Not kept here: Azgaar's PNG exports. They are re-exportable from the `.map` at any
 resolution and were 8.5 MB in every Pages deploy; the `.map` is the source.
 
+## Region hulls
+
+Each mainland region's dashed ghost border is a hand-built polygon in
+`MANUAL_HULL` in `build_fantasy_map.py`; Outer Isles has none. Since #457:
+
+- Neighbours share their borders vertex for vertex, so no land falls between two
+  regions and no two overlap. Change a shared border in both polygons at once.
+- Where a region meets the sea, its edge runs a few units offshore: the coast from
+  `build/coast.json`, offset 5 units out and simplified at 2.5.
+- Two stretches stay unclaimed on purpose: the Gospel Desert, south of the
+  Judith Hill → Ruthie Foster → Danielle Nicole road, and the fretboard north of
+  the Amplified Range.
+
+The builder comment above `MANUAL_HULL` lists the points where three regions
+meet and each region's member coverage. A hull change should leave every
+settlement in the same polygon; the builder's stray flags are the check.
+
 ## The plate's view toggles
 
 Four boxes in two rows, all on by default:
