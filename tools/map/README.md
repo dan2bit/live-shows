@@ -41,12 +41,16 @@ Each mainland region's dashed ghost border is a hand-built polygon in
   regions and no two overlap. Change a shared border in both polygons at once.
 - Where a region meets the sea, its edge runs a few units offshore: the coast from
   `build/coast.json`, offset 5 units out and simplified at 2.5.
+- Two rivers are borders, followed bend for bend: the Big Muddy below The Source
+  (Quiet Woods west, Steel Foothills east, Secondline below both), and the creek
+  from Pokey LaFarge to the sea at Valerie June's harbor (Quiet Woods north,
+  Heartland south). Those edges are the river's centerline from `art/map.svg`.
 - Two stretches stay unclaimed on purpose: the Gospel Desert, south of the
   Judith Hill → Ruthie Foster → Danielle Nicole road, and the fretboard north of
   the Amplified Range.
 
-The builder comment above `MANUAL_HULL` lists the points where three regions
-meet and each region's member coverage. A hull change should leave every
+The builder comment above `MANUAL_HULL` lists the shared border points
+and each region's member coverage. A hull change should leave every
 settlement in the same polygon; the builder's stray flags are the check.
 
 ## The plate's view toggles
