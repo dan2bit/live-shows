@@ -192,9 +192,11 @@
   #zoomer button:hover{background:#f5ecd6;}
   #err{position:absolute;top:16px;left:16px;right:64px;color:var(--paper);
     font-family:'Special Elite',monospace;font-size:14px;line-height:1.7;display:none;}
-  /* #406 routes layer: one hairline weight for every class, colours kept, pattern per class -
+  /* #406 routes layer: one hairline weight for every class, pattern per class -
      dots for trails and passes, dashes for ferries, solid for roads and the autobahn (a hair
-     heavier). The layer sits at .9 so rivers and lakes stay the primary features under it. */
+     heavier). Roads, passes and trails take their region's tint (a cross-region hop switches
+     where it enters the destination's hull); ferries stay in ink, the autobahn in the Range
+     tint. The layer sits at .9 so rivers and lakes stay the primary features under it. */
   #routes{opacity:.9;}
   #routes .core{stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;}
   #routes .core.autobahn{stroke-width:1.5;}
@@ -762,6 +764,13 @@
     gRoutes.replaceChildren();planLanes();
     const missing=new Set();
     const path=(g,d,color,cls,extra)=>g.appendChild(mkEl('path',Object.assign({class:cls,d,fill:'none',stroke:color},extra||{})));
+    // A land hop (road, pass, trail) takes its region's tint; one between two regions keeps
+    // the origin's tint until it enters the destination's hull. Ferries stay in ink.
+    const tinted=(g,pts,a,b,cls)=>{
+      if(rreg(a)===rreg(b)){path(g,pathD(pts),TINT[rreg(a)]||'var(--ink)',cls);return;}
+      const [p1,p2]=splitAtHull(pts,HULL[rreg(b)]);
+      path(g,pathD(p1),TINT[rreg(a)]||'var(--ink)',cls);path(g,pathD(p2),TINT[rreg(b)]||'var(--ink)',cls);
+    };
     let fadeN=0;
     for(const [ri,r] of (THOR.routes||[]).entries()){
       const chain=r.chain||[];
@@ -788,22 +797,20 @@
         if(r.cls==='road'){
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb);
           const off=Math.min(8+Rh()*12,L*0.2)*(Rh()<.5?-1:1),pts=via.length?catmull([pa,...via,pb],8):bent(pa,pb,off,14);
-          if(rreg(a)===rreg(b))path(g,pathD(pts),TINT[rreg(a)]||'var(--ink)','core road');
-          else{const [p1,p2]=splitAtHull(pts,HULL[rreg(b)]);   // interstate: origin tint until it enters the destination's hull
-            path(g,pathD(p1),TINT[rreg(a)]||'var(--ink)','core road');path(g,pathD(p2),TINT[rreg(b)]||'var(--ink)','core road');}
+          tinted(g,pts,a,b,'core road');
           path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='pass'){
           // switchbacks that follow the land: a turn every ~16 units, a few units of amplitude mid-climb, tapering at both ends
           const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/16)),way=[];
           for(let k=0;k<=n;k++){const t=k/n,amp=9*Math.pow(Math.sin(Math.PI*t),0.7)*(k%2?1:-1),bs=lerp(pa,pb,t);way.push([bs[0]+nx*amp,bs[1]+ny*amp]);}
-          const d=pathD(via.length?catmull([pa,...via,pb],8):roundCorners(way,5));
-          path(g,d,'#44525c','core pass');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i});
+          const pts=via.length?catmull([pa,...via,pb],8):roundCorners(way,5);
+          tinted(g,pts,a,b,'core pass');path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='trail'){
           // a meander that follows the land: alternating ~7-12 unit offsets every ~34 units, smoothed
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/34)),way=[pa];
           for(let k=1;k<n;k++){const off=(7+Rh()*5)*(k%2?1:-1),bs=lerp(pa,pb,k/n);way.push([bs[0]+nx*off,bs[1]+ny*off]);}
-          way.push(pb);const d=pathD(catmull(via.length?[pa,...via,pb]:way,8));
-          path(g,d,'#2f7d4f','core trail');path(g,d,'transparent','hit',{'data-r':ri,'data-h':i});
+          way.push(pb);const pts=catmull(via.length?[pa,...via,pb]:way,8);
+          tinted(g,pts,a,b,'core trail');path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='ferry'){
           const ink='var(--ink)';
           if(r.offmap){
