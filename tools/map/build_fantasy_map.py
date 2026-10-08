@@ -1065,15 +1065,6 @@ if _OV:
                     UNPLACED.add(nm)
         if ov.get("size"):
             OVERRIDE_SIZE[nm] = ov["size"]
-for nm, sz in OVERRIDE_SIZE.items():
-    if sz != "capital":
-        continue
-    reg_ = region_of[nm]
-    if reg_ in DECREED:
-        sys.exit(f"map_overrides.json: two decreed capitals in {reg_}: "
-                 f"{DECREED[reg_]} and {nm} - the file has to say which")
-    DECREED[reg_] = nm
-
 _decree_pins = (set(json.loads((SCRIPT_DIR / "edits" / "pins.json").read_text()))
                 if (SCRIPT_DIR / "edits" / "pins.json").exists() else set())
 for nm, (reg_, pt_) in DECREE_MOVES.items():
@@ -1093,6 +1084,163 @@ for nm, reg_ in DECREE_ASHORE.items():
                                  spec_["anchor"][1] - spec_["ry"] * 0.5, spec_["anchor"])
         xy[nm] = (sx_ + (jr7.random() - 0.5) * 20, sy_ + (jr7.random() - 0.5) * 14)
         UNPLACED.add(nm)
+
+# Region ghost boundaries are hand-built polygons, one per mainland region.
+# They began as generated convex hulls clipped against every neighbor's
+# bisector, but the member clouds along some boundaries are too intermixed for
+# any bisector position to serve both sides, so each was worked out by hand
+# against live settlement data. Outer Isles has no polygon by decision: its
+# settlements sit on the pegs off the headstock, and the sea around them
+# already reads as the boundary; the label alone marks the region.
+#
+# Neighbors share their borders vertex for vertex, so no land sits between
+# two regions and no two regions overlap. Where a region meets the sea
+# its edge runs a few units offshore: those runs are the mainland outline
+# (build/coast.json) offset 5 units out and simplified at 2.5, so they follow
+# the coast without crossing it. Two stretches are unclaimed on purpose -
+# the Gospel Desert south of the Judith Hill -> Ruthie Foster -> Danielle Nicole
+# road (Delta Coast's south edge dips only far enough to take in that road's
+# bend), and the fretboard north of the Amplified Range.
+#
+# Two rivers are borders, and there the edge follows the river's centerline
+# (its painted ribbon in art/map.svg, simplified at 0.75) bend for bend:
+#   The Big Muddy, from The Source south: Quiet Woods holds the west bank and
+#     Steel Foothills the east, each down to where its straight southern border
+#     meets the river; Secondline holds both banks below that.
+#   The creek that reaches the west coast at Valerie June's harbor: from
+#     Pokey LaFarge to the sea, Quiet Woods holds the north bank and Heartland
+#     the south.
+# The shared points:
+#   [620, 292]        Range / Quiet Woods / Steel Foothills, just east of the
+#                     Larkin Poe -> Sue Foley road; the Woods/Foothills border
+#                     runs east of that road, passing north of Larkin Poe, then
+#                     through The Source to the head of the Big Muddy
+#   [713.1, 400]      Range / Steel Foothills, at the coast
+#   [609.5, 472.8]    Quiet Woods / Steel Foothills / Secondline, on the Big
+#                     Muddy: the Woods' southern line carried east to the river
+#   [615.7, 503.6]    Steel Foothills / Secondline, on the Big Muddy: the
+#                     Foothills' southeastern line carried west to the river
+#   [508, 457.2]      Quiet Woods / Heartland / Secondline
+#   [416.3, 397.5]    Quiet Woods / Heartland, where their straight border meets
+#                     the creek, by Pokey LaFarge
+#   [463.2, 591.1]    Heartland / Secondline at the desert's edge, south of Volume
+#   [438.3, 600.4]    Heartland / Delta Coast at the desert's edge; the two share
+#                     one straight border from here to the west coast
+# Every pinned settlement inside a polygon takes that polygon's region (see the
+# pin pass that follows), so a region's coverage is complete by construction;
+# only pins outside every polygon keep a region the polygons don't decide.
+MANUAL_HULL = {
+    "delta_coast": [
+        [124.6, 587.1], [157.8, 537.6], [241.5, 422.5], [438.3, 600.4],
+        [388.3, 607.3], [363.2, 619.0], [331.9, 621.5], [300.0, 622.5],
+        [244.3, 632.1], [161.1, 609.7],
+    ],
+    "amplified_range": [
+        [620.0, 292.0], [603.0, 250.0], [592.3, 206.9], [751.6, 138.6],
+        [834.75, 133.6], [941.0, 144.0], [863.6, 254.6], [726.0, 398.0],
+        [713.1, 400.0],
+    ],
+    "slide_foothills": [
+        [620.0, 292.0], [713.1, 400.0], [726.0, 398.0], [724.4, 422.0],
+        [720.7, 435.4], [728.1, 445.0], [635.9, 493.1], [615.7, 503.6],
+        [612.7, 498.5], [607.7, 494.1], [606.1, 489.2], [609.5, 472.8],
+        [611.6, 469.4], [611.8, 464.4], [613.6, 461.7], [608.0, 452.3],
+        [606.9, 445.1], [604.1, 442.6], [603.4, 437.9], [604.6, 434.3],
+        [598.9, 428.7], [602.4, 419.8], [596.7, 415.5], [595.7, 412.4],
+        [592.1, 410.3], [592.3, 406.6], [595.7, 402.5], [596.9, 398.7],
+        [594.1, 396.5], [589.4, 396.4], [587.1, 394.0], [587.5, 389.7],
+        [591.7, 388.1], [592.7, 384.9], [586.2, 378.2], [584.0, 360.0],
+        [590.0, 351.0], [601.0, 346.0], [612.0, 318.0],
+    ],
+    "heartland": [
+        [241.5, 422.5], [250.2, 411.6], [250.5, 398.2], [263.5, 390.7],
+        [271.3, 379.7], [289.0, 376.7], [295.4, 367.0], [306.7, 367.3],
+        [308.3, 353.5], [311.6, 353.3], [316.8, 353.2], [319.3, 348.5],
+        [322.6, 353.3], [329.1, 352.1], [339.7, 355.2], [352.5, 362.9],
+        [365.6, 360.2], [367.4, 367.0], [371.0, 369.2], [373.5, 375.2],
+        [376.4, 376.1], [379.4, 375.5], [381.6, 378.0], [386.7, 379.7],
+        [389.1, 385.4], [396.1, 384.9], [398.4, 390.1], [402.3, 390.4],
+        [408.8, 394.8], [416.3, 397.5], [508.0, 457.2], [462.2, 544.7],
+        [463.2, 591.1], [438.3, 600.4],
+    ],
+    "river_port": [
+        [463.2, 591.1], [462.2, 544.7], [508.0, 457.2], [609.5, 472.8],
+        [606.1, 489.2], [607.7, 494.1], [612.7, 498.5], [615.7, 503.6],
+        [635.9, 493.1], [728.1, 445.0], [728.4, 462.6], [733.3, 467.7],
+        [732.1, 533.3], [728.0, 543.9], [733.9, 553.2], [730.9, 564.8],
+        [733.1, 572.0], [723.9, 581.2], [715.4, 583.6], [715.4, 587.7],
+        [665.6, 693.5], [647.2, 699.5],
+    ],
+    "quiet_woods": [
+        [308.3, 353.5], [307.7, 342.2], [303.4, 337.6], [305.3, 318.5],
+        [321.3, 280.0], [344.7, 258.5], [346.8, 246.8], [382.8, 229.3],
+        [400.9, 229.5], [404.5, 217.2], [415.5, 206.8], [426.9, 203.3],
+        [435.8, 207.0], [461.7, 203.1], [472.6, 211.1], [484.0, 200.2],
+        [490.7, 198.8], [509.6, 203.1], [513.6, 208.2], [533.9, 208.3],
+        [537.7, 212.2], [560.5, 208.6], [568.0, 216.3], [592.3, 206.9],
+        [603.0, 250.0], [620.0, 292.0], [612.0, 318.0], [601.0, 346.0],
+        [590.0, 351.0], [584.0, 360.0], [586.2, 378.2], [592.7, 384.9],
+        [591.7, 388.1], [587.5, 389.7], [587.1, 394.0], [589.4, 396.4],
+        [594.1, 396.5], [596.9, 398.7], [595.7, 402.5], [592.3, 406.6],
+        [592.1, 410.3], [595.7, 412.4], [596.7, 415.5], [602.4, 419.8],
+        [598.9, 428.7], [604.6, 434.3], [603.4, 437.9], [604.1, 442.6],
+        [606.9, 445.1], [608.0, 452.3], [613.6, 461.7], [611.8, 464.4],
+        [611.6, 469.4], [609.5, 472.8], [508.0, 457.2], [416.3, 397.5],
+        [408.8, 394.8], [402.3, 390.4], [398.4, 390.1], [396.1, 384.9],
+        [389.1, 385.4], [386.7, 379.7], [381.6, 378.0], [379.4, 375.5],
+        [376.4, 376.1], [373.5, 375.2], [371.0, 369.2], [367.4, 367.0],
+        [365.6, 360.2], [352.5, 362.9], [339.7, 355.2], [329.1, 352.1],
+        [322.6, 353.3], [319.3, 348.5], [316.8, 353.2], [311.6, 353.3],
+    ],
+}
+
+def point_in_poly(x, y, poly):
+    inside = False
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i - 1], poly[i]
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+# ---- a pin inside a region's border decides the region ----
+# Without this, region comes from FORCED_REGION, Last.fm tags or neighbor votes,
+# and the tags and the graph change under a settlement from one rebuild to the
+# next while its pin stays put - a pinned Quiet Woods hamlet would wake up in the
+# Outer Isles. Moving a pin across a border is how Dan rehomes a settlement, so a
+# pin inside a polygon beats every other source of region: FORCED_REGION, the
+# moves above and map_overrides.json. A pin outside every polygon (an islet, the
+# unclaimed desert or fretboard) keeps the region those gave it.
+def hull_region(x, y):
+    for reg_, poly in MANUAL_HULL.items():
+        if point_in_poly(x, y, poly):
+            return reg_
+    return None
+
+_ov_region = {nm: ov["region"] for nm, ov in _OV.items() if isinstance(ov, dict) and ov.get("region")}
+for nm, pt_ in sorted(_pins_law.items()):
+    if nm not in records:
+        continue
+    reg_ = hull_region(*pt_)
+    if not reg_ or reg_ == region_of.get(nm):
+        continue
+    if _ov_region.get(nm) and _ov_region[nm] != reg_:
+        print(f"  pin decides region: {nm} is {reg_} (map_overrides.json says {_ov_region[nm]})")
+    old_d = district_of.get(nm)
+    if old_d in districts and nm in districts[old_d]["members"]:
+        districts[old_d]["members"].remove(nm)
+    region_of[nm] = reg_
+    district_of[nm] = f"{reg_}:pinned"
+    UNPLACED.discard(nm)
+
+# decreed capitals, read once every region is final
+for nm, sz in OVERRIDE_SIZE.items():
+    if sz != "capital":
+        continue
+    reg_ = region_of[nm]
+    if reg_ in DECREED:
+        sys.exit(f"map_overrides.json: two decreed capitals in {reg_}: "
+                 f"{DECREED[reg_]} and {nm} - the file has to say which")
+    DECREED[reg_] = nm
 
 for did in [d_ for d_, dd in districts.items()
             if dd["region"] == "outer_isles" and not dd["members"]]:
@@ -1187,6 +1335,11 @@ if args.prune_overrides and _OV:
     for r in override_audit:
         ov = _OV[r["name"]]
         if r["class"] == "orphan":
+            # An orphan that carries a region is kept: the act is only off the
+            # roster for now (a pruned potentials row, a lapsed follow), and its
+            # home should not snap back to an automatic one when it returns.
+            if ov.get("region"):
+                continue
             del _OV[r["name"]]; changed.append(f"dropped {r['name']} (orphan)")
         elif r["class"] == "redundant":
             for k in ("size", "basis", "why"):
@@ -1214,124 +1367,6 @@ for did, d in districts.items():
         d["seat"] = cap
         d["suggested_name"] = f"{word} {sfx}"
 
-# Region ghost boundaries are hand-built polygons, one per mainland region.
-# They began as generated convex hulls clipped against every neighbor's
-# bisector, but the member clouds along some boundaries are too intermixed for
-# any bisector position to serve both sides, so each was worked out by hand
-# against live settlement data. Outer Isles has no polygon by decision: its
-# settlements sit on the pegs off the headstock, and the sea around them
-# already reads as the boundary; the label alone marks the region.
-#
-# Neighbors share their borders vertex for vertex, so no land sits between
-# two regions and no two regions overlap. Where a region meets the sea
-# its edge runs a few units offshore: those runs are the mainland outline
-# (build/coast.json) offset 5 units out and simplified at 2.5, so they follow
-# the coast without crossing it. Two stretches are unclaimed on purpose -
-# the Gospel Desert south of the Judith Hill -> Ruthie Foster -> Danielle Nicole
-# road (Delta Coast's south edge dips only far enough to take in that road's
-# bend), and the fretboard north of the Amplified Range.
-#
-# Two rivers are borders, and there the edge follows the river's centerline
-# (its painted ribbon in art/map.svg, simplified at 0.75) bend for bend:
-#   The Big Muddy, from The Source south: Quiet Woods holds the west bank and
-#     Steel Foothills the east, each down to where its straight southern border
-#     meets the river; Secondline holds both banks below that.
-#   The creek that reaches the west coast at Valerie June's harbor: from
-#     Pokey LaFarge to the sea, Quiet Woods holds the north bank and Heartland
-#     the south.
-# The shared points:
-#   [620, 292]        Range / Quiet Woods / Steel Foothills, just east of the
-#                     Larkin Poe -> Sue Foley road; the Woods/Foothills border
-#                     runs east of that road, passing north of Larkin Poe, then
-#                     through The Source to the head of the Big Muddy
-#   [713.1, 400]      Range / Steel Foothills, at the coast
-#   [609.5, 472.8]    Quiet Woods / Steel Foothills / Secondline, on the Big
-#                     Muddy: the Woods' southern line carried east to the river
-#   [615.7, 503.6]    Steel Foothills / Secondline, on the Big Muddy: the
-#                     Foothills' southeastern line carried west to the river
-#   [508, 457.2]      Quiet Woods / Heartland / Secondline
-#   [416.3, 397.5]    Quiet Woods / Heartland, where their straight border meets
-#                     the creek, by Pokey LaFarge
-#   [463.2, 591.1]    Heartland / Secondline at the desert's edge, south of Volume
-#   [438.3, 600.4]    Heartland / Delta Coast at the desert's edge; the two share
-#                     one straight border from here to the west coast
-# A member whose position sits past its own polygon (a real outlier, not a
-# hull artifact) renders outside its ghost boundary - expected per the schema
-# doc ("these are not meant as exact borders"), not a bug to chase here.
-# Coverage, checked against live data:
-#   delta_coast       40/40
-#   amplified_range   94/95   (Taj Farrant is outside by decree - see
-#                              STRAY_EXEMPT below)
-#   slide_foothills   25/25   (Joey Landreth and The Bros. Landreth sit just
-#                              inside its corner against Secondline)
-#   heartland         54/54
-#   river_port        63/63
-#   quiet_woods       76/77   (Chris Smither outside)
-MANUAL_HULL = {
-    "delta_coast": [
-        [124.6, 587.1], [157.8, 537.6], [241.5, 422.5], [438.3, 600.4],
-        [388.3, 607.3], [363.2, 619.0], [331.9, 621.5], [300.0, 622.5],
-        [244.3, 632.1], [161.1, 609.7],
-    ],
-    "amplified_range": [
-        [620.0, 292.0], [603.0, 250.0], [592.3, 206.9], [751.6, 138.6],
-        [834.75, 133.6], [941.0, 144.0], [863.6, 254.6], [726.0, 398.0],
-        [713.1, 400.0],
-    ],
-    "slide_foothills": [
-        [620.0, 292.0], [713.1, 400.0], [726.0, 398.0], [724.4, 422.0],
-        [720.7, 435.4], [728.1, 445.0], [635.9, 493.1], [615.7, 503.6],
-        [612.7, 498.5], [607.7, 494.1], [606.1, 489.2], [609.5, 472.8],
-        [611.6, 469.4], [611.8, 464.4], [613.6, 461.7], [608.0, 452.3],
-        [606.9, 445.1], [604.1, 442.6], [603.4, 437.9], [604.6, 434.3],
-        [598.9, 428.7], [602.4, 419.8], [596.7, 415.5], [595.7, 412.4],
-        [592.1, 410.3], [592.3, 406.6], [595.7, 402.5], [596.9, 398.7],
-        [594.1, 396.5], [589.4, 396.4], [587.1, 394.0], [587.5, 389.7],
-        [591.7, 388.1], [592.7, 384.9], [586.2, 378.2], [584.0, 360.0],
-        [590.0, 351.0], [601.0, 346.0], [612.0, 318.0],
-    ],
-    "heartland": [
-        [241.5, 422.5], [250.2, 411.6], [250.5, 398.2], [263.5, 390.7],
-        [271.3, 379.7], [289.0, 376.7], [295.4, 367.0], [306.7, 367.3],
-        [308.3, 353.5], [311.6, 353.3], [316.8, 353.2], [319.3, 348.5],
-        [322.6, 353.3], [329.1, 352.1], [339.7, 355.2], [352.5, 362.9],
-        [365.6, 360.2], [367.4, 367.0], [371.0, 369.2], [373.5, 375.2],
-        [376.4, 376.1], [379.4, 375.5], [381.6, 378.0], [386.7, 379.7],
-        [389.1, 385.4], [396.1, 384.9], [398.4, 390.1], [402.3, 390.4],
-        [408.8, 394.8], [416.3, 397.5], [508.0, 457.2], [462.2, 544.7],
-        [463.2, 591.1], [438.3, 600.4],
-    ],
-    "river_port": [
-        [463.2, 591.1], [462.2, 544.7], [508.0, 457.2], [609.5, 472.8],
-        [606.1, 489.2], [607.7, 494.1], [612.7, 498.5], [615.7, 503.6],
-        [635.9, 493.1], [728.1, 445.0], [728.4, 462.6], [733.3, 467.7],
-        [732.1, 533.3], [728.0, 543.9], [733.9, 553.2], [730.9, 564.8],
-        [733.1, 572.0], [723.9, 581.2], [715.4, 583.6], [715.4, 587.7],
-        [665.6, 693.5], [647.2, 699.5],
-    ],
-    "quiet_woods": [
-        [308.3, 353.5], [307.7, 342.2], [303.4, 337.6], [305.3, 318.5],
-        [321.3, 280.0], [344.7, 258.5], [346.8, 246.8], [382.8, 229.3],
-        [400.9, 229.5], [404.5, 217.2], [415.5, 206.8], [426.9, 203.3],
-        [435.8, 207.0], [461.7, 203.1], [472.6, 211.1], [484.0, 200.2],
-        [490.7, 198.8], [509.6, 203.1], [513.6, 208.2], [533.9, 208.3],
-        [537.7, 212.2], [560.5, 208.6], [568.0, 216.3], [592.3, 206.9],
-        [603.0, 250.0], [620.0, 292.0], [612.0, 318.0], [601.0, 346.0],
-        [590.0, 351.0], [584.0, 360.0], [586.2, 378.2], [592.7, 384.9],
-        [591.7, 388.1], [587.5, 389.7], [587.1, 394.0], [589.4, 396.4],
-        [594.1, 396.5], [596.9, 398.7], [595.7, 402.5], [592.3, 406.6],
-        [592.1, 410.3], [595.7, 412.4], [596.7, 415.5], [602.4, 419.8],
-        [598.9, 428.7], [604.6, 434.3], [603.4, 437.9], [604.1, 442.6],
-        [606.9, 445.1], [608.0, 452.3], [613.6, 461.7], [611.8, 464.4],
-        [611.6, 469.4], [609.5, 472.8], [508.0, 457.2], [416.3, 397.5],
-        [408.8, 394.8], [402.3, 390.4], [398.4, 390.1], [396.1, 384.9],
-        [389.1, 385.4], [386.7, 379.7], [381.6, 378.0], [379.4, 375.5],
-        [376.4, 376.1], [373.5, 375.2], [371.0, 369.2], [367.4, 367.0],
-        [365.6, 360.2], [352.5, 362.9], [339.7, 355.2], [329.1, 352.1],
-        [322.6, 353.3], [319.3, 348.5], [316.8, 353.2], [311.6, 353.3],
-    ],
-}
-
 # A region absent from MANUAL_HULL (Outer Isles) gets hull=null and map.html
 # draws no boundary for it - the label still renders from labels.json.
 region_hulls = dict(MANUAL_HULL)
@@ -1340,21 +1375,14 @@ region_hulls = dict(MANUAL_HULL)
 # unplaced  the builder staged it in a ring; the position means nothing (set above)
 # unpinned  builder-positioned, no pins.json entry: the only marks that can move
 #           on a rebuild, since everything else is pinned - a look, not always a drag
-# stray     pinned, but the pin lies outside its region's polygon: a region changed
-#           under a pin made for the old one, or a known outlier. Advisory - the
-#           polygons are not exact borders, and some outliers are deliberate.
+# stray     pinned, but the pin lies outside its region's polygon. A pin inside any
+#           polygon takes that polygon's region, so this only catches a pin outside
+#           every polygon whose region is a mainland one - a known outlier or a
+#           settlement that has drifted off the land. Advisory.
 # All three are mainland-only: Outer Isles sits on fixed pegs with no polygon.
 # map.html re-derives unpinned and stray against the live pins.json before it
 # draws, the same way it applies live pin positions, so a pin saved after the
 # last rebuild is honoured immediately.
-def point_in_poly(x, y, poly):
-    inside = False
-    for i in range(len(poly)):
-        (x1, y1), (x2, y2) = poly[i - 1], poly[i]
-        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
-            inside = not inside
-    return inside
-
 # Pinned outside their region's polygon on purpose. Taj Farrant holds Farrant
 # Rock, his own islet at the top of the headstock (a labels.json island, not a
 # tuning-peg isle), while remaining a Range citizen - the polygon is not meant
