@@ -78,6 +78,14 @@
   .stl.pinlabel .lbl,.stl.found .lbl,.stl.traced .lbl{display:block;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
+  /* a water named in labels.json -> water_tiers follows the settlement label tiers above: a
+     city-tier river shows at any zoom, a town-tier one from 2x, village from 4x, hamlet from 8x.
+     A water with no tier (the lakes) always shows. */
+  .geo-water[data-lt]{display:none;}
+  #map[data-zoom-tier="1"] .geo-water[data-lt="1"],
+  #map[data-zoom-tier="2"] .geo-water[data-lt="1"],#map[data-zoom-tier="2"] .geo-water[data-lt="2"],
+  #map[data-zoom-tier="3"] .geo-water[data-lt="1"],#map[data-zoom-tier="3"] .geo-water[data-lt="2"],#map[data-zoom-tier="3"] .geo-water[data-lt="3"],
+  #map[data-zoom-tier="4"] .geo-water[data-lt]{display:block;}
   #rose{opacity:.94;}
   #rose-home{pointer-events:all;cursor:pointer;}
   #rose-home:hover #rose-clef,#rose-home:focus-visible #rose-clef{stroke:#0e5a70;}
@@ -951,9 +959,11 @@
     t.setAttribute('x',il.xy[0]);t.setAttribute('y',il.xy[1]);
     t.textContent=il.name;gGeo.appendChild(t);
   }
+  const WATER_TIER=LBL.water_tiers||{}, WATER_FONT={1:7.5,2:6.5,3:6,4:5.5};
   for(const wl of WATER_SRC){
-    const t=document.createElementNS(NS,'text');
-    t.setAttribute('class','geo-water');t.setAttribute('font-size',6.5);
+    const t=document.createElementNS(NS,'text'),lt=WATER_TIER[wl.name];
+    t.setAttribute('class','geo-water');t.setAttribute('font-size',WATER_FONT[lt]||6.5);
+    if(lt)t.dataset.lt=lt;
     t.dataset.gname=wl.name;t.dataset.gkind='water';
     t.setAttribute('text-anchor','middle');
     t.setAttribute('x',wl.xy[0]);t.setAttribute('y',wl.xy[1]);
