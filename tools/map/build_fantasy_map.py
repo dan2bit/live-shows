@@ -533,7 +533,7 @@ LEGENDS = {
     "John Hiatt", "Cowboy Junkies", "Willie Nelson",          # of the Heartland
     "Mavis Staples",                                          # of Second Line
     "Bonnie Raitt",                                           # of the Woods
-    "Keb' Mo'",                                               # of the Delta
+    "Keb' Mo'", "Kim Wilson",                                 # of the Delta (Kim Wilson at the head of Harp Run)
     "Walter Trout", "Steve Miller Band",                      # of the Amplified Range
     "Tommy Castro & the Painkillers", "Jimmie Vaughan", "Robert Cray Band",
     "Taj Mahal", "John Primer", "Chris Smither",              # of the Delta (Legends Island)
