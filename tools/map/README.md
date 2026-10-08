@@ -49,9 +49,14 @@ Each mainland region's dashed ghost border is a hand-built polygon in
   Judith Hill → Ruthie Foster → Danielle Nicole road, and the fretboard north of
   the Amplified Range.
 
-The builder comment above `MANUAL_HULL` lists the shared border points
-and each region's member coverage. A hull change should leave every
-settlement in the same polygon; the builder's stray flags are the check.
+The builder comment above `MANUAL_HULL` lists the shared border points.
+
+A pin inside a polygon decides the settlement's region, ahead of tags, the
+builder's forced regions and any `region` in `map_overrides.json`: drag a pin
+across a border and the next rebuild rehomes it. Moving a border rehomes every
+pin it passes over, so check who sits along an edge before changing it. Only a
+pin outside every polygon keeps a region from elsewhere - Taj Farrant on Farrant
+Rock, Queen Latifah - and a mainland settlement in that state is flagged `stray`.
 
 ## The plate's view toggles
 

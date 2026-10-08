@@ -82,7 +82,8 @@ Three more are the editor's worklist rather than facts about the artist, and a v
 render should ignore them: `unplaced` (staged in a ring by the builder; the position is
 meaningless until hand-placed), `unpinned` (builder-positioned with no pins.json entry, so
 the position can move on a rebuild), `stray` (pinned, but the pin lies outside the region's
-polygon — advisory, since the polygons are not exact borders). All three are mainland-only.
+polygon; since a pin inside any polygon takes that polygon's region, only a pin outside every
+polygon can be stray). All three are mainland-only.
 `score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus) if you want
 continuous scaling instead of the tier buckets. `auto_size` is the size the builder would
 have given with no override in `map_overrides.json` - equal to `size` unless an override is
@@ -101,6 +102,9 @@ doing something. Renderers use `size`; the editor and the audit use both.
   (`auto_size`, `score`, ISO date), stamped by the editor. It is what makes the override
   auditable later.
 - `why` is free text for the overrides worth a sentence (the Delta Coast seat swap).
+- `region` moves a settlement to another region. A pin inside a region's polygon outranks
+  it - the pin decides - so a `region` only matters for an unpinned settlement or one whose
+  pin is outside every polygon. The build log names any pin that disagrees with a `region`.
 
 Every rebuild audits each size override against today's `auto_size` and writes the result
 to `meta.override_audit` (rows of `{name, override, auto, score, basis?, class}`) and
@@ -110,7 +114,8 @@ basis); `still-promotion` / `still-demotion` (score moved, override still on the
 now caps, or a demotion now lifts - the one that needs a decision); `orphan` (matches no
 settlement); `promotion (no basis)` / `demotion (no basis)` for hand-written entries.
 `--prune-overrides` drops the `size` of `redundant` rows (a `region` on the same entry
-stays), deletes `orphan` rows, and backfills a missing `basis` from today's values; it never
+stays), deletes `orphan` rows (except an orphan that carries a `region`, kept so the act's home
+survives a spell off the roster), and backfills a missing `basis` from today's values; it never
 touches a decree or a flipped row. `meta.decreed_capitals` is `{region: name}`.
 
 **graph_edges[]** — `{a, b, cls, crossRegion}` with `a`/`b` as canonical names. `cls` is
