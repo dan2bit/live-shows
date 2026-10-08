@@ -127,7 +127,7 @@ to the thoroughfares.
 
 **Thoroughfares** are not in this file. `tools/map/edits/thoroughfares.json` holds the hand-owned
 routes (`road / autobahn / pass / trail / ferry` chains, harbors with quai + heading, hand
-waypoints, off-map legs); `map.html` reads it alongside this JSON and draws the `routes` layer
+waypoints - on the autobahn a hop's waypoints replace its one generated bump - and off-map legs); `map.html` reads it alongside this JSON and draws the `routes` layer
 from it, with `build/coast.json` (the painted coast, from `art/map.svg` via `extract_coast.py`)
 deciding which
 side of a ferry is water.
