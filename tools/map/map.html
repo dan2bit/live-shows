@@ -210,6 +210,15 @@
   #routes .core.autobahn{stroke-width:1.5;}
   #routes .core.trail,#routes .core.pass{stroke-dasharray:0.1 3.2;}
   #routes .core.ferry{stroke-dasharray:5 3.5;}
+  /* bridges (drawn where a road, pass or trail crosses painted water): ink parapet rails
+     for roads and the autobahn, a paper-filled stone arch for passes, a plank or stepping
+     stones for trails. Map-unit sizes, so they scale with the zoom like the routes do. */
+  #routes .bridge{pointer-events:none;}
+  #routes .bridge .b-rail{fill:none;stroke:var(--ink);stroke-width:.32;stroke-linecap:round;stroke-linejoin:round;}
+  #routes .bridge .b-plank{fill:var(--paper);stroke:var(--ink);stroke-width:.25;}
+  #routes .bridge .b-arch{fill:none;stroke:var(--ink);stroke-width:.4;stroke-linecap:round;}
+  #routes .bridge .b-arch-fill{fill:var(--paper);opacity:.9;}
+  #routes .bridge .b-stone{fill:#b9ad90;stroke:var(--ink);stroke-width:.2;}
   /* route editor: a wide invisible hit stroke per hop, live only in edit mode; the
      selected route reads heavier; yellow handles are the hand waypoints (drag; alt-click
      removes), the small white ones in the gaps insert a waypoint where clicked */
@@ -823,8 +832,66 @@
     return {dense:[...head,...curve(side).slice(1),...tail],side};
   }
   let selRoute=null;   // {r, i} - the ferry hop the editor has selected
+  // ── bridges: where a road, pass or trail crosses painted water ──
+  // Found live from the drawn route and the painted river centerlines (coast.json -> rivers,
+  // from extract_coast.py), so a bridge moves with its route whenever the route is redrawn,
+  // including mid-drag in the route editor. The water cannot bend; the route can. By class:
+  // roads and the autobahn get parapet rails, passes a stone arch, trails a plank over a
+  // river and stepping stones across a stream or rill. The size of the water is its widest
+  // painted width: 2.4 and up a river, 1.2 and up a stream, under that a rill. Ferries take
+  // no bridges. Water segments sit in a 20-unit grid so a redraw during a drag stays cheap.
+  const WGRID=new Map(),WCELL=20;
+  for(const rv of (COAST&&COAST.rivers)||[]){
+    const P=rv.pts||[];
+    for(let i=0;i<P.length-1;i++){
+      const a=P[i],b=P[i+1],w={a,b,w:rv.w},cx0=Math.floor(Math.min(a[0],b[0])/WCELL),cx1=Math.floor(Math.max(a[0],b[0])/WCELL),
+            cy0=Math.floor(Math.min(a[1],b[1])/WCELL),cy1=Math.floor(Math.max(a[1],b[1])/WCELL);
+      for(let cx=cx0;cx<=cx1;cx++)for(let cy=cy0;cy<=cy1;cy++){const k=cx+','+cy;if(!WGRID.has(k))WGRID.set(k,[]);WGRID.get(k).push(w);}
+    }
+  }
+  const segX=(p,q,a,b)=>{ const r0=q[0]-p[0],r1=q[1]-p[1],s0=b[0]-a[0],s1=b[1]-a[1],d=r0*s1-r1*s0; if(!d)return null;
+    const t=((a[0]-p[0])*s1-(a[1]-p[1])*s0)/d,u=((a[0]-p[0])*r1-(a[1]-p[1])*r0)/d;
+    return (t>=0&&t<=1&&u>=0&&u<=1)?[p[0]+t*r0,p[1]+t*r1]:null; };
+  // crossings along one drawn route line; ends are the settlements it joins, and a crossing
+  // within 3 units of one is left to the settlement's own mark (it sits on the bank)
+  function waterCrossings(pts,ends){
+    const out=[];
+    for(let i=0;i<pts.length-1;i++){
+      const p=pts[i],q=pts[i+1],seen=new Set();
+      const cx0=Math.floor(Math.min(p[0],q[0])/WCELL),cx1=Math.floor(Math.max(p[0],q[0])/WCELL),
+            cy0=Math.floor(Math.min(p[1],q[1])/WCELL),cy1=Math.floor(Math.max(p[1],q[1])/WCELL);
+      for(let cx=cx0;cx<=cx1;cx++)for(let cy=cy0;cy<=cy1;cy++)for(const w of WGRID.get(cx+','+cy)||[]){
+        if(seen.has(w))continue;seen.add(w);
+        const X=segX(p,q,w.a,w.b); if(!X)continue;
+        if(ends.some(e=>Math.hypot(e[0]-X[0],e[1]-X[1])<3))continue;
+        const o=out.find(c=>Math.hypot(c.x-X[0],c.y-X[1])<3);
+        if(o){ if(w.w>o.w)o.w=w.w; continue; }
+        let ang=Math.atan2(q[1]-p[1],q[0]-p[0])*180/Math.PI; if(ang>90)ang-=180; if(ang<=-90)ang+=180;   // keep an arch's hump up
+        out.push({x:X[0],y:X[1],ang,w:w.w});
+      }
+    }
+    return out;
+  }
+  function drawBridge(under,over,cls,c){
+    const w=c.w,h=w/2+0.9,river=w>=2.4,tf=`translate(${c.x.toFixed(1)},${c.y.toFixed(1)}) rotate(${c.ang.toFixed(0)})`;
+    const U=mkEl('g',{class:'bridge',transform:tf}),O=mkEl('g',{class:'bridge',transform:tf});
+    if(cls==='road'||cls==='autobahn'){
+      for(const s of [-1,1])O.appendChild(mkEl('path',{class:'b-rail',d:`M${(-h-.45).toFixed(2)} ${s*1.35} L${(-h).toFixed(2)} ${s} L${h.toFixed(2)} ${s} L${(h+.45).toFixed(2)} ${s*1.35}`}));
+    }else if(cls==='pass'){
+      const d=`M${(-h-.3).toFixed(2)} 0 Q 0 ${(-(h*0.9+0.9)).toFixed(2)} ${(h+.3).toFixed(2)} 0`;
+      U.appendChild(mkEl('path',{class:'b-arch-fill',d:d+' Z'}));O.appendChild(mkEl('path',{class:'b-arch',d}));
+    }else if(river){
+      U.appendChild(mkEl('rect',{class:'b-plank',x:(-h).toFixed(2),y:-1,width:(2*h).toFixed(2),height:2}));
+    }else{
+      const n=Math.max(2,Math.round(w*1.4));
+      for(let i=0;i<n;i++){const t=i/(n-1)-0.5;O.appendChild(mkEl('ellipse',{class:'b-stone',cx:(t*w*1.1).toFixed(2),cy:i%2?.3:-.3,rx:.75,ry:.58}));}
+    }
+    if(U.childNodes.length)under.appendChild(U);
+    if(O.childNodes.length)over.appendChild(O);
+  }
   function drawThoroughfares(){
     gRoutes.replaceChildren();planLanes();
+    const BR=[];   // [class, drawn points, settlement points] for every hop that can take a bridge
     const missing=new Set();
     const path=(g,d,color,cls,extra)=>g.appendChild(mkEl('path',Object.assign({class:cls,d,fill:'none',stroke:color},extra||{})));
     // A land hop (road, pass, trail) takes its region's tint; one between two regions keeps
@@ -848,7 +915,9 @@
           way.push(pa,...(via.length?via:[[(pa[0]+pb[0])/2+nx*off,(pa[1]+pb[1])/2+ny*off]]));
         }
         way.push(rpos(chain[chain.length-1]));
-        path(g,pathD(roundCorners(way,50)),'#8a5a2a','core autobahn');   // Range tint the whole run, no seam switch
+        const ab=roundCorners(way,50);
+        path(g,pathD(ab),'#8a5a2a','core autobahn');   // Range tint the whole run, no seam switch
+        BR.push(['autobahn',ab,chain.map(rpos)]);
         continue;
       }
       const R=rng(seed);let side=R()<.5?-1:1;
@@ -860,20 +929,20 @@
         if(r.cls==='road'){
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb);
           const off=Math.min(8+Rh()*12,L*0.2)*(Rh()<.5?-1:1),pts=via.length?catmull([pa,...via,pb],8):bent(pa,pb,off,14);
-          tinted(g,pts,a,b,'core road');
+          tinted(g,pts,a,b,'core road');BR.push(['road',pts,[pa,pb]]);
           path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='pass'){
           // switchbacks that follow the land: a turn every ~16 units, a few units of amplitude mid-climb, tapering at both ends
           const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/16)),way=[];
           for(let k=0;k<=n;k++){const t=k/n,amp=9*Math.pow(Math.sin(Math.PI*t),0.7)*(k%2?1:-1),bs=lerp(pa,pb,t);way.push([bs[0]+nx*amp,bs[1]+ny*amp]);}
           const pts=via.length?catmull([pa,...via,pb],8):roundCorners(way,5);
-          tinted(g,pts,a,b,'core pass');path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
+          tinted(g,pts,a,b,'core pass');BR.push(['pass',pts,[pa,pb]]);path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='trail'){
           // a meander that follows the land: alternating ~7-12 unit offsets every ~34 units, smoothed
           const Rh=rng(hs);const [nx,ny,L]=perp(pa,pb),n=Math.max(2,Math.round(L/34)),way=[pa];
           for(let k=1;k<n;k++){const off=(7+Rh()*5)*(k%2?1:-1),bs=lerp(pa,pb,k/n);way.push([bs[0]+nx*off,bs[1]+ny*off]);}
           way.push(pb);const pts=catmull(via.length?[pa,...via,pb]:way,8);
-          tinted(g,pts,a,b,'core trail');path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
+          tinted(g,pts,a,b,'core trail');BR.push(['trail',pts,[pa,pb]]);path(g,pathD(pts),'transparent','hit',{'data-r':ri,'data-h':i});
         }else if(r.cls==='ferry'){
           const ink='var(--ink)';
           if(r.offmap){
@@ -896,6 +965,10 @@
         }
       }
     }
+    // bridges: decks and arch fills under every route line, rails, arch strokes and stones over them
+    const bUnder=mkEl('g',{class:'bridges-under'}),bOver=mkEl('g',{class:'bridges-over'});
+    for(const [cls,pts,ends] of BR)for(const c of waterCrossings(pts,ends))drawBridge(bUnder,bOver,cls,c);
+    gRoutes.insertBefore(bUnder,gRoutes.firstChild);gRoutes.appendChild(bOver);
     if(selRoute)gRoutes.querySelectorAll(`.route[data-key="${selRoute.key}"]`).forEach(x=>x.classList.add('sel'));
     if(missing.size)console.warn('thoroughfares: no settlement for',[...missing]);
   }
