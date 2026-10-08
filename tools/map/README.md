@@ -32,6 +32,20 @@ point the page at alternative files for a repaint preview.
 Not kept here: Azgaar's PNG exports. They are re-exportable from the `.map` at any
 resolution and were 8.5 MB in every Pages deploy; the `.map` is the source.
 
+## The in-page editor
+
+An authed desktop gets edit and trace modes on `map.html`. Signed in, the page loads
+every `edits/` file from `staging` through the GitHub API - where its saves land - rather
+than from the Pages copy, which trails a save by the promote and the deploy; everyone else
+sees the Pages copy. **save changes** writes each touched file as one Contents-API commit
+to `staging`, folding only this session's changes into the file as it stands there: pins
+and overrides by name, labels by `group:key`, routes by class + chain, traces appended.
+An edit made while a save is running stays unsaved and goes out with the next save.
+
+Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
+to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand
+edits in `thoroughfares.json`, where a hop's `via` replaces its one generated bump.
+
 ## Region hulls
 
 Each mainland region's dashed ghost border is a hand-built polygon in
