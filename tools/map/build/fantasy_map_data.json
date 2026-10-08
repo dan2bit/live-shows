@@ -3308,7 +3308,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "09e204db85",
-  "overrides_hash": "4c2f0ba175",
+  "overrides_hash": "fa40ebac0c",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -5752,7 +5752,6 @@
    "region": "outer_isles",
    "members": [
     "AJR",
-    "Cavetown",
     "Chelsea Cutler",
     "Valley"
    ],
@@ -5798,10 +5797,8 @@
    "region": "outer_isles",
    "members": [
     "Danny Burns",
-    "Grace Bowers",
     "Hozier",
     "Jessie's Girl",
-    "Spartan Jet-Plex",
     "Talia Segal",
     "ViRG",
     "Zara Phillips",
@@ -5957,7 +5954,6 @@
     "Bonnie Raitt",
     "Bridge City Sinners",
     "Chad Hollister",
-    "Chris Smither",
     "Eric Bibb",
     "Fruition",
     "Jessie Baylin",
@@ -7701,8 +7697,8 @@
   {
    "id": 80,
    "name": "Cavetown",
-   "region": "outer_isles",
-   "district": "outer_isles:d1",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -7711,8 +7707,8 @@
     255.5
    ],
    "region_uv": [
-    -2.4102,
-    2.5156
+    0.232,
+    0.221
    ],
    "flags": {},
    "src": "seen as support for AJR (2025-08-10)",
@@ -7884,8 +7880,8 @@
   {
    "id": 88,
    "name": "Chris Smither",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "region": "delta_coast",
+   "district": "delta_coast:override",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -7894,13 +7890,12 @@
     593.1
    ],
    "region_uv": [
-    0.1044,
-    1.7281
+    0.6044,
+    0.4529
    ],
    "flags": {
     "legacy": true,
-    "unvisited": true,
-    "stray": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong): Promoted from pruned-potentials 2026-10-03…",
    "times_seen": 0,
@@ -9164,8 +9159,8 @@
   {
    "id": 158,
    "name": "Grace Bowers",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "river_port",
+   "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
    "score": 3,
@@ -9174,8 +9169,8 @@
     507.6
    ],
    "region_uv": [
-    -1.6392,
-    5.1417
+    0.202,
+    0.2603
    ],
    "flags": {
     "unvisited": true
@@ -13046,8 +13041,8 @@
   {
    "id": 365,
    "name": "Spartan Jet-Plex",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
+   "region": "quiet_woods",
+   "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -13056,8 +13051,8 @@
     271.8
    ],
    "region_uv": [
-    -2.3835,
-    2.6854
+    0.2456,
+    0.2938
    ],
    "flags": {},
    "src": "seen as support for Sparkbird (2025-11-17)",
@@ -15188,7 +15183,7 @@
    "a": "AJR",
    "b": "Cavetown",
    "cls": "river",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "AJR",
@@ -17954,7 +17949,7 @@
    "a": "Sparkbird",
    "b": "Spartan Jet-Plex",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Sparkbird",
