@@ -358,6 +358,22 @@
   // so it's hardcoded here rather than duplicating a config loader for one value.
   const OWNER='dan2bit', REPO='live-shows', BRANCH='staging';
 
+  // The hand-owned edits files. An authed editor reads them from BRANCH through the API,
+  // where its saves land, not from the Pages copy, which trails a save by the promote and
+  // the deploy (a few minutes): a reload inside that window showed a save as lost, and
+  // re-editing the same route or override from that stale copy wrote the stale parts back
+  // over it. Everyone else reads the Pages copy. Falls back to Pages if the API read fails.
+  async function loadEdit(name,asText){
+    if(authed){
+      try{
+        const r=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/tools/map/edits/'+name+'?ref='+encodeURIComponent(BRANCH),
+          {cache:'no-store',headers:{'Accept':'application/vnd.github.raw','Authorization':'token '+localStorage.getItem(PAT_KEY)}});
+        if(r.ok)return asText?await r.text():await r.json();
+      }catch(e){}
+    }
+    const r=await fetch(fresh('edits/'+name),{cache:'no-store'});
+    return asText?await r.text():await r.json();
+  }
   // Contents-API read-merge-write. The GET that fetches the fresh SHA (per the repo's
   // commit rules - never reuse a SHA from an earlier read) also returns the file's
   // current content on BRANCH; `merge` is handed that decoded object and returns what
@@ -419,10 +435,10 @@
               heartland:'var(--heart)',river_port:'var(--port)',quiet_woods:'var(--woods)',outer_isles:'var(--isles)'};
   const S=new Map(data.settlements.map(s=>[s.name,s]));
   let LBL={regions:{},islands:{},waters:{}};
-  try{ LBL=await (await fetch(fresh('edits/labels.json'),{cache:'no-store'})).json(); }catch(e){}
+  try{ LBL=await loadEdit('labels.json'); }catch(e){}
   // pins.json is position truth - render it live, don't wait for the rebuild bot
   let PINFILE={};
-  try{ PINFILE=await (await fetch(fresh('edits/pins.json'),{cache:'no-store'})).json(); }catch(e){}
+  try{ PINFILE=await loadEdit('pins.json'); }catch(e){}
 
   // Dan's viewer overrides: {name: {region?, size?, exclude?}}. One object, shared by the
   // editor panel and the staleness banner below, both of which record decisions into it.
@@ -434,7 +450,7 @@
         ovRegion=document.getElementById('ovRegion'), ovSize=document.getElementById('ovSize'),
         editwho=document.getElementById('editwho');
   if(authed){
-  try{ Object.assign(overrides, await (await fetch(fresh('edits/map_overrides.json'),{cache:'no-store'})).json()); }catch(e){}
+  try{ Object.assign(overrides, await loadEdit('map_overrides.json')); }catch(e){}
   ovRegion.innerHTML=data.regions.map(r=>`<option value="${r.id}">${r.label}</option>`).join('');
   }
 
@@ -446,7 +462,10 @@
   // button write only the files that actually changed, one Contents-API commit each (a
   // Git-Data batch would be one commit, but does not fire the push event auto-promote
   // listens for). A file this page never touched is never written.
-  const dirty={pins:new Set(),overrides:new Set(),labels:new Set(),traces:0,thor:new Set()};
+  // Each touched key maps to the touch that last changed it, so a save can tell a key it
+  // wrote from one touched again while the save was in flight (that one stays dirty).
+  const dirty={pins:new Map(),overrides:new Map(),labels:new Map(),traces:0,thor:new Map()};
+  let touchSeq=0;
   const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus');
   const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces+dirty.thor.size;
   function refreshSave(){
@@ -466,7 +485,7 @@
     const asks=['flipped','redundant','orphan'].filter(k=>ac[k]).map(k=>`${ac[k]} ${k}`);
     if(asks.length)saveStatus.innerHTML+=` \u00b7 <b>audit:</b> ${asks.join(', ')}`;
   }
-  function touch(kind,key){ if(kind==='traces')dirty.traces++; else dirty[kind].add(key); refreshSave(); }
+  function touch(kind,key){ if(kind==='traces')dirty.traces++; else dirty[kind].set(key,++touchSeq); refreshSave(); }
   function markOv(name,key,val){
     (overrides[name]??={})[key]=val;
     touch('overrides',name);
@@ -475,6 +494,14 @@
   const mergeByName=(local,names)=>remote=>{ const out=(remote&&typeof remote==='object'&&!Array.isArray(remote))?remote:{};
     for(const n of names){ if(n in local)out[n]=local[n]; else delete out[n]; } return out; };
   const adopt=(local,merged)=>{ for(const k of Object.keys(local))delete local[k]; Object.assign(local,merged); };
+  // A save takes a snapshot of one kind's dirty keys, writes those, then settles: a key
+  // still at the touch it was written at is clean; a key touched again in flight, or first
+  // touched in flight, stays dirty. adopt() replaces the local copy with what was written,
+  // so the still-dirty keys' local values are held across it and put back - an edit made
+  // while a save runs survives to the next save instead of being dropped.
+  const settle=(kind,taken)=>{ for(const [k,n] of taken)if(dirty[kind].get(k)===n)dirty[kind].delete(k); return [...dirty[kind].keys()]; };
+  const adoptKeeping=(local,merged,keep)=>{ const held=keep.map(k=>[k,k in local,local[k]]); adopt(local,merged);
+    for(const [k,had,v] of held){ if(had)local[k]=v; else delete local[k]; } };
   async function saveAll(indId){
     const ind=indId||'ind-save';
     if(typeof tracing!=='undefined'&&tracing)endTrace();
@@ -482,37 +509,50 @@
     let ok=true;
     try{
       if(dirty.pins.size){
-        const {merged}=await ghCommitJson('tools/map/edits/pins.json',mergeByName(pins,dirty.pins),`map: update pins (${dirty.pins.size} changed) via in-page editor`);
-        adopt(pins,merged); dirty.pins.clear();
+        const taken=new Map(dirty.pins);
+        const {merged}=await ghCommitJson('tools/map/edits/pins.json',mergeByName(pins,[...taken.keys()]),`map: update pins (${taken.size} changed) via in-page editor`);
+        adoptKeeping(pins,merged,settle('pins',taken));
       }
       if(dirty.overrides.size){
-        const {merged}=await ghCommitJson('tools/map/edits/map_overrides.json',mergeByName(overrides,dirty.overrides),`map: update overrides (${dirty.overrides.size} changed) via in-page editor`);
-        adopt(overrides,merged); dirty.overrides.clear();
+        const taken=new Map(dirty.overrides);
+        const {merged}=await ghCommitJson('tools/map/edits/map_overrides.json',mergeByName(overrides,[...taken.keys()]),`map: update overrides (${taken.size} changed) via in-page editor`);
+        adoptKeeping(overrides,merged,settle('overrides',taken));
       }
       if(dirty.labels.size){
-        const keys=[...dirty.labels];
+        const taken=new Map(dirty.labels),keys=[...taken.keys()];
+        const split=k=>{const i=k.indexOf(':');return [k.slice(0,i),k.slice(i+1)];};
         const {merged}=await ghCommitJson('tools/map/edits/labels.json',remote=>{
           const out=(remote&&typeof remote==='object')?remote:{}; for(const g of ['regions','islands','waters'])out[g]??={};
-          for(const k of keys){ const i=k.indexOf(':'),g=k.slice(0,i),id=k.slice(i+1); if(LBL[g]&&id in LBL[g])out[g][id]=LBL[g][id]; else delete out[g][id]; }
+          for(const k of keys){ const [g,id]=split(k); if(LBL[g]&&id in LBL[g])out[g][id]=LBL[g][id]; else delete out[g][id]; }
           return out; },`map: update labels (${keys.length} changed) via in-page editor`);
-        LBL=merged; dirty.labels.clear();
+        const held=settle('labels',taken).map(k=>{const [g,id]=split(k);return [g,id,!!(LBL[g]&&id in LBL[g]),LBL[g]&&LBL[g][id]];});
+        LBL=merged;
+        for(const [g,id,had,v] of held){ LBL[g]??={}; if(had)LBL[g][id]=v; else delete LBL[g][id]; }
       }
       if(dirty.traces){
-        const added=TRACES.slice(TRACES.length-dirty.traces);
+        const n=dirty.traces,end=TRACES.length,added=TRACES.slice(end-n,end);
         const {merged}=await ghCommitJson('tools/map/edits/traced_waterways.json',remote=>{
           const base=Array.isArray(remote)?remote:[];
           added.forEach((t,i)=>{ t.id=`wway-${base.length+i+1}`; });   // renumber behind whatever landed meanwhile
           return base.concat(added); },`map: add ${added.length} traced waterway${added.length>1?'s':''} via in-page editor`);
-        TRACES.length=0; TRACES.push(...merged); dirty.traces=0;
+        const late=TRACES.slice(end);   // traced while the save ran: kept, still unsaved
+        TRACES.length=0; TRACES.push(...merged,...late); dirty.traces-=n;
       }
       if(dirty.thor.size){
-        const keys=[...dirty.thor];
+        const taken=new Map(dirty.thor),keys=[...taken.keys()];
         const {merged}=await ghCommitJson('tools/map/edits/thoroughfares.json',remote=>{
           const out=(remote&&typeof remote==='object'&&!Array.isArray(remote))?remote:{routes:[]}; out.routes??=[];
           for(const k of keys){ const mine=THOR.routes.find(r=>routeKey(r)===k),j=out.routes.findIndex(r=>routeKey(r)===k);
             if(mine){ if(j>=0)out.routes[j]=mine; else out.routes.push(mine); } else if(j>=0)out.routes.splice(j,1); }
           return out; },`map: update thoroughfares (${keys.length} route${keys.length>1?'s':''}) via in-page editor`,fmtThor);
-        THOR=merged; dirty.thor.clear(); drawThoroughfares(); drawHandles();
+        const keep=settle('thor',taken);
+        if(dragV&&selRoute&&!keep.includes(selRoute.key))keep.push(selRoute.key);   // a drag in progress is not touched until it ends
+        const held=keep.map(k=>[k,THOR.routes.find(r=>routeKey(r)===k)]);
+        THOR=merged; THOR.routes??=[];
+        for(const [k,mine] of held){ const j=THOR.routes.findIndex(r=>routeKey(r)===k);
+          if(mine){ if(j>=0)THOR.routes[j]=mine; else THOR.routes.push(mine); } else if(j>=0)THOR.routes.splice(j,1); }
+        if(selRoute){ selRoute.r=THOR.routes.findIndex(r=>routeKey(r)===selRoute.key); if(selRoute.r<0){selRoute=null;dragV=null;} }
+        drawThoroughfares(); drawHandles();
       }
     }catch(e){ ok=false; console.error(e); setInd(ind,'err',e.message); }
     if(ok)setInd(ind,'ok');
@@ -647,7 +687,7 @@
   // here carry colour and a class and nothing else. coast.json (extract_coast.py, from
   // map.svg's feature paths) is the painted coast; ferries use it to bow over water.
   COAST=null;
-  try{ THOR=await (await fetch(fresh('edits/thoroughfares.json'),{cache:'no-store'})).json(); }catch(e){}
+  try{ THOR=await loadEdit('thoroughfares.json'); }catch(e){}
   try{ COAST=await (await fetch(fresh('build/coast.json'),{cache:'no-store'})).json(); }catch(e){}
   const routeKey=r=>r.cls+':'+(r.chain||[]).join('>');
   const hopKey=(a,b)=>`${a}>${b}`;
@@ -804,8 +844,8 @@
         const R=rng(seed);const way=[];
         for(let i=0;i<chain.length-1;i++){
           const pa=rpos(chain[i]),pb=rpos(chain[i+1]);const [nx,ny]=perp(pa,pb);
-          const off=(4+R()*5)*(R()<.5?-1:1);
-          way.push(pa,[(pa[0]+pb[0])/2+nx*off,(pa[1]+pb[1])/2+ny*off]);
+          const off=(4+R()*5)*(R()<.5?-1:1),via=hopVia(r,chain[i],chain[i+1]);   // R drawn either way, so other hops keep their bumps
+          way.push(pa,...(via.length?via:[[(pa[0]+pb[0])/2+nx*off,(pa[1]+pb[1])/2+ny*off]]));
         }
         way.push(rpos(chain[chain.length-1]));
         path(g,pathD(roundCorners(way,50)),'#8a5a2a','core autobahn');   // Range tint the whole run, no seam switch
@@ -1198,7 +1238,7 @@
   // saves are cumulative: seed this session from the committed files
   const pins={}, editCb=window.editCb=document.getElementById('editMode');
   if(authed){
-  try{ const ptxt=await (await fetch(fresh('edits/pins.json'),{cache:'no-store'})).text();
+  try{ const ptxt=await loadEdit('pins.json',true);
        Object.assign(pins, JSON.parse(ptxt));
        // freshness check: does the rendered data know about this pins file?
        if(data.meta&&data.meta.pins_hash){
@@ -1307,7 +1347,7 @@
         traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
   const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
   if(authed){
-  try{ TRACES=await (await fetch(fresh('edits/traced_waterways.json'),{cache:'no-store'})).json(); }catch(e){}
+  try{ TRACES=await loadEdit('traced_waterways.json'); }catch(e){}
   }
   let tracing=null, pendingName=null;
   const traceCount=()=>refreshSave();
