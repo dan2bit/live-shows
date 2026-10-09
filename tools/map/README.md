@@ -9,7 +9,7 @@ else is sorted by who writes it.
 | `map.html` | the viewer and, for an authed desktop, the editor | humans, by PR |
 | `build_fantasy_map.py` | settlements, regions, districts from the tracking data | humans, by PR |
 | `emit_heightmap.py` | the FMG heightmap seed from the built data | humans, by PR |
-| `extract_coast.py` | the painted coast as polygons, from `art/map.svg` | humans, by PR |
+| `extract_coast.py` | the painted coast as polygons and the painted rivers as centerlines, from `art/map.svg` | humans, by PR |
 | `docs/` | `fantasy_map_schema.md` (the data contract, the device/desktop split), `heightmap_azgaar_notes.md` (the repaint procedure) | humans |
 | `edits/` | `pins.json`, `labels.json`, `map_overrides.json`, `thoroughfares.json`, `traced_waterways.json`, `discovered_adds.json` — the hand-owned state | the in-page editor (read-merge-write, to `staging`), or a hand edit |
 | `build/` | `fantasy_map_data.json`, `coast.json`, `heightmap.png` — derived, never hand-edited | `map-rebuild.yml` on every push to `main` that touches `edits/` or a generator; `coast.json` by running `extract_coast.py` after a repaint |
@@ -45,6 +45,14 @@ An edit made while a save is running stays unsaved and goes out with the next sa
 Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
 to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand
 edits in `thoroughfares.json`, where a hop's `via` replaces its one generated bump.
+
+Bridges are drawn, never stored: wherever a road, the autobahn, a pass or a trail crosses
+painted water, the page puts a bridge on the crossing, recomputed every time the route is
+drawn - bend a route in the editor and its bridges follow. Roads and the autobahn get
+parapet rails, passes a stone arch, and trails a plank over a river or stepping stones
+across a stream or rill. The water is `build/coast.json -> rivers` (painted centerlines
+and widths from `extract_coast.py`); 2.4 units wide and up is a river, 1.2 and up a
+stream, anything narrower a rill. Ferries take no bridges.
 
 ## Region hulls
 
