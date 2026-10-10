@@ -61,8 +61,8 @@
   {"cls": "trail", "chain": ["Margo Price", "Tommy Prine", "Molly Tuttle"], "via": {"Margo Price>Tommy Prine": [[274.1, 461.3], [304.5, 488.8], [325.3, 473.7]]}},
   {"cls": "trail", "chain": ["Willie Nelson", "Billy Strings"], "via": {"Willie Nelson>Billy Strings": [[368.2, 510.4]]}},
   {"cls": "road", "chain": ["Jon Batiste", "Alabama Shakes"]},
-  {"cls": "trail", "chain": ["Daniel Donato", "Greensky Bluegrass", "Billy Strings"]},
-  {"cls": "trail", "chain": ["Bridge City Sinners", "The Devil Makes Three"]},
-  {"cls": "trail", "chain": ["Muireann Bradley", "Nat Myers", "Chris Smither"]}
+  {"cls": "trail", "chain": ["Daniel Donato", "Greensky Bluegrass", "Billy Strings"], "via": {"Greensky Bluegrass>Billy Strings": [[400.1, 516.1]]}},
+  {"cls": "trail", "chain": ["Bridge City Sinners", "The Devil Makes Three"], "via": {"Bridge City Sinners>The Devil Makes Three": [[528.8, 444.7]]}},
+  {"cls": "trail", "chain": ["Muireann Bradley", "Nat Myers", "Chris Smither"], "via": {"Muireann Bradley>Nat Myers": [[225.8, 510.7]], "Nat Myers>Chris Smither": [[254.3, 540.7], [296.2, 539.1]]}}
  ]
 }
