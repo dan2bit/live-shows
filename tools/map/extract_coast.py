@@ -9,6 +9,13 @@ the freshwater group references. All of it is already in the 1000x700 canvas
 frame the map page draws in, so nothing is rescaled - the curves are flattened
 and simplified (Douglas-Peucker) so a page can do point-in-polygon on them.
 
+The painted rivers come along too. FMG draws each river under <g id="rivers"> as one
+closed ribbon - down one bank and back up the other - so the centerline is the midpoint
+of the two banks taken at matching fractions of their length, and the gap between them
+is the painted width there. Each river is written as its widest painted width and its
+centerline points, simplified like the coast; map.html uses them to put bridges where a
+route crosses water.
+
 Run it again after an FMG repaint; map.html reads build/coast.json.
 """
 import argparse, json, re
@@ -71,6 +78,34 @@ def simplify(pts, eps):
     h = len(pts) // 2   # a closed ring: split it in two open runs so the ends survive
     return dp(pts[:h + 1])[:-1] + dp(pts[h:] + [pts[0]])[:-1]
 
+def simplify_open(pts, eps):
+    """Douglas-Peucker on an open run of [x, y, ...] points; extra fields ride along."""
+    if len(pts) < 3:
+        return pts
+    a, b = pts[0], pts[-1]; dx, dy = b[0] - a[0], b[1] - a[1]; L = (dx*dx + dy*dy) ** .5 or 1e-9
+    dm, im = -1, 0
+    for i in range(1, len(pts) - 1):
+        d = abs((pts[i][0] - a[0]) * dy - (pts[i][1] - a[1]) * dx) / L
+        if d > dm:
+            dm, im = d, i
+    if dm > eps:
+        return simplify_open(pts[:im + 1], eps)[:-1] + simplify_open(pts[im:], eps)
+    return [a, b]
+
+def centerline(ring):
+    """A river ribbon (one bank out, the other back) as [x, y, width] down its middle."""
+    h = len(ring) // 2
+    a, b = ring[:h], ring[h:][::-1]
+    def at(P, t):
+        k = t * (len(P) - 1); k0 = int(k); k1 = min(k0 + 1, len(P) - 1); f = k - k0
+        return (P[k0][0] * (1 - f) + P[k1][0] * f, P[k0][1] * (1 - f) + P[k1][1] * f)
+    n = max(len(a), len(b))
+    out = []
+    for k in range(n):
+        p, q = at(a, k / (n - 1)), at(b, k / (n - 1))
+        out.append([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2, ((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2) ** .5])
+    return out
+
 def area(p):
     return abs(sum(p[i-1][0]*p[i][1] - p[i][0]*p[i-1][1] for i in range(len(p)))) / 2
 
@@ -80,10 +115,20 @@ mainland_id = max(rings, key=lambda f: area(rings[f]))
 mainland = rings.pop(mainland_id)
 islands = [rings[f] for f in sorted(rings, key=lambda f: -area(rings[f]))]
 rnd = lambda ring: [[round(x, 1), round(y, 1)] for x, y in ring]
+rv = re.search(r'<g id="rivers"[^>]*>(.*?)</g>', svg, re.S)
+rivers = []
+for rid, d in re.findall(r'<path id="(river\d+)" d="([^"]+)"', rv.group(1) if rv else ""):
+    full = centerline(flatten(d))
+    c = simplify_open(full, args.eps / 2)
+    rivers.append({"id": rid, "w": round(max(w for _, _, w in full), 2),
+                   "pts": [[round(x, 1), round(y, 1)] for x, y, _ in c]})
 out = {
     "_note": f"Coastline from map.svg ({mainland_id} is the mainland), 1000x700 canvas units, "
-             f"Douglas-Peucker eps {args.eps}. Regenerate with extract_coast.py after a repaint.",
+             f"Douglas-Peucker eps {args.eps}; rivers are painted centerlines with their widest width, "
+             f"eps {args.eps / 2}. Regenerate with extract_coast.py after a repaint.",
     "mainland": rnd(mainland), "islands": [rnd(r) for r in islands], "lakes": [rnd(r) for r in lakes],
+    "rivers": rivers,
 }
 args.out.write_text(json.dumps(out, separators=(",", ":")) + "\n")
-print(f"wrote {args.out}: mainland {len(mainland)} pts, {len(islands)} islands, {len(lakes)} lakes")
+print(f"wrote {args.out}: mainland {len(mainland)} pts, {len(islands)} islands, {len(lakes)} lakes, "
+      f"{len(rivers)} rivers ({sum(len(r['pts']) for r in rivers)} pts)")
