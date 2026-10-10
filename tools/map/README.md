@@ -41,6 +41,17 @@ sees the Pages copy. **save changes** writes each touched file as one Contents-A
 to `staging`, folding only this session's changes into the file as it stands there: pins
 and overrides by name, labels by `group:key`, routes by class + chain, traces appended.
 An edit made while a save is running stays unsaved and goes out with the next save.
+**discard** drops every unsaved edit by reloading the page: the dirty bookkeeping knows
+which keys changed, not what they were, and an authed load already reads `staging`, so a
+reload is exactly "back to the last save there", other tabs' saves included. The view and
+edit mode come back after the reload; a selected route does not. It asks first, and is
+disabled while a save is in flight.
+
+Dragging maps the cursor through the SVG's own matrix (`getScreenCTM`), so a dragged pin,
+waypoint or label stays under the cursor in any window shape. The viewBox is 10:7 and
+letterboxed with `xMidYMid meet`; dividing by the element's bounding box, as the page did
+until October 2026, ignored the bars and put a dragged pin to the side of the cursor by a
+fraction of its distance from the window's centre.
 
 Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
 to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand

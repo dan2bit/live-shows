@@ -321,6 +321,9 @@
           font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
           save changes (0)</button>
         <span class="save-ind" id="ind-save" style="font-size:10.5px;margin-left:4px;"></span>
+        <button id="discardAll" disabled title="Reload the page from staging, dropping every unsaved edit" style="margin-top:4px;margin-left:6px;font-family:'Special Elite',monospace;
+          font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;opacity:.9;">
+          discard (0)</button>
         <div id="saveStatus" style="font-size:10.5px;opacity:.85;line-height:1.5;"></div>
       </div>
     </div>
@@ -475,11 +478,13 @@
   // wrote from one touched again while the save was in flight (that one stays dirty).
   const dirty={pins:new Map(),overrides:new Map(),labels:new Map(),traces:0,thor:new Map()};
   let touchSeq=0;
-  const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus');
+  const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus'),discardBtn=document.getElementById('discardAll');
   const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces+dirty.thor.size;
   function refreshSave(){
     if(!authed)return;
     saveAllBtn.textContent=`save changes (${dirtyCount()})`;
+    discardBtn.textContent=`discard (${dirtyCount()})`;
+    discardBtn.disabled=!dirtyCount()||saveAllBtn.disabled;   // nothing to drop, or a save is in flight
     const part=(n,total,label)=>n?`<b>${label} ${total}</b> (${n} unsaved)`:`${label} ${total}`;
     // pins: drawn/undrawn. Undrawn entries are pins for names the map does not draw
     // (merged, excluded, or off the roster); they stay so a returning act lands where
@@ -568,8 +573,20 @@
     saveAllBtn.disabled=false; refreshSave();
     return ok;
   }
+  // Reset is a reload. The dirty maps know which keys changed, not what they were, and
+  // every edit is already in the DOM; an authed load reads every edits file from BRANCH
+  // (loadEdit above), so reloading is exactly "back to the last save on staging",
+  // other tabs' saves included. The view and edit mode ride across in sessionStorage.
+  const VIEW_KEY='map_view_after_discard';
   if(authed){
     saveAllBtn.addEventListener('click',()=>saveAll('ind-save'));
+    discardBtn.addEventListener('click',()=>{
+      const n=dirtyCount(); if(!n||saveAllBtn.disabled)return;
+      if(!confirm(`Discard ${n} unsaved change${n>1?'s':''} and reload from ${BRANCH}?`))return;
+      for(const k of ['pins','overrides','labels','thor'])dirty[k].clear(); dirty.traces=0;   // so beforeunload stays quiet
+      try{ sessionStorage.setItem(VIEW_KEY,JSON.stringify({vb,edit:true})); }catch(e){}
+      location.reload();
+    });
     window.addEventListener('beforeunload',e=>{ if(dirtyCount()>0){e.preventDefault();e.returnValue='';} });
   }
 
@@ -1295,15 +1312,21 @@
   // zoom: wheel-to-cursor, buttons, fit; drag to pan — one viewBox for all layers
   let vb={x:0,y:0,w:W,h:H};
   const apply=()=>{map.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);map.dataset.zoomTier=zoomTier(vb.w);};
+  // Screen -> map units through the SVG's own matrix. The viewBox is 10:7 and fitted with
+  // xMidYMid meet, so in any window that is not 10:7 it is letterboxed inside #map: dividing
+  // by the element's bounding box (the old way) ignored the bars and put a dragged pin left
+  // of the cursor on the right half of a wide window, right of it on the left half, by a
+  // fraction of the cursor's distance from centre. getScreenCTM includes the fit.
+  const toMap=(cx,cy)=>{const q=new DOMPoint(cx,cy).matrixTransform(map.getScreenCTM().inverse());return [q.x,q.y];};
+  const pxPerUnit=()=>{const m=map.getScreenCTM();return [m.a,m.d];};   // screen px per map unit, x and y
   function zoomAt(px,py,k){
     vb={x:px-(px-vb.x)*k,y:py-(py-vb.y)*k,w:vb.w*k,h:vb.h*k};apply();
   }
   const stage=document.getElementById('stage');
   stage.addEventListener('wheel',e=>{
     e.preventDefault();
-    const r=map.getBoundingClientRect();
-    zoomAt(vb.x+(e.clientX-r.left)/r.width*vb.w, vb.y+(e.clientY-r.top)/r.height*vb.h,
-           e.deltaY<0?0.85:1/0.85);
+    const [px,py]=toMap(e.clientX,e.clientY);
+    zoomAt(px,py,e.deltaY<0?0.85:1/0.85);
   },{passive:false});
   document.getElementById('zin').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,0.75);
   document.getElementById('zout').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/0.75);
@@ -1325,6 +1348,10 @@
   const saveBlock=document.getElementById('saveBlock');
   editCb.addEventListener('change',()=>{editctl.style.display=editCb.checked?'block':'none';document.body.classList.toggle('editing',editCb.checked);saveBlock.style.display=editCb.checked?'block':'none';
     const rb=document.getElementById('rosterBanner');if(rb)rb.style.display=editCb.checked?'':'none';});
+  try{ const v=JSON.parse(sessionStorage.getItem(VIEW_KEY)||'null'); sessionStorage.removeItem(VIEW_KEY);
+    if(v&&v.vb&&isFinite(v.vb.w)&&v.vb.w>0){ vb=v.vb; apply(); }
+    if(v&&v.edit&&!DEVICE){ editCb.checked=true; editCb.dispatchEvent(new Event('change')); }
+  }catch(e){}
   }
   // keep a mark's class list in step with its (live) flags after an edit
   function reflag(g){
@@ -1533,8 +1560,6 @@
   });
   }
   let pan=null, dragS=null;
-  const toMap=(cx,cy)=>{const r=map.getBoundingClientRect();
-    return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
   // Pinch: the stage owns its touches (touch-action:none on a device), so two pointers are a
   // zoom about their midpoint plus a pan by the midpoint's travel - the viewBox does both,
   // the browser's page zoom never fires. A second finger ends any pan or drag in progress.
@@ -1610,9 +1635,9 @@
     if(pinch&&touches.has(e.pointerId)){
       touches.set(e.pointerId,[e.clientX,e.clientY]);
       if(touches.size<2)return;
-      const g=pinchGeom(),r=map.getBoundingClientRect();
-      zoomAt(vb.x+(g.mx-r.left)/r.width*vb.w, vb.y+(g.my-r.top)/r.height*vb.h, pinch.d/g.d);
-      vb.x-=(g.mx-pinch.mx)/r.width*vb.w;vb.y-=(g.my-pinch.my)/r.height*vb.h;apply();
+      const g=pinchGeom(),[px,py]=toMap(g.mx,g.my);
+      zoomAt(px,py,pinch.d/g.d);
+      const [sx,sy]=pxPerUnit();vb.x-=(g.mx-pinch.mx)/sx;vb.y-=(g.my-pinch.my)/sy;apply();
       pinch=g;return;
     }
     if(dragV){const [mx,my]=toMap(e.clientX,e.clientY);dragV.arr[dragV.i]=[+mx.toFixed(1),+my.toFixed(1)];drawThoroughfares();drawHandles();return;}
@@ -1634,8 +1659,8 @@
       return;
     }
     if(!pan)return;
-    const r=map.getBoundingClientRect();
-    vb.x-=(e.clientX-pan.x)/r.width*vb.w;vb.y-=(e.clientY-pan.y)/r.height*vb.h;
+    const [sx,sy]=pxPerUnit();
+    vb.x-=(e.clientX-pan.x)/sx;vb.y-=(e.clientY-pan.y)/sy;
     pan={x:e.clientX,y:e.clientY};apply();
   });
   const endTouch=e=>{touches.delete(e.pointerId);if(touches.size<2)pinch=null;};
