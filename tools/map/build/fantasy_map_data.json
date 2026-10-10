@@ -24,8 +24,8 @@
   {
    "name": "Tone",
    "xy": [
-    498,
-    550
+    495,
+    551
    ]
   },
   {
@@ -52,8 +52,8 @@
   {
    "name": "Lovett Creek",
    "xy": [
-    428,
-    560
+    422,
+    562
    ]
   },
   {
@@ -171,8 +171,8 @@
   {
    "name": "Cigar Box Creek",
    "xy": [
-    696.7,
-    448.8
+    701,
+    452
    ]
   },
   {
@@ -221,14 +221,14 @@
    "name": "Juke Slough",
    "xy": [
     272,
-    525
+    515
    ]
   },
   {
    "name": "Howard Bayou",
    "xy": [
-    694,
-    493
+    708,
+    498
    ]
   },
   {
@@ -262,8 +262,8 @@
   {
    "name": "Sustain Run",
    "xy": [
-    719.6,
-    339.9
+    714,
+    336
    ]
   },
   {
@@ -332,7 +332,7 @@
   {
    "name": "Harp Run",
    "xy": [
-    236,
+    230,
     488
    ]
   },
@@ -1938,6 +1938,11 @@
      "name": "Angélique Kidjo",
      "at": 0.4923377251947235,
      "dist": 3.8
+    },
+    {
+     "name": "Matteo Mancuso",
+     "at": 1.0000000000000002,
+     "dist": 6.6
     }
    ]
   },
@@ -1980,7 +1985,13 @@
     ]
    ],
    "note": "auto from art/map.svg river298 (channel river298 > river280); 3 on this channel",
-   "captured": []
+   "captured": [
+    {
+     "name": "Matteo Mancuso",
+     "at": 1.0,
+     "dist": 6.6
+    }
+   ]
   },
   {
    "id": "wway-17",
@@ -3463,7 +3474,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "dcf820f846",
+  "pins_hash": "54e772189d",
   "overrides_hash": "fa40ebac0c",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
@@ -6468,12 +6479,12 @@
    "auto_size": "town",
    "score": 9,
    "xy": [
-    688.6,
-    368.8
+    688.2,
+    361.9
    ],
    "region_uv": [
-    0.2103,
-    1.1552
+    0.2091,
+    1.1276
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -6791,12 +6802,12 @@
    "auto_size": "town",
    "score": 3,
    "xy": [
-    684.3,
-    584.0
+    685.5,
+    585.8
    ],
    "region_uv": [
-    0.8452,
-    0.75
+    0.85,
+    0.7615
    ],
    "flags": {
     "unvisited": true
@@ -8042,12 +8053,12 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    343.9,
-    593.1
+    318.2,
+    552.6
    ],
    "region_uv": [
-    0.6044,
-    0.4529
+    0.5297,
+    0.0635
    ],
    "flags": {
     "legacy": true,
@@ -8450,12 +8461,12 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    472.6,
-    545.8
+    472.2,
+    544.2
    ],
    "region_uv": [
-    -0.0016,
-    0.5051
+    -0.0032,
+    0.4949
    ],
    "flags": {
     "unvisited": true
@@ -10375,12 +10386,12 @@
    "auto_size": "city",
    "score": 12,
    "xy": [
-    497.1,
-    565.2
+    496.6,
+    566.3
    ],
    "region_uv": [
-    0.0964,
-    0.6295
+    0.0944,
+    0.6365
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -10650,12 +10661,12 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    247.0,
-    489.0
+    244.5,
+    490.1
    ],
    "region_uv": [
-    0.3227,
-    -0.5481
+    0.3154,
+    -0.5375
    ],
    "flags": {
     "legacy": true,
@@ -11110,12 +11121,12 @@
    "auto_size": "waystation",
    "score": 3,
    "xy": [
-    288.2,
-    502.3
+    286.3,
+    501.6
    ],
    "region_uv": [
-    0.4424,
-    -0.4202
+    0.4369,
+    -0.4269
    ],
    "flags": {
     "unvisited": true
@@ -11545,12 +11556,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    518.6,
-    549.7
+    506.3,
+    547.8
    ],
    "region_uv": [
-    0.1824,
-    0.5301
+    0.1332,
+    0.5179
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11638,12 +11649,12 @@
    "auto_size": "town",
    "score": 9,
    "xy": [
-    671.1,
-    368.0
+    672.6,
+    362.1
    ],
    "region_uv": [
-    0.6991,
-    0.3729
+    0.7121,
+    0.3479
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11818,11 +11829,11 @@
    "auto_size": "waystation",
    "score": 2,
    "xy": [
-    300.6,
+    298.5,
     515.1
    ],
    "region_uv": [
-    0.4785,
+    0.4724,
     -0.2971
    ],
    "flags": {
@@ -11842,12 +11853,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    224.5,
-    498.6
+    225.3,
+    499.1
    ],
    "region_uv": [
-    0.2573,
-    -0.4558
+    0.2596,
+    -0.451
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11908,12 +11919,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    292.3,
-    552.3
+    226.2,
+    521.0
    ],
    "region_uv": [
-    0.4544,
-    0.0606
+    0.2622,
+    -0.2404
    ],
    "flags": {
     "unvisited": true
@@ -12347,12 +12358,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    511.5,
-    566.4
+    511.2,
+    565.5
    ],
    "region_uv": [
-    0.154,
-    0.6372
+    0.1528,
+    0.6314
    ],
    "flags": {
     "unvisited": true
@@ -13431,11 +13442,11 @@
    "auto_size": "town",
    "score": 3,
    "xy": [
-    549.0,
+    551.9,
     596.4
    ],
    "region_uv": [
-    0.304,
+    0.3156,
     0.8295
    ],
    "flags": {
@@ -14028,12 +14039,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    409.5,
-    556.0
+    405.5,
+    550.3
    ],
    "region_uv": [
-    0.4724,
-    0.822
+    0.4618,
+    0.7979
    ],
    "flags": {},
    "src": "seen as support for Maggie Rose (2025-12-20)",
@@ -14424,12 +14435,12 @@
    "auto_size": "town",
    "score": 9,
    "xy": [
-    436.2,
-    583.8
+    443.3,
+    578.7
    ],
    "region_uv": [
-    0.5426,
-    0.9398
+    0.5613,
+    0.9182
    ],
    "flags": {},
    "src": "history pass: seen as support",
