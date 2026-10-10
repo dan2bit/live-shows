@@ -4,7 +4,7 @@
    "name": "Giddens Pool",
    "xy": [
     459,
-    253
+    252
    ]
   },
   {
@@ -136,8 +136,8 @@
   {
    "name": "Fretless Creek",
    "xy": [
-    473,
-    522
+    476,
+    520
    ]
   },
   {
@@ -178,8 +178,8 @@
   {
    "name": "The Flood",
    "xy": [
-    579.9,
-    256.5
+    567,
+    258
    ]
   },
   {
@@ -325,8 +325,8 @@
   {
    "name": "Bellow Brook",
    "xy": [
-    571.4,
-    368.2
+    531,
+    361
    ]
   },
   {
@@ -353,8 +353,8 @@
   {
    "name": "Sparkstream",
    "xy": [
-    383,
-    256
+    377,
+    241
    ]
   }
  ],
@@ -925,6 +925,11 @@
    ],
    "note": "auto from art/map.svg river174 (channel river174 > river138); 5 on this channel",
    "captured": [
+    {
+     "name": "The Devil Makes Three",
+     "at": 0.010128278569965772,
+     "dist": 2.9
+    },
     {
      "name": "Bella McCormick",
      "at": 0.10584865530141187,
@@ -1756,11 +1761,6 @@
    "note": "auto from art/map.svg river104 (channel river104); 5 on this channel",
    "captured": [
     {
-     "name": "The Family Crest",
-     "at": 0.7705189829801528,
-     "dist": 3.9
-    },
-    {
      "name": "Glen Hansard",
      "at": 0.9233539980592608,
      "dist": 10.0
@@ -1926,18 +1926,18 @@
    "captured": [
     {
      "name": "Mohini Dey",
-     "at": 0.3355154375663653,
-     "dist": 3.5
+     "at": 0.33182435726259357,
+     "dist": 4.4
     },
     {
      "name": "Sona Jobarteh",
-     "at": 0.4060981754503121,
-     "dist": 9.5
+     "at": 0.4262791959327952,
+     "dist": 7.7
     },
     {
      "name": "Angélique Kidjo",
      "at": 0.4923377251947235,
-     "dist": 9.8
+     "dist": 3.8
     }
    ]
   },
@@ -2995,9 +2995,9 @@
      "dist": 8.8
     },
     {
-     "name": "The Devil Makes Three",
-     "at": 0.8356028134569686,
-     "dist": 7.5
+     "name": "Lindsay Lou",
+     "at": 0.46381875288138413,
+     "dist": 5.6
     }
    ]
   },
@@ -3095,8 +3095,8 @@
    "captured": [
     {
      "name": "Mikaela Davis",
-     "at": 0.3890709607311615,
-     "dist": 6.4
+     "at": 0.29789564208208186,
+     "dist": 5.8
     }
    ]
   },
@@ -3463,7 +3463,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "3b6f15a083",
+  "pins_hash": "dcf820f846",
   "overrides_hash": "fa40ebac0c",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
@@ -6681,12 +6681,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    570.5,
-    400.0
+    567.6,
+    401.2
    ],
    "region_uv": [
-    0.7631,
-    0.8661
+    0.7547,
+    0.8714
    ],
    "flags": {},
    "src": "seen as support for Yasmin Williams (2025-02-07)",
@@ -6815,12 +6815,12 @@
    "auto_size": "waystation",
    "score": 0.5,
    "xy": [
-    499.4,
-    527.8
+    494.5,
+    531.3
    ],
    "region_uv": [
-    0.1056,
-    0.3897
+    0.086,
+    0.4122
    ],
    "flags": {
     "unvisited": true
@@ -6861,12 +6861,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    535.8,
-    400.8
+    537.7,
+    399.7
    ],
    "region_uv": [
-    0.6622,
-    0.8696
+    0.6677,
+    0.8647
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -6928,12 +6928,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    546.2,
-    352.0
+    548.0,
+    351.1
    ],
    "region_uv": [
-    0.6924,
-    0.6518
+    0.6977,
+    0.6478
    ],
    "flags": {
     "unvisited": true
@@ -7588,12 +7588,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    446.8,
-    562.6
+    446.0,
+    560.7
    ],
    "region_uv": [
-    0.5705,
-    0.85
+    0.5684,
+    0.8419
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -8679,12 +8679,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    511.8,
-    410.0
+    514.1,
+    410.1
    ],
    "region_uv": [
-    0.5924,
-    0.9107
+    0.5991,
+    0.9112
    ],
    "flags": {
     "unvisited": true
@@ -8978,12 +8978,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    625.3,
-    271.9
+    614.5,
+    257.1
    ],
    "region_uv": [
-    0.0294,
-    0.7676
+    -0.0014,
+    0.7084
    ],
    "flags": {
     "unvisited": true
@@ -9345,12 +9345,12 @@
    "auto_size": "town",
    "score": 9,
    "xy": [
-    395.5,
-    459.4
+    415.8,
+    510.1
    ],
    "region_uv": [
-    0.4355,
-    0.4127
+    0.4889,
+    0.6275
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -9755,12 +9755,12 @@
    "auto_size": "village",
    "score": 4,
    "xy": [
-    491.7,
-    458.8
+    487.0,
+    473.4
    ],
    "region_uv": [
-    0.6887,
-    0.4102
+    0.6763,
+    0.472
    ],
    "flags": {},
    "src": "seen as support for ZZ Ward (2023-09-08)",
@@ -10351,12 +10351,12 @@
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    450.7,
-    247.3
+    462.9,
+    264.6
    ],
    "region_uv": [
-    0.4148,
-    0.1844
+    0.4503,
+    0.2616
    ],
    "flags": {
     "unvisited": true
@@ -10398,11 +10398,11 @@
    "score": 3,
    "xy": [
     528.1,
-    250.6
+    244.7
    ],
    "region_uv": [
     0.6398,
-    0.1991
+    0.1728
    ],
    "flags": {},
    "src": "seen as support for The Heavy Heavy (2025-06-13)",
@@ -10697,12 +10697,12 @@
    "auto_size": "city",
    "score": 18,
    "xy": [
-    581.8,
-    274.3
+    583.2,
+    271.7
    ],
    "region_uv": [
-    0.7959,
-    0.3049
+    0.8,
+    0.2933
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11042,12 +11042,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    415.6,
-    510.8
+    395.2,
+    458.6
    ],
    "region_uv": [
-    0.4884,
-    0.6305
+    0.4347,
+    0.4093
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11591,12 +11591,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    556.0,
-    362.0
+    553.0,
+    358.5
    ],
    "region_uv": [
-    0.7209,
-    0.6964
+    0.7122,
+    0.6808
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11730,12 +11730,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    483.7,
-    525.5
+    483.3,
+    524.6
    ],
    "region_uv": [
-    0.0428,
-    0.375
+    0.0412,
+    0.3692
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -11796,12 +11796,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    444.3,
-    522.5
+    474.3,
+    484.8
    ],
    "region_uv": [
-    0.5639,
-    0.6801
+    0.6429,
+    0.5203
    ],
    "flags": {},
    "src": "seen as support for Alanis Morissette (2024-06-29)",
@@ -12184,12 +12184,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    584.9,
-    321.0
+    587.8,
+    318.9
    ],
    "region_uv": [
-    0.8049,
-    0.5134
+    0.8134,
+    0.504
    ],
    "flags": {},
    "src": "seen as support for Beck (2023-09-10)",
@@ -13070,12 +13070,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    492.4,
-    522.6
+    492.3,
+    524.7
    ],
    "region_uv": [
-    0.0776,
-    0.3564
+    0.0772,
+    0.3699
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -13889,12 +13889,12 @@
    "auto_size": "town",
    "score": 6,
    "xy": [
-    378.4,
-    473.2
+    492.1,
+    457.4
    ],
    "region_uv": [
-    0.3905,
-    0.4712
+    0.6897,
+    0.4042
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -13982,12 +13982,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    526.8,
-    229.9
+    521.7,
+    245.0
    ],
    "region_uv": [
-    0.636,
-    0.1067
+    0.6212,
+    0.1741
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -14283,12 +14283,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    471.9,
-    492.4
+    471.0,
+    491.0
    ],
    "region_uv": [
-    0.6366,
-    0.5525
+    0.6342,
+    0.5466
    ],
    "flags": {},
    "src": "history pass: seen as support",
@@ -14952,12 +14952,12 @@
    "auto_size": "village",
    "score": 4,
    "xy": [
-    472.3,
-    286.4
+    471.4,
+    285.2
    ],
    "region_uv": [
-    0.4776,
-    0.3589
+    0.475,
+    0.3536
    ],
    "flags": {},
    "src": "history pass: seen as support",
