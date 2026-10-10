@@ -11,7 +11,7 @@ else is sorted by who writes it.
 | `emit_heightmap.py` | the FMG heightmap seed from the built data | humans, by PR |
 | `extract_coast.py` | the painted coast as polygons and the painted rivers as centerlines, from `art/map.svg` | humans, by PR |
 | `docs/` | `fantasy_map_schema.md` (the data contract, the device/desktop split), `heightmap_azgaar_notes.md` (the repaint procedure) | humans |
-| `edits/` | `pins.json`, `labels.json`, `map_overrides.json`, `thoroughfares.json`, `traced_waterways.json`, `discovered_adds.json` — the hand-owned state | the in-page editor (read-merge-write, to `staging`), or a hand edit |
+| `edits/` | `pins.json`, `labels.json`, `map_overrides.json`, `thoroughfares.json`, `discovered_adds.json` — the hand-owned state | the in-page editor (read-merge-write, to `staging`), or a hand edit |
 | `build/` | `fantasy_map_data.json`, `coast.json`, `heightmap.png` — derived, never hand-edited | `map-rebuild.yml` on every push to `main` that touches `edits/` or a generator; `coast.json` by running `extract_coast.py` after a repaint |
 | `art/` | `map.svg`, the painted background the page draws under everything; the Azgaar `.map` project it was exported from | a repaint session in Azgaar's FMG |
 
@@ -34,12 +34,12 @@ resolution and were 8.5 MB in every Pages deploy; the `.map` is the source.
 
 ## The in-page editor
 
-An authed desktop gets edit and trace modes on `map.html`. Signed in, the page loads
+An authed desktop gets edit mode on `map.html`. Signed in, the page loads
 every `edits/` file from `staging` through the GitHub API - where its saves land - rather
 than from the Pages copy, which trails a save by the promote and the deploy; everyone else
 sees the Pages copy. **save changes** writes each touched file as one Contents-API commit
 to `staging`, folding only this session's changes into the file as it stands there: pins
-and overrides by name, labels by `group:key`, routes by class + chain, traces appended.
+and overrides by name, labels by `group:key`, routes by class + chain.
 An edit made while a save is running stays unsaved and goes out with the next save.
 **discard** drops every unsaved edit by reloading the page: the dirty bookkeeping knows
 which keys changed, not what they were, and an authed load already reads `staging`, so a
@@ -52,6 +52,13 @@ waypoint or label stays under the cursor in any window shape. The viewBox is 10:
 letterboxed with `xMidYMid meet`; dividing by the element's bounding box, as the page did
 until October 2026, ignored the bars and put a dragged pin to the side of the cursor by a
 fraction of its distance from the window's centre.
+
+Waterways are not traced by hand any more. The rivers are painted: `extract_coast.py`
+reads them off the Azgaar export into `build/coast.json -> rivers`, and their names are
+`labels.json -> waters`, placed in the editor like any other label (#460). The earlier
+trace mode - click settlements source to mouth, save the polyline - produced
+`edits/traced_waterways.json`, whose 47 names seeded that label set; the file and the mode
+were retired in October 2026 and live on in history.
 
 Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
 to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand

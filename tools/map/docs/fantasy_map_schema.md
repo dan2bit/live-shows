@@ -181,10 +181,10 @@ way hovering does on a desktop, since touch has no hover. The stage owns every t
 the step buttons are hidden and only the fit button remains. A one-line nudge at the foot
 of a portrait screen says the map wants landscape; where the browser can rotate the display
 (fullscreen plus `screen.orientation.lock`) a button beside it does so, and where it cannot
-the line stands alone and the map letterboxes until the phone is turned. Edit mode, trace
-mode and the roster panel are never offered on a device.
+the line stands alone and the map letterboxes until the phone is turned. Edit mode and
+the roster panel are never offered on a device.
 
-On a desktop: edit and trace appear for an authed viewer as before, and the roster "not on
+On a desktop: edit mode appears for an authed viewer as before, and the roster "not on
 the map" panel appears only while edit mode is on - it is an editor's worklist, not a
 viewer's banner. The collapsed plate renders the same way on both.
 
