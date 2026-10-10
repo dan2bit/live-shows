@@ -57,25 +57,17 @@
   .stl.faded .dot{fill-opacity:.35;}
   .stl.legacy .dot{fill:var(--gold);}
   .stl .tick{stroke:var(--ink);stroke-width:.5;fill:var(--tint);}
-  .stl.traced .traceno{font-size:5.5px;fill:#0e5a70;paint-order:stroke;stroke:rgba(237,224,194,.9);stroke-width:1.6px;}
-  .stl.traced .dot{stroke:#0e5a70;stroke-width:1.6;}
-  body.tracing .stl .dot{fill:rgba(237,224,194,.92);stroke:#FF2FA0;stroke-width:1.4;stroke-dasharray:none;opacity:1;}
-  body.tracing .stl.tracedone .dot{fill:rgba(34,26,18,.28);stroke:rgba(34,26,18,.45);stroke-width:.8;}
-  body.tracing .stl.traced .dot{fill:#0e5a70;stroke:#0e5a70;}
-  body.tracing .stl text{opacity:.9;}
-  #traceName{width:100%;font-family:'Oswald';font-size:12px;border:1.5px solid var(--ink);background:#f6eed9;padding:4px;margin-top:4px;display:none;}
-  .tracepath{fill:none;stroke:#0e5a70;stroke-width:1.2;stroke-dasharray:3 2;opacity:.75;vector-effect:non-scaling-stroke;}
   /* settlement labels: every settlement carries one <text class="lbl"> at one size; zoom decides
      which tiers show. apply() writes data-zoom-tier on the svg from vb.w (1: capitals and cities,
      2: + towns, 3: + villages, 4: + hamlets and waystations) and each .stl carries data-lt, its
-     own tier. A label pinned by a click (.pinlabel), a finder hit (.found) or a traced settlement
-     (.traced) shows at any zoom. The legend's "names" toggle still hides them all. */
+     own tier. A label pinned by a click (.pinlabel) or a finder hit (.found) shows at any
+     zoom. The legend's "names" toggle still hides them all. */
   .stl .lbl{display:none;font-size:7px;}
   #map[data-zoom-tier="1"] .stl[data-lt="1"] .lbl,
   #map[data-zoom-tier="2"] .stl[data-lt="1"] .lbl,#map[data-zoom-tier="2"] .stl[data-lt="2"] .lbl,
   #map[data-zoom-tier="3"] .stl[data-lt="1"] .lbl,#map[data-zoom-tier="3"] .stl[data-lt="2"] .lbl,#map[data-zoom-tier="3"] .stl[data-lt="3"] .lbl,
   #map[data-zoom-tier="4"] .stl .lbl,
-  .stl.pinlabel .lbl,.stl.found .lbl,.stl.traced .lbl{display:block;}
+  .stl.pinlabel .lbl,.stl.found .lbl{display:block;}
   .geo-island{font-family:'Special Elite',monospace;fill:#EDE0C2;letter-spacing:.1em;paint-order:stroke;stroke:rgba(34,26,18,.85);stroke-width:2.2px;}
   .geo-water{fill:#d9e6f0;font-style:italic;letter-spacing:.06em;paint-order:stroke;stroke:rgba(20,35,55,.9);stroke-width:2px;}
   /* a water named in labels.json -> water_tiers follows the settlement label tiers above: a
@@ -119,10 +111,10 @@
   /* A visible settlement name is the link to its card - the same rule the poster and the
      list pages use, so the map does not invent a third convention. The DOT keeps toggling
      the label, so an unlabelled hamlet is still "click to ask its name, click the name to
-     ask about it". View mode only: edit and trace keep pointer-events:none here so drag
-     and trace targets are exactly what they were. */
-  body:not(.editing):not(.tracing) .stl text.lbl{pointer-events:auto;cursor:pointer;}
-  body:not(.editing):not(.tracing) .stl text.lbl:hover{text-decoration:underline;}
+     ask about it". View mode only: edit mode keeps pointer-events:none here so drag
+     targets are exactly what they were. */
+  body:not(.editing) .stl text.lbl{pointer-events:auto;cursor:pointer;}
+  body:not(.editing) .stl text.lbl:hover{text-decoration:underline;}
   #readout .name.am-open{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;}
   .stl:hover .dot{stroke-width:1.6;}
 
@@ -180,7 +172,7 @@
   /* Coarse-pointer devices (phones, tablets): the plate sits top-left where the eye lands and
      starts collapsed, the stage owns every touch so pinch and drag reach the map instead of
      the page's own zoom, and the step buttons give way to pinch - only the fit button stays.
-     Edit and trace are never offered here; they are a desktop job. */
+     Edit mode is never offered here; it is a desktop job. */
   body.device #plate{left:8px;top:8px;transform:none;width:min(262px,70vw);}
   body.device #stage{touch-action:none;}
   body.device #zoomer #zin,body.device #zoomer #zout{display:none;}
@@ -298,11 +290,6 @@
     </select>
     <button id="exclOv" title="not an act the map should know about - leaves the map on the next rebuild" style="margin-top:5px;font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">exclude from map</button>
     <label style="display:block;font-size:11.5px;margin-top:5px;"><input type="checkbox" id="showStrays" checked> region strays (amber)</label>
-    <div id="tracebar" style="margin-top:7px;border-top:1px dashed rgba(34,26,18,.3);padding-top:6px;">
-      <button id="traceBtn" style="font-family:'Special Elite',monospace;font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">trace waterway</button>
-      <input id="traceName" placeholder="name / note for this waterway &mdash; Enter to save">
-      <div id="traceMsg" style="font-size:10.5px;margin-top:3px;min-height:12px;"></div>
-    </div>
   </div>
   <div id="legend">
     <div class="lgrow"><span class="lgk">features</span><label><input type="checkbox" data-t="maplabels" checked> labels</label><label><input type="checkbox" data-t="routes" checked> routes</label></div>
@@ -315,7 +302,6 @@
     </div>
     <div id="ownerControls" style="display:none">
       <label><input type="checkbox" id="editMode"> edit</label>
-      <label><input type="checkbox" id="traceMode"> trace rivers</label>
       <div id="saveBlock" style="display:none">
         <button id="saveAll" style="margin-top:4px;font-family:'Special Elite',monospace;
           font-size:11px;border:1.5px solid var(--ink);background:transparent;padding:3px 8px;cursor:pointer;">
@@ -348,7 +334,7 @@
   // background image below already does this, and artist-modal.js does it for its data)
   const fresh=u=>u+(u.includes('?')?'&':'?')+'t='+Date.now();
 
-  // Owner-only edit/trace tooling is gated on the same PAT the list pages (app.js)
+  // Owner-only edit tooling is gated on the same PAT the list pages (app.js)
   // store, so a token saved there just works here too — no separate auth surface on
   // the map. For an authed user this also grants write capability: the save button
   // below commits straight to staging with this same PAT.
@@ -356,7 +342,7 @@
   const authed=!!localStorage.getItem(PAT_KEY);
   // A coarse pointer is the honest test for "a device": true on phones and tablets whatever
   // their width, false on a narrow desktop window where hover and the editor still make sense.
-  // Edit and trace are desktop-only; a device gets the viewing surface and the card.
+  // Edit mode is desktop-only; a device gets the viewing surface and the card.
   const DEVICE=matchMedia('(pointer: coarse)').matches;
   if(DEVICE)document.body.classList.add('device');
   const portraitQ=matchMedia('(orientation: portrait)');
@@ -468,18 +454,18 @@
 
   // ── one save for the four editable files ──
   // The page tracks WHAT it changed, not just the whole object: pins and overrides by
-  // touched name (an absent name is a deletion), labels by "group:key", traces by how many
-  // it appended. That is what read-merge-write needs - each save fetches the file as it is
+  // touched name (an absent name is a deletion), labels by "group:key", routes by key.
+  // That is what read-merge-write needs - each save fetches the file as it is
   // now on staging and folds only this session's changes into it - and it is what lets one
   // button write only the files that actually changed, one Contents-API commit each (a
   // Git-Data batch would be one commit, but does not fire the push event auto-promote
   // listens for). A file this page never touched is never written.
   // Each touched key maps to the touch that last changed it, so a save can tell a key it
   // wrote from one touched again while the save was in flight (that one stays dirty).
-  const dirty={pins:new Map(),overrides:new Map(),labels:new Map(),traces:0,thor:new Map()};
+  const dirty={pins:new Map(),overrides:new Map(),labels:new Map(),thor:new Map()};
   let touchSeq=0;
   const saveAllBtn=document.getElementById('saveAll'),saveStatus=document.getElementById('saveStatus'),discardBtn=document.getElementById('discardAll');
-  const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.traces+dirty.thor.size;
+  const dirtyCount=()=>dirty.pins.size+dirty.overrides.size+dirty.labels.size+dirty.thor.size;
   function refreshSave(){
     if(!authed)return;
     saveAllBtn.textContent=`save changes (${dirtyCount()})`;
@@ -493,13 +479,13 @@
     const pinTotal=`<span title="pins on drawn settlements / pins for names not drawn (merged, excluded or off the roster)">${pinDrawn}/${pinNames.length-pinDrawn}</span>`;
     saveStatus.innerHTML=[part(dirty.pins.size,pinTotal,'pins'),part(dirty.overrides.size,Object.keys(overrides).length,'overrides'),
       part(dirty.labels.size,Object.keys(LBL.regions||{}).length+Object.keys(LBL.islands||{}).length+Object.keys(LBL.waters||{}).length,'labels'),
-      part(dirty.traces,TRACES.length,'waterways'),part(dirty.thor.size,(THOR.routes||[]).length,'routes')].join(' \u00b7 ');
+      part(dirty.thor.size,(THOR.routes||[]).length,'routes')].join(' \u00b7 ');
     // the builder's override audit (meta.override_audit_counts): only the classes that ask for a hand
     const ac=(data.meta&&data.meta.override_audit_counts)||{};
     const asks=['flipped','redundant','orphan'].filter(k=>ac[k]).map(k=>`${ac[k]} ${k}`);
     if(asks.length)saveStatus.innerHTML+=` \u00b7 <b>audit:</b> ${asks.join(', ')}`;
   }
-  function touch(kind,key){ if(kind==='traces')dirty.traces++; else dirty[kind].set(key,++touchSeq); refreshSave(); }
+  function touch(kind,key){ dirty[kind].set(key,++touchSeq); refreshSave(); }
   function markOv(name,key,val){
     (overrides[name]??={})[key]=val;
     touch('overrides',name);
@@ -518,7 +504,6 @@
     for(const [k,had,v] of held){ if(had)local[k]=v; else delete local[k]; } };
   async function saveAll(indId){
     const ind=indId||'ind-save';
-    if(typeof tracing!=='undefined'&&tracing)endTrace();
     setInd(ind,'pending'); saveAllBtn.disabled=true;
     let ok=true;
     try{
@@ -542,15 +527,6 @@
         const held=settle('labels',taken).map(k=>{const [g,id]=split(k);return [g,id,!!(LBL[g]&&id in LBL[g]),LBL[g]&&LBL[g][id]];});
         LBL=merged;
         for(const [g,id,had,v] of held){ LBL[g]??={}; if(had)LBL[g][id]=v; else delete LBL[g][id]; }
-      }
-      if(dirty.traces){
-        const n=dirty.traces,end=TRACES.length,added=TRACES.slice(end-n,end);
-        const {merged}=await ghCommitJson('tools/map/edits/traced_waterways.json',remote=>{
-          const base=Array.isArray(remote)?remote:[];
-          added.forEach((t,i)=>{ t.id=`wway-${base.length+i+1}`; });   // renumber behind whatever landed meanwhile
-          return base.concat(added); },`map: add ${added.length} traced waterway${added.length>1?'s':''} via in-page editor`);
-        const late=TRACES.slice(end);   // traced while the save ran: kept, still unsaved
-        TRACES.length=0; TRACES.push(...merged,...late); dirty.traces-=n;
       }
       if(dirty.thor.size){
         const taken=new Map(dirty.thor),keys=[...taken.keys()];
@@ -583,7 +559,7 @@
     discardBtn.addEventListener('click',()=>{
       const n=dirtyCount(); if(!n||saveAllBtn.disabled)return;
       if(!confirm(`Discard ${n} unsaved change${n>1?'s':''} and reload from ${BRANCH}?`))return;
-      for(const k of ['pins','overrides','labels','thor'])dirty[k].clear(); dirty.traces=0;   // so beforeunload stays quiet
+      for(const k of ['pins','overrides','labels','thor'])dirty[k].clear();   // so beforeunload stays quiet
       try{ sessionStorage.setItem(VIEW_KEY,JSON.stringify({vb,edit:true})); }catch(e){}
       location.reload();
     });
@@ -1440,125 +1416,7 @@
     selected=null;editwho.textContent='select a settlement\u2026';
   });
   }
-  // waterway tracing: a full-takeover mode - no other edits while tracing
-  let TRACES=[];
-  const traceCb=document.getElementById('traceMode');
-  const traceBtn=document.getElementById('traceBtn'),
-        traceMsg=document.getElementById('traceMsg'), traceName=document.getElementById('traceName');
-  const gTrace=document.createElementNS(NS,'g'); map.appendChild(gTrace);
-  if(authed){
-  try{ TRACES=await loadEdit('traced_waterways.json'); }catch(e){}
-  }
-  let tracing=null, pendingName=null;
-  const traceCount=()=>refreshSave();
-  if(authed){
-  refreshSave();
-  }
-  function segd(p,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],L2=vx*vx+vy*vy||1e-9;
-    const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));
-    return Math.hypot(p[0]-(a[0]+t*vx),p[1]-(a[1]+t*vy));}
-  function tubeCapture(tr){
-    const pts=tr.points; if(pts.length<2)return[];
-    const listed=new Set(tr.settlements), caps=[];
-    for(const st of data.settlements){
-      if(st.region==='outer_isles'||listed.has(st.name))continue;
-      let dd=1e9;
-      for(let i=0;i<pts.length-1;i++)dd=Math.min(dd,segd(st.xy,pts[i],pts[i+1]));
-      if(dd<=10)caps.push(st.name);
-    }
-    return caps;
-  }
-  function doneNames(){
-    const done=new Set();
-    for(const t of TRACES){
-      (t.settlements||[]).forEach(n=>done.add(n));
-      (t.captured||[]).forEach(c=>done.add(c.name||c));
-    }
-    return done;
-  }
-  function paintDone(){
-    const done=doneNames();
-    gStl.querySelectorAll('.stl').forEach(g=>g.classList.toggle('tracedone',done.has(g.dataset.name)));
-  }
-  if(authed){
-  traceCb.addEventListener('change',()=>{
-    const on=traceCb.checked;
-    document.body.classList.toggle('tracing',on);
-    if(on){
-      if(editCb.checked){editCb.checked=false;editCb.dispatchEvent(new Event('change'));}
-      editCb.disabled=true;
-      paintDone();
-      traceMsg.textContent=`${doneNames().size} settlements already traced \u2014 pink = still to do`;
-    }else{
-      editCb.disabled=false;
-      if(tracing)endTrace(true);
-      gStl.querySelectorAll('.stl.tracedone').forEach(g=>g.classList.remove('tracedone'));
-      traceMsg.textContent='';
-    }
-  });
-  }
-  function redrawTrace(){
-    gTrace.replaceChildren();
-    if(tracing&&tracing.points.length>1){
-      const p=document.createElementNS(NS,'path');
-      p.setAttribute('class','tracepath');
-      p.setAttribute('d','M '+tracing.points.map(q=>q.join(' ')).join(' L '));
-      gTrace.appendChild(p);
-    }
-    document.querySelectorAll('.stl.traced').forEach(g=>{
-      g.classList.remove('traced');
-      g.querySelectorAll('.traceno').forEach(t=>t.remove());
-    });
-    if(!tracing)return;
-    tracing.settlements.forEach((n,i)=>{
-      const g=[...gStl.querySelectorAll('.stl')].find(x=>x.dataset.name===n);
-      if(!g)return;
-      g.classList.add('traced');
-      const st=S.get(n);
-      const no=document.createElementNS(NS,'text');
-      no.setAttribute('class','traceno');no.setAttribute('x',-(R[st.size]||2)-5);no.setAttribute('y',-3);
-      no.textContent=i+1;g.appendChild(no);
-    });
-  }
-  function toggleMember(g){
-    const n=g.dataset.name, st=S.get(n); if(!st)return;
-    const i=tracing.settlements.indexOf(n);
-    if(i>=0){tracing.settlements.splice(i,1);tracing.points.splice(i,1);}
-    else{tracing.settlements.push(n);tracing.points.push([+st.xy[0].toFixed(1),+st.xy[1].toFixed(1)]);}
-    redrawTrace();
-    traceMsg.textContent=`${tracing.id}: ${tracing.settlements.length} tagged`;
-  }
-  function endTrace(silent){
-    if(tracing&&tracing.settlements.length>=2){
-      tracing.captured=tubeCapture(tracing);
-      TRACES.push(tracing);touch('traces');
-      pendingName=tracing;
-      if(!silent){
-        traceName.style.display='block';traceName.value='';traceName.focus();
-        traceMsg.textContent=`${tracing.id} saved: ${tracing.settlements.length} tagged + ${tracing.captured.length} captured \u2014 name it, then SAVE`;
-      }
-      paintDone();
-    } else if(tracing&&!silent){ traceMsg.textContent='trace discarded (needs 2+)'; }
-    tracing=null;redrawTrace();
-    traceBtn.textContent='trace waterway';traceCount();
-    if(dirty.traces>=2)traceMsg.textContent+=` \u26a0 ${dirty.traces} traces unsaved \u2014 save now`;
-  }
-  if(authed){
-  traceName.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&pendingName){
-      pendingName.name=traceName.value.trim()||null;
-      traceName.style.display='none';pendingName=null;
-      traceMsg.textContent='named \u2014 remember to save';
-    }
-  });
-  traceBtn.addEventListener('click',()=>{
-    if(!traceCb.checked){traceCb.checked=true;traceCb.dispatchEvent(new Event('change'));}
-    if(tracing){endTrace();return;}
-    tracing={id:`wway-${TRACES.length+1}`,name:null,settlements:[],points:[],captured:[]};
-    traceBtn.textContent='end trace';
-    traceMsg.textContent=`${tracing.id}: click settlements source \u2192 mouth (click again to remove)`;
-  });
-  }
+  if(authed)refreshSave();   // first render of the save status
   let pan=null, dragS=null;
   // Pinch: the stage owns its touches (touch-action:none on a device), so two pointers are a
   // zoom about their midpoint plus a pan by the midpoint's travel - the viewBox does both,
@@ -1627,7 +1485,6 @@
     const g=(authed&&window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
     if(rl){dragL=rl;e.preventDefault();return;}
-    if(g&&tracing){traceAdd(g);e.preventDefault();return;}
     if(g){dragS={g,name:g.dataset.name};selectStl(g);e.preventDefault();return;}
     pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
   });
@@ -1678,7 +1535,7 @@
     }
     // click (not drag) in view mode: a visible NAME opens the card, the dot toggles the label
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
-       &&!(authed&&window.editCb&&editCb.checked)&&!document.body.classList.contains('tracing')){
+       &&!(authed&&window.editCb&&editCb.checked)){
       const g=e.target.closest&&e.target.closest('.stl');
       if(g&&e.target.closest('text.lbl'))openSettlementCard(g);
       else if(g){g.classList.toggle('pinlabel');if(g._readout)g._readout();}
@@ -1693,7 +1550,7 @@
     if(!g||typeof openArtistModal!=='function')return;
     openArtistModal(g.dataset.name,g._amCtx?g._amCtx():null);
   }
-  // The plate readout works in EVERY mode, including edit and trace where the canvas path is
+  // The plate readout works in EVERY mode, including edit mode where the canvas path is
   // off, and gives touch a route: tap the dot, then tap the name on the plate.
   readout.addEventListener('click',e=>{
     if(e.target.closest('.name.am-open')&&readoutFor)openSettlementCard(readoutFor);
