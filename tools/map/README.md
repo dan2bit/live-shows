@@ -58,7 +58,11 @@ reads them off the Azgaar export into `build/coast.json -> rivers`, and their na
 `labels.json -> waters`, placed in the editor like any other label (#460). The earlier
 trace mode - click settlements source to mouth, save the polyline - produced
 `edits/traced_waterways.json`, whose 47 names seeded that label set; the file and the mode
-were retired in October 2026 and live on in history.
+were retired in October 2026 and live on in history. An unnamed tributary of a named water
+earns a fork or branch label of its own when the builder scores of the settlements on it
+sum to 12 or more across two or more settlements, or when any one of them is a city -
+otherwise its settlements count as on the named water they drain into. Birch Fork (off
+Slowhand Creek) is the first to clear it.
 
 Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
 to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand
