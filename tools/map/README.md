@@ -64,6 +64,21 @@ sum to 12 or more across two or more settlements, or when any one of them is a c
 otherwise its settlements count as on the named water they drain into. Birch Fork (off
 Slowhand Creek) is the first to clear it.
 
+A water name shows its reach. Hover one (tap, on a device) and the painted line it belongs
+to is stroked in blue, every settlement on that water gets a ring and its label, and the
+readout lists them: `Tweed Creek - stream, 198 units - 6 on it: Sue Foley, ...`. The rule is
+the strand census's: a name belongs to the nearest painted centerline (a river-class line
+within 25 wins, since a wide river's name sits off its bank), the reach floods through
+touching lines but stops at any line that is another name's home, and a settlement within
+10 units is on it. In edit mode every water name shows at any zoom, grabbing one holds the
+reach and dims everything else, and the reach follows the label as it moves - slide a name
+six units onto the next creek and the rings jump, which is the point. A tap or a drag holds
+the reach until the next press or Esc; a hover clears on leave. Water names are hit
+targets in every mode for this; a click that lands on one is handed to the dot beneath it.
+(The same change fixed the view-mode click itself: the stage captures the pointer on press,
+so pointerup's target is the stage, and the dot-toggles-label / name-opens-card branch had
+been reading the wrong element. It now reads what the press hit.)
+
 Routes: click a road, pass, trail or ferry hop to drag its waypoints, click a white handle
 to add one, alt-click to remove one. The autobahn is not clickable; its waypoints are hand
 edits in `thoroughfares.json`, where a hop's `via` replaces its one generated bump.
