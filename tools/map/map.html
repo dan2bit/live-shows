@@ -82,8 +82,23 @@
   #rose-home{pointer-events:all;cursor:pointer;}
   #rose-home:hover #rose-clef,#rose-home:focus-visible #rose-clef{stroke:#0e5a70;}
   #rose-home:hover circle,#rose-home:focus-visible circle{opacity:.85;}
-  .region-label,.geo-island,.geo-water{pointer-events:none;}
+  .region-label,.geo-island{pointer-events:none;}
+  /* A water name is a hit target in every mode: hovering (or tapping) it paints the reach it
+     names. A click that lands on it is handed to any dot beneath it (see the view-mode click),
+     so a name lying across a settlement never steals that settlement's click. */
+  .geo-water{pointer-events:all;cursor:default;}
   body.editing .region-label,body.editing .geo-island,body.editing .geo-water{pointer-events:all;cursor:move;}
+  /* Every water name shows while editing, whatever the zoom - a tier-4 rill is otherwise
+     ungrabbable until 8x - and the one whose reach is painted shows in any mode. */
+  body.editing .geo-water[data-lt],.geo-water.picked{display:block;}
+  /* The reach: the painted line(s) a water name belongs to, stroked over the background
+     while its label is hovered or dragged, and a steady ring on every settlement on it.
+     Dimming only while editing, where the point is to see the association move. */
+  #waterReach path{fill:none;stroke:#39a7d8;stroke-opacity:.75;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+  .stl.onwater .waterring{fill:none;stroke:#39a7d8;stroke-width:2;vector-effect:non-scaling-stroke;}
+  .stl.onwater .lbl{display:block;}
+  body.waterpick .stl:not(.onwater){opacity:.25;}
+  body.waterpick .geo-water:not(.picked),body.waterpick .geo-island,body.waterpick .region-label,body.waterpick #routes{opacity:.3;}
   /* placement halos are the editor's worklist: drawn only while editing, one ring per kind.
      unplaced = staged, position meaningless (solid pink dash); unpinned = builder-positioned,
      no pin, can move on a rebuild (faint dotted); stray = pinned outside its region polygon,
@@ -1074,6 +1089,8 @@
     t.setAttribute('text-anchor','middle');
     t.setAttribute('x',wl.xy[0]);t.setAttribute('y',wl.xy[1]);
     t.textContent=wl.name;gGeo.appendChild(t);
+    t.addEventListener('mouseenter',()=>{ if(!dragL&&!dragS&&!pan)paintReach(t); });
+    t.addEventListener('mouseleave',()=>{ if(!dragL&&!reachHeld)clearReach(); });
   }
 
   // settlements, small first so capitals sit on top
@@ -1221,6 +1238,73 @@
     }
   }
   placeLabels();
+
+  // ── water reach: which painted line a water name belongs to, and who is on it ──
+  // The same rule the strand census uses. A label's home is the nearest painted centerline
+  // by (distance - half width), a river-class line (2.4+ wide) within 25 taking precedence
+  // since a wide river's name sits off its bank; the reach floods from there through lines
+  // whose ends touch (within 2), stopping at any line that is another label's home - so an
+  // unnamed tributary belongs to the water it drains into until it earns a fork label of
+  // its own. A settlement within 10 of the reach is on it. Lakes: the polygon, same 10.
+  const RIVERS=(COAST&&COAST.rivers)||[], LAKE_POLYS=(COAST&&COAST.lakes)||[], LAKE_NAMES=new Set((data.lakes||[]).map(l=>l.name));
+  const segDist=(p,a,b)=>{const vx=b[0]-a[0],vy=b[1]-a[1],L2=vx*vx+vy*vy||1e-9;
+    const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));return Math.hypot(p[0]-(a[0]+t*vx),p[1]-(a[1]+t*vy));};
+  const polyDist=(p,pts,closed)=>{let d=1e9;const n=pts.length;for(let i=0;i<(closed?n:n-1);i++)d=Math.min(d,segDist(p,pts[i],pts[(i+1)%n]));return d;};
+  const riverDist=(p,i)=>polyDist(p,RIVERS[i].pts)-RIVERS[i].w/2;
+  const homeOf=xy=>{let best=null,big=null;
+    RIVERS.forEach((rv,i)=>{const d=riverDist(xy,i);if(!best||d<best[0])best=[d,i];if(rv.w>=2.4&&d<=25&&(!big||d<big[0]))big=[d,i];});
+    return (big||best)?(big||best)[1]:-1;};
+  const TOUCH=RIVERS.map(()=>[]);
+  for(let i=0;i<RIVERS.length;i++)for(let j=i+1;j<RIVERS.length;j++){
+    const A=RIVERS[i].pts,B=RIVERS[j].pts;
+    if(polyDist(A[0],B)<=2||polyDist(A[A.length-1],B)<=2||polyDist(B[0],A)<=2||polyDist(B[B.length-1],A)<=2){TOUCH[i].push(j);TOUCH[j].push(i);}
+  }
+  let HOMES=new Map();   // label name -> home line, for every river label; rebuilt when a label moves
+  function rehome(){HOMES=new Map();for(const [nm,xy] of Object.entries(LBL.waters||{}))if(!LAKE_NAMES.has(nm))HOMES.set(nm,homeOf(xy));}
+  rehome();
+  function waterReach(name,xy){
+    const on=[],near=(test)=>{for(const [n,st] of S){if(st.region==='outer_isles'||!st.xy)continue;const d=test(st.xy);if(d<=10)on.push([d,n]);}on.sort((a,b)=>a[0]-b[0]);};
+    if(LAKE_NAMES.has(name)){
+      if(!LAKE_POLYS.length)return null;
+      const lk=LAKE_POLYS.reduce((b,poly)=>{const d=inPoly(xy[0],xy[1],poly)?0:polyDist(xy,poly,true);return (!b||d<b[0])?[d,poly]:b;},null)[1];
+      near(p=>inPoly(p[0],p[1],lk)?0:polyDist(p,lk,true));
+      return {lake:lk,lines:[],on,cls:'lake',len:0};
+    }
+    const home=homeOf(xy); if(home<0)return null;
+    const others=new Set([...HOMES].filter(([n])=>n!==name).map(([,h])=>h));
+    const seen=new Set([home]),stack=[home];
+    while(stack.length){const i=stack.pop();for(const j of TOUCH[i])if(!seen.has(j)&&!others.has(j)){seen.add(j);stack.push(j);}}
+    const lines=[...seen];
+    near(p=>Math.min(...lines.map(i=>riverDist(p,i))));
+    const w=Math.max(...lines.map(i=>RIVERS[i].w));
+    const len=lines.reduce((t,i)=>{const P=RIVERS[i].pts;for(let k=0;k<P.length-1;k++)t+=Math.hypot(P[k+1][0]-P[k][0],P[k+1][1]-P[k][1]);return t;},0);
+    return {lines,on,len:Math.round(len),cls:w>=2.4?'river':w>=1.2?'stream':'rill'};
+  }
+  const gReach=document.createElementNS(NS,'g');gReach.setAttribute('id','waterReach');map.insertBefore(gReach,gStl);
+  let reachFor=null,reachHeld=false;   // held: painted by a tap or a drag, so it outlives the hover
+  function clearReach(){
+    gReach.replaceChildren();
+    gStl.querySelectorAll('.stl.onwater').forEach(g=>{g.classList.remove('onwater');g.querySelectorAll('.waterring').forEach(r=>r.remove());});
+    gGeo.querySelectorAll('.geo-water.picked').forEach(t=>t.classList.remove('picked'));
+    document.body.classList.remove('waterpick');reachFor=null;reachHeld=false;
+  }
+  function paintReach(t,hold){
+    clearReach();
+    const name=t.dataset.gname,xy=[+t.getAttribute('x'),+t.getAttribute('y')],r=waterReach(name,xy);
+    if(!r)return;
+    reachFor=name;reachHeld=!!hold;t.classList.add('picked');
+    if(authed&&window.editCb&&editCb.checked)document.body.classList.add('waterpick');
+    const stroke=(pts,w,closed)=>{const p=document.createElementNS(NS,'path');p.setAttribute('d',pathD(pts)+(closed?' Z':''));p.setAttribute('stroke-width',(Math.max(w,1.6)+1.2).toFixed(1));gReach.appendChild(p);};
+    if(r.lake)stroke(r.lake,1.6,true); else for(const i of r.lines)stroke(RIVERS[i].pts,RIVERS[i].w,false);
+    const byName=new Map([...gStl.querySelectorAll('.stl')].map(g=>[g.dataset.name,g]));
+    for(const [,n] of r.on){const g=byName.get(n);if(!g)continue;
+      g.classList.add('onwater');const st=S.get(n),ring=document.createElementNS(NS,'circle');
+      ring.setAttribute('class','waterring');ring.setAttribute('r',(R[st.size]||2)+4);g.insertBefore(ring,g.querySelector('text'));}
+    const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const what=r.lake?'lake':`${r.cls}, ${r.len} units`;
+    readout.classList.remove('idle');
+    readout.innerHTML=`<div class="nm">${esc(name)}</div><div class="stats">${what} \u00b7 ${r.on.length?`${r.on.length} on it: ${r.on.map(([d,n])=>esc(n)).join(', ')}`:'nobody on it'}</div>`;
+  }
 
   // Plate footer count: the literal number of recorded pins, not the roster size. MAP_EXCLUDE
   // names are already off data.settlements (the builder drops them before publishing), so
@@ -1467,7 +1551,7 @@
     L.push(' "harbors": {',Object.entries(o.harbors||{}).map(([k,v])=>'  '+JSON.stringify(k)+': '+j(v)).join(',\n'),' },');
     L.push(' "routes": [',(o.routes||[]).map(r=>'  '+j(r)).join(',\n'),' ]','}');return L.join('\n')+'\n';};
 
-  let dragL=null, downAt=null;
+  let dragL=null, downAt=null, downTarget=null;   // downTarget: what the press hit - the stage captures the pointer, so pointerup's own target is the stage
   stage.addEventListener('pointerdown',e=>{
     if(e.target.closest('#rose-home')){return;}  // let the anchor's native click/nav fire uncaptured (#363 follow-up)
     // The roster banner is an HTML control panel inside the stage: capturing the pointer
@@ -1478,13 +1562,14 @@
       touches.set(e.pointerId,[e.clientX,e.clientY]);
       if(touches.size===2){stage.setPointerCapture(e.pointerId);pinch=pinchGeom();pan=null;dragS=null;dragL=null;downAt=null;stage.classList.add('panning');return;}
     }
-    downAt=[e.clientX,e.clientY];
+    downAt=[e.clientX,e.clientY];downTarget=e.target;
+    if(reachFor&&!(e.target.closest&&e.target.closest('.geo-water')&&e.target.closest('.geo-water').dataset.gname===reachFor))clearReach();
     const rh=(authed&&window.editCb&&editCb.checked)?e.target.closest('#routes .hit,#routeEdit .vh'):null;
     if(rh){stage.setPointerCapture(e.pointerId);routeDown(rh,e);e.preventDefault();return;}
     const rl=(authed&&window.editCb&&editCb.checked)?e.target.closest('.region-label,.geo-island,.geo-water'):null;
     const g=(authed&&window.editCb&&editCb.checked&&!rl)?e.target.closest('.stl'):null;
     stage.setPointerCapture(e.pointerId);
-    if(rl){dragL=rl;e.preventDefault();return;}
+    if(rl){dragL=rl;if(rl.dataset.gkind==='water')paintReach(rl,true);e.preventDefault();return;}
     if(g){dragS={g,name:g.dataset.name};selectStl(g);e.preventDefault();return;}
     pan={x:e.clientX,y:e.clientY};stage.classList.add('panning');
   });
@@ -1506,6 +1591,7 @@
       if(dragL.dataset.rid){ (LBL.regions[dragL.dataset.rid]??={}).xy=[X,Y]; touch('labels','regions:'+dragL.dataset.rid); }
       else if(dragL.dataset.gkind==='island'){ LBL.islands[dragL.dataset.gname]=[X,Y]; touch('labels','islands:'+dragL.dataset.gname); }
       else { LBL.waters[dragL.dataset.gname]=[X,Y]; touch('labels','waters:'+dragL.dataset.gname); }
+      if(dragL.dataset.gkind==='water'){paintReach(dragL,true);readout.querySelector('.stats').insertAdjacentHTML('beforeend',` \u00b7 (${X}, ${Y})`);return;}
       readout.innerHTML=`<div class="nm">${dragL.dataset.rid||dragL.dataset.gname}</div><div class="stats">(${X}, ${Y}) \u2014 in labels.json</div>`;
       return;
     }
@@ -1526,6 +1612,7 @@
     if(pinch||(e.pointerType==='touch'&&!downAt)){endTouch(e);if(!pinch)stage.classList.remove('panning');return;}
     endTouch(e);
     if(dragV){routeChanged();dragV=null;return;}
+    if(dragL&&dragL.dataset.gkind==='water')rehome();   // other labels' reaches respect the new home
     if(dragS&&dragS.moved)placeLabels();   // a moved mark changes its neighbours' best slots too
     // click (not drag) in edit mode on an unpinned settlement pins it where it stands
     if(dragS&&!dragS.moved&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4){
@@ -1536,8 +1623,12 @@
     // click (not drag) in view mode: a visible NAME opens the card, the dot toggles the label
     if(!dragS&&!dragL&&downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<4
        &&!(authed&&window.editCb&&editCb.checked)){
-      const g=e.target.closest&&e.target.closest('.stl');
-      if(g&&e.target.closest('text.lbl'))openSettlementCard(g);
+      let tgt=downTarget||e.target;
+      const wl=tgt.closest&&tgt.closest('.geo-water');
+      if(wl){const under=document.elementsFromPoint(e.clientX,e.clientY).find(el=>el!==wl&&el.closest&&el.closest('.stl'));
+        if(under)tgt=under; else {paintReach(wl,true);return;}}   // a tap on the name itself: hold the reach until the next press
+      const g=tgt.closest&&tgt.closest('.stl');
+      if(g&&tgt.closest('text.lbl'))openSettlementCard(g);
       else if(g){g.classList.toggle('pinlabel');if(g._readout)g._readout();}
     }
     pan=null;dragS=null;dragL=null;downAt=null;stage.classList.remove('panning');
@@ -1570,6 +1661,7 @@
     const am=document.getElementById('artistModal');
     if(am&&am.classList.contains('open')){closeArtistModal();return;}
     if(selRoute){selRoute=null;drawThoroughfares();drawHandles();return;}
+    if(reachFor){clearReach();return;}
     document.querySelectorAll('.stl.pinlabel').forEach(g=>g.classList.remove('pinlabel'));
   });
   // Deep link: #artist/<slug> on this page opens the card AND recentres on that settlement
