@@ -11,7 +11,7 @@ else is sorted by who writes it.
 | `emit_heightmap.py` | the FMG heightmap seed from the built data | humans, by PR |
 | `extract_coast.py` | the painted coast as polygons and the painted rivers as centerlines, from `art/map.svg` | humans, by PR |
 | `docs/` | `fantasy_map_schema.md` (the data contract, the device/desktop split), `heightmap_azgaar_notes.md` (the repaint procedure) | humans |
-| `edits/` | `pins.json`, `labels.json`, `map_overrides.json`, `thoroughfares.json`, `discovered_adds.json` — the hand-owned state | the in-page editor (read-merge-write, to `staging`), or a hand edit |
+| `edits/` | `pins.json`, `labels.json`, `map_overrides.json`, `thoroughfares.json`, `discovered_adds.json`, `legacy_shows.tsv` — the hand-owned state | the in-page editor (read-merge-write, to `staging`), or a hand edit |
 | `build/` | `fantasy_map_data.json`, `coast.json`, `heightmap.png` — derived, never hand-edited | `map-rebuild.yml` on every push to `main` that touches `edits/` or a generator; `coast.json` by running `extract_coast.py` after a repaint |
 | `art/` | `map.svg`, the painted background the page draws under everything; the Azgaar `.map` project it was exported from | a repaint session in Azgaar's FMG |
 
@@ -75,6 +75,24 @@ parapet rails, passes a stone arch, and trails a plank over a river or stepping 
 across a stream or rill. The water is `build/coast.json -> rivers` (painted centerlines
 and widths from `extract_coast.py`); 2.4 units wide and up is a river, 1.2 and up a
 stream, anything narrower a rill. Ferries take no bridges.
+
+## The legacy ledger
+
+The history TSVs begin in 2021. `edits/legacy_shows.tsv` is the map's own record of
+the shows before that - 24 shows, 1985-2019, lifted once from the setlist.fm attendance
+cache (`tools/archive/setlist_attendances_20260626.tsv`, issue #468) - one row per act per
+show: `Show Date`, `Artist`, `Venue`, `Setlist URL`. It is map-only: `artists.tsv`, the
+history TSVs and the recommendation index never see it. The builder adds each row to the
+act's `times_seen` (so Peter Gabriel is seen five times, not a follow), gives an act the
+index does not know a record of its own (status `legacy`, no tags, no tier - its region
+comes from its pin), and treats rows that share a date and a venue as one bill, so they
+become river edges like any other bill. A settlement credited this way carries
+`legacy_shows` in the built JSON and, when nothing in the live history explains it, a
+`src` of the form `seen 4x before the history begins (1985-2016, setlist.fm)`. A name
+the index does not resolve can be aliased in `data/recommend_aliases.tsv`; the builder
+reads that file directly, so the alias works on the next build rather than the next
+index regeneration. Acts that no longer exist are `ruin`s (the builder's `RUINS` set),
+which is a different thing from `faded` and suppresses it.
 
 ## Region hulls
 
