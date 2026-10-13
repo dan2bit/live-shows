@@ -14,6 +14,8 @@ Reads the same sources as tools/research/graph/artist-graph.html:
   artists.tsv            Via column (road edges), Times Seen / VIP (settlement size)
   seen_with.tsv          recurring sidemen (bridge edges)
   live_shows_current.tsv / history/<year>.tsv   bill edges (river-road edges)
+  legacy_shows.tsv       the ledger of shows before the history begins (2021): seen counts,
+                         bill edges, settlements (issue 468); the map is its first consumer
 
 Lives in tools/map/ and finds its sources in the repo's data/ tree. Run it from
 anywhere; the repo root is auto-detected by walking up from this file (or pass
@@ -245,6 +247,16 @@ variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
 id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in EXCLUDED}
 variants = {k: id2canon[v] for k, v in idx["variants"].items() if v in id2canon}
 
+# data/recommend_aliases.tsv feeds the index's variants when CI regenerates it; reading it
+# here too means a freshly added alias resolves on the very next build instead of waiting
+# for the index workflow (the legacy ledger's "Elvis Costello" -> "... & The Imposters").
+for _ar in tsv_rows(DATA / "recommend_aliases.tsv") if (DATA / "recommend_aliases.tsv").exists() else []:
+    _al, _cn = (_ar.get("Alias") or "").strip(), (_ar.get("Canonical") or "").strip()
+    _hit = variants.get(_cn.lower()) or (_cn if _cn in records else None)
+    if _al and _hit:
+        variants.setdefault(_al.lower(), _hit)
+        variants.setdefault(re.sub(r"[^\w\s]", "", _al).lower(), _hit)
+
 def resolve(name):
     if not name:
         return None
@@ -333,6 +345,38 @@ for _c, _hv in _hist_seen.items():
         seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,
                          "most_recent": _hv["last"], "via_history": True, "bills": _hv["bills"]}
 
+# ---- the legacy ledger: shows from before the history TSVs begin (issue 468) ----
+# data/legacy_shows.tsv: one row per act per show, lifted once from the setlist.fm
+# attendance cache. Domain content with the map as its first consumer; it never touches
+# artists.tsv, the history TSVs or the recommendation index. Each row adds one to the act's times_seen and can only
+# raise most_recent (every row predates the history, so it never does). An act the
+# index does not know gets a record here, status "legacy", with no tags and no tier -
+# region then comes from its pin (a pin inside a polygon decides) or, unpinned, from
+# the neighbour vote and the outer-isles fallback like any other tagless record. Rows
+# that share a date and a venue were one bill and become river edges below.
+_lg_path = DATA / "legacy_shows.tsv"
+LEGACY = {}        # canonical -> {"n", "first", "last"}
+LEGACY_BILLS = []  # [(date, venue, canonical)] for the bill edges
+if _lg_path.exists():
+    _lg_next_id = max(r["id"] for r in records.values()) + 1   # ids past the index's, like discovered_adds
+    for _r in tsv_rows(_lg_path):
+        _nm = (_r.get("Artist") or "").strip()
+        _d = (_r.get("Show Date") or "")[:10]
+        if not _nm or not _d:
+            continue
+        _c = resolve(_nm)
+        if not _c:
+            records[_nm] = {"id": _lg_next_id, "canonical": _nm, "status": "legacy", "sources": ["legacy"], "tier": None}
+            _lg_next_id += 1
+            variants[_nm.lower()] = _nm
+            _c = _nm
+        _l = LEGACY.setdefault(_c, {"n": 0, "first": _d, "last": _d})
+        _l["n"] += 1; _l["first"] = min(_l["first"], _d); _l["last"] = max(_l["last"], _d)
+        _m = seen_meta.setdefault(_c, {"times_seen": 0, "vip": 0, "most_recent": ""})
+        _m["times_seen"] = _m.get("times_seen", 0) + 1
+        _m["most_recent"] = max(_m.get("most_recent", ""), _d)
+        LEGACY_BILLS.append((_d, (_r.get("Venue") or "").strip(), _c))
+
 # audit dedupe: merges and co-bill suppressions
 MERGES = {   # absorbed -> survivor (survivor inherits seen history)
     "Daniel Donato's Cosmic Country": "Daniel Donato",
@@ -373,6 +417,10 @@ for _gone, _keep in MERGES.items():
               f"{_gone} stays a settlement of its own", file=sys.stderr)
         continue
     _fold_seen(_keep, seen_meta.get(_gone, {}))
+    if _gone in LEGACY:   # the ledger credit follows the seen history to the survivor
+        _lk = LEGACY.setdefault(_keep, {"n": 0, "first": LEGACY[_gone]["first"], "last": LEGACY[_gone]["last"]})
+        _lk["n"] += LEGACY[_gone]["n"]; _lk["first"] = min(_lk["first"], LEGACY[_gone]["first"]); _lk["last"] = max(_lk["last"], LEGACY[_gone]["last"])
+        del LEGACY[_gone]
     records[_keep]["sources"] = sorted(set(records[_keep].get("sources", []))
                                        | set(records[_gone].get("sources", [])))
     records.pop(_gone); seen_meta.pop(_gone, None)
@@ -420,6 +468,14 @@ for p in sorted((DATA / "history").glob("*.tsv")):
         bill_edges(r.get("Artist"), r.get("Supporting Acts"))
 for r in tsv_rows(DATA / "live_shows_current.tsv"):
     bill_edges(r.get("Artist"), r.get("Supporting Artist"))
+# legacy ledger: acts on the same date at the same venue shared a bill
+_lg_by_show = defaultdict(list)
+for _d, _v, _c in LEGACY_BILLS:
+    _lg_by_show[(_d, _v)].append(_c)
+for _acts in _lg_by_show.values():
+    for _i in range(len(_acts)):
+        for _j in range(_i + 1, len(_acts)):
+            add_edge(_acts[_i], _acts[_j], "river")
 
 # bridges: sidemen recurring across >=2 headliners
 side = defaultdict(set)
@@ -465,6 +521,7 @@ FORCED_REGION = {
     "Taj Mahal": "delta_coast",
     "TajMo: The Taj Mahal & Keb' Mo' Band": "delta_coast",
     "Taj Farrant": "amplified_range",
+    "Moby": "outer_isles",        # on Pop Rock; his one edge (the 2002 Bowie bill) would vote him ashore
     "Buffalo Nichols": "delta_coast",
     "Southern Avenue": "delta_coast",
     "Ruthie Foster": "delta_coast",
@@ -530,7 +587,7 @@ for reg in REGIONS:
 
 # ---------------------------------------------------------------- settlements
 LEGENDS = {
-    "John Hiatt", "Cowboy Junkies", "Willie Nelson",          # of the Heartland
+    "John Hiatt", "Cowboy Junkies", "Willie Nelson", "Bob Dylan",   # of the Heartland
     "Mavis Staples",                                          # of Second Line
     "Bonnie Raitt",                                           # of the Woods
     "Keb' Mo'", "Kim Wilson",                                 # of the Delta (Kim Wilson at the head of Harp Run)
@@ -589,6 +646,8 @@ def size_tier(c, s, regional_max):
     return "hamlet"
 
 def faded(c):
+    if c in RUINS:   # a ruin draws as a ruin; faded would stack a second style on it
+        return False
     mr = seen_meta.get(c, {}).get("most_recent", "")
     return bool(mr) and mr < "2019-01-01"
 
@@ -944,8 +1003,17 @@ for r in _read_tsv(ROOT / "data" / "live_shows_potential.tsv"):
 def _trim(t, n=70):
     return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "\u2026"
 
+def _legacy_ref(c):
+    l = LEGACY.get(c)
+    if not l:
+        return ""
+    yrs = l["first"][:4] if l["first"][:4] == l["last"][:4] else f"{l['first'][:4]}-{l['last'][:4]}"
+    return f"seen {l['n']}\u00d7 before the history begins ({yrs}, setlist.fm)"
+
 def source_ref(c):
     srcs = records[c].get("sources", [])
+    if "legacy" in srcs:
+        return _legacy_ref(c)
     if seen_meta.get(c, {}).get("via_history"):
         # whose bill: newest first, two shown, the rest counted
         bills = sorted(set(seen_meta[c].get("bills") or []), reverse=True)
@@ -956,7 +1024,7 @@ def source_ref(c):
         # credited from the Artist column only: a headline bill with no artists.tsv row
         return "seen as headliner (history TSVs; no artists.tsv row)"
     if seen_meta.get(c, {}).get("times_seen") and "seen-support" not in srcs:
-        return ""
+        return _legacy_ref(c)   # "" unless the legacy ledger is part of why it is seen
     if "seen-support" in srcs or records[c].get("status") == "seen-support":
         return "history pass: seen as support"
     if "fast_track" in srcs:
@@ -979,7 +1047,8 @@ MAP_RENAME = {"New York's Finest": "Every Breath You Take"}   # current performi
 # Curated sizes (including the Delta Coast capital swap) used to be a table
 # here; they now live in map_overrides.json with a basis and, where it matters,
 # a why - one place for size decrees, one audit over all of them.
-RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard"}
+RUINS = {"Enter the Haggis", "Talia Segal", "Glen Hansard",
+         "Grateful Dead", "David Bowie", "Jimmy Buffett"}   # the legacy ledger's acts that no longer exist
 HARBORMISTRESSES = {"Ally Venable Band", "Vanessa Collier", "Sue Foley",
                     "Jackie Venson", "Orianthi", "Queen Latifah",
                     # one per remaining mainland region, promoted in place at
@@ -1277,6 +1346,7 @@ for c in sorted(records):
         "src": source_ref(c),
         "times_seen": m.get("times_seen", 0), "vip": m.get("vip", 0),
         "tier": records[c].get("tier"),
+        **({"legacy_shows": LEGACY[c]["n"]} if c in LEGACY else {}),
     })
 
 # ---- override audit: is each size override still doing what it was saved to do? ----

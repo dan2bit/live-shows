@@ -84,6 +84,11 @@ meaningless until hand-placed), `unpinned` (builder-positioned with no pins.json
 the position can move on a rebuild), `stray` (pinned, but the pin lies outside the region's
 polygon; since a pin inside any polygon takes that polygon's region, only a pin outside every
 polygon can be stray). All three are mainland-only.
+`legacy_shows`, present when the map's own ledger of pre-2021 shows (`edits/legacy_shows.tsv`)
+credits the act, is how many of its `times_seen` come from there; a settlement that exists
+only because of the ledger has `status` `legacy` in the index sense - no tags, no tier, region
+from its pin. `ruin` (an act that no longer exists) and `faded` (not seen since before 2019)
+never both appear: a ruin draws as a ruin.
 `score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus) if you want
 continuous scaling instead of the tier buckets. `auto_size` is the size the builder would
 have given with no override in `map_overrides.json` - equal to `size` unless an override is
