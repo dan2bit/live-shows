@@ -603,7 +603,7 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-10-11",
+  "generated_from": "2026-10-13",
   "seed": 2026,
   "excluded": [
    "A Musical Celebration of John Prine",
@@ -717,30 +717,6 @@
      "at": "2026-09-25"
     },
     "class": "unchanged"
-   },
-   {
-    "name": "Billy Strings",
-    "override": "town",
-    "auto": "town",
-    "score": 6,
-    "basis": {
-     "size": "waystation",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
-    "name": "Blackberry Smoke",
-    "override": "village",
-    "auto": "village",
-    "score": 4,
-    "basis": {
-     "size": "waystation",
-     "score": 1,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
    },
    {
     "name": "Carolyn Wonderland",
@@ -1056,18 +1032,6 @@
     "class": "flipped"
    },
    {
-    "name": "Mark Knopfler",
-    "override": "town",
-    "auto": "town",
-    "score": 9,
-    "basis": {
-     "size": "waystation",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
     "name": "Marshall Crenshaw",
     "override": "village",
     "auto": "waystation",
@@ -1138,18 +1102,6 @@
      "at": "2026-10-02"
     },
     "class": "unchanged"
-   },
-   {
-    "name": "Peter Gabriel",
-    "override": "city",
-    "auto": "city",
-    "score": 18,
-    "basis": {
-     "size": "waystation",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
    },
    {
     "name": "Pixies",
@@ -1482,7 +1434,6 @@
    "decree": 4,
    "flipped": 1,
    "orphan": 1,
-   "redundant": 4,
    "still-promotion": 1,
    "unchanged": 59
   },
