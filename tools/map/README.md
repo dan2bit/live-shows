@@ -91,6 +91,26 @@ across a stream or rill. The water is `build/coast.json -> rivers` (painted cent
 and widths from `extract_coast.py`); 2.4 units wide and up is a river, 1.2 and up a
 stream, anything narrower a rill. Ferries take no bridges.
 
+## The legacy ledger
+
+The history TSVs begin in 2021. `data/legacy_shows.tsv` is the record of the shows before
+that - 24 shows, 1985-2019, lifted once from the setlist.fm attendance cache
+(`tools/archive/setlist_attendances_20260626.tsv`, issue #468) - one row per act per show:
+`Show Date`, `Artist`, `Venue`, `Setlist URL`. It lives in `data/` because it is domain
+content, like `related_acts.tsv`; the map is its first consumer, not its owner, and
+`map-rebuild.yml` watches it alongside `edits/`. `artists.tsv`, the history TSVs and the
+recommendation index never see it. The builder adds each row to the
+act's `times_seen` (so Peter Gabriel is seen five times, not a follow), gives an act the
+index does not know a record of its own (status `legacy`, no tags, no tier - its region
+comes from its pin), and treats rows that share a date and a venue as one bill, so they
+become river edges like any other bill. A settlement credited this way carries
+`legacy_shows` in the built JSON and, when nothing in the live history explains it, a
+`src` of the form `seen 4x before the history begins (1985-2016, setlist.fm)`. A name
+the index does not resolve can be aliased in `data/recommend_aliases.tsv`; the builder
+reads that file directly, so the alias works on the next build rather than the next
+index regeneration. Acts that no longer exist are `ruin`s (the builder's `RUINS` set),
+which is a different thing from `faded` and suppresses it.
+
 ## Region hulls
 
 Each mainland region's dashed ghost border is a hand-built polygon in
