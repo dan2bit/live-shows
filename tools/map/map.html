@@ -1251,16 +1251,27 @@
     const t=Math.max(0,Math.min(1,((p[0]-a[0])*vx+(p[1]-a[1])*vy)/L2));return Math.hypot(p[0]-(a[0]+t*vx),p[1]-(a[1]+t*vy));};
   const polyDist=(p,pts,closed)=>{let d=1e9;const n=pts.length;for(let i=0;i<(closed?n:n-1);i++)d=Math.min(d,segDist(p,pts[i],pts[(i+1)%n]));return d;};
   const riverDist=(p,i)=>polyDist(p,RIVERS[i].pts)-RIVERS[i].w/2;
-  const homeOf=xy=>{let best=null,big=null;
-    RIVERS.forEach((rv,i)=>{const d=riverDist(xy,i);if(!best||d<best[0])best=[d,i];if(rv.w>=2.4&&d<=25&&(!big||d<big[0]))big=[d,i];});
-    return (big||best)?(big||best)[1]:-1;};
+  // ranked candidates for a name's home line: river-class lines within 25 first (a wide river's
+  // name sits off its bank), then everything by distance; the first line nobody else holds wins.
+  const homeOf=(xy,taken)=>{
+    const c=RIVERS.map((rv,i)=>[riverDist(xy,i),i]).sort((a,b)=>a[0]-b[0]);
+    for(const [d,i] of c.filter(([d,i])=>RIVERS[i].w>=2.4&&d<=25).concat(c))if(!taken||!taken.has(i))return i;
+    return -1;};
   const TOUCH=RIVERS.map(()=>[]);
   for(let i=0;i<RIVERS.length;i++)for(let j=i+1;j<RIVERS.length;j++){
     const A=RIVERS[i].pts,B=RIVERS[j].pts;
     if(polyDist(A[0],B)<=2||polyDist(A[A.length-1],B)<=2||polyDist(B[0],A)<=2||polyDist(B[B.length-1],A)<=2){TOUCH[i].push(j);TOUCH[j].push(i);}
   }
   let HOMES=new Map();   // label name -> home line, for every river label; rebuilt when a label moves
-  function rehome(){HOMES=new Map();for(const [nm,xy] of Object.entries(LBL.waters||{}))if(!LAKE_NAMES.has(nm))HOMES.set(nm,homeOf(xy));}
+  // One home line per name. Bigger waters (lower tier) claim first, ties by distance, so a creek's
+  // name sitting a few units off a river's bank keeps its creek instead of taking the river's own
+  // line - two names on one line would each flood the whole system (Bottleneck Run / Big Muddy).
+  function rehome(){
+    HOMES=new Map();const taken=new Set();
+    const names=Object.entries(LBL.waters||{}).filter(([nm])=>!LAKE_NAMES.has(nm))
+      .sort((a,b)=>(WATER_TIER[a[0]]||5)-(WATER_TIER[b[0]]||5)||riverDist(a[1],homeOf(a[1]))-riverDist(b[1],homeOf(b[1])));
+    for(const [nm,xy] of names){const h=homeOf(xy,taken);HOMES.set(nm,h);if(h>=0)taken.add(h);}
+  }
   rehome();
   function waterReach(name,xy){
     const on=[],near=(test)=>{for(const [n,st] of S){if(st.region==='outer_isles'||!st.xy)continue;const d=test(st.xy);if(d<=10)on.push([d,n]);}on.sort((a,b)=>a[0]-b[0]);};
@@ -1270,8 +1281,8 @@
       near(p=>inPoly(p[0],p[1],lk)?0:polyDist(p,lk,true));
       return {lake:lk,lines:[],on,cls:'lake',len:0};
     }
-    const home=homeOf(xy); if(home<0)return null;
     const others=new Set([...HOMES].filter(([n])=>n!==name).map(([,h])=>h));
+    const home=homeOf(xy,others); if(home<0)return null;
     const seen=new Set([home]),stack=[home];
     while(stack.length){const i=stack.pop();for(const j of TOUCH[i])if(!seen.has(j)&&!others.has(j)){seen.add(j);stack.push(j);}}
     const lines=[...seen];
