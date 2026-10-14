@@ -1,15 +1,15 @@
 name: Manifest lint + scoreboard
 
-# Validator and scoreboard for the bootleg-upload pipeline (#247) — NOT a
+# Validator and scoreboard for the bootleg-upload pipeline — NOT a
 # state machine and NOT an executor. Paste a manifest into a comment on a
 # "Playlist:" issue inside a ```manifest fenced block (optionally with the
 # sidecar in a ```machine block); this replies with lint findings and mirrors
 # a progress checklist into the issue body between the scoreboard markers.
 #
-# Deliberate boundaries, recorded in #247 so they are not re-litigated:
+# Deliberate boundaries, not to be re-litigated (docs/ISSUE_LOG.md has their history):
 #   - No credential of any kind is used here. GITHUB_TOKEN with issues:write
 #     is the entire blast radius. The channel-write OAuth token must never
-#     land in Actions secrets (see #76 for why that lesson is pre-learned).
+#     land in Actions secrets (docs/ISSUE_LOG.md has the incident behind this rule).
 #   - --scan/--upload can never move to CI: the clips live on a laptop.
 #   - Signals here are advisory; the local CLI remains the thing that acts.
 #
