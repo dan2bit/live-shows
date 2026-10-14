@@ -45,6 +45,7 @@ ALIASES_PATH = "data/recommend_aliases.tsv"
 NEAR_COLLISION_ALLOWLIST = {
     tuple(sorted(("eric johanson", "eric johnson"))),
     tuple(sorted(("blood brothers", "wood brothers"))),
+    tuple(sorted(("kara jackson", "ava jackson"))),
 }
 
 
