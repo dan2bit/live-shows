@@ -68,9 +68,11 @@ A water name shows its reach. Hover one (tap, on a device) and the painted line 
 to is stroked in blue, every settlement on that water gets a ring and its label, and the
 readout lists them: `Tweed Creek - stream, 198 units - 6 on it: Sue Foley, ...`. The rule is
 the strand census's: a name belongs to the nearest painted centerline (a river-class line
-within 25 wins, since a wide river's name sits off its bank), the reach floods through
-touching lines but stops at any line that is another name's home, and a settlement within
-10 units is on it. In edit mode every water name shows at any zoom, grabbing one holds the
+within 25 wins, since a wide river's name sits off its bank), no two names share a line
+(bigger waters claim first, by tier, so a creek's name a few units off a river's bank keeps
+its creek rather than taking the river's own line), the reach floods through touching lines
+but stops at any line that is another name's home, and a settlement within 10 units is on
+it. In edit mode every water name shows at any zoom, grabbing one holds the
 reach and dims everything else, and the reach follows the label as it moves - slide a name
 six units onto the next creek and the rings jump, which is the point. A tap or a drag holds
 the reach until the next press or Esc; a hover clears on leave. Water names are hit
