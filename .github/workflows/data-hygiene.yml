@@ -197,7 +197,7 @@ jobs:
           fi
 
       - name: Restore setlist.fm verification cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/setlistfm-verified.json
           key: setlistfm-verified-${{ github.run_id }}
