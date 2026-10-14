@@ -28,8 +28,8 @@
 #     dispatch verify every link not verified in the last 45 days, inside a
 #     request budget, reusing the facts kept in the Actions cache. ATTENDANCE
 #     (the weekly run and a manual dispatch only) pulls the setlist.fm user's
-#     attended list and reconciles it with the ledgers from 2021 on: shows
-#     attended there with no ledger row, acts on a bill whose own setlist is not
+#     attended list and reconciles all of it with the history ledgers from 2021
+#     on and data/legacy_shows.tsv before that: shows attended there with no row, acts on a bill whose own setlist is not
 #     linked (MULTI candidates), linked setlists not on the list, and dates that
 #     disagree. ADVISORY permanently, for the same reasons as verification. The
 #     user is the SETLISTFM_USER repository variable, else the repo owner; its

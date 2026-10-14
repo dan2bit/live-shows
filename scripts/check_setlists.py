@@ -19,7 +19,8 @@ Four checks, four reports, four step-summary sections:
                 repeat run asks only about links it has not seen recently.
   attendance    ADVISORY permanently, and only with --api on a full run (no
                 --changed). Pulls the setlist.fm user's attended list and
-                reconciles it with the ledgers from ATTENDANCE_FROM on, both ways:
+                reconciles all of it, both ways, with the history ledgers from
+                ATTENDANCE_FROM on and with LEGACY before that:
                 a setlist attended there that no ledger row accounts for (a missed
                 show, or an act on a bill whose own setlist is not linked - a
                 MULTI candidate), a linked setlist the attended list does not have
@@ -75,7 +76,8 @@ URL_FIND_RE = re.compile(r"https?://(?:www\.)?setlist\.fm/setlist/[^\s\"'\t]+?\.
 STOPWORDS = {"the", "and", "usa", "for", "hall", "club", "center", "centre", "theatre",
              "theater", "live", "park", "arts", "national", "performing"}
 API_BASE_DEFAULT = "https://api.setlist.fm/rest"
-ATTENDANCE_FROM = "2021-01-01"       # the history ledgers' first year; earlier shows are hand-kept
+ATTENDANCE_FROM = "2021-01-01"       # the history ledgers' first year
+LEGACY = "data/legacy_shows.tsv"     # the shows before it: one row per act per show
 ATTENDED_CACHE_KEY = "_attended"     # not a setlist id, so it never collides with verification facts
 DRIFT_DAYS = 3                       # how far apart two dates can be and still be one show
 
@@ -455,6 +457,41 @@ def pull_attended(user, key, base, pause, max_pages):
     return found, False, f"stopped at --attended-max-pages {max_pages}"
 
 
+def legacy_shows():
+    """LEGACY's rows in the shape ledger_shows() returns. One row per act, so an act's
+    bill-mates are the other rows with the same date and venue. The file opens with a
+    comment block, so lines are counted from the file itself."""
+    if not os.path.exists(LEGACY):
+        return []
+    rows, header = [], None
+    with open(LEGACY, encoding="utf-8", newline="") as fh:
+        for number, raw in enumerate(fh.read().split("\n"), start=1):
+            if not raw.strip() or raw.lstrip().startswith("#"):
+                continue
+            cells = raw.split("\t")
+            if header is None:
+                header = cells
+                continue
+            cells += [""] * (len(header) - len(cells))
+            rows.append((number, dict(zip(header, cells))))
+    bills = defaultdict(list)
+    for _, row in rows:
+        bills[((row.get("Show Date") or "").strip(), (row.get("Venue") or "").strip())].append(
+            (row.get("Artist") or "").strip())
+    shows = []
+    for line, row in rows:
+        when = (row.get("Show Date") or "").strip()
+        act = (row.get("Artist") or "").strip()
+        if not when or not act:
+            continue
+        url = (row.get("Setlist URL") or "").strip()
+        parts = parse_url(url)
+        mates = [a for a in bills[(when, (row.get("Venue") or "").strip())] if a != act]
+        shows.append({"path": LEGACY, "line": line, "date": when, "headliner": act, "support": mates,
+                      "seen": [], "links": [(act, url, parts["id"])] if parts else [], "legacy": True})
+    return shows
+
+
 def ledger_shows():
     """Every attended show from ATTENDANCE_FROM on, with the setlists it links.
 
@@ -525,8 +562,6 @@ def reconcile(shows, attended, same_act, through, complete=True, drifted=()):
     oldest = min((a["date"] for a in attended.values()), default="")
 
     for sid, a in sorted(attended.items(), key=lambda kv: (kv[1]["date"], kv[1]["artist"])):
-        if a["date"] < ATTENDANCE_FROM:
-            continue
         where = f"{a['venue']}, {a['city']}".strip(", ")
         if sid in linked:
             show, act, url = linked[sid]
@@ -551,9 +586,16 @@ def reconcile(shows, attended, same_act, through, complete=True, drifted=()):
             kind, s, how = hit
             if kind == "unlinked" and not s["links"]:
                 msg = f"{a['artist']} on {a['date']}: the row has no setlist link; setlist.fm has {a['url']}"
+            elif kind == "unlinked" and s.get("legacy"):
+                msg = (f"{a['artist']} on {a['date']}: the legacy row links another setlist, not "
+                       f"the attended one ({a['url']})")
             elif kind == "unlinked":
                 msg = (f"{a['artist']} on {a['date']}: a second attended setlist for the headliner, not "
                        f"linked from the row ({a['url']})")
+            elif s.get("legacy"):
+                kind = "unaccounted"
+                msg = (f"{a['artist']} on {a['date']} shared the bill with {s['headliner']} but has no "
+                       f"row of its own in {LEGACY} ({a['url']})")
             else:
                 msg = (f"{a['artist']} on {a['date']} is {how} of the {s['headliner']} row but its "
                        f"setlist is not linked: MULTI candidate ({a['url']})")
@@ -567,12 +609,13 @@ def reconcile(shows, attended, same_act, through, complete=True, drifted=()):
                         f"{a['artist']}: setlist.fm dates the show {a['date']} at {where}, the ledger "
                         f"row is {s['date']} ({a['url']})"))
             continue
-        tail = (f"; the {', '.join(s['headliner'] for s in same_day)} row that night names no such act"
+        tail = (f"; the {', '.join(s['headliner'] for s in same_day)} row(s) that night name no such act"
                 if same_day else "")
+        missing_from = LEGACY if a["date"] < ATTENDANCE_FROM else "any ledger"
         out.append(("unaccounted", same_day[0]["path"] if same_day else None,
                     same_day[0]["line"] if same_day else None,
-                    f"{a['artist']} on {a['date']} at {where}: attended on setlist.fm, not in any "
-                    f"ledger{tail} ({a['url']})"))
+                    f"{a['artist']} on {a['date']} at {where}: attended on setlist.fm, not in "
+                    f"{missing_from}{tail} ({a['url']})"))
 
     for show in shows:
         if show["date"] > through or (not complete and show["date"] < oldest):
@@ -633,7 +676,7 @@ def check_attendance(report, args, summary_note, drifted):
     def same_act(a, b):
         return artists_match(a, b) or bool(resolver.group(a) & resolver.group(b))
 
-    findings = reconcile(ledger_shows(), attended, same_act, today, complete, drifted)
+    findings = reconcile(legacy_shows() + ledger_shows(), attended, same_act, today, complete, drifted)
     order = ("unaccounted", "multi", "unlinked", "drift", "not-attended")
     for kind in order:
         for k, path, line, message in findings:
@@ -675,6 +718,10 @@ def selftest():
          "support": [], "seen": [], "links": [("Retagged Example", u("r", "e1"), "e1")]},
         {"path": "L", "line": 8, "date": "2099-04-01", "headliner": "Example Mule",
          "support": [], "seen": [], "links": [("Example Mule", u("m", "f1"), "f1")]},
+        {"path": "G", "line": 9, "date": "1999-01-01", "headliner": "Legacy Example",
+         "support": ["Legacy Opener"], "seen": [], "links": [], "legacy": True},
+        {"path": "G", "line": 10, "date": "1999-06-01", "headliner": "Legacy Linked",
+         "support": [], "seen": [], "links": [("Legacy Linked", u("g", "g9"), "g9")], "legacy": True},
     ]
 
     def a(when, artist, sid):
@@ -690,12 +737,15 @@ def selftest():
         "t1": a("2099-03-21", "Typo Date Example", "t1"),     # a day off -> drift
         "e1": a("2099-03-26", "Retagged Example", "e1"),      # same id, other date -> drift
         "z1": a("2099-03-30", "Missed Show Example", "z1"),   # no row at all
-        "o1": a("1999-01-01", "Before The Ledgers", "o1"),    # out of scope
+        "l1": a("1999-01-01", "Legacy Example", "l1"),        # legacy row, no link
+        "l2": a("1999-01-01", "Legacy Opener", "l2"),         # bill-mate with no row of its own
+        "l3": a("1998-05-05", "Before The Legacy Rows", "l3"),  # pre-2021, in no file
     }
     loose_match = lambda x, y: loose(x) == loose(y)
-    got = sorted((k, line) for k, _, line, _ in reconcile(shows, attended, loose_match, "2099-03-31"))
+    got = sorted((k, line or 0) for k, _, line, _ in reconcile(shows, attended, loose_match, "2099-03-31"))
     want = sorted([("multi", 2), ("multi", 3), ("unlinked", 4), ("not-attended", 5), ("drift", 6),
-                   ("drift", 7), ("unaccounted", None)])
+                   ("drift", 7), ("unaccounted", 0), ("unlinked", 9), ("unaccounted", 9),
+                   ("unaccounted", 0), ("not-attended", 10)])
     failures = [] if got == want else [f"reconcile: expected {want}, got {got}"]
     # a show after `through` is not owed an attendance yet; f1 is 2099-04-01
     if any(k == "not-attended" and line == 8 for k, _, line, _ in
