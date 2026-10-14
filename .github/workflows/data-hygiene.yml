@@ -13,7 +13,7 @@
 #     docs/ISSUE_LOG.md). BLOCKING on a staging push and on any PR into
 #     main/staging, but only for the files the change touched; the full-repo
 #     scan stays advisory.
-#   - check_setlists.py — the setlist.fm links every show carries. Three checks in
+#   - check_setlists.py — the setlist.fm links every show carries. Four checks in
 #     one script. PAIRING (a MULTI marker has its data/setlists entry and the
 #     reverse; a marker's date is its row's date; every entry lists acts with
 #     URLs) is mechanical and BLOCKING on a staging push and on any PR into
@@ -26,7 +26,14 @@
 #     absent, which is always the case on a PR from a fork. A push or a PR
 #     verifies only the links it added or changed. The weekly run and a manual
 #     dispatch verify every link not verified in the last 45 days, inside a
-#     request budget, reusing the facts kept in the Actions cache.
+#     request budget, reusing the facts kept in the Actions cache. ATTENDANCE
+#     (the weekly run and a manual dispatch only) pulls the setlist.fm user's
+#     attended list and reconciles all of it with the history ledgers from 2021
+#     on and data/legacy_shows.tsv before that: shows attended there with no row, acts on a bill whose own setlist is not
+#     linked (MULTI candidates), linked setlists not on the list, and dates that
+#     disagree. ADVISORY permanently, for the same reasons as verification. The
+#     user is the SETLISTFM_USER repository variable, else the repo owner; its
+#     rules are pinned by an offline --selftest that runs on every push.
 #   - reconcile_follows.py --hygiene — the follows-pipeline invariants that need
 #     only the repo (NAR/follows_master overlap, NAR/artists overlap, fast_track
 #     rows with no follows_master row). ADVISORY everywhere: a violation is a
@@ -197,19 +204,22 @@ jobs:
           restore-keys: |
             setlistfm-verified-
 
-      - name: Setlist pairing, link sanity and setlist.fm verification
+      - name: Setlist pairing, link sanity, setlist.fm verification and attendance
         shell: bash
         env:
           SETLISTFM_API_KEY: ${{ secrets.SETLISTFM_API_KEY }}
+          SETLISTFM_USER: ${{ vars.SETLISTFM_USER }}
         run: |
           set -euo pipefail
+          python scripts/check_setlists.py --selftest
           args=(--api --cache .cache/setlistfm-verified.json)
           if [ '${{ steps.diff.outputs.blocking }}' = 'true' ]; then
             args+=(--strict)
           fi
           # A push or a PR verifies only the links it added or changed. The
           # scheduled run and a manual dispatch have no range, so they verify
-          # every link that has not been verified recently.
+          # every link that has not been verified recently and reconcile the
+          # attended list.
           before=""
           head='${{ github.sha }}'
           case '${{ github.event_name }}' in
