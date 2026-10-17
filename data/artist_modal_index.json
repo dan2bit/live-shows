@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-10-17T00:29:49Z",
+"generated_at":"2026-10-17T13:28:52Z",
 "aliases":{
 "albert castiglia tour schedule page":"albert castiglia",
 "allman betts family revival a decade of revival":"allman betts band",
@@ -1683,7 +1683,7 @@
 "signed":false
 }
 },
-"vip":1,
+"vip":2,
 "photo":1,
 "photo_album":"https://photos.redhat-bootlegs.net/share/GRxpay7XS8ILveAsZmOil-0zM17VSsCcEXXmxOdANIq8l-6O27rStI92PzUD4HSe3MQ"
 },
@@ -4551,9 +4551,12 @@
 "show_log":[]
 },
 "fast_track":false,
-"affinity":null,
+"affinity":{
+"score":0.15,
+"band":"low"
+},
 "badges":{
-"hat":"not_yet",
+"hat":"completed",
 "book":"absent",
 "book_detail":{
 "aps":{
