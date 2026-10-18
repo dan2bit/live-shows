@@ -1,7 +1,7 @@
 ---
 name: Photos
 about: Every photo from one show, filed into the show library one comment at a time
-title: "Photos: {{HEADLINER}} — {{YYYY-MM-DD}} ({{VENUE_SHORT}})"
+title: "Photos: {{HEADLINER}} — {{YYYY-MM-DD}} ({{VENUE_SHORT}}) — before {{NEXT_SHOW_DATE}}"
 labels: photo
 ---
 
@@ -13,6 +13,13 @@ Expected from the notes (edit freely):
 - [ ] with-artist: {{ARTIST_2_OR_DELETE_LINE}}
 - [ ] pre-show selfie
 - [ ] memorabilia: {{ITEM_OR_DELETE_LINE}}
+
+**File these before {{NEXT_SHOW_DATE}}, the next purchased show.** The Immich app
+uploads the on-device original, so each photo must still be on the phone when you
+file it. If Google Photos' *Free up space* has already run - the usual prep before
+the next show - re-download this show's photos to the device first (Google Photos
+-> open the photo -> ⋮ -> Download), then upload. A cloud-only thumbnail cannot be
+filed, and the originals purge again at the next free-up.
 
 ## How to file each photo
 
