@@ -15,6 +15,7 @@ on:
       - data/live_shows_potential.tsv
       - tools/research/follows/follows_master.tsv
       - data/history/**
+      - data/live_shows_current.tsv   # attended rows credit support acts (same pass as history/)
       - data/recommend_aliases.tsv
       - scripts/build_recommend_index.py
   workflow_dispatch:

@@ -13,7 +13,8 @@ Reads the same sources as tools/research/graph/artist-graph.html:
   related_acts.tsv       hand-maintained kinship (road edges)
   artists.tsv            Via column (road edges), Times Seen / VIP (settlement size)
   seen_with.tsv          recurring sidemen (bridge edges)
-  live_shows_current.tsv / history/<year>.tsv   bill edges (river-road edges)
+  live_shows_current.tsv / history/<year>.tsv   bill edges (river-road edges); attended rows of
+                         current credit seen-time like history rows (support acts, most_recent)
   legacy_shows.tsv       the ledger of shows before the history begins (2021): seen counts,
                          bill edges, settlements (issue 468); the map is its first consumer
 
@@ -326,20 +327,31 @@ def _hist_tokens(cell):
             yield tok
 
 # bills: (date, headliner) for every support credit, so a support-only settlement's
-# source line can say whose bill it was, not just that there was one
+# source line can say whose bill it was, not just that there was one.
+# The attended rows of live_shows_current.tsv count the same way: a bill is settled when
+# the status flips, so a new opener does not wait for the playlist/photo curation that
+# gates the rollover into history/ (a show is in one file or the other, never both).
+# Rows still upcoming are never read - an announced opener who falls through must not
+# become a phantom settlement. current names the column "Supporting Artist".
+def _attended_rows():
+    for _hp in sorted((DATA / "history").glob("*.tsv")):
+        for _hr in tsv_rows(_hp):
+            yield _hr, _hr.get("Supporting Acts")
+    for _hr in tsv_rows(DATA / "live_shows_current.tsv"):
+        if (_hr.get("Status") or "").strip().lower() == "attended":
+            yield _hr, _hr.get("Supporting Artist")
 _hist_seen = defaultdict(lambda: {"n": 0, "last": "", "bills": []})
-for _hp in sorted((DATA / "history").glob("*.tsv")):
-    for _hr in tsv_rows(_hp):
-        _hd = (_hr.get("Show Date") or "")[:10]
-        _head = (_hr.get("Artist") or "").strip()
-        for _cell, _support in ((_hr.get("Artist"), False), (_hr.get("Supporting Acts"), True)):
-            for _tok in _hist_tokens(_cell):
-                _c = resolve(_tok)
-                if _c:
-                    _hist_seen[_c]["n"] += 1
-                    _hist_seen[_c]["last"] = max(_hist_seen[_c]["last"], _hd)
-                    if _support and _head:
-                        _hist_seen[_c]["bills"].append((_hd, _head))
+for _hr, _sup in _attended_rows():
+    _hd = (_hr.get("Show Date") or "")[:10]
+    _head = (_hr.get("Artist") or "").strip()
+    for _cell, _support in ((_hr.get("Artist"), False), (_sup, True)):
+        for _tok in _hist_tokens(_cell):
+            _c = resolve(_tok)
+            if _c:
+                _hist_seen[_c]["n"] += 1
+                _hist_seen[_c]["last"] = max(_hist_seen[_c]["last"], _hd)
+                if _support and _head:
+                    _hist_seen[_c]["bills"].append((_hd, _head))
 for _c, _hv in _hist_seen.items():
     if _c not in seen_meta:
         seen_meta[_c] = {"times_seen": _hv["n"], "vip": 0,

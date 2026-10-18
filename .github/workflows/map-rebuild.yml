@@ -1,8 +1,17 @@
 name: Rebuild fantasy map data
 
 # Closes the pins -> data loop: when the map's inputs change on main
-# (anything under tools/map/edits/, or the two generator scripts),
+# (anything under tools/map/edits/, the two generator scripts, or the
+# recommendation index the builder reads its roster and seen counts from),
 # regenerate build/fantasy_map_data.json and build/heightmap.png and commit them.
+#
+# data/recommend_index.json is a watched path so that a show flowing through
+# Routine 2 (artists.tsv, live_shows_current.tsv) or the rollover (history/)
+# reaches the map without a hand-run: those pushes rebuild the index, the
+# index job commits to staging with the promote deploy key, auto-promote
+# fast-forwards main with the same key, and that push - a real push, not a
+# GITHUB_TOKEN one - lands here. The index job no-ops when nothing changed,
+# and so does this one, so the chain is quiet on a quiet day.
 #
 # main requires the `guard` status check, so this commits to `staging`
 # via the promote deploy key (which also makes the staging push trigger
@@ -37,6 +46,7 @@ on:
     paths:
       - tools/map/edits/**
       - data/legacy_shows.tsv
+      - data/recommend_index.json
       - tools/map/build_fantasy_map.py
       - tools/map/emit_heightmap.py
   workflow_dispatch:

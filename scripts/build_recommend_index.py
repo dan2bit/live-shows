@@ -14,6 +14,11 @@ Sources (status precedence high -> low):
   3. live_shows_potential.tsv   -> "potential"   (Buy/Choose/Sell/Pass; +support acts)
   4. follows/follows_master.tsv -> "follow"      (follow list; tier)
   5. history/*.tsv              -> "seen-support" (attended bills; appearances/years)
+     + live_shows_current.tsv rows with Status = attended, read the same way: a bill
+       is settled the moment the status flips, so an opener does not wait for the
+       playlist/photo curation that gates the rollover into history/. Rows still
+       "upcoming" are never read - an announced opener who falls through (Jontavious
+       Willis, Honeydrops 2026-10-03) must not become a phantom sighting.
 
 The history pass exists because an artist actually seen live was invisible to the
 index unless they independently earned an artists.tsv row or a follow. Support acts
@@ -43,6 +48,7 @@ FASTTRACK = ROOT / "data" / "fast_track.tsv"
 POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
 FOLLOWS   = ROOT / "tools" / "research" / "follows" / "follows_master.tsv"
 HISTORY   = ROOT / "data" / "history"
+CURRENT   = ROOT / "data" / "live_shows_current.tsv"
 ALIASES   = ROOT / "data" / "recommend_aliases.tsv"
 OUTPUT    = ROOT / "data" / "recommend_index.json"
 
@@ -140,8 +146,27 @@ def alias_targets():
     return out
 
 
+def attended_bills():
+    """(date, headliner, support cell) for every attended bill: the history TSVs
+    plus the rows of live_shows_current.tsv whose Status is "attended" - a show is
+    in one file or the other, never both, so the two sum without double counting.
+    The current file names the support column "Supporting Artist"; history
+    abbreviates it to "Supporting Acts"."""
+    for path in sorted(HISTORY.glob("*.tsv")):
+        for r in read_tsv(path):
+            yield (r.get("Show Date", "") or "", (r.get("Artist", "") or "").strip(),
+                   r.get("Supporting Acts", "") or "")
+    if CURRENT.exists():
+        for r in read_tsv(CURRENT):
+            if (r.get("Status", "") or "").strip().lower() != "attended":
+                continue
+            yield (r.get("Show Date", "") or "", (r.get("Artist", "") or "").strip(),
+                   r.get("Supporting Artist", "") or "")
+
+
 def load_history():
-    """One record per distinct name spelling appearing in data/history/*.tsv.
+    """One record per distinct name spelling appearing on an attended bill
+    (data/history/*.tsv, plus the attended rows of live_shows_current.tsv).
 
     Aggregates per raw spelling rather than per row so a repeat visit does not
     become several records; spellings that differ ("Robert Cray" vs "Robert Cray
@@ -157,27 +182,24 @@ def load_history():
     # The bill list is support slots only: who the act opened for, so a name that was
     # never a headliner can be introduced by the bill it was on.
     agg = {}
-    for path in sorted(HISTORY.glob("*.tsv")):
-        for r in read_tsv(path):
-            date = r.get("Show Date", "") or ""
-            year = date[:4]
-            head = (r.get("Artist", "") or "").strip()
-            names = [head]
-            names += HISTORY_SUPPORT_SEP.split(r.get("Supporting Acts", "") or "")
-            for i, raw in enumerate(names):
-                raw = raw.strip()
-                if len(raw) < 2 or raw == "-" or SKIP_AGGREGATE.search(raw):
-                    continue
-                raw = aliases.get(norm(raw), raw)
-                slot = agg.setdefault(raw, [0, year, year, 0, []])
-                slot[0] += 1
-                if year:
-                    slot[1] = min(slot[1] or year, year)
-                    slot[2] = max(slot[2] or year, year)
-                if i == 0:
-                    slot[3] += 1
-                elif head:
-                    slot[4].append((date, head))
+    for date, head, support in attended_bills():
+        year = date[:4]
+        names = [head]
+        names += HISTORY_SUPPORT_SEP.split(support)
+        for i, raw in enumerate(names):
+            raw = raw.strip()
+            if len(raw) < 2 or raw == "-" or SKIP_AGGREGATE.search(raw):
+                continue
+            raw = aliases.get(norm(raw), raw)
+            slot = agg.setdefault(raw, [0, year, year, 0, []])
+            slot[0] += 1
+            if year:
+                slot[1] = min(slot[1] or year, year)
+                slot[2] = max(slot[2] or year, year)
+            if i == 0:
+                slot[3] += 1
+            elif head:
+                slot[4].append((date, head))
 
     out = []
     for name, (count, first, last, headlined, bills) in agg.items():
