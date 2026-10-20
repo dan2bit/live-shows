@@ -145,6 +145,17 @@ Routine 2 (post-show notes), or on direct request from Dan at any time.
 - Multiple tickets or PAPER/VIP: `[Artist] (N)`, `[Artist] (N PAPER)`, `[Artist] (N VIP)`
 - VIP package: append `(VIP)`
 
+### Start time — REINFORCED
+
+Set by the **Doors Time Rule** in `EMAIL_WORKFLOWS.md`:
+- **GA** (no assigned seat, including first-come "GA Seated" rooms): the event
+  **starts at doors open**. Not show time.
+- **Reserved seat or table:** starting at doors is fine. Starting at show time is also
+  acceptable, but then the description must open with `Doors [time] / Show [time]`.
+
+A blank doors time is never left as-is. Look it up (event page, then the venue defaults
+below), and escalate as the show date nears, per that rule.
+
 ### Location — REINFORCED
 
 The Location field feeds driving directions, so it must point to **where Dan actually parks**,
