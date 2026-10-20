@@ -45,6 +45,15 @@ Fetch both files and hold them in context for the full session:
 fails, stop immediately.** These two files drive duplicate suppression (Routines 3–5)
 and date pruning (Routine 3).
 
+### 0c — Blank doors-time sweep
+
+From the upcoming rows fetched in 0b, list every show inside the next **14 days**
+whose `Doors Time` is `-`, and resolve each per the **Doors Time Rule** below
+(look it up, update the row and the calendar event). Report the result at the top of
+the session, before any routine output. A **GA show inside 7 days** with a blank doors
+time is a must-fix: resolve it first, or tell Dan plainly that the venue has not
+published one. Never pass over it silently.
+
 ---
 
 ## Gmail Label System
@@ -141,6 +150,53 @@ Key carry-overs:
 
 ---
 
+## Doors Time Rule
+
+**A blank doors time is never ignored.** For a GA show it is a must-have: the calendar
+event starts at doors open, because doors is when Dan has to be there to get a spot.
+The rule gets stricter as the show date gets closer.
+
+**What counts as GA here.** It depends on the ticket, not on the `Seat Type` column
+alone. A ticket with **no assigned seat** counts as GA, including first-come seating
+such as "GA Seated", "ADV GA Gold Seated", or Birchmere GA tables. A ticket that names
+a specific seat or table (`Sec / Row / Seat`, `Table 103, Seat 1`, or a premium-seating
+add-on such as "Table C, Seat 2") is **reserved**, even when the row says `GA`. Read the
+seat info in the receipt or in `current_private.tsv` to decide.
+
+**Calendar event start time:**
+- **GA:** the event **must** start at the doors time, with
+  `Doors: [time] / Show: [time]` in the description.
+- **Reserved seat:** starting at doors is fine. Starting at show time is also
+  acceptable, but then the description must open with `Doors [time] / Show [time]`
+  so the doors time is never hidden.
+- **End time:** keep the existing end time, or about 3 hours after show time.
+
+**Where to find the doors time,** in this order:
+1. The receipt or ticket email.
+2. The `Venue Event URL` on the row. Union Stage Presents, 930.com and theatlantis.com
+   pages usually list Doors and Show.
+3. The venue defaults table (Routine 1 Step 2) and `venues.tsv`.
+4. The venue's own calendar page or social posts.
+
+If none of these gives a time, record `-` in the row and say why in the public Notes
+(e.g. "Doors time not published"). Re-check it in every pre-flight (Step 0c).
+
+**Escalation by proximity:**
+
+| Days to show | Blank doors on a GA show | Blank doors on a reserved show |
+|---|---|---|
+| more than 14 | look up at purchase; flag in the log if unpublished | look up at purchase; note in the log |
+| 14 or fewer | resolve in pre-flight 0c; tell Dan if still unpublished | resolve in pre-flight 0c |
+| 7 or fewer | **must-fix**: resolve first, or tell Dan explicitly at the top of the session | resolve; tell Dan if still unpublished |
+
+**Writing the fix.** When a doors time is found:
+- Update `Doors Time` in `data/live_shows_current.tsv` (public, `staging`).
+- Update the calendar event: for GA, move the event start to doors; for any ticket,
+  add or refresh the `Doors / Show` line in the description.
+- Do both in the same pass. One without the other is an incomplete fix.
+
+---
+
 ## Routine 1 — New Ticket Purchase
 
 **Trigger:** `label:ticket-receipt -label:processed`
@@ -149,6 +205,11 @@ Key carry-overs:
 
 Extract: artist, supporting act(s), show date/times, venue, seat info, ticket access
 method, ticket quantity, face value, fees, total cost, purchase date, order numbers.
+
+**Doors time is a required field, not optional.** If the receipt doesn't state it, look
+it up per the **Doors Time Rule** (event page, then venue defaults) before writing the
+row or the calendar event. Decide whether the ticket is GA or reserved from the seat
+info. That decides the calendar start time in Step 4.
 
 **Ticket quantity rule (Ticketmaster and similar).** Ticketmaster confirmation
 emails state only the order total - no quantity, no per-ticket price (that
@@ -231,7 +292,9 @@ confirmation if venue not listed.
 
 **Step 4 — Create calendar event — MANDATORY, NOT OPTIONAL**
 
-Per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**. A purchased show is not
+Per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**. **Start time follows the
+Doors Time Rule:** a GA ticket starts at doors. A reserved seat may start at show time
+only if the description carries the doors time. A purchased show is not
 fully processed until it has a corresponding calendar event — the TSV row and the
 calendar entry are treated as a single unit of work, not two independently-optional
 outputs. This applies regardless of ticket access method (paper, mobile barcode,
@@ -286,7 +349,9 @@ a hand-fix is a last resort, noted explicitly, and will be re-verified by the ne
 Before writing the activity log draft or applying `processed`, re-query the calendar
 (`Google Calendar:list_events`, `redhat.bootlegs@gmail.com`, date-bounded around the
 show date) and confirm a timed event exists for this show, with a title matching the
-artist and a start time matching the parsed doors/show time. This is a positive
+artist and a start time that follows the **Doors Time Rule**: doors for a GA ticket,
+doors or show time for a reserved seat. A GA event that starts at show time
+while a doors time is known counts as **details mismatched** below. This is a positive
 verification step, not a re-statement of Step 4 — it exists specifically to catch cases
 where Step 4 appeared to succeed but the event was never actually created or committed
 (tool call silently no-op'd, wrong calendar targeted, wrong date, event created then
@@ -312,6 +377,10 @@ is a fresh read-back.
 
 Include explicit confirmation in the log body that the calendar event was verified
 present (Step 8), not just "created."
+
+Include a `Doors:` line for every receipt. Give the time and its source (receipt,
+event page, venue default), or say "not published". If not published, say whether the
+ticket is GA and when the next pre-flight sweep will re-check it.
 
 Include a `Qty: N` line for every receipt, noting how the quantity was determined
 when the email did not state it (derived from seat range, receipt data pasted by
