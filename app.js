@@ -328,6 +328,8 @@ async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
   if(!res.ok)throw new Error(await res.text());
 }
 // TSV -> row objects keyed by the line-1 header; short rows are padded with ''.
+// '-' is the TSV empty sentinel; never treat it as a URL.
+function _url(v){var s=(v||'').trim();return(s===''||s==='-')?'':s;}
 function parseTsv(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
   var headers=lines[0].split('\t').map(function(h){return h.trim();});
@@ -1115,8 +1117,8 @@ async function _purchaseAppendPublic(r,form,iso){
   var nr={};headers.forEach(function(h){nr[h]='-';});
   nr['Show ID']=iso;nr['Artist']=r['Artist']||'';nr['Supporting Artist']=r['Support']||'';
   nr['Show Date']=iso;nr['Venue Name']=r['Venue']||'';nr['Venue Address']=r['Venue City']||'-';
-  nr['Venue Event URL']=r['Event URL']||r['Purchase URL']||'-';
-  nr['Seat Type']=form.seatType;nr['VIP']=form.vip?'Y':'';nr['Group']=form.group?'Y':'';
+  nr['Venue Event URL']=_url(r['Event URL'])||_url(r['Purchase URL'])||'-';
+  nr['Seat Type']=form.seatType;nr['VIP']=form.vip?'Y':'N';nr['Group']=form.group?'Y':'N';
   var access=form.access||'';
   if(form.paper){access=/paper/i.test(access)?access:(access?access+' (Paper)':'Paper');}
   nr['Ticket Access']=access||'-';nr['Status']='upcoming';
@@ -1236,10 +1238,10 @@ function closeForSaleModal(){document.getElementById('forsaleModal').classList.r
 // ── Potential rows ───────────────────────────────────
 function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium',dots=t==='strong'?'●●●':t.includes('strong')&&t.includes('medium')?'●●':t==='medium'?'●':t==='low'?'◦':'';return'<span class="cell-tier '+cls+'">'+(dots?'<span class="tier-dots">'+dots+'</span> ':'')+esc(tier)+'</span>';}
 function renderPotentialRowBystander(r,gi){
-  var pn=esc(r['Notes']||''),vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
+  var pn=esc(r['Notes']||''),vu=_url(r['Event URL'])||_url(r['Purchase URL']),vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
-  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),phLink=(isSell&&r['Purchase URL'])?'<a class="icon-link price-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a> ':'';
+  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),phLink=(isSell&&_url(r['Purchase URL']))?'<a class="icon-link price-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a> ':'';
   var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=artistLink(r['Artist']);
@@ -1254,7 +1256,7 @@ function renderPotentialRowBystander(r,gi){
 function renderPotentialRowAuthed(r,gi){
   var pn=r['Notes']||'',pvt=r['Private Notes']||'',s=pvt==='-';
   var fn=!s&&pvt?pn+(pn?' · ':'')+pvt:pn,fne=esc(fn);
-  var vu=r['Event URL']||r['Purchase URL']||'',vs=shortVenueName(r['Venue']||'');
+  var vu=_url(r['Event URL'])||_url(r['Purchase URL']),vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',isSell=dec.toLowerCase()==='sell';
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
@@ -1265,7 +1267,7 @@ function renderPotentialRowAuthed(r,gi){
   if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<a href="#" class="pot-reconciling" onclick="event.preventDefault();refreshAfterPurchase();">🎟 purchased — reconciling… (tap to refresh)</a>';}
   else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
-  var pu=r['Purchase URL']||'',sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
+  var pu=_url(r['Purchase URL']),sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
   var phLink=sl?'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a> ':'';
   if((r['Box Office']||'').trim().toUpperCase()==='Y')phLink+='<span title="Buy at the box office — not online">🏣</span> ';
   var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
@@ -1297,9 +1299,9 @@ function renderShows(){
   // current row wins — a row mid-migration is still the one receiving writes.
   var _histY=historyData[ATTENDED_YEAR]||[];
   var _curAtt=currentRows.filter(function(r){return r['Status']==='attended';});
-  var _curKeys={};_curAtt.forEach(function(r){_curKeys[_goalNorm(r['Artist']||'')+'\u241f'+(r['Show Date']||'').trim()]=1;});
+  var _curKeys={};_curAtt.forEach(function(r){_curKeys[_goalNorm(r['Artist']||'')+'␟'+(r['Show Date']||'').trim()]=1;});
   var attended=_curAtt.map(function(r){return{row:r,fileKey:'current',origIdx:currentRows.indexOf(r)};})
-    .concat(_histY.filter(function(r){return!_curKeys[_goalNorm(r['Artist']||'')+'\u241f'+(r['Show Date']||'').trim()];}).map(function(r){return{row:r,fileKey:'history:'+ATTENDED_YEAR,origIdx:_histY.indexOf(r)};}))
+    .concat(_histY.filter(function(r){return!_curKeys[_goalNorm(r['Artist']||'')+'␟'+(r['Show Date']||'').trim()];}).map(function(r){return{row:r,fileKey:'history:'+ATTENDED_YEAR,origIdx:_histY.indexOf(r)};}))
     .sort(function(a,b){return((b.row['Show Date'])||'').localeCompare((a.row['Show Date'])||'');});
   var sellRows=featureOn('for_sale')?potentialRows.filter(function(r){return(r['Decision']||'').toLowerCase()==='sell';}):[];
   var bannerCta=sellRows.length
