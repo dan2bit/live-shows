@@ -54,6 +54,11 @@ the session, before any routine output. A **GA show inside 7 days** with a blank
 time is a must-fix: resolve it first, or tell Dan plainly that the venue has not
 published one. Never pass over it silently.
 
+In the same pass, list every upcoming show inside the next **30 days** whose
+`Venue Event URL` is `-` or a generic page (see the **Event URL Rule** below). Try to
+find the event page; if you can't, list the show for Dan with the best link available.
+Report this after the doors list. It is a reminder, not a blocker.
+
 ---
 
 ## Gmail Label System
@@ -197,6 +202,57 @@ If none of these gives a time, record `-` in the row and say why in the public N
 
 ---
 
+## Event URL Rule
+
+**Every show row should link to its own event page.** The event page is how a show
+gets tracked after it's bought: doors and set times, opener changes, reschedules,
+and the page the calendar event points back to. A link to a whole venue calendar is a
+placeholder, not an event URL.
+
+**Specific vs generic.** A URL is **specific** when its path names this one event: an
+event slug or ID (`/events/robert-jon-the-wreck/`, `/e/sadurn/`,
+`/events/detail/event-1626548`, a Ticketmaster `/event/<ID>`, an Eventim
+`/event/<name>/<number>`). It is **generic** when it is a site root or a listing page:
+`birchmere.com`, `/calendar/`, `/shows`, `/events/`, `/upcoming`, a bare
+`axs.com`. An Eventim link with no trailing event number is generic (it doesn't
+resolve to the show).
+
+**Which column matters when:**
+
+| File | Most important | Also fill when found |
+|---|---|---|
+| `live_shows_potential.tsv` | `Purchase URL`: where the ticket is bought | `Event URL`: the venue's own page for the show |
+| `live_shows_current.tsv` | `Venue Event URL`: the event page, for tracking | (the purchase link is no longer needed) |
+
+The site's 🎟 bought modal copies a potentials row's `Event URL` (falling back to
+`Purchase URL`) into the new current row's `Venue Event URL`. So an event URL
+captured when the potentials row is written is the cheapest one to get: it flows
+through to the purchase with no extra step.
+Caveat: the modal treats a literal `-` in `Event URL` as a value, so a row with
+`Event URL` = `-` and a real `Purchase URL` carries `-` into the current row. Fix
+the current row by hand after an in-page purchase like that, until the modal is
+changed to skip `-`.
+
+**Where to find it,** in this order:
+1. A link in the email being processed (receipt, newsletter, artist alert). Resolve
+   tracking or redirect links to the real page.
+2. The venue calendar (`venues.tsv` → `Venue Event Calendar`). Find this show's entry
+   and take its detail-page link. Some calendars open details in a slide-over panel
+   with no URL of its own (the Fillmore, for one). Then use the ticketing page the
+   panel's Buy button points to.
+3. The ticketing platform's own event page (Ticketmaster, AXS, Eventim, Opendate,
+   Tixr, Eventbrite, InstantSeats).
+4. Ask Dan. Don't write a generic page as if it were the answer.
+
+**Strip session parameters** before writing a URL: drop `CFID`, `CFTOKEN`, `utm_*`,
+`fbclid` and similar. Keep the parameters that identify the event (InstantSeats
+`fuseaction` and `eventid`, an Eventim `afflky`).
+
+**When none is found,** write `-`, not a generic page. Say so in the log, and let
+pre-flight 0c pick it up again as the show gets closer.
+
+---
+
 ## Routine 1 — New Ticket Purchase
 
 **Trigger:** `label:ticket-receipt -label:processed`
@@ -210,6 +266,11 @@ method, ticket quantity, face value, fees, total cost, purchase date, order numb
 it up per the **Doors Time Rule** (event page, then venue defaults) before writing the
 row or the calendar event. Decide whether the ticket is GA or reserved from the seat
 info. That decides the calendar start time in Step 4.
+
+**Venue Event URL is required too.** Take it from the receipt if it links to the
+event, otherwise find it per the **Event URL Rule** (venue calendar, then the ticketing
+page). In verify-and-enrich mode (Step 1b), replace a `-` or generic URL the modal
+carried over.
 
 **Ticket quantity rule (Ticketmaster and similar).** Ticketmaster confirmation
 emails state only the order total - no quantity, no per-ticket price (that
@@ -381,6 +442,9 @@ present (Step 8), not just "created."
 Include a `Doors:` line for every receipt. Give the time and its source (receipt,
 event page, venue default), or say "not published". If not published, say whether the
 ticket is GA and when the next pre-flight sweep will re-check it.
+
+Include an `Event URL:` line for every receipt: the URL written and where it came
+from, or "not found" and when the next pre-flight sweep will re-check it.
 
 Include a `Qty: N` line for every receipt, noting how the quantity was determined
 when the email did not state it (derived from seat range, receipt data pasted by
@@ -673,6 +737,12 @@ Using Step 0b data, for every artist/show surfaced:
 
 **Confirmation required before any potentials write.** Present the full proposed set
 (new rows, updates, date-pruning removals) and wait for explicit confirmation.
+
+**Links on every proposed Buy/Choose row (Event URL Rule).** The `Purchase URL` comes
+first: it is what Dan clicks to buy. Fill `Event URL` too whenever the venue has a page
+for the show; it carries into the current row if the show is bought in-page. If the
+email gives neither, check the venue calendar before proposing the row, and show which
+links are still missing in the confirmation list. A Pass row needs neither.
 
 **Write the reason, not the status (#440).** When the confirmed row is written, its
 `Notes` and `Availability Notes` carry why - fit, bill, source, and any collision named
