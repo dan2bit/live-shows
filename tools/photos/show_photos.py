@@ -9,9 +9,12 @@ Everything after that happens here.
   plan      Show what would be tagged for one show. No writes. Derives what
             it can and names every judgment it cannot make.
 
-  edit      Serve a local page with one card per photo, carrying only the
-            undecidable fields: which artist, and for memorabilia the show
-            date and subtype. Everything derivable is pre-filled.
+  queue     Serve a local page of every photo in an upload album that has
+            no show/ tag yet, grouped by the show it appears to belong to,
+            one card each carrying only the undecidable fields; one Apply
+            files the ticked cards through `add`. Also shows, per show, what
+            the open Photos: issue expected against what is filed. The
+            batch path beside the per-issue one (photo_queue.py).
 
   tag       Apply the tags recorded by `edit` to Immich.
 
@@ -278,7 +281,79 @@ def show_bill(row):
     for part in re.split(r"\s*[/,]\s*", support):
         if part.strip():
             out.append(part.strip())
-    return [a for a in out if a]
+    # "-" is the row's empty-support placeholder, not an act
+    return [a for a in out if a and a != "-"]
+
+
+# ── the description as a capture-time hint ────────────────────────────────
+#
+# The phone can only choose an upload album, so the show is otherwise derived
+# from the capture date - wrong by design for memorabilia (shot at home days
+# later) and fragile for anything shot after midnight. A description typed in
+# the Immich app when uploading is the one structured thing the phone CAN say:
+#
+#     show 2026-10-16
+#     show 2026-10-16 artist "Autumn Nicholas"
+#     show 2026-10-16 subtype=setlist signed artist="Luther Dickinson"
+#     show 2026-10-16 kind=with-artist
+#
+# Same vocabulary as an issue comment. Anything the hint states is taken as
+# assigned, ahead of the derivation; anything it leaves out is derived or asked
+# as before. Tags stay the source of truth - the hint is read before tagging,
+# never consulted after.
+
+_HINT_SHOW_RE = re.compile(r"\bshow[\s=:]+(\d{4}-\d{2}-\d{2})\b", re.I)
+_HINT_ARTIST_RE = re.compile(r"\bartist\s*[=:\s]\s*[\"\u201c]([^\"\u201d]+)[\"\u201d]", re.I)
+_HINT_SUBTYPE_RE = re.compile(r"\bsubtype\s*[=:]\s*([a-z][a-z-]*)", re.I)
+_HINT_KIND_RE = re.compile(r"\bkind\s*[=:]\s*([a-z][a-z-]*)", re.I)
+_HINT_SIGNED_RE = re.compile(r"(?<![\w-])signed\b", re.I)
+
+
+def parse_hint(text):
+    """{"show", "artist", "subtype", "kind", "signed"} for whatever a
+    description states; {} for a description that states nothing (a plain
+    caption, or one the pipeline wrote). Values are not validated here -
+    the caller refuses an unknown kind or subtype the same way it refuses
+    one on the command line."""
+    text = text or ""
+    out = {}
+    m = _HINT_SHOW_RE.search(text)
+    if m:
+        out["show"] = m.group(1)
+    m = _HINT_ARTIST_RE.search(text)
+    if m:
+        out["artist"] = m.group(1).strip()
+    m = _HINT_SUBTYPE_RE.search(text)
+    if m:
+        out["subtype"] = m.group(1).lower()
+    m = _HINT_KIND_RE.search(text)
+    if m:
+        out["kind"] = m.group(1).lower()
+    if out and _HINT_SIGNED_RE.search(text):
+        out["signed"] = True
+    return out
+
+
+def asset_description(asset_id):
+    """The description as stored on the asset ("" when blank)."""
+    a = immich.asset(asset_id) or {}
+    return ((a.get("exifInfo") or {}).get("description") or "").strip()
+
+
+def asset_hint(asset_id):
+    return parse_hint(asset_description(asset_id))
+
+
+def hinted_assets(date):
+    """Assets whose description assigns them to this show, wherever their
+    capture date fell. Server-side description filter, then the parser
+    confirms the match (the filter is a substring search)."""
+    out = {}
+    for a in immich.search_metadata(description=f"show {date}", with_exif=True):
+        desc = ((a.get("exifInfo") or {}).get("description") or "")
+        if parse_hint(desc).get("show") == date:
+            out[a["id"]] = a
+    return out
 
 
 # ── asset gathering ────────────────────────────────────────────────────────
@@ -322,7 +397,8 @@ def gather(date, window_days=1):
     lo = (day - datetime.timedelta(days=0)).isoformat()
     hi = (day + datetime.timedelta(days=window_days)).isoformat()
     by_date = {a["id"]: a for a in immich.search_metadata(
-        taken_after=f"{lo}T00:00:00.000Z", taken_before=f"{hi}T23:59:59.999Z")}
+        taken_after=f"{lo}T00:00:00.000Z", taken_before=f"{hi}T23:59:59.999Z",
+        with_exif=True)}
 
     kinds = _album_kinds()
     in_album = {}
@@ -330,11 +406,20 @@ def gather(date, window_days=1):
         for a in immich.search_metadata(album_id=album_id):
             in_album[a["id"]] = kind
 
+    # A third source: a description that says `show <date>` assigns the photo
+    # to this show outright - memorabilia shot at home, a photo from after
+    # midnight beyond the window. These are proposals, not candidates.
+    hinted = hinted_assets(date)
+
     out = []
-    for aid, a in by_date.items():
-        out.append({"id": aid, "kind": in_album.get(aid),
+    for aid, a in list(by_date.items()) + [(k, v) for k, v in hinted.items()
+                                          if k not in by_date]:
+        hint = parse_hint(((a.get("exifInfo") or {}).get("description") or ""))
+        if hint.get("show") and hint["show"] != date:
+            continue   # shot in the window, but the phone says another night
+        out.append({"id": aid, "kind": hint.get("kind") or in_album.get(aid),
                     "taken": str(a.get("fileCreatedAt") or "")[:10],
-                    "by_date": True})
+                    "by_date": aid in by_date, "hint": hint})
     return out, in_album
 
 
@@ -381,13 +466,22 @@ def cmd_plan(args):
     for a in sorted(assets, key=lambda x: (x["kind"] or "~", x["id"])):
         tags = sorted(have.get(a["id"], []))
         print(f"  {a['id'][:8]}  taken {a['taken']}  "
-              f"kind={a['kind'] or 'UNKNOWN (not in an upload album)'}")
+              f"kind={a['kind'] or 'UNKNOWN (not in an upload album)'}"
+              + ("" if a["by_date"] else "  (by description, outside the window)"))
+        hint = a.get("hint") or {}
+        if hint:
+            said = ", ".join(f"{k}={v}" for k, v in hint.items())
+            print(f"            description says: {said}")
         if tags:
             print(f"            already tagged: {', '.join(tags)}")
     print()
     mem = [a for a in assets if a["kind"] == MEMORABILIA_KIND]
     print("Needs a human:")
-    print(f"  - artist for each photo (bill: {', '.join(bill)})")
+    unhinted = [a for a in assets if not (a.get("hint") or {}).get("artist")
+                and a["kind"] not in ("selfie", "crowd")
+                and not any(t.startswith("artist/") for t in have.get(a["id"], ()))]
+    if unhinted:
+        print(f"  - artist for {len(unhinted)} photo(s) (bill: {', '.join(bill)})")
     if unknown:
         print(f"  - {len(unknown)} asset(s) are in no upload album, so kind "
               "cannot be derived")
@@ -724,8 +818,32 @@ def _assets_of(tag_id):
     return {a["id"] for a in immich.search_metadata(tag_id=tag_id)}
 
 
+def sync_state(dry_run=False):
+    """Server state one sync run reads: the tag index, the album/link
+    state, and a cache of tag -> member ids. Pass the same object to
+    several sync_targets calls (the queue page files a batch through
+    add_asset) and the server is read once for the batch instead of once
+    per photo; `known` membership is folded into the cache as it arrives,
+    so a photo tagged moments ago is seen by the next call without a
+    round-trip. One call with no state behaves as before."""
+    return {"tags": _tag_index(), "st": _Albums(dry_run), "assets": {}}
+
+
+def _members(state, tid, extra=()):
+    """Member ids of a tag, from the state's cache, unioned with ids the
+    caller already knows are (about to be) members."""
+    if tid is None:
+        ids = set()
+    elif tid in state["assets"]:
+        ids = state["assets"][tid]
+    else:
+        ids = state["assets"][tid] = _assets_of(tid)
+    ids |= set(extra)
+    return ids
+
+
 def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
-                 name_hints=None, known=None):
+                 name_hints=None, known=None, state=None):
     """Materialise tags into albums and links.
 
     dates / artists / kinds restrict which albums are touched (None = every
@@ -744,21 +862,24 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
     hints = dict(_name_hints())
     hints.update(name_hints or {})
     known = known or {}
-    tags = _tag_index()
-    st = _Albums(dry_run)
+    state = state or sync_state(dry_run)
+    tags, st = state["tags"], state["st"]
     out = {"shows": {}, "artists": {}, "kinds": {}}
 
     # show/<date> -> member asset ids, for every show tag. This is the
     # membership source for both show and artist albums.
     show_assets = {}
+    known_shows = known.get("shows") or {}
     for val, tid in tags.items():
         if val.startswith("show/"):
             date = val[len("show/"):].split("/")[-1]
-            ids = _assets_of(tid)
+            ids = _members(state, tid, known_shows.get(date, ()))
             if ids:
                 show_assets[date] = ids
-    for date, ids in (known.get("shows") or {}).items():
-        show_assets.setdefault(date, set()).update(ids)
+    for date, ids in known_shows.items():
+        if date not in show_assets:   # a show whose tag was minted this batch
+            show_assets[date] = state.setdefault("new_shows", {}).setdefault(date, set())
+            show_assets[date].update(ids)
 
     for date in sorted(show_assets):
         if dates is not None and date not in dates:
@@ -785,7 +906,10 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
         tid = artist_tags.get(slug)
         if artists is not None and slug not in artists and not affected:
             continue
-        own = (_assets_of(tid) if tid else set()) | set(known_artists.get(slug, ()))
+        own = _members(state, tid, known_artists.get(slug, ()))
+        if tid is None:   # an artist whose tag was minted this batch
+            own = state.setdefault("new_artists", {}).setdefault(slug, set())
+            own.update(known_artists.get(slug, ()))
         if not own:
             continue
         if artists is not None and slug not in artists and not (own & affected):
@@ -803,7 +927,7 @@ def sync_targets(dates=None, artists=None, kinds=None, dry_run=False,
         if kinds is not None and kind not in kinds:
             continue
         tid = tags.get(f"kind/{kind}")
-        ids = (_assets_of(tid) if tid else set()) | set((known.get("kinds") or {}).get(kind, ()))
+        ids = _members(state, tid, (known.get("kinds") or {}).get(kind, ()))
         album = st.kind_album(kind)
         if album is None and not ids:
             continue
@@ -856,7 +980,7 @@ def cmd_sync(args):
 # ── add ────────────────────────────────────────────────────────────────────
 
 def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False,
-              detail=False, dry_run=False):
+              detail=False, dry_run=False, state=None):
     """Tag one asset and place it in every album it belongs to.
 
     kind=None means "whichever upload album the photo sits in" - the
@@ -866,6 +990,19 @@ def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False
     handler writes the show row and the artist-albums.tsv row from these).
     Nothing here reads EXIF: `show` is stated by the caller, which is what
     memorabilia needs."""
+    hint = asset_hint(asset_id)
+    if hint:
+        # The description is the phone's statement; the caller's arguments
+        # win where they overlap, the hint fills what the caller left out.
+        if hint.get("show") and hint["show"] != show:
+            print(f"WARN: description says show {hint['show']}, filing under {show} "
+                  "as stated by the caller")
+        kind = kind or hint.get("kind")
+        artist = artist or hint.get("artist")
+        subtype = subtype or hint.get("subtype")
+        signed = signed or bool(hint.get("signed"))
+        said = ", ".join(f"{k}={v}" for k, v in hint.items())
+        print(f"description says: {said}")
     row = find_show(show)
     if not row:
         raise SystemExit(f"No show row for {show}. Checked "
@@ -911,7 +1048,7 @@ def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False
     result = sync_targets(dates={show}, artists={slug} if slug else set(),
                           kinds={kind}, dry_run=dry_run,
                           name_hints={slug: artist} if slug else None,
-                          known=known)
+                          known=known, state=state)
     name = artist_album_name(slug, {slug: artist}) if slug else None
     return {
         "asset_id": asset_id,
@@ -924,7 +1061,12 @@ def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False
 
 def cmd_add(args):
     asset_id = resolve_asset(args.asset)
-    res = add_asset(asset_id, args.show, args.kind, artist=args.artist,
+    show = args.show or asset_hint(asset_id).get("show")
+    if not show:
+        raise SystemExit("--show DATE is required unless the photo's description "
+                         "says `show YYYY-MM-DD`")
+    args.show = show
+    res = add_asset(asset_id, show, args.kind, artist=args.artist,
                     subtype=args.subtype, signed=args.signed,
                     detail=args.detail, dry_run=args.dry_run)
     print()
@@ -1343,6 +1485,22 @@ def cmd_scaffold(args):
           "date to override the capture date.")
 
 
+def cmd_queue(args):
+    """The untagged queue page lives in photo_queue.py; this is the `queue`
+    verb of the one entry point."""
+    import photo_queue
+    argv = ["--port", str(args.port)]
+    if args.no_browser:
+        argv.append("--no-browser")
+    if args.list:
+        argv.append("--list")
+    if args.since:
+        argv += ["--since", args.since]
+    if args.root:
+        argv += ["--root", args.root]
+    photo_queue.main(argv)
+
+
 # ── CLI ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1378,8 +1536,9 @@ def main():
     p = sub.add_parser("add", help="one asset: tag it and place it in its albums")
     p.add_argument("--asset", required=True, metavar="ID_OR_LINK",
                    help="asset id, or the photo's own /share/ link")
-    p.add_argument("--show", required=True, metavar="DATE",
-                   help="the show date - stated, never derived from EXIF")
+    p.add_argument("--show", metavar="DATE",
+                   help="the show date - stated, never derived from EXIF; may "
+                        "come from the photo's description (`show YYYY-MM-DD`)")
     p.add_argument("--kind", choices=sorted(KIND_ALBUM_NAMES),
                    help="default: whichever upload album the photo is in")
     p.add_argument("--artist", metavar="NAME",
@@ -1391,6 +1550,16 @@ def main():
     p.add_argument("--write", action="store_true",
                    help="also write the show row and artist-albums.tsv row")
     p.add_argument("--dry-run", action="store_true")
+
+    p = sub.add_parser("queue", help="serve the untagged-photo queue page (photo_queue.py)")
+    p.add_argument("--port", type=int, default=8781)
+    p.add_argument("--no-browser", action="store_true")
+    p.add_argument("--list", action="store_true", help="print the queue and gaps as text")
+    p.add_argument("--since", metavar="DATE",
+                   help="photos captured on/after DATE (default 90 days ago; 'all')")
+    p.add_argument("--root", metavar="DIR",
+                   help="checkout whose data/ rows are written (a worktree run points "
+                        "at the real clone)")
 
     p = sub.add_parser("sync", help="materialise tags into albums + links")
     p.add_argument("--write", action="store_true",
@@ -1409,7 +1578,7 @@ def main():
 
     args = ap.parse_args()
     {"plan": cmd_plan, "tag": cmd_tag, "sync": cmd_sync,
-     "scaffold": cmd_scaffold, "add": cmd_add,
+     "scaffold": cmd_scaffold, "add": cmd_add, "queue": cmd_queue,
      "audit": cmd_audit, "seed": cmd_seed}[args.cmd](args)
 
 
