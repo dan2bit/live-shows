@@ -18,32 +18,34 @@ name: Daily release refresh (spotify_cache)
 # weeks, so a "New Music [Month]" list isn't trustworthy until well into the
 # following month. What makes it trustworthy is narrow and checkable: every
 # resolved entry has a latest_release_checked ON OR AFTER the month's last
-# release Friday, by the 3rd of the next month. A check made before that
-# Friday cannot see that Friday's releases, so ramp days earlier than the
-# Friday contribute nothing toward it, however large they are.
+# release Friday. A check made before that Friday cannot see that Friday's
+# releases, so ramp days earlier than the Friday contribute nothing toward it.
 #
-# So the ramp is one window that opens on the last Friday itself:
+# The binding constraint is Spotify's Dev-mode ceiling of roughly 100 calls a
+# day for the whole app; going over it is a lockout of about a day that stops
+# every Spotify job, not just this one. One check is one call, so a roster of
+# 500+ needs five to six days of ramp after the Friday, and no setting in this
+# file shortens that. The ramp is therefore a steady daily budget UNDER the
+# ceiling, not a burst, and it runs until nothing is pending:
 #
-#   - Window: the month's last Friday through the 3rd of the next month. Every
-#     scheduled run inside it sets --stale-days so that exactly the entries
-#     checked BEFORE that Friday are eligible (days since the Friday, plus
-#     one). Oldest-checked-first ordering then walks the roster once: nothing
-#     is revisited until everything older has been.
-#   - Budget: entries still pending, divided by the days left in the window
-#     (today included), rounded up - never below the flat 25, never above
-#     RAMP_CAP. The pending figure comes from --count-pending, which is local
-#     and spends no requests. Because it is recomputed daily, a dropped or
-#     bailed run raises the next day's budget instead of leaving a hole.
-#   - RAMP_CAP is the one dial. A last Friday on the 30th or 31st leaves four
-#     or five days for a roster of 500+, which needs roughly 100+ a day; a
-#     lower cap trades coverage for fewer requests per run, and the log says
-#     how many entries the cap leaves for the window's last day to miss.
+#   - Window: opens on the month's last Friday and runs until no entry is
+#     pending, with a hard stop on the WINDOW_END_DOM-th of the next month
+#     (an entry that keeps failing to stamp would otherwise hold it open).
 #     Outside the window the flat trickle runs unchanged.
+#   - Eligibility: inside the window, --stale-days is set so exactly the
+#     entries checked BEFORE that Friday are eligible (days since the Friday,
+#     plus one). Oldest-checked-first ordering then walks the roster once.
+#   - Budget: RAMP_CAP a day, less what other jobs on the same Spotify app spend
+#     that day - SUNDAY_RESERVE for the weekly new-artist resolve, HEAL_RESERVE
+#     for the portrait heal on the 1st - and never more than what is pending.
+#     The pending figure comes from --count-pending, which is local and spends
+#     no requests, so a dropped or bailed run just leaves more for tomorrow.
+#   - RAMP_CAP, SUNDAY_RESERVE and HEAL_RESERVE are the dials. Lower the reserve
+#     when the weekly resolve returns to a small limit; raise RAMP_CAP only with
+#     evidence about where the real ceiling sits.
 #
 # A rate-limit bail exits non-zero, but the entries pulled before it are
-# flushed and committed by the always()-guarded step below, and oldest-first
-# ordering re-serves whoever is still oldest on the next run. An over-large
-# cap therefore degrades gracefully; it does not lose work.
+# flushed and committed by the always()-guarded step below.
 #
 # A manual workflow_dispatch NEVER applies this ramp — github.event_name is
 # 'schedule' only for the actual cron, so a person dispatching this by hand
@@ -122,9 +124,12 @@ jobs:
           # the full rationale. A manual dispatch keeps exactly the
           # limit/stale-days it was given, ramp or no ramp.
           if [ "$EVENT_NAME" = "schedule" ]; then
-            RAMP_CAP=120        # most requests a ramp run may budget
-            WINDOW_END_DOM=3    # window closes on this day of the next month
-            FLAT_LIMIT=$LIMIT   # the plain trickle budget, also the floor
+            RAMP_CAP=85         # most refresh requests a ramp day may spend
+            SUNDAY_RESERVE=60   # held back for the weekly new-artist resolve
+            HEAL_RESERVE=15     # held back for the portrait heal on the 1st
+            WINDOW_END_DOM=7    # hard stop, day of the next month
+            FLAT_LIMIT=$LIMIT   # the plain trickle budget
+            FLAT_STALE=$STALE_DAYS
 
             # RAMP_TODAY exists so the calendar maths can be exercised for any
             # date; a real run leaves it unset and uses the UTC date.
@@ -146,11 +151,15 @@ jobs:
             if [[ ! "$TODAY" < "$LAST_FRI" && ! "$TODAY" > "$WINDOW_END" ]]; then
               DAY_SECS=86400
               SINCE_FRI=$(( ($(date -u -d "$TODAY" +%s) - $(date -u -d "$LAST_FRI" +%s)) / DAY_SECS ))
-              DAYS_LEFT=$(( ($(date -u -d "$WINDOW_END" +%s) - $(date -u -d "$TODAY" +%s)) / DAY_SECS + 1 ))
               # Eligible = checked before the Friday: skipped means checked
               # fewer than STALE_DAYS ago, so SINCE_FRI + 1 spares exactly the
               # entries checked on or after it.
               STALE_DAYS=$((SINCE_FRI + 1))
+
+              DAY_CAP=$RAMP_CAP
+              [ "$(date -u -d "$TODAY" +%u)" = "7" ] && DAY_CAP=$((DAY_CAP - SUNDAY_RESERVE))
+              [ "$DOM" -eq 1 ] && DAY_CAP=$((DAY_CAP - HEAL_RESERVE))
+              [ "$DAY_CAP" -lt 0 ] && DAY_CAP=0
 
               PENDING=$(python3 scripts/spotify_cache.py --refresh-releases \
                 --stale-days "$STALE_DAYS" --count-pending \
@@ -158,15 +167,17 @@ jobs:
               if [ -z "$PENDING" ]; then
                 echo "::warning::eom-ramp: could not read the pending count; using the flat budget"
                 LIMIT=$FLAT_LIMIT
+                STALE_DAYS=$FLAT_STALE
               else
-                LIMIT=$(( (PENDING + DAYS_LEFT - 1) / DAYS_LEFT ))
-                [ "$LIMIT" -lt "$FLAT_LIMIT" ] && LIMIT=$FLAT_LIMIT
-                [ "$LIMIT" -gt "$RAMP_CAP" ] && LIMIT=$RAMP_CAP
-                if [ "$((LIMIT * DAYS_LEFT))" -lt "$PENDING" ]; then
-                  echo "::warning::eom-ramp: cap $RAMP_CAP leaves about $((PENDING - LIMIT * DAYS_LEFT)) entries unchecked after the window closes"
-                fi
+                LIMIT=$DAY_CAP
+                [ "$PENDING" -lt "$LIMIT" ] && LIMIT=$PENDING
               fi
-              echo "eom-ramp: $TODAY, last Friday $LAST_FRI, window ends $WINDOW_END ($DAYS_LEFT day(s) left), pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS"
+              echo "eom-ramp: $TODAY, last Friday $LAST_FRI, hard stop $WINDOW_END, pending ${PENDING:-unknown}, day cap $DAY_CAP -> limit $LIMIT, stale-days $STALE_DAYS"
+              if [ "$LIMIT" -le 0 ]; then
+                # --limit 0 would mean no budget at all downstream; skip instead.
+                echo "eom-ramp: nothing to spend today (reserve day or nothing pending) - skipping the refresh"
+                exit 0
+              fi
             fi
           fi
 
