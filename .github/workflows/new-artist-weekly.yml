@@ -16,11 +16,12 @@ name: Weekly new-artist resolve (spotify_cache)
 # Quota: a typical week adds 0-5 artists ≈ ≤15 calls; --limit 30 caps a
 # surprise backlog at ~10 artists and rolls the rest to next week, exit 0.
 #
-# TEMPORARILY RAISED to --limit 90 (~30 artists a week) to work through the
+# TEMPORARILY RAISED to --limit 60 (~20 artists a week) to work through the
 # backlog seeded when the collector began reading history's "Supporting Acts"
-# column: about 110 null-id entries, roughly four Sunday runs. Put it back to 30
-# once the null-id queue is empty, so this burst never overlaps the month-end
-# release ramp in refresh-releases.yml.
+# column. 60 is also exactly what refresh-releases.yml holds back for this job
+# on Sundays (SUNDAY_RESERVE), so that the whole Spotify app stays under its
+# daily call ceiling; change the two together. Put it back to 30 once the
+# null-id queue is empty.
 #
 # The hydration watch runs LAST, after the commit. It reads the cache this job
 # just resolved and mails a notice for any artist in data/hydration_watch.tsv that
@@ -60,7 +61,7 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
-        run: python3 scripts/spotify_cache.py --new-artist --limit 90
+        run: python3 scripts/spotify_cache.py --new-artist --limit 60
       - name: Commit to staging if changed
         run: |
           git add data/artist_spotify.json
