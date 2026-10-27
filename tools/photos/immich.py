@@ -186,13 +186,21 @@ def about():
 
 
 def search_metadata(filename=None, taken_after=None, taken_before=None,
-                    album_id=None, person_id=None, tag_id=None, page_size=250):
-    """Paged metadata search; returns a flat list of asset dicts."""
+                    album_id=None, person_id=None, tag_id=None, page_size=250,
+                    description=None, with_exif=False):
+    """Paged metadata search; returns a flat list of asset dicts.
+
+    with_exif=True returns each asset's exifInfo (the description lives
+    there, as exifInfo.description); description= filters on it server
+    side, which is how a capture-time hint typed on the phone is found
+    without scanning every asset."""
     out, page = [], 1
     while True:
-        body = {"page": page, "size": page_size, "withExif": False}
+        body = {"page": page, "size": page_size, "withExif": bool(with_exif)}
         if filename:
             body["originalFileName"] = filename
+        if description:
+            body["description"] = description
         if taken_after:
             body["takenAfter"] = taken_after
         if taken_before:
