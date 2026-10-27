@@ -14,31 +14,36 @@ name: Daily release refresh (spotify_cache)
 # no-op — nothing is re-pulled inside 25 days, so the run does nothing until
 # entries age past the threshold.
 #
-# END-OF-MONTH RAMP. A flat 25/day means a full-roster sweep takes
-# roughly two weeks, so a "New Music [Month]" digest isn't trustworthy until
-# well into the FOLLOWING month — and even then only "probably fine, can't be
-# sure," since an artist checked early in that sweep can still release
-# something later in the same covered month with no second look coming for
-# another ~25 days. The ramp is two DIFFERENT phases, not one bigger number:
+# END-OF-MONTH RAMP. A flat 25/day means a full-roster sweep takes roughly two
+# weeks, so a "New Music [Month]" list isn't trustworthy until well into the
+# following month. What makes it trustworthy is narrow and checkable: every
+# resolved entry has a latest_release_checked ON OR AFTER the month's last
+# release Friday, by the 3rd of the next month. A check made before that
+# Friday cannot see that Friday's releases, so ramp days earlier than the
+# Friday contribute nothing toward it, however large they are.
 #
-#   - Last 5 days of the month (limit 45, stale-days UNCHANGED): pure
-#     backlog-clear. refresh_releases() already walks oldest-checked-first,
-#     so the extra budget lands on the stalest entries by construction — no
-#     new prioritization logic needed here, just more of it.
-#   - First 3 days of the next month (limit 45, stale-days DROPPED to 5):
-#     a deliberate RE-VERIFY pass, not more backlog-clearing. Dropping
-#     stale-days re-admits whoever the tail-end ramp just checked (6-8 days
-#     old by now) — oldest-first ordering means the entries checked EARLIEST
-#     in the ramp (the ones with the most remaining days in the old month to
-#     have released something new) get re-confirmed first, ahead of the
-#     Sept-30-ish entries that had almost no exposure to begin with. This is
-#     the actual gap-closer: it targets exactly the "checked early, released
-#     late, no one looked again" case a bigger flat limit doesn't touch.
+# So the ramp is one window that opens on the last Friday itself:
 #
-# --limit 45 (not the old burst's 90) keeps wall-clock exposure low — ~90s of
-# calls at the 2.0s default delay — and isn't remotely the failure mode the
-# incident described above hit, which was a missing always()-guarded commit
-# (fixed below), not the limit value itself.
+#   - Window: the month's last Friday through the 3rd of the next month. Every
+#     scheduled run inside it sets --stale-days so that exactly the entries
+#     checked BEFORE that Friday are eligible (days since the Friday, plus
+#     one). Oldest-checked-first ordering then walks the roster once: nothing
+#     is revisited until everything older has been.
+#   - Budget: entries still pending, divided by the days left in the window
+#     (today included), rounded up - never below the flat 25, never above
+#     RAMP_CAP. The pending figure comes from --count-pending, which is local
+#     and spends no requests. Because it is recomputed daily, a dropped or
+#     bailed run raises the next day's budget instead of leaving a hole.
+#   - RAMP_CAP is the one dial. A last Friday on the 30th or 31st leaves four
+#     or five days for a roster of 500+, which needs roughly 100+ a day; a
+#     lower cap trades coverage for fewer requests per run, and the log says
+#     how many entries the cap leaves for the window's last day to miss.
+#     Outside the window the flat trickle runs unchanged.
+#
+# A rate-limit bail exits non-zero, but the entries pulled before it are
+# flushed and committed by the always()-guarded step below, and oldest-first
+# ordering re-serves whoever is still oldest on the next run. An over-large
+# cap therefore degrades gracefully; it does not lose work.
 #
 # A manual workflow_dispatch NEVER applies this ramp — github.event_name is
 # 'schedule' only for the actual cron, so a person dispatching this by hand
@@ -113,21 +118,55 @@ jobs:
         run: |
           set -euo pipefail
 
-          # End-of-month ramp - schedule-only, see the header comment
-          # above for the full rationale. A manual dispatch keeps exactly the
+          # End-of-month ramp - schedule-only, see the header comment above for
+          # the full rationale. A manual dispatch keeps exactly the
           # limit/stale-days it was given, ramp or no ramp.
           if [ "$EVENT_NAME" = "schedule" ]; then
-            DOM=$(date -u +%d)
-            LAST_DAY=$(date -u -d "$(date -u +%Y-%m-01) +1 month -1 day" +%d)
-            DAYS_LEFT=$((10#$LAST_DAY - 10#$DOM))
-            RAMP_LIMIT=45
-            if [ "$DAYS_LEFT" -le 4 ]; then
-              LIMIT=$RAMP_LIMIT
-              echo "eom-ramp: day $DOM, $DAYS_LEFT day(s) left in the month - backlog-clear phase (limit $LIMIT, stale-days unchanged at $STALE_DAYS)"
-            elif [ "$((10#$DOM))" -le 3 ]; then
-              LIMIT=$RAMP_LIMIT
-              STALE_DAYS=5
-              echo "eom-ramp: day $DOM of the new month - re-verify phase (limit $LIMIT, stale-days dropped to $STALE_DAYS)"
+            RAMP_CAP=120        # most requests a ramp run may budget
+            WINDOW_END_DOM=3    # window closes on this day of the next month
+            FLAT_LIMIT=$LIMIT   # the plain trickle budget, also the floor
+
+            # RAMP_TODAY exists so the calendar maths can be exercised for any
+            # date; a real run leaves it unset and uses the UTC date.
+            TODAY="${RAMP_TODAY:-$(date -u +%F)}"
+            DOM=$((10#$(date -u -d "$TODAY" +%d)))
+
+            # The month whose last Friday governs today: last month through
+            # its WINDOW_END_DOM-th day, this month after that.
+            if [ "$DOM" -le "$WINDOW_END_DOM" ]; then
+              MONTH_START=$(date -u -d "$(date -u -d "$TODAY" +%Y-%m-01) -1 month" +%F)
+            else
+              MONTH_START=$(date -u -d "$TODAY" +%Y-%m-01)
+            fi
+            LAST_DAY=$(date -u -d "$MONTH_START +1 month -1 day" +%F)
+            DOW=$(date -u -d "$LAST_DAY" +%u)      # Monday=1 ... Sunday=7
+            LAST_FRI=$(date -u -d "$LAST_DAY -$(( (DOW + 2) % 7 )) days" +%F)
+            WINDOW_END=$(date -u -d "$MONTH_START +1 month +$((WINDOW_END_DOM - 1)) days" +%F)
+
+            if [[ ! "$TODAY" < "$LAST_FRI" && ! "$TODAY" > "$WINDOW_END" ]]; then
+              DAY_SECS=86400
+              SINCE_FRI=$(( ($(date -u -d "$TODAY" +%s) - $(date -u -d "$LAST_FRI" +%s)) / DAY_SECS ))
+              DAYS_LEFT=$(( ($(date -u -d "$WINDOW_END" +%s) - $(date -u -d "$TODAY" +%s)) / DAY_SECS + 1 ))
+              # Eligible = checked before the Friday: skipped means checked
+              # fewer than STALE_DAYS ago, so SINCE_FRI + 1 spares exactly the
+              # entries checked on or after it.
+              STALE_DAYS=$((SINCE_FRI + 1))
+
+              PENDING=$(python3 scripts/spotify_cache.py --refresh-releases \
+                --stale-days "$STALE_DAYS" --count-pending \
+                | sed -n 's/^--count-pending: \([0-9][0-9]*\) of .*/\1/p' || true)
+              if [ -z "$PENDING" ]; then
+                echo "::warning::eom-ramp: could not read the pending count; using the flat budget"
+                LIMIT=$FLAT_LIMIT
+              else
+                LIMIT=$(( (PENDING + DAYS_LEFT - 1) / DAYS_LEFT ))
+                [ "$LIMIT" -lt "$FLAT_LIMIT" ] && LIMIT=$FLAT_LIMIT
+                [ "$LIMIT" -gt "$RAMP_CAP" ] && LIMIT=$RAMP_CAP
+                if [ "$((LIMIT * DAYS_LEFT))" -lt "$PENDING" ]; then
+                  echo "::warning::eom-ramp: cap $RAMP_CAP leaves about $((PENDING - LIMIT * DAYS_LEFT)) entries unchecked after the window closes"
+                fi
+              fi
+              echo "eom-ramp: $TODAY, last Friday $LAST_FRI, window ends $WINDOW_END ($DAYS_LEFT day(s) left), pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS"
             fi
           fi
 
