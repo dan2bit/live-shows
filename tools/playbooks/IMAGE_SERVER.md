@@ -127,7 +127,17 @@ python3 tools/photos/show_photos.py sync --dry-run # plan album/link materialisa
 python3 tools/photos/show_photos.py sync --write   # apply, and write the library rows
 python3 tools/photos/show_photos.py add --asset <id-or-link> --show 2026-08-25 \
     --artist "Ghalia Volt" --subtype pick --signed --write   # kind comes from the upload album
+python3 tools/photos/show_photos.py queue                   # the backlog page: every upload-album
+    # photo with no show/ tag, grouped by show, filed in batches; also expected-vs-filed per
+    # open Photos: issue. --since DATE|all, --root DIR when run from a worktree (#481)
+python3 tools/photos/show_photos.py queue --list            # the same as text
 ```
+
+A description typed in the Immich app when uploading is read as a hint before
+tagging: `show 2026-10-16`, `artist "Autumn Nicholas"`, `subtype=setlist signed`,
+`kind=with-artist`. It assigns what the capture date cannot (memorabilia shot at
+home, a photo from after midnight) and pre-fills the queue card. Tags stay the
+source of truth; the hint is never consulted after tagging.
 
 - **Filing from the phone** goes through one `Photos:` issue per show (template: `.github/ISSUE_TEMPLATE/photo.md`), one comment per photo, link first, then tokens: `artist="..."`, `subtype=LEAF`, `signed`, `detail`, `close`. The kind is never typed - it is the upload album the photo sits in. `subtype` is exactly one of `setlist cd vinyl poster pick ticket autograph-book photo-print hat other`; anything else is refused with the list.
 
