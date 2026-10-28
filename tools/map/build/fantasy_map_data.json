@@ -582,6 +582,7 @@
    "Alexia Gabriella",
    "Antoñio Villaronga",
    "Bev Stanton",
+   "Blood Brothers (Mike Zito & Albert Castiglia)",
    "Christian Crowley",
    "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
    "Damien Bethel",
@@ -629,7 +630,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "c45d295710",
-  "overrides_hash": "b4e8417be2",
+  "overrides_hash": "7a09e3b0e2",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1406,7 +1407,7 @@
    "unchanged": 58
   },
   "counts": {
-   "settlements": 421,
+   "settlements": 420,
    "graph_edges": 509,
    "districts": 72
   }
@@ -3083,7 +3084,6 @@
    "id": "outer_isles:outskirts",
    "region": "outer_isles",
    "members": [
-    "Blood Brothers (Mike Zito & Albert Castiglia)",
     "DJ Selah",
     "Danny Burns",
     "Hozier",
@@ -4586,30 +4586,6 @@
    "times_seen": 1,
    "vip": 0,
    "tier": null
-  },
-  {
-   "id": 57,
-   "name": "Blood Brothers (Mike Zito & Albert Castiglia)",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 3,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Elkton Music Hall 2027-04-21",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Strong"
   },
   {
    "id": 58,
@@ -9760,12 +9736,12 @@
    "auto_size": "waystation",
    "score": 0,
    "xy": [
-    900.0,
-    62.0
+    889.9,
+    104.8
    ],
    "region_uv": [
-    0.5,
-    0.5
+    0.4423,
+    0.9463
    ],
    "flags": {
     "unvisited": true
