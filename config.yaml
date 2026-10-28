@@ -63,6 +63,7 @@ site:
 
   about_footer: "Life is short. Buy the tickets."
   region: "DC/MD/VA"             # home region, used in visitor-facing copy (bystander banner, recommendation replies)
+  sale_email: redhat.bootlegs@gmail.com   # For Sale rows with a paper ticket get a mailto link here instead of a listing link; omit to hide it
 
 # ── Theme ────────────────────────────────────────────────────────────────────
 theme:
