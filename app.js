@@ -1256,13 +1256,17 @@ function openForSaleModal(idx){
 function closeForSaleModal(){document.getElementById('forsaleModal').classList.remove('open');}
 
 // ── Potential rows ───────────────────────────────────
+// Face cell shows only a plain amount, a min-max range, or TBD; the full Face Price text is the hover title.
+function _priceShort(raw){var t=(raw||'').trim(),m=t.match(/\$\s?\d[\d,]*(?:\.\d+)?/g);if(!m)return/^tbd$/i.test(t)?'TBD':'';var v=m.map(function(x){return Math.round(parseFloat(x.replace(/[$,\s]/g,'')));}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v);return lo===hi?'$'+lo+(m.length===1&&/\d\s*\+/.test(t)?'+':''):'$'+lo+'&ndash;$'+hi;}
+function _priceHtml(raw){var sh=_priceShort(raw),t=(raw||'').trim();if(!sh)return'';return'<span class="price-amt"'+(t&&t!==sh?' title="'+esc(t)+'"':'')+'>'+sh+'</span>';}
 function tierHtml(tier){var t=(tier||'').toLowerCase(),cls=t.includes('strong')&&t.includes('medium')?'tier-medium-strong':t==='strong'?'tier-strong':t==='low'?'tier-low':'tier-medium',dots=t==='strong'?'●●●':t.includes('strong')&&t.includes('medium')?'●●':t==='medium'?'●':t==='low'?'◦':'';return'<span class="cell-tier '+cls+'">'+(dots?'<span class="tier-dots">'+dots+'</span> ':'')+esc(tier)+'</span>';}
 function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=_url(r['Event URL'])||_url(r['Purchase URL']),vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
-  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),sl=isSell?_saleLink(r):'',phLink=sl?_saleIconHtml(r,sl):'';
-  var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
+  var isSell=dec.toLowerCase()==='sell',pu=_url(r['Purchase URL']),sl=isSell?_saleLink(r):((cls==='buy'||cls==='choose')&&pu);
+  var phLink=!sl?'':isSell?_saleIconHtml(r,sl):'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="Buy tickets">🎟</a> ';
+  var ph=phLink+_priceHtml(r['Face Price']);
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
@@ -1287,10 +1291,10 @@ function renderPotentialRowAuthed(r,gi){
   if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<a href="#" class="pot-reconciling" onclick="event.preventDefault();refreshAfterPurchase();">🎟 purchased — reconciling… (tap to refresh)</a>';}
   else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
-  var pu=_url(r['Purchase URL']),sl=isSell?_saleLink(r):((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
+  var pu=_url(r['Purchase URL']),sl=isSell?_saleLink(r):((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu);
   var phLink=!sl?'':isSell?_saleIconHtml(r,sl):'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="Buy tickets">🎟</a> ';
   if((r['Box Office']||'').trim().toUpperCase()==='Y')phLink+='<span title="Buy at the box office — not online">🏣</span> ';
-  var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
+  var ph=phLink+_priceHtml(r['Face Price']);
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
