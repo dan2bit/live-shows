@@ -236,20 +236,42 @@ changed to skip `-`.
 **Where to find it,** in this order:
 1. A link in the email being processed (receipt, newsletter, artist alert). Resolve
    tracking or redirect links to the real page.
-2. The venue calendar (`venues.tsv` → `Venue Event Calendar`). Find this show's entry
+2. The venue's URL patterns (`venues.tsv` -> `Event URL Pattern` and
+   `Purchase URL Pattern`). Build or search for the page that fits the pattern - a
+   site-restricted search on the venue's domain usually finds it. Union Stage
+   Presents pages (`unionstagepresents.com/shows/<artist-slug>-<d>-<mon>`) are both
+   the event page and the ticket path.
+3. The venue calendar (`venues.tsv` -> `Venue Event Calendar`). Find this show's entry
    and take its detail-page link. Some calendars open details in a slide-over panel
    with no URL of its own (the Fillmore, for one). Then use the ticketing page the
    panel's Buy button points to.
-3. The ticketing platform's own event page (Ticketmaster, AXS, Eventim, Opendate,
-   Tixr, Eventbrite, InstantSeats).
-4. Ask Dan. Don't write a generic page as if it were the answer.
+4. The ticketing platform's own event page (Ticketmaster, AXS, Eventim, Opendate,
+   Tixr, Eventbrite, InstantSeats, Dice, Etix).
+5. Ask Dan, as an explicit question in the confirmation list.
+6. Only if he has no link either: `Event URL` falls back to the venue's calendar URL
+   (`Venue Event Calendar`), and `Purchase URL` stays `-` (2026-10-27, Dan). A
+   calendar URL in `Event URL` is a known placeholder; pre-flight 0c and the
+   find-potential-tickets audit keep flagging it until a child page replaces it.
+
+**Never a reseller or an aggregator.** On Buy and Choose rows, neither column takes
+StubHub, Vivid Seats, SeatGeek, TicketSmarter or other resale links, nor JamBase,
+Songkick, Bandsintown or other listing sites - including their tracking redirects
+to a real seller. (A Sell row's `Purchase URL` is Dan's own resale listing and is
+the one exception.) When the venue page and a ticket seller disagree, the venue
+page wins for `Event URL`.
+
+**Record new patterns.** When a venue's child-page or ticket-link shape is seen for
+the first time, add it to that venue's `Event URL Pattern` / `Purchase URL Pattern`
+in `venues.tsv` in the same commit.
 
 **Strip session parameters** before writing a URL: drop `CFID`, `CFTOKEN`, `utm_*`,
 `fbclid` and similar. Keep the parameters that identify the event (InstantSeats
 `fuseaction` and `eventid`, an Eventim `afflky`).
 
-**When none is found,** write `-`, not a generic page. Say so in the log, and let
-pre-flight 0c pick it up again as the show gets closer.
+**When none is found** for a current row's `Venue Event URL`, write `-`, not a
+generic page. Say so in the log, and let pre-flight 0c pick it up again as the show
+gets closer. (Buy and Choose potentials rows use the calendar fallback in step 6
+above instead.)
 
 ---
 
@@ -738,11 +760,15 @@ Using Step 0b data, for every artist/show surfaced:
 **Confirmation required before any potentials write.** Present the full proposed set
 (new rows, updates, date-pruning removals) and wait for explicit confirmation.
 
-**Links on every proposed Buy/Choose row (Event URL Rule).** The `Purchase URL` comes
-first: it is what Dan clicks to buy. Fill `Event URL` too whenever the venue has a page
-for the show; it carries into the current row if the show is bought in-page. If the
-email gives neither, check the venue calendar before proposing the row, and show which
-links are still missing in the confirmation list. A Pass row needs neither.
+**Links on every proposed Buy/Choose row - a gate, not a nicety (Event URL Rule,
+tightened 2026-10-27).** The `Purchase URL` comes first: it is what Dan clicks to buy.
+`Event URL` is required too; it carries into the current row if the show is bought
+in-page. Before proposing a Buy or Choose row, work the full **Where to find it**
+order above, starting from the venue's `venues.tsv` URL patterns. The confirmation
+list shows, for every Buy/Choose row, both URLs and where each came from. Any link
+still missing is a numbered question to Dan in that list, not a silent `-`. Write
+the fallbacks (calendar `Event URL`, `-` `Purchase URL`) only after he has had the
+chance to answer. A Pass row needs neither link.
 
 **Write the reason, not the status (#440).** When the confirmed row is written, its
 `Notes` and `Availability Notes` carry why - fit, bill, source, and any collision named
