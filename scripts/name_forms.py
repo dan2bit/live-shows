@@ -34,6 +34,11 @@ They look similar and must never be merged:
   identity_keys(raw)     variant_keys plus the hand-maintained alias table. The one to
                          use for any join against the tracking files — see its docstring.
 
+  strip_annotation(raw)  drop a trailing "(...)" note from a hand-written potentials
+                         Artist/Support cell, unless the full spelling is an alias.
+                         Used by build_recommend_index before a potentials name becomes
+                         a record — see its docstring.
+
   ArtistResolver         WHICH IDENTITY a name belongs to, WHAT to call it, and WHICH
                          ACTS an appearance credits. The layer above the four functions
                          above; see the "Artist identity" section below.
@@ -128,6 +133,45 @@ def surface_forms(raw):
 def variant_keys(raw):
     """Normalized surface_forms — the identity keys."""
     return {k for k in (norm(f) for f in surface_forms(raw)) if k}
+
+
+def strip_annotation(raw, alias_keys=()):
+    """Drop a trailing parenthetical NOTE from a name written into an Artist cell.
+
+    The potentials file is written by hand, and a parenthetical there has always been a
+    note about the row rather than part of the act's name: a purchase note ("(resale)",
+    "(VIP package)") that keeps the purchase reconciler from matching the row against a
+    show already bought, a member list, or a lineup. Read as a name, each one became a
+    recommend-index record of its own and a map settlement beside the real act.
+
+    The alias table wins: a name whose full spelling (parenthetical included) is the
+    alias side of a recommend_aliases.tsv row is returned untouched, so that row keeps
+    resolving it. Pass the normalized alias keys as ``alias_keys``.
+
+    >>> strip_annotation("They Might Be Giants (resale)")
+    'They Might Be Giants'
+    >>> strip_annotation("Maggie Rose (VIP package)")
+    'Maggie Rose'
+    >>> strip_annotation("Blood Brothers (Mike Zito & Albert Castiglia)")
+    'Blood Brothers'
+    >>> strip_annotation("BEAT (Belew/Vai/Levin/Bozzio)")
+    'BEAT'
+    >>> strip_annotation("Yola (DJ)")
+    'Yola'
+    >>> strip_annotation("The House You Grew Up In (THYGUI)")
+    'The House You Grew Up In'
+    >>> strip_annotation("Experience Hendrix (Kenny Wayne Shepherd)",
+    ...                  {norm("Experience Hendrix (Kenny Wayne Shepherd)")})
+    'Experience Hendrix (Kenny Wayne Shepherd)'
+    >>> strip_annotation("Allman Betts Family Revival: A Decade of Revival")
+    'Allman Betts Family Revival: A Decade of Revival'
+    >>> strip_annotation("(untitled)")
+    '(untitled)'
+    """
+    raw = (raw or "").strip()
+    if not raw or norm(raw) in alias_keys:
+        return raw
+    return _TRAILING_PAREN.sub("", raw).strip() or raw
 
 
 def bill_components(raw):
