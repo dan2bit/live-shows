@@ -1222,6 +1222,22 @@ async function confirmPurchase(idx){
 }
 
 // ── For Sale modal ───────────────────────────────────
+// A paper ticket can't go through a resale platform, so a Sell row whose Ticket Service
+// mentions "paper" gets an email link to site.sale_email instead of a listing link. The
+// subject drops any trailing "(...)" note the row carries for the purchase reconciler.
+// No sale_email configured -> no link at all, rather than a dead mailto.
+function _isPaperSale(r){return/paper/i.test(r['Ticket Service']||'');}
+function _saleMailto(r){
+  var e=(SITE_CONFIG.site&&SITE_CONFIG.site.sale_email)||'';if(!e)return'';
+  var a=(r['Artist']||'').replace(/\s*\([^)]*\)\s*$/,'').trim();
+  return'mailto:'+e+'?subject='+encodeURIComponent('Interested in your Paper Ticket to '+a);
+}
+function _saleLink(r){return _isPaperSale(r)?_saleMailto(r):_url(r['Purchase URL']);}
+function _saleIconHtml(r,href){
+  return _isPaperSale(r)
+    ?'<a class="icon-link price-link" href="'+esc(href)+'" title="Email me about this paper ticket">&#9993;</a> '
+    :'<a class="icon-link price-link" href="'+esc(href)+'" target="_blank" title="View listing">🎟</a> ';
+}
 function openForSaleModal(idx){
   var r=potentialRows[idx];if(!r)return;
   var m=(r['Watching For']||'').match(/(\d+)/),qty=m?parseInt(m[1],10):1;
@@ -1231,7 +1247,9 @@ function openForSaleModal(idx){
     +(r['Ticket Service']?'<div class="fs-detail"><strong>Platform:</strong> '+esc(r['Ticket Service'])+'</div>':'')
     +'<div class="fs-price">'+esc(r['Face Price']||'')+' / ticket &middot; '+qty+' ticket'+(qty!==1?'s':'')+' available</div>'
     +(r['Notes']?'<div class="fs-notes">'+esc(r['Notes'])+'</div>':'')
-    +(r['Purchase URL']?'<a class="fs-buy-btn" href="'+esc(r['Purchase URL'])+'" target="_blank">Buy tickets &#8594;</a>':'');
+    +(_isPaperSale(r)
+      ?(_saleMailto(r)?'<a class="fs-buy-btn" href="'+esc(_saleMailto(r))+'">&#9993; Email me about this ticket &#8594;</a>':'')
+      :(_url(r['Purchase URL'])?'<a class="fs-buy-btn" href="'+esc(r['Purchase URL'])+'" target="_blank">Buy tickets &#8594;</a>':''));
   document.getElementById('forsaleModalBody').innerHTML=html;
   document.getElementById('forsaleModal').classList.add('open');
 }
@@ -1243,7 +1261,7 @@ function renderPotentialRowBystander(r,gi){
   var pn=esc(r['Notes']||''),vu=_url(r['Event URL'])||_url(r['Purchase URL']),vs=shortVenueName(r['Venue']||'');
   var vh=vu?'<a href="'+esc(vu)+'" target="_blank" style="color:var(--text-muted);text-decoration:none">'+esc(vs)+'</a>':esc(vs);
   var dec=r['Decision']||'',cls=dec.toLowerCase().startsWith('buy')?'buy':dec.toLowerCase()==='choose'?'choose':dec.toLowerCase()==='sell'?'sell':'pass';
-  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),phLink=(isSell&&_url(r['Purchase URL']))?'<a class="icon-link price-link" href="'+esc(r['Purchase URL'])+'" target="_blank" title="View listing">🎟</a> ':'';
+  var isSell=dec.toLowerCase()==='sell',phAmt=esc(r['Face Price']||''),sl=isSell?_saleLink(r):'',phLink=sl?_saleIconHtml(r,sl):'';
   var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
   var ctx=[esc(r['Prev Show (2026)']||''),esc(r['Next Show (2026)']||'')].filter(Boolean).map(function(s){return'<div>'+s+'</div>';}).join('');
   var an=artistLink(r['Artist']);
@@ -1269,8 +1287,8 @@ function renderPotentialRowAuthed(r,gi){
   if(_purchasePending[(r['Artist']||'')+'␟'+(r['Date']||'')]){dh='<a href="#" class="pot-reconciling" onclick="event.preventDefault();refreshAfterPurchase();">🎟 purchased — reconciling… (tap to refresh)</a>';}
   else if(isSell){dh='<span class="cell-decision-ro sell">'+esc(dec)+'</span><button class="revoke-btn" onclick="handleRevoke('+gi+')" title="Remove listing">&#10005; revoke</button>';}
   else{var opts=['Buy','Choose','Pass'].map(function(v){return'<option value="'+v+'"'+(dec.toLowerCase().startsWith(v.toLowerCase())?' selected':'')+'>'+v+'</option>';}).join('');dh='<select class="decision-select" data-row="'+gi+'" onchange="handleDecisionChange(this)">'+opts+'</select><span class="save-indicator" id="save-'+gi+'"></span>';if(featureOn('in_page_purchase'))dh+='<button class="bought-btn" onclick="openPurchaseModal('+gi+')" title="Record a ticket purchase">🎟 bought</button>';}
-  var pu=_url(r['Purchase URL']),sl=isSell?pu:((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
-  var phLink=sl?'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="'+(isSell?'View listing':'Buy tickets')+'">🎟</a> ':'';
+  var pu=_url(r['Purchase URL']),sl=isSell?_saleLink(r):((dec.toLowerCase().startsWith('buy')||dec.toLowerCase()==='choose')&&pu),phAmt=esc(r['Face Price']||'');
+  var phLink=!sl?'':isSell?_saleIconHtml(r,sl):'<a class="icon-link price-link" href="'+esc(pu)+'" target="_blank" title="Buy tickets">🎟</a> ';
   if((r['Box Office']||'').trim().toUpperCase()==='Y')phLink+='<span title="Buy at the box office — not online">🏣</span> ';
   var ph=phLink+(phAmt?'<span class="price-amt">'+phAmt+'</span>':'');
   var an=artistLink(r['Artist']);
@@ -1605,7 +1623,7 @@ async function commitConfig(){
     st.textContent='pushed to '+dataBranch()+' - visible after CI promotes and Pages rebuilds (a few minutes)';
   }catch(e){st.textContent='commit failed: '+e.message;}
 }
-// ── Boot ───────────────────────────────────────────────
+// ── Boot ─────────────────────────────────────────────────
 async function loadData(){
   _purchasePending={};
   document.getElementById('showsContent').innerHTML=hatLoadingHtml();
