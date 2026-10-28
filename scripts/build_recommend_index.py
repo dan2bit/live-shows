@@ -37,7 +37,7 @@ import csv
 import json
 import re
 import sys
-from name_forms import norm, variant_keys
+from name_forms import norm, strip_annotation, variant_keys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -73,7 +73,7 @@ SKIP_AGGREGATE = re.compile(r"festival|blues summit", re.I)
 HISTORY_SUPPORT_SEP = re.compile(r"\s*[;/]\s*")
 
 
-# ── normalization ───────────────────────────────────────────────────────────
+# ── normalization ────────────────────────────────────────────────────────────
 # strip_accents / norm / surface_forms / variant_keys now live in name_forms.py, the one
 # canonical definition. surface_forms is IDENTITY only — it must never split a bill
 # into its members, because variant_keys feeds the union-find below and would fuse separate
@@ -90,7 +90,7 @@ def display_name(raw):
     return raw
 
 
-# ── TSV reading ─────────────────────────────────────────────────────────────
+# ── TSV reading ─────────────────────────────────────────────────────────────────────────
 def read_tsv(path, skip_hash=False):
     if not path.exists():
         print("WARN: missing source %s" % path, file=sys.stderr)
@@ -116,7 +116,7 @@ def yt_url(v):
     return v
 
 
-# ── load sources ────────────────────────────────────────────────────────────
+# ── load sources ────────────────────────────────────────────────────────────────────────
 def blank_rec(name, status, **kw):
     rec = dict(name=name, status=status, decision="", tier="",
                times_seen="", first_seen="", most_recent_seen="",
@@ -219,9 +219,20 @@ def load_history():
 
 def load_records():
     recs = []
+    # {normalized alias -> canonical}. Every source name is resolved through it at
+    # ingestion, as load_history() already does, so a billing spelled as an alias row
+    # attaches to the canonical record instead of standing beside it. Without this the
+    # alias pass in build() could only adopt the canonical name when no source spelled
+    # it; once one did (a potentials row billed "Blood Brothers" next to the follows row
+    # "Bill Murray and His Blood Brothers") the alias became a collision, two records.
+    aliases = alias_targets()
+
+    def resolve(raw):
+        raw = (raw or "").strip()
+        return aliases.get(norm(raw), raw) if raw else raw
 
     for r in read_tsv(ARTISTS):
-        name = r.get("Artist", "")
+        name = resolve(r.get("Artist", ""))
         if name:
             recs.append(blank_rec(name, "seen",
                 times_seen=r.get("Times Seen", ""),
@@ -231,13 +242,16 @@ def load_records():
                 youtube=yt_url(r.get("YouTube Channel", ""))))
 
     for r in read_tsv(FASTTRACK, skip_hash=True):
-        name = r.get("Artist", "")
+        name = resolve(r.get("Artist", ""))
         if name:
             recs.append(blank_rec(name, "fast_track",
                 tier=r.get("Tier", ""), spotify=r.get("Spotify URL", "")))
 
+    # Potentials cells are hand-written and a trailing "(...)" there is a note about the
+    # row ("(resale)", "(VIP package)", a member list), not part of the name; drop it so
+    # the row attaches to the act's own record instead of becoming one. Alias rows win.
     for r in read_tsv(POTENTIAL):
-        name = r.get("Artist", "")
+        name = resolve(strip_annotation(r.get("Artist", ""), aliases))
         decision = r.get("Decision", "")
         if name and not SKIP_AGGREGATE.search(name):
             recs.append(blank_rec(name, "potential",
@@ -245,12 +259,13 @@ def load_records():
         if HARVEST_POTENTIAL_SUPPORT:
             for tok in r.get("Support", "").split("/"):
                 tok = re.sub(r"\s*\+\s*\d*\s*more$", "", tok.strip(), flags=re.I).strip()
+                tok = resolve(strip_annotation(tok, aliases))
                 if len(tok) > 2 and not re.fullmatch(r"more", tok, re.I):
                     recs.append(blank_rec(tok, "potential", decision=decision,
                                           bill=name, role="support"))
 
     for r in read_tsv(FOLLOWS):
-        name = r.get("Artist", "")
+        name = resolve(r.get("Artist", ""))
         if name:
             recs.append(blank_rec(name, "follow", tier=r.get("Tier", "")))
 
