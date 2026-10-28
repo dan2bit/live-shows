@@ -12,6 +12,8 @@ let currentRows=[],potentialRows=[],authed=false;
 // history file. HISTORY_YEARS deliberately excludes this year until the January
 // year-flip — a History-panel year tab for it would just duplicate the Attended tab.
 var ATTENDED_YEAR=(new Date()).getFullYear();
+// Upcoming splits into a separate next-year tab once this many shows are purchased for next year or later.
+var UPCOMING_SPLIT_MIN=3;
 var historyData={};
 HISTORY_YEARS.forEach(function(yr){historyData[yr]=null;});
 if(!(ATTENDED_YEAR in historyData))historyData[ATTENDED_YEAR]=null;
@@ -1292,8 +1294,20 @@ function recommendCtaHtml(label){
 }
 
 // ── Shows rendering ───────────────────────────────────
+// A purchased show whose tickets are listed for resale has a potentials Sell row with
+// the same first ISO date and the same artist (the Sell row may carry a suffix such
+// as " (resale)" so the purchase reconciler leaves it alone). Those tickets are not
+// being used, so the show is left off Upcoming; the current row stays until Routine 6.
+function _isListedForSale(r){
+  var d=(r['Show Date']||'').slice(0,10),a=(r['Artist']||'').trim().toLowerCase();
+  return potentialRows.some(function(p){
+    if((p['Decision']||'').toLowerCase()!=='sell')return false;
+    var pa=(p['Artist']||'').replace(/\s*\([^)]*\)\s*$/,'').trim().toLowerCase();
+    return pa===a&&(p['Date']||'').slice(0,10)===d;
+  });
+}
 function renderShows(){
-  var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming';}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
+  var upcoming=currentRows.filter(function(r){return r['Status']==='upcoming'&&!_isListedForSale(r);}).sort(function(a,b){return(a['Show Date']||'').localeCompare(b['Show Date']||'');});
   // Attended = current.tsv attended rows + this year's already-migrated history rows
   // (terminal-state rollover moves rows out mid-year). On a Date+Artist collision the
   // current row wins — a row mid-migration is still the one receiving writes.
@@ -1310,14 +1324,28 @@ function renderShows(){
   var banner=!authed?'<div class="bystander-banner"><span>&#128075; Welcome! &#8212; Feel free to browse my upcoming shows and history.</span>'+bannerCta+'</div>':'';
   document.getElementById('showsBadge').textContent=attended.length+'+'+upcoming.length;
   var upOrigIdx=upcoming.map(function(r){return currentRows.indexOf(r);});
-  var uTbody=authed?upcoming.map(function(r,i){return renderUpcomingRowAuthed(r,i,upOrigIdx[i]);}).join(''):upcoming.map(function(r,i){return renderUpcomingRowBystander(r,i);}).join('');
+  // Next-year split: once at least UPCOMING_SPLIT_MIN shows are already purchased for
+  // next year or later, those rows move to their own "Upcoming (YYYY)" tab. Rows are
+  // rendered once over the whole list so the note-toggle ids (n-up-<i>) stay unique
+  // across both tables.
+  var _nextY=ATTENDED_YEAR+1;
+  var _upYr=function(r){return parseInt((r['Show Date']||'').slice(0,4),10)||0;};
+  var upLater=upcoming.filter(function(r){return _upYr(r)>=_nextY;});
+  var splitUp=upLater.length>=UPCOMING_SPLIT_MIN;
+  var uRowsHtml=upcoming.map(function(r,i){return authed?renderUpcomingRowAuthed(r,i,upOrigIdx[i]):renderUpcomingRowBystander(r,i);});
+  var uTbody=uRowsHtml.filter(function(h,i){return!splitUp||_upYr(upcoming[i])<_nextY;}).join('');
+  var uNextTbody=splitUp?uRowsHtml.filter(function(h,i){return _upYr(upcoming[i])>=_nextY;}).join(''):'';
+  var upNowCount=upcoming.length-(splitUp?upLater.length:0);
+  var upNextLabel=_nextY+(upLater.some(function(r){return _upYr(r)>_nextY;})?'+':'');
   var aTbody=authed?attended.map(function(e,i){return renderAttendedRowAuthed(e.row,i,e.origIdx,e.fileKey);}).join(''):attended.map(function(e,i){return renderAttendedRowBystander(e.row,i);}).join('');
-  var uTable='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>'+uTbody+'</tbody></table>';
+  var uHead='<table class="shows-table"><thead><tr><th>Date</th><th>Artist</th><th class="col-support">Venue</th><th class="col-seat">Seat / GA</th><th>Notes</th></tr></thead><tbody>';
+  var uTable=uHead+uTbody+'</tbody></table>';
+  var uNextTable=splitUp?uHead+uNextTbody+'</tbody></table>':'';
   var aTableHead=authed?'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th class="col-cost">Cost</th><th>Notes</th></tr></thead>':'<thead><tr><th>Date</th><th>Artist</th><th>Venue</th><th>Links</th><th>Notes</th></tr></thead>';
   var aTable='<div class="attended-table"><table class="shows-table">'+aTableHead+'<tbody>'+aTbody+'</tbody></table></div>';
   var di=authed?'upcoming':'attended';
-  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended ('+ATTENDED_YEAR+')<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming <span class="tab-badge">'+upcoming.length+'</span></div><div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
-  var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>';
+  var itr='<div class="inner-tab-row"><div class="inner-tab'+(di==='attended'?' active':'')+'" data-inner="attended" onclick="switchInnerTab(\'attended\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'attended\')">Attended ('+ATTENDED_YEAR+')<span class="tab-badge">'+attended.length+'</span></div><div class="inner-tab'+(di==='upcoming'?' active':'')+'" data-inner="upcoming" onclick="switchInnerTab(\'upcoming\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming\')">Upcoming'+(splitUp?' ('+ATTENDED_YEAR+')':'')+' <span class="tab-badge">'+upNowCount+'</span></div>'+(splitUp?'<div class="inner-tab" data-inner="upcoming-next" onclick="switchInnerTab(\'upcoming-next\')" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \')switchInnerTab(\'upcoming-next\')">Upcoming ('+upNextLabel+') <span class="tab-badge">'+upLater.length+'</span></div>':'')+'<div style="margin-left:auto;padding:6px 4px 6px 12px">'+recommendCtaHtml()+'</div></div>';
+  var ip='<div class="inner-panel'+(di==='attended'?' active':'')+'" id="inner-attended">'+aTable+'</div><div class="inner-panel'+(di==='upcoming'?' active':'')+'" id="inner-upcoming">'+uTable+'</div>'+(splitUp?'<div class="inner-panel" id="inner-upcoming-next">'+uNextTable+'</div>':'');
   document.getElementById('showsContent').innerHTML=banner+itr+ip;
   requestAnimationFrame(revealToggles);
   if(fastTrackRows.length)renderTourHere();
@@ -1448,7 +1476,7 @@ function revealToggles(){
 }
 function switchInnerTab(name){
   document.querySelectorAll('.inner-tab:not([data-inner^="hist-"])').forEach(function(t){t.classList.toggle('active',t.dataset.inner===name);});
-  document.querySelectorAll('#inner-attended,#inner-upcoming').forEach(function(p){p.classList.toggle('active',p.id==='inner-'+name);});
+  document.querySelectorAll('#inner-attended,#inner-upcoming,#inner-upcoming-next').forEach(function(p){p.classList.toggle('active',p.id==='inner-'+name);});
   requestAnimationFrame(revealToggles);
 }
 async function openHistory(){
