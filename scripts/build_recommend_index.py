@@ -73,7 +73,7 @@ SKIP_AGGREGATE = re.compile(r"festival|blues summit", re.I)
 HISTORY_SUPPORT_SEP = re.compile(r"\s*[;/]\s*")
 
 
-# ── normalization ────────────────────────────────────────────────────────────
+# ── normalization ───────────────────────────────────────────────────────────
 # strip_accents / norm / surface_forms / variant_keys now live in name_forms.py, the one
 # canonical definition. surface_forms is IDENTITY only — it must never split a bill
 # into its members, because variant_keys feeds the union-find below and would fuse separate
@@ -90,7 +90,7 @@ def display_name(raw):
     return raw
 
 
-# ── TSV reading ─────────────────────────────────────────────────────────────────────────
+# ── TSV reading ─────────────────────────────────────────────────────────────
 def read_tsv(path, skip_hash=False):
     if not path.exists():
         print("WARN: missing source %s" % path, file=sys.stderr)
@@ -116,7 +116,7 @@ def yt_url(v):
     return v
 
 
-# ── load sources ────────────────────────────────────────────────────────────────────────
+# ── load sources ────────────────────────────────────────────────────────────
 def blank_rec(name, status, **kw):
     rec = dict(name=name, status=status, decision="", tier="",
                times_seen="", first_seen="", most_recent_seen="",
