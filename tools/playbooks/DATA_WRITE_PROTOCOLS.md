@@ -447,6 +447,16 @@ flagged. The pattern to copy is any existing "just announced" row, e.g. Beck:
 `Live Nation / Ticketmaster\t-\t-\tTBD` — service name filled in, both URLs `-`,
 price `TBD`.
 
+**Buy and Choose rows need both links (2026-10-27).** Any writer - an inbox routine,
+a chat request, research, a Choose upgrade from Pass - proposing or upgrading a Buy or
+Choose row first works the `EMAIL_WORKFLOWS.md` -> **Event URL Rule** lookup order,
+starting from the venue's `Event URL Pattern` / `Purchase URL Pattern` columns in
+`data/venues.tsv`. The confirmation shows both URLs with their source; a link that
+can't be found is asked of Dan before the write. Fallbacks once he has answered:
+`Event URL` = the venue's `Venue Event Calendar` URL, `Purchase URL` = `-`. Resellers
+and listing aggregators (StubHub, SeatGeek, JamBase, Songkick, Bandsintown and the
+like) are never written to either column of a Buy or Choose row.
+
 **Run `python3 scripts/validate_potential.py` before committing, not after.** It reads
 the file raw and never pads short rows, which is the point: a reader that tops a row up
 to the header width cannot see the defect it exists to catch.
