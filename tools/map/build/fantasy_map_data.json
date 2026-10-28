@@ -582,7 +582,6 @@
    "Alexia Gabriella",
    "Antoñio Villaronga",
    "Bev Stanton",
-   "Blood Brothers (Mike Zito & Albert Castiglia)",
    "Christian Crowley",
    "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
    "Damien Bethel",
@@ -629,8 +628,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "c45d295710",
-  "overrides_hash": "7a09e3b0e2",
+  "pins_hash": "d16477649d",
+  "overrides_hash": "b4e8417be2",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1407,7 +1406,7 @@
    "unchanged": 58
   },
   "counts": {
-   "settlements": 420,
+   "settlements": 421,
    "graph_edges": 509,
    "districts": 72
   }
@@ -3084,6 +3083,8 @@
    "id": "outer_isles:outskirts",
    "region": "outer_isles",
    "members": [
+    "BEAT (Belew/Vai/Levin/Bozzio)",
+    "Blood Brothers (Mike Zito & Albert Castiglia)",
     "DJ Selah",
     "Danny Burns",
     "Hozier",
@@ -4228,18 +4229,18 @@
    "id": 40,
    "name": "BEAT (Belew/Vai/Levin/Bozzio)",
    "label": "BEAT",
-   "region": "amplified_range",
-   "district": "amplified_range:pinned",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
    "xy": [
-    823.0,
-    184.0
+    900.0,
+    62.0
    ],
    "region_uv": [
-    0.5943,
-    0.416
+    0.5,
+    0.5
    ],
    "flags": {
     "unvisited": true
@@ -4586,6 +4587,30 @@
    "times_seen": 1,
    "vip": 0,
    "tier": null
+  },
+  {
+   "id": 57,
+   "name": "Blood Brothers (Mike Zito & Albert Castiglia)",
+   "region": "outer_isles",
+   "district": "outer_isles:outskirts",
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 3,
+   "xy": [
+    900.0,
+    62.0
+   ],
+   "region_uv": [
+    0.5,
+    0.5
+   ],
+   "flags": {
+    "unvisited": true
+   },
+   "src": "potential: Elkton Music Hall 2027-04-21",
+   "times_seen": 0,
+   "vip": 0,
+   "tier": "Strong"
   },
   {
    "id": 58,
@@ -9736,12 +9761,12 @@
    "auto_size": "waystation",
    "score": 0,
    "xy": [
-    889.9,
-    104.8
+    900.0,
+    62.0
    ],
    "region_uv": [
-    0.4423,
-    0.9463
+    0.5,
+    0.5
    ],
    "flags": {
     "unvisited": true
