@@ -575,7 +575,7 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-10-28",
+  "generated_from": "2026-10-29",
   "seed": 2026,
   "excluded": [
    "A Musical Celebration of John Prine",
@@ -1407,7 +1407,7 @@
   },
   "counts": {
    "settlements": 418,
-   "graph_edges": 508,
+   "graph_edges": 509,
    "districts": 72
   }
  },
@@ -3323,12 +3323,13 @@
     "Dior Ashley Brown and the Filthy Animals",
     "Lake Street Dive",
     "Oh He Dead",
+    "Snacktime",
     "St. Paul & The Broken Bones",
     "The California Honeydrops",
     "The Dip"
    ],
-   "seat": "The Dip",
-   "suggested_name": "Dip Parade"
+   "seat": "Lake Street Dive",
+   "suggested_name": "Dive Parade"
   },
   {
    "id": "river_port:d3",
@@ -3412,7 +3413,6 @@
     "Nikki Hill",
     "Rachael & Vilray",
     "Rich Ruth",
-    "Snacktime",
     "Sona Jobarteh",
     "Sweet Leda",
     "Tal Wilkenfeld",
@@ -10654,7 +10654,7 @@
    "id": 359,
    "name": "Snacktime",
    "region": "river_port",
-   "district": "river_port:outskirts",
+   "district": "river_port:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -15300,6 +15300,12 @@
    "a": "Lake Street Dive",
    "b": "Oh He Dead",
    "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Lake Street Dive",
+   "b": "Snacktime",
+   "cls": "river",
    "crossRegion": false
   },
   {
