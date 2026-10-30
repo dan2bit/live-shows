@@ -39,8 +39,11 @@ month when `latest_release.date` **or** `previous_release.date` falls in it. A
 refresh in the first days of the next month can replace a late-month release
 with an early-next-month one; the replaced release moves to `previous_release`
 rather than disappearing, so reading `latest_release` alone silently drops those
-artists. Build after the month-end re-verify pass (the first days of the next
-month), so every entry has been checked after the month's last release Friday.
+artists. Build when the **`[releases] ready for <Month> New Releases`** mail
+arrives: it is sent by the run that finishes the month-end window, and its body
+already lists every cached release dated in the month. If the window hit its
+hard stop first, the subject says how many artists were left unchecked and the
+body names them. (#433)
 
 ## Workflow B — Multi-artist bill top tracks
 
@@ -82,15 +85,21 @@ says "persist"; until then, don't.
   `--stale-days` — never bare. `_infer_stale_days()`'s band-aware auto-inference
   exists in the script, but only a manual, bare invocation ever exercises it;
   the schedule doesn't rely on it. Normal days: `--limit 25`.
-- **End-of-month ramp:** two distinct phases raise the budget to `--limit 45`
-  around the month boundary — the last 5 days of the month (backlog-clear,
-  `--stale-days` unchanged) and the first 3 days of the next month (a
-  deliberate re-verify pass, `--stale-days` dropped to 5 so whoever the
-  tail-end ramp already checked becomes re-checkable in time to catch a
-  release in their last few days of the covered month). Full rationale lives
-  in the workflow's own header comment and `docs/ISSUE_LOG.md`. Schedule-only
-  — a manual `workflow_dispatch` always gets exactly the limit/stale-days
-  typed (or the 25/25 default), ramp or no ramp.
+- **End-of-month window** (#396, #433): `scripts/release_window.py` holds the
+  calendar maths. The **anchor** is the month's last Friday when the month ends
+  Sat/Sun/Mon, otherwise the month's last day. From the anchor until nothing is
+  pending (hard stop on the 7th), each scheduled run spends up to 85 calls with
+  `--stale-days` = days since the anchor + 1 and `--active-first` (artists with
+  a release in the last two years before the quiet tail). The weekly
+  `--new-artist` resolve skips while the window is open and the portrait heal
+  runs on the 8th, so the window gets the day's whole budget. Expected finish:
+  active artists about 3-4 days after month end, the whole ~500 roster about
+  4-5. The regular trickle rate doesn't change that - every entry is re-checked
+  after the anchor anyway. Schedule-only: a manual `workflow_dispatch` always
+  gets exactly the limit/stale-days typed (or the 25/25 default).
+- Before building a playlist inside the window, remember the window is spending
+  most of the app's ~100/day ceiling; build the day the ready mail arrives
+  (the window is idle from then on) or later.
 - `--count-pending` previews how many artists a given `--stale-days` value
   would actually touch, before spending real quota.
 - A bare (no explicit `--stale-days`) manual run self-resumes across
@@ -112,5 +121,5 @@ says "persist"; until then, don't.
   short or common names) in `data/spotify_unresolvable.tsv` as `no_presence`,
   in a `staging` commit that lands first. Parked names are dropped before
   seeding, so they never become skeletons. Size the weekly `--limit` to the
-  backlog (about 3 calls per name), finish it before the month-end ramp starts,
+  backlog (about 3 calls per name), finish it before the month-end window opens,
   then put the limit back.
