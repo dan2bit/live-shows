@@ -1,7 +1,7 @@
 name: Weekly new-artist resolve (spotify_cache)
 
-# Companion cadence to the monthly releases burst
-# (refresh-releases-monthly.yml): a cheap weekly pass that
+# Companion cadence to the daily release sweep
+# (refresh-releases.yml): a cheap weekly pass that
 # resolves artists added to the TSVs during the week (potentials, follows,
 # purchases) so their modal portrait + release + Last.fm block exist within
 # days instead of waiting for month-end.
@@ -18,10 +18,15 @@ name: Weekly new-artist resolve (spotify_cache)
 #
 # TEMPORARILY RAISED to --limit 60 (~20 artists a week) to work through the
 # backlog seeded when the collector began reading history's "Supporting Acts"
-# column. 60 is also exactly what refresh-releases.yml holds back for this job
-# on Sundays (SUNDAY_RESERVE), so that the whole Spotify app stays under its
-# daily call ceiling; change the two together. Put it back to 30 once the
-# null-id queue is empty.
+# column. Put it back to 30 once the null-id queue is empty.
+#
+# The Spotify resolve SKIPS on a scheduled run while the month-end release
+# window is open (scripts/release_window.py, the same calculation
+# refresh-releases.yml uses). That window spends nearly the whole app's daily
+# call ceiling on re-checks, so a Sunday inside it gives the resolve's calls to
+# the window instead; names seeded meanwhile wait for the first Sunday after.
+# The Last.fm seed and the hydration watch make no Spotify calls and always run.
+# A manual dispatch always resolves.
 #
 # The hydration watch runs LAST, after the commit. It reads the cache this job
 # just resolved and mails a notice for any artist in data/hydration_watch.tsv that
@@ -56,7 +61,15 @@ jobs:
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
         run: python3 scripts/spotify_cache.py --refresh-lastfm
+      - name: Check the month-end release window
+        id: window
+        run: |
+          WINDOW_STATE=$(python3 scripts/release_window.py --env) || WINDOW_STATE="IN_WINDOW=false"
+          eval "$WINDOW_STATE"
+          echo "in_window=$IN_WINDOW" >> "$GITHUB_OUTPUT"
+          echo "month-end window open: $IN_WINDOW"
       - name: Resolve new artists (budgeted)
+        if: github.event_name != 'schedule' || steps.window.outputs.in_window != 'true'
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
