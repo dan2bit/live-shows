@@ -14,35 +14,40 @@ name: Daily release refresh (spotify_cache)
 # no-op — nothing is re-pulled inside 25 days, so the run does nothing until
 # entries age past the threshold.
 #
-# END-OF-MONTH RAMP. A flat 25/day means a full-roster sweep takes roughly two
-# weeks, so a "New Music [Month]" list isn't trustworthy until well into the
-# following month. What makes it trustworthy is narrow and checkable: every
-# resolved entry has a latest_release_checked ON OR AFTER the month's last
-# release Friday. A check made before that Friday cannot see that Friday's
-# releases, so ramp days earlier than the Friday contribute nothing toward it.
+# END-OF-MONTH WINDOW. A "New Music [Month]" list picks releases dated inside
+# the month, up through its last day, and can be built once every resolved entry
+# has been checked late enough to see them. The goal is the shortest possible
+# wait into the new month before that is true.
 #
 # The binding constraint is Spotify's Dev-mode ceiling of roughly 100 calls a
 # day for the whole app; going over it is a lockout of about a day that stops
 # every Spotify job, not just this one. One check is one call, so a roster of
-# 500+ needs five to six days of ramp after the Friday, and no setting in this
-# file shortens that. The ramp is therefore a steady daily budget UNDER the
-# ceiling, not a burst, and it runs until nothing is pending:
+# 500+ needs about six days of checks after the window opens, and the plain
+# trickle rate the rest of the month makes no difference to that: every entry
+# has to be re-checked after the window opens regardless.
 #
-#   - Window: opens on the month's last Friday and runs until no entry is
-#     pending, with a hard stop on the WINDOW_END_DOM-th of the next month
-#     (an entry that keeps failing to stamp would otherwise hold it open).
-#     Outside the window the flat trickle runs unchanged.
-#   - Eligibility: inside the window, --stale-days is set so exactly the
-#     entries checked BEFORE that Friday are eligible (days since the Friday,
-#     plus one). Oldest-checked-first ordering then walks the roster once.
-#   - Budget: RAMP_CAP a day, less what other jobs on the same Spotify app spend
-#     that day - SUNDAY_RESERVE for the weekly new-artist resolve, HEAL_RESERVE
-#     for the portrait heal on the 1st - and never more than what is pending.
-#     The pending figure comes from --count-pending, which is local and spends
-#     no requests, so a dropped or bailed run just leaves more for tomorrow.
-#   - RAMP_CAP, SUNDAY_RESERVE and HEAL_RESERVE are the dials. Lower the reserve
-#     when the weekly resolve returns to a small limit; raise RAMP_CAP only with
-#     evidence about where the real ceiling sits.
+# The calendar maths lives in scripts/release_window.py, which the weekly
+# new-artist resolve also reads. In short:
+#
+#   - Anchor: the month's last Friday when the month ends Sat, Sun or Mon (few
+#     releases land on those days, and the window opens up to three days
+#     sooner); otherwise the month's last day, so mid-week releases after the
+#     Friday are caught.
+#   - Window: opens on the anchor and runs until nothing is pending, with a
+#     hard stop on the 7th of the next month. Outside it the flat trickle runs
+#     unchanged.
+#   - Eligibility: --stale-days is days since the anchor plus one, so exactly
+#     the entries checked before the anchor are eligible.
+#   - Order: --active-first, so artists with a release in the last two years
+#     finish before the quiet tail.
+#   - Budget: RAMP_CAP every window day, never more than what is pending. No
+#     reserves are needed inside the window: the weekly new-artist resolve
+#     skips while it is open, and the portrait heal runs on the 8th, after the
+#     hard stop. A dropped or bailed run just leaves more pending for tomorrow.
+#   - Ready mail: the run that takes pending from above zero to zero mails
+#     "ready for <Month> New Releases" with every cached release dated in the
+#     month. If the hard stop arrives first, the same mail goes out listing the
+#     entries still unchecked.
 #
 # A rate-limit bail exits non-zero, but the entries pulled before it are
 # flushed and committed by the always()-guarded step below.
@@ -52,7 +57,9 @@ name: Daily release refresh (spotify_cache)
 # always gets exactly the limit/stale-days they typed (or the plain 25/25
 # default), never a calendar-computed override they didn't ask for.
 #
-# The --heal-only portrait step runs on the 1st only, NOT daily. Its set is
+# The --heal-only portrait step runs on the 8th only, NOT daily - the first day
+# after the month-end window's hard stop, so it never competes with the window
+# for the day's calls. Its set is
 # entries never stamped by a successful pull, and null-preserve means an
 # artist Spotify has no portrait for never leaves it. That set is currently 9
 # and structurally stuck, so a daily heal would burn ~270 requests/month for
@@ -120,71 +127,52 @@ jobs:
         run: |
           set -euo pipefail
 
-          # End-of-month ramp - schedule-only, see the header comment above for
-          # the full rationale. A manual dispatch keeps exactly the
-          # limit/stale-days it was given, ramp or no ramp.
+          # End-of-month window - schedule-only, see the header comment above
+          # for the full rationale. A manual dispatch keeps exactly the
+          # limit/stale-days it was given, window or no window.
+          ORDER=""
           if [ "$EVENT_NAME" = "schedule" ]; then
-            RAMP_CAP=85         # most refresh requests a ramp day may spend
-            SUNDAY_RESERVE=60   # held back for the weekly new-artist resolve
-            HEAL_RESERVE=15     # held back for the portrait heal on the 1st
-            WINDOW_END_DOM=7    # hard stop, day of the next month
-            FLAT_LIMIT=$LIMIT   # the plain trickle budget
-            FLAT_STALE=$STALE_DAYS
+            RAMP_CAP=85         # most refresh requests a window day may spend
 
             # RAMP_TODAY exists so the calendar maths can be exercised for any
             # date; a real run leaves it unset and uses the UTC date.
-            TODAY="${RAMP_TODAY:-$(date -u +%F)}"
-            DOM=$((10#$(date -u -d "$TODAY" +%d)))
+            WINDOW_STATE=$(python3 scripts/release_window.py --env ${RAMP_TODAY:+--today "$RAMP_TODAY"}) || {
+              echo "::warning::eom-window: release_window.py failed; running the flat trickle"
+              WINDOW_STATE="IN_WINDOW=false"
+            }
+            eval "$WINDOW_STATE"
 
-            # The month whose last Friday governs today: last month through
-            # its WINDOW_END_DOM-th day, this month after that.
-            if [ "$DOM" -le "$WINDOW_END_DOM" ]; then
-              MONTH_START=$(date -u -d "$(date -u -d "$TODAY" +%Y-%m-01) -1 month" +%F)
-            else
-              MONTH_START=$(date -u -d "$TODAY" +%Y-%m-01)
-            fi
-            LAST_DAY=$(date -u -d "$MONTH_START +1 month -1 day" +%F)
-            DOW=$(date -u -d "$LAST_DAY" +%u)      # Monday=1 ... Sunday=7
-            LAST_FRI=$(date -u -d "$LAST_DAY -$(( (DOW + 2) % 7 )) days" +%F)
-            WINDOW_END=$(date -u -d "$MONTH_START +1 month +$((WINDOW_END_DOM - 1)) days" +%F)
+            if [ "$IN_WINDOW" = "true" ]; then
+              PENDING=$(python3 scripts/release_window.py --pending --month "$MONTH" || true)
+              # Read by the ready-mail step after the commit.
+              {
+                echo "WINDOW_MONTH=$MONTH"
+                echo "WINDOW_MONTH_NAME=$MONTH_NAME"
+                echo "WINDOW_PENDING_BEFORE=${PENDING:-}"
+                echo "WINDOW_LAST_DAY=$WINDOW_LAST_DAY"
+              } >> "$GITHUB_ENV"
 
-            if [[ ! "$TODAY" < "$LAST_FRI" && ! "$TODAY" > "$WINDOW_END" ]]; then
-              DAY_SECS=86400
-              SINCE_FRI=$(( ($(date -u -d "$TODAY" +%s) - $(date -u -d "$LAST_FRI" +%s)) / DAY_SECS ))
-              # Eligible = checked before the Friday: skipped means checked
-              # fewer than STALE_DAYS ago, so SINCE_FRI + 1 spares exactly the
-              # entries checked on or after it.
-              STALE_DAYS=$((SINCE_FRI + 1))
-
-              DAY_CAP=$RAMP_CAP
-              [ "$(date -u -d "$TODAY" +%u)" = "7" ] && DAY_CAP=$((DAY_CAP - SUNDAY_RESERVE))
-              [ "$DOM" -eq 1 ] && DAY_CAP=$((DAY_CAP - HEAL_RESERVE))
-              [ "$DAY_CAP" -lt 0 ] && DAY_CAP=0
-
-              PENDING=$(python3 scripts/spotify_cache.py --refresh-releases \
-                --stale-days "$STALE_DAYS" --count-pending \
-                | sed -n 's/^--count-pending: \([0-9][0-9]*\) of .*/\1/p' || true)
               if [ -z "$PENDING" ]; then
-                echo "::warning::eom-ramp: could not read the pending count; using the flat budget"
-                LIMIT=$FLAT_LIMIT
-                STALE_DAYS=$FLAT_STALE
+                echo "::warning::eom-window: could not read the pending count; using the flat budget"
               else
-                LIMIT=$DAY_CAP
+                STALE_DAYS=$WINDOW_STALE_DAYS
+                LIMIT=$RAMP_CAP
                 [ "$PENDING" -lt "$LIMIT" ] && LIMIT=$PENDING
-              fi
-              echo "eom-ramp: $TODAY, last Friday $LAST_FRI, hard stop $WINDOW_END, pending ${PENDING:-unknown}, day cap $DAY_CAP -> limit $LIMIT, stale-days $STALE_DAYS"
-              if [ "$LIMIT" -le 0 ]; then
-                # --limit 0 would mean no budget at all downstream; skip instead.
-                echo "eom-ramp: nothing to spend today (reserve day or nothing pending) - skipping the refresh"
-                exit 0
+                ORDER="--active-first"
+                echo "eom-window: $MONTH_NAME, anchor $ANCHOR, hard stop $WINDOW_END, pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS, active first"
+                if [ "$LIMIT" -le 0 ]; then
+                  # --limit 0 would mean no budget at all downstream; skip instead.
+                  echo "eom-window: nothing pending - skipping the refresh"
+                  exit 0
+                fi
               fi
             fi
           fi
 
           python3 scripts/spotify_cache.py --refresh-releases \
-            --stale-days "$STALE_DAYS" --limit "$LIMIT"
+            --stale-days "$STALE_DAYS" --limit "$LIMIT" $ORDER
 
-      - name: Heal unstamped portraits (1st of the month, or on request)
+      - name: Heal unstamped portraits (8th of the month, or on request)
         # Guarded in shell rather than in `if:` — Actions expressions have no
         # access to the current date. Dispatch can force it with heal=true.
         env:
@@ -192,8 +180,8 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           FORCE_HEAL: ${{ github.event.inputs.heal || 'false' }}
         run: |
-          if [ "$(date -u +%d)" != "01" ] && [ "$FORCE_HEAL" != "true" ]; then
-            echo "Not the 1st and heal not requested - skipping portrait heal."
+          if [ "$(date -u +%d)" != "08" ] && [ "$FORCE_HEAL" != "true" ]; then
+            echo "Not the 8th and heal not requested - skipping portrait heal."
             exit 0
           fi
           python3 scripts/spotify_cache.py --refresh-images --heal-only --limit 15
@@ -255,6 +243,7 @@ jobs:
             --body-file /tmp/release_digest.txt
 
       - name: Commit to staging if changed
+        id: commit
         # always(): a real 429 exits the refresh step non-zero, and without
         # this the runner is destroyed with the flushed checkpoint still on it
         # — the 2026-08-29 run completed 10 refreshes and lost all of them
@@ -292,3 +281,38 @@ jobs:
             echo "gave up after 5 attempts"
             exit 1
           fi
+
+      - name: Mail "ready" when the month-end window completes
+        # Runs after the commit so the mail never announces data that is not on
+        # staging yet; auto-promote carries it to main within minutes. Fires once
+        # per month without stored state: only the run that takes pending from
+        # above zero to zero sends, and a later run starts at zero. If the hard
+        # stop arrives with entries still unchecked, the same mail goes out
+        # listing them, so a month never ends silently.
+        if: always() && steps.commit.outcome == 'success' && env.WINDOW_MONTH != ''
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -euo pipefail
+          BEFORE="${WINDOW_PENDING_BEFORE:-0}"
+          AFTER=$(python3 scripts/release_window.py --pending --month "$WINDOW_MONTH")
+          echo "eom-window: pending before $BEFORE, after $AFTER, last day $WINDOW_LAST_DAY"
+
+          if [ "$BEFORE" -gt 0 ] && [ "$AFTER" -eq 0 ]; then
+            SUBJECT="[releases] ready for $WINDOW_MONTH_NAME New Releases"
+          elif [ "$WINDOW_LAST_DAY" = "true" ] && [ "$AFTER" -gt 0 ]; then
+            SUBJECT="[releases] ready for $WINDOW_MONTH_NAME New Releases - $AFTER artist(s) unchecked"
+          else
+            echo "Window still open or already announced - no mail."
+            exit 0
+          fi
+
+          python3 scripts/release_window.py --report --month "$WINDOW_MONTH" > /tmp/window_ready.txt
+          cat /tmp/window_ready.txt
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::$SUBJECT - RESEND_API_KEY is unset, not mailed."
+            exit 0
+          fi
+          python3 scripts/notify_email.py \
+            --subject "$SUBJECT" \
+            --body-file /tmp/window_ready.txt

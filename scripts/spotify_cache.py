@@ -1010,6 +1010,27 @@ def _carry_previous(entry: dict, prev) -> None:
     _shift_previous(entry, prev.get("latest_release"), entry.get("latest_release"))
 
 
+ACTIVE_RELEASE_DAYS = 730   # a release within this many days marks an artist active
+
+
+def _is_active(entry: dict) -> bool:
+    """True when the entry's newest known release is within ACTIVE_RELEASE_DAYS.
+
+    Used by --active-first: at month end every entry must be re-checked, and the
+    Spotify ceiling spreads that over several days, so the artists most likely to
+    have released something this month go first and the quiet tail goes last.
+    Partial dates pad to the start of their period, so a year-only date counts
+    from January 1st (conservatively older)."""
+    rd = (entry.get("latest_release") or {}).get("date")
+    if not rd:
+        return False
+    try:
+        d = date.fromisoformat(_release_sort_key(rd))
+    except ValueError:
+        return False
+    return (date.today() - d).days <= ACTIVE_RELEASE_DAYS
+
+
 def refresh_releases(cache: dict, creds, args) -> None:
     """Re-pull ONLY latest_release for already-cached artists; leave the rest of
     each entry untouched. Honors --artist, --start-after, --stale-days, --dry-run.
@@ -1044,6 +1065,12 @@ def refresh_releases(cache: dict, creds, args) -> None:
     # never strands the tail — the next run re-serves whoever is still oldest.
     # Never-checked entries (no date) sort first; name breaks ties.
     names.sort(key=lambda n: (cache[n].get("latest_release_checked") or "", n))
+    # --active-first: same ordering inside two tiers, recently-releasing artists
+    # ahead of the quiet ones. A bail still leaves the neediest active entries
+    # at the front of the next run.
+    if getattr(args, "active_first", False):
+        names.sort(key=lambda n: (0 if _is_active(cache[n]) else 1,
+                                  cache[n].get("latest_release_checked") or "", n))
     # Auto-infer stale_days when not explicitly set. --stale-days 0 forces brute-force.
     stale_days = args.stale_days
     if stale_days is None:
@@ -2266,6 +2293,12 @@ def main() -> None:
                          "Combine with --stale-days 0 to preview a full brute-force "
                          "run. Example: python spotify_cache.py --refresh-releases "
                          "--count-pending")
+    ap.add_argument("--active-first", action="store_true",
+                    help="With --refresh-releases: check artists with a release in "
+                         f"the last {ACTIVE_RELEASE_DAYS} days before the rest, "
+                         "oldest-checked-first within each group. The month-end "
+                         "window uses it so the artists a New Music list is likely "
+                         "to draw on finish first.")
     ap.add_argument("--delay", type=float, default=DELAY, metavar="SECONDS",
                     help="Seconds to sleep between Spotify calls (default "
                          "%(default)s). The build packs ~1-2 calls/artist; raise "
