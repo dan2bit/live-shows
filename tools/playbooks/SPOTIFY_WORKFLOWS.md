@@ -92,7 +92,10 @@ says "persist"; until then, don't.
   `--stale-days` = days since the anchor + 1 and `--active-first` (artists with
   a release in the last two years before the quiet tail). The weekly
   `--new-artist` resolve skips while the window is open and the portrait heal
-  runs on the 8th, so the window gets the day's whole budget. Expected finish:
+  runs on the 8th, so the window gets the day's whole budget. Window runs pace
+  calls 4s apart and sleep through a short 429 (up to 10 minutes) instead of
+  bailing - the first window run, 10/30, tripped a ~5-minute burst throttle after
+  75 calls at the default 2s spacing. Expected finish:
   active artists about 3-4 days after month end, the whole ~500 roster about
   4-5. The regular trickle rate doesn't change that - every entry is re-checked
   after the anchor anyway. Schedule-only: a manual `workflow_dispatch` always
