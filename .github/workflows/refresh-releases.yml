@@ -40,6 +40,12 @@ name: Daily release refresh (spotify_cache)
 #     the entries checked before the anchor are eligible.
 #   - Order: --active-first, so artists with a release in the last two years
 #     finish before the quiet tail.
+#   - Pace: WINDOW_DELAY seconds between calls, and a short 429 (a rolling-window
+#     burst throttle, Retry-After of a few minutes) is slept through up to
+#     WINDOW_MAX_BACKOFF instead of ending the run. A window day spends many
+#     more calls than the trickle, and at the default 2s spacing a run of about
+#     75 calls tripped that throttle and bailed with most of the day's budget
+#     unspent. Hour-long lockouts still bail with the checkpoint saved.
 #   - Budget: RAMP_CAP every window day, never more than what is pending. No
 #     reserves are needed inside the window: the weekly new-artist resolve
 #     skips while it is open, and the portrait heal runs on the 8th, after the
@@ -132,7 +138,9 @@ jobs:
           # limit/stale-days it was given, window or no window.
           ORDER=""
           if [ "$EVENT_NAME" = "schedule" ]; then
-            RAMP_CAP=85         # most refresh requests a window day may spend
+            RAMP_CAP=85             # most refresh requests a window day may spend
+            WINDOW_DELAY=4          # seconds between calls inside the window
+            WINDOW_MAX_BACKOFF=600  # longest 429 wait slept through, not bailed on
 
             # RAMP_TODAY exists so the calendar maths can be exercised for any
             # date; a real run leaves it unset and uses the UTC date.
@@ -158,8 +166,8 @@ jobs:
                 STALE_DAYS=$WINDOW_STALE_DAYS
                 LIMIT=$RAMP_CAP
                 [ "$PENDING" -lt "$LIMIT" ] && LIMIT=$PENDING
-                ORDER="--active-first"
-                echo "eom-window: $MONTH_NAME, anchor $ANCHOR, hard stop $WINDOW_END, pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS, active first"
+                ORDER="--active-first --delay $WINDOW_DELAY --max-backoff $WINDOW_MAX_BACKOFF"
+                echo "eom-window: $MONTH_NAME, anchor $ANCHOR, hard stop $WINDOW_END, pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS, active first, delay ${WINDOW_DELAY}s, max backoff ${WINDOW_MAX_BACKOFF}s"
                 if [ "$LIMIT" -le 0 ]; then
                   # --limit 0 would mean no budget at all downstream; skip instead.
                   echo "eom-window: nothing pending - skipping the refresh"
