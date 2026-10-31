@@ -48,15 +48,20 @@ STRIPPED METADATA (no popularity / followers / genres)
     (Last.fm) as its own refreshable layer — see LAST.FM ENRICHMENT.
 
 RATE LIMITS
-    Spotify's Dev-mode limits are tight: a 429 can carry a multi-HOUR
-    Retry-After (observed ~22h). So api_get caps its sleep at MAX_BACKOFF and
-    raises RateLimited on anything longer — and on exhausted retries — so the run
-    BAILS, keeping its periodic checkpoints, instead of sleeping for hours or
-    churning every remaining artist into a false 'unresolved'. To keep request
-    volume down per build: build_entry makes ONE call (latest_release); a stored
-    or cached id skips the /search; and non-artist rows (festival/event names in
-    the Artist column of Pass potentials, plus known-unresolvable artists from
-    data/spotify_unresolvable.tsv) are dropped before resolution via
+    Spotify's Dev-mode limits are tight, and a 429 comes in two very different
+    sizes: a short one (a few minutes, from a rolling window tripped by a fast
+    burst of calls) and a lockout whose Retry-After runs to hours (observed ~22h).
+    So api_get sleeps through a 429 up to MAX_BACKOFF and raises RateLimited on
+    anything longer — and on exhausted retries — so the run BAILS, keeping its
+    periodic checkpoints, instead of sleeping for hours or churning every
+    remaining artist into a false 'unresolved'. --max-backoff raises the ceiling
+    for a scheduled run that would rather wait out a short throttle than lose the
+    rest of its budget to it.
+    To keep request volume down per build: build_entry makes ONE call
+    (latest_release); a stored or cached id skips the /search; and non-artist
+    rows (festival/event names in the Artist column of Pass potentials, plus
+    known-unresolvable artists from data/spotify_unresolvable.tsv) are dropped
+    before resolution via
     _is_non_artist (explicit set + the unresolvable table + "festival" substring)
     so they never cost a call.
     Pace the calls with --delay (default 2.0s) — raise it on a big first build to
@@ -327,7 +332,7 @@ ALBUMS_LIMIT      = 10        # /artists/{id}/albums MAX page size (>10 => 400 "
 DELAY             = 2.0       # default inter-call spacing (s); override per-run with --delay
 SAVE_EVERY        = 25        # incremental checkpoint so a long run survives an interruption
 SEARCH_MIN_SCORE  = 0.55      # min name-match confidence to accept a search hit
-MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours)
+MAX_BACKOFF       = 60        # cap 429 sleeps; longer Retry-After => bail (Dev-mode lockouts run hours); --max-backoff
 DEFAULT_RETRY_AFTER = 5       # assumed wait when a 429 carries no Retry-After header
 
 # Last.fm enrichment (separately refreshable; only --refresh-lastfm uses these)
@@ -2190,7 +2195,7 @@ def _reject_mode_clashes(active: str, pairs, extra: str = "") -> None:
 
 
 def main() -> None:
-    global DELAY
+    global DELAY, MAX_BACKOFF
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--refresh", action="store_true",
@@ -2305,6 +2310,12 @@ def main() -> None:
                          "this to stay under Dev-mode 429 lockouts on a big run, "
                          "lower it (e.g. 0.3) for speed once limits relax or for "
                          "the lighter --refresh-* passes.")
+    ap.add_argument("--max-backoff", type=int, default=MAX_BACKOFF, metavar="SECONDS",
+                    help="Longest Retry-After a 429 may ask for and still be slept "
+                         "through (default %(default)s). Longer waits bail with the "
+                         "checkpoint saved. Raise it (e.g. 600) for a scheduled run "
+                         "that should ride out a short burst throttle; hour-long "
+                         "lockouts still bail.")
     ap.add_argument("--limit", type=int, default=None, metavar="N",
                     help="Voluntary Spotify request budget for this run. When spent, "
                          "the run checkpoints and exits 0 — the expected, successful "
@@ -2319,6 +2330,9 @@ def main() -> None:
     args = ap.parse_args()
 
     DELAY = args.delay
+    if args.max_backoff < 0:
+        sys.exit("--max-backoff must be zero or more seconds")
+    MAX_BACKOFF = args.max_backoff
     if args.limit is not None:
         if args.limit <= 0:
             sys.exit("--limit must be a positive request count")
