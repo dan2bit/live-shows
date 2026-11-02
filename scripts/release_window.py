@@ -35,6 +35,27 @@ would otherwise hold it open forever). Inside it, --stale-days is the number of
 days since the anchor plus one, which leaves exactly the entries checked before
 the anchor eligible.
 
+PRIORITY AND SKIPS
+
+The window checks artists in the order they are likely to have released, judged
+from the two releases the cache keeps (latest_release, previous_release) as of
+the anchor. Measured against four months of the cache's own history (July to
+October 2026, 77 releases that only a window check found):
+
+    tier 1  a single in the last 90 days           ~17% found something
+    tier 2  a release in the last year              ~4%
+    tier 3  last release one to two years ago       ~2%
+    tier 4  last release two or more years ago      ~1.4%
+    skip    an album already out this month          0 of 45
+    skip    no release on Spotify at all             0 of 44
+
+Tiers 1 and 2 hold about 84% of what the window finds, so checking them first
+finds most of a month's late releases on the window's first days. Quiet artists
+stay in, last: when they do release it is usually a full album with no single
+ahead of it. The two skip groups are left out of the window and out of the
+pending count; the daily trickle still reaches them, so a rare release from one
+shows up within a few weeks rather than never.
+
 USAGE
 
     release_window.py --env [--today YYYY-MM-DD]
@@ -45,8 +66,12 @@ USAGE
         whose window governs today even when IN_WINDOW is false.
 
     release_window.py --pending --month YYYY-MM
-        Resolved entries still checked before that month's anchor, as a count.
-        Local only; no API calls.
+        Resolved entries still checked before that month's anchor, skip groups
+        excluded, as a count. Local only; no API calls.
+
+    release_window.py --plan --month YYYY-MM
+        The same entries, one cache key per line, in priority order (tier, then
+        oldest-checked first), for spotify_cache.py --names-from.
 
     release_window.py --report --month YYYY-MM
         The plain-text body of the "ready" mail: coverage, any entries still
@@ -70,6 +95,11 @@ CACHE = REPO_ROOT / "data" / "artist_spotify.json"
 WINDOW_END_DOM = 7          # hard stop: this day of the month after the one closing
 FRIDAY = 4                  # date.weekday(): Monday=0 ... Sunday=6
 FRIDAY_ANCHOR_EOM_DAYS = {5, 6, 0}   # month ends Sat, Sun, Mon -> anchor on Friday
+SINGLE_RECENT_DAYS = 90     # tier 1: a single this recent
+TIER_YEAR_DAYS = 365        # tier 2 bound
+TIER_QUIET_DAYS = 730       # tier 3 bound; older is tier 4
+SKIP_ALBUM = "album already out this month"
+SKIP_NONE = "no release on Spotify"
 
 
 def month_end(d: date) -> date:
@@ -135,17 +165,69 @@ def _checked(entry: dict) -> date | None:
         return None
 
 
-def pending(cache: dict, m: date) -> list:
-    """Resolved entries last checked before the month's anchor, by name."""
+def _rdate(r: dict) -> date | None:
+    """A release's date, padded to the start of its period when partial."""
+    parts = (r.get("date") or "").split("-")
+    try:
+        y = int(parts[0])
+        mo = int(parts[1]) if len(parts) > 1 and parts[1] else 1
+        dd = int(parts[2]) if len(parts) > 2 and parts[2] else 1
+        return date(y, mo, dd)
+    except (ValueError, IndexError):
+        return None
+
+
+def tier(entry: dict, m: date):
+    """Priority tier 1-4 for month m's window, or a SKIP_* reason string."""
     a = anchor_for(m)
-    out = []
+    rels = [r for r in (entry.get("latest_release"), entry.get("previous_release"))
+            if isinstance(r, dict) and _rdate(r)]
+    if not rels:
+        return SKIP_NONE
+    prefix = m.strftime("%Y-%m")
+    if any((r.get("type") == "album") and (r.get("date") or "").startswith(prefix) for r in rels):
+        return SKIP_ALBUM
+    if any(r.get("type") == "single" and (a - _rdate(r)).days <= SINGLE_RECENT_DAYS for r in rels):
+        return 1
+    age = (a - max(_rdate(r) for r in rels)).days
+    if age <= TIER_YEAR_DAYS:
+        return 2
+    if age <= TIER_QUIET_DAYS:
+        return 3
+    return 4
+
+
+def _uncovered(cache: dict, m: date):
+    """(name, entry) for resolved entries last checked before the anchor."""
+    a = anchor_for(m)
     for name, e in cache.items():
         if not isinstance(e, dict) or not e.get("spotify_id"):
             continue
         c = _checked(e)
         if c is None or c < a:
-            out.append(name)
-    return sorted(out)
+            yield name, e
+
+
+def pending(cache: dict, m: date) -> list:
+    """Uncovered entries the window still owes a check, skip groups excluded."""
+    return sorted(n for n, e in _uncovered(cache, m) if isinstance(tier(e, m), int))
+
+
+def skipped(cache: dict, m: date) -> dict:
+    """Uncovered entries the window leaves out, by skip reason."""
+    out = {}
+    for n, e in _uncovered(cache, m):
+        t = tier(e, m)
+        if not isinstance(t, int):
+            out.setdefault(t, []).append(n)
+    return {k: sorted(v) for k, v in out.items()}
+
+
+def plan(cache: dict, m: date) -> list:
+    """Pending names in check order: tier, then oldest-checked first, then name."""
+    rows = [(tier(e, m), e.get("latest_release_checked") or "", n)
+            for n, e in _uncovered(cache, m)]
+    return [n for t, _, n in sorted(r for r in rows if isinstance(r[0], int))]
 
 
 def releases_in(cache: dict, m: date) -> list:
@@ -194,6 +276,10 @@ def report(cache: dict, m: date) -> str:
         span = f"{e:%b %d}" if first == e else f"{first:%b %d} to {e:%b %d}"
         lines.append(f"(Anchored on the last Friday: a release dated {span} is seen "
                      f"only for artists checked on or after its date.)")
+    skips = skipped(cache, m)
+    for reason, names in sorted(skips.items()):
+        lines.append(f"{len(names)} artist(s) not re-checked ({reason}); "
+                     f"the daily trickle still covers them.")
     if unresolved:
         lines.append(f"{unresolved} cache entries have no Spotify id and are not covered.")
     rel = releases_in(cache, m)
@@ -242,11 +328,23 @@ def self_test() -> int:
                  "latest_release": {"date": "2026-11-01", "name": "Y", "spotify_id": "2"},
                  "previous_release": {"date": "2026-10-30", "name": "Z", "spotify_id": "3"}},
         "Skeleton": {"spotify_id": None},
+        "Quiet": {"spotify_id": "c", "latest_release_checked": "2026-10-01",
+                  "latest_release": {"date": "2019", "type": "album", "spotify_id": "4"}},
+        "Singling": {"spotify_id": "d", "latest_release_checked": "2026-10-20",
+                     "latest_release": {"date": "2026-09-25", "type": "single", "spotify_id": "5"}},
+        "AlbumOut": {"spotify_id": "e", "latest_release_checked": "2026-10-20",
+                     "latest_release": {"date": "2026-10-16", "type": "album", "spotify_id": "6"}},
+        "Nothing": {"spotify_id": "f", "latest_release_checked": "2026-10-20",
+                    "latest_release": None},
     }
-    if pending(cache, m) != ["Early"]:
+    if pending(cache, m) != ["Early", "Quiet", "Singling"]:
         print("bad pending", pending(cache, m)); fails += 1
+    if plan(cache, m) != ["Singling", "Early", "Quiet"]:
+        print("bad plan", plan(cache, m)); fails += 1
+    if skipped(cache, m) != {SKIP_ALBUM: ["AlbumOut"], SKIP_NONE: ["Nothing"]}:
+        print("bad skipped", skipped(cache, m)); fails += 1
     got = [(d_, n) for d_, n, _ in releases_in(cache, m)]
-    if got != [("2026-10-09", "Early"), ("2026-10-30", "Late")]:
+    if got != [("2026-10-09", "Early"), ("2026-10-16", "AlbumOut"), ("2026-10-30", "Late")]:
         print("bad releases", got); fails += 1
     print("self-test:", "ok" if not fails else f"{fails} failure(s)")
     return 1 if fails else 0
@@ -257,9 +355,10 @@ def main() -> int:
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--env", action="store_true", help="KEY=VALUE window state for today")
     g.add_argument("--pending", action="store_true", help="count entries not yet covered")
+    g.add_argument("--plan", action="store_true", help="pending names in check order")
     g.add_argument("--report", action="store_true", help="render the ready-mail body")
     g.add_argument("--self-test", action="store_true")
-    ap.add_argument("--month", metavar="YYYY-MM", help="month for --pending/--report")
+    ap.add_argument("--month", metavar="YYYY-MM", help="month for --pending/--plan/--report")
     ap.add_argument("--today", metavar="YYYY-MM-DD",
                     help="override today's date (UTC by default) for --env")
     args = ap.parse_args()
@@ -272,11 +371,14 @@ def main() -> int:
             print(f"{k}={v!s}" if " " not in v else f"{k}='{v}'")
         return 0
     if not args.month:
-        ap.error("--pending and --report need --month YYYY-MM")
+        ap.error("--pending, --plan and --report need --month YYYY-MM")
     m = _month_start(args.month)
     cache = _load_cache()
     if args.pending:
         print(len(pending(cache, m)))
+    elif args.plan:
+        for n in plan(cache, m):
+            print(n)
     else:
         sys.stdout.write(report(cache, m))
     return 0

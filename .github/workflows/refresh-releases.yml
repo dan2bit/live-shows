@@ -38,8 +38,11 @@ name: Daily release refresh (spotify_cache)
 #     unchanged.
 #   - Eligibility: --stale-days is days since the anchor plus one, so exactly
 #     the entries checked before the anchor are eligible.
-#   - Order: --active-first, so artists with a release in the last two years
-#     finish before the quiet tail.
+#   - Order: release_window.py --plan, passed with --names-from. Artists in a
+#     run of recent singles go first, then anyone with a release in the last
+#     year, then the quiet tail. Two groups are left out entirely: artists whose
+#     album already came out this month, and artists with nothing on Spotify;
+#     the pending count excludes them too, so they never hold the window open.
 #   - Pace: WINDOW_DELAY seconds between calls, and a short 429 (a rolling-window
 #     burst throttle, Retry-After of a few minutes) is slept through up to
 #     WINDOW_MAX_BACKOFF instead of ending the run. A window day spends many
@@ -166,8 +169,10 @@ jobs:
                 STALE_DAYS=$WINDOW_STALE_DAYS
                 LIMIT=$RAMP_CAP
                 [ "$PENDING" -lt "$LIMIT" ] && LIMIT=$PENDING
-                ORDER="--active-first --delay $WINDOW_DELAY --max-backoff $WINDOW_MAX_BACKOFF"
-                echo "eom-window: $MONTH_NAME, anchor $ANCHOR, hard stop $WINDOW_END, pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS, active first, delay ${WINDOW_DELAY}s, max backoff ${WINDOW_MAX_BACKOFF}s"
+                PLAN_FILE=/tmp/window_plan.txt
+                python3 scripts/release_window.py --plan --month "$MONTH" > "$PLAN_FILE"
+                ORDER="--names-from $PLAN_FILE --delay $WINDOW_DELAY --max-backoff $WINDOW_MAX_BACKOFF"
+                echo "eom-window: $MONTH_NAME, anchor $ANCHOR, hard stop $WINDOW_END, pending $PENDING -> limit $LIMIT, stale-days $STALE_DAYS, priority plan, delay ${WINDOW_DELAY}s, max backoff ${WINDOW_MAX_BACKOFF}s"
                 if [ "$LIMIT" -le 0 ]; then
                   # --limit 0 would mean no budget at all downstream; skip instead.
                   echo "eom-window: nothing pending - skipping the refresh"
