@@ -89,15 +89,19 @@ says "persist"; until then, don't.
   calendar maths. The **anchor** is the month's last Friday when the month ends
   Sat/Sun/Mon, otherwise the month's last day. From the anchor until nothing is
   pending (hard stop on the 7th), each scheduled run spends up to 85 calls with
-  `--stale-days` = days since the anchor + 1 and `--active-first` (artists with
-  a release in the last two years before the quiet tail). The weekly
+  `--stale-days` = days since the anchor + 1, in the priority order of
+  `release_window.py --plan` (passed as `--names-from`): recent singles first,
+  then a release in the last year, then 1-2 years, then 2+ years. Artists with
+  an album already out this month, or nothing on Spotify, are skipped (0 window
+  finds for either across Jul-Oct 2026); quiet artists stay in because their
+  rare releases are usually full albums. The weekly
   `--new-artist` resolve skips while the window is open and the portrait heal
   runs on the 8th, so the window gets the day's whole budget. Window runs pace
   calls 4s apart and sleep through a short 429 (up to 10 minutes) instead of
   bailing - the first window run, 10/30, tripped a ~5-minute burst throttle after
-  75 calls at the default 2s spacing. Expected finish:
-  active artists about 3-4 days after month end, the whole ~500 roster about
-  4-5. The regular trickle rate doesn't change that - every entry is re-checked
+  75 calls at the default 2s spacing. Expected: most of the window's finds in
+  its first two or three runs, the whole ~500 roster about 4-5 days after month
+  end. The regular trickle rate doesn't change that - every entry is re-checked
   after the anchor anyway. Schedule-only: a manual `workflow_dispatch` always
   gets exactly the limit/stale-days typed (or the 25/25 default).
 - Before building a playlist inside the window, remember the window is spending
