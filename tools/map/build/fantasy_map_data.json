@@ -749,14 +749,14 @@
    {
     "name": "Emmylou Harris",
     "override": "town",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-10-02"
     },
-    "class": "unchanged"
+    "class": "still-promotion"
    },
    {
     "name": "Enter the Haggis",
@@ -1408,8 +1408,8 @@
    "decree": 4,
    "flipped": 1,
    "orphan": 3,
-   "still-promotion": 1,
-   "unchanged": 58
+   "still-promotion": 2,
+   "unchanged": 57
   },
   "counts": {
    "settlements": 416,
@@ -6048,8 +6048,8 @@
    "region": "heartland",
    "district": "heartland:d2",
    "size": "town",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5,
    "xy": [
     336.2,
     378.0
@@ -6064,7 +6064,7 @@
    "src": "seen as support for John Prine Celebration (2026-06-09)",
    "times_seen": 1,
    "vip": 0,
-   "tier": "-"
+   "tier": "Legacy"
   },
   {
    "id": 127,
