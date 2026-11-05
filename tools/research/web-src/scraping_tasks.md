@@ -14,7 +14,7 @@ Capture: artist name, venue/event name, date, time, attending count (Tracking)
 Dates must always include the year (e.g. "Jul 04, 2026")
 
 4. Save the file in `/tools/research/web-src`
-5. Have Claude Desktop diff the file against the previous month
+5. Run `python3 tools/research/websrc_diff.py` once this month's HFTB file is also committed
 
 _Faster path: the pagination endpoint (verified 2026-09-07)_
 
@@ -54,21 +54,16 @@ clock has been observed running days behind wall time, which silently mis-dates
 provenance notes and "days until show" math. Cross-check against the newest dated
 entries in the potentials file before writing any date into a scrape artifact.
 
-*Here for the Bands shows list MONTHLY*
+*Here for the Bands shows list - AUTOMATED (weekly CI)*
 
-1. open https://www.hereforthebands.com/shows.php and choose dc
-2. scroll to the bottom and click ALL, wait for the load to complete
+No manual step. `weekly-hftb-diff.yml` runs Fridays, fetches the endpoint below
+headless via `scrape_hftb.py`, and commits `rhbl-hereforthebands-dc-YYYY-MM.tsv`
+(region=3, DC + Baltimore) to staging. The first Friday of a month writes that
+month's file, so the monthly `websrc_diff.py` run waits for it. To get it sooner,
+dispatch the workflow by hand from the Actions tab.
 
-_Prompt_
-create rhbl-hereforthebands-dc-2026-MM.tsv for download
-use the current two-digit month in place of MM
-Schema: Artist | Venue | Date | Venue URL
-Capture: artist name, venue, date, venue URL
-Dates must always include the year
-all shows at the same venue share the same Venue URL
-
-3. Save the file in `/tools/research/web-src`
-4. Have Claude Desktop diff the file against the previous month
+Schema: Artist | Venue | Date | Venue URL - all shows at the same venue share the
+same Venue URL. The notes below are the reference for the scraper.
 
 _Faster path: the per-day JSON endpoint (verified 2026-09-07)_
 
@@ -106,38 +101,33 @@ Caution: the Artist column holds an entire bill, comma-separated ("Cheekface, Ap
 Of The State"). Tokenize before comparing against tracking files or the join silently
 misses nearly everything - see websrc_diff.py.
 
-*Venue calendars scrape MONTHLY*
+*Venue calendars scrape MONTHLY - Bethesda Theater only*
 
-1. ask Claude Desktop for the calendar URLs of venues in data/venues.tsv whose `Coverage` column contains `scrape`
+Collective Encore and Hub City Vinyl moved to the daily page watch on 2026-10-03
+(`tools/watch/watches.tsv`, extractors in `extractors.py`); a new date there arrives
+as a `[watch]` mail. Bethesda Theater stays a manual, interactive Chrome scrape: its
+robots.txt names AI crawlers with Disallow, which is honored (see its `venues.tsv`
+row), so it is never put on the headless watch. The alternative is the venue's own
+email list.
 
-   (This replaced the old free-text `Calendar Coverage` column in 2026-09. `Coverage`
-   is a pipe-separated controlled vocabulary - `hftb`, `email`, `scrape`, `watch`,
-   `artist-platform`, `none` - so this is now an exact membership test rather than a
-   substring match on prose. `Newsletter Source`, `Subscription` and `Coverage Checked`
-   carry the rest of what that column used to imply.)
+1. open the Bethesda Theater calendar URL from data/venues.tsv in a tab
+   (its `Coverage` value is `scrape`; any venue that gains that value joins this step)
 
-As of 2026-09-07 that is three venues: Collective Encore, Hub City Vinyl, and
-Bethesda Theater. None of the three publishes prices on its calendar page, and
-Hub City's list view carries no times or per-event links either, so expect the
-Price and Ticket URL columns to come back mostly empty.
+Bethesda does not publish prices on its calendar, so expect the Price column to
+come back mostly empty.
 
-_Prompt 1_
-open each of these URLs in a new tab in this window
-
-_Prompt 2_
-
-for each venue with an open tab
-create venue-calendar-<venue>-2026-MM.tsv for download
+_Prompt_
+create venue-calendar-bethesda-theater-2026-MM.tsv for download
 use the current two-digit month in place of MM
 Capture: upcoming events only. ignore past events
 Click All Events, Load More, or equivalent expansion or pagination controls
 Schema: Date | Day | Time | Artist/Event | Price | Ticket URL
-Dates must always include the year
+Dates must always include the year; compute Day from the date
 Flag any entry that is not a live-music event (trivia, private events, venue rentals) instead of including it silently
-offer the completed file before moving on to the next venue
 
-3. save the files in `tools/research/web-src`
-4. Have Claude Desktop diff each file against the previous month
+2. save the file in `tools/research/web-src`
+3. compare it against the prior month's file in `tools/archive/` by eye - it is
+   short, and websrc_diff.py does not read venue calendars
 
 *Bandsintown scrape follows list ON CHANGE*
 
@@ -189,32 +179,21 @@ The artist search is an in-page overlay with no results URL.
 root reports ledger-vs-platform drift (empty output = clean). This is Workflow 1-B
 in `ANALYSIS_WORKFLOWS.md`.
 
-*Fast track tour pages scrape MONTHLY*
+*Fast track tour pages - AUTOMATED (daily page watch)*
 
-1. ask Claude Desktop to produce just the list of tour page URLs from data/fast_track.tsv
+No manual step. Since 2026-10-03 all ten fast-track artists are rows in
+`tools/watch/watches.tsv` (check_every_days 1): Evan Nicole Bell, Nikki Hill,
+Beth Hart, Angelique Francis and Kat Riggins as plain server-rendered pages;
+Danielle Ponder and Miko Marks via the Seated tour API; Sugaray Rayford,
+Grace Bowers and Garret T. Willie via Bandsintown's public events endpoint. A
+DC/MD/VA date arrives as a `[watch]` mail; the fast-track buy decision (cap check
+per DATA_WRITE_PROTOCOLS.md) is still a human one.
 
-_Prompt 1_
-open each of these URLs in a new tab in this window
+Every new `data/fast_track.tsv` row gets a watch row with it - see
+DATA_WRITE_PROTOCOLS.md -> fast_track.tsv protocol -> Adding a row.
 
-2. review the pages for completely empty lists (Bell, Ponder) and close the tabs
-
-_Prompt 2_
-
-for each artist with an open tab, in turn
-append rows to a single fast-track-tour-dates.tsv for download
-Capture: upcoming dates only. ignore past events
-Click All Shows, Load More, or equivalent expansion or pagination controls
-Schema: Artist | Date | Day | Time | Event/Venue | Venue | City | State (or Country if non-USA)
-The Artist column repeats the artist's name (as spelled in data/fast_track.tsv) on every one of that artist's rows
-offer the running file after each artist before moving on to the next
-
-3. save the single file as `tools/research/web-src/fast-track-tour-dates.tsv`, overwriting the prior copy
-   (this replaced the former per-artist fast-track-<artist>-tour-dates.tsv files, consolidated 2026-07-23)
-
-Each tour page is a different platform, so budget one browser permission grant per
-domain. Angelique Francis paginates through a Turbo Stream endpoint rather than a
-normal pager; Beth Hart and Kat Riggins publish no set times. Recompute the Day
-column from the date rather than trusting the site's own weekday label.
+`fast-track-tour-dates.tsv` in this folder is the last consolidated Chrome scrape
+(2026-09) and is no longer refreshed.
 
 *Youtube Playlist Inventory ON DEMAND*
 
