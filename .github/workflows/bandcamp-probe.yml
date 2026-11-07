@@ -1,0 +1,183 @@
+name: bandcamp-probe
+
+# Temporary and manual: run it, read the job summary, then delete it.
+#
+# Answers one question before any Bandcamp lookup tooling is built: does Bandcamp
+# answer a GitHub-hosted runner the way it answers a logged-out browser tab? A
+# browser session already works. Runner IP ranges are a common target for bot
+# protection, so a plausible-looking 200 is not enough - each check below also
+# verifies the body is the real payload and not a challenge page.
+#
+# Checks, each reported with HTTP status, content type, size and a verdict:
+#   1. artist search API      POST /api/bcsearch_public_api/1/autocomplete_elastic
+#                             for names with known answers, plus a nonsense query
+#   2. artist page            GET <subdomain>.bandcamp.com and /music, parsing
+#                             location and release count the way a lookup would
+#   3. fan follows API        POST /api/fancollection/1/following_bands for the
+#                             public fan account the follows export would read
+#
+# The search requests are spaced a few seconds apart and stop at the first hard
+# block, so a blocked runner is not retried into a longer block.
+# Nothing is written to the repo and no secret is used.
+
+on:
+  workflow_dispatch:
+    inputs:
+      fan_id:
+        description: Public Bandcamp fan id for the follows check
+        required: false
+        default: "4498338"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probe Bandcamp from the runner
+        env:
+          FAN_ID: ${{ inputs.fan_id }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, re, time, urllib.request, urllib.error
+
+          UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/130.0 Safari/537.36")
+          SUMMARY = os.environ["GITHUB_STEP_SUMMARY"]
+          rows, blocked = [], False
+
+          CHALLENGE = re.compile(r"captcha|cf-chl|challenge-platform|"
+                                 r"access denied|are you a robot|attention required",
+                                 re.I)
+
+          def req(method, url, payload=None):
+              data = json.dumps(payload).encode() if payload is not None else None
+              r = urllib.request.Request(url, data=data, method=method, headers={
+                  "User-Agent": UA,
+                  "Accept": "application/json, text/html;q=0.9",
+                  "Content-Type": "application/json",
+              })
+              t0 = time.time()
+              try:
+                  with urllib.request.urlopen(r, timeout=20) as resp:
+                      body = resp.read().decode("utf-8", "replace")
+                      return resp.status, resp.headers.get("Content-Type", ""), body, time.time() - t0, dict(resp.headers)
+              except urllib.error.HTTPError as e:
+                  body = e.read().decode("utf-8", "replace")
+                  return e.code, e.headers.get("Content-Type", ""), body, time.time() - t0, dict(e.headers)
+              except Exception as e:
+                  return None, "", f"{type(e).__name__}: {e}", time.time() - t0, {}
+
+          def record(check, target, status, ctype, body, secs, verdict, detail=""):
+              global blocked
+              if verdict == "BLOCKED":
+                  blocked = True
+              rows.append((check, target, str(status), ctype.split(";")[0], len(body),
+                           f"{secs:.1f}s", verdict, detail))
+
+          def classify_json(status, ctype, body):
+              if status is None:
+                  return "ERROR", body[:120]
+              if status in (403, 429, 503) or CHALLENGE.search(body[:4000]):
+                  return "BLOCKED", body[:120].replace("\n", " ")
+              if "json" not in ctype:
+                  return "BLOCKED", f"non-JSON {ctype}: " + body[:100].replace("\n", " ")
+              try:
+                  return "OK", json.loads(body)
+              except ValueError:
+                  return "BLOCKED", "unparseable JSON"
+
+          # 1. search API: known answers, a band-member name, and a nonsense control
+          SEARCH = "https://bandcamp.com/api/bcsearch_public_api/1/autocomplete_elastic"
+          cases = [
+              ("Larkin Poe", "larkinpoe"),
+              ("Samantha Fish", "samanthafish"),
+              ("Sue Foley", "suefoley1"),
+              ("zzqxv nonsense band 7731", None),
+          ]
+          for name, expect in cases:
+              if blocked:
+                  record("search", name, "-", "", "", 0, "SKIPPED", "earlier hard block")
+                  continue
+              st, ct, body, secs, _ = req("POST", SEARCH, {
+                  "search_text": name, "search_filter": "b",
+                  "full_page": False, "fan_id": None})
+              verdict, parsed = classify_json(st, ct, body)
+              detail = parsed if verdict != "OK" else ""
+              if verdict == "OK":
+                  results = (parsed.get("auto") or {}).get("results") or []
+                  subs = [re.sub(r"^https?://|\.bandcamp\.com.*$", "", r.get("item_url_root") or "")
+                          for r in results]
+                  if expect is None:
+                      verdict = "OK" if not any(n.lower() == name.lower() for n in
+                                                (r.get("name", "") for r in results)) else "UNEXPECTED"
+                      detail = f"{len(results)} results, no exact match expected"
+                  else:
+                      verdict = "OK" if expect in subs else "MISMATCH"
+                      detail = f"{len(results)} results; expected {expect}; top: {', '.join(subs[:3])}"
+              record("search", name, st, ct, body, secs, verdict, detail)
+              time.sleep(3)
+
+          # 2. artist page: location + release count, as a lookup's validation would read them
+          for sub in ["larkinpoe", "suefoley1"]:
+              if blocked:
+                  record("page", sub, "-", "", "", 0, "SKIPPED", "earlier hard block")
+                  continue
+              for path in ["", "/music"]:
+                  url = f"https://{sub}.bandcamp.com{path}"
+                  st, ct, body, secs, _ = req("GET", url)
+                  if st is None:
+                      record("page", url, st, ct, body, secs, "ERROR", body[:120]); continue
+                  if st in (403, 429, 503) or CHALLENGE.search(body[:4000]):
+                      record("page", url, st, ct, body, secs, "BLOCKED", body[:120].replace("\n", " ")); continue
+                  loc = re.search(r'<span class="location[^"]*">([^<]*)</span>', body)
+                  rels = len(set(re.findall(r'href="(/(?:album|track)/[^"?#]+)"', body)))
+                  ok = st == 200 and (loc or rels)
+                  record("page", url, st, ct, body, secs, "OK" if ok else "MISMATCH",
+                         f"location={loc.group(1).strip() if loc else '?'}; release links={rels}")
+                  time.sleep(2)
+
+          # 3. fan follows API
+          fan = os.environ.get("FAN_ID") or "4498338"
+          if blocked:
+              record("follows", fan, "-", "", "", 0, "SKIPPED", "earlier hard block")
+          else:
+              st, ct, body, secs, _ = req("POST",
+                  "https://bandcamp.com/api/fancollection/1/following_bands",
+                  {"fan_id": int(fan), "older_than_token": f"{int(time.time())}::a::", "count": 20})
+              verdict, parsed = classify_json(st, ct, body)
+              detail = parsed if verdict != "OK" else ""
+              if verdict == "OK":
+                  items = parsed.get("followeers") or parsed.get("followees") or []
+                  verdict = "OK" if items else "MISMATCH"
+                  detail = f"{len(items)} followed (first page of 20); more_available={parsed.get('more_available')}"
+              record("follows", fan, st, ct, body, secs, verdict, detail)
+
+          # runner egress address, so a block can be matched to Azure ranges later
+          st, _, ip, _, _ = req("GET", "https://api.ipify.org")
+          egress = ip.strip() if st == 200 else "unknown"
+
+          ok = sum(r[6] == "OK" for r in rows)
+          bad = [r for r in rows if r[6] in ("BLOCKED", "ERROR")]
+          headline = ("**Bandcamp answers the runner.** CI lookup is viable."
+                      if not bad and ok == len(rows) else
+                      "**Bandcamp blocks or degrades the runner.** Keep lookups in Claude in Chrome."
+                      if bad else
+                      "**Mixed result.** Reachable, but some answers differ from the browser - read the rows.")
+          with open(SUMMARY, "a") as f:
+              f.write("## Bandcamp reachability from a GitHub-hosted runner\n\n")
+              f.write(headline + "\n\n")
+              f.write(f"Runner egress IP: `{egress}`; {ok}/{len(rows)} checks OK.\n\n")
+              f.write("| check | target | status | type | bytes | time | verdict | detail |\n")
+              f.write("|---|---|---|---|---|---|---|---|\n")
+              for r in rows:
+                  cells = [str(c).replace("|", "/") for c in r]
+                  f.write("| " + " | ".join(cells) + " |\n")
+              f.write("\nVerdicts: OK = real payload with the expected answer; MISMATCH = real "
+                      "payload, unexpected content; BLOCKED = 403/429/503, challenge page or "
+                      "non-JSON where JSON was expected; SKIPPED = not attempted after a block.\n")
+          print(open(SUMMARY).read())
+          PY
