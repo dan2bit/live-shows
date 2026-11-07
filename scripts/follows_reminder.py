@@ -10,6 +10,11 @@ ref, with the platforms still to be followed on:
     a fast_track add with no follows_master row is reported as such (the
     pipeline expects fast_track to be a subset of follows_master)
 
+Bandcamp is reported only for an artist whose data/artists.tsv row carries a
+real Bandcamp URL (not blank, not "-"): most acts have no Bandcamp page of their
+own, so asking for that follow everywhere would nag about follows that cannot
+exist. That follow is made from the dan2bit fan account, not rhbl.
+
 Songkick is frozen and never reported. Direct Mail is a separate decision and
 never reported.
 
@@ -39,8 +44,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 FOLLOWS_MASTER = "tools/research/follows/follows_master.tsv"
 FAST_TRACK = "data/fast_track.tsv"
+ARTISTS = "data/artists.tsv"
 EXPORTS = ("tools/research/follows/rhbl-bandsintown.tsv",
-           "tools/research/follows/rhbl-seated.tsv")
+           "tools/research/follows/rhbl-seated.tsv",
+           "tools/research/follows/dan2bit-bandcamp.tsv")
 PLATFORMS = ("Bandsintown", "Seated")
 SEATED_URL = "https://go.seated.com/notifications"
 
@@ -72,8 +79,35 @@ def added(ref, path):
     return [r for r in rows_now(path) if r["Artist"] not in before]
 
 
-def missing_platforms(fm_row):
-    return [p for p in PLATFORMS if (fm_row or {}).get(p, "").strip() != "Y"]
+_BANDCAMP = None
+
+
+def bandcamp_url(name):
+    """The artist's own Bandcamp page from artists.tsv, matched through the
+    shared name forms so "Ally Venable" meets "Ally Venable Band"; None when
+    the artist has no row or the cell is blank / "-"."""
+    global _BANDCAMP
+    if _BANDCAMP is None:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from name_forms import lookup_forms, norm  # noqa: E402
+        _BANDCAMP = {"_forms": lambda n: {norm(f) for f in lookup_forms(n)}}
+        for r in rows_now(ARTISTS):
+            url = (r.get("Bandcamp URL") or "").strip()
+            if url.startswith("http"):
+                for k in _BANDCAMP["_forms"](r.get("Artist", "")):
+                    _BANDCAMP.setdefault(k, url)
+    for k in _BANDCAMP["_forms"](name):
+        if k in _BANDCAMP:
+            return _BANDCAMP[k]
+    return None
+
+
+def missing_platforms(fm_row, name=None):
+    row = fm_row or {}
+    need = [p for p in PLATFORMS if row.get(p, "").strip() != "Y"]
+    if name and row.get("Bandcamp", "").strip() != "Y" and bandcamp_url(name):
+        need.append("Bandcamp")
+    return need
 
 
 def export_age(path):
@@ -96,7 +130,7 @@ def main():
     reported = set()
 
     for r in added(args.base, FOLLOWS_MASTER):
-        need = missing_platforms(r)
+        need = missing_platforms(r, r["Artist"])
         if not need:
             continue
         ft = ft_now.get(r["Artist"])
@@ -111,11 +145,12 @@ def main():
             continue
         fm = fm_now.get(name)
         if fm is None:
+            need = list(PLATFORMS) + (["Bandcamp"] if bandcamp_url(name) else [])
             lines.append(f"- {name} (fast track): NO follows_master row - add one, then follow on "
-                         f"{', '.join(PLATFORMS)}")
-            lines.extend(links(name, list(PLATFORMS), r))
+                         f"{', '.join(need)}")
+            lines.extend(links(name, need, r))
             continue
-        need = missing_platforms(fm)
+        need = missing_platforms(fm, name)
         if need:
             lines.append(f"- {name} (fast track): add to {', '.join(need)}")
             lines.extend(links(name, need, r))
@@ -130,7 +165,7 @@ def main():
         out.append("")
         for path in EXPORTS:
             days = export_age(path)
-            label = Path(path).stem.replace("rhbl-", "")
+            label = Path(path).stem.replace("rhbl-", "").replace("dan2bit-", "")
             out.append(f"{label} export: {days} days old" if days is not None
                        else f"{label} export: age unknown")
     print("\n".join(out))
@@ -147,6 +182,8 @@ def links(name, need, ft_row):
             out.append(f"    Bandsintown: search the header box for \"{name}\"")
     if "Seated" in need:
         out.append(f"    Seated: {SEATED_URL} - search \"{name}\"")
+    if "Bandcamp" in need:
+        out.append(f"    Bandcamp (follow as dan2bit): {bandcamp_url(name)}")
     return out
 
 
