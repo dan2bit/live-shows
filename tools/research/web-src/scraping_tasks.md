@@ -179,6 +179,47 @@ The artist search is an in-page overlay with no results URL.
 root reports ledger-vs-platform drift (empty output = clean). This is Workflow 1-B
 in `ANALYSIS_WORKFLOWS.md`.
 
+*Bandcamp follows export ON CHANGE*
+
+Read-only, from a **logged-out** bandcamp.com tab (the dan2bit profile is public;
+fan_id `4498338`). Claude in Chrome only: Bandcamp blocks GitHub-hosted runners.
+Page each endpoint with `{"fan_id":4498338,"older_than_token":"<epoch>::a::","count":100}`.
+The list comes back under `followeers`; follow `last_token` while `more_available`
+is true.
+
+- `POST /api/fancollection/1/following_bands`: artists and labels. There is no
+  label flag, so classify by name or page and write Kind `artist` or `label`.
+- `POST /api/fancollection/1/following_fans`: Kind `fan`.
+- `POST /api/fancollection/1/following_genres`: Kind `genre` (taste context only).
+
+Write `tools/research/follows/dan2bit-bandcamp.tsv`:
+`Name | Bandcamp URL | Kind | Location | Date Followed`. Use the full page URL,
+including custom domains (Sparkbird, Whitney Mongé). `-` marks empty cells. Put the
+export date in the commit message. Then run `python3 tools/research/reconcile_follows.py`.
+Bandcamp drift is reported in one direction only (see `FOLLOWS_PIPELINE.md`).
+
+First export 2026-11-07: 89 artists, 10 labels, 3 fans, 21 genres. The profile says
+"following 125", and the genre endpoint returned 22 entries with "roots" listed
+twice, so the profile count includes that duplicate.
+
+*Label rosters ON CHANGE (Bandcamp-sourced)*
+
+The rosters behind `websrc_diff.py`'s "Untracked, on a label roster" section (the
+`ROSTERS` table in that script). Alligator and Ruf come from the labels' own sites;
+the rest come from Bandcamp, logged out, in Chrome:
+
+- A label with an artists page (`https://<label>.bandcamp.com/artists`): take the
+  names in the artists grid.
+- A label without one (Tompkins Square, Continental): take the distinct artist
+  names from the `/music` grid (`.artist-override` plus the grid's client items).
+  Strip release-date and "feat." annotations, and drop compilations and samplers.
+
+File shape: `Artist Name | URL | Status`, with URL being the label page the names
+came from. Only in-lane labels get a roster. A mostly-indie roster (Fat Possum,
+Nettwerk) turns the section into noise, so those two are deliberately left out even
+though dan2bit follows them. Built 2026-11-07: Stax 45, Rounder 104, Arhoolie 67,
+Tompkins Square 65, Fantasy 64, Smithsonian Folkways 197, Continental 230.
+
 *Fast track tour pages - AUTOMATED (daily page watch)*
 
 No manual step. Since 2026-10-03 all ten fast-track artists are rows in
