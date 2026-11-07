@@ -16,9 +16,16 @@ Invariants the pipeline is expected to hold:
      follows_master row flagged Y for a platform is actually followed there.
 
 Invariants 1-3 need only the repo. Invariant 4 needs the platform exports in
-tools/research/follows/ (rhbl-bandsintown.tsv, rhbl-seated.tsv), refreshed by
-hand per web-src/scraping_tasks.md; those sections are skipped when an export
-is missing. Songkick is frozen and never checked.
+tools/research/follows/ (rhbl-bandsintown.tsv, rhbl-seated.tsv,
+dan2bit-bandcamp.tsv), refreshed by hand per web-src/scraping_tasks.md; those
+sections are skipped when an export is missing. Songkick is frozen and never
+checked.
+
+Bandcamp is checked one way only. Its follows live on the dan2bit fan account,
+which also follows family, friends and off-profile acts, so a followed artist
+with no follows_master row is expected noise and is not reported. The flag
+checks (flagged Y but not followed, followed but flag blank) still run. Only
+export rows of Kind "artist" count; labels, fans and genres are ignored.
 
 Name matching goes through scripts/name_forms.py plus data/recommend_aliases.tsv,
 never a raw string compare, so "Ghalia Volt Band" meets "Ghalia Volt" and a
@@ -57,7 +64,11 @@ ALIASES = ROOT / "data/recommend_aliases.tsv"
 EXPORTS = {
     "Bandsintown": FOLLOWS / "rhbl-bandsintown.tsv",
     "Seated": FOLLOWS / "rhbl-seated.tsv",
+    "Bandcamp": FOLLOWS / "dan2bit-bandcamp.tsv",
 }
+# Platforms whose follow list is a personal account rather than a curated rhbl
+# one: untracked follows there are noise, not drift.
+NOISY_PLATFORMS = {"Bandcamp"}
 # A note carrying one of these phrases marks an expected platform gap, not drift.
 EXPECTED_GAP = {"Seated": ("not on seated",)}
 
@@ -70,12 +81,18 @@ def read_tsv(path):
 
 
 def read_roster(path):
-    names = []
+    """Artist names from a platform export. A one-column export (header
+    "Artist") is read as-is; an export with a Kind column keeps only the
+    "artist" rows, so labels, fans and genres never count as artists."""
     with open(path, encoding="utf-8", newline="") as fh:
-        for row in csv.reader(fh, delimiter="\t"):
-            if row and row[0].strip() and row[0].strip() != "Artist":
-                names.append(row[0].strip())
-    return names
+        rows = list(csv.reader(fh, delimiter="\t"))
+    if rows and "Kind" in rows[0]:
+        head = rows[0]
+        ni, ki = head.index("Name") if "Name" in head else 0, head.index("Kind")
+        return [r[ni].strip() for r in rows[1:]
+                if len(r) > ki and r[ki].strip() == "artist" and r[ni].strip()]
+    return [r[0].strip() for r in rows
+            if r and r[0].strip() and r[0].strip() != "Artist"]
 
 
 def load_aliases():
@@ -207,6 +224,8 @@ def run():
                         r["Artist"])
                 else:
                     add(f"{platform} - followed, flag blank", f"{r['Artist']}  [{r.get('Tier', '')}]")
+        if platform in NOISY_PLATFORMS:
+            continue
         for name in roster:
             if not m.hit(m.lookup(name), fm_i):
                 add(f"{platform} - followed, no follows_master row",

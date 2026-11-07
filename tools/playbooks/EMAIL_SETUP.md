@@ -19,6 +19,7 @@ for setup and auditing — not needed during routine inbox processing. See
 | `ticket-receipt` | `Label_8008139800288276097` | Manual (or future filter) | Routine 1 |
 | `artist-mail` | — | Manual or filter | Routine 4 |
 | `artist-follow` | — | Filter (BIT/Songkick) or manual | Routine 5 |
+| `bandcamp` | `Label_2` | Filter (`from:bandcamp.com`, after forwarding from dan2bit) | Routine 10 |
 
 ### Gmail filters to create
 
@@ -31,6 +32,11 @@ For each artist newsletter sender, create a filter:
 - **Do this:** Apply label `artist-mail`, Skip Promotions
 
 Bandsintown and Songkick sender addresses should be filtered to `artist-follow`.
+
+Bandcamp mail is two filters on two accounts. On **dan2bit**: `from:bandcamp.com`,
+forward to redhat.bootlegs (in place since 2026-11-07; forwards new mail only). On
+**redhat.bootlegs**: `from:bandcamp.com`, apply label `bandcamp`. Forwarding keeps
+the original From line, so the second filter matches forwarded mail.
 
 The `show-notes` label is applied by a filter matching subject keywords combined with
 `from:dan2bit` — catches post-show note emails forwarded from the dan2bit account.

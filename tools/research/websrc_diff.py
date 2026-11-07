@@ -79,9 +79,21 @@ TRACKING = {
     "artists":    ROOT / "data" / "artists.tsv",
 }
 
+# Label rosters. Alligator and Ruf come from the labels' own sites; the rest
+# are read from each label's Bandcamp artists page (or its music grid when the
+# label has no artists page), refreshed by hand per web-src/scraping_tasks.md.
+# Only labels in Dan's lane are listed: a mostly-indie roster (Fat Possum,
+# Nettwerk) would turn this section into noise.
 ROSTERS = {
-    "Alligator": WEBSRC / "alligator_records_artists.tsv",
-    "Ruf":       WEBSRC / "ruf_records_artists.tsv",
+    "Alligator":            WEBSRC / "alligator_records_artists.tsv",
+    "Ruf":                  WEBSRC / "ruf_records_artists.tsv",
+    "Stax":                 WEBSRC / "stax_records_artists.tsv",
+    "Rounder":              WEBSRC / "rounder_records_artists.tsv",
+    "Arhoolie":             WEBSRC / "arhoolie_records_artists.tsv",
+    "Tompkins Square":      WEBSRC / "tompkins_square_artists.tsv",
+    "Fantasy":              WEBSRC / "fantasy_records_artists.tsv",
+    "Smithsonian Folkways": WEBSRC / "smithsonian_folkways_artists.tsv",
+    "Continental":          WEBSRC / "continental_record_services_artists.tsv",
 }
 
 # Normalized venue fragments. Matched as substrings of the normalized venue cell
@@ -388,7 +400,7 @@ def load_rosters():
     Reading the wrong header silently yields an empty roster and reports every
     artist as a non-match, which reads identically to a real negative result.
     That is why a roster file that exists but parses to nothing is a hard error
-    here rather than a warning: "no blues-label artists are playing this month"
+    here rather than a warning: "no roster-label artists are playing this month"
     and "I could not read the roster" must never look the same in the output.
     A roster that is simply absent is a legitimate state and only warns.
     """
@@ -577,7 +589,7 @@ def render(res):
     section("Untracked, corroborated in both sources", res["untracked_corroborated"])
     section("Untracked, single source, core venue, new this month",
             res["untracked_single_source_core_venue"])
-    section("Untracked, on a blues label roster", res["label_roster_hits"])
+    section("Untracked, on a label roster", res["label_roster_hits"])
     return "\n".join(out)
 
 
