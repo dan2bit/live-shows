@@ -17,6 +17,15 @@ Three ledgers, one direction of travel:
 
 Songkick is frozen: the `follows_master` flag is historical and is never reconciled.
 
+Bandcamp is the one platform followed from **dan2bit**, not rhbl. That account holds
+Dan's purchases, so playlists and the collection have to live there too. Its
+`follows_master` flag (`Bandcamp`, Y/blank) is reconciled against
+`tools/research/follows/dan2bit-bandcamp.tsv`. Only in one direction: dan2bit also
+follows family, friends and off-profile acts, so a Bandcamp follow with no
+`follows_master` row is noise, not drift. Only export rows of Kind `artist` count.
+Labels feed the label rosters, not the ledgers. A `Bandcamp` flag is only possible for
+an artist who has a Bandcamp page of their own, so a blank flag is not a to-do.
+
 ## Invariants
 
 Checked by `tools/research/reconcile_follows.py`. Invariants 1-3 need only the
@@ -26,7 +35,7 @@ platform exports.
 1. NAR ∩ `follows_master` = ∅. A row leaves NAR on promotion or rejection.
 2. NAR ∩ `artists.tsv` = ∅. Seen live means a `follows_master` decision, not research. `prune_potentials.py` enforces this with the repo's name normalization and alias map, so band-name variants do not slip through.
 3. `fast_track` ⊂ `follows_master`. Tier is **not** constrained - fast track means a strong buy, not automatically Strong tier.
-4. Every artist the rhbl account follows has a `follows_master` row, and every row flagged Y is actually followed. NAR gets no platform columns; a followed artist with only a NAR row is drift, resolved by promoting or unfollowing.
+4. Every artist the rhbl account follows on Bandsintown or Seated has a `follows_master` row, and every row flagged Y is actually followed (for Bandcamp, only the second half - see above). NAR gets no platform columns; a followed artist with only a NAR row is drift, resolved by promoting or unfollowing.
 5. `NOT ON SEATED` / `not on Seated service` in a `follows_master` note marks an expected gap, never drift. A note that says so for an artist who is in fact followed is a note to fix.
 6. Every `fast_track` row has an active `watches.tsv` row (`kind artist`, `check_every_days 1`). Not yet checked by `reconcile_follows.py` - as of 2026-10-03 all ten fast-track artists are watched; a new fast-track row without a watch is drift until the check exists.
 

@@ -75,6 +75,7 @@ Report this after the doors list. It is a reminder, not a blocker.
 | `show-reminders` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[potentials]`) | Routine 8 |
 | `releases-digest` | Gmail filter (from `alerts@redhat-bootlegs.net`, subject starts `[releases]`) | Routine 4 |
 | `watch-alert` | Gmail filter — needs a check/update; see Routine 9 | Routine 9 |
+| `bandcamp` | Gmail filter on redhat.bootlegs (`from:bandcamp.com`), fed by a dan2bit filter that forwards `from:bandcamp.com` | Routine 10 |
 | `processed` | Claude at end of each routine | All routines (excluded via `-label:processed`) |
 
 **Label IDs:**
@@ -86,6 +87,7 @@ Report this after the doors list. It is a reminder, not a blocker.
 - `show-reminders` = `Label_6890844345333686816`
 - `releases-digest` = `Label_1`
 - `watch-alert` = `Label_4414465393540001960`
+- `bandcamp` = `Label_2`
 
 **Search patterns:**
 
@@ -100,6 +102,7 @@ Report this after the doors list. It is a reminder, not a blocker.
 | 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
 | 8 — Show reminders | `label:show-reminders -label:processed` |
 | 9 — Page watch alert | `label:watch-alert -label:processed` |
+| 10 — Bandcamp mail | `label:bandcamp -label:processed` (also `from:bandcamp.com -label:bandcamp -label:processed`, see Routine 10) |
 
 ---
 
@@ -1171,3 +1174,48 @@ no template-selection parameter — it cannot read `.github/ISSUE_TEMPLATE/` the
 GitHub web UI's "New Issue" picker does.** Any workflow that creates a `playlist`- or
 `photo`-labeled issue must fetch the relevant template file live and fill it in by
 hand (see Routine 2 Step 6 / Step 6b) — there is no tool-level shortcut.
+
+---
+
+## Routine 10 — Bandcamp Mail
+
+**Trigger:** `label:bandcamp -label:processed`
+
+Also sweep `from:bandcamp.com -label:bandcamp -label:processed` for mail the forward
+chain delivered without the label, and apply `bandcamp` (`Label_2`) before handling it.
+The chain cannot be tested on demand: a hand-forwarded copy arrives from dan2bit, not
+bandcamp.com, so it never matches the redhat.bootlegs filter. Only mail forwarded by
+the dan2bit filter keeps Bandcamp as the sender.
+
+Bandcamp mail belongs to the **dan2bit** fan account (https://bandcamp.com/dan2bit),
+which holds the purchases, follows and playlists. A Gmail filter on dan2bit forwards
+`from:bandcamp.com` to redhat.bootlegs (new mail only, set up 2026-11-07). A filter
+here applies `bandcamp`. There is no second Bandcamp account: the dan2bit follow list
+feeds nothing personalised that we scrape, so its off-profile follows are just mail
+volume (see #496).
+
+The dan2bit account follows off-profile acts too (family, friends, DC punk), so not
+every mail is about a tracked artist. Check before acting.
+
+**Step 1 — Classify each mail.** The formats were not yet confirmed when this routine
+was written. Confirm them against the first real mails and tighten this step.
+- **New release / pre-order** from a followed artist or label: handle per Routine 4
+  Step 2's "new music releases" rule (surface in conversation; no file action). An
+  untracked artist on a release is research-queue material only if they fit the
+  taste profile. A label's release from an artist on no ledger is a NAR candidate per
+  the Routine 3 NAR-triage logic.
+- **Artist message / mailing-list mail** ("<artist> posted a message", or mail sent
+  from the artist's own Bandcamp list): treat it like Routine 4 artist mail. Tour
+  dates, presale codes and DMV shows go through the same checks (calendar conflict,
+  confirm, write). Note which artists send these. If a follow turns out to carry the
+  artist's mailing list, that is evidence for a `Direct Mail` equivalence, which #496
+  has not yet decided. Do not set `Direct Mail` from it.
+- **Purchase receipts, download links, shipping notices** for dan2bit purchases: no
+  file action. Never copy prices or order details into the public repo. Merch bought
+  at or for a show goes through the `item-log` skill only if Dan says so.
+- **Bandcamp-wide mail** (Bandcamp Daily, Bandcamp Friday, recommendations): no action.
+  Bandcamp Friday dates are worth one line in the log draft.
+
+**Step 2 — Activity log draft** (subject: `[LOG] Routine 10 — Bandcamp — YYYY-MM-DD`).
+
+**Final:** Apply `processed` label.
