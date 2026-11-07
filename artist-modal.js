@@ -526,6 +526,7 @@ function amLinks(L,spotify){
   if(spotify)add(L.spotify,'Spotify');
   add(L.bandsintown,'Bandsintown');
   add(L.seated,'Seated');
+  add(L.bandcamp,'Bandcamp');
   add(L.qobuz,'Qobuz');
   if(spotify){add(L.lastfm,'Last.fm');}
   add(L.setlistfm,'setlist.fm');

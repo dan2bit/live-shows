@@ -402,8 +402,8 @@ def merge_into_history(corr_results, source_file):
 ARTISTS_TSV = "artists.tsv"
 ARTISTS_FIELDNAMES = [
     "Artist", "Times Seen", "First Seen", "Most Recent Seen",
-    "YouTube Channel", "Spotify URL", "Photo", "Book Autograph",
-    "Hat Autograph", "VIP Ticket",
+    "YouTube Channel", "Spotify URL", "Bandcamp URL", "Book Autograph",
+    "VIP Count", "Via",
 ]
 
 

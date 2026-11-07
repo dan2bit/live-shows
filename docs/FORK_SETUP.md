@@ -105,7 +105,7 @@ Everything the site shows lives in TSVs under `data/`:
 | `live_shows_current.tsv` | This year's shows, upcoming + attended (19 columns; `-` sentinels for empty link cells) |
 | `live_shows_potential.tsv` | Shows you're considering — `Buy` / `Choose` / `Pass` (+ `Sell` listings) |
 | `fast_track.tsv` | Artists you'd buy instantly if they toured near you (the Waiting tab) |
-| `artists.tsv` | Per-artist ledger: times seen, first/last seen, YouTube/Spotify links |
+| `artists.tsv` | Per-artist ledger: times seen, first/last seen, YouTube/Spotify/Bandcamp links |
 | `history/<year>.tsv` | Past-year archives (list the years in config `history_years`) |
 | `venues.tsv` + `venue_aliases.tsv` | Venue facts + name-variant resolution |
 | `recommend_aliases.tsv` | Artist name variants → canonical names (drives several joins) |

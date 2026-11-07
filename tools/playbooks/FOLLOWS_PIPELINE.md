@@ -62,6 +62,10 @@ Artist | Signal | Proposed Tier | Genre | Official Site | Bandcamp | Overview & 
 or nothing; `Genre` holds the free-text kind of act. They were one column until
 2026-09, which is why older rows have one or the other. `Status` is `active`
 (under research) or `pending-review` (auto-created by the prune path, unresearched).
+`Bandcamp` holds the artist's own Bandcamp page if one was found during research.
+It is a candidate, not a verified value: when the artist later gets an `artists.tsv`
+row, the value is validated and copied into `Bandcamp URL` (see **Bandcamp URL
+upkeep** in `EMAIL_WORKFLOWS.md`).
 
 ## Reminder and reconcile
 

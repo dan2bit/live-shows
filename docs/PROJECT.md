@@ -48,9 +48,11 @@ Financial and seat detail (Seat Info, Ticket Quantity, Face Value, Fees, Total C
 - **Pricing is public here by design:** what a potential ticket *costs* (Face Price, Fees Notes) is public; what was actually *spent* on purchased shows is private.
 - **No Private Notes column** — private notes go to `dan2bit/live-shows-private → potential_private.tsv`, keyed by `Artist` + `Date`.
 
-### artists.tsv — 9 columns
+### artists.tsv — 10 columns
 
-`Artist | Times Seen | First Seen | Most Recent Seen | YouTube Channel | Spotify URL | Book Autograph | VIP Count | Via`
+`Artist | Times Seen | First Seen | Most Recent Seen | YouTube Channel | Spotify URL | Bandcamp URL | Book Autograph | VIP Count | Via`
+
+- **Bandcamp URL** is the artist's own Bandcamp page (`https://<subdomain>.bandcamp.com`), never a label's page. `-` means checked and none found (not on Bandcamp, label-only, or no page accepted as official); blank means not checked yet. It drives the Bandcamp link in the artist modal. How a value is looked up and validated: `tools/research/web-src/scraping_tasks.md` -> *Bandcamp artist lookup*.
 
 - **Via** attributes combined-bill sightings (e.g. Joe Satriani via `SatchVai Band`, Taj Mahal via `TajMo`) — the builder borrows the bill's sightings for the component artist.
 - Photo and hat completions are **not** columns here — they derive from Photo URLs on show rows and `data/show_goals/hat_signatures.tsv` respectively (see `docs/GOALS_SPEC.md`).

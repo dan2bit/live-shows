@@ -195,6 +195,48 @@ DATA_WRITE_PROTOCOLS.md -> fast_track.tsv protocol -> Adding a row.
 `fast-track-tour-dates.tsv` in this folder is the last consolidated Chrome scrape
 (2026-09) and is no longer refreshed.
 
+*Bandcamp artist lookup ON CHANGE + MONTHLY sweep*
+
+Fills the `Bandcamp URL` column of `data/artists.tsv`. Runs when a routine adds a
+new artist row, and as a monthly sweep over blank cells alongside the BIT scrape
+(both need a Chrome session). **Chrome only:** Bandcamp returns a bot-challenge page
+to GitHub-hosted runners (tested 2026-11-07). The block arrives as HTTP 200 with a
+small HTML page, so a 200 is never proof of success. Stay logged out; read-only.
+
+Search, from a bandcamp.com tab:
+
+    POST /api/bcsearch_public_api/1/autocomplete_elastic
+    {"search_text":"<name>","search_filter":"b","full_page":false,"fan_id":null}
+
+Results are in `auto.results` (`name`, `item_url_root`, `location`, `genre_name`).
+Match on the normalized name (lowercase, no accents, no leading "the", "&" -> "and",
+no punctuation); accept a prefix match either way ("Robert Randolph" vs "Robert
+Randolph and The Family Band"). If nothing matches, retry with ", The" moved to the
+front, then the lead name before " & " / " and " / " with " / ":", then without a
+trailing "Band".
+
+Validate every candidate before using it:
+
+- **Releases:** open `https://<subdomain>.bandcamp.com/music` and count the grid
+  items. Do NOT count with the album search: it returns only a few results and
+  undercounts. 0 releases means an empty or squatter page (the Larkin Poe
+  `1235agejghahanl` case, Calhoun GA, no content).
+- **Location and genre** fit the act.
+- **Big acts** (arena / major-label) need extra proof: Dan follows the page
+  (https://bandcamp.com/dan2bit), or it links the official site or socials, or it has
+  3+ releases matching the real discography. Many big acts are rightly NONE.
+- **Never a label's page.** If the music is only on a label's page, the value is `-`;
+  note the label for the label rosters.
+
+Resolve: one candidate passes -> write it. Several pass -> Dan picks (show link,
+location, release count, newest release; default to the more complete or newer
+page). Possibly a different act -> ask, leave blank. None -> `-`.
+
+The initial backfill (2026-11-07) is
+`tools/research/web-src/artists-bandcamp-final-2026-11-07.tsv`, merged from
+`...-backfill-...` (pass 1) and `...-pass2-...` (pass 2); its `Basis` column records
+where each value came from.
+
 *Youtube Playlist Inventory ON DEMAND*
 
 Reference: provide `dom-reference-youtube-setlist.md` (this folder) to the Claude for Chrome session before starting — it has the tested selectors, extraction scripts, and verification gates.
