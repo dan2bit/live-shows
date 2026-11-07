@@ -202,6 +202,29 @@ First export 2026-11-07: 89 artists, 10 labels, 3 fans, 21 genres. The profile s
 "following 125", and the genre endpoint returned 22 entries with "roots" listed
 twice, so the profile count includes that duplicate.
 
+*Bandcamp collection + wishlist export ON CHANGE*
+
+Same setup as the follows export: logged out, from a bandcamp.com tab, fan_id
+`4498338`, Claude in Chrome only. Page `POST /api/fancollection/1/collection_items`
+and `.../wishlist_items` with the same body; each list is under `items`. Dedupe on
+`item_id` within each source.
+
+Write ONE file, `tools/research/follows/dan2bit-bandcamp-collection.tsv`:
+`Artist | Bandcamp URL | Item | Item Type | Source | Note`. Source is `collection` or
+`wishlist`; Note is `label page` when the item sits on a label's page, otherwise `-`.
+**Names only:** no prices, currency, purchase or added dates, sale ids or tokens.
+A purchase history is personal data, and this file is public.
+
+Check the row counts against the profile's own tab counts. First export 2026-11-07:
+91 collection and 18 wishlist rows, 75 distinct artists, 54 of them already tracked.
+
+What it feeds:
+- **NAR.** An untracked, in-lane artist becomes a NAR row (with Dan's approval),
+  `Signal` starting `bandcamp-collection` or the weaker `bandcamp-wishlist`. A follow
+  on its own is not a signal; about 30% of follows are off-profile.
+- **The artist graph and map** (#499).
+- **Bandcamp playlist drafts**, which can only use owned tracks.
+
 *Label rosters ON CHANGE (Bandcamp-sourced)*
 
 The rosters behind `websrc_diff.py`'s "Untracked, on a label roster" section (the
