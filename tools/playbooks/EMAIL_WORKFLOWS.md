@@ -529,7 +529,8 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
 - `data/live_shows_current.tsv` — status → attended; Setlist, Notes / Memories,
   Artist Interaction filled; also update `dan2bit/live-shows-private → current_private.tsv`
   for actual Food & Bev / Parking / Merch
-- `data/artists.tsv` — always included
+- `data/artists.tsv` — always included (a new row gets its `Bandcamp URL` per
+  **Bandcamp URL upkeep** below)
 - `data/show_goals/book_signatures.tsv` — if a book was signed (canonical event log)
 - `data/show_goals/autograph_books_eligibility.tsv` — only if backfilling a signer who
   was in the physical book but not yet tracked (rare)
@@ -793,6 +794,16 @@ individual rows.
 support) to `live_shows_current.tsv`, also adds a `data/show_goals/hat_eligibility.tsv`
 row for any artist not already present (`Yes`/`No` per the #115 semantics; ask Dan when
 uncertain).
+
+**Bandcamp URL upkeep:** any step that adds a new `artists.tsv` row also fills its
+`Bandcamp URL` cell, using the *Bandcamp artist lookup* in
+`tools/research/web-src/scraping_tasks.md` (Claude in Chrome; Bandcamp blocks CI
+runners). Reuse NAR's `Bandcamp` value when the artist had a NAR row, but still
+validate it. One validated candidate: write it. More than one: ask Dan to pick, with
+each candidate's link, location, release count and newest release. Possibly a
+different act: ask, and leave the cell blank. None: write `-`. If no Chrome session
+is available during the routine, leave the cell blank (= not checked) and say so in
+the log draft; the monthly sweep picks up blanks.
 
 **Validate before committing.** Any write to `live_shows_potential.tsv` runs
 `python3 scripts/validate_potential.py` first — column count, `Decision` vocabulary,

@@ -586,6 +586,9 @@ def build(root):
         links = {
             "spotify": spotify_url,
             "youtube": yt,
+            # Artist-owned Bandcamp page only (never a label's page); "-" in
+            # artists.tsv means checked-and-none, which clean() maps to None.
+            "bandcamp": clean(a.get("Bandcamp URL")),
             "lastfm": clean(lf.get("url")),
             "musicbrainz": f"https://musicbrainz.org/artist/{mbid}" if mbid else None,
             # Vanity path resolves to the canonical /a/{id} artist page; unknown
