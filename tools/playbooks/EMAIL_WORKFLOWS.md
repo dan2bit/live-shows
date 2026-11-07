@@ -102,7 +102,7 @@ Report this after the doors list. It is a reminder, not a blocker.
 | 7 — Weekly HFTB diff | `label:hftb-diff -label:processed` |
 | 8 — Show reminders | `label:show-reminders -label:processed` |
 | 9 — Page watch alert | `label:watch-alert -label:processed` |
-| 10 — Bandcamp mail | `label:bandcamp -label:processed` |
+| 10 — Bandcamp mail | `label:bandcamp -label:processed` (also `from:bandcamp.com -label:bandcamp -label:processed`, see Routine 10) |
 
 ---
 
@@ -1180,6 +1180,12 @@ hand (see Routine 2 Step 6 / Step 6b) — there is no tool-level shortcut.
 ## Routine 10 — Bandcamp Mail
 
 **Trigger:** `label:bandcamp -label:processed`
+
+Also sweep `from:bandcamp.com -label:bandcamp -label:processed` for mail the forward
+chain delivered without the label, and apply `bandcamp` (`Label_2`) before handling it.
+The chain cannot be tested on demand: a hand-forwarded copy arrives from dan2bit, not
+bandcamp.com, so it never matches the redhat.bootlegs filter. Only mail forwarded by
+the dan2bit filter keeps Bandcamp as the sender.
 
 Bandcamp mail belongs to the **dan2bit** fan account (https://bandcamp.com/dan2bit),
 which holds the purchases, follows and playlists. A Gmail filter on dan2bit forwards
