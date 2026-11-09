@@ -575,7 +575,7 @@
   }
  ],
  "meta": {
-  "generated_from": "2026-11-07",
+  "generated_from": "2026-11-09",
   "seed": 2026,
   "excluded": [
    "A Musical Celebration of John Prine",
@@ -1117,7 +1117,7 @@
     "name": "Shemekia Copeland",
     "override": "capital",
     "auto": "capital",
-    "score": 6,
+    "score": 9,
     "class": "decree"
    },
    {
@@ -1413,8 +1413,8 @@
   },
   "counts": {
    "settlements": 416,
-   "graph_edges": 516,
-   "districts": 76
+   "graph_edges": 518,
+   "districts": 71
   }
  },
  "canvas": {
@@ -2580,23 +2580,27 @@
    "id": "amplified_range:d1",
    "region": "amplified_range",
    "members": [
-    "Ally Venable Band",
-    "Buddy Guy",
-    "Christone 'Kingfish' Ingram",
-    "Dylan Triplett",
-    "Gary Clark Jr.",
-    "Gary Hoey",
-    "Henri Brown",
-    "Joe Satriani",
-    "Kenny Wayne Shepherd",
-    "Mato Nanji",
-    "Steve Miller Band",
-    "Steve Vai",
-    "Yutzi",
-    "Zakk Wylde"
+    "Albert Castiglia",
+    "Albert Cummings",
+    "Altered Five Blues Band",
+    "Artur Menezes",
+    "Bywater Call",
+    "Eddie 9V",
+    "Eric Gales",
+    "GA-20",
+    "Jimmie Vaughan",
+    "Joanne Shaw Taylor",
+    "Joe Bonamassa",
+    "Kirk Fletcher",
+    "Larry McCray",
+    "Robben Ford",
+    "Robert Cray Band",
+    "The Fabulous Thunderbirds",
+    "Tinsley Ellis",
+    "Walter Trout"
    ],
-   "seat": "Kenny Wayne Shepherd",
-   "suggested_name": "Shepherd Pass"
+   "seat": "Joanne Shaw Taylor",
+   "suggested_name": "Taylor Pass"
   },
   {
    "id": "amplified_range:d10",
@@ -2612,9 +2616,11 @@
   {
    "id": "amplified_range:d11",
    "region": "amplified_range",
-   "members": [],
-   "seat": "Brittany Howard",
-   "suggested_name": "Howard Pass"
+   "members": [
+    "Jax Hollow"
+   ],
+   "seat": "Jax Hollow",
+   "suggested_name": "Hollow Pass"
   },
   {
    "id": "amplified_range:d12",
@@ -2640,35 +2646,37 @@
    "id": "amplified_range:d2",
    "region": "amplified_range",
    "members": [
-    "Albert Castiglia",
-    "Albert Cummings",
-    "Altered Five Blues Band",
-    "Beth Hart",
-    "Bywater Call",
-    "Eddie 9V",
-    "GA-20",
-    "Joanne Shaw Taylor",
-    "Joe Bonamassa",
-    "Orianthi",
-    "Robert Cray Band",
-    "Tinsley Ellis",
-    "Walter Trout"
+    "Ally Venable Band",
+    "Buddy Guy",
+    "Christone 'Kingfish' Ingram",
+    "Dylan Triplett",
+    "Gary Clark Jr.",
+    "Gary Hoey",
+    "Henri Brown",
+    "Joe Satriani",
+    "Kenny Wayne Shepherd",
+    "Marcus King",
+    "Mato Nanji",
+    "Steve Miller Band",
+    "Steve Vai",
+    "Yutzi",
+    "Zakk Wylde"
    ],
-   "seat": "Walter Trout",
-   "suggested_name": "Trout Summit"
+   "seat": "Kenny Wayne Shepherd",
+   "suggested_name": "Shepherd Summit"
   },
   {
    "id": "amplified_range:d3",
    "region": "amplified_range",
    "members": [
     "Bernard Allison",
+    "Beth Hart",
     "Billy Gibbons",
-    "Caitlin Krisko & The Broadcast",
     "Canned Heat",
-    "J & The Causeways",
-    "Jackie Venson",
     "Joanna Connor",
+    "Lightnin' Malcolm",
     "Mitch Ryder",
+    "Orianthi",
     "Scott Tournet",
     "Sue Foley",
     "ZZ Top"
@@ -2680,45 +2688,29 @@
    "id": "amplified_range:d4",
    "region": "amplified_range",
    "members": [
-    "Artur Menezes",
-    "Eric Gales",
-    "Jimmie Vaughan",
-    "Kirk Fletcher",
-    "Larry McCray",
-    "Robben Ford",
+    "Blackberry Smoke",
+    "JJ Grey & Mofro",
+    "Robert Jon & The Wreck",
     "Shaw Davis & The Black Ties",
     "Soul Miners Union",
-    "The Fabulous Thunderbirds"
+    "The Record Company"
    ],
-   "seat": "Eric Gales",
-   "suggested_name": "Gales Ridge"
+   "seat": "Gov't Mule",
+   "suggested_name": "Mule Ridge"
   },
   {
    "id": "amplified_range:d5",
    "region": "amplified_range",
    "members": [
-    "Blackberry Smoke",
-    "JJ Grey & Mofro",
-    "Marcus King",
-    "Robert Jon & The Wreck",
-    "The Record Company"
+    "Caitlin Krisko & The Broadcast",
+    "J & The Causeways",
+    "Jackie Venson"
    ],
-   "seat": "Gov't Mule",
-   "suggested_name": "Mule Crag"
+   "seat": "Jackie Venson",
+   "suggested_name": "Venson Crag"
   },
   {
    "id": "amplified_range:d6",
-   "region": "amplified_range",
-   "members": [
-    "Gabe Stillman",
-    "Lightnin' Malcolm",
-    "Tommy Castro & the Painkillers"
-   ],
-   "seat": "Carolyn Wonderland",
-   "suggested_name": "Wonderland Pass"
-  },
-  {
-   "id": "amplified_range:d7",
    "region": "amplified_range",
    "members": [
     "Peter Gabriel",
@@ -2726,10 +2718,10 @@
     "Sting"
    ],
    "seat": "Peter Gabriel",
-   "suggested_name": "Gabriel Summit"
+   "suggested_name": "Gabriel Pass"
   },
   {
-   "id": "amplified_range:d8",
+   "id": "amplified_range:d7",
    "region": "amplified_range",
    "members": [
     "Barenaked Ladies",
@@ -2737,7 +2729,17 @@
     "Sugar Ray"
    ],
    "seat": "Sugar Ray",
-   "suggested_name": "Ray Overdrive"
+   "suggested_name": "Ray Summit"
+  },
+  {
+   "id": "amplified_range:d8",
+   "region": "amplified_range",
+   "members": [
+    "Gabe Stillman",
+    "Tommy Castro & the Painkillers"
+   ],
+   "seat": "Gabe Stillman",
+   "suggested_name": "Stillman Overdrive"
   },
   {
    "id": "amplified_range:d9",
@@ -2777,17 +2779,30 @@
    "id": "delta_coast:d1",
    "region": "delta_coast",
    "members": [
-    "Abraham Alexander",
+    "Brandon Miller",
+    "Brody Buster",
+    "Cole Larravide",
+    "Danielle Nicole",
+    "Ruthie Foster",
+    "Shemekia Copeland"
+   ],
+   "seat": "Danielle Nicole",
+   "suggested_name": "Nicole Quay"
+  },
+  {
+   "id": "delta_coast:d2",
+   "region": "delta_coast",
+   "members": [
     "Keb' Mo'",
     "Nat Myers",
     "Taj Mahal",
     "TajMo: The Taj Mahal & Keb' Mo' Band"
    ],
    "seat": "Keb' Mo'",
-   "suggested_name": "Mo Quay"
+   "suggested_name": "Mo Levee"
   },
   {
-   "id": "delta_coast:d2",
+   "id": "delta_coast:d3",
    "region": "delta_coast",
    "members": [
     "Chris Cain",
@@ -2796,29 +2811,18 @@
     "The Jesse Williams Band"
    ],
    "seat": "D.K. Harrell",
-   "suggested_name": "Harrell Levee"
-  },
-  {
-   "id": "delta_coast:d3",
-   "region": "delta_coast",
-   "members": [
-    "Cole Larravide",
-    "Ruthie Foster",
-    "Shemekia Copeland"
-   ],
-   "seat": "Ruthie Foster",
-   "suggested_name": "Foster Landing"
+   "suggested_name": "Harrell Landing"
   },
   {
    "id": "delta_coast:d4",
    "region": "delta_coast",
    "members": [
-    "Brandon Miller",
-    "Brody Buster",
-    "Danielle Nicole"
+    "Derrick Dove & The Peacekeepers",
+    "John Primer",
+    "Mr. Sipp"
    ],
-   "seat": "Danielle Nicole",
-   "suggested_name": "Nicole Shoals"
+   "seat": "John Primer",
+   "suggested_name": "Primer Shoals"
   },
   {
    "id": "delta_coast:d5",
@@ -2834,21 +2838,12 @@
    "id": "delta_coast:d6",
    "region": "delta_coast",
    "members": [
-    "John Primer",
-    "Mr. Sipp"
-   ],
-   "seat": "Mr. Sipp",
-   "suggested_name": "Sipp Quay"
-  },
-  {
-   "id": "delta_coast:d7",
-   "region": "delta_coast",
-   "members": [
+    "Muireann Bradley",
     "Sadia Bangura",
     "Southern Avenue"
    ],
    "seat": "Southern Avenue",
-   "suggested_name": "Avenue Levee"
+   "suggested_name": "Avenue Quay"
   },
   {
    "id": "delta_coast:outskirts",
@@ -2857,13 +2852,11 @@
     "Anthony Rosano and The Conqueroos",
     "Buffalo Nichols",
     "Cedric Burnside",
-    "Derrick Dove & The Peacekeepers",
     "Evan Nicole Bell",
     "John Nemeth",
     "Kat Riggins",
     "Kim Wilson",
-    "Miko Marks",
-    "Muireann Bradley"
+    "Miko Marks"
    ],
    "seat": null,
    "suggested_name": "Delta Coast Outskirts"
@@ -2872,11 +2865,17 @@
    "id": "heartland:d1",
    "region": "heartland",
    "members": [
+    "Bella McCormick",
+    "Billy Strings",
+    "Daniel Donato",
+    "Greensky Bluegrass",
     "Hayes Carll",
     "Lindsay Lou",
+    "Molly Tuttle",
+    "Punch Brothers",
     "Shovels & Rope",
+    "Sierra Hull",
     "The Secret Sisters",
-    "The Wildmans",
     "The Wood Brothers"
    ],
    "seat": "Shovels & Rope",
@@ -2886,53 +2885,39 @@
    "id": "heartland:d10",
    "region": "heartland",
    "members": [],
-   "seat": "Zedicus & Abyssinia Roots",
-   "suggested_name": "Roots Hollow"
+   "seat": "John Mayer",
+   "suggested_name": "Mayer Hollow"
   },
   {
    "id": "heartland:d11",
    "region": "heartland",
-   "members": [
-    "Lynn Hollyfield"
-   ],
-   "seat": "Lynn Hollyfield",
-   "suggested_name": "Hollyfield Fields"
+   "members": [],
+   "seat": "Every Breath You Take",
+   "suggested_name": "Take Fields"
   },
   {
    "id": "heartland:d12",
    "region": "heartland",
    "members": [
-    "Austin Meade",
-    "Stephen Wilson Jr"
-   ],
-   "seat": "Austin Meade",
-   "suggested_name": "Meade Prairie"
-  },
-  {
-   "id": "heartland:d13",
-   "region": "heartland",
-   "members": [],
-   "seat": "John Mayer",
-   "suggested_name": "Mayer Crossing"
-  },
-  {
-   "id": "heartland:d14",
-   "region": "heartland",
-   "members": [],
-   "seat": "Every Breath You Take",
-   "suggested_name": "Take Silo"
-  },
-  {
-   "id": "heartland:d15",
-   "region": "heartland",
-   "members": [
     "Larry Campbell & Teresa Williams"
    ],
    "seat": "Larry Campbell & Teresa Williams",
-   "suggested_name": "Williams Hollow"
+   "suggested_name": "Williams Prairie"
   },
   {
    "id": "heartland:d2",
+   "region": "heartland",
+   "members": [
+    "Charly Lowry",
+    "Maggie Rose",
+    "Margo Price",
+    "The Hip Snacks"
+   ],
+   "seat": "Rhiannon Giddens",
+   "suggested_name": "Giddens Prairie"
+  },
+  {
+   "id": "heartland:d3",
    "region": "heartland",
    "members": [
     "Cowboy Junkies",
@@ -2942,10 +2927,10 @@
     "Patty Griffin"
    ],
    "seat": "Lucinda Williams",
-   "suggested_name": "Williams Prairie"
+   "suggested_name": "Williams Crossing"
   },
   {
-   "id": "heartland:d3",
+   "id": "heartland:d4",
    "region": "heartland",
    "members": [
     "Chelsey Green",
@@ -2955,10 +2940,10 @@
     "Yola (DJ)"
    ],
    "seat": "Valerie June",
-   "suggested_name": "June Crossing"
+   "suggested_name": "June Silo"
   },
   {
-   "id": "heartland:d4",
+   "id": "heartland:d5",
    "region": "heartland",
    "members": [
     "Brittney Spencer",
@@ -2969,10 +2954,10 @@
     "Zach Bryan"
    ],
    "seat": "Willie Nelson",
-   "suggested_name": "Nelson Silo"
+   "suggested_name": "Nelson Hollow"
   },
   {
-   "id": "heartland:d5",
+   "id": "heartland:d6",
    "region": "heartland",
    "members": [
     "John Hiatt",
@@ -2982,61 +2967,44 @@
     "Steve Earle"
    ],
    "seat": "John Hiatt",
-   "suggested_name": "Hiatt Hollow"
-  },
-  {
-   "id": "heartland:d6",
-   "region": "heartland",
-   "members": [
-    "Jobi Riccio",
-    "Maggie Rose",
-    "Margo Price",
-    "The Hip Snacks"
-   ],
-   "seat": "Margo Price",
-   "suggested_name": "Price Fields"
+   "suggested_name": "Hiatt Fields"
   },
   {
    "id": "heartland:d7",
    "region": "heartland",
-   "members": [
-    "Charly Lowry"
-   ],
-   "seat": "Rhiannon Giddens",
-   "suggested_name": "Giddens Prairie"
+   "members": [],
+   "seat": "Zedicus & Abyssinia Roots",
+   "suggested_name": "Roots Prairie"
   },
   {
    "id": "heartland:d8",
    "region": "heartland",
    "members": [
-    "Alison Krauss",
-    "Bella McCormick",
-    "Punch Brothers",
-    "Sierra Hull"
+    "Lynn Hollyfield"
    ],
-   "seat": "Sierra Hull",
-   "suggested_name": "Hull Crossing"
+   "seat": "Lynn Hollyfield",
+   "suggested_name": "Hollyfield Crossing"
   },
   {
    "id": "heartland:d9",
    "region": "heartland",
    "members": [
-    "Billy Strings",
-    "Daniel Donato",
-    "Greensky Bluegrass",
-    "Molly Tuttle"
+    "Austin Meade",
+    "Stephen Wilson Jr"
    ],
-   "seat": "Molly Tuttle",
-   "suggested_name": "Tuttle Silo"
+   "seat": "Austin Meade",
+   "suggested_name": "Meade Silo"
   },
   {
    "id": "heartland:outskirts",
    "region": "heartland",
    "members": [
+    "Alison Krauss",
     "Anthony D'Amato",
     "Cris Jacobs",
     "Elizabeth Cook",
     "Jah Works",
+    "Kashus Culpepper",
     "Last Train Home",
     "Morgan Wade",
     "Sarah Borges & Eric Ambel",
@@ -3140,10 +3108,11 @@
    "id": "quiet_woods:d10",
    "region": "quiet_woods",
    "members": [
-    "Shawn James"
+    "Amadou Kouyate",
+    "Yasmin Williams"
    ],
-   "seat": "Shawn James",
-   "suggested_name": "James Glen"
+   "seat": "Yasmin Williams",
+   "suggested_name": "Williams Glen"
   },
   {
    "id": "quiet_woods:d11",
@@ -3178,37 +3147,33 @@
    "id": "quiet_woods:d14",
    "region": "quiet_woods",
    "members": [
+    "Richard Thompson"
+   ],
+   "seat": "Peter Case",
+   "suggested_name": "Case Vale"
+  },
+  {
+   "id": "quiet_woods:d15",
+   "region": "quiet_woods",
+   "members": [
     "Colin Hay",
     "Martin Sexton"
    ],
    "seat": "Martin Sexton",
-   "suggested_name": "Sexton Vale"
+   "suggested_name": "Sexton Glen"
   },
   {
-   "id": "quiet_woods:d15",
+   "id": "quiet_woods:d16",
    "region": "quiet_woods",
    "members": [
     "Lucy Dacus",
     "boygenius"
    ],
    "seat": "Lucy Dacus",
-   "suggested_name": "Dacus Glen"
+   "suggested_name": "Dacus Hollow"
   },
   {
    "id": "quiet_woods:d2",
-   "region": "quiet_woods",
-   "members": [
-    "Amadou Kouyate",
-    "David Moore",
-    "Jake Xerxes Fussell",
-    "Sam Amidon",
-    "Yasmin Williams"
-   ],
-   "seat": "Jake Xerxes Fussell",
-   "suggested_name": "Fussell Lake"
-  },
-  {
-   "id": "quiet_woods:d3",
    "region": "quiet_woods",
    "members": [
     "Glom",
@@ -3216,7 +3181,18 @@
     "Shakey Graves"
    ],
    "seat": "Sadurn",
-   "suggested_name": "Sadurn Grove"
+   "suggested_name": "Sadurn Lake"
+  },
+  {
+   "id": "quiet_woods:d3",
+   "region": "quiet_woods",
+   "members": [
+    "Anna Moss",
+    "Leyla McCalla",
+    "Sabine McCalla"
+   ],
+   "seat": "Sabine McCalla",
+   "suggested_name": "McCalla Grove"
   },
   {
    "id": "quiet_woods:d4",
@@ -3234,37 +3210,15 @@
    "id": "quiet_woods:d5",
    "region": "quiet_woods",
    "members": [
-    "Anna Moss",
-    "Leyla McCalla",
-    "Sabine McCalla"
-   ],
-   "seat": "Leyla McCalla",
-   "suggested_name": "McCalla Glen"
-  },
-  {
-   "id": "quiet_woods:d6",
-   "region": "quiet_woods",
-   "members": [
-    "Jess Williamson",
-    "Mikaela Davis",
-    "Waxahatchee"
-   ],
-   "seat": "Jess Williamson",
-   "suggested_name": "Williamson Hollow"
-  },
-  {
-   "id": "quiet_woods:d7",
-   "region": "quiet_woods",
-   "members": [
     "Sparkbird",
     "Spartan Jet-Plex",
     "Sushi Soucy"
    ],
    "seat": "Sparkbird",
-   "suggested_name": "Sparkbird Lake"
+   "suggested_name": "Sparkbird Glen"
   },
   {
-   "id": "quiet_woods:d8",
+   "id": "quiet_woods:d6",
    "region": "quiet_woods",
    "members": [
     "Glenn Yoder",
@@ -3272,10 +3226,10 @@
     "Kingsley Flood"
    ],
    "seat": "Kingsley Flood",
-   "suggested_name": "Flood Grove"
+   "suggested_name": "Flood Hollow"
   },
   {
-   "id": "quiet_woods:d9",
+   "id": "quiet_woods:d7",
    "region": "quiet_woods",
    "members": [
     "Aoife O'Donovan",
@@ -3283,7 +3237,26 @@
     "The Wailin' Jennys"
    ],
    "seat": "Aoife O'Donovan",
-   "suggested_name": "ODonovan Vale"
+   "suggested_name": "ODonovan Lake"
+  },
+  {
+   "id": "quiet_woods:d8",
+   "region": "quiet_woods",
+   "members": [
+    "Shawn James"
+   ],
+   "seat": "Shawn James",
+   "suggested_name": "James Grove"
+  },
+  {
+   "id": "quiet_woods:d9",
+   "region": "quiet_woods",
+   "members": [
+    "Jess Williamson",
+    "Waxahatchee"
+   ],
+   "seat": "Jess Williamson",
+   "suggested_name": "Williamson Vale"
   },
   {
    "id": "quiet_woods:outskirts",
@@ -3295,6 +3268,7 @@
     "Bonnie Raitt",
     "Bridge City Sinners",
     "Chad Hollister",
+    "David Moore",
     "Eric Bibb",
     "Fruition",
     "Jessie Baylin",
@@ -3302,10 +3276,11 @@
     "Judy Blank",
     "Lucius",
     "Marc Broussard",
+    "Mikaela Davis",
     "Oliver Wood",
     "Phoenix",
     "Pokey LaFarge",
-    "Richard Thompson",
+    "Sam Amidon",
     "The Family Crest",
     "The North Country",
     "Vienna Teng",
@@ -3318,42 +3293,26 @@
    "id": "river_port:d1",
    "region": "river_port",
    "members": [
+    "Cory Wong",
     "Danielle Ponder",
-    "Lucky Chops",
-    "Rebirth Brass Band",
-    "The Dirty Dozen Brass Band",
+    "Diana Silvers",
+    "Dumpstaphunk",
+    "Galactic",
+    "Ivan Neville",
+    "Jon Batiste",
     "The Soul Rebels",
     "Trombone Shorty & Orleans Avenue",
-    "Victor Wooten",
     "Ziggy Marley"
    ],
    "seat": "Trombone Shorty & Orleans Avenue",
    "suggested_name": "Avenue Landing"
   },
   {
-   "id": "river_port:d10",
-   "region": "river_port",
-   "members": [
-    "Sweet Leda",
-    "Vanessa Collier"
-   ],
-   "seat": "Sweet Leda",
-   "suggested_name": "Leda Wharf"
-  },
-  {
-   "id": "river_port:d11",
-   "region": "river_port",
-   "members": [
-    "ZZ Ward"
-   ],
-   "seat": "ZZ Ward",
-   "suggested_name": "Ward Landing"
-  },
-  {
    "id": "river_port:d2",
    "region": "river_port",
    "members": [
     "AZTEC SUN",
+    "Brittany Howard",
     "Dior Ashley Brown and the Filthy Animals",
     "Lake Street Dive",
     "Oh He Dead",
@@ -3361,25 +3320,39 @@
     "The California Honeydrops",
     "The Dip"
    ],
-   "seat": "Oh He Dead",
-   "suggested_name": "Dead Parade"
+   "seat": "The Dip",
+   "suggested_name": "Dip Parade"
   },
   {
    "id": "river_port:d3",
    "region": "river_port",
-   "members": [],
-   "seat": "LL Cool J",
-   "suggested_name": "J Bend"
+   "members": [
+    "Blu Eye Extinction",
+    "Lucky Chops",
+    "MonoNeon",
+    "Rebirth Brass Band",
+    "The Dirty Dozen Brass Band",
+    "Victor Wooten"
+   ],
+   "seat": "Rebirth Brass Band",
+   "suggested_name": "Band Bend"
   },
   {
    "id": "river_port:d4",
    "region": "river_port",
    "members": [],
-   "seat": "Wu-Tang Clan",
-   "suggested_name": "Clan Ward"
+   "seat": "LL Cool J",
+   "suggested_name": "J Ward"
   },
   {
    "id": "river_port:d5",
+   "region": "river_port",
+   "members": [],
+   "seat": "Wu-Tang Clan",
+   "suggested_name": "Clan Wharf"
+  },
+  {
+   "id": "river_port:d6",
    "region": "river_port",
    "members": [
     "Eastern Standard Time",
@@ -3387,49 +3360,36 @@
     "The Pietasters"
    ],
    "seat": "The Pietasters",
-   "suggested_name": "Pietasters Wharf"
-  },
-  {
-   "id": "river_port:d6",
-   "region": "river_port",
-   "members": [
-    "Bonerama",
-    "Dumpstaphunk",
-    "Ivan Neville"
-   ],
-   "seat": "Dumpstaphunk",
-   "suggested_name": "Dumpstaphunk Landing"
+   "suggested_name": "Pietasters Landing"
   },
   {
    "id": "river_port:d7",
-   "region": "river_port",
-   "members": [
-    "Blu Eye Extinction",
-    "MonoNeon"
-   ],
-   "seat": "George Clinton & Parliament-Funkadelic",
-   "suggested_name": "ParliamentFunkadelic Parade"
-  },
-  {
-   "id": "river_port:d8",
-   "region": "river_port",
-   "members": [
-    "Cory Wong",
-    "Diana Silvers",
-    "Jon Batiste"
-   ],
-   "seat": "Jon Batiste",
-   "suggested_name": "Batiste Bend"
-  },
-  {
-   "id": "river_port:d9",
    "region": "river_port",
    "members": [
     "Matteo Mancuso",
     "Mohini Dey"
    ],
    "seat": "Matteo Mancuso",
-   "suggested_name": "Mancuso Ward"
+   "suggested_name": "Mancuso Parade"
+  },
+  {
+   "id": "river_port:d8",
+   "region": "river_port",
+   "members": [
+    "Sweet Leda",
+    "Vanessa Collier"
+   ],
+   "seat": "Sweet Leda",
+   "suggested_name": "Leda Bend"
+  },
+  {
+   "id": "river_port:d9",
+   "region": "river_port",
+   "members": [
+    "ZZ Ward"
+   ],
+   "seat": "ZZ Ward",
+   "suggested_name": "Ward Ward"
   },
   {
    "id": "river_port:outskirts",
@@ -3439,11 +3399,10 @@
     "Anders Osborne",
     "Angelique Francis",
     "Bobby Rush",
-    "Deanna Bogart",
+    "Bonerama",
     "Dominique Fils-Aimé",
     "Fantastic Negrito",
     "Free Nationals",
-    "Galactic",
     "Josh Hoyer & Soul Colossal",
     "Judith Hill",
     "Kent Burnside",
@@ -3464,12 +3423,13 @@
    "id": "slide_foothills:d1",
    "region": "slide_foothills",
    "members": [
+    "Mike Zito",
     "North Mississippi Allstars",
     "Robert Randolph",
     "Selwyn Birchwood"
    ],
-   "seat": "North Mississippi Allstars",
-   "suggested_name": "Allstars Terrace"
+   "seat": "Selwyn Birchwood",
+   "suggested_name": "Birchwood Terrace"
   },
   {
    "id": "slide_foothills:d2",
@@ -3497,7 +3457,6 @@
    "members": [
     "Ghalia Volt",
     "Larkin Poe",
-    "Mike Zito",
     "Sonny Landreth"
    ],
    "seat": "Larkin Poe",
@@ -3577,7 +3536,7 @@
    "id": 1,
    "name": "Abraham Alexander",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -3687,7 +3646,7 @@
    "id": 7,
    "name": "Albert Castiglia",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -3709,7 +3668,7 @@
    "id": 8,
    "name": "Albert Cummings",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -3779,7 +3738,7 @@
    "id": 12,
    "name": "Alison Krauss",
    "region": "heartland",
-   "district": "heartland:d8",
+   "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0.5,
@@ -3828,7 +3787,7 @@
    "name": "Ally Venable Band",
    "label": "Ally Venable",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "city",
    "auto_size": "city",
    "score": 24,
@@ -3876,7 +3835,7 @@
    "name": "Altered Five Blues Band",
    "label": "Altered Five",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -3900,7 +3859,7 @@
    "id": 19,
    "name": "Amadou Kouyate",
    "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "district": "quiet_woods:d10",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4080,7 +4039,7 @@
    "id": 27,
    "name": "Anna Moss",
    "region": "quiet_woods",
-   "district": "quiet_woods:d5",
+   "district": "quiet_woods:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4147,7 +4106,7 @@
    "id": 31,
    "name": "Aoife O'Donovan",
    "region": "quiet_woods",
-   "district": "quiet_woods:d9",
+   "district": "quiet_woods:d7",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -4193,7 +4152,7 @@
    "id": 33,
    "name": "Artur Menezes",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -4215,7 +4174,7 @@
    "id": 34,
    "name": "Austin Meade",
    "region": "heartland",
-   "district": "heartland:d12",
+   "district": "heartland:d9",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4242,12 +4201,12 @@
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    482.3,
-    269.7
+    473.2,
+    283.6
    ],
    "region_uv": [
-    0.5067,
-    0.2843
+    0.4802,
+    0.3466
    ],
    "flags": {
     "unpinned": true
@@ -4285,7 +4244,7 @@
    "id": 38,
    "name": "Barenaked Ladies",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -4351,7 +4310,7 @@
    "id": 43,
    "name": "Bella McCormick",
    "region": "heartland",
-   "district": "heartland:d8",
+   "district": "heartland:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4417,7 +4376,7 @@
    "id": 46,
    "name": "Beth Hart",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "town",
    "auto_size": "town",
    "score": 3,
@@ -4533,7 +4492,7 @@
    "id": 52,
    "name": "Billy Strings",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -4556,7 +4515,7 @@
    "id": 53,
    "name": "Blackberry Smoke",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d4",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -4623,7 +4582,7 @@
    "id": 57,
    "name": "Blu Eye Extinction",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4718,7 +4677,7 @@
    "id": 60,
    "name": "Bonerama",
    "region": "river_port",
-   "district": "river_port:d6",
+   "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -4766,7 +4725,7 @@
    "id": 63,
    "name": "Brandon Miller",
    "region": "delta_coast",
-   "district": "delta_coast:d4",
+   "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4832,7 +4791,7 @@
    "id": 66,
    "name": "Brittany Howard",
    "region": "river_port",
-   "district": "river_port:override",
+   "district": "river_port:d2",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -4854,7 +4813,7 @@
    "id": 67,
    "name": "Brittney Spencer",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -4876,7 +4835,7 @@
    "id": 68,
    "name": "Brody Buster",
    "region": "delta_coast",
-   "district": "delta_coast:d4",
+   "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -4922,7 +4881,7 @@
    "id": 71,
    "name": "Buddy Guy",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
    "score": 11,
@@ -4969,7 +4928,7 @@
    "id": 74,
    "name": "Bywater Call",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -5016,7 +4975,7 @@
    "name": "Caitlin Krisko & The Broadcast",
    "label": "Caitlin Krisko",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d5",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -5218,7 +5177,7 @@
    "id": 86,
    "name": "Charly Lowry",
    "region": "heartland",
-   "district": "heartland:d7",
+   "district": "heartland:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5262,7 +5221,7 @@
    "id": 88,
    "name": "Chelsey Green",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5284,7 +5243,7 @@
    "id": 89,
    "name": "Chris Cain",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -5334,7 +5293,7 @@
    "name": "Christone 'Kingfish' Ingram",
    "label": "Kingfish",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "capital",
    "auto_size": "capital",
    "score": 27,
@@ -5356,7 +5315,7 @@
    "id": 94,
    "name": "Cole Larravide",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5378,7 +5337,7 @@
    "id": 95,
    "name": "Colin Hay",
    "region": "quiet_woods",
-   "district": "quiet_woods:d14",
+   "district": "quiet_woods:d15",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -5403,7 +5362,7 @@
    "id": 96,
    "name": "Cory Wong",
    "region": "river_port",
-   "district": "river_port:d8",
+   "district": "river_port:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -5452,7 +5411,7 @@
    "id": 97,
    "name": "Cowboy Junkies",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "town",
    "auto_size": "hamlet",
    "score": 3,
@@ -5500,7 +5459,7 @@
    "id": 99,
    "name": "D.K. Harrell",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -5568,7 +5527,7 @@
    "id": 101,
    "name": "Daniel Donato",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d1",
    "size": "capital",
    "auto_size": "capital",
    "score": 27,
@@ -5591,7 +5550,7 @@
    "id": 102,
    "name": "Danielle Nicole",
    "region": "delta_coast",
-   "district": "delta_coast:d4",
+   "district": "delta_coast:d1",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -5682,7 +5641,7 @@
    "id": 105,
    "name": "David Moore",
    "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5726,7 +5685,7 @@
    "id": 107,
    "name": "Deanna Bogart",
    "region": "river_port",
-   "district": "river_port:outskirts",
+   "district": "river_port:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5749,7 +5708,7 @@
    "name": "Derrick Dove & The Peacekeepers",
    "label": "Derrick Dove",
    "region": "delta_coast",
-   "district": "delta_coast:outskirts",
+   "district": "delta_coast:d4",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -5795,7 +5754,7 @@
    "id": 111,
    "name": "Diana Silvers",
    "region": "river_port",
-   "district": "river_port:d8",
+   "district": "river_port:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5886,7 +5845,7 @@
    "id": 118,
    "name": "Dumpstaphunk",
    "region": "river_port",
-   "district": "river_port:d6",
+   "district": "river_port:d1",
    "size": "village",
    "auto_size": "village",
    "score": 3.5,
@@ -5908,7 +5867,7 @@
    "id": 120,
    "name": "Dylan Triplett",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "town",
    "score": 8,
@@ -5930,7 +5889,7 @@
    "id": 121,
    "name": "Eastern Standard Time",
    "region": "river_port",
-   "district": "river_port:d5",
+   "district": "river_port:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -5952,7 +5911,7 @@
    "id": 122,
    "name": "Eddie 9V",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "village",
    "auto_size": "waystation",
    "score": 1,
@@ -6046,7 +6005,7 @@
    "id": 126,
    "name": "Emmylou Harris",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "town",
    "auto_size": "village",
    "score": 5,
@@ -6143,7 +6102,7 @@
    "id": 130,
    "name": "Eric Gales",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "city",
    "auto_size": "city",
    "score": 15,
@@ -6301,7 +6260,7 @@
    "id": 140,
    "name": "Fastball",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6394,7 +6353,7 @@
    "id": 144,
    "name": "GA-20",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -6418,7 +6377,7 @@
    "id": 145,
    "name": "Gabe Stillman",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6462,7 +6421,7 @@
    "id": 147,
    "name": "Galactic",
    "region": "river_port",
-   "district": "river_port:outskirts",
+   "district": "river_port:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -6508,7 +6467,7 @@
    "id": 149,
    "name": "Gary Clark Jr.",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -6530,7 +6489,7 @@
    "id": 150,
    "name": "Gary Hoey",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -6623,7 +6582,7 @@
    "id": 154,
    "name": "Gillian Welch",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -6672,7 +6631,7 @@
    "id": 156,
    "name": "Glenn Yoder",
    "region": "quiet_woods",
-   "district": "quiet_woods:d8",
+   "district": "quiet_woods:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6694,7 +6653,7 @@
    "id": 157,
    "name": "Glom",
    "region": "quiet_woods",
-   "district": "quiet_woods:d3",
+   "district": "quiet_woods:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6787,7 +6746,7 @@
    "id": 161,
    "name": "Greensky Bluegrass",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d1",
    "size": "town",
    "auto_size": "city",
    "score": 12,
@@ -6834,7 +6793,7 @@
    "id": 163,
    "name": "Hannah Honeycutt",
    "region": "quiet_woods",
-   "district": "quiet_woods:d8",
+   "district": "quiet_woods:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6878,7 +6837,7 @@
    "id": 166,
    "name": "Henri Brown",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -6922,7 +6881,7 @@
    "id": 171,
    "name": "Houndmouth",
    "region": "quiet_woods",
-   "district": "quiet_woods:d3",
+   "district": "quiet_woods:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -6992,7 +6951,7 @@
    "id": 175,
    "name": "I'm With Her",
    "region": "quiet_woods",
-   "district": "quiet_woods:d9",
+   "district": "quiet_woods:d7",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -7037,7 +6996,7 @@
    "id": 178,
    "name": "Ivan Neville",
    "region": "river_port",
-   "district": "river_port:d6",
+   "district": "river_port:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0.5,
@@ -7062,7 +7021,7 @@
    "name": "J & The Causeways",
    "label": "Causeways",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -7107,7 +7066,7 @@
    "name": "JJ Grey & Mofro",
    "label": "JJ Grey",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d4",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -7153,7 +7112,7 @@
    "id": 182,
    "name": "Jackie Venson",
    "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "district": "amplified_range:d5",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -7243,7 +7202,7 @@
    "id": 186,
    "name": "Jake Xerxes Fussell",
    "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "district": "quiet_woods:pinned",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -7289,7 +7248,7 @@
    "id": 190,
    "name": "Jax Hollow",
    "region": "amplified_range",
-   "district": "amplified_range:pinned",
+   "district": "amplified_range:d11",
    "size": "village",
    "auto_size": "town",
    "score": 6,
@@ -7311,7 +7270,7 @@
    "id": 191,
    "name": "Jess Williamson",
    "region": "quiet_woods",
-   "district": "quiet_woods:d6",
+   "district": "quiet_woods:d9",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -7401,7 +7360,7 @@
    "id": 196,
    "name": "Jimmie Vaughan",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -7521,7 +7480,7 @@
    "id": 201,
    "name": "Joanne Shaw Taylor",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -7543,7 +7502,7 @@
    "id": 202,
    "name": "Jobi Riccio",
    "region": "heartland",
-   "district": "heartland:d6",
+   "district": "heartland:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -7565,7 +7524,7 @@
    "id": 203,
    "name": "Joe Bonamassa",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -7587,7 +7546,7 @@
    "id": 204,
    "name": "Joe Pug",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -7611,7 +7570,7 @@
    "id": 205,
    "name": "Joe Satriani",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "town",
    "score": 6,
@@ -7682,7 +7641,7 @@
    "id": 207,
    "name": "John Hiatt",
    "region": "heartland",
-   "district": "heartland:d5",
+   "district": "heartland:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -7755,7 +7714,7 @@
    "id": 209,
    "name": "John Primer",
    "region": "delta_coast",
-   "district": "delta_coast:d6",
+   "district": "delta_coast:d4",
    "size": "town",
    "auto_size": "village",
    "score": 5,
@@ -7779,7 +7738,7 @@
    "id": 211,
    "name": "Jon Batiste",
    "region": "river_port",
-   "district": "river_port:d8",
+   "district": "river_port:d1",
    "size": "city",
    "auto_size": "city",
    "score": 14,
@@ -8001,7 +7960,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium): bandcamp",
+   "src": "follow (Medium)",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8032,7 +7991,7 @@
    "id": 223,
    "name": "Kashus Culpepper",
    "region": "heartland",
-   "district": "heartland:pinned",
+   "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -8103,7 +8062,7 @@
    "id": 226,
    "name": "Keb' Mo'",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -8150,7 +8109,7 @@
    "id": 228,
    "name": "Kenny Wayne Shepherd",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -8242,7 +8201,7 @@
    "id": 232,
    "name": "Kingsley Flood",
    "region": "quiet_woods",
-   "district": "quiet_woods:d8",
+   "district": "quiet_woods:d6",
    "size": "town",
    "auto_size": "city",
    "score": 18,
@@ -8264,7 +8223,7 @@
    "id": 233,
    "name": "Kirk Fletcher",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -8354,7 +8313,7 @@
    "id": 236,
    "name": "Langhorne Slim",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -8398,7 +8357,7 @@
    "id": 238,
    "name": "Larry Campbell & Teresa Williams",
    "region": "heartland",
-   "district": "heartland:d15",
+   "district": "heartland:d12",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -8422,7 +8381,7 @@
    "id": 239,
    "name": "Larry McCray",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -8470,7 +8429,7 @@
    "id": 241,
    "name": "Leyla McCalla",
    "region": "quiet_woods",
-   "district": "quiet_woods:d5",
+   "district": "quiet_woods:d3",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -8485,7 +8444,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "follow (Medium): bandcamp; sister of Sabine McCalla",
+   "src": "follow (Medium): sister of Sabine McCalla",
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
@@ -8516,7 +8475,7 @@
    "id": 243,
    "name": "Lightnin' Malcolm",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d3",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -8606,7 +8565,7 @@
    "id": 250,
    "name": "Los Lobos",
    "region": "heartland",
-   "district": "heartland:d5",
+   "district": "heartland:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -8630,7 +8589,7 @@
    "id": 252,
    "name": "Lucinda Williams",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3,
@@ -8676,7 +8635,7 @@
    "id": 254,
    "name": "Lucky Chops",
    "region": "river_port",
-   "district": "river_port:d1",
+   "district": "river_port:d3",
    "size": "village",
    "auto_size": "village",
    "score": 5,
@@ -8698,7 +8657,7 @@
    "id": 255,
    "name": "Lucy Dacus",
    "region": "quiet_woods",
-   "district": "quiet_woods:d15",
+   "district": "quiet_woods:d16",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -8722,7 +8681,7 @@
    "id": 256,
    "name": "Lyle Lovett",
    "region": "heartland",
-   "district": "heartland:d5",
+   "district": "heartland:d6",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -8746,7 +8705,7 @@
    "id": 257,
    "name": "Lynn Hollyfield",
    "region": "heartland",
-   "district": "heartland:d11",
+   "district": "heartland:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -8791,7 +8750,7 @@
    "id": 258,
    "name": "Maggie Rose",
    "region": "heartland",
-   "district": "heartland:d6",
+   "district": "heartland:d2",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -8859,7 +8818,7 @@
    "id": 261,
    "name": "Marcus King",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -8903,7 +8862,7 @@
    "id": 263,
    "name": "Margo Price",
    "region": "heartland",
-   "district": "heartland:d6",
+   "district": "heartland:d2",
    "size": "village",
    "auto_size": "town",
    "score": 6,
@@ -8972,7 +8931,7 @@
    "id": 266,
    "name": "Martin Sexton",
    "region": "quiet_woods",
-   "district": "quiet_woods:d14",
+   "district": "quiet_woods:d15",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0,
@@ -9022,7 +8981,7 @@
    "id": 268,
    "name": "Mathias Lattin",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "town",
    "auto_size": "village",
    "score": 4,
@@ -9044,7 +9003,7 @@
    "id": 269,
    "name": "Mato Nanji",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -9066,7 +9025,7 @@
    "id": 270,
    "name": "Matteo Mancuso",
    "region": "river_port",
-   "district": "river_port:d9",
+   "district": "river_port:d7",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -9112,7 +9071,7 @@
    "id": 273,
    "name": "Mikaela Davis",
    "region": "quiet_woods",
-   "district": "quiet_woods:d6",
+   "district": "quiet_woods:outskirts",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -9159,7 +9118,7 @@
    "id": 275,
    "name": "Mike Zito",
    "region": "slide_foothills",
-   "district": "slide_foothills:outskirts",
+   "district": "slide_foothills:d1",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -9276,7 +9235,7 @@
    "id": 279,
    "name": "Mohini Dey",
    "region": "river_port",
-   "district": "river_port:d9",
+   "district": "river_port:d7",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -9298,7 +9257,7 @@
    "id": 280,
    "name": "Molly Tuttle",
    "region": "heartland",
-   "district": "heartland:d9",
+   "district": "heartland:d1",
    "size": "village",
    "auto_size": "village",
    "score": 3.5,
@@ -9320,7 +9279,7 @@
    "id": 281,
    "name": "MonoNeon",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -9364,7 +9323,7 @@
    "id": 283,
    "name": "Mr. Sipp",
    "region": "delta_coast",
-   "district": "delta_coast:d6",
+   "district": "delta_coast:d4",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -9388,7 +9347,7 @@
    "id": 284,
    "name": "Muireann Bradley",
    "region": "delta_coast",
-   "district": "delta_coast:outskirts",
+   "district": "delta_coast:d6",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -9454,7 +9413,7 @@
    "id": 288,
    "name": "Nat Myers",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -9639,7 +9598,7 @@
    "id": 299,
    "name": "Orianthi",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d3",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -9687,7 +9646,7 @@
    "id": 301,
    "name": "Patty Griffin",
    "region": "heartland",
-   "district": "heartland:d2",
+   "district": "heartland:d3",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -9755,7 +9714,7 @@
    "id": 304,
    "name": "Peter Gabriel",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "city",
    "auto_size": "city",
    "score": 18,
@@ -9895,7 +9854,7 @@
    "id": 312,
    "name": "Punch Brothers",
    "region": "heartland",
-   "district": "heartland:d8",
+   "district": "heartland:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3,
@@ -9910,7 +9869,7 @@
    "flags": {
     "unvisited": true
    },
-   "src": "potential: Warner Theatre 2026-11-06",
+   "src": "on the potentials list",
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
@@ -9967,7 +9926,7 @@
    "id": 317,
    "name": "Rebecca Porter",
    "region": "heartland",
-   "district": "heartland:d5",
+   "district": "heartland:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -9990,7 +9949,7 @@
    "name": "Rebirth Brass Band",
    "label": "Rebirth",
    "region": "river_port",
-   "district": "river_port:d1",
+   "district": "river_port:d3",
    "size": "village",
    "auto_size": "village",
    "score": 3.5,
@@ -10056,7 +10015,7 @@
    "id": 322,
    "name": "Richard Thompson",
    "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
+   "district": "quiet_woods:d14",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3,
@@ -10102,7 +10061,7 @@
    "id": 324,
    "name": "Robben Ford",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -10127,7 +10086,7 @@
    "name": "Robert Cray Band",
    "label": "Robert Cray",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10152,7 +10111,7 @@
    "name": "Robert Jon & The Wreck",
    "label": "Robert Jon",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d4",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -10196,7 +10155,7 @@
    "id": 329,
    "name": "Roger Waters",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10218,7 +10177,7 @@
    "id": 331,
    "name": "Ruthie Foster",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -10240,7 +10199,7 @@
    "id": 332,
    "name": "Sabine McCalla",
    "region": "quiet_woods",
-   "district": "quiet_woods:d5",
+   "district": "quiet_woods:d3",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -10262,7 +10221,7 @@
    "id": 333,
    "name": "Sadia Bangura",
    "region": "delta_coast",
-   "district": "delta_coast:d7",
+   "district": "delta_coast:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10306,7 +10265,7 @@
    "id": 336,
    "name": "Sam Amidon",
    "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10444,7 +10403,7 @@
    "id": 347,
    "name": "Shakey Graves",
    "region": "quiet_woods",
-   "district": "quiet_woods:d3",
+   "district": "quiet_woods:d2",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -10489,7 +10448,7 @@
    "id": 349,
    "name": "Shawn James",
    "region": "quiet_woods",
-   "district": "quiet_woods:d10",
+   "district": "quiet_woods:d8",
    "size": "town",
    "auto_size": "town",
    "score": 11,
@@ -10535,10 +10494,10 @@
    "id": 351,
    "name": "Shemekia Copeland",
    "region": "delta_coast",
-   "district": "delta_coast:d3",
+   "district": "delta_coast:d1",
    "size": "capital",
    "auto_size": "capital",
-   "score": 6,
+   "score": 9,
    "xy": [
     246.9,
     588.3
@@ -10549,7 +10508,7 @@
    ],
    "flags": {},
    "src": "history pass: seen as support",
-   "times_seen": 1,
+   "times_seen": 2,
    "vip": 0,
    "tier": "Strong"
   },
@@ -10579,7 +10538,7 @@
    "id": 354,
    "name": "Sierra Hull",
    "region": "heartland",
-   "district": "heartland:d8",
+   "district": "heartland:d1",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -10755,7 +10714,7 @@
    "id": 363,
    "name": "Southern Avenue",
    "region": "delta_coast",
-   "district": "delta_coast:d7",
+   "district": "delta_coast:d6",
    "size": "city",
    "auto_size": "town",
    "score": 9,
@@ -10779,7 +10738,7 @@
    "id": 364,
    "name": "Sparkbird",
    "region": "quiet_woods",
-   "district": "quiet_woods:d7",
+   "district": "quiet_woods:d5",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -10801,7 +10760,7 @@
    "id": 365,
    "name": "Spartan Jet-Plex",
    "region": "quiet_woods",
-   "district": "quiet_woods:d7",
+   "district": "quiet_woods:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10823,7 +10782,7 @@
    "id": 366,
    "name": "Spring Heeled Jack",
    "region": "river_port",
-   "district": "river_port:d5",
+   "district": "river_port:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10870,7 +10829,7 @@
    "id": 370,
    "name": "Stephen Wilson Jr",
    "region": "heartland",
-   "district": "heartland:d12",
+   "district": "heartland:d9",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -10892,7 +10851,7 @@
    "id": 371,
    "name": "Steve Earle",
    "region": "heartland",
-   "district": "heartland:d5",
+   "district": "heartland:d6",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -10914,7 +10873,7 @@
    "id": 372,
    "name": "Steve Miller Band",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -10938,7 +10897,7 @@
    "id": 373,
    "name": "Steve Vai",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -10982,7 +10941,7 @@
    "id": 438,
    "name": "Sting",
    "region": "amplified_range",
-   "district": "amplified_range:d7",
+   "district": "amplified_range:d6",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -11031,7 +10990,7 @@
    "id": 376,
    "name": "Sugar Ray",
    "region": "amplified_range",
-   "district": "amplified_range:d8",
+   "district": "amplified_range:d7",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11101,7 +11060,7 @@
    "id": 379,
    "name": "Sushi Soucy",
    "region": "quiet_woods",
-   "district": "quiet_woods:d7",
+   "district": "quiet_woods:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11145,7 +11104,7 @@
    "id": 381,
    "name": "Sweet Leda",
    "region": "river_port",
-   "district": "river_port:d10",
+   "district": "river_port:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11211,7 +11170,7 @@
    "id": 385,
    "name": "Taj Mahal",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -11236,7 +11195,7 @@
    "name": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "label": "TajMo",
    "region": "delta_coast",
-   "district": "delta_coast:d1",
+   "district": "delta_coast:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11396,7 +11355,7 @@
    "name": "The Avett Brothers",
    "label": "Avett Brothers",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "city",
    "auto_size": "city",
    "score": 12,
@@ -11557,7 +11516,7 @@
    "name": "The Dirty Dozen Brass Band",
    "label": "Dirty Dozen",
    "region": "river_port",
-   "district": "river_port:d1",
+   "district": "river_port:d3",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -11580,7 +11539,7 @@
    "name": "The Fabulous Thunderbirds",
    "label": "Thunderbirds",
    "region": "amplified_range",
-   "district": "amplified_range:d4",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -11675,7 +11634,7 @@
    "name": "The Hip Snacks",
    "label": "Hip Snacks",
    "region": "heartland",
-   "district": "heartland:d6",
+   "district": "heartland:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11767,7 +11726,7 @@
    "name": "The Jesse Williams Band",
    "label": "Jesse Williams",
    "region": "delta_coast",
-   "district": "delta_coast:d2",
+   "district": "delta_coast:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -11836,7 +11795,7 @@
    "name": "The Pietasters",
    "label": "Pietasters",
    "region": "river_port",
-   "district": "river_port:d5",
+   "district": "river_port:d6",
    "size": "village",
    "auto_size": "town",
    "score": 6,
@@ -11906,7 +11865,7 @@
    "name": "The Record Company",
    "label": "Record Company",
    "region": "amplified_range",
-   "district": "amplified_range:d5",
+   "district": "amplified_range:d4",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -12071,7 +12030,7 @@
    "id": 411,
    "name": "The Wailin' Jennys",
    "region": "quiet_woods",
-   "district": "quiet_woods:d9",
+   "district": "quiet_woods:d7",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3,
@@ -12096,7 +12055,7 @@
    "name": "The War and Treaty",
    "label": "War and Treaty",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d4",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -12119,7 +12078,7 @@
    "name": "The Wildmans",
    "label": "Wildmans",
    "region": "heartland",
-   "district": "heartland:d1",
+   "district": "heartland:pinned",
    "size": "village",
    "auto_size": "village",
    "score": 4,
@@ -12186,7 +12145,7 @@
    "id": 394,
    "name": "Tiera Kennedy",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -12208,7 +12167,7 @@
    "id": 395,
    "name": "Tinsley Ellis",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2,
@@ -12233,7 +12192,7 @@
    "name": "Tommy Castro & the Painkillers",
    "label": "Tommy Castro",
    "region": "amplified_range",
-   "district": "amplified_range:d6",
+   "district": "amplified_range:d8",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -12392,7 +12351,7 @@
    "id": 403,
    "name": "Valerie June",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d4",
    "size": "town",
    "auto_size": "town",
    "score": 9,
@@ -12438,7 +12397,7 @@
    "id": 405,
    "name": "Vanessa Collier",
    "region": "river_port",
-   "district": "river_port:d10",
+   "district": "river_port:d8",
    "size": "city",
    "auto_size": "city",
    "score": 24,
@@ -12508,7 +12467,7 @@
    "id": 407,
    "name": "Victor Wooten",
    "region": "river_port",
-   "district": "river_port:d1",
+   "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -12576,7 +12535,7 @@
    "id": 412,
    "name": "Walter Trout",
    "region": "amplified_range",
-   "district": "amplified_range:d2",
+   "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -12600,7 +12559,7 @@
    "id": 415,
    "name": "Waxahatchee",
    "region": "quiet_woods",
-   "district": "quiet_woods:d6",
+   "district": "quiet_woods:d9",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1,
@@ -12668,7 +12627,7 @@
    "id": 419,
    "name": "Willie Nelson",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "village",
    "auto_size": "hamlet",
    "score": 3,
@@ -12714,7 +12673,7 @@
    "id": 423,
    "name": "Yasmin Williams",
    "region": "quiet_woods",
-   "district": "quiet_woods:d2",
+   "district": "quiet_woods:d10",
    "size": "town",
    "auto_size": "town",
    "score": 6,
@@ -12736,17 +12695,17 @@
    "id": 424,
    "name": "Yola (DJ)",
    "region": "heartland",
-   "district": "heartland:d3",
+   "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
    "xy": [
-    459.8,
-    476.5
+    363.0,
+    436.8
    ],
    "region_uv": [
-    0.6048,
-    0.4851
+    0.3499,
+    0.3168
    ],
    "flags": {
     "unpinned": true
@@ -12782,7 +12741,7 @@
    "id": 426,
    "name": "Yutzi",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -12848,7 +12807,7 @@
    "id": 435,
    "name": "ZZ Ward",
    "region": "river_port",
-   "district": "river_port:d11",
+   "district": "river_port:d9",
    "size": "city",
    "auto_size": "city",
    "score": 19,
@@ -12872,7 +12831,7 @@
    "id": 428,
    "name": "Zach Bryan",
    "region": "heartland",
-   "district": "heartland:d4",
+   "district": "heartland:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -12916,7 +12875,7 @@
    "id": 430,
    "name": "Zakk Wylde",
    "region": "amplified_range",
-   "district": "amplified_range:d1",
+   "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3,
@@ -13007,7 +12966,7 @@
    "id": 62,
    "name": "boygenius",
    "region": "quiet_woods",
-   "district": "quiet_woods:d15",
+   "district": "quiet_woods:d16",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3,
@@ -13056,12 +13015,6 @@
   {
    "a": "A.J. Croce",
    "b": "Bonnie Raitt",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "A.J. Croce",
-   "b": "John Hiatt",
    "cls": "trail",
    "crossRegion": true
   },
@@ -13211,12 +13164,6 @@
   },
   {
    "a": "Albert Castiglia",
-   "b": "Keb' Mo'",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "Albert Castiglia",
    "b": "Mike Zito",
    "cls": "trail",
    "crossRegion": true
@@ -13246,10 +13193,10 @@
    "crossRegion": false
   },
   {
-   "a": "Alison Krauss",
-   "b": "Sierra Hull",
+   "a": "Alejandro Escovedo",
+   "b": "Peter Case",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Allison Russell",
@@ -13272,6 +13219,12 @@
   {
    "a": "Allison Russell",
    "b": "Joy Oladokun",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Allison Russell",
+   "b": "Kaia Kater",
    "cls": "trail",
    "crossRegion": false
   },
@@ -13302,6 +13255,12 @@
   {
    "a": "Allison Russell",
    "b": "Sunny War",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Allison Russell",
+   "b": "Valerie June",
    "cls": "trail",
    "crossRegion": true
   },
@@ -13356,6 +13315,12 @@
   {
    "a": "Altered Five Blues Band",
    "b": "Ana Popović",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Altered Five Blues Band",
+   "b": "GA-20",
    "cls": "trail",
    "crossRegion": false
   },
@@ -13445,12 +13410,6 @@
   },
   {
    "a": "Ana Popović",
-   "b": "Piper & The Hard Times",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "Ana Popović",
    "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": true
@@ -13526,12 +13485,6 @@
    "b": "Kat Riggins",
    "cls": "trail",
    "crossRegion": true
-  },
-  {
-   "a": "Angelique Francis",
-   "b": "Sugaray Rayford",
-   "cls": "trail",
-   "crossRegion": false
   },
   {
    "a": "Anna Moss",
@@ -13661,6 +13614,12 @@
   },
   {
    "a": "Bernard Allison",
+   "b": "Sugaray Rayford",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Bernard Allison",
    "b": "Tab Benoit",
    "cls": "trail",
    "crossRegion": true
@@ -13674,12 +13633,6 @@
   {
    "a": "Beth Hart",
    "b": "Carolyn Wonderland",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "Beth Hart",
-   "b": "Ghalia Volt",
    "cls": "trail",
    "crossRegion": true
   },
@@ -13727,7 +13680,7 @@
   },
   {
    "a": "Billy Gibbons",
-   "b": "Joe Bonamassa",
+   "b": "Joanne Shaw Taylor",
    "cls": "trail",
    "crossRegion": false
   },
@@ -13786,12 +13739,6 @@
    "crossRegion": true
   },
   {
-   "a": "Blackberry Smoke",
-   "b": "The Bros. Landreth",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Blessing Offor",
    "b": "Robert Randolph",
    "cls": "river",
@@ -13837,12 +13784,6 @@
    "a": "Bone Thugs-n-Harmony",
    "b": "LL Cool J",
    "cls": "river",
-   "crossRegion": false
-  },
-  {
-   "a": "Bonerama",
-   "b": "Dumpstaphunk",
-   "cls": "trail",
    "crossRegion": false
   },
   {
@@ -13937,6 +13878,12 @@
   },
   {
    "a": "Buddy Guy",
+   "b": "Jackie Venson",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Buddy Guy",
    "b": "Judith Hill",
    "cls": "river",
    "crossRegion": true
@@ -13979,7 +13926,7 @@
   },
   {
    "a": "Buffalo Nichols",
-   "b": "Marcus King",
+   "b": "Carolyn Wonderland",
    "cls": "trail",
    "crossRegion": true
   },
@@ -14051,7 +13998,7 @@
   },
   {
    "a": "Carolyn Wonderland",
-   "b": "Selwyn Birchwood",
+   "b": "Samantha Fish",
    "cls": "trail",
    "crossRegion": false
   },
@@ -14080,12 +14027,6 @@
    "crossRegion": true
   },
   {
-   "a": "Carolyn Wonderland",
-   "b": "Tommy Castro & the Painkillers",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Cassie & Maggie",
    "b": "Enter the Haggis",
    "cls": "river",
@@ -14100,6 +14041,12 @@
   {
    "a": "Cedric Burnside",
    "b": "GA-20",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Cedric Burnside",
+   "b": "Joanna Connor",
    "cls": "trail",
    "crossRegion": true
   },
@@ -14134,6 +14081,12 @@
    "crossRegion": false
   },
   {
+   "a": "Chris Smither",
+   "b": "John Hiatt",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
    "a": "Christone 'Kingfish' Ingram",
    "b": "Dylan Triplett",
    "cls": "river",
@@ -14155,6 +14108,12 @@
    "a": "Christone 'Kingfish' Ingram",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
+   "crossRegion": false
+  },
+  {
+   "a": "Christone 'Kingfish' Ingram",
+   "b": "Marcus King",
+   "cls": "trail",
    "crossRegion": false
   },
   {
@@ -14219,12 +14178,6 @@
   },
   {
    "a": "D.K. Harrell",
-   "b": "Larry McCray",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "D.K. Harrell",
    "b": "Mathias Lattin",
    "cls": "trail",
    "crossRegion": false
@@ -14278,6 +14231,12 @@
    "crossRegion": false
   },
   {
+   "a": "Danielle Nicole",
+   "b": "Sugaray Rayford",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
    "a": "Danielle Ponder",
    "b": "Trombone Shorty & Orleans Avenue",
    "cls": "river",
@@ -14320,6 +14279,12 @@
    "crossRegion": true
   },
   {
+   "a": "Derrick Dove & The Peacekeepers",
+   "b": "John Primer",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
    "a": "Devon Allman",
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
@@ -14329,6 +14294,12 @@
    "a": "Devon Allman",
    "b": "Kenny Wayne Shepherd",
    "cls": "river",
+   "crossRegion": true
+  },
+  {
+   "a": "Devon Allman",
+   "b": "Larry McCray",
+   "cls": "trail",
    "crossRegion": true
   },
   {
@@ -14353,6 +14324,12 @@
    "a": "Dior Ashley Brown and the Filthy Animals",
    "b": "Oh He Dead",
    "cls": "river",
+   "crossRegion": false
+  },
+  {
+   "a": "Dumpstaphunk",
+   "b": "Galactic",
+   "cls": "trail",
    "crossRegion": false
   },
   {
@@ -14387,12 +14364,6 @@
   },
   {
    "a": "Eddie 9V",
-   "b": "Marcus King",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "Eddie 9V",
    "b": "Robert Cray Band",
    "cls": "trail",
    "crossRegion": false
@@ -14408,6 +14379,12 @@
    "b": "Nick Lowe & Los Straitjackets",
    "cls": "river",
    "crossRegion": false
+  },
+  {
+   "a": "Elvis Costello & The Imposters",
+   "b": "Pretenders",
+   "cls": "trail",
+   "crossRegion": true
   },
   {
    "a": "Emmylou Harris",
@@ -14465,6 +14442,18 @@
   },
   {
    "a": "Eric Gales",
+   "b": "Jackie Venson",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Eric Gales",
+   "b": "Joanne Shaw Taylor",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Eric Gales",
    "b": "Joe Bonamassa",
    "cls": "trail",
    "crossRegion": false
@@ -14477,15 +14466,9 @@
   },
   {
    "a": "Eric Gales",
-   "b": "Larry McCray",
+   "b": "Mike Zito",
    "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "Eric Gales",
-   "b": "Shaw Davis & The Black Ties",
-   "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Eric Gales",
@@ -14590,12 +14573,6 @@
    "crossRegion": true
   },
   {
-   "a": "GA-20",
-   "b": "Walter Trout",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
    "a": "Gabe Stillman",
    "b": "Mike Zito",
    "cls": "trail",
@@ -14648,6 +14625,12 @@
    "b": "Steve Miller Band",
    "cls": "bridge",
    "crossRegion": false
+  },
+  {
+   "a": "Gary Clark Jr.",
+   "b": "Tedeschi Trucks Band",
+   "cls": "trail",
+   "crossRegion": true
   },
   {
    "a": "Gary Hoey",
@@ -14861,12 +14844,6 @@
   },
   {
    "a": "JJ Grey & Mofro",
-   "b": "Marcus King",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "JJ Grey & Mofro",
    "b": "North Mississippi Allstars",
    "cls": "trail",
    "crossRegion": true
@@ -14894,12 +14871,6 @@
    "b": "Joanne Shaw Taylor",
    "cls": "trail",
    "crossRegion": false
-  },
-  {
-   "a": "Jackie Venson",
-   "b": "Samantha Fish",
-   "cls": "trail",
-   "crossRegion": true
   },
   {
    "a": "Jaime Wyatt",
@@ -14945,12 +14916,6 @@
   },
   {
    "a": "Jess Williamson",
-   "b": "Mikaela Davis",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "Jess Williamson",
    "b": "Waxahatchee",
    "cls": "trail",
    "crossRegion": false
@@ -14993,7 +14958,7 @@
   },
   {
    "a": "Joanna Connor",
-   "b": "Sue Foley",
+   "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": false
   },
@@ -15047,13 +15012,13 @@
   },
   {
    "a": "Joanne Shaw Taylor",
-   "b": "Walter Trout",
+   "b": "Sugaray Rayford",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
-   "a": "Jobi Riccio",
-   "b": "Margo Price",
+   "a": "Joanne Shaw Taylor",
+   "b": "Walter Trout",
    "cls": "trail",
    "crossRegion": false
   },
@@ -15190,12 +15155,6 @@
    "crossRegion": false
   },
   {
-   "a": "Kat Riggins",
-   "b": "Sugaray Rayford",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Kate Davis",
    "b": "Mystery Friends",
    "cls": "river",
@@ -15278,12 +15237,6 @@
    "b": "The Fabulous Thunderbirds",
    "cls": "road",
    "crossRegion": true
-  },
-  {
-   "a": "King Solomon Hicks",
-   "b": "Sugaray Rayford",
-   "cls": "trail",
-   "crossRegion": false
   },
   {
    "a": "Kingsley Flood",
@@ -15436,12 +15389,6 @@
    "crossRegion": false
   },
   {
-   "a": "Lilly Hiatt",
-   "b": "Sunny War",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Lindsay Lou",
    "b": "Molly Tuttle",
    "cls": "trail",
@@ -15470,12 +15417,6 @@
    "b": "Patty Griffin",
    "cls": "trail",
    "crossRegion": false
-  },
-  {
-   "a": "Lucinda Williams",
-   "b": "Peter Case",
-   "cls": "trail",
-   "crossRegion": true
   },
   {
    "a": "Lucinda Williams",
@@ -15568,6 +15509,12 @@
    "crossRegion": false
   },
   {
+   "a": "Margo Price",
+   "b": "Rhiannon Giddens",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
    "a": "Martin Sexton",
    "b": "Patty Griffin",
    "cls": "trail",
@@ -15605,6 +15552,18 @@
   },
   {
    "a": "Mike Zito",
+   "b": "Selwyn Birchwood",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Mike Zito",
+   "b": "Sugaray Rayford",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Mike Zito",
    "b": "Tab Benoit",
    "cls": "river",
    "crossRegion": true
@@ -15634,12 +15593,6 @@
    "crossRegion": true
   },
   {
-   "a": "Mitch Ryder",
-   "b": "Southern Avenue",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Modest Mouse",
    "b": "Pixies",
    "cls": "river",
@@ -15659,6 +15612,12 @@
   },
   {
    "a": "Muireann Bradley",
+   "b": "Southern Avenue",
+   "cls": "trail",
+   "crossRegion": false
+  },
+  {
+   "a": "Muireann Bradley",
    "b": "Valerie June",
    "cls": "trail",
    "crossRegion": true
@@ -15671,9 +15630,9 @@
   },
   {
    "a": "Nat Myers",
-   "b": "Taj Mahal",
+   "b": "Walter Trout",
    "cls": "trail",
-   "crossRegion": false
+   "crossRegion": true
   },
   {
    "a": "Nicole Atkins",
@@ -15726,6 +15685,12 @@
   {
    "a": "Patty Griffin",
    "b": "The Wailin' Jennys",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Peter Case",
+   "b": "Richard Thompson",
    "cls": "trail",
    "crossRegion": true
   },
@@ -15820,12 +15785,6 @@
    "crossRegion": true
   },
   {
-   "a": "Robert Randolph",
-   "b": "Trombone Shorty & Orleans Avenue",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
    "a": "Ruthie Foster",
    "b": "Shemekia Copeland",
    "cls": "trail",
@@ -15847,6 +15806,12 @@
    "a": "Sadurn",
    "b": "Shakey Graves",
    "cls": "river",
+   "crossRegion": true
+  },
+  {
+   "a": "Samantha Fish",
+   "b": "Shemekia Copeland",
+   "cls": "trail",
    "crossRegion": true
   },
   {
@@ -15917,6 +15882,18 @@
   },
   {
    "a": "Shemekia Copeland",
+   "b": "Sue Foley",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Shemekia Copeland",
+   "b": "Sugaray Rayford",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
+   "a": "Shemekia Copeland",
    "b": "Vanessa Collier",
    "cls": "bridge",
    "crossRegion": true
@@ -15960,12 +15937,6 @@
   {
    "a": "Sonny Landreth",
    "b": "Walter Trout",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "Southern Avenue",
-   "b": "The War and Treaty",
    "cls": "trail",
    "crossRegion": true
   },
@@ -16036,6 +16007,12 @@
    "crossRegion": false
   },
   {
+   "a": "Tab Benoit",
+   "b": "Walter Trout",
+   "cls": "trail",
+   "crossRegion": true
+  },
+  {
    "a": "Taj Mahal",
    "b": "TajMo: The Taj Mahal & Keb' Mo' Band",
    "cls": "road",
@@ -16070,12 +16047,6 @@
    "b": "The Teskey Brothers",
    "cls": "trail",
    "crossRegion": true
-  },
-  {
-   "a": "The Dirty Dozen Brass Band",
-   "b": "Trombone Shorty & Orleans Avenue",
-   "cls": "trail",
-   "crossRegion": false
   },
   {
    "a": "The Jesse Williams Band",
