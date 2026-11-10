@@ -517,14 +517,35 @@ not a routine step; usually the signer is already in the eligibility file.
 
 If hat autograph:
 1. Update `hat_signatures.tsv` — append a row: next `seq`, signer, attribution, show_date, venue (leave region/photo_ref/legible blank). This is the canonical record.
-2. Update `data/show_goals/hat_eligibility.tsv` — if the signer is a band member or
-   backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
+   Pick the attribution per `docs/GOALS_SPEC.md` § Source binding syntax:
+   - the headliner or a solo opener signing for themselves → blank
+   - a member of a band act (headliner or support band) → `of <band>`
+   - a touring/backing player in a solo-named act, or an opener signed at the
+     headliner's show → `w/ <act>` (e.g. Laura Chavez `w/ Vanessa Collier`,
+     Pops Magalhães `w/ Artur Menezes`)
+2. Update `data/show_goals/hat_eligibility.tsv` — if the signer is an `of <band>` member
+   or backing singer of a `No`-rated act, flip that act to `Yes` with a membership `Basis`
    (materialized-exception rule, #115). Basis records membership facts only — never
-   signature assertions; completion lives in `hat_signatures.tsv` alone.
-3. Nothing further to do — `signers/index.html` rebuilds automatically from
-   `hat_signatures.tsv` via `.github/workflows/signers-rebuild.yml` once Step 5's
-   commit promotes. The hand-maintained Google Doc this replaced is retired
-   (2026-09-29, #412) — no manual append.
+   signature assertions; completion lives in `hat_signatures.tsv` alone. A `w/` signer
+   never flips the act: a male bandleader's act stays `No` (see the hat protocol in
+   `DATA_WRITE_PROTOCOLS.md`). A signer whose act has no eligibility row gets one.
+3. **Support-act signer → `artists.tsv` row.** If the signer is a support act, or a
+   member of a support band, and that act has no `artists.tsv` row yet, add it now, on
+   its first appearance (exception to the second-appearance rule; see
+   `DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy). A touring player in a
+   backing band gets no row. The row is part of Step 5's bundled commit, and Step 5b's
+   count check covers it.
+4. **Red Hat Signers playlists.**
+   - Spotify (`16iFg2ws9smr9vGVNaI3FK`): append one track by the signer (or their band)
+     at position = `seq`, and confirm the choice with Dan.
+   - Bandcamp (#501): if `tools/research/follows/dan2bit-bandcamp-collection.tsv` has a
+     digital release by the act, add the signer to the build checklist on #501; if the act
+     is on Bandcamp but nothing digital is owned, add it to the purchase list there; if not
+     on Bandcamp, add it to the not-accessible list. Dan adds the track in the app.
+5. `signers/index.html` rebuilds automatically from `hat_signatures.tsv` via
+   `.github/workflows/signers-rebuild.yml` once Step 5's commit promotes. The
+   hand-maintained Google Doc this replaced is retired (2026-09-29, #412) — no manual
+   append.
 
 **Step 5 — Commit public file changes to `staging` — bundle same-show files, don't sequence them (2026-07-19)**
 
@@ -539,6 +560,7 @@ Per **`DATA_WRITE_PROTOCOLS.md` → `artists.tsv` counting policy**. Files commi
   was in the physical book but not yet tracked (rare)
 - `data/show_goals/hat_signatures.tsv` — if the hat was signed
 - `data/show_goals/hat_eligibility.tsv` — if a membership exception was flipped or a new artist row was added
+  (including a support-act hat signer's new row, Step 4 hat item 3)
 
 **Commit `live_shows_current.tsv` and `artists.tsv` together in one `push_files` call**
 (plus any of the `show_goals` files above touched this run) — per
