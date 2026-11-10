@@ -534,6 +534,16 @@ column at index 14/15. Appending more free-text columns widens the blind spot.
 new row added **only when their second appearance is recorded.** One-off openers do not
 get entries.
 
+**Exception — hat signers (2026-11-10):** a support act gets its row at its **first**
+appearance when the hat is signed by the act itself or by a member of it. The row goes to
+the billed act: the signer's own name for a solo opener, the band for a member of a support
+band (Aila Wildman -> `The Wildmans`). A touring player in someone else's backing band (e.g.
+Laura Chavez with Vanessa Collier, Pops Magalhães with Artur Menezes) never gets a row of
+their own; the bill's act is the only candidate. Book signatures do **not** trigger this
+exception. Fill the row like any other: counts from the builder (`audit_times_seen.py` must
+stay green), Spotify URL, YouTube handle, Bandcamp URL per *Bandcamp URL upkeep*, and a
+`hat_eligibility.tsv` row per the hat protocol below.
+
 **First Seen / Most Recent Seen** use the same inclusive logic across all roles.
 
 **History files are the source of truth.** Audit `history/*.tsv` and
@@ -656,6 +666,14 @@ Single source of truth for hat-signing eligibility (#115). Schema: `Artist | Hat
   cases are `No` until a signature is actually obtained, then flipped with a membership
   `Basis` (materialized exception). `Basis` records membership/fronting facts only —
   never signature assertions; completion is sourced exclusively from `hat_signatures.tsv`.
+- **The flip applies only to `of <band>` signers.** The materialized exception exists because
+  an `of <band>` signature credits the band, so the band's `Yes` resolves to `completed`. A
+  touring player in a male bandleader's eponymous band signs as `w/ <leader>`, which credits
+  the signer only, so the act stays **`No`** (e.g. `Artur Menezes | No | male bandleader; his
+  touring band members are credited individually (w/), not the act`). Flipping such an act to
+  `Yes` would show a permanent open `not_yet` target for a signature that already happened.
+  Keep the `No` row rather than deleting it: an absent row triggers a fresh eligibility
+  lookup in Routines 1 and 2.
 - **Writes:** `staging`, full-file pushes, fresh blob SHA before every write. Not
   in-page-editable; keep it comment-free anyway.
 - **Upkeep:** every new artist row in `artists.tsv` / `fast_track.tsv` / `follows_master.tsv`,
