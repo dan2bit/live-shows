@@ -20,6 +20,12 @@ title: "Guitar Women Who Have Signed This Hat"
 output_html: guitar-women.html
 print_pdf: guitar-women.pdf
 
+# Print-only adjustments to the shared layout. The playlist covers every signer,
+# not just these, so its QR footer is left off this sheet. The list is short
+# enough to afford more line spacing than the full list's 1.12.
+print_playlist_footer: false
+print_entry_line_height: 1.4
+
 signers:
   - Sue Foley
   - Samantha Fish
