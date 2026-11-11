@@ -22,7 +22,14 @@ Two guarantees, both learned by testing rather than assumed:
 Usage (repo root, after render_signers.py):
     pip install weasyprint
     python3 tools/signers/render_signers_pdf.py
+
+A variant (tools/signers/variants/<name>.yaml - see render_signers.py) prints
+the same way, to the variant's own print_pdf:
+    python3 tools/signers/render_signers_pdf.py --variant guitar-women
+It is rendered in memory from a fresh render rather than from a file on disk,
+so a variant's PDF needs no committed HTML page behind it.
 """
+import argparse
 import datetime
 import os
 import sys
@@ -40,11 +47,20 @@ def source_epoch(rows):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--variant", metavar="NAME",
+                         help="print tools/signers/variants/NAME.yaml instead of the full list")
+    args = parser.parse_args()
+
     cfg = rs.load_config()
     rows = rs.load_tsv(rs.HAT_SIGNATURES_TSV)
     if not rows:
         sys.exit("hat_signatures.tsv has no rows - nothing to print.")
-    if not rs.OUTPUT_HTML.is_file():
+    variant = rs.load_variant(args.variant) if args.variant else None
+    if variant:
+        rows.sort(key=lambda r: int(r["seq"]))
+        rows = rs.select_rows(rows, variant)
+    elif not rs.OUTPUT_HTML.is_file():
         sys.exit(f"{rs.OUTPUT_HTML} does not exist - run render_signers.py first.")
 
     os.environ["SOURCE_DATE_EPOCH"] = source_epoch(rows)
@@ -53,14 +69,20 @@ def main():
     except ImportError:
         sys.exit("weasyprint is required for the print PDF: pip install weasyprint")
 
-    document = HTML(filename=str(rs.OUTPUT_HTML)).render()
+    if variant:
+        # base_url is where the page would sit, so the template's ../static
+        # asset paths resolve exactly as they do for the full list.
+        page = rs.output_html_path(variant)
+        document = HTML(string=rs.render(variant), base_url=page.as_uri()).render()
+    else:
+        document = HTML(filename=str(rs.OUTPUT_HTML)).render()
     pages = len(document.pages)
     if pages != 1:
         sys.exit(f"print layout is {pages} pages, must be exactly 1 - raise print_column_count "
                   f"in tools/signers/signers.yaml or tighten the print font sizes in "
                   f"tools/signers/signers.template.html, then rebuild.")
 
-    out = rs.OUTPUT_HTML.parent / cfg["print_pdf"]
+    out = rs.OUTPUT_HTML.parent / (variant or cfg)["print_pdf"]
     document.write_pdf(str(out))
     print(f"wrote {out} ({out.stat().st_size} bytes, 1 page)")
 
