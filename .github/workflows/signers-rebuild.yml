@@ -65,6 +65,17 @@ name: Rebuild signers page
 # of it. When the page did not change, the committed PDF is not behind the
 # page, so the same failure (a package mirror that will not resolve, say) is
 # reported as a warning and the run stays green.
+#
+# The system packages come from a cache when they can. The runner image
+# already carries most of what WeasyPrint needs; the few packages it lacks
+# are downloaded once as .deb files, kept with actions/cache, and installed
+# from there on later runs with no network at all. That takes the Ubuntu
+# package mirrors out of the ordinary path - an outage there once failed
+# this job three runs in a row - and it also holds those library versions
+# still between runs, which is what the byte-reproducible PDF wants anyway.
+# The mirrors are only used when the cache is empty (GitHub evicts a cache
+# that goes a week unused) or when a cached package no longer installs
+# because the image moved on; either way the fresh download is cached again.
 
 on:
   push:
@@ -155,31 +166,58 @@ jobs:
             echo "build=false" >> "$GITHUB_OUTPUT"
             echo "Skipping the print PDF: the page is unchanged and the push touched nothing the PDF alone depends on."
           fi
+      - name: Restore cached PDF system packages
+        id: debcache
+        if: steps.gate.outputs.build == 'true'
+        continue-on-error: true
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/signers-pdf-debs
+          # A cache entry cannot be overwritten, so each save gets its own key
+          # and a restore takes the newest one that shares the prefix. The
+          # prefix carries the runner image, so moving the runs-on pin starts
+          # a fresh set of packages.
+          key: signers-pdf-debs-ubuntu-24.04-${{ github.run_id }}
+          restore-keys: |
+            signers-pdf-debs-ubuntu-24.04-
       - name: Install PDF dependencies
         id: pdfdeps
         if: steps.gate.outputs.build == 'true'
         continue-on-error: true
         run: |
           PACKAGES="libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fonts-liberation"
-          # apt-get update exits 0 when a mirror cannot be reached (it only
-          # warns and falls back to the image's own package lists), so the
-          # install is what shows whether the mirror is really usable.
-          apt_install() {
-            sudo apt-get update -qq -o Acquire::Retries=3
-            sudo apt-get install -y -qq -o Acquire::Retries=3 $PACKAGES
+          DEBS="$HOME/signers-pdf-debs"
+          mkdir -p "$DEBS"
+
+          missing_packages() {
+            for pkg in $PACKAGES; do
+              dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || printf '%s ' "$pkg"
+            done
           }
-          if ! apt_install; then
-            # The runner image points apt at an in-datacenter mirror. When that
-            # hostname will not resolve, go to the canonical archive instead.
-            # Same packages and versions either way, so the PDF bytes do not
-            # depend on which mirror served them.
-            echo "::warning::apt failed against the runner's default mirror - retrying against archive.ubuntu.com"
-            if [ -f /etc/apt/apt-mirrors.txt ]; then
-              sudo sed -i 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' /etc/apt/apt-mirrors.txt
-            fi
-            apt_install
+
+          missing="$(missing_packages)"
+          if [ -z "$missing" ]; then
+            echo "All PDF system packages are already on the runner image."
+          elif ls "$DEBS"/*.deb >/dev/null 2>&1 && sudo dpkg -i "$DEBS"/*.deb && [ -z "$(missing_packages)" ]; then
+            echo "Installed from the package cache, no download needed: $missing"
+          else
+            # Nothing cached, or the cached packages no longer fit the image.
+            # Download the missing ones afresh and keep them for next time.
+            echo "Downloading from the package mirrors: $missing"
+            rm -f "$DEBS"/*.deb
+            sudo apt-get update -qq -o Acquire::Retries=3
+            (cd "$DEBS" && apt-get download -o Acquire::Retries=3 $missing)
+            sudo apt-get install -y -qq -o Acquire::Retries=3 $PACKAGES
+            echo "fetched=true" >> "$GITHUB_OUTPUT"
           fi
           pip install "weasyprint==70.0"
+      - name: Save downloaded PDF system packages
+        if: steps.pdfdeps.outputs.fetched == 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: ~/signers-pdf-debs
+          key: signers-pdf-debs-ubuntu-24.04-${{ github.run_id }}
       - name: Rebuild the print PDF
         id: pdf
         if: steps.gate.outputs.build == 'true' && steps.pdfdeps.outcome == 'success'
