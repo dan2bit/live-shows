@@ -94,10 +94,22 @@ reporting nothing, every time, with no error.
   it is not a send-as credential for the inbox it writes to. A digest job that
   finds it unset emits a `::warning::` naming the count that went unmailed
   rather than failing, so a missing secret never costs the run.
-- **Concurrency:** every committing workflow has its own `concurrency` group
-  with `cancel-in-progress: false` so runs queue rather than clobber.
-- **Race safety:** all bot pushes `git pull --rebase`/rebase before `git push`
-  to prevent bot-vs-bot races.
+- **Concurrency:** every committing workflow has a `concurrency` group with
+  `cancel-in-progress: false` so runs queue rather than clobber. Each has its
+  own group, except the three that write `data/artist_spotify.json`
+  (`refresh-releases`, `new-artist-weekly`, `refresh-images-quarterly`), which
+  share `artist-spotify-cache` so no two of them hold that file at once.
+- **Build from `staging`:** a workflow that commits back checks out
+  `ref: staging`, never the commit that triggered it. Bot commits land on
+  staging first, so a run that built from its triggering `main` commit would
+  be working on a tree that can already be behind, and its rebase onto staging
+  would conflict with the output of the run before it.
+- **Race safety:** every bot push rebases onto `staging` first and retries a
+  rejected push. On a rebase conflict, a workflow whose output is wholly
+  generated (`artist-modal-index`, `recommend-index`, `cache-bust`) takes the
+  new staging tip, runs its generator again and pushes that; a workflow that
+  edits hand-maintained files, or whose output costs API calls to rebuild,
+  stops instead.
 - **Retrigger safety:** each generator's output file is deliberately absent
   from its own `paths:` filter; maintenance jobs are idempotent on the second
   (post-promotion) run.

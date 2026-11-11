@@ -5,6 +5,12 @@ name: Close photo issue
 # NOT trigger auto-promote). No [skip ci]: auto-promote must run to
 # fast-forward main.
 #
+# The job works on a checkout of `staging`, so the rows it edits are the newest
+# ones and the rebase below is normally a no-op. A rejected push (staging moved
+# in the moment between fetch and push) is retried; a rebase conflict is not,
+# because these are hand-edited files and the photo has already been filed on
+# the image server - rerunning that part is not this step's call to make.
+#
 # Triggered by a comment on a "Photos:" issue (one issue per show) that
 # BEGINS with a photo's own image-server share link, optionally followed by
 # tokens: artist="..." subtype=LEAF signed detail close. The handler resolves
@@ -57,6 +63,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
 
       - name: Set up Python
@@ -106,9 +113,21 @@ jobs:
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
             git commit -m "photo: filed from issue #${{ github.event.issue.number }}"
-            git fetch promote staging
-            git rebase promote/staging
-            git push promote HEAD:staging
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging - another commit changed the same lines of the show or album TSVs while this run was working. Nothing was pushed."
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
           fi
 
       - name: Reply with the links, and close on request

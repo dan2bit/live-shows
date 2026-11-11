@@ -5,6 +5,15 @@ name: Build artist_modal_index.json
 # auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
 # auto-promote to run. artist_modal_index.json is not a watched path, so promotion
 # back to main does not retrigger this workflow.
+#
+# The build runs on a checkout of `staging`, not the pushed `main` commit, even
+# though the trigger is a push to main. Two pushes that land close together
+# start two runs; if each built from its own triggering commit, the second
+# would rebuild the whole file from a tree that lacks the first run's output
+# and then fail to rebase onto it. Building from staging makes that rebase a
+# no-op in the ordinary case. If staging does gain its own copy of the output
+# while this run is working, the commit step does not give up: it takes the
+# new staging tip, runs the generator again there and pushes that.
 
 on:
   push:
@@ -41,9 +50,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # One definition of the generator, because the commit step runs it a
+      # second time when it has to rebuild on a staging tip that moved.
+      GENERATE: python3 scripts/build_artist_index.py
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -51,7 +65,7 @@ jobs:
       - name: Install deps
         run: pip install pyyaml
       - name: Generate index
-        run: python3 scripts/build_artist_index.py
+        run: $GENERATE
       - name: Commit to staging if changed
         run: |
           git add data/artist_modal_index.json
@@ -70,15 +84,26 @@ jobs:
             git commit -m "ci: regenerate artist_modal_index.json"
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
-              git rebase promote/staging || {
-                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
-                exit 1
-              }
+              if ! git rebase promote/staging; then
+                # Two full rewrites of a generated file cannot be merged. Drop this
+                # run's copy, take staging as it now stands, and rebuild from those
+                # inputs - the result is what a later run would have produced anyway.
+                echo "rebase conflict on attempt $attempt - staging gained its own copy of the output; rebuilding on the new staging tip"
+                git rebase --abort || true
+                git reset --hard promote/staging
+                $GENERATE
+                git add data/artist_modal_index.json
+                if git diff --cached --quiet; then
+                  echo "staging already carries this output - nothing to commit."
+                  exit 0
+                fi
+                git commit -m "ci: regenerate artist_modal_index.json"
+              fi
               if git push promote HEAD:staging; then
                 echo "push succeeded on attempt $attempt"
                 exit 0
               fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
               sleep "$attempt"
             done
             echo "gave up after 5 attempts"

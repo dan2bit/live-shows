@@ -5,6 +5,12 @@ name: Potentials maintenance
 # trigger auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
 # auto-promote to run. A pruned potential.tsv promoted back to main retriggers
 # this workflow, but the second run finds nothing to prune (idempotent).
+#
+# The job works on a checkout of `staging`, not the pushed `main` commit:
+# staging is where the next edit to these files lands, so reconciling and
+# pruning there means the rebase below is a no-op unless staging moves while
+# the job runs. These files are edited by hand as well, so a rebase conflict
+# here can be a real one - the job stops instead of rebuilding over it.
 
 on:
   push:
@@ -28,6 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
 
       - name: Set up Python
@@ -63,14 +70,14 @@ jobs:
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
-                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                echo "rebase conflict on staging - another commit changed the same lines of the potentials or fast-track files while this run was working. Nothing was pushed."
                 exit 1
               }
               if git push promote HEAD:staging; then
                 echo "push succeeded on attempt $attempt"
                 exit 0
               fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
               sleep "$attempt"
             done
             echo "gave up after 5 attempts"

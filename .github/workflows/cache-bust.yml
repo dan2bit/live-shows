@@ -20,6 +20,17 @@ name: Cache-bust static assets
 # auto-promote — GITHUB_TOKEN pushes would not). No [skip ci]: we WANT
 # auto-promote to run. No host page is a watched path, so promotion back to
 # main does not retrigger this workflow.
+#
+# The rewrite runs on a checkout of `staging`, not the pushed `main` commit.
+# The host pages are edited by hand as well as by this job, and staging is
+# where those edits land first, so that is the copy to rewrite. If staging
+# moves under the run and the rebase conflicts, the job takes the new staging
+# tip and applies the same rewrite again there, which keeps the other edit and
+# still lands the version bump. The rewrite and the commit share one step so
+# the retry runs the identical sed pass, not a second copy of it.
+#
+# The version token is still the pushed main commit's SHA: it only has to
+# change when an asset changes, and that commit is the one that changed it.
 
 on:
   push:
@@ -45,9 +56,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
 
-      - name: Rewrite asset version strings in the host pages
+      - name: Rewrite asset version strings and commit to staging if changed
         run: |
           SHA="${{ github.sha }}"
           SHORT="${SHA:0:8}"
@@ -56,29 +68,27 @@ jobs:
                  festival/festival_poster.html festival/index.html \
                  tools/signers/signers.template.html signers/index.html"
 
-          # Replace any existing ?v=... or no version at all, for each asset.
-          # Patterns handle both: href="styles.css" and href="styles.css?v=abc123",
-          # and \1 captures an optional leading path (../../../ on the graph page)
-          # so the same pass rewrites a repo-relative reference from any depth.
-          sed -i \
-            -e "s|href=\"\([^\"]*/\)\?styles\.css\(?[^\"]*\)\?\"|href=\"\1styles.css?v=${SHORT}\"|g" \
-            -e "s|href=\"\([^\"]*/\)\?artist-modal\.css\(?[^\"]*\)\?\"|href=\"\1artist-modal.css?v=${SHORT}\"|g" \
-            -e "s|src=\"\([^\"]*/\)\?app\.js\(?[^\"]*\)\?\"|src=\"\1app.js?v=${SHORT}\"|g" \
-            -e "s|src=\"\([^\"]*/\)\?recommend\.js\(?[^\"]*\)\?\"|src=\"\1recommend.js?v=${SHORT}\"|g" \
-            -e "s|src=\"\([^\"]*/\)\?artist-modal\.js\(?[^\"]*\)\?\"|src=\"\1artist-modal.js?v=${SHORT}\"|g" \
-            $HOSTS
+          rewrite_hosts() {
+            # Replace any existing ?v=... or no version at all, for each asset.
+            # Patterns handle both: href="styles.css" and href="styles.css?v=abc123",
+            # and \1 captures an optional leading path (../../../ on the graph page)
+            # so the same pass rewrites a repo-relative reference from any depth.
+            sed -i \
+              -e "s|href=\"\([^\"]*/\)\?styles\.css\(?[^\"]*\)\?\"|href=\"\1styles.css?v=${SHORT}\"|g" \
+              -e "s|href=\"\([^\"]*/\)\?artist-modal\.css\(?[^\"]*\)\?\"|href=\"\1artist-modal.css?v=${SHORT}\"|g" \
+              -e "s|src=\"\([^\"]*/\)\?app\.js\(?[^\"]*\)\?\"|src=\"\1app.js?v=${SHORT}\"|g" \
+              -e "s|src=\"\([^\"]*/\)\?recommend\.js\(?[^\"]*\)\?\"|src=\"\1recommend.js?v=${SHORT}\"|g" \
+              -e "s|src=\"\([^\"]*/\)\?artist-modal\.js\(?[^\"]*\)\?\"|src=\"\1artist-modal.js?v=${SHORT}\"|g" \
+              $HOSTS
+          }
 
+          rewrite_hosts
           echo "Updated asset references to ?v=${SHORT}"
           grep -HE '(app\.js|recommend\.js|artist-modal\.(js|css)|styles\.css)' $HOSTS
 
-      - name: Commit to staging if changed
-        run: |
-          git add index.html tools/research/graph/artist-graph.html \
-                  tools/festival/poster_timeline.template.html tools/festival/poster_crescendo.template.html \
-                  festival/festival_poster.html festival/index.html \
-                  tools/signers/signers.template.html signers/index.html
+          git add $HOSTS
           if git diff --cached --quiet; then
-            echo "host pages unchanged — nothing to commit."
+            echo "host pages unchanged - nothing to commit."
           else
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.PROMOTE_DEPLOY_KEY }}" > "$HOME/.ssh/promote_key"
@@ -92,15 +102,26 @@ jobs:
             git commit -m "ci: cache-bust static assets"
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
-              git rebase promote/staging || {
-                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
-                exit 1
-              }
+              if ! git rebase promote/staging; then
+                # Staging changed the same lines of a host page. Drop this run's
+                # copy, take staging as it now stands, and apply the rewrite again
+                # there - that keeps the other edit and still lands the bump.
+                echo "rebase conflict on attempt $attempt - staging changed the same lines of a host page; rewriting on the new staging tip"
+                git rebase --abort || true
+                git reset --hard promote/staging
+                rewrite_hosts
+                git add $HOSTS
+                if git diff --cached --quiet; then
+                  echo "staging already carries this output - nothing to commit."
+                  exit 0
+                fi
+                git commit -m "ci: cache-bust static assets"
+              fi
               if git push promote HEAD:staging; then
                 echo "push succeeded on attempt $attempt"
                 exit 0
               fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
               sleep "$attempt"
             done
             echo "gave up after 5 attempts"

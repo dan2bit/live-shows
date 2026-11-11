@@ -5,6 +5,11 @@ name: Close playlist issue
 # staging would NOT trigger auto-promote). No [skip ci]: auto-promote must run to
 # fast-forward main. Triggered by a comment carrying the playlist URL on a
 # "Playlist:" issue.
+#
+# The job works on a checkout of `staging`, so the row it edits is the newest
+# one and the rebase below is normally a no-op. A rejected push (staging moved
+# in the moment between fetch and push) is retried; a rebase conflict on this
+# hand-edited file stops the job, and posting the comment again reruns it.
 
 on:
   issue_comment:
@@ -34,6 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
 
       - name: Set up Python
@@ -127,9 +133,21 @@ jobs:
             git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
 
             git commit -m "playlist: ${{ steps.extract.outputs.show_date }} — added URL from issue #${{ github.event.issue.number }}"
-            git fetch promote staging
-            git rebase promote/staging
-            git push promote HEAD:staging
+            for attempt in 1 2 3 4 5; do
+              git fetch promote staging
+              git rebase promote/staging || {
+                echo "rebase conflict on staging - another commit changed the same lines of data/live_shows_current.tsv while this run was working. Nothing was pushed."
+                exit 1
+              }
+              if git push promote HEAD:staging; then
+                echo "push succeeded on attempt $attempt"
+                exit 0
+              fi
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
+              sleep "$attempt"
+            done
+            echo "gave up after 5 attempts"
+            exit 1
           fi
 
       - name: Close the issue

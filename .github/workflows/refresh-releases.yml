@@ -86,6 +86,14 @@ name: Daily release refresh (spotify_cache)
 # Mail goes out only when the digest found something. Silence on a quiet day is
 # the point - an alert channel that mails you to say nothing happened is one you
 # stop reading.
+#
+# This job works on a checkout of `staging`, and shares the concurrency group
+# `artist-spotify-cache` with the other two workflows that write
+# data/artist_spotify.json (refresh-releases.yml, new-artist-weekly.yml and
+# refresh-images-quarterly.yml). Between them that removes the stale-base
+# rebase conflict: no two of the three ever hold the file at once, and each
+# starts from the newest copy. A conflict is still fatal here, on purpose -
+# the cache cannot be rebuilt without spending the Spotify calls again.
 
 on:
   schedule:
@@ -110,7 +118,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: refresh-releases
+  group: artist-spotify-cache
   cancel-in-progress: false
 
 jobs:
@@ -119,6 +127,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: staging
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -281,14 +290,14 @@ jobs:
             for attempt in 1 2 3 4 5; do
               git fetch promote staging
               git rebase promote/staging || {
-                echo "rebase conflict on staging — bailing (not a race, a real conflict)"
+                echo "rebase conflict on staging - another commit changed the same lines of data/artist_spotify.json while this run was working. Nothing was pushed."
                 exit 1
               }
               if git push promote HEAD:staging; then
                 echo "push succeeded on attempt $attempt"
                 exit 0
               fi
-              echo "push rejected on attempt $attempt (staging moved) — retrying after ${attempt}s backoff"
+              echo "push rejected on attempt $attempt (staging moved) - retrying after ${attempt}s backoff"
               sleep "$attempt"
             done
             echo "gave up after 5 attempts"
