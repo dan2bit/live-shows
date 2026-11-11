@@ -147,6 +147,12 @@ def load_variant(name):
     if variant["output_html"] == OUTPUT_HTML.name:
         sys.exit(f"{path.relative_to(REPO_ROOT)}: output_html may not be "
                   f"{OUTPUT_HTML.name} - that is the full list.")
+    line_height = variant.get("print_entry_line_height")
+    if line_height is not None and not (
+            isinstance(line_height, (int, float)) and not isinstance(line_height, bool)
+            and 1 <= line_height <= 3):
+        sys.exit(f"{path.relative_to(REPO_ROOT)}: print_entry_line_height must be a "
+                  f"number from 1 to 3, got {line_height!r}.")
     variant["name"] = name
     return variant
 
@@ -178,6 +184,23 @@ def select_rows(rows, variant):
         sys.exit(f"variant {variant['name']}: no hat_signatures.tsv row for: "
                   f"{', '.join(missing)} - names must match the signer column exactly.")
     return picked
+
+
+def variant_print_css(variant):
+    """Print-only CSS a variant adds on top of the shared template, or "" when
+    it asks for nothing. Two optional keys: print_playlist_footer: false hides
+    the playlist QR footer, and print_entry_line_height sets the line spacing
+    of the list (the template's own value suits the full list, which has to
+    fit far more names on the sheet)."""
+    rules = []
+    if variant.get("print_playlist_footer") is False:
+        rules.append(".page-footer{display:none;}")
+    if variant.get("print_entry_line_height") is not None:
+        rules.append(f".entry{{line-height:{variant['print_entry_line_height']};}}")
+    if not rules:
+        return ""
+    return "  /* Variant overrides (" + variant["name"] + ") */\n  @media print{\n" \
+        + "".join(f"    {rule}\n" for rule in rules) + "  }\n"
 
 
 def output_html_path(variant=None):
@@ -341,6 +364,14 @@ def render(variant=None):
     artists, aliases = load_artist_index()
 
     template = TEMPLATE_HTML.read_text(encoding="utf-8")
+    if variant:
+        # Appended at the end of the template's one stylesheet so the rules win
+        # over the shared print rules by order. The template itself is left
+        # alone, which keeps the full list's output byte-identical.
+        if template.count("</style>") != 1:
+            sys.exit("signers.template.html no longer has exactly one </style> - "
+                      "variant print overrides have nowhere unambiguous to go.")
+        template = template.replace("</style>", variant_print_css(variant) + "</style>")
     playlist_url_short = re.sub(r"^https?://", "", cfg["playlist_url"])
     page_url_short = re.sub(r"^https?://", "", cfg["page_url"])
     og_w, og_h = png_size(REPO_ROOT / cfg["og_image"])
