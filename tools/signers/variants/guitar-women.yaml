@@ -1,0 +1,53 @@
+# Variant of the hat signers list: the guitar women.
+#
+# A subset of the signers, in a hand-picked order instead of the order they
+# signed. The scaffolding is Sue Foley's book "Guitar Women" - this is the list
+# of hat signers that could sit on its flyleaf, Sue herself being the one name
+# on both. The order is a subjective ranking and is edited here by hand; it is
+# rendered without numbers.
+#
+# Build (repo root):
+#   python3 tools/signers/render_signers_pdf.py --variant guitar-women
+#
+# Every name must match the signer column of data/show_goals/hat_signatures.tsv.
+# title, description and print_pdf override the same keys in signers.yaml;
+# everything else (banner, QR codes, print layout) is shared with the full list.
+
+title: "Guitar Women Who Have Signed This Hat"
+
+# Written next to signers/index.html. output_html is only produced on request
+# (render_signers.py --variant guitar-women); the PDF does not need it.
+output_html: guitar-women.html
+print_pdf: guitar-women.pdf
+
+signers:
+  - Sue Foley
+  - Samantha Fish
+  - Ana Popović
+  - Laura Chavez
+  - Megan Lovell
+  - Carolyn Wonderland
+  - Orianthi
+  - Jackie Venson
+  - Joanne Shaw Taylor
+  - Ally Venable
+  - Ghalia Volt
+  - Rebecca Lovell
+  - Danielle Nicole
+  - Muireann Bradley
+  - Yasmin Williams
+  - Mohini Dey
+  - Amythyst Kiah
+  - Valerie June
+  - Margaret Glaspy
+  - Suzanne Vega
+  - Ruthie Foster
+  - ZZ Ward
+  - Jesse Williams
+  - Kanene Pipkin
+  - Jax Hollow
+  - Judith Hill
+  - Whitney Mongé
+  - Cary Ann Hearst
+  - Lindsay Lou
+  - Sabine McCalla
