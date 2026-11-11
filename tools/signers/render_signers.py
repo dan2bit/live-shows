@@ -203,7 +203,9 @@ def am_norm(s):
     if m:
         s = m.group(2) + " " + m.group(1)
     s = unicodedata.normalize("NFKD", s)
-    s = re.sub(r"[̀-ͯ]", "", s).lower()
+    # Combining diacritical marks, U+0300 to U+036F. Spelled with chr() so the
+    # range survives write paths that decode unicode escapes in source text.
+    s = re.sub("[" + chr(0x0300) + "-" + chr(0x036F) + "]", "", s).lower()
     s = re.sub(r"^\s*(the|a|an)\s+", "", s)
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
