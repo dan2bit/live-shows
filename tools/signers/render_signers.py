@@ -20,6 +20,16 @@ Usage:
     python3 tools/signers/render_signers.py --check     # exit 1 if the committed
                                                           # file doesn't match a
                                                           # fresh render
+    python3 tools/signers/render_signers.py --variant guitar-women
+                                                          # write a curated subset
+                                                          # (see Variants below)
+
+Variants: tools/signers/variants/<name>.yaml names a subset of the signers in
+a hand-picked order, with its own title and output filenames. A variant page
+uses the same template and the same per-entry markup as the full list - only
+the selection and the order differ, and the entries are not grouped by year.
+The full page ignores variants entirely, so adding one never changes
+signers/index.html.
 
 Run from the repo root - every path below is relative to it.
 """
@@ -44,6 +54,9 @@ SITE_CONFIG_YAML = REPO_ROOT / "config.yaml"
 CONFIG_YAML = Path(__file__).resolve().parent / "signers.yaml"
 TEMPLATE_HTML = Path(__file__).resolve().parent / "signers.template.html"
 OUTPUT_HTML = REPO_ROOT / "signers" / "index.html"
+VARIANTS_DIR = Path(__file__).resolve().parent / "variants"
+# The only signers.yaml keys a variant file may override.
+VARIANT_OVERRIDES = ("title", "description", "print_pdf")
 
 
 def load_tsv(path):
@@ -113,6 +126,87 @@ def short_venue_names():
     return names
 
 
+def load_variant(name):
+    """tools/signers/variants/<name>.yaml as a dict, validated. Required keys:
+    output_html (a bare filename, written next to index.html so the template's
+    ../ asset paths still resolve), print_pdf, and signers (the ordered list)."""
+    path = VARIANTS_DIR / f"{name}.yaml"
+    if not path.is_file():
+        known = sorted(p.stem for p in VARIANTS_DIR.glob("*.yaml")) if VARIANTS_DIR.is_dir() else []
+        sys.exit(f"no variant named {name!r} - expected {path.relative_to(REPO_ROOT)}. "
+                  f"Known variants: {', '.join(known) or 'none'}.")
+    with open(path, encoding="utf-8") as f:
+        variant = yaml.safe_load(f) or {}
+    for key in ("output_html", "print_pdf", "signers"):
+        if not variant.get(key):
+            sys.exit(f"{path.relative_to(REPO_ROOT)}: {key} is missing.")
+    for key in ("output_html", "print_pdf"):
+        if Path(variant[key]).name != variant[key]:
+            sys.exit(f"{path.relative_to(REPO_ROOT)}: {key} must be a bare filename, "
+                      f"got {variant[key]!r}.")
+    if variant["output_html"] == OUTPUT_HTML.name:
+        sys.exit(f"{path.relative_to(REPO_ROOT)}: output_html may not be "
+                  f"{OUTPUT_HTML.name} - that is the full list.")
+    line_height = variant.get("print_entry_line_height")
+    if line_height is not None and not (
+            isinstance(line_height, (int, float)) and not isinstance(line_height, bool)
+            and 1 <= line_height <= 3):
+        sys.exit(f"{path.relative_to(REPO_ROOT)}: print_entry_line_height must be a "
+                  f"number from 1 to 3, got {line_height!r}.")
+    variant["name"] = name
+    return variant
+
+
+def select_rows(rows, variant):
+    """The variant's signers, in the variant's order. Names are compared after
+    Unicode NFC normalisation, so an accented name matches whichever form the
+    TSV or the YAML happens to store. A listed name with no signature row, or
+    one listed twice, fails the build; a signer with more than one row (a
+    second signature) contributes the earliest."""
+    def key(name):
+        return unicodedata.normalize("NFC", (name or "").strip())
+
+    by_name = {}
+    for row in rows:  # already in seq order, so the first row seen is the earliest
+        by_name.setdefault(key(row["signer"]), row)
+
+    picked, missing, seen = [], [], set()
+    for name in variant["signers"]:
+        k = key(str(name))
+        if k in seen:
+            sys.exit(f"variant {variant['name']}: {name!r} is listed twice.")
+        seen.add(k)
+        if k in by_name:
+            picked.append(by_name[k])
+        else:
+            missing.append(str(name))
+    if missing:
+        sys.exit(f"variant {variant['name']}: no hat_signatures.tsv row for: "
+                  f"{', '.join(missing)} - names must match the signer column exactly.")
+    return picked
+
+
+def variant_print_css(variant):
+    """Print-only CSS a variant adds on top of the shared template, or "" when
+    it asks for nothing. Two optional keys: print_playlist_footer: false hides
+    the playlist QR footer, and print_entry_line_height sets the line spacing
+    of the list (the template's own value suits the full list, which has to
+    fit far more names on the sheet)."""
+    rules = []
+    if variant.get("print_playlist_footer") is False:
+        rules.append(".page-footer{display:none;}")
+    if variant.get("print_entry_line_height") is not None:
+        rules.append(f".entry{{line-height:{variant['print_entry_line_height']};}}")
+    if not rules:
+        return ""
+    return "  /* Variant overrides (" + variant["name"] + ") */\n  @media print{\n" \
+        + "".join(f"    {rule}\n" for rule in rules) + "  }\n"
+
+
+def output_html_path(variant=None):
+    return OUTPUT_HTML.parent / variant["output_html"] if variant else OUTPUT_HTML
+
+
 def fmt_date(iso_date):
     """'2023-09-08' -> '9/8/23' (matches the source doc's own format)."""
     y, m, d = (int(p) for p in iso_date.split("-"))
@@ -132,7 +226,9 @@ def am_norm(s):
     if m:
         s = m.group(2) + " " + m.group(1)
     s = unicodedata.normalize("NFKD", s)
-    s = re.sub(r"[\u0300-\u036f]", "", s).lower()
+    # Combining diacritical marks, U+0300 to U+036F. Spelled with chr() so the
+    # range survives write paths that decode unicode escapes in source text.
+    s = re.sub("[" + chr(0x0300) + "-" + chr(0x036F) + "]", "", s).lower()
     s = re.sub(r"^\s*(the|a|an)\s+", "", s)
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
@@ -177,9 +273,13 @@ def lookup_slug(name, artists, aliases):
     return (slug, True) if slug is not None else (None, False)
 
 
-def build_entries_html(rows, venue_short, artists, aliases):
+def build_entries_html(rows, venue_short, artists, aliases, group_by_year=True):
     """Group by year (in seq/ledger order, which is already chronological
-    in the data) and render each entry. The `notes` column is deliberately
+    in the data) and render each entry. With group_by_year=False the rows are
+    rendered as one list in the order given - a variant's hand-picked order is
+    not chronological, so year groups would reshuffle it.
+
+    The `notes` column is deliberately
     NOT rendered here - it carries internal photo-panel-tracking shorthand
     ("panel anchor (Dan)", raw PXL_ filenames) that was never meant for a
     public page. See #412, open decision 3, for the one case (Talia Segal's
@@ -210,12 +310,18 @@ def build_entries_html(rows, venue_short, artists, aliases):
         return f'<a class="{classes}" href="#artist/{html.escape(slug, quote=True)}">{text}</a>'
 
     years = OrderedDict()
-    for row in rows:
-        years.setdefault(row["show_date"][:4], []).append(row)
+    if group_by_year:
+        for row in rows:
+            years.setdefault(row["show_date"][:4], []).append(row)
+    else:
+        years[None] = list(rows)
 
     out = []
     for year, entries in years.items():
-        out.append(f'    <section class="year-group">\n      <h2 class="year">{year}</h2>\n      <ul class="entry-list">')
+        if year is None:
+            out.append('    <section class="year-group">\n      <ul class="entry-list">')
+        else:
+            out.append(f'    <section class="year-group">\n      <h2 class="year">{year}</h2>\n      <ul class="entry-list">')
         for r in entries:
             attribution = (r.get("attribution") or "").strip()
             band = re.match(r"^of\s+(.+)$", attribution, re.I)
@@ -236,21 +342,41 @@ def build_entries_html(rows, venue_short, artists, aliases):
     return "\n".join(out), unlinked, folded
 
 
-def render():
+def render(variant=None):
     cfg = load_config()
     site = load_site_config()
     rows = load_tsv(HAT_SIGNATURES_TSV)
     if not rows:
         sys.exit("hat_signatures.tsv has no rows - refusing to render an empty page.")
     rows.sort(key=lambda r: int(r["seq"]))  # ledger order; also the chronological order
+    if variant:
+        rows = select_rows(rows, variant)
+        cfg = {**cfg, **{k: variant[k] for k in VARIANT_OVERRIDES if variant.get(k)}}
+        # A variant's order is not chronological, so its date range is the
+        # earliest and latest signature among the rows it selected.
+        first_date = min(r["show_date"] for r in rows)
+        latest_date = max(r["show_date"] for r in rows)
+    else:
+        first_date, latest_date = rows[0]["show_date"], rows[-1]["show_date"]
+    output_html = output_html_path(variant)
+    canonical = f"{site['pages_base']}/{OUTPUT_HTML.parent.name}/" + (output_html.name if variant else "")
     venue_short = short_venue_names()
     artists, aliases = load_artist_index()
 
     template = TEMPLATE_HTML.read_text(encoding="utf-8")
+    if variant:
+        # Appended at the end of the template's one stylesheet so the rules win
+        # over the shared print rules by order. The template itself is left
+        # alone, which keeps the full list's output byte-identical.
+        if template.count("</style>") != 1:
+            sys.exit("signers.template.html no longer has exactly one </style> - "
+                      "variant print overrides have nowhere unambiguous to go.")
+        template = template.replace("</style>", variant_print_css(variant) + "</style>")
     playlist_url_short = re.sub(r"^https?://", "", cfg["playlist_url"])
     page_url_short = re.sub(r"^https?://", "", cfg["page_url"])
     og_w, og_h = png_size(REPO_ROOT / cfg["og_image"])
-    entries_html, unlinked, folded = build_entries_html(rows, venue_short, artists, aliases)
+    entries_html, unlinked, folded = build_entries_html(
+        rows, venue_short, artists, aliases, group_by_year=not variant)
     if folded:
         print("signers: linked through the trailing-Band equivalence: "
               + ", ".join(f"{n} -> {s}" for n, s in folded.items()), file=sys.stderr)
@@ -262,14 +388,14 @@ def render():
         "TITLE": html.escape(cfg["title"]),
         "DESCRIPTION": html.escape(cfg["description"]),
         "SITE_TITLE": html.escape(site["title"]),
-        "CANONICAL_URL": html.escape(f"{site['pages_base']}/{OUTPUT_HTML.parent.name}/"),
+        "CANONICAL_URL": html.escape(canonical),
         "OG_IMAGE_URL": html.escape(f"{site['pages_base']}/{cfg['og_image']}"),
         "OG_IMAGE_WIDTH": str(og_w),
         "OG_IMAGE_HEIGHT": str(og_h),
         "BANNER_ALT": html.escape(cfg["banner_alt"]),
         "COUNT": str(len(rows)),
-        "FIRST_DATE": fmt_date(rows[0]["show_date"]),
-        "LATEST_DATE": fmt_date(rows[-1]["show_date"]),
+        "FIRST_DATE": fmt_date(first_date),
+        "LATEST_DATE": fmt_date(latest_date),
         "BANNER_SVG": cfg["banner_svg"],
         "SITE_QR": cfg["site_qr"],
         "PLAYLIST_URL": html.escape(cfg["playlist_url"]),
@@ -296,24 +422,31 @@ def render():
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true",
-                         help="exit 1 if signers/index.html doesn't match a fresh render, without writing")
+                         help="exit 1 if the output file doesn't match a fresh render, without writing")
+    parser.add_argument("--variant", metavar="NAME",
+                         help="render tools/signers/variants/NAME.yaml instead of the full list")
     args = parser.parse_args()
 
-    rendered = render()
+    variant = load_variant(args.variant) if args.variant else None
+    output_html = output_html_path(variant)
+    rendered = render(variant)
 
     if args.check:
-        if not OUTPUT_HTML.is_file():
-            sys.exit(f"{OUTPUT_HTML} does not exist - run without --check to create it.")
-        current = OUTPUT_HTML.read_text(encoding="utf-8")
+        if not output_html.is_file():
+            sys.exit(f"{output_html} does not exist - run without --check to create it.")
+        current = output_html.read_text(encoding="utf-8")
         if current != rendered:
-            sys.exit(f"{OUTPUT_HTML} is stale - it doesn't match a fresh render of the current inputs. "
-                      f"Run: python3 {Path(__file__).relative_to(REPO_ROOT)}")
-        print("signers/index.html is up to date.")
+            rerun = f"python3 {Path(__file__).relative_to(REPO_ROOT)}"
+            if variant:
+                rerun += f" --variant {variant['name']}"
+            sys.exit(f"{output_html} is stale - it doesn't match a fresh render of the current inputs. "
+                      f"Run: {rerun}")
+        print(f"{output_html.relative_to(REPO_ROOT)} is up to date.")
         return
 
-    OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_HTML.write_text(rendered, encoding="utf-8")
-    print(f"wrote {OUTPUT_HTML} ({len(rendered)} bytes)")
+    output_html.parent.mkdir(parents=True, exist_ok=True)
+    output_html.write_text(rendered, encoding="utf-8")
+    print(f"wrote {output_html} ({len(rendered)} bytes)")
 
 
 if __name__ == "__main__":
