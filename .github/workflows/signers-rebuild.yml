@@ -52,6 +52,19 @@ name: Rebuild signers page
 # the PDF step are allowed to fail; the commit step still lands the
 # refreshed page, and the last step then fails the run so the problem is
 # visible instead of quietly leaving a stale PDF behind.
+#
+# The PDF is only attempted when it could differ. The page is rebuilt first
+# (it needs nothing but pyyaml), and the gate step then asks whether the PDF
+# has anything new to print: the page changed, the PDF file is missing, the
+# push touched something the PDF depends on that the page does not (the PDF
+# script, the banner and QR images, this file), or the run was started by
+# hand. Most runs are started by a watched file that leaves the page
+# identical, and those now skip the system packages and WeasyPrint entirely.
+#
+# A PDF that could not be built fails the run only when the page moved ahead
+# of it. When the page did not change, the committed PDF is not behind the
+# page, so the same failure (a package mirror that will not resolve, say) is
+# reported as a warning and the run stays green.
 
 on:
   push:
@@ -98,18 +111,78 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install pyyaml
-      - name: Install PDF dependencies
-        id: pdfdeps
-        continue-on-error: true
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fonts-liberation
-          pip install "weasyprint==70.0"
       - name: Rebuild signers/index.html
         run: python3 tools/signers/render_signers.py
+      - name: Decide whether the print PDF needs rebuilding
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          # Inputs the PDF has that the page does not: a change to any of these
+          # can alter the PDF while leaving signers/index.html byte-identical.
+          PDF_ONLY_INPUTS=".github/workflows/signers-rebuild.yml tools/signers/render_signers_pdf.py static/hat-banner.svg static/hat-playlist-qr.svg static/redhat-bootlegs-qr.svg"
+
+          if [ -n "$(git status --porcelain -- signers/index.html)" ]; then
+            page_changed=true
+          else
+            page_changed=false
+          fi
+
+          pdf_name="$(python3 -c "import yaml; print(yaml.safe_load(open('tools/signers/signers.yaml'))['print_pdf'])")"
+
+          reason=""
+          if [ "$page_changed" = "true" ]; then
+            reason="signers/index.html changed"
+          elif [ ! -f "signers/$pdf_name" ]; then
+            reason="signers/$pdf_name does not exist yet"
+          elif [ "$EVENT_NAME" != "push" ]; then
+            reason="started by $EVENT_NAME"
+          elif ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null || ! git cat-file -e "$AFTER^{commit}" 2>/dev/null; then
+            # No usable before/after pair (first push, rewritten history): build
+            # rather than guess.
+            reason="the pushed range could not be read"
+          elif ! git diff --quiet "$BEFORE" "$AFTER" -- $PDF_ONLY_INPUTS; then
+            reason="the push touched a PDF-only input: $(git diff --name-only "$BEFORE" "$AFTER" -- $PDF_ONLY_INPUTS | tr '\n' ' ')"
+          fi
+
+          echo "page_changed=$page_changed" >> "$GITHUB_OUTPUT"
+          if [ -n "$reason" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            echo "Rebuilding the print PDF: $reason"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping the print PDF: the page is unchanged and the push touched nothing the PDF alone depends on."
+          fi
+      - name: Install PDF dependencies
+        id: pdfdeps
+        if: steps.gate.outputs.build == 'true'
+        continue-on-error: true
+        run: |
+          PACKAGES="libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fonts-liberation"
+          # apt-get update exits 0 when a mirror cannot be reached (it only
+          # warns and falls back to the image's own package lists), so the
+          # install is what shows whether the mirror is really usable.
+          apt_install() {
+            sudo apt-get update -qq -o Acquire::Retries=3
+            sudo apt-get install -y -qq -o Acquire::Retries=3 $PACKAGES
+          }
+          if ! apt_install; then
+            # The runner image points apt at an in-datacenter mirror. When that
+            # hostname will not resolve, go to the canonical archive instead.
+            # Same packages and versions either way, so the PDF bytes do not
+            # depend on which mirror served them.
+            echo "::warning::apt failed against the runner's default mirror - retrying against archive.ubuntu.com"
+            if [ -f /etc/apt/apt-mirrors.txt ]; then
+              sudo sed -i 's|azure\.archive\.ubuntu\.com|archive.ubuntu.com|g' /etc/apt/apt-mirrors.txt
+            fi
+            apt_install
+          fi
+          pip install "weasyprint==70.0"
       - name: Rebuild the print PDF
         id: pdf
-        if: steps.pdfdeps.outcome == 'success'
+        if: steps.gate.outputs.build == 'true' && steps.pdfdeps.outcome == 'success'
         continue-on-error: true
         run: python3 tools/signers/render_signers_pdf.py
       - name: Commit to staging if changed
@@ -145,8 +218,13 @@ jobs:
             echo "gave up after 5 attempts"
             exit 1
           fi
-      - name: Fail the run if the print PDF could not be built
-        if: steps.pdfdeps.outcome == 'failure' || steps.pdf.outcome == 'failure'
+      - name: Report a print PDF that could not be built
+        if: steps.gate.outputs.build == 'true' && (steps.pdfdeps.outcome == 'failure' || steps.pdf.outcome == 'failure')
+        env:
+          PAGE_CHANGED: ${{ steps.gate.outputs.page_changed }}
         run: |
-          echo "::error::signers/index.html was refreshed, but the print PDF was not (dependencies failed to install, or the list no longer fits one page). See the two PDF steps above."
-          exit 1
+          if [ "$PAGE_CHANGED" = "true" ]; then
+            echo "::error::signers/index.html was refreshed, but the print PDF was not (dependencies failed to install, or the list no longer fits one page). See the two PDF steps above."
+            exit 1
+          fi
+          echo "::warning::The print PDF could not be rebuilt (dependencies failed to install, or the list no longer fits one page - see the two PDF steps above). signers/index.html did not change in this run, so the committed PDF is not behind the page. If this run was started by a change to the PDF script, the banner or QR images, or this workflow, re-run it to pick that change up."
