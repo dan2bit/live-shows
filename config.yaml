@@ -187,6 +187,11 @@ badges:
     goals_decay: 0.4             # G-term decay: one flat series over ALL goal completion
                                  # events (any signature, any photo — equal bases). First
                                  # completion = 1-d (0.6); the k-th adds d^(k-1)-d^k.
+    purchases:                   # bonus term: music owned, from scripts/purchases.py
+      weight: 0.25               # share of the REMAINING gap to 1.0 a full collection closes
+      first: 0.7                 # how much of that the FIRST purchase earns (track or album alike)
+      decay: 0.8                 # each further purchase closes 1-decay (20%) of what is left
+      signed_bonus: 0.5          # what an autograph adds to a purchase's weight of 1
     # rarely touched:
     seen_scale: 2.5              # shows to reach ~63% of the seen score (higher = slower ramp)
     bands: {high: 0.60, medium: 0.30}    # gauge label cutoffs (low = below medium)

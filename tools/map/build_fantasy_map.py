@@ -613,12 +613,32 @@ LEGENDS = {
 }
 
 TIER_SCORE = {"Strong": 3, "Medium-Strong": 2, "Medium": 1, "Lower": 0.5, "Legacy": 2}
-def score(c):
+
+# Purchases: music Dan owns grows a settlement, so a collected-but-rarely-seen
+# act is not sized on attendance alone. The count comes from scripts/purchases.py - the
+# same reading, de-duplication, signed bonus and share() curve the affinity score uses.
+# The share answers "did I buy from this artist?" first: one purchase, track or album,
+# earns 0.7 of it, and each further one a small step more. Scaled by OWN_MAX, a first
+# purchase is worth +2.1 and a deep collection approaches but never reaches +3 - one
+# show seen - so owning music cannot outweigh the shows. It never founds a settlement
+# and never lifts an unseen act out of waystation - size_tier checks times_seen first.
+# It never makes a city or a capital either: those two ranks are decided on
+# shows_score(), the score without purchases, so a town stays a town however much of
+# its music Dan owns. A city is earned at shows or decreed in map_overrides.json.
+OWN_MAX = 3.0
+sys.path.insert(0, str(ROOT / "scripts"))
+from purchases import load_purchases, share, weigh  # noqa: E402
+OWNED, _ = weigh(load_purchases(str(ROOT)), resolve)
+
+def shows_score(c):
     m = seen_meta.get(c, {})
     r = records[c]
     return (3 * min(m.get("times_seen", 0), 8)
             + 2 * m.get("vip", 0)
             + TIER_SCORE.get(r.get("tier"), 0))
+
+def score(c):
+    return shows_score(c) + OWN_MAX * share(OWNED.get(c, {}).get("weight", 0.0))
 
 # Outer Isles used to rebuild its districts as hand-numbered "peg crews" -
 # genre-family buckets (isle_family), PEG_CREW relabeling, CURATED_ISLES
@@ -650,9 +670,12 @@ def size_tier(c, s, regional_max):
         regional_max = float("inf")  # nobody else in this region auto-promotes
     if m.get("times_seen", 0) == 0:
         return "waystation"
-    if s >= regional_max and s >= 12:
+    # city and capital are earned at shows: regional_max and this test both use the
+    # score without purchases. Purchases can still carry a settlement up to town.
+    earned = shows_score(c)
+    if earned >= regional_max and earned >= 12:
         return "capital"
-    if s >= 12: return "city"
+    if earned >= 12: return "city"
     if s >= 6:  return "town"
     if s >= 3.5: return "village"
     return "hamlet"
@@ -1073,7 +1096,7 @@ def rename_settlement(old, new):
     if old not in records:
         return
     records[new] = {**records.pop(old), "canonical": new}
-    for dmap in (seen_meta, SIZE_OVERRIDE, DISPLAY):
+    for dmap in (seen_meta, SIZE_OVERRIDE, DISPLAY, OWNED):
         if old in dmap: dmap[new] = dmap.pop(old)
     for smap in (region_of, district_of):
         if old in smap: smap[new] = smap.pop(old)
@@ -1328,7 +1351,7 @@ for did in [d_ for d_, dd in districts.items()
     del districts[did]
 
 settlements = []
-reg_max = {reg: max((score(c) for c in records if region_of[c] == reg), default=0)
+reg_max = {reg: max((shows_score(c) for c in records if region_of[c] == reg), default=0)
            for reg in REGIONS}
 for c in sorted(records):
     s = score(c)

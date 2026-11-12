@@ -28,6 +28,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from name_forms import ArtistResolver  # noqa: E402  (sibling module in scripts/)
+from purchases import load_purchases, share, weigh  # noqa: E402  (sibling module in scripts/)
 
 SCHEMA_VERSION = 1
 
@@ -159,7 +160,28 @@ def load_config(root):
     # Its only knob is goals_decay (first completion = 1−d ≈ the old hat weight at
     # d=0.4; the k-th adds d^(k−1) − d^k). Per-goal weights — the old goals_split dict
     # and show_goals[].weight — are obsolete and ignored; see validate_goals_config.
+    #
+    # The P-term is a BONUS on top of the three main dials, not a fourth dial.
+    # With base = tier + seen + goals:
+    #     score = base + (1 − base) × weight × P
+    # where P is purchases.share(n) and n is the artist's purchase weight from
+    # scripts/purchases.py (1 per distinct release owned - track or album alike - plus
+    # signed_bonus for a signed copy). P answers "did I buy from this artist?" first:
+    # one purchase earns `first` of it, and each further one closes (1 − decay) of the
+    # rest. Purchases close a fraction of the gap that is left, so the score stays
+    # asymptotic below 1.0 (the earned-max vs explicitly-starred distinction survives)
+    # and a purchase moves a middling artist more than one already near the top. Kept
+    # outside the weights that must total 1.0,
+    # so an artist with no purchases scores exactly what they did before, and a fork
+    # with no purchase files (or weight: 0) is unaffected.
+    pur = aff.get("purchases") or {}
     return {
+        "purchases": {
+            "weight": float(pur.get("weight", 0.25)),
+            "first": float(pur.get("first", 0.7)),
+            "decay": float(pur.get("decay", 0.8)),
+            "signed_bonus": float(pur.get("signed_bonus", 0.5)),
+        },
         "weights": weights,
         "tier_points": aff.get("tier_points") or {},
         "fast_track_equiv_shows": aff.get("fast_track_equiv_shows", 1),
@@ -472,6 +494,16 @@ def build(root):
 
     universe = set(display)
 
+    # Purchases: one count per artist, shared with the map builder through
+    # scripts/purchases.py. Only acts already in the universe are weighed - owning a
+    # record does not by itself make an act tracked (that is a NAR decision).
+    def _tracked(name):
+        key = canon(name)
+        return key if key in universe else None
+
+    owned, _untracked = weigh(load_purchases(root), _tracked,
+                              cfg["purchases"]["signed_bonus"])
+
     def tier_for(k):
         raw = follows.get(k) or (pots.get(k, {}).get("Tier") if k in pots else None)
         raw = (raw or "").strip()
@@ -543,9 +575,14 @@ def build(root):
         Seff = max(S, floor)
         n_goal = goal_event_counts.get(k, 0) + photo_count
         G = 1 - cfg["goals_decay"] ** n_goal if n_goal > 0 else 0.0
-        gate = (tlabel is not None) or count > 0 or n_goal > 0 or is_fast
+        # P-term: purchases close part of the remaining gap (see load_config).
+        own = owned.get(k)
+        pcfg = cfg["purchases"]
+        P = share(own["weight"], pcfg["first"], pcfg["decay"]) if own else 0.0
+        gate = (tlabel is not None) or count > 0 or n_goal > 0 or is_fast or bool(own)
         if gate:
-            score = max(0.0, min(1.0, w["tier"] * T + w["seen"] * Seff + w["goals"] * G))
+            base = max(0.0, min(1.0, w["tier"] * T + w["seen"] * Seff + w["goals"] * G))
+            score = base + (1 - base) * pcfg["weight"] * P
             band = "high" if score >= cfg["bands"]["high"] else ("medium" if score >= cfg["bands"]["medium"] else "low")
             affinity = {"score": round(score, 3), "band": band}
         else:
@@ -636,6 +673,10 @@ def build(root):
             },
             "fast_track": is_fast,
             "affinity": affinity,
+            # Distinct releases owned and how many of them are signed, or None.
+            # Counts only - the sources carry no prices or dates. Additive to the
+            # frozen schema.
+            "purchases": {"count": own["count"], "signed": own["signed"]} if own else None,
             "badges": {
                 "hat": hat_badge,
                 "book": book_badge,

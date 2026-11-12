@@ -89,7 +89,9 @@ credits the act, is how many of its `times_seen` come from there; a settlement t
 only because of the ledger has `status` `legacy` in the index sense - no tags, no tier, region
 from its pin. `ruin` (an act that no longer exists) and `faded` (not seen since before 2019)
 never both appear: a ruin draws as a ruin.
-`score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus) if you want
+`score` is the raw size metric (3×times-seen capped at 8, +2×VIP, +tier bonus, +up to 3 for
+music owned: 2.1 for a first purchase, small steps after, from `scripts/purchases.py`, #499;
+purchases can lift a settlement as far as town, never to city or capital) if you want
 continuous scaling instead of the tier buckets. `auto_size` is the size the builder would
 have given with no override in `map_overrides.json` - equal to `size` unless an override is
 doing something. Renderers use `size`; the editor and the audit use both.
