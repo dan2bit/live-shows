@@ -225,6 +225,28 @@ What it feeds:
 - **The artist graph and map** (#499).
 - **Bandcamp playlist drafts**, which can only use owned tracks.
 
+*Bandcamp Red Hat Signers playlist re-verify ON CHANGE (after a hat signing)*
+
+The playlist (`bandcamp_playlist_url` in `tools/signers/signers.yaml`) is built by
+hand in the Bandcamp mobile app; there is no web editor or API (#501). It holds one
+owned track per hat signer, in `hat_signatures.tsv` seq order, skipping signers
+with nothing digital on Bandcamp.
+
+When a new signing is logged:
+1. Check the collection export for an owned release by the signer's act. If there
+   is none, look for a single-track purchase on the artist's page.
+2. The track must be publicly streamable. A track with no public stream can be
+   bought but cannot be added to a public playlist (Mikaela Davis, "Other Lover
+   (early version)", 2026-11-11). Check `trackinfo[].streaming` in the release
+   page's `data-tralbum` before buying.
+3. Dan adds the track in the app, at the end.
+4. Open the playlist URL in Chrome and read the rows from the DOM (the track list
+   is rendered client-side, so a plain fetch of the page returns no rows). Check
+   the count, the order against seq, and that the new track is last.
+
+Verified 2026-11-11: 41 tracks for 56 signers; 15 signers have no digital release
+on Bandcamp (14 not on Bandcamp, 1 physical-only).
+
 *Label rosters ON CHANGE (Bandcamp-sourced)*
 
 The rosters behind `websrc_diff.py`'s "Untracked, on a label roster" section (the
@@ -331,7 +353,3 @@ Capture: use the pagination controls to collect all setlists if necessary
 follow the attached dom-reference-youtube-setlist.md for selectors and extraction
 
 3. save the file in `tools/archive` and optionally delete the prior file
-
-
-
-
