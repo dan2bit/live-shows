@@ -31,6 +31,11 @@ playlist_url: "https://open.spotify.com/playlist/16iFg2ws9smr9vGVNaI3FK"
 # encoded URL disagree — see tools/signers/make_qr.py.
 playlist_qr: static/hat-playlist-qr.svg
 
+# Bandcamp companion to the Spotify playlist above (#501). Built by hand in the
+# Bandcamp app from owned tracks; not rendered on the page and not behind a QR.
+# Re-verify steps: tools/research/web-src/scraping_tasks.md.
+bandcamp_playlist_url: "https://bandcamp.com/dan2bit/playlist/red-hat-signers"
+
 banner_svg: static/hat-banner.svg
 banner_png: static/hat-banner.png
 
