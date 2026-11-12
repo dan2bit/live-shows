@@ -223,11 +223,28 @@ any `show_goals` entry still carries one. Remove them from forked configs.
 **Validator.** `goals_decay` must lie strictly between 0 and 1; the build fails
 otherwise. The old sum-to-1.0 weight validator is retired with the weights.
 
-**Affinity formula overall** (unchanged):
+**Affinity formula overall** (the three dials are unchanged):
 
 ```
-score = 0.35·T + 0.40·Seff + 0.25·G
+base  = 0.35·T + 0.40·Seff + 0.25·G
+score = base + (1 − base) · w · P        P = f + (1 − f)·(1 − d_p^(n−1)),  n ≥ 1
 ```
+
+**Purchases (the P-term, #499).** Not a goal and not a fourth dial: a bonus that
+closes part of the gap `base` leaves. It answers "did I buy from this artist?"
+first and "did I keep buying?" second: the first purchase, a single track or an
+album alike, earns `f` of the bonus, and each further one closes `1 − d_p` of what
+is left. `n` is the artist's purchase weight from
+`scripts/purchases.py` - 1 per distinct release owned, plus `signed_bonus` for a
+signed copy - read from three sources and de-duplicated across them: the Bandcamp
+collection export (`Source = collection`, never wishlist), `CD` / `vinyl` rows of
+`item_log.tsv` (one per physical item, however many signers), and
+`tools/research/follows/music_purchases.tsv`. `w`, `f`, `d_p` and `signed_bonus` are
+`config.yaml → badges.affinity.purchases` (`weight`, `first`, `decay`, `signed_bonus`;
+defaults 0.25, 0.7, 0.8, 0.5). An artist with no
+purchases scores exactly `base`; the score stays below 1.0. The index carries the
+counts as `purchases: {count, signed}` (or `null`). The map's settlement score reads
+the same helper.
 
 ---
 
