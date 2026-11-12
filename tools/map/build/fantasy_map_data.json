@@ -629,7 +629,7 @@
    "Tab Benoit & Anders Osborne"
   ],
   "pins_hash": "8d8e92c1b7",
-  "overrides_hash": "b4e8417be2",
+  "overrides_hash": "349be18187",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -641,14 +641,14 @@
     "name": "AJR",
     "override": "capital",
     "auto": "capital",
-    "score": 6,
+    "score": 6.0,
     "class": "decree"
    },
    {
     "name": "Alicia Keys",
     "override": "town",
     "auto": "waystation",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "waystation",
      "score": 3,
@@ -672,7 +672,7 @@
     "name": "Ariel Posen",
     "override": "town",
     "auto": "village",
-    "score": 4,
+    "score": 4.0,
     "basis": {
      "size": "village",
      "score": 4,
@@ -684,7 +684,7 @@
     "name": "Barenaked Ladies",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -696,7 +696,7 @@
     "name": "Carolyn Wonderland",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -714,7 +714,7 @@
     "name": "Cowboy Junkies",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -726,7 +726,7 @@
     "name": "Dylan Triplett",
     "override": "village",
     "auto": "town",
-    "score": 8,
+    "score": 8.0,
     "basis": {
      "size": "town",
      "score": 8,
@@ -738,7 +738,7 @@
     "name": "Eddie 9V",
     "override": "village",
     "auto": "waystation",
-    "score": 1,
+    "score": 1.0,
     "basis": {
      "size": "waystation",
      "score": 1,
@@ -750,7 +750,7 @@
     "name": "Emmylou Harris",
     "override": "town",
     "auto": "village",
-    "score": 5,
+    "score": 5.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -762,7 +762,7 @@
     "name": "Enter the Haggis",
     "override": "town",
     "auto": "city",
-    "score": 12,
+    "score": 14.2,
     "basis": {
      "size": "city",
      "score": 12,
@@ -774,7 +774,7 @@
     "name": "Eric Clapton",
     "override": "village",
     "auto": "waystation",
-    "score": 2,
+    "score": 2.0,
     "basis": {
      "size": "waystation",
      "score": 2,
@@ -786,7 +786,7 @@
     "name": "George Clinton & Parliament-Funkadelic",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -798,7 +798,7 @@
     "name": "Glen Hansard",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -810,7 +810,7 @@
     "name": "Greensky Bluegrass",
     "override": "town",
     "auto": "city",
-    "score": 12,
+    "score": 12.0,
     "basis": {
      "size": "city",
      "score": 12,
@@ -822,7 +822,7 @@
     "name": "Hozier",
     "override": "city",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "town",
      "score": 6,
@@ -833,20 +833,20 @@
    {
     "name": "J. P. Soars",
     "override": "village",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.2,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "Jake Blount",
     "override": "village",
     "auto": "town",
-    "score": 6,
+    "score": 8.1,
     "basis": {
      "size": "town",
      "score": 6,
@@ -858,7 +858,7 @@
     "name": "Jax Hollow",
     "override": "village",
     "auto": "town",
-    "score": 6,
+    "score": 8.2,
     "basis": {
      "size": "town",
      "score": 6,
@@ -870,7 +870,7 @@
     "name": "Joan Jett & The Blackhearts",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -882,7 +882,7 @@
     "name": "Joanna Connor",
     "override": "village",
     "auto": "waystation",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "waystation",
      "score": 3,
@@ -900,7 +900,7 @@
     "name": "Joe Satriani",
     "override": "village",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "town",
      "score": 6,
@@ -911,26 +911,26 @@
    {
     "name": "John Primer",
     "override": "town",
-    "auto": "village",
-    "score": 5,
+    "auto": "town",
+    "score": 7.2,
     "basis": {
      "size": "village",
      "score": 5,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "Kent Burnside",
     "override": "village",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.2,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "Kermit Ruffins",
@@ -942,7 +942,7 @@
     "name": "Kingsley Flood",
     "override": "town",
     "auto": "city",
-    "score": 18,
+    "score": 18.0,
     "basis": {
      "size": "city",
      "score": 18,
@@ -954,7 +954,7 @@
     "name": "LL Cool J",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -966,14 +966,14 @@
     "name": "Larkin Poe",
     "override": "capital",
     "auto": "capital",
-    "score": 27,
+    "score": 29.7,
     "class": "decree"
    },
    {
     "name": "Liz Phair",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -990,20 +990,20 @@
    {
     "name": "Margaret Glaspy",
     "override": "town",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.2,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "still-promotion"
    },
    {
     "name": "Margo Price",
     "override": "village",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1015,7 +1015,7 @@
     "name": "Marshall Crenshaw",
     "override": "village",
     "auto": "waystation",
-    "score": 1,
+    "score": 1.0,
     "basis": {
      "size": "waystation",
      "score": 1,
@@ -1027,7 +1027,7 @@
     "name": "Mathias Lattin",
     "override": "town",
     "auto": "village",
-    "score": 4,
+    "score": 4.0,
     "basis": {
      "size": "village",
      "score": 4,
@@ -1039,7 +1039,7 @@
     "name": "Nas",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1051,7 +1051,7 @@
     "name": "Oh He Dead",
     "override": "town",
     "auto": "city",
-    "score": 12,
+    "score": 12.0,
     "basis": {
      "size": "city",
      "score": 12,
@@ -1063,7 +1063,7 @@
     "name": "P!nk",
     "override": "town",
     "auto": "waystation",
-    "score": 1,
+    "score": 1.0,
     "basis": {
      "size": "waystation",
      "score": 1,
@@ -1075,7 +1075,7 @@
     "name": "Patty Griffin",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1087,7 +1087,7 @@
     "name": "Pixies",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1099,7 +1099,7 @@
     "name": "Queen Latifah",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1111,7 +1111,7 @@
     "name": "Sarah McLachlan",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1123,14 +1123,14 @@
     "name": "Shemekia Copeland",
     "override": "capital",
     "auto": "capital",
-    "score": 9,
+    "score": 9.0,
     "class": "decree"
    },
    {
     "name": "Sona Jobarteh",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1142,7 +1142,7 @@
     "name": "Soul Coughing",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1154,7 +1154,7 @@
     "name": "Southern Avenue",
     "override": "city",
     "auto": "town",
-    "score": 9,
+    "score": 11.2,
     "basis": {
      "size": "town",
      "score": 9,
@@ -1166,7 +1166,7 @@
     "name": "Steve Earle",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1178,7 +1178,7 @@
     "name": "Steve Miller Band",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1190,7 +1190,7 @@
     "name": "Stevie Nicks",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1213,32 +1213,32 @@
    {
     "name": "The California Honeydrops",
     "override": "village",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.1,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-10-06"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "The Family Crest",
     "override": "village",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.4,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "The Pietasters",
     "override": "village",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "town",
      "score": 6,
@@ -1250,7 +1250,7 @@
     "name": "The Roots",
     "override": "city",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1262,7 +1262,7 @@
     "name": "The Teskey Brothers",
     "override": "village",
     "auto": "waystation",
-    "score": 1,
+    "score": 1.0,
     "basis": {
      "size": "waystation",
      "score": 1,
@@ -1274,7 +1274,7 @@
     "name": "They Might Be Giants",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1285,20 +1285,20 @@
    {
     "name": "Tommy Castro & the Painkillers",
     "override": "village",
-    "auto": "hamlet",
-    "score": 3,
+    "auto": "village",
+    "score": 5.2,
     "basis": {
      "size": "hamlet",
      "score": 3,
      "at": "2026-09-25"
     },
-    "class": "unchanged"
+    "class": "redundant"
    },
    {
     "name": "Tommy Prine",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1310,7 +1310,7 @@
     "name": "Tori Amos",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1322,7 +1322,7 @@
     "name": "Tracy Chapman",
     "override": "village",
     "auto": "waystation",
-    "score": 1,
+    "score": 1.0,
     "basis": {
      "size": "waystation",
      "score": 1,
@@ -1334,14 +1334,14 @@
     "name": "Trombone Shorty & Orleans Avenue",
     "override": "capital",
     "auto": "capital",
-    "score": 21,
+    "score": 21.0,
     "class": "decree"
    },
    {
     "name": "Violent Femmes",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1353,7 +1353,7 @@
     "name": "Willie Nelson",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1365,7 +1365,7 @@
     "name": "Wu-Tang Clan",
     "override": "town",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1377,7 +1377,7 @@
     "name": "Young Dubliners",
     "override": "city",
     "auto": "town",
-    "score": 6,
+    "score": 6.0,
     "basis": {
      "size": "town",
      "score": 6,
@@ -1389,7 +1389,7 @@
     "name": "ZZ Top",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1401,7 +1401,7 @@
     "name": "Zach Person",
     "override": "village",
     "auto": "hamlet",
-    "score": 3,
+    "score": 3.0,
     "basis": {
      "size": "hamlet",
      "score": 3,
@@ -1414,8 +1414,9 @@
    "decree": 4,
    "flipped": 1,
    "orphan": 4,
-   "still-promotion": 2,
-   "unchanged": 57
+   "redundant": 6,
+   "still-promotion": 3,
+   "unchanged": 50
   },
   "counts": {
    "settlements": 420,
@@ -3482,7 +3483,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     542.5,
     555.8
@@ -3506,7 +3507,7 @@
    "district": "outer_isles:d1",
    "size": "capital",
    "auto_size": "capital",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     954.8,
     235.5
@@ -3528,7 +3529,7 @@
    "district": "river_port:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     652.5,
     682.0
@@ -3550,7 +3551,7 @@
    "district": "delta_coast:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     401.3,
     567.7
@@ -3572,7 +3573,7 @@
    "district": "quiet_woods:override",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     460.7,
     237.7
@@ -3592,9 +3593,9 @@
    "name": "Al Olender",
    "region": "heartland",
    "district": "heartland:override",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     284.4,
     438.6
@@ -3616,7 +3617,7 @@
    "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     723.4,
     485.7
@@ -3638,7 +3639,7 @@
    "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     792.5,
     301.6
@@ -3660,7 +3661,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     687.3,
     363.8
@@ -3682,7 +3683,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.4,
    "xy": [
     720.3,
     187.9
@@ -3704,7 +3705,7 @@
    "district": "quiet_woods:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     602.1,
     278.9
@@ -3728,7 +3729,7 @@
    "district": "quiet_woods:outskirts",
    "size": "town",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     390.9,
     358.4
@@ -3776,7 +3777,7 @@
    "district": "quiet_woods:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 22,
+   "score": 24.4,
    "xy": [
     471.9,
     223.1
@@ -3801,7 +3802,7 @@
    "district": "amplified_range:d2",
    "size": "city",
    "auto_size": "city",
-   "score": 24,
+   "score": 26.4,
    "xy": [
     880.0,
     197.1
@@ -3826,7 +3827,7 @@
    "district": "river_port:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     492.5,
     512.2
@@ -3849,7 +3850,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     733.8,
     343.8
@@ -3873,7 +3874,7 @@
    "district": "quiet_woods:d10",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     567.6,
     401.2
@@ -3893,9 +3894,9 @@
    "name": "Amy Stroup",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     401.3,
     382.8
@@ -3917,7 +3918,7 @@
    "district": "quiet_woods:override",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.2,
    "xy": [
     442.3,
     264.1
@@ -3939,7 +3940,7 @@
    "district": "amplified_range:override",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 17.2,
    "xy": [
     668.0,
     306.0
@@ -3961,7 +3962,7 @@
    "district": "river_port:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 8,
+   "score": 8.0,
    "xy": [
     675.5,
     565.2
@@ -3983,7 +3984,7 @@
    "district": "river_port:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     685.5,
     585.8
@@ -4031,7 +4032,7 @@
    "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     810.0,
     203.0
@@ -4053,7 +4054,7 @@
    "district": "quiet_woods:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     537.7,
     399.7
@@ -4075,7 +4076,7 @@
    "district": "heartland:outskirts",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     274.8,
     405.0
@@ -4098,7 +4099,7 @@
    "district": "delta_coast:outskirts",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     243.0,
     571.6
@@ -4120,7 +4121,7 @@
    "district": "quiet_woods:d7",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     548.0,
     351.1
@@ -4144,7 +4145,7 @@
    "district": "slide_foothills:d3",
    "size": "town",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     606.2,
     427.5
@@ -4166,7 +4167,7 @@
    "district": "amplified_range:d1",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     729.2,
     308.6
@@ -4188,7 +4189,7 @@
    "district": "heartland:d9",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     441.7,
     482.5
@@ -4210,14 +4211,14 @@
    "district": "quiet_woods:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
-    473.2,
+    472.5,
     283.6
    ],
    "region_uv": [
-    0.4802,
-    0.3466
+    0.4782,
+    0.3465
    ],
    "flags": {
     "unpinned": true
@@ -4234,7 +4235,7 @@
    "district": "amplified_range:d7",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     816.0,
     257.0
@@ -4256,7 +4257,7 @@
    "district": "river_port:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     693.4,
     485.5
@@ -4278,7 +4279,7 @@
    "district": "amplified_range:d13",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     848.2,
     250.6
@@ -4300,7 +4301,7 @@
    "district": "heartland:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     472.6,
     477.8
@@ -4322,7 +4323,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     556.5,
     414.0
@@ -4344,7 +4345,7 @@
    "district": "amplified_range:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     698.9,
     214.2
@@ -4366,7 +4367,7 @@
    "district": "amplified_range:d3",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 5.1,
    "xy": [
     679.6,
     213.8
@@ -4390,7 +4391,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     858.8,
     36.5
@@ -4412,7 +4413,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -4436,7 +4437,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     579.4,
     334.2
@@ -4458,7 +4459,7 @@
    "district": "amplified_range:d3",
    "size": "town",
    "auto_size": "town",
-   "score": 8,
+   "score": 8.0,
    "xy": [
     815.3,
     181.4
@@ -4482,7 +4483,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     778.6,
     236.2
@@ -4506,7 +4507,7 @@
    "district": "heartland:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     381.1,
     510.7
@@ -4529,7 +4530,7 @@
    "district": "amplified_range:d4",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     707.9,
     362.8
@@ -4552,7 +4553,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     603.1,
     387.3
@@ -4574,7 +4575,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     925.2,
     266.7
@@ -4596,7 +4597,7 @@
    "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     632.1,
     672.1
@@ -4618,7 +4619,7 @@
    "district": "heartland:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     472.0,
     452.0
@@ -4644,7 +4645,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     658.7,
     527.5
@@ -4669,7 +4670,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     851.0,
     32.7
@@ -4691,7 +4692,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     584.4,
     621.3
@@ -4715,7 +4716,7 @@
    "district": "quiet_woods:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     531.5,
     435.0
@@ -4739,7 +4740,7 @@
    "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     311.3,
     598.2
@@ -4759,9 +4760,9 @@
    "name": "Brassie",
    "region": "outer_isles",
    "district": "outer_isles:arrivals",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.3,
    "xy": [
     913.1,
     268.4
@@ -4781,9 +4782,9 @@
    "name": "Bridge City Sinners",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.1,
    "xy": [
     569.2,
     442.2
@@ -4805,7 +4806,7 @@
    "district": "river_port:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     704.6,
     482.4
@@ -4827,7 +4828,7 @@
    "district": "heartland:d6",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     446.0,
     560.7
@@ -4849,7 +4850,7 @@
    "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     286.0,
     588.8
@@ -4871,7 +4872,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     689.3,
     228.7
@@ -4895,7 +4896,7 @@
    "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 11,
+   "score": 11.0,
    "xy": [
     817.4,
     169.5
@@ -4920,7 +4921,7 @@
    "district": "delta_coast:outskirts",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.4,
    "xy": [
     184.8,
     546.9
@@ -4942,7 +4943,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     666.3,
     221.6
@@ -4964,7 +4965,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     799.8,
     278.9
@@ -4989,7 +4990,7 @@
    "district": "amplified_range:d5",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     722.5,
     346.9
@@ -5013,7 +5014,7 @@
    "district": "amplified_range:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     782.6,
     232.8
@@ -5035,7 +5036,7 @@
    "district": "delta_coast:d5",
    "size": "town",
    "auto_size": "town",
-   "score": 10,
+   "score": 12.3,
    "xy": [
     238.8,
     559.0
@@ -5057,7 +5058,7 @@
    "district": "slide_foothills:override",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     666.9,
     435.1
@@ -5077,9 +5078,9 @@
    "name": "Cassie & Maggie",
    "region": "outer_isles",
    "district": "outer_isles:d2",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     767.2,
     92.3
@@ -5101,7 +5102,7 @@
    "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     788.4,
     307.0
@@ -5123,7 +5124,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     387.8,
     255.5
@@ -5145,7 +5146,7 @@
    "district": "delta_coast:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     282.2,
     565.4
@@ -5169,7 +5170,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     370.5,
     365.3
@@ -5191,7 +5192,7 @@
    "district": "heartland:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     318.3,
     387.5
@@ -5213,7 +5214,7 @@
    "district": "outer_isles:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     984.7,
     189.1
@@ -5235,7 +5236,7 @@
    "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     435.5,
     574.1
@@ -5257,7 +5258,7 @@
    "district": "delta_coast:d3",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     326.6,
     575.4
@@ -5281,7 +5282,7 @@
    "district": "delta_coast:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     312.5,
     556.5
@@ -5307,7 +5308,7 @@
    "district": "amplified_range:d2",
    "size": "capital",
    "auto_size": "capital",
-   "score": 27,
+   "score": 29.1,
    "xy": [
     761.2,
     308.8
@@ -5329,7 +5330,7 @@
    "district": "delta_coast:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     286.7,
     542.7
@@ -5351,7 +5352,7 @@
    "district": "quiet_woods:d15",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     414.0,
     362.8
@@ -5376,7 +5377,7 @@
    "district": "river_port:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     524.7,
     566.1
@@ -5400,7 +5401,7 @@
    "district": "amplified_range:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     832.0,
     278.0
@@ -5425,7 +5426,7 @@
    "district": "heartland:d3",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     462.4,
     465.6
@@ -5449,7 +5450,7 @@
    "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     374.4,
     445.1
@@ -5473,7 +5474,7 @@
    "district": "delta_coast:d3",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     259.7,
     604.6
@@ -5495,7 +5496,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     871.7,
     18.9
@@ -5517,7 +5518,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -5541,7 +5542,7 @@
    "district": "heartland:d1",
    "size": "capital",
    "auto_size": "capital",
-   "score": 27,
+   "score": 29.7,
    "xy": [
     441.4,
     512.3
@@ -5564,7 +5565,7 @@
    "district": "delta_coast:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.4,
    "xy": [
     298.6,
     600.7
@@ -5586,7 +5587,7 @@
    "district": "river_port:d1",
    "size": "village",
    "auto_size": "village",
-   "score": 5,
+   "score": 5.0,
    "xy": [
     173.0,
     542.5
@@ -5608,7 +5609,7 @@
    "district": "outer_isles:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     762.0,
     82.0
@@ -5630,7 +5631,7 @@
    "district": "amplified_range:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     842.1,
     243.4
@@ -5655,7 +5656,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     541.0,
     364.0
@@ -5677,7 +5678,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     871.4,
     23.4
@@ -5699,7 +5700,7 @@
    "district": "river_port:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     554.6,
     540.5
@@ -5722,7 +5723,7 @@
    "district": "delta_coast:d4",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     268.1,
     548.8
@@ -5746,7 +5747,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     623.2,
     406.3
@@ -5768,7 +5769,7 @@
    "district": "river_port:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     464.4,
     545.2
@@ -5791,7 +5792,7 @@
    "district": "river_port:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     659.3,
     674.3
@@ -5813,7 +5814,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     472.2,
     544.2
@@ -5837,7 +5838,7 @@
    "district": "river_port:arrivals",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     594.2,
     596.3
@@ -5881,7 +5882,7 @@
    "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "town",
-   "score": 8,
+   "score": 8.0,
    "xy": [
     737.1,
     331.7
@@ -5903,7 +5904,7 @@
    "district": "river_port:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     577.9,
     614.1
@@ -5925,7 +5926,7 @@
    "district": "amplified_range:d1",
    "size": "village",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     775.7,
     239.5
@@ -5949,7 +5950,7 @@
    "district": "quiet_woods:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     562.9,
     334.3
@@ -5971,7 +5972,7 @@
    "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     305.5,
     465.0
@@ -5996,7 +5997,7 @@
    "district": "quiet_woods:d13",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     522.9,
     216.2
@@ -6019,7 +6020,7 @@
    "district": "heartland:d3",
    "size": "town",
    "auto_size": "village",
-   "score": 5,
+   "score": 5.0,
    "xy": [
     336.2,
     378.0
@@ -6043,7 +6044,7 @@
    "district": "outer_isles:d2",
    "size": "town",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.2,
    "xy": [
     769.5,
     72.7
@@ -6067,7 +6068,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     514.1,
     410.1
@@ -6091,7 +6092,7 @@
    "district": "amplified_range:d9",
    "size": "village",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     816.6,
     200.9
@@ -6116,7 +6117,7 @@
    "district": "amplified_range:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 17.4,
    "xy": [
     733.0,
     249.3
@@ -6138,7 +6139,7 @@
    "district": "slide_foothills:override",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.2,
    "xy": [
     701.7,
     427.1
@@ -6160,7 +6161,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     575.3,
     343.8
@@ -6182,7 +6183,7 @@
    "district": "delta_coast:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 5.3,
    "xy": [
     225.1,
     544.1
@@ -6206,7 +6207,7 @@
    "district": "outer_isles:override",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 15.0,
    "xy": [
     798.0,
     44.2
@@ -6228,7 +6229,7 @@
    "district": "heartland:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     301.9,
     456.8
@@ -6250,7 +6251,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     529.5,
     627.3
@@ -6274,7 +6275,7 @@
    "district": "amplified_range:d7",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     824.0,
     251.5
@@ -6296,7 +6297,7 @@
    "district": "amplified_range:d12",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     796.5,
     226.8
@@ -6321,7 +6322,7 @@
    "district": "river_port:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     637.6,
     666.1
@@ -6343,7 +6344,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     570.8,
     264.2
@@ -6367,7 +6368,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     614.5,
     257.1
@@ -6391,7 +6392,7 @@
    "district": "amplified_range:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     670.2,
     248.5
@@ -6413,7 +6414,7 @@
    "district": "outer_isles:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     755.6,
     89.1
@@ -6435,7 +6436,7 @@
    "district": "river_port:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     585.4,
     560.3
@@ -6457,7 +6458,7 @@
    "district": "amplified_range:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     747.4,
     331.0
@@ -6481,7 +6482,7 @@
    "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     743.2,
     274.1
@@ -6503,7 +6504,7 @@
    "district": "amplified_range:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     697.0,
     333.8
@@ -6528,7 +6529,7 @@
    "district": "river_port:arrivals",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     649.3,
     662.1
@@ -6552,7 +6553,7 @@
    "district": "slide_foothills:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 10,
+   "score": 10.0,
    "xy": [
     673.5,
     444.1
@@ -6574,7 +6575,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     967.4,
     201.2
@@ -6596,7 +6597,7 @@
    "district": "heartland:d3",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     403.6,
     487.4
@@ -6621,7 +6622,7 @@
    "district": "quiet_woods:d12",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     508.2,
     218.7
@@ -6645,7 +6646,7 @@
    "district": "quiet_woods:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     507.0,
     258.0
@@ -6667,7 +6668,7 @@
    "district": "quiet_woods:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     587.0,
     260.7
@@ -6689,7 +6690,7 @@
    "district": "slide_foothills:override",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     648.8,
     347.0
@@ -6711,7 +6712,7 @@
    "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     523.5,
     507.6
@@ -6735,7 +6736,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     900.0,
     62.0
@@ -6759,7 +6760,7 @@
    "district": "heartland:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     422.2,
     524.5
@@ -6784,7 +6785,7 @@
    "district": "heartland:d1",
    "size": "town",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     415.8,
     510.1
@@ -6807,7 +6808,7 @@
    "district": "outer_isles:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     766.7,
     77.8
@@ -6831,7 +6832,7 @@
    "district": "quiet_woods:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     588.9,
     267.9
@@ -6853,7 +6854,7 @@
    "district": "heartland:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     323.3,
     369.4
@@ -6875,7 +6876,7 @@
    "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     719.8,
     276.6
@@ -6897,7 +6898,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     814.4,
     43.7
@@ -6919,7 +6920,7 @@
    "district": "quiet_woods:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     584.3,
     251.6
@@ -6943,7 +6944,7 @@
    "district": "outer_isles:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     772.6,
     77.1
@@ -6967,7 +6968,7 @@
    "district": "outer_isles:outskirts",
    "size": "city",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     969.8,
     192.2
@@ -6989,7 +6990,7 @@
    "district": "quiet_woods:d7",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     528.0,
     370.0
@@ -7011,7 +7012,7 @@
    "district": "quiet_woods:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     375.7,
     341.5
@@ -7059,7 +7060,7 @@
    "district": "amplified_range:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     786.4,
     288.8
@@ -7080,8 +7081,8 @@
    "region": "slide_foothills",
    "district": "slide_foothills:override",
    "size": "village",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     621.9,
     441.2
@@ -7104,7 +7105,7 @@
    "district": "amplified_range:d4",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     654.3,
     246.7
@@ -7126,7 +7127,7 @@
    "district": "amplified_range:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     786.9,
     253.2
@@ -7150,7 +7151,7 @@
    "district": "amplified_range:d5",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.6,
    "xy": [
     736.1,
     160.9
@@ -7174,7 +7175,7 @@
    "district": "heartland:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     656.3,
     614.3
@@ -7194,9 +7195,9 @@
    "name": "Jaime Wyatt",
    "region": "heartland",
    "district": "heartland:override",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.1,
    "xy": [
     487.0,
     473.4
@@ -7218,7 +7219,7 @@
    "district": "quiet_woods:override",
    "size": "village",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     448.3,
     240.9
@@ -7240,7 +7241,7 @@
    "district": "quiet_woods:pinned",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.3,
    "xy": [
     556.3,
     238.1
@@ -7262,7 +7263,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     701.2,
     288.5
@@ -7286,7 +7287,7 @@
    "district": "amplified_range:d11",
    "size": "village",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.2,
    "xy": [
     637.6,
     258.0
@@ -7308,7 +7309,7 @@
    "district": "quiet_woods:d9",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     414.2,
     361.8
@@ -7332,7 +7333,7 @@
    "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
-   "score": 10,
+   "score": 12.2,
    "xy": [
     701.5,
     573.6
@@ -7354,7 +7355,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     447.5,
     276.9
@@ -7376,7 +7377,7 @@
    "district": "outer_isles:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     811.8,
     35.6
@@ -7398,7 +7399,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     756.1,
     261.8
@@ -7422,7 +7423,7 @@
    "district": "river_port:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     657.3,
     605.7
@@ -7447,7 +7448,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     641.7,
     383.7
@@ -7470,7 +7471,7 @@
    "district": "amplified_range:outskirts",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     760.5,
     282.8
@@ -7494,7 +7495,7 @@
    "district": "amplified_range:d3",
    "size": "village",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     646.0,
     227.4
@@ -7518,7 +7519,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     666.7,
     207.4
@@ -7540,7 +7541,7 @@
    "district": "heartland:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     319.4,
     457.1
@@ -7562,7 +7563,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     703.9,
     182.9
@@ -7584,7 +7585,7 @@
    "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     822.3,
     194.8
@@ -7606,7 +7607,7 @@
    "district": "amplified_range:d12",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     797.3,
     218.4
@@ -7631,7 +7632,7 @@
    "district": "slide_foothills:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     616.1,
     481.0
@@ -7655,7 +7656,7 @@
    "district": "heartland:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     453.4,
     442.2
@@ -7679,7 +7680,7 @@
    "district": "amplified_range:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     712.3,
     174.1
@@ -7704,7 +7705,7 @@
    "district": "delta_coast:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     238.5,
     494.4
@@ -7727,8 +7728,8 @@
    "region": "delta_coast",
    "district": "delta_coast:d4",
    "size": "town",
-   "auto_size": "village",
-   "score": 5,
+   "auto_size": "town",
+   "score": 7.2,
    "xy": [
     140.5,
     585.6
@@ -7752,7 +7753,7 @@
    "district": "river_port:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 14,
+   "score": 16.4,
    "xy": [
     635.9,
     553.4
@@ -7774,7 +7775,7 @@
    "district": "river_port:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     493.8,
     536.7
@@ -7796,7 +7797,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     687.9,
     441.1
@@ -7818,7 +7819,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     667.1,
     255.1
@@ -7843,7 +7844,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     554.8,
     587.7
@@ -7867,7 +7868,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     428.6,
     394.3
@@ -7891,7 +7892,7 @@
    "district": "quiet_woods:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     462.9,
     264.6
@@ -7915,7 +7916,7 @@
    "district": "river_port:outskirts",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     496.6,
     566.3
@@ -7935,9 +7936,9 @@
    "name": "Judy Blank",
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     528.1,
     244.7
@@ -7959,7 +7960,7 @@
    "district": "quiet_woods:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 3.3,
    "xy": [
     435.3,
     235.9
@@ -7981,9 +7982,9 @@
    "name": "Kara Jackson",
    "region": "quiet_woods",
    "district": "quiet_woods:d1",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     466.1,
     270.7
@@ -8005,7 +8006,7 @@
    "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     369.3,
     524.8
@@ -8029,7 +8030,7 @@
    "district": "delta_coast:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     265.7,
     521.7
@@ -8053,7 +8054,7 @@
    "district": "outer_isles:d3",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 17.7,
    "xy": [
     904.7,
     251.2
@@ -8076,7 +8077,7 @@
    "district": "delta_coast:d2",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     183.5,
     595.9
@@ -8101,7 +8102,7 @@
    "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     637.1,
     296.4
@@ -8123,7 +8124,7 @@
    "district": "amplified_range:d2",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     715.6,
     281.6
@@ -8145,8 +8146,8 @@
    "region": "river_port",
    "district": "river_port:outskirts",
    "size": "village",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     627.7,
     523.4
@@ -8168,7 +8169,7 @@
    "district": "delta_coast:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     244.5,
     490.1
@@ -8193,7 +8194,7 @@
    "district": "river_port:outskirts",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     616.6,
     517.4
@@ -8215,7 +8216,7 @@
    "district": "quiet_woods:d6",
    "size": "town",
    "auto_size": "city",
-   "score": 18,
+   "score": 18.0,
    "xy": [
     583.2,
     271.7
@@ -8237,7 +8238,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     711.4,
     289.7
@@ -8261,7 +8262,7 @@
    "district": "outer_isles:override",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     840.4,
     26.9
@@ -8281,9 +8282,9 @@
    "name": "La Unica",
    "region": "outer_isles",
    "district": "outer_isles:d4",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     793.2,
     31.9
@@ -8305,7 +8306,7 @@
    "district": "river_port:d2",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     513.1,
     558.2
@@ -8327,7 +8328,7 @@
    "district": "heartland:d6",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     394.2,
     442.0
@@ -8349,7 +8350,7 @@
    "district": "slide_foothills:outskirts",
    "size": "capital",
    "auto_size": "capital",
-   "score": 27,
+   "score": 29.7,
    "xy": [
     598.2,
     360.3
@@ -8371,7 +8372,7 @@
    "district": "heartland:d12",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     321.3,
     464.8
@@ -8395,7 +8396,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     799.6,
     300.2
@@ -8419,7 +8420,7 @@
    "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     363.6,
     516.2
@@ -8443,7 +8444,7 @@
    "district": "quiet_woods:d3",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 3.1,
    "xy": [
     518.7,
     396.7
@@ -8467,7 +8468,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     570.4,
     245.4
@@ -8489,7 +8490,7 @@
    "district": "amplified_range:d3",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     704.0,
     319.3
@@ -8511,7 +8512,7 @@
    "district": "heartland:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     449.3,
     453.5
@@ -8535,7 +8536,7 @@
    "district": "heartland:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     395.2,
     458.6
@@ -8557,7 +8558,7 @@
    "district": "quiet_woods:d11",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     390.8,
     292.6
@@ -8579,7 +8580,7 @@
    "district": "heartland:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     339.4,
     404.1
@@ -8603,7 +8604,7 @@
    "district": "heartland:d3",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     266.1,
     428.8
@@ -8627,7 +8628,7 @@
    "district": "quiet_woods:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     429.5,
     243.5
@@ -8647,9 +8648,9 @@
    "name": "Lucky Chops",
    "region": "river_port",
    "district": "river_port:d3",
-   "size": "village",
-   "auto_size": "village",
-   "score": 5,
+   "size": "town",
+   "auto_size": "town",
+   "score": 7.2,
    "xy": [
     576.4,
     571.2
@@ -8671,7 +8672,7 @@
    "district": "quiet_woods:d16",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     403.0,
     260.5
@@ -8695,7 +8696,7 @@
    "district": "heartland:d5",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     416.7,
     574.9
@@ -8719,7 +8720,7 @@
    "district": "heartland:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     329.9,
     402.0
@@ -8741,7 +8742,7 @@
    "district": "amplified_range:arrivals",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     825.1,
     275.7
@@ -8764,7 +8765,7 @@
    "district": "heartland:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     410.4,
     539.7
@@ -8786,14 +8787,14 @@
    "district": "river_port:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
-    537.2,
-    486.5
+    537.3,
+    486.6
    ],
    "region_uv": [
-    0.2566,
-    0.1252
+    0.257,
+    0.1259
    ],
    "flags": {
     "unpinned": true
@@ -8810,7 +8811,7 @@
    "district": "delta_coast:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     381.1,
     581.3
@@ -8832,7 +8833,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     415.1,
     382.0
@@ -8856,7 +8857,7 @@
    "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     637.2,
     287.7
@@ -8877,8 +8878,8 @@
    "region": "quiet_woods",
    "district": "quiet_woods:d12",
    "size": "town",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     336.5,
     333.3
@@ -8900,7 +8901,7 @@
    "district": "heartland:d2",
    "size": "village",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     257.0,
     426.1
@@ -8922,7 +8923,7 @@
    "district": "amplified_range:d9",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     803.7,
     210.4
@@ -8945,7 +8946,7 @@
    "district": "quiet_woods:override",
    "size": "village",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     548.2,
     254.3
@@ -8969,7 +8970,7 @@
    "district": "quiet_woods:d15",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     407.6,
     366.1
@@ -8995,7 +8996,7 @@
    "district": "delta_coast:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     359.6,
     542.6
@@ -9019,7 +9020,7 @@
    "district": "delta_coast:d3",
    "size": "town",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     253.9,
     577.6
@@ -9041,7 +9042,7 @@
    "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     726.5,
     275.7
@@ -9063,7 +9064,7 @@
    "district": "river_port:d7",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.2,
    "xy": [
     506.3,
     547.8
@@ -9085,7 +9086,7 @@
    "district": "delta_coast:override",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     242.8,
     605.9
@@ -9109,7 +9110,7 @@
    "district": "quiet_woods:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.2,
    "xy": [
     553.0,
     358.5
@@ -9132,7 +9133,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     730.5,
     192.5
@@ -9156,7 +9157,7 @@
    "district": "slide_foothills:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     672.6,
     362.1
@@ -9178,7 +9179,7 @@
    "district": "delta_coast:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 5.4,
    "xy": [
     387.4,
     606.6
@@ -9202,7 +9203,7 @@
    "district": "amplified_range:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     806.9,
     197.2
@@ -9226,7 +9227,7 @@
    "district": "outer_isles:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     957.2,
     248.4
@@ -9251,7 +9252,7 @@
    "district": "amplified_range:d10",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     818.4,
     285.4
@@ -9273,7 +9274,7 @@
    "district": "river_port:d7",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     483.3,
     524.6
@@ -9317,7 +9318,7 @@
    "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     630.2,
     678.4
@@ -9339,7 +9340,7 @@
    "district": "heartland:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     474.3,
     484.8
@@ -9361,7 +9362,7 @@
    "district": "delta_coast:d4",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     298.5,
     515.1
@@ -9385,7 +9386,7 @@
    "district": "delta_coast:d6",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.3,
    "xy": [
     225.3,
     499.1
@@ -9407,7 +9408,7 @@
    "district": "outer_isles:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     902.0,
     260.4
@@ -9429,7 +9430,7 @@
    "district": "outer_isles:override",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     845.0,
     16.6
@@ -9451,7 +9452,7 @@
    "district": "delta_coast:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     226.2,
     521.0
@@ -9476,7 +9477,7 @@
    "district": "quiet_woods:d13",
    "size": "village",
    "auto_size": "village",
-   "score": 5,
+   "score": 5.0,
    "xy": [
     546.7,
     233.6
@@ -9498,7 +9499,7 @@
    "district": "quiet_woods:d4",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     405.0,
     252.3
@@ -9520,7 +9521,7 @@
    "district": "river_port:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     578.9,
     545.9
@@ -9544,7 +9545,7 @@
    "district": "quiet_woods:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     396.1,
     364.8
@@ -9570,7 +9571,7 @@
    "district": "slide_foothills:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     689.3,
     419.0
@@ -9592,7 +9593,7 @@
    "district": "river_port:d2",
    "size": "town",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     684.9,
     491.8
@@ -9614,7 +9615,7 @@
    "district": "quiet_woods:outskirts",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.2,
    "xy": [
     456.6,
     388.1
@@ -9636,7 +9637,7 @@
    "district": "amplified_range:d3",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     737.2,
     352.3
@@ -9660,7 +9661,7 @@
    "district": "amplified_range:override",
    "size": "town",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     857.2,
     224.0
@@ -9684,7 +9685,7 @@
    "district": "heartland:d3",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     338.7,
     385.9
@@ -9706,7 +9707,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -9730,7 +9731,7 @@
    "district": "amplified_range:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     723.6,
     196.4
@@ -9752,7 +9753,7 @@
    "district": "amplified_range:d6",
    "size": "city",
    "auto_size": "city",
-   "score": 18,
+   "score": 18.0,
    "xy": [
     835.5,
     264.4
@@ -9777,7 +9778,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     587.8,
     318.9
@@ -9800,7 +9801,7 @@
    "district": "delta_coast:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     247.8,
     532.2
@@ -9824,7 +9825,7 @@
    "district": "amplified_range:d10",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     821.3,
     217.3
@@ -9846,7 +9847,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     422.8,
     394.9
@@ -9870,7 +9871,7 @@
    "district": "amplified_range:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     817.9,
     222.9
@@ -9892,7 +9893,7 @@
    "district": "outer_isles:override",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     883.5,
     98.8
@@ -9916,7 +9917,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     511.2,
     565.5
@@ -9938,9 +9939,9 @@
    "name": "Rebecca Porter",
    "region": "heartland",
    "district": "heartland:d5",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3,
+   "size": "village",
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     442.4,
     451.2
@@ -9985,7 +9986,7 @@
    "district": "quiet_woods:override",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.1,
    "xy": [
     475.3,
     259.8
@@ -10007,7 +10008,7 @@
    "district": "river_port:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     524.0,
     519.0
@@ -10029,7 +10030,7 @@
    "district": "quiet_woods:d14",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     442.1,
     390.0
@@ -10053,7 +10054,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -10077,7 +10078,7 @@
    "district": "amplified_range:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     758.7,
     251.7
@@ -10099,7 +10100,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     679.6,
     242.2
@@ -10124,7 +10125,7 @@
    "district": "amplified_range:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     723.6,
     269.0
@@ -10149,7 +10150,7 @@
    "district": "amplified_range:d4",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     706.3,
     348.5
@@ -10171,7 +10172,7 @@
    "district": "slide_foothills:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     599.5,
     407.5
@@ -10193,7 +10194,7 @@
    "district": "amplified_range:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     848.0,
     214.0
@@ -10215,7 +10216,7 @@
    "district": "delta_coast:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     374.7,
     601.7
@@ -10235,9 +10236,9 @@
    "name": "Sabine McCalla",
    "region": "quiet_woods",
    "district": "quiet_woods:d3",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.3,
    "xy": [
     524.4,
     401.7
@@ -10259,7 +10260,7 @@
    "district": "delta_coast:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     301.3,
     564.6
@@ -10281,7 +10282,7 @@
    "district": "outer_isles:arrivals",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.1,
    "xy": [
     908.0,
     266.9
@@ -10303,7 +10304,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     592.2,
     233.6
@@ -10325,7 +10326,7 @@
    "district": "slide_foothills:override",
    "size": "city",
    "auto_size": "city",
-   "score": 24,
+   "score": 26.2,
    "xy": [
     710.9,
     441.1
@@ -10351,7 +10352,7 @@
    "district": "heartland:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     369.1,
     481.6
@@ -10375,7 +10376,7 @@
    "district": "quiet_woods:d1",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     417.8,
     339.8
@@ -10397,7 +10398,7 @@
    "district": "amplified_range:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     653.5,
     257.9
@@ -10419,7 +10420,7 @@
    "district": "slide_foothills:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 17.4,
    "xy": [
     629.9,
     370.6
@@ -10441,7 +10442,7 @@
    "district": "quiet_woods:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     520.5,
     265.6
@@ -10464,7 +10465,7 @@
    "district": "amplified_range:d4",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.1,
    "xy": [
     682.0,
     306.9
@@ -10486,7 +10487,7 @@
    "district": "quiet_woods:d8",
    "size": "town",
    "auto_size": "town",
-   "score": 11,
+   "score": 11.0,
    "xy": [
     582.8,
     231.7
@@ -10508,7 +10509,7 @@
    "district": "amplified_range:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     733.0,
     274.9
@@ -10532,7 +10533,7 @@
    "district": "delta_coast:d1",
    "size": "capital",
    "auto_size": "capital",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     246.9,
     588.3
@@ -10554,7 +10555,7 @@
    "district": "heartland:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     408.4,
     451.6
@@ -10576,7 +10577,7 @@
    "district": "heartland:d1",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     381.5,
     523.4
@@ -10598,7 +10599,7 @@
    "district": "amplified_range:d13",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     833.1,
     241.9
@@ -10620,7 +10621,7 @@
    "district": "delta_coast:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     392.1,
     573.5
@@ -10642,7 +10643,7 @@
    "district": "amplified_range:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     767.7,
     242.6
@@ -10664,7 +10665,7 @@
    "district": "river_port:outskirts",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     492.3,
     524.7
@@ -10686,7 +10687,7 @@
    "district": "slide_foothills:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     675.5,
     457.6
@@ -10708,7 +10709,7 @@
    "district": "amplified_range:override",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     809.1,
     268.9
@@ -10730,7 +10731,7 @@
    "district": "amplified_range:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     677.1,
     298.2
@@ -10752,7 +10753,7 @@
    "district": "delta_coast:d6",
    "size": "city",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.2,
    "xy": [
     222.4,
     532.4
@@ -10776,7 +10777,7 @@
    "district": "quiet_woods:d5",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 8.8,
    "xy": [
     376.2,
     248.3
@@ -10798,7 +10799,7 @@
    "district": "quiet_woods:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     392.5,
     271.8
@@ -10820,7 +10821,7 @@
    "district": "river_port:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     590.6,
     610.0
@@ -10843,7 +10844,7 @@
    "district": "river_port:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     517.8,
     612.5
@@ -10867,7 +10868,7 @@
    "district": "heartland:d9",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     438.4,
     494.3
@@ -10889,7 +10890,7 @@
    "district": "heartland:d5",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     452.5,
     483.0
@@ -10911,7 +10912,7 @@
    "district": "amplified_range:d2",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     694.6,
     341.3
@@ -10935,7 +10936,7 @@
    "district": "amplified_range:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     823.9,
     189.2
@@ -10957,7 +10958,7 @@
    "district": "quiet_woods:override",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     432.5,
     316.9
@@ -10979,7 +10980,7 @@
    "district": "amplified_range:d6",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     848.1,
     238.1
@@ -11004,7 +11005,7 @@
    "district": "amplified_range:d3",
    "size": "city",
    "auto_size": "city",
-   "score": 15,
+   "score": 15.0,
    "xy": [
     621.1,
     245.9
@@ -11028,7 +11029,7 @@
    "district": "amplified_range:d7",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     814.4,
     246.3
@@ -11050,7 +11051,7 @@
    "district": "river_port:override",
    "size": "town",
    "auto_size": "town",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     551.9,
     596.4
@@ -11074,7 +11075,7 @@
    "district": "delta_coast:override",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     281.8,
     528.8
@@ -11098,7 +11099,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -11122,7 +11123,7 @@
    "district": "quiet_woods:d5",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     381.9,
     265.9
@@ -11144,7 +11145,7 @@
    "district": "quiet_woods:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 16,
+   "score": 18.2,
    "xy": [
     357.6,
     340.1
@@ -11166,7 +11167,7 @@
    "district": "river_port:d8",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     564.6,
     597.8
@@ -11188,7 +11189,7 @@
    "district": "river_port:override",
    "size": "city",
    "auto_size": "city",
-   "score": 21,
+   "score": 21.0,
    "xy": [
     665.7,
     559.6
@@ -11210,7 +11211,7 @@
    "district": "amplified_range:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     938.1,
     75.6
@@ -11232,7 +11233,7 @@
    "district": "delta_coast:d2",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     156.8,
     578.2
@@ -11257,7 +11258,7 @@
    "district": "delta_coast:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     162.2,
     595.8
@@ -11301,7 +11302,7 @@
    "district": "outer_isles:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     919.5,
     249.0
@@ -11325,7 +11326,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     622.6,
     417.3
@@ -11345,9 +11346,9 @@
    "name": "Taylor Ashton",
    "region": "quiet_woods",
    "district": "quiet_woods:d4",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.1,
    "xy": [
     408.4,
     236.5
@@ -11370,7 +11371,7 @@
    "district": "slide_foothills:d3",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     618.0,
     464.4
@@ -11394,7 +11395,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     632.3,
     397.2
@@ -11417,7 +11418,7 @@
    "district": "heartland:d6",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 12.0,
    "xy": [
     387.6,
     499.5
@@ -11440,7 +11441,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     533.9,
     238.6
@@ -11463,7 +11464,7 @@
    "district": "slide_foothills:d2",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     611.3,
     480.6
@@ -11488,7 +11489,7 @@
    "district": "river_port:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     699.4,
     489.6
@@ -11509,8 +11510,8 @@
    "region": "river_port",
    "district": "river_port:d2",
    "size": "village",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.1,
    "xy": [
     599.3,
     603.8
@@ -11533,7 +11534,7 @@
    "district": "heartland:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     492.1,
     457.4
@@ -11555,7 +11556,7 @@
    "district": "river_port:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     485.8,
     583.8
@@ -11578,7 +11579,7 @@
    "district": "river_port:d3",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     608.7,
     615.6
@@ -11600,7 +11601,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -11625,7 +11626,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     770.0,
     267.9
@@ -11649,8 +11650,8 @@
    "region": "quiet_woods",
    "district": "quiet_woods:outskirts",
    "size": "village",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.4,
    "xy": [
     521.7,
     245.0
@@ -11672,7 +11673,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -11697,7 +11698,7 @@
    "district": "amplified_range:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     646.2,
     237.4
@@ -11720,7 +11721,7 @@
    "district": "heartland:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     405.5,
     550.3
@@ -11743,7 +11744,7 @@
    "district": "outer_isles:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     917.7,
     268.3
@@ -11766,7 +11767,7 @@
    "district": "slide_foothills:override",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     663.6,
     447.2
@@ -11789,7 +11790,7 @@
    "district": "river_port:outskirts",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     527.5,
     536.2
@@ -11812,7 +11813,7 @@
    "district": "delta_coast:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     313.4,
     522.3
@@ -11835,7 +11836,7 @@
    "district": "quiet_woods:d4",
    "size": "capital",
    "auto_size": "capital",
-   "score": 24,
+   "score": 26.2,
    "xy": [
     568.5,
     379.0
@@ -11858,7 +11859,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     546.9,
     433.6
@@ -11881,7 +11882,7 @@
    "district": "river_port:d6",
    "size": "village",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     588.4,
     615.5
@@ -11904,7 +11905,7 @@
    "district": "quiet_woods:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     453.5,
     269.8
@@ -11926,7 +11927,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -11951,7 +11952,7 @@
    "district": "amplified_range:d4",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     748.9,
     266.5
@@ -11976,7 +11977,7 @@
    "district": "outer_isles:override",
    "size": "city",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     864.7,
     31.1
@@ -12000,7 +12001,7 @@
    "district": "heartland:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     471.0,
     491.0
@@ -12023,7 +12024,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     800.7,
     33.1
@@ -12046,7 +12047,7 @@
    "district": "river_port:d1",
    "size": "village",
    "auto_size": "village",
-   "score": 4,
+   "score": 4.0,
    "xy": [
     604.8,
     611.8
@@ -12069,7 +12070,7 @@
    "district": "slide_foothills:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     678.9,
     388.7
@@ -12092,7 +12093,7 @@
    "district": "delta_coast:override",
    "size": "village",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     371.2,
     570.9
@@ -12116,7 +12117,7 @@
    "district": "quiet_woods:d7",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     409.1,
     356.0
@@ -12141,7 +12142,7 @@
    "district": "heartland:d4",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 9.0,
    "xy": [
     443.3,
     578.7
@@ -12162,9 +12163,9 @@
    "label": "Wildmans",
    "region": "heartland",
    "district": "heartland:pinned",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.1,
    "xy": [
     405.0,
     430.8
@@ -12187,7 +12188,7 @@
    "district": "heartland:d1",
    "size": "city",
    "auto_size": "city",
-   "score": 12,
+   "score": 14.1,
    "xy": [
     420.3,
     423.3
@@ -12209,7 +12210,7 @@
    "district": "amplified_range:outskirts",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     806.4,
     293.1
@@ -12231,7 +12232,7 @@
    "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     431.4,
     565.9
@@ -12253,7 +12254,7 @@
    "district": "amplified_range:d1",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 2,
+   "score": 2.0,
    "xy": [
     711.8,
     326.0
@@ -12277,8 +12278,8 @@
    "region": "amplified_range",
    "district": "amplified_range:d8",
    "size": "village",
-   "auto_size": "hamlet",
-   "score": 3,
+   "auto_size": "village",
+   "score": 5.2,
    "xy": [
     684.2,
     296.9
@@ -12302,7 +12303,7 @@
    "district": "amplified_range:outskirts",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     688.1,
     196.4
@@ -12324,7 +12325,7 @@
    "district": "heartland:outskirts",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     324.5,
     450.3
@@ -12346,7 +12347,7 @@
    "district": "quiet_woods:d1",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     359.7,
     304.5
@@ -12368,7 +12369,7 @@
    "district": "quiet_woods:d1",
    "size": "village",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     380.9,
     349.7
@@ -12392,7 +12393,7 @@
    "district": "heartland:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     451.2,
     462.6
@@ -12415,7 +12416,7 @@
    "district": "river_port:d1",
    "size": "capital",
    "auto_size": "capital",
-   "score": 21,
+   "score": 21.0,
    "xy": [
     603.7,
     569.8
@@ -12437,7 +12438,7 @@
    "district": "heartland:d4",
    "size": "town",
    "auto_size": "town",
-   "score": 9,
+   "score": 11.3,
    "xy": [
     318.4,
     356.5
@@ -12461,7 +12462,7 @@
    "district": "outer_isles:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     975.7,
     187.8
@@ -12483,7 +12484,7 @@
    "district": "river_port:d8",
    "size": "city",
    "auto_size": "city",
-   "score": 24,
+   "score": 26.4,
    "xy": [
     600.3,
     619.5
@@ -12507,7 +12508,7 @@
    "district": "river_port:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     584.6,
     608.7
@@ -12531,7 +12532,7 @@
    "district": "outer_isles:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     924.2,
     255.7
@@ -12553,7 +12554,7 @@
    "district": "river_port:d3",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     473.6,
     529.2
@@ -12575,7 +12576,7 @@
    "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     426.2,
     379.0
@@ -12599,7 +12600,7 @@
    "district": "amplified_range:d10",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     833.0,
     233.3
@@ -12621,7 +12622,7 @@
    "district": "amplified_range:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     789.0,
     225.7
@@ -12645,7 +12646,7 @@
    "district": "quiet_woods:d9",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 1,
+   "score": 1.0,
    "xy": [
     411.0,
     252.6
@@ -12669,7 +12670,7 @@
    "district": "quiet_woods:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     584.4,
     245.9
@@ -12689,9 +12690,9 @@
    "name": "Whitney Mongé",
    "region": "quiet_woods",
    "district": "quiet_woods:override",
-   "size": "village",
-   "auto_size": "village",
-   "score": 4,
+   "size": "town",
+   "auto_size": "town",
+   "score": 6.1,
    "xy": [
     471.4,
     285.2
@@ -12713,7 +12714,7 @@
    "district": "heartland:d6",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     354.9,
     499.3
@@ -12737,7 +12738,7 @@
    "district": "outer_isles:override",
    "size": "town",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     852.9,
     12.6
@@ -12759,7 +12760,7 @@
    "district": "quiet_woods:d10",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     580.4,
     395.2
@@ -12781,14 +12782,14 @@
    "district": "heartland:d4",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
-    573.4,
-    445.1
+    574.0,
+    444.6
    ],
    "region_uv": [
-    0.9036,
-    0.3522
+    0.9054,
+    0.3502
    ],
    "flags": {
     "unpinned": true
@@ -12805,7 +12806,7 @@
    "district": "outer_isles:d4",
    "size": "city",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     776.7,
     86.6
@@ -12827,7 +12828,7 @@
    "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     702.1,
     303.2
@@ -12849,7 +12850,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     867.7,
     9.1
@@ -12871,7 +12872,7 @@
    "district": "amplified_range:d3",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     815.8,
     187.3
@@ -12893,7 +12894,7 @@
    "district": "river_port:d9",
    "size": "city",
    "auto_size": "city",
-   "score": 19,
+   "score": 21.2,
    "xy": [
     620.2,
     557.8
@@ -12917,7 +12918,7 @@
    "district": "heartland:d6",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     279.0,
     421.4
@@ -12939,7 +12940,7 @@
    "district": "slide_foothills:override",
    "size": "village",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     612.2,
     418.2
@@ -12961,7 +12962,7 @@
    "district": "amplified_range:d2",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     765.9,
     249.7
@@ -12983,7 +12984,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     983.5,
     206.4
@@ -13008,7 +13009,7 @@
    "district": "outer_isles:override",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     807.3,
     32.2
@@ -13030,7 +13031,7 @@
    "district": "river_port:d1",
    "size": "town",
    "auto_size": "town",
-   "score": 6,
+   "score": 6.0,
    "xy": [
     648.5,
     612.2
@@ -13052,7 +13053,7 @@
    "district": "quiet_woods:d16",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     414.1,
     247.7
@@ -13076,7 +13077,7 @@
    "district": "outer_isles:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
-   "score": 0,
+   "score": 0.0,
    "xy": [
     900.0,
     62.0
@@ -13100,7 +13101,7 @@
    "district": "outer_isles:outskirts",
    "size": "hamlet",
    "auto_size": "hamlet",
-   "score": 3,
+   "score": 3.0,
    "xy": [
     912.3,
     249.1
