@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-purchases.py - the one place that knows what music Dan has bought (#499).
+purchases.py - the one place that knows what music Dan has bought.
 
 A purchase is the strongest attachment the tracking data can show: money changed
 hands. Two surfaces weigh it - the affinity score in build_artist_index.py (which
@@ -23,9 +23,15 @@ THREE SOURCES, each purchase counted once:
      Physical purchases that are neither on Bandcamp nor in the item log (direct,
      crowdfund, unsigned show CDs). Status = pending counts: the money is committed.
 
-WEIGHTING. Every purchase weighs 1.0 whatever the channel or format. A signed copy
-adds SIGNED_BONUS on top (Signed = Y in music_purchases, signed = Y on any row of an
-item-log item).
+WEIGHTING. Every purchase weighs 1.0 whatever the channel or format - a single track
+and a full album are each one purchase. A signed copy adds SIGNED_BONUS on top
+(Signed = Y in music_purchases, signed = Y on any row of an item-log item).
+
+SHAPE. The question the signal answers is "did I buy from this artist?", and only
+then "did I keep buying?". share() turns a purchase weight into a 0..1 share: the
+first purchase alone earns FIRST_SHARE (most of it), and each further unit closes a
+small, fixed fraction of what is left. Both consumers scale that one share, so the
+graph and the map agree on what a deep collection is worth next to a single track.
 
 DE-DUPLICATION. The same release can sit in more than one source (Kent Burnside's
 "Hill Country Blood" is both a Bandcamp album and a signed CD). It is one purchase,
@@ -52,6 +58,10 @@ MUSIC_PURCHASES_TSV = "tools/research/follows/music_purchases.tsv"
 
 # What an autograph adds to a purchase's weight of 1.0. Callers may pass their own.
 SIGNED_BONUS = 0.5
+# share(): what the first purchase earns, and how much of the remainder is still
+# left after each further unit of weight (0.8 = every further purchase closes 20%).
+FIRST_SHARE = 0.7
+MORE_DECAY = 0.8
 
 _ITEM_MEDIA = re.compile(r"^\s*(cd|vinyl)\b\s*(?:\((.*)\))?\s*$", re.I)
 _OF_BAND = re.compile(r"^of\s+(.+)$", re.I)
@@ -132,6 +142,19 @@ def load_purchases(root="."):
     return out
 
 
+def share(weight, first=FIRST_SHARE, decay=MORE_DECAY):
+    """0..1 share of the purchase bonus for a purchase weight (from weigh()).
+
+    0 for no purchases. The first purchase earns `first`; every further unit of weight
+    closes (1 - decay) of what is left, so the share rises in small steps and stays
+    below 1.0:  share = first + (1 - first) * (1 - decay ** (weight - 1)).
+    A weight under 1 cannot occur (a purchase weighs at least 1) and is read as 1.
+    """
+    if not weight or weight <= 0:
+        return 0.0
+    return first + (1 - first) * (1 - decay ** (max(weight, 1.0) - 1))
+
+
 def weigh(purchases, resolve, signed_bonus=SIGNED_BONUS):
     """De-duplicate and total the purchases per resolved artist.
 
@@ -197,7 +220,8 @@ def main():
           f"distinct releases across {len(by_artist)} tracked artists; "
           f"{len(unmatched)} by untracked acts")
     for key, e in sorted(by_artist.items(), key=lambda kv: (-kv[1]["weight"], tracked[kv[0]].lower())):
-        print(f"  {e['weight']:>5}  {tracked[key]}  ({e['count']} owned, {e['signed']} signed)")
+        print(f"  {e['weight']:>5}  share {share(e['weight']):.2f}  {tracked[key]}  "
+              f"({e['count']} owned, {e['signed']} signed)")
     if args.unmatched:
         print("untracked:")
         for p in unmatched:
