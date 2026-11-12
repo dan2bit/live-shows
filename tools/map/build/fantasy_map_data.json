@@ -831,18 +831,6 @@
     "class": "unchanged"
    },
    {
-    "name": "J. P. Soars",
-    "override": "village",
-    "auto": "village",
-    "score": 5.2,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
     "name": "Jake Blount",
     "override": "village",
     "auto": "town",
@@ -907,30 +895,6 @@
      "at": "2026-09-25"
     },
     "class": "unchanged"
-   },
-   {
-    "name": "John Primer",
-    "override": "town",
-    "auto": "town",
-    "score": 7.2,
-    "basis": {
-     "size": "village",
-     "score": 5,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
-    "name": "Kent Burnside",
-    "override": "village",
-    "auto": "village",
-    "score": 5.2,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
    },
    {
     "name": "Kermit Ruffins",
@@ -1211,30 +1175,6 @@
     "class": "unchanged"
    },
    {
-    "name": "The California Honeydrops",
-    "override": "village",
-    "auto": "village",
-    "score": 5.1,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-10-06"
-    },
-    "class": "redundant"
-   },
-   {
-    "name": "The Family Crest",
-    "override": "village",
-    "auto": "village",
-    "score": 5.4,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
-   },
-   {
     "name": "The Pietasters",
     "override": "village",
     "auto": "town",
@@ -1281,18 +1221,6 @@
      "at": "2026-09-25"
     },
     "class": "unchanged"
-   },
-   {
-    "name": "Tommy Castro & the Painkillers",
-    "override": "village",
-    "auto": "village",
-    "score": 5.2,
-    "basis": {
-     "size": "hamlet",
-     "score": 3,
-     "at": "2026-09-25"
-    },
-    "class": "redundant"
    },
    {
     "name": "Tommy Prine",
@@ -1414,7 +1342,6 @@
    "decree": 4,
    "flipped": 1,
    "orphan": 4,
-   "redundant": 6,
    "still-promotion": 3,
    "unchanged": 50
   },
