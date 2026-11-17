@@ -10,7 +10,7 @@ byte-identical output - so CI can run it after every input change with
 nothing to hand-maintain, and --check lets CI (or a person) catch drift
 without diffing by eye.
 
-Inputs: hat_signatures.tsv, venues.tsv, tools/signers/signers.yaml, the
+Inputs: hat_signatures.tsv, venues.tsv, venue_aliases.tsv, tools/signers/signers.yaml, the
 repo-root config.yaml (site.pages_base and site.title, for the absolute URLs
 in the head), and data/artist_modal_index.json (to decide which names can
 open the artist modal).
@@ -49,6 +49,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 HAT_SIGNATURES_TSV = REPO_ROOT / "data" / "show_goals" / "hat_signatures.tsv"
 VENUES_TSV = REPO_ROOT / "data" / "venues.tsv"
+VENUE_ALIASES_TSV = REPO_ROOT / "data" / "venue_aliases.tsv"
 ARTIST_INDEX_JSON = REPO_ROOT / "data" / "artist_modal_index.json"
 SITE_CONFIG_YAML = REPO_ROOT / "config.yaml"
 CONFIG_YAML = Path(__file__).resolve().parent / "signers.yaml"
@@ -116,6 +117,7 @@ def short_venue_names():
     """Venue Name -> Short Name, falling back to the full name when blank
     or when the venue has no venues.tsv row at all (#412, open decision 2:
     only 3 of 20 hat-signing venues currently have Short Name filled in).
+    Names listed in venue_aliases.tsv resolve to their canonical row first.
     """
     names = {}
     for row in load_tsv(VENUES_TSV):
@@ -123,6 +125,16 @@ def short_venue_names():
         short = (row.get("Short Name") or "").strip()
         if full:
             names[full] = short or full
+    # A signature row may name the venue by an alias ("Live at Hub City Vinyl").
+    # Map each alias to its canonical row's display name, so it shortens the
+    # same way the canonical name does. A venues.tsv name always wins over an
+    # alias of the same spelling, and a fork without the alias file loses nothing.
+    if VENUE_ALIASES_TSV.is_file():
+        for row in load_tsv(VENUE_ALIASES_TSV):
+            alias = (row.get("Alias") or "").strip()
+            canon = (row.get("Venue Name") or "").strip()
+            if alias and canon:
+                names.setdefault(alias, names.get(canon, canon))
     return names
 
 
