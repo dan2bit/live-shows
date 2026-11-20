@@ -7,7 +7,7 @@ name: Auto-promote staging to main
 # advances by fast-forward from `staging`, so no staging sync is needed on
 # success.
 #
-# TWO TIERS OF FAILURE, deliberately different:
+# THREE KINDS OF FAILURE, in two tiers, deliberately different:
 #
 #   - The private-data guard is a LEAK check. A failing commit is never promoted
 #     AND is reset off `staging`, because the offending content must not sit on a
@@ -16,9 +16,17 @@ name: Auto-promote staging to main
 #     promoted, but is LEFT on `staging` and the run goes red. Resetting would
 #     discard the author's work over a malformed row, which is disproportionate -
 #     nothing is leaking, the data is just wrong. Fix the row and push again.
+#   - The public-notes check is a leak check that is a HEURISTIC. It reads free
+#     text for private-looking details, so it can be wrong. A failing commit is
+#     not promoted - `main` is what the site serves, so the detail never reaches
+#     visitors - but it is LEFT on `staging` and the run goes red, the same as
+#     the shape check. Resetting on a false positive would silently discard a
+#     real data commit. Fix the note (or record the exception in
+#     data/public_notes_allow.tsv) and push again.
 #
-# That is why the shape step is `continue-on-error` with the promote gated on its
-# outcome, rather than a plain failing step: a plain failure would trip the reset.
+# That is why the shape and notes steps are `continue-on-error` with the promote
+# gated on their outcomes, rather than plain failing steps: a plain failure would
+# trip the reset.
 
 on:
   push:
@@ -78,8 +86,15 @@ jobs:
         continue-on-error: true
         run: python3 scripts/validate_potential.py
 
+      # MIRROR of the "Block private details in public notes" step in
+      # private-data-guard.yml. Soft tier: see the header.
+      - name: Check public notes for private details
+        id: notes
+        continue-on-error: true
+        run: python3 scripts/check_public_notes.py --strict
+
       - name: Promote staging -> main
-        if: success() && steps.shape.outcome == 'success'
+        if: success() && steps.shape.outcome == 'success' && steps.notes.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -93,8 +108,8 @@ jobs:
           git remote add promote "git@github.com:${GITHUB_REPOSITORY}.git"
           git push promote HEAD:main
 
-      # Guard failures only. A soft-failing shape check does not mark the job
-      # failed, so this step is skipped and the commit stays on `staging`.
+      # Guard failures only. A soft-failing shape or notes check does not mark
+      # the job failed, so this step is skipped and the commit stays on `staging`.
       - name: Reset staging on failure
         if: failure()
         shell: bash
@@ -110,4 +125,12 @@ jobs:
         run: |
           echo "::error::validate_potential.py failed - staging was NOT promoted."
           echo "The commit is still on staging. Fix the row and push again."
+          exit 1
+
+      - name: Fail the run if the public-notes check failed
+        if: steps.notes.outcome == 'failure'
+        run: |
+          echo "::error::check_public_notes.py failed - staging was NOT promoted."
+          echo "The commit is still on staging. Move the private detail out of the public note"
+          echo "(or record the exception in data/public_notes_allow.tsv) and push again."
           exit 1

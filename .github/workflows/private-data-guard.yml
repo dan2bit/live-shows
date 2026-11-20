@@ -66,6 +66,15 @@ jobs:
 
           echo "OK — no private sidecar files or private-schema headers in the public repo."
 
+      # Private CONTENT in public cells: order references, calendar-block
+      # details, ticket counts, purchase-channel details, dollar amounts, and
+      # seat locations on upcoming shows. The steps above catch private files;
+      # this catches a private detail typed into a public note. The script never
+      # prints the matched text, because this log is public. Stdlib only.
+      # MIRRORED in auto-promote.yml, where it gates promotion.
+      - name: Block private details in public notes
+        run: python3 scripts/check_public_notes.py --strict
+
       - name: Sample-file header drift check
         shell: bash
         run: |
