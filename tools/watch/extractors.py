@@ -324,7 +324,9 @@ def hub_city_vinyl_offprofile(title):
 # /wp-admin/.
 
 _CE_ARTICLE_RE = re.compile(r'<article\s+class="([^"]*wfea-short-date-item[^"]*)">(.*?)</article>', re.S)
-_CE_TIME_RE = re.compile(r'<time class="wfea-short-date-item-datetime">\s*(\w+)\s+(\d{1,2}),\s*(\d{4})', re.S)
+# [^>]* after the class: the wfea plugin added a datetime="..." attribute to this tag
+# around 2026-11-15, and the old exact-">" pattern then matched zero events.
+_CE_TIME_RE = re.compile(r'<time class="wfea-short-date-item-datetime"[^>]*>\s*(\w+)\s+(\d{1,2}),\s*(\d{4})', re.S)
 _CE_TITLE_RE = re.compile(r'<h3 class="eaw-title[^"]*">\s*<a[^>]*>(.*?)</a>', re.S)
 _CE_MONTHS = {name: num for name, num in zip(
     ("January", "February", "March", "April", "May", "June", "July", "August",
