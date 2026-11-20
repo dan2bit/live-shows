@@ -745,9 +745,16 @@ apply the calendar conflict rule before creating an on-sale reminder (Step 4).
 
 - **Timed show already booked:** skip silently.
 - **All-day `NO SHOWS` block:**
-  - Strong tier → add Pass row with `Watching For` = `[block description] calendar conflict [date range]`
+  - Strong tier → add Pass row with `Watching For` = `Calendar block conflict`
   - Medium or lower → skip silently.
 - **Date open:** proceed.
+
+**Conflict wording in public files (hard rule):** a Pass row records the generic conflict
+only - `Calendar block conflict` or `Conflicting show`. Never write a block's dates, its
+reason (travel, a family event, rest) or the name of the conflicting show into any public
+column. The same holds for every other public note: say "falls in a calendar block" or
+"clear", and never describe a neighbouring block. Block dates and reasons live on the
+calendar only; they say when the house is empty.
 
 **Songkick note:** If a show surfaces first or exclusively on Songkick (not yet on BIT,
 Seated, or venue site), flag the source provenance in the recommendation summary.

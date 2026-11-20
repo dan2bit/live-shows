@@ -249,8 +249,9 @@ travel, family commitments, recovery time, or voluntary show-density limits.
 - **Always all-day or multi-day** — never a timed event.
 - **Title:** `NO SHOWS`.
 - **The block carries a note explaining the reason** in its description (e.g. "out of town",
-  "Beach Week", "rest — too many recent shows"). The reason text is what the email routines
-  quote when recording a calendar-conflict Pass row, so keep it short and descriptive.
+  "Beach Week", "rest — too many recent shows"). The reason is for Dan and for the
+  conversation only: the email routines never copy a block's reason or dates into a public
+  file. A calendar-conflict Pass row says `Calendar block conflict` and nothing more.
 - Created on request from Dan. The email routines never create NO SHOWS blocks — they only
   read them during availability/conflict checks.
 
