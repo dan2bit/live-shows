@@ -22,12 +22,12 @@ PARSING `Watching For` IS DELIBERATELY NARROW
 
 That column is free text and mostly is not a date at all - of the values present
 when this was written, three carried an on-sale date and the rest were prose
-("distance and density", "revisit if it comes closer", a spring-break block).
+("distance and density", "revisit if it comes closer", a calendar-block conflict).
 
 So a date is only read when the text actually says on-sale. The alternative,
 matching any month-day, misreads exactly the row that proves the point:
 
-    "During Spring Break - NO SHOWS block Mar 20-27 2027 (out of town)"
+    "Calendar block conflict - revisit if the Mar 20 date moves"
 
 which contains a perfectly good `Mar 20` and means the opposite of an on-sale.
 
