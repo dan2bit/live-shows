@@ -101,7 +101,7 @@ def visible_lines(html_text):
     p = _TextExtractor()
     p.feed(html_text or "")
     text = unescape("".join(p.chunks))
-    lines = (re.sub(r"[ \t\u00a0]+", " ", ln).strip() for ln in text.splitlines())
+    lines = (re.sub(r"[ \t ]+", " ", ln).strip() for ln in text.splitlines())
     return [ln for ln in lines if ln]
 
 
@@ -159,7 +159,7 @@ def blues_alley(html_text):
     def flush():
         nonlocal title_buf, status
         if cur_date and title_buf:
-            title = " ".join(title_buf).strip(" -\u2013\u2014")
+            title = " ".join(title_buf).strip(" -–—")
             if title:
                 events.append({"date": cur_date, "title": title, "status": status or ""})
         title_buf, status = [], None
@@ -324,7 +324,9 @@ def hub_city_vinyl_offprofile(title):
 # /wp-admin/.
 
 _CE_ARTICLE_RE = re.compile(r'<article\s+class="([^"]*wfea-short-date-item[^"]*)">(.*?)</article>', re.S)
-_CE_TIME_RE = re.compile(r'<time class="wfea-short-date-item-datetime">\s*(\w+)\s+(\d{1,2}),\s*(\d{4})', re.S)
+# [^>]* after the class: the wfea plugin added a datetime="..." attribute to this tag
+# around 2026-11-15, and the old exact-">" pattern then matched zero events.
+_CE_TIME_RE = re.compile(r'<time class="wfea-short-date-item-datetime"[^>]*>\s*(\w+)\s+(\d{1,2}),\s*(\d{4})', re.S)
 _CE_TITLE_RE = re.compile(r'<h3 class="eaw-title[^"]*">\s*<a[^>]*>(.*?)</a>', re.S)
 _CE_MONTHS = {name: num for name, num in zip(
     ("January", "February", "March", "April", "May", "June", "July", "August",

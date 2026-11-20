@@ -331,12 +331,25 @@ def process_venue(row, tracking):
     html_text = fetch(row["url"])
     events = spec["extract"](html_text)
     summary = ["%s: parsed %d events" % (row["name"], len(events))]
+    snap_path = SNAPSHOTS / ("%s.json" % row["slug"])
     if len(events) < EVENT_FLOOR:
+        # Below the floor reads as extractor drift, not a quiet calendar. Keep the
+        # prior snapshot untouched - overwriting it with the near-empty parse turns
+        # every real event into a "removed" line once and then hides the breakage
+        # behind empty-vs-empty "unchanged" runs (Collective Encore, 2026-11-15).
+        # Mail it, so a broken watch cannot go silent.
         print("::warning::%s: only %d events parsed - possible extractor drift, verify against the live page"
               % (row["slug"], len(events)))
-        summary.append("  WARNING: suspiciously few events parsed - check the extractor")
+        summary.append("  WARNING: suspiciously few events parsed - check the extractor; snapshot left unchanged")
+        prior = "no prior snapshot"
+        if snap_path.exists():
+            prior = "%d events in the kept snapshot" % len(json.loads(snap_path.read_text(encoding="utf-8")))
+        body = ("EXTRACTOR DRIFT\n"
+                "  Parsed %d events from %s (floor is %d); %s.\n"
+                "  The snapshot was NOT overwritten. Check the page markup against the '%s' extractor.\n"
+                % (len(events), row["url"], EVENT_FLOOR, prior, row["extractor"]))
+        return summary, {"subject": "[watch] %s - extractor drift" % row["name"], "body": body}
 
-    snap_path = SNAPSHOTS / ("%s.json" % row["slug"])
     if not snap_path.exists():
         snap_path.parent.mkdir(parents=True, exist_ok=True)
         snap_path.write_text(json.dumps(events, indent=1, ensure_ascii=False), encoding="utf-8")
