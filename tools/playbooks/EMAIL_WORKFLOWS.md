@@ -749,12 +749,17 @@ apply the calendar conflict rule before creating an on-sale reminder (Step 4).
   - Medium or lower → skip silently.
 - **Date open:** proceed.
 
-**Conflict wording in public files (hard rule):** a Pass row records the generic conflict
-only - `Calendar block conflict` or `Conflicting show`. Never write a block's dates, its
-reason (travel, a family event, rest) or the name of the conflicting show into any public
-column. The same holds for every other public note: say "falls in a calendar block" or
-"clear", and never describe a neighbouring block. Block dates and reasons live on the
-calendar only; they say when the house is empty.
+**Conflict wording in public files (hard rule):** a Pass row for a calendar block records
+the generic conflict only - `Calendar block conflict`. Never write a block's dates or its
+reason (travel, a family event, rest) into any public column. The same holds for every
+other public note: say "falls in a calendar block" or "clear", and never describe a
+neighbouring block. Block dates and reasons live on the calendar only; they say when the
+house is empty. A direct conflict with another show may name that show - it is already
+public on the Current tab.
+
+**Seat wording in public files:** seat, table, section and tier details are private for
+**upcoming** shows only. Once a show is attended, where Dan sat is a memory and may be
+explicit (the `Vantage:` field, a row or table).
 
 **Songkick note:** If a show surfaces first or exclusively on Songkick (not yet on BIT,
 Seated, or venue site), flag the source provenance in the recommendation summary.
