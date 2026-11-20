@@ -14,14 +14,21 @@ Grouping follows the item log's own convention: a row whose notes say
 starts a new item. That is what keeps three separately personalized posters
 from one night as three items.
 
-Two dates are kept apart. An item's show_date / venue say where it was
-ACQUIRED; a signature's show_date / venue say where it was SIGNED. The item
-log only ever recorded the signing, so the converter copies it to both and the
-reviewer corrects the items that were bought elsewhere and signed later.
+Two dates are kept apart. An item's acquired_date / venue say when and where it
+was ACQUIRED; a signature's show_date / venue say where it was SIGNED. The item
+log only ever recorded the signing, so the converter copies it to both, and
+overrides.tsv corrects the items that were bought elsewhere and signed later.
+acquired_date may be a year or a year-month when that is all that is known;
+venue is filled only for something acquired at a show.
 
-`paid` is Y, N or ? - a ? is a question for the reviewer (was this poster
-bought, or handed over with a VIP package?), and no ? may remain when the
-ledger goes live.
+`acquired` says how it arrived: show, vip (part of a VIP package paid for as a
+whole, so there is no price for the item itself), mail, crowdfund, bandcamp,
+raffle, gift, own (made by Dan - a print of his own photo). `paid` is Y, N or
+? - a ? is a question for the reviewer, and none may remain when the ledger
+goes live.
+
+tools/items/overrides.tsv holds the reviewer's decisions, so a rebuild keeps
+them.
 
 Bandcamp purchases are not converted here. They arrive through their own
 import from a scraped snapshot that carries a stable catalogue key.
@@ -41,10 +48,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ITEM_LOG = REPO_ROOT / "data" / "show_goals" / "item_log.tsv"
 PURCHASES = REPO_ROOT / "tools" / "research" / "follows" / "music_purchases.tsv"
+OVERRIDES = Path(__file__).resolve().parent / "overrides.tsv"
 ITEMS_OUT = REPO_ROOT / "data" / "items.tsv"
 SIGS_OUT = REPO_ROOT / "data" / "show_goals" / "item_signatures.tsv"
 
-ITEM_COLS = ["item_id", "artist", "title", "kind", "acquired", "paid", "show_date",
+ITEM_COLS = ["item_id", "artist", "title", "kind", "acquired", "paid", "acquired_date",
              "venue", "status", "photo_ref", "source_key", "notes"]
 SIG_COLS = ["item_id", "seq", "signer", "attribution", "show_date", "venue",
             "photo_ref", "legible", "confidence", "notes"]
@@ -147,7 +155,8 @@ def build():
         photo = next((r["photo_ref"].strip() for r in rows if (r.get("photo_ref") or "").strip()), "")
         items.append({
             "item_id": str(item_id), "artist": credited_artist(first), "title": title, "kind": kind,
-            "acquired": acquired, "paid": paid, "show_date": first["show_date"], "venue": first["venue"],
+            "acquired": acquired, "paid": paid, "acquired_date": first["show_date"], "venue": first["venue"],
+            "_key": "log:%d" % lead,
             "status": "received", "photo_ref": photo, "source_key": "",
             "notes": clean_notes(first.get("notes")),
         })
@@ -170,17 +179,52 @@ def build():
         items.append({
             "item_id": str(next_id), "artist": r["Artist"].strip(), "title": r["Item"].strip(),
             "kind": (r.get("Format") or "other").strip().lower(), "acquired": acquired, "paid": "Y",
-            "show_date": "", "venue": "", "status": (r.get("Status") or "").strip() or "received",
+            "acquired_date": "", "venue": "", "status": (r.get("Status") or "").strip() or "received",
+            "_key": "purchase:%s|%s" % (r["Artist"].strip(), r["Item"].strip()),
             "photo_ref": "", "source_key": "", "notes": (r.get("Note") or "").strip(),
         })
         if (r.get("Signed") or "").strip().upper() == "Y":
             sigs.append({
+                "_key": "purchase:%s|%s" % (r["Artist"].strip(), r["Item"].strip()),
                 "item_id": str(next_id), "seq": "", "signer": r["Artist"].strip(), "attribution": "",
                 "show_date": "", "venue": "", "photo_ref": "", "legible": "", "confidence": "low",
                 "notes": "signer assumed from the purchases ledger's Signed flag - confirm who signed",
             })
         next_id += 1
+    apply_overrides(items, sigs)
     return items, sigs
+
+
+ACQUIRED = ("show", "vip", "mail", "crowdfund", "bandcamp", "raffle", "gift", "own", "")
+PAID = ("Y", "N", "?")
+DATE = re.compile(r"^(?:\d{4}(?:-\d{2}(?:-\d{2})?)?)?$")
+
+
+def apply_overrides(items, sigs):
+    """Apply the reviewer's decisions from overrides.tsv (key, target, field, value, reason).
+
+    A key is `log:<seq of the item's first item-log row>` or
+    `purchase:<Artist>|<Item>`. target is `item` or `sig`; a `sig` override
+    reaches the purchases-ledger placeholder signature only, since item-log
+    signatures are already first-hand. A key that matches nothing fails the
+    build, so a decision cannot be dropped silently."""
+    if not OVERRIDES.is_file():
+        return
+    item_by_key = {it["_key"]: it for it in items}
+    sig_by_key = {sg["_key"]: sg for sg in sigs if sg.get("_key")}
+    for n, row in enumerate(load(OVERRIDES), start=2):
+        key, target, field = row["key"].strip(), row["target"].strip(), row["field"].strip()
+        value = "" if row["value"].strip() == "-" else row["value"].strip()
+        pool, cols = (item_by_key, ITEM_COLS) if target == "item" else (sig_by_key, SIG_COLS)
+        if target not in ("item", "sig") or key not in pool or field not in cols or field == "item_id":
+            sys.exit("overrides.tsv line %d: no such %s / field: %s %s" % (n, target, key, field))
+        if field == "acquired" and value not in ACQUIRED:
+            sys.exit("overrides.tsv line %d: acquired must be one of %s" % (n, ", ".join(a for a in ACQUIRED if a)))
+        if field == "paid" and value not in PAID:
+            sys.exit("overrides.tsv line %d: paid must be Y, N or ?" % n)
+        if field in ("acquired_date", "show_date") and not DATE.match(value):
+            sys.exit("overrides.tsv line %d: a date is YYYY, YYYY-MM or YYYY-MM-DD" % n)
+        pool[key][field] = value
 
 
 def render(rows, cols):
@@ -203,7 +247,7 @@ def report(items, sigs):
         if label.startswith("paid"):
             for it in chosen:
                 out.append("  %3s  %-8s %-28s %-34s %s" % (it["item_id"], it["kind"], it["artist"][:28],
-                                                          it["title"][:34], it["show_date"]))
+                                                          it["title"][:34], it["acquired_date"]))
     return "\n".join(out)
 
 
