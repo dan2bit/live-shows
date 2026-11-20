@@ -101,7 +101,7 @@ def visible_lines(html_text):
     p = _TextExtractor()
     p.feed(html_text or "")
     text = unescape("".join(p.chunks))
-    lines = (re.sub(r"[ \t\\u00a0]+", " ", ln).strip() for ln in text.splitlines())
+    lines = (re.sub(r"[ \t\u00a0]+", " ", ln).strip() for ln in text.splitlines())
     return [ln for ln in lines if ln]
 
 
@@ -159,7 +159,7 @@ def blues_alley(html_text):
     def flush():
         nonlocal title_buf, status
         if cur_date and title_buf:
-            title = " ".join(title_buf).strip(" -\\u2013\\u2014")
+            title = " ".join(title_buf).strip(" -\u2013\u2014")
             if title:
                 events.append({"date": cur_date, "title": title, "status": status or ""})
         title_buf, status = [], None
