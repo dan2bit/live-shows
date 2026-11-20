@@ -761,6 +761,15 @@ public on the Current tab.
 **upcoming** shows only. Once a show is attended, where Dan sat is a memory and may be
 explicit (the `Vantage:` field, a row or table).
 
+**Check before every public commit:** run `python3 scripts/check_public_notes.py --strict`
+before committing any public TSV in Routines 1-6, the same way `validate_current.py` and
+`validate_potential.py` are run. It scans the notes columns of the current, history,
+potentials and research files for order references, calendar-block details, ticket counts,
+purchase-channel details, dollar amounts and (upcoming rows only) seat locations. A finding
+means the detail belongs in the private sidecar; a deliberate exception is recorded in
+`data/public_notes_allow.tsv`, never by loosening the rule. `auto-promote.yml` runs the same
+check and will not promote a commit that fails it.
+
 **Songkick note:** If a show surfaces first or exclusively on Songkick (not yet on BIT,
 Seated, or venue site), flag the source provenance in the recommendation summary.
 Do not suppress — just note it.
