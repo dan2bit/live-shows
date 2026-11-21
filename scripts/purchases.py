@@ -8,24 +8,21 @@ sizes the artist-graph nodes) and the settlement score in
 tools/map/build_fantasy_map.py - and both must count the same purchases the same
 way, so the reading, the de-duplication and the weighting live here and nowhere else.
 
-THREE SOURCES, each purchase counted once:
+ONE SOURCE. data/items.tsv is the ledger of things Dan owns, one row per item,
+and data/show_goals/item_signatures.tsv records who signed which item. A row is a
+purchase when its `paid` column is Y - a CD, a download, a poster or a shirt alike.
+A release received as a gift counts too - a signed CD a friend brought back is
+music owned, the same as one that was bought. Mementos (a setlist, a thrown pick),
+raffle prizes and prints of Dan's own photos are in the ledger but are not purchases. Something that came inside a VIP
+package was paid for and counts. Status = pending counts: the money is committed.
 
-  1. tools/research/follows/dan2bit-bandcamp-collection.tsv
-     Rows with Source = collection. Wishlist rows are intent, not a purchase, and
-     are ignored.
-  2. data/show_goals/item_log.tsv
-     Rows whose item is "CD (...)" or "vinyl (...)". Several signers on one disc
-     are several rows but ONE purchase, so rows are grouped per physical item
-     (item + show date). The item is credited to the band named by an
-     "of <band>" attribution when there is one, otherwise to each signer (a joint
-     album signed by both of its artists credits both).
-  3. tools/research/follows/music_purchases.tsv
-     Physical purchases that are neither on Bandcamp nor in the item log (direct,
-     crowdfund, unsigned show CDs). Status = pending counts: the money is committed.
+An item is credited to its `artist`. A signed item is also credited to every signer
+recorded without an "of <band>" attribution - a joint album signed by both of its
+artists credits both, while a band member's signature credits only the band.
 
-WEIGHTING. Every purchase weighs 1.0 whatever the channel or format - a single track
-and a full album are each one purchase. A signed copy adds SIGNED_BONUS on top
-(Signed = Y in music_purchases, signed = Y on any row of an item-log item).
+WEIGHTING. Every purchase weighs 1.0 whatever the channel or format - a single track,
+a full album and a tour poster are each one purchase. A signed item adds SIGNED_BONUS
+on top (it has at least one row in item_signatures.tsv).
 
 SHAPE. The question the signal answers is "did I buy from this artist?", and only
 then "did I keep buying?". share() turns a purchase weight into a 0..1 share: the
@@ -33,10 +30,12 @@ first purchase alone earns FIRST_SHARE (most of it), and each further unit close
 small, fixed fraction of what is left. Both consumers scale that one share, so the
 graph and the map agree on what a deep collection is worth next to a single track.
 
-DE-DUPLICATION. The same release can sit in more than one source (Kent Burnside's
+DE-DUPLICATION. The same release can be owned more than once (Kent Burnside's
 "Hill Country Blood" is both a Bandcamp album and a signed CD). It is one purchase,
 and it keeps the signed bonus if ANY copy is signed. The key is the resolved artist
-plus the normalized title, so it needs the caller's resolver - see weigh().
+plus the normalized title, so it needs the caller's resolver - see weigh(). Merch is
+keyed with its kind in front ("poster: 2026 tour"), so a poster never merges with a
+release of the same name, and identical posters from one night count once.
 
 Names only. Nothing here reads or emits a price, a date of purchase or a sale id:
 the inputs are public files and carry none.
@@ -52,9 +51,11 @@ import re
 import sys
 import unicodedata
 
-COLLECTION_TSV = "tools/research/follows/dan2bit-bandcamp-collection.tsv"
-ITEM_LOG_TSV = "data/show_goals/item_log.tsv"
-MUSIC_PURCHASES_TSV = "tools/research/follows/music_purchases.tsv"
+ITEMS_TSV = "data/items.tsv"
+ITEM_SIGNATURES_TSV = "data/show_goals/item_signatures.tsv"
+
+# Kinds whose title is a release title. Everything else is merch.
+_MUSIC_KINDS = ("cd", "vinyl", "digital-album", "digital-track")
 
 # What an autograph adds to a purchase's weight of 1.0. Callers may pass their own.
 SIGNED_BONUS = 0.5
@@ -63,8 +64,6 @@ SIGNED_BONUS = 0.5
 FIRST_SHARE = 0.7
 MORE_DECAY = 0.8
 
-_ITEM_MEDIA = re.compile(r"^\s*(cd|vinyl)\b\s*(?:\((.*)\))?\s*$", re.I)
-_OF_BAND = re.compile(r"^of\s+(.+)$", re.I)
 _TRAILING_BAND = re.compile(r"\s+band$", re.I)
 
 
@@ -99,46 +98,38 @@ def title_key(title):
 
 
 def load_purchases(root="."):
-    """Every purchase row from the three sources, NOT yet de-duplicated:
+    """Every purchase in the items ledger, NOT yet de-duplicated:
     [{"artist", "title", "signed", "source"}]. One dict per credited artist per
-    purchase, so a joint album yields one dict for each of its artists."""
+    purchase, so a joint album yields one dict for each of its artists. `source`
+    is the item's `acquired` value (show, bandcamp, mail, vip ...)."""
+    signers = {}  # item_id -> signers recorded with no "of <band>" attribution
+    signed = set()
+    for r in _rows(os.path.join(root, ITEM_SIGNATURES_TSV)):
+        item_id = _cell(r, "item_id")
+        signed.add(item_id)
+        if _cell(r, "signer") and not _cell(r, "attribution"):
+            signers.setdefault(item_id, []).append(_cell(r, "signer"))
+
     out = []
-
-    for r in _rows(os.path.join(root, COLLECTION_TSV)):
-        if _cell(r, "Source").lower() != "collection":
+    for r in _rows(os.path.join(root, ITEMS_TSV)):
+        item_id, artist, kind = _cell(r, "item_id"), _cell(r, "artist"), _cell(r, "kind").lower()
+        # A release Dan was given counts like one he bought: what the signal
+        # measures is owning the artist's music, and a signed CD handed over by a
+        # friend is that. Other unpaid things (mementos, raffle prizes) are not.
+        gifted_release = _cell(r, "acquired") == "gift" and kind in _MUSIC_KINDS
+        if not (_yes(r.get("paid")) or gifted_release):
             continue
-        artist, title = _cell(r, "Artist"), _cell(r, "Item")
-        if artist and title:
-            out.append({"artist": artist, "title": title, "signed": False,
-                        "source": "bandcamp"})
-
-    # item log: group the signer rows of one physical item, then credit it once.
-    items = {}  # (item cell, show date) -> {"title", "signed", "bands", "signers"}
-    for r in _rows(os.path.join(root, ITEM_LOG_TSV)):
-        item = _cell(r, "item")
-        m = _ITEM_MEDIA.match(item)
-        if not m:
+        title = _cell(r, "title")
+        # A Bandcamp merch package is a physical copy of the release it is named for.
+        is_release = kind in _MUSIC_KINDS or _cell(r, "source_key").startswith("bandcamp:package:")
+        if not is_release:
+            title = "%s: %s" % (kind or "item", title or "untitled")
+        if not artist or not title:
             continue
-        g = items.setdefault((item, _cell(r, "show_date")), {
-            "title": (m.group(2) or "").strip() or item,
-            "signed": False, "bands": [], "signers": []})
-        g["signed"] = g["signed"] or _yes(r.get("signed"))
-        signer = _cell(r, "signer")
-        band = _OF_BAND.match(_cell(r, "attribution"))
-        if band and band.group(1).strip() not in g["bands"]:
-            g["bands"].append(band.group(1).strip())
-        if signer and signer not in g["signers"]:
-            g["signers"].append(signer)
-    for g in items.values():
-        for artist in (g["bands"] or g["signers"]):
-            out.append({"artist": artist, "title": g["title"], "signed": g["signed"],
-                        "source": "item_log"})
-
-    for r in _rows(os.path.join(root, MUSIC_PURCHASES_TSV)):
-        artist, title = _cell(r, "Artist"), _cell(r, "Item")
-        if artist and title:
-            out.append({"artist": artist, "title": title, "signed": _yes(r.get("Signed")),
-                        "source": "music_purchases"})
+        credited = [artist] + [s for s in signers.get(item_id, []) if s != artist]
+        for name in credited:
+            out.append({"artist": name, "title": title, "signed": item_id in signed,
+                        "source": _cell(r, "acquired") or "unknown"})
     return out
 
 

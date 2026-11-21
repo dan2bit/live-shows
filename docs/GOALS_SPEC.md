@@ -235,11 +235,13 @@ closes part of the gap `base` leaves. It answers "did I buy from this artist?"
 first and "did I keep buying?" second: the first purchase, a single track or an
 album alike, earns `f` of the bonus, and each further one closes `1 − d_p` of what
 is left. `n` is the artist's purchase weight from
-`scripts/purchases.py` - 1 per distinct release owned, plus `signed_bonus` for a
-signed copy - read from three sources and de-duplicated across them: the Bandcamp
-collection export (`Source = collection`, never wishlist), `CD` / `vinyl` rows of
-`item_log.tsv` (one per physical item, however many signers), and
-`tools/research/follows/music_purchases.tsv`. `w`, `f`, `d_p` and `signed_bonus` are
+`scripts/purchases.py` - 1 per distinct thing bought, plus `signed_bonus` for a
+signed one - read from the items ledger, `data/items.tsv`: every row with `paid = Y`
+counts, music and merch alike (a CD, a download, a poster, a shirt, something that
+came in a VIP package), and so does a release received as a gift. Mementos, raffle
+prizes and prints of Dan's own photos are in the ledger but are not purchases. "Signed" means the item has a row in
+`data/show_goals/item_signatures.tsv`. The same release owned twice (a Bandcamp
+album and its signed CD) counts once. `w`, `f`, `d_p` and `signed_bonus` are
 `config.yaml → badges.affinity.purchases` (`weight`, `first`, `decay`, `signed_bonus`;
 defaults 0.25, 0.7, 0.8, 0.5). An artist with no
 purchases scores exactly `base`; the score stays below 1.0. The index carries the

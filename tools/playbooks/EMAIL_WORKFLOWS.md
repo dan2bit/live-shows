@@ -715,6 +715,8 @@ In short: Dan uploads each photo from the phone into the Immich album that says 
 
 Memorabilia photographed at the show is filed through the same issue, but the *item* still goes to `data/show_goals/item_log.tsv` via the `item-log` skill - the photo pipeline records the picture, the ledger records the thing. Do **not** touch `artists.tsv` — it carries no photo column.
 
+**Rebuild the items ledger in the same commit.** `data/items.tsv` and `data/show_goals/item_signatures.tsv` are built from `item_log.tsv`, `tools/research/follows/music_purchases.tsv`, the Bandcamp collection export and `tools/items/overrides.tsv`, and the purchase bonus on the artist graph and the map reads the built files, not the sources. After any change to one of those sources run `python3 tools/items/convert_item_log.py` and commit its two outputs alongside. Never edit `data/items.tsv` by hand - record a correction in `tools/items/overrides.tsv`. The data-hygiene run fails when the built files are stale.
+
 **Step 7 — Activity log draft** (subject: `[LOG] Routine 2 — [Artist] post-show — YYYY-MM-DD`)
 
 Include explicit confirmation in the log body that the Step 6 playlist issue (and Step

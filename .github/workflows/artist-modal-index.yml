@@ -36,6 +36,10 @@ on:
       - data/artist_relations.tsv
       - data/bill_annotations.tsv
       - tools/research/follows/follows_master.tsv
+      # purchase bonus inputs
+      - data/items.tsv
+      - data/show_goals/item_signatures.tsv
+      - scripts/purchases.py
       - scripts/build_artist_index.py
       - scripts/name_forms.py
   workflow_dispatch:

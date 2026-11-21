@@ -75,6 +75,7 @@ on:
       - "*.css"
       - "*.html"
       - "tools/research/**"
+      - "tools/items/**"
       - ".github/workflows/**"
   pull_request:
     # PRs into either integration branch get the same scans BEFORE the merge,
@@ -89,6 +90,7 @@ on:
       - "*.css"
       - "*.html"
       - "tools/research/**"
+      - "tools/items/**"
       - ".github/workflows/**"
   schedule:
     # Weekly sweep of the setlist.fm verification. A scheduled run is on the
@@ -243,3 +245,7 @@ jobs:
 
       - name: Follows-pipeline invariants
         run: python tools/research/reconcile_follows.py --hygiene
+
+      # Fails when data/items.tsv is stale against the files it is built from.
+      - name: Items ledger matches its sources
+        run: python tools/items/convert_item_log.py --check
