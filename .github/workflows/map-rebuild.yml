@@ -47,6 +47,10 @@ on:
       - tools/map/edits/**
       - data/legacy_shows.tsv
       - data/recommend_index.json
+      # purchase bonus inputs
+      - data/items.tsv
+      - data/show_goals/item_signatures.tsv
+      - scripts/purchases.py
       - tools/map/build_fantasy_map.py
       - tools/map/emit_heightmap.py
   workflow_dispatch:
