@@ -99,7 +99,8 @@ jobs:
 
       - name: Commit updated TSVs to staging
         run: |
-          git add data/live_shows_current.tsv data/history/*.tsv data/show_goals/artist-albums.tsv
+          git add data/live_shows_current.tsv data/history/*.tsv data/show_goals/artist-albums.tsv \
+            data/items.tsv data/show_goals/item_signatures.tsv
           if git diff --cached --quiet; then
             echo "No TSV changes - nothing to commit."
           else

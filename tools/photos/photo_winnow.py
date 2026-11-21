@@ -307,7 +307,7 @@ def _widen_by_artist(row):
     index = _person_index()
 
     out, tried = [], []
-    for name in backfill._row_artists(row, backfill._item_log_index()):
+    for name in backfill._row_artists(row, backfill._item_index()):
         pids = index.get(backfill.goal_norm(name), [])
         if not pids:
             resolved, _ = backfill._resolve_artist(name, canon, aliases)
@@ -384,7 +384,7 @@ def _widen_by_album(row, rows, index):
     members have the opposite problem: Immich knows the face, but the row
     is filed under the band, so the artist lookup finds nothing. Album
     membership is what both cases still have."""
-    memorabilia = (row.get("source_row") or "").startswith("item_log")
+    memorabilia = (row.get("source_row") or "").startswith("items.tsv")
     album_ids = _album_ids(memorabilia)
     if not album_ids:
         return [], "no matching album on the server"

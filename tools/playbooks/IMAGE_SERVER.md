@@ -147,7 +147,7 @@ source of truth; the hint is never consulted after tagging.
 
 - **Shared-link defaults:** `allowDownload=true`, `showMetadata=false`, no expiry — viewers can save photos, but capture time/device/location EXIF stays private (parity with the old Google Photos shares).
 - **Taxonomy:** `tags --bootstrap` creates the standard facets — `kind/{with-artist,performance,memorabilia,selfie,crowd}`, `memorabilia/{setlist,cd,vinyl,poster,pick,ticket,autograph-book,photo-print,hat,other}`, and flat `signed`. Hat detail is a memorabilia subtype, not a kind. `show/<year>/<date>`, `artist/<slug>`, and `venue/<slug>` tags are created on demand via `tag`/`--ensure` (slugs must match the show-library slug rules).
-- **Crosswalk seeding:** `seed-crosswalk` enumerates every Google Photos link across `data/show_goals/artist-photos.tsv`, `data/live_shows_current.tsv`, `data/history/*.tsv`, and `data/show_goals/item_log.tsv` into `tools/photos/backfill_crosswalk.tsv` — one row per distinct link (shared links merge their sources), existing rows always preserved so confirmed matches are never re-litigated. `--no-immich` seeds offline; with the key set it also prefills same-day capture-date candidates.
+- **Crosswalk seeding:** `seed-crosswalk` enumerates every Google Photos link across `data/show_goals/artist-photos.tsv`, `data/live_shows_current.tsv`, `data/history/*.tsv`, and `data/items.tsv` into `tools/photos/backfill_crosswalk.tsv` — one row per distinct link (shared links merge their sources), existing rows always preserved so confirmed matches are never re-litigated. `--no-immich` seeds offline; with the key set it also prefills same-day capture-date candidates.
 
 ## Seed migration (Google Photos → Immich)
 

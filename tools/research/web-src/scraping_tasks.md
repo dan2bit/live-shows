@@ -226,8 +226,10 @@ copied out of a browser session by hand, also compare a checksum computed in the
 with one computed on the written file. Exports: 2026-11-07, 91 collection and 18
 wishlist rows; 2026-11-20, 118 and 19.
 
-Then rebuild the items ledger: `python3 tools/items/convert_item_log.py`. Every
-`collection` row becomes an item keyed on `Key`; `wishlist` rows stay here only.
+Then add the new purchases to the items ledger:
+`python3 tools/items/ledger.py import-bandcamp`. Every `collection` row the
+ledger does not hold yet is appended as an item keyed on `Key`; existing items
+keep their numbers, and `wishlist` rows stay here only.
 
 What it feeds:
 - **NAR.** An untracked, in-lane artist becomes a NAR row (with Dan's approval),

@@ -246,6 +246,5 @@ jobs:
       - name: Follows-pipeline invariants
         run: python tools/research/reconcile_follows.py --hygiene
 
-      # Fails when data/items.tsv is stale against the files it is built from.
-      - name: Items ledger matches its sources
-        run: python tools/items/convert_item_log.py --check
+      - name: Items ledger is well formed
+        run: python tools/items/ledger.py check
