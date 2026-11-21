@@ -80,7 +80,7 @@ PLACEHOLDER_RE = re.compile(r"^played with\s+.+\(.+\)\s*$", re.I)
 LINK_SOURCES = [
     ("data/show_goals/artist-photos.tsv", "Share Link"),
     ("data/live_shows_current.tsv", "Photo URL"),
-    ("data/show_goals/item_log.tsv", "photo_ref"),
+    ("data/items.tsv", "photo_ref"),
 ]
 HISTORY_DIR = "data/history"
 
@@ -368,15 +368,27 @@ def _caption_date(caption):
     return None
 
 
-def _item_log_index():
-    """seq -> (signer, show_date) from the item log, so an item_log crosswalk
-    row (whose source carries only the seq) still yields artist and date."""
+def _item_index():
+    """item number -> (names, show_date) from the items ledger, so an item
+    crosswalk row (whose source carries only the number) still yields who
+    signed it and the night it belongs to. names are the signers, or the
+    item's artist when nobody signed it."""
+    signers, days = {}, {}
+    for row in _read_rows("data/show_goals/item_signatures.tsv"):
+        num = (row.get("item_id") or "").strip()
+        name = (row.get("signer") or "").strip()
+        if name and name != "-":
+            signers.setdefault(num, []).append(name)
+        day = (row.get("show_date") or "").strip()
+        if re.match(r"\d{4}-\d{2}-\d{2}$", day):
+            days[num] = max(day, days.get(num, ""))
     out = {}
-    for row in _read_rows("data/show_goals/item_log.tsv"):
-        seq = (row.get("seq") or "").strip()
-        if seq:
-            out[seq] = ((row.get("signer") or "").strip(),
-                        (row.get("show_date") or "").strip())
+    for row in _read_rows("data/items.tsv"):
+        num = (row.get("item_id") or "").strip()
+        day = days.get(num) or (row.get("acquired_date") or "").strip()
+        if not re.match(r"\d{4}-\d{2}-\d{2}$", day):
+            day = ""
+        out[num] = (signers.get(num) or [(row.get("artist") or "").strip()], day)
     return out
 
 
@@ -411,11 +423,10 @@ def _row_artists(row, item_index=None):
         m = re.match(r"(?:current|history/[^:]+):\d{4}-\d{2}-\d{2}\s+(..*)$", source)
         if m:
             names.append(m.group(1).strip())
-        m = re.match(r"item_log\.tsv:(\d+)$", source)
+        m = re.match(r"items\.tsv:(\d+)$", source)
         if m and item_index:
-            signer, _ = item_index.get(m.group(1), ("", ""))
-            if signer:
-                names.append(signer)
+            signers, _ = item_index.get(m.group(1), ([], ""))
+            names.extend(n for n in signers if n)
         m = re.match(r"artist-photos\.tsv:(.+)$", source)
         if m:
             lead = _lead_artist(m.group(1))
@@ -460,7 +471,7 @@ def cmd_enrich(args):
             person_by_artist.setdefault(goal_norm(resolved), []).append(person["id"])
 
     songs = {} if args.no_ocr else _catalog_songs_by_artist()
-    item_index = _item_log_index()
+    item_index = _item_index()
     scrape = _gp_scrape()
     corpus = None  # built lazily on the first candidate-less item row
 
@@ -474,12 +485,12 @@ def cmd_enrich(args):
         signals = [s for s in (row.get("signals") or "").split("|") if s]
         candidates = [c for c in (row.get("immich_candidates") or "").split(";") if c]
         dates = set(re.findall(r"\d{4}-\d{2}-\d{2}", row.get("source_row", "")))
-        is_item = (row.get("source_row") or "").startswith("item_log")
+        is_item = (row.get("source_row") or "").startswith("items.tsv")
         if is_item:
             for source in (row.get("source_row") or "").split(" ; "):
-                m = re.match(r"item_log\.tsv:(\d+)$", source.strip())
+                m = re.match(r"items\.tsv:(\d+)$", source.strip())
                 if m:
-                    _, show_date = item_index.get(m.group(1), ("", ""))
+                    _, show_date = item_index.get(m.group(1), ([], ""))
                     if show_date:
                         dates.add(show_date)
         dates = sorted(dates)

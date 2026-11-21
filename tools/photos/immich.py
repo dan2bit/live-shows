@@ -417,13 +417,13 @@ def _gather_sources():
                            link,
                            f"{row.get('Artist', '')} at {row.get('Venue', '')}",
                            row.get("Show Date", ""))
-    for row in _read_tsv_rows("data/show_goals/item_log.tsv"):
+    for row in _read_tsv_rows("data/items.tsv"):
         link = row.get("photo_ref", "")
         if link.startswith(_GP_PREFIX):
-            yield (f"item_log.tsv:{row.get('seq', '')}",
+            yield (f"items.tsv:{row.get('item_id', '')}",
                    link,
-                   f"{row.get('signer', '')} {row.get('item', '')}",
-                   row.get("show_date", ""))
+                   f"{row.get('artist', '')} {row.get('kind', '')} {row.get('title', '')}",
+                   row.get("acquired_date", ""))
 
 
 def seed_crosswalk(out_path, use_immich=True):

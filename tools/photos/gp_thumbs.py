@@ -10,7 +10,7 @@ harvested the same way the captions were.
 
 Two classes of share link, harvested two different ways:
 
-  album-level  (no `/photo/` segment - the item_log memorabilia shares)
+  album-level  (no `/photo/` segment - the items ledger memorabilia shares)
       The share page carries an `og:image` meta tag readable with no
       cookies at all, so `album` mode fetches them directly. No browser,
       no session.
