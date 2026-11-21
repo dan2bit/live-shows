@@ -23,7 +23,10 @@ Everything after that happens here.
             album and (when an artist is named) the artist album, and
             report the links the library rows need. The issue-close
             workflow calls this once per comment; anything can also be
-            filed by hand with it.
+            filed by hand with it. With --item N the photo is of a thing in
+            the items ledger: the night, the artist, the memorabilia subtype
+            and whether it is signed all come from the ledger row, and the
+            photo's own link is stored on the item.
 
   sync      Materialise tags into albums for the whole server: show/,
             artist/ and kind/. Ensure each album, add missing assets, mint
@@ -1059,8 +1062,44 @@ def add_asset(asset_id, show, kind=None, artist=None, subtype=None, signed=False
     }
 
 
+def item_defaults(item_id, asset_id, kind=None):
+    """What the items ledger says about a picture of item `item_id`:
+    {"show", "artist", "subtype", "signed"}. A picture of an owned item is
+    memorabilia by definition, so a photo sitting in any other upload album is
+    refused here with a message that says where it belongs."""
+    sys.path.insert(0, os.path.join(_ROOT, "tools", "items"))
+    import ledger  # noqa: E402
+    plan = ledger.photo_plan(item_id)
+    actual = kind or asset_kind(asset_id)
+    if actual != MEMORABILIA_KIND:
+        raise SystemExit(f"item {item_id} is a thing Dan owns, so its photo belongs in "
+                         f"the Concert memorabilia album; this one is filed as "
+                         f"{actual or 'no upload album'}")
+    return plan
+
+
+def record_item_photo(item_id, ref):
+    """Store the photo's own /share/ link on the item, or say why it was not."""
+    if not (immich.on_photo_host(ref) and immich.share_key(ref)):
+        return (f"item {item_id}: photo link NOT recorded - pass the photo's own "
+                "/share/ link as --asset to store it on the item")
+    sys.path.insert(0, os.path.join(_ROOT, "tools", "items"))
+    import ledger  # noqa: E402
+    return ledger.set_item_photo(item_id, ref.strip())
+
+
 def cmd_add(args):
     asset_id = resolve_asset(args.asset)
+    if args.item:
+        plan = item_defaults(args.item, asset_id, args.kind)
+        args.show = args.show or plan["show"]
+        args.artist = args.artist or plan["artist"]
+        args.subtype = args.subtype or plan["subtype"]
+        args.signed = args.signed or plan["signed"]
+        if not args.show:
+            raise SystemExit(f"item {args.item} never passed through a show, so there is "
+                             "no night to file its photo under. Record the link alone: "
+                             f"python3 tools/items/ledger.py set-photo {args.item} <link>")
     show = args.show or asset_hint(asset_id).get("show")
     if not show:
         raise SystemExit("--show DATE is required unless the photo's description "
@@ -1080,6 +1119,8 @@ def cmd_add(args):
         print(set_show_photo_url(args.show, res["show_link"]))
         if res["artist"]:
             print(upsert_artist_album(res["artist"], res["artist_link"]))
+        if args.item:
+            print(record_item_photo(args.item, args.asset))
     else:
         print("\nImmich updated; library rows printed only. Re-run with "
               "--write to apply them.")
@@ -1547,6 +1588,10 @@ def main():
                    help="memorabilia only: " + ", ".join(MEMORABILIA_SUBTYPES))
     p.add_argument("--signed", action="store_true")
     p.add_argument("--detail", action="store_true")
+    p.add_argument("--item", metavar="N",
+                   help="the photo is of item N in data/items.tsv: show, artist, "
+                        "subtype and signed come from the ledger, and --write stores "
+                        "the photo's /share/ link on the item")
     p.add_argument("--write", action="store_true",
                    help="also write the show row and artist-albums.tsv row")
     p.add_argument("--dry-run", action="store_true")
