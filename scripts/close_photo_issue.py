@@ -20,6 +20,7 @@ followed by tokens:
     https://photos.../share/KEY
     https://photos.../share/KEY artist="Steve Bell"
     https://photos.../share/KEY subtype=pick signed artist="Ghalia Volt"
+    https://photos.../share/KEY item=73
     https://photos.../share/KEY close
 
     artist="..."   who is in frame. Defaults to the title's artist for a
@@ -27,6 +28,9 @@ followed by tokens:
     subtype=LEAF   memorabilia only: setlist, cd, vinyl, poster, pick,
                    ticket, autograph-book, photo-print, hat, other
     signed         memorabilia carries a signature
+    item=N         the photo is of item N in data/items.tsv. subtype, signed
+                   and artist then default to what the ledger says, and the
+                   link is stored on the item (tools/items/ledger.py)
     detail         a close-up of an item already filed
     close          this is the last photo; close the issue
 
@@ -42,8 +46,9 @@ none exists. Two library rows are then upserted:
     data/show_goals/artist-albums.tsv             Artist row <- artist-album link
 
 Both are idempotent, so every photo after the first from one show is a
-no-op on the show row and a membership add on the server. Memorabilia also
-belongs in item_log.tsv; that is a separate, human step.
+no-op on the show row and a membership add on the server. With item=N a
+third write stores the photo's link on that item in the items ledger; without
+it, recording the item itself stays a separate, human step.
 
 The artist name is canonicalized through recommend_aliases.tsv before it
 becomes a tag, so billing drift resolves via a data row, never a code change.
@@ -81,7 +86,7 @@ TITLE_RE = re.compile(
 LINK_RE = re.compile(r"^\s*(?P<link>https://\S+/share/[A-Za-z0-9_-]+)(?P<rest>.*)$")
 TOKEN_RE = re.compile(r"""(?P<key>[a-z]+)(?:=(?:"(?P<dq>[^"]*)"|'(?P<sq>[^']*)'|(?P<bare>\S+)))?""")
 FLAGS = {"signed", "detail", "close"}
-VALUES = {"artist", "subtype"}
+VALUES = {"artist", "subtype", "item"}
 
 
 def parse_comment(body):
@@ -102,7 +107,7 @@ def parse_comment(body):
             opts[key] = val.strip()
         else:
             raise SystemExit(f"unrecognised token {t.group(0)!r}; allowed: "
-                             "artist=\"...\", subtype=LEAF, signed, detail, close")
+                             "artist=\"...\", subtype=LEAF, item=N, signed, detail, close")
     return m.group("link"), opts
 
 
@@ -136,6 +141,15 @@ def main() -> int:
         print("ERROR: this photo is in none of the five upload albums; move it into "
               "one in Immich and comment the link again", file=sys.stderr)
         return 1
+    item = opts.get("item")
+    if item:
+        if not item.isdigit():
+            print(f"ERROR: item= takes the item's number, got {item!r}", file=sys.stderr)
+            return 1
+        plan = show_photos.item_defaults(item, asset_id, kind)
+        opts.setdefault("artist", plan["artist"])
+        opts.setdefault("subtype", plan["subtype"])
+        opts["signed"] = opts["signed"] or plan["signed"]
     artist = opts.get("artist")
     if artist:
         artist = show_photos.canonical_artist(artist)
@@ -152,6 +166,8 @@ def main() -> int:
     print(show_photos.set_show_photo_url(iso, res["show_link"]))
     if res["artist"]:
         print(show_photos.upsert_artist_album(res["artist"], res["artist_link"]))
+    if item:
+        print(show_photos.record_item_photo(item, link))
 
     _gh_output(kind=res["kind"], show_link=res["show_link"],
                artist=res["artist"] or "", artist_link=res["artist_link"] or "",

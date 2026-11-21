@@ -68,6 +68,13 @@ signing: `subtype=hat signed artist="..."`. A pick with no signature:
 `subtype=pick`.
 
 ```
+https://photos.redhat-bootlegs.net/share/... item=73
+```
+Memorabilia that is already in the items ledger (`data/items.tsv`). The
+subtype, `signed` and the artist come from the item's row, and the link is
+stored on the item, so nothing else needs typing.
+
+```
 https://photos.redhat-bootlegs.net/share/... close
 ```
 Add `close` to whichever comment is the last photo. The issue stays open
@@ -83,14 +90,16 @@ show-album link is written to the show row's Photo URL, the artist-album link
 to `data/show_goals/artist-albums.tsv`, and the workflow replies with the
 links. Second and later photos from the show are no-ops on the rows.
 
-**Memorabilia is also a ledger entry.** After the comment, record the item in
-`data/show_goals/item_log.tsv` (the `item-log` skill does this) - the photo
-pipeline files the picture, not the fact that you own the thing.
+**Memorabilia is also a ledger entry.** Record the item first (the `item-log`
+skill does this) and file its photo with `item=N`, which stores the link on
+the item. Without `item=N` the photo pipeline files the picture only, not the
+fact that you own the thing.
 
 If the workflow is ever unavailable, the same thing by hand:
 
 ```
 python3 tools/photos/show_photos.py add --asset <pasted link> --show {{YYYY-MM-DD}} [--artist "..."] [--subtype pick --signed] --write
+python3 tools/photos/show_photos.py add --asset <pasted link> --item 73 --write
 ```
 
 Do not touch `artists.tsv` - it carries no photo column.
