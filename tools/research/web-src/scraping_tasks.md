@@ -205,18 +205,29 @@ twice, so the profile count includes that duplicate.
 *Bandcamp collection + wishlist export ON CHANGE*
 
 Same setup as the follows export: logged out, from a bandcamp.com tab, fan_id
-`4498338`, Claude in Chrome only. Page `POST /api/fancollection/1/collection_items`
-and `.../wishlist_items` with the same body; each list is under `items`. Dedupe on
-`item_id` within each source.
+`4498338`. Works in Claude in Chrome and in the Claude desktop app's built-in browser
+(tested 2026-11-18); GitHub-hosted runners get a bot-challenge page. Page
+`POST /api/fancollection/1/collection_items` and `.../wishlist_items` with the same
+body; each list is under `items`. Pages overlap, so dedupe on `item_type` + `item_id`
+within each source.
 
 Write ONE file, `tools/research/follows/dan2bit-bandcamp-collection.tsv`:
-`Artist | Bandcamp URL | Item | Item Type | Source | Note`. Source is `collection` or
-`wishlist`; Note is `label page` when the item sits on a label's page, otherwise `-`.
-**Names only:** no prices, currency, purchase or added dates, sale ids or tokens.
-A purchase history is personal data, and this file is public.
+`Artist | Bandcamp URL | Item | Item Type | Source | Note | Key`. Source is `collection`
+or `wishlist`; Note is `label page` when the item sits on a label's page, otherwise `-`;
+Item Type is `album`, `track` or `package` (physical merch bought through Bandcamp).
+`Key` is `<item_type>:<item_id>` - Bandcamp's public catalogue id for the release, which
+is what lets the items ledger recognise the same purchase on the next export.
+**Whitelist the columns:** the response also carries price, currency, purchased / added /
+updated dates, `sale_item_id`, a token and gift fields. None of those may be written. A
+purchase history is personal data, and this file is public.
 
-Check the row counts against the profile's own tab counts. First export 2026-11-07:
-91 collection and 18 wishlist rows, 75 distinct artists, 54 of them already tracked.
+Check the distinct row counts against the profile's own tab counts. When the rows are
+copied out of a browser session by hand, also compare a checksum computed in the page
+with one computed on the written file. Exports: 2026-11-07, 91 collection and 18
+wishlist rows; 2026-11-20, 118 and 19.
+
+Then rebuild the items ledger: `python3 tools/items/convert_item_log.py`. Every
+`collection` row becomes an item keyed on `Key`; `wishlist` rows stay here only.
 
 What it feeds:
 - **NAR.** An untracked, in-lane artist becomes a NAR row (with Dan's approval),

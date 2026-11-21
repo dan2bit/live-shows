@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-time converter: item_log.tsv + music_purchases.tsv -> the items ledger.
+"""Builder: item_log.tsv + music_purchases.tsv + the Bandcamp snapshot -> the items ledger.
 
 The item log records one row per SIGNER, so a CD signed by three people is
 three rows and "what do I own" has to be rebuilt by grouping. The purchases
@@ -23,15 +23,22 @@ venue is filled only for something acquired at a show.
 
 `acquired` says how it arrived: show, vip (part of a VIP package paid for as a
 whole, so there is no price for the item itself), mail, crowdfund, bandcamp,
-raffle, gift, own (made by Dan - a print of his own photo). `paid` is Y, N or
+download (another download store, named in the notes), raffle, gift, own (made by Dan - a print of his own photo). `paid` is Y, N or
 ? - a ? is a question for the reviewer, and none may remain when the ledger
 goes live.
 
 tools/items/overrides.tsv holds the reviewer's decisions, so a rebuild keeps
 them.
 
-Bandcamp purchases are not converted here. They arrive through their own
-import from a scraped snapshot that carries a stable catalogue key.
+Bandcamp purchases come from the scraped snapshot
+(tools/research/follows/dan2bit-bandcamp-collection.tsv): each owned row
+becomes an item whose source_key is Bandcamp's catalogue id, wishlist rows are
+left out. Refreshing the snapshot and re-running this is the whole import.
+
+While the old ledgers still exist, items.tsv is a BUILD PRODUCT of them - edit
+the sources or overrides.tsv, never items.tsv. item_id is assigned in build
+order and can shift when a source gains a row; it becomes permanent when the
+old ledgers are retired and items.tsv becomes the hand-kept file.
 
 Deterministic: the same inputs give byte-identical outputs.
 
@@ -48,6 +55,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ITEM_LOG = REPO_ROOT / "data" / "show_goals" / "item_log.tsv"
 PURCHASES = REPO_ROOT / "tools" / "research" / "follows" / "music_purchases.tsv"
+BANDCAMP = REPO_ROOT / "tools" / "research" / "follows" / "dan2bit-bandcamp-collection.tsv"
 OVERRIDES = Path(__file__).resolve().parent / "overrides.tsv"
 ITEMS_OUT = REPO_ROOT / "data" / "items.tsv"
 SIGS_OUT = REPO_ROOT / "data" / "show_goals" / "item_signatures.tsv"
@@ -175,7 +183,8 @@ def build():
     next_id = len(items) + 1
     for r in load(PURCHASES):
         channel = (r.get("Channel") or "").strip().lower()
-        acquired = {"direct": "mail", "crowdfund": "crowdfund"}.get(channel, "")
+        # A download store other than Bandcamp is "download"; the note names the store.
+        acquired = {"direct": "mail", "crowdfund": "crowdfund", "qobuz": "download"}.get(channel, "")
         items.append({
             "item_id": str(next_id), "artist": r["Artist"].strip(), "title": r["Item"].strip(),
             "kind": (r.get("Format") or "other").strip().lower(), "acquired": acquired, "paid": "Y",
@@ -191,11 +200,34 @@ def build():
                 "notes": "signer assumed from the purchases ledger's Signed flag - confirm who signed",
             })
         next_id += 1
+
+    # Bandcamp: every owned row of the scraped snapshot, keyed on Bandcamp's own
+    # catalogue id so a later scrape matches the same item. Wishlist rows are
+    # intent, not ownership, and stay in the snapshot.
+    for r in load(BANDCAMP):
+        if (r.get("Source") or "").strip().lower() != "collection":
+            continue
+        key = (r.get("Key") or "").strip()
+        if not key or key == "-":
+            sys.exit("bandcamp snapshot: %s / %s has no Key - re-run the export" % (r["Artist"], r["Item"]))
+        item_type = (r.get("Item Type") or "").strip().lower()
+        kind = {"album": "digital-album", "track": "digital-track"}.get(item_type, "other")
+        notes = [n for n in ((r.get("Note") or "").strip(),) if n and n != "-"]
+        if item_type == "package":
+            notes.append("Bandcamp merch package (physical item)")
+        items.append({
+            "_key": "bandcamp:%s" % key,
+            "item_id": str(next_id), "artist": r["Artist"].strip(), "title": r["Item"].strip(),
+            "kind": kind, "acquired": "bandcamp", "paid": "Y", "acquired_date": "", "venue": "",
+            "status": "received", "photo_ref": "", "source_key": "bandcamp:%s" % key,
+            "notes": "; ".join(notes),
+        })
+        next_id += 1
     apply_overrides(items, sigs)
     return items, sigs
 
 
-ACQUIRED = ("show", "vip", "mail", "crowdfund", "bandcamp", "raffle", "gift", "own", "")
+ACQUIRED = ("show", "vip", "mail", "crowdfund", "bandcamp", "download", "raffle", "gift", "own", "")
 PAID = ("Y", "N", "?")
 DATE = re.compile(r"^(?:\d{4}(?:-\d{2}(?:-\d{2})?)?)?$")
 
@@ -203,8 +235,8 @@ DATE = re.compile(r"^(?:\d{4}(?:-\d{2}(?:-\d{2})?)?)?$")
 def apply_overrides(items, sigs):
     """Apply the reviewer's decisions from overrides.tsv (key, target, field, value, reason).
 
-    A key is `log:<seq of the item's first item-log row>` or
-    `purchase:<Artist>|<Item>`. target is `item` or `sig`; a `sig` override
+    A key is `log:<seq of the item's first item-log row>`,
+    `purchase:<Artist>|<Item>` or `bandcamp:<type>:<catalogue id>`. target is `item` or `sig`; a `sig` override
     reaches the purchases-ledger placeholder signature only, since item-log
     signatures are already first-hand. A key that matches nothing fails the
     build, so a decision cannot be dropped silently."""
