@@ -238,8 +238,8 @@ is left. `n` is the artist's purchase weight from
 `scripts/purchases.py` - 1 per distinct thing bought, plus `signed_bonus` for a
 signed one - read from the items ledger, `data/items.tsv`: every row with `paid = Y`
 counts, music and merch alike (a CD, a download, a poster, a shirt, something that
-came in a VIP package). Mementos, raffle prizes, gifts and prints of Dan's own photos
-are in the ledger but are not purchases. "Signed" means the item has a row in
+came in a VIP package), and so does a release received as a gift. Mementos, raffle
+prizes and prints of Dan's own photos are in the ledger but are not purchases. "Signed" means the item has a row in
 `data/show_goals/item_signatures.tsv`. The same release owned twice (a Bandcamp
 album and its signed CD) counts once. `w`, `f`, `d_p` and `signed_bonus` are
 `config.yaml → badges.affinity.purchases` (`weight`, `first`, `decay`, `signed_bonus`;
