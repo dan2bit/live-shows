@@ -106,3 +106,10 @@ tell Dan rather than improvising):
   per-ticket price. Never default quantity to 1; a pasted order-detail block
   may appear anywhere in the forwarded message (often above the forwarded
   body). Details in the playbook's Routine 1 Step 1.
+- **Calendar Location = parking, not the venue.** A show event's Location comes
+  from the venue's `venues.tsv` Parking cell (cleaned to the lot's street address
+  or named place, with city and state). Use the venue Address only when Parking
+  says on site or street parking. A Parking value with no street number (Maury
+  Wills Field, L'Enfant Promenade) is still the Location. Blank Parking or no
+  venue row: stop and ask Dan. Read the event back and check the Location after
+  every create or update. Details in `CALENDAR_WORKFLOWS.md` → Location.

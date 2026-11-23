@@ -380,7 +380,10 @@ confirmation if venue not listed.
 
 Per **`CALENDAR_WORKFLOWS.md` → Event Type 1 — Show Events**. **Start time follows the
 Doors Time Rule:** a GA ticket starts at doors. A reserved seat may start at show time
-only if the description carries the doors time. A purchased show is not
+only if the description carries the doors time. **Location comes from the venue's `venues.tsv`
+Parking cell, not its Address,** unless Parking says on site; run the pre-save Location
+check in `CALENDAR_WORKFLOWS.md` → Location before saving, and stop and ask Dan if the
+Parking cell is blank or the venue has no row. A purchased show is not
 fully processed until it has a corresponding calendar event — the TSV row and the
 calendar entry are treated as a single unit of work, not two independently-optional
 outputs. This applies regardless of ticket access method (paper, mobile barcode,
@@ -435,9 +438,13 @@ a hand-fix is a last resort, noted explicitly, and will be re-verified by the ne
 Before writing the activity log draft or applying `processed`, re-query the calendar
 (`Google Calendar:list_events`, `redhat.bootlegs@gmail.com`, date-bounded around the
 show date) and confirm a timed event exists for this show, with a title matching the
-artist and a start time that follows the **Doors Time Rule**: doors for a GA ticket,
-doors or show time for a reserved seat. A GA event that starts at show time
-while a doors time is known counts as **details mismatched** below. This is a positive
+artist, a start time that follows the **Doors Time Rule** (doors for a GA ticket,
+doors or show time for a reserved seat), and a **Location that follows
+`CALENDAR_WORKFLOWS.md` → Location** (the `venues.tsv` Parking place, or the venue
+Address only when Parking says on site). A GA event that starts at show time
+while a doors time is known counts as **details mismatched** below, and so does a
+Location that is blank, a bare venue name, or the venue's own address at a venue whose
+Parking names a separate lot. This is a positive
 verification step, not a re-statement of Step 4 — it exists specifically to catch cases
 where Step 4 appeared to succeed but the event was never actually created or committed
 (tool call silently no-op'd, wrong calendar targeted, wrong date, event created then
@@ -448,7 +455,7 @@ purchases alike have gone missing from the calendar in practice, so both are ver
 identically.
 
 - **Event found, details match:** proceed to Step 9.
-- **Event found, details mismatched** (wrong time/date/title): fix it now — this is
+- **Event found, details mismatched** (wrong time/date/title/location): fix it now — this is
   still Routine 1's job, not a deferred cleanup item. Note the correction in the log.
 - **No event found:** treat as a Step 4 failure. Do not proceed to the log draft or
   `processed` label. Create the missing event now, per `CALENDAR_WORKFLOWS.md` → Event
@@ -462,7 +469,8 @@ is a fresh read-back.
 **Step 9 — Activity log draft** (subject: `[LOG] Routine 1 — [Artist] ticket — YYYY-MM-DD`)
 
 Include explicit confirmation in the log body that the calendar event was verified
-present (Step 8), not just "created."
+present (Step 8), not just "created," with its saved Location and the Parking case it
+came from.
 
 Include a `Doors:` line for every receipt. Give the time and its source (receipt,
 event page, venue default), or say "not published". If not published, say whether the

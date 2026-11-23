@@ -156,25 +156,59 @@ Set by the **Doors Time Rule** in `EMAIL_WORKFLOWS.md`:
 A blank doors time is never left as-is. Look it up (event page, then the venue defaults
 below), and escalate as the show date nears, per that rule.
 
-### Location — REINFORCED
+### Location — HARD RULE (read from `venues.tsv` Parking, never the venue Address)
 
 The Location field feeds driving directions, so it must point to **where Dan actually parks**,
-not the venue door.
+not the venue door. **Location comes from the `venues.tsv` Parking column (column 4). The
+venue Address (column 2) goes in Location only when Parking says the parking is on site.**
+The 9:30 Club event for They Might Be Giants (2026-11-22) got the venue address in Location
+even though its Parking cell names a lot; that is the failure this section exists to stop.
 
-- **Venues WITHOUT on-site parking** (e.g. Rams Head On Stage, Hamilton Live, Warner Theatre,
-  9:30 Club, and any other venue whose `venues.tsv` **Parking** column holds a separate lot
-  address): set Location to the **parking-lot street address** from `venues.tsv` (column 4,
-  Parking). Strip the lot name / validation notes after the em-dash and use the clean street
-  address so directions route to the lot, not the venue.
-  - Example: Rams Head → `25 Calvert St, Annapolis, MD 21401` (not `33 West St`).
-  - Example: Hamilton Live / Warner Theatre → `1325 G St NW, DC 20005`.
-- **Venues WITH on-site parking** (`venues.tsv` Parking = `On site…`): set Location to the
-  venue street Address (column 2). On-site lot and venue door are effectively the same drive.
+Read the venue's Parking cell fresh from `venues.tsv` every time (never from memory or from an
+earlier event at the same venue), then apply the first case that matches:
 
-Always read the venue's Parking field from `venues.tsv` to decide — do not assume. Every show
-event must have a Location set; a missing Location is a defect on the same footing as a missing
-calendar event entirely (see `EMAIL_WORKFLOWS.md` Routine 1 Step 8) — don't leave it blank
-because the venue's parking situation is ambiguous. Confirm with Dan if genuinely unclear.
+1. **Parking begins `On site`, or says the lot is on site** (Birchmere, Wolf Trap, Jammin'
+   Java, Hank Dietle's, and so on) → Location = the venue street **Address** (column 2). The
+   on-site lot and the venue door are the same drive.
+2. **Parking names a separate lot, garage, field or street** → Location = that parking place,
+   cleaned up:
+   - Keep the street address and drop lot names, prices and validation notes on either side
+     of the em-dash. `Gott's Court Garage — 25 Calvert St, Annapolis, MD 21401` →
+     `25 Calvert St, Annapolis, MD 21401`. `1325 G St NW, DC 20005 — 24hr lot, validate…` →
+     `1325 G St NW, Washington, DC 20005`.
+   - **A Parking value with no street number is still a lot, never a reason to fall back to
+     the venue address.** Use the place itself with the city and state added:
+     - 9:30 Club, Lincoln Theatre, The Atlantis, DC9 → `9th St NW Maury Wills Field, Washington, DC`
+     - The Anthem, Union Stage, Pearl Street Warehouse → `L'Enfant Promenade SW, Washington, DC 20024`
+   - Several lots listed (`X or Y`, primary and secondary) → use the first one listed.
+3. **Parking is `Street parking…`** with no lot named → Location = the venue street Address
+   (Dan parks on the street around the door). Do not use the venue name alone.
+4. **Parking is blank, or the venue has no `venues.tsv` row** → **stop**. Do not save the
+   event with a guessed Location and do not fall back to the venue address. Ask Dan where he
+   parks, then add the answer to the venue's Parking cell (`staging`) so the next event reads
+   it from data.
+
+Location is always a street address or a named parking place with city and state. A bare
+venue name (`The Anthem, Washington DC`, `Rams Head On Stage, Annapolis MD`) is never a valid
+Location, and neither is a blank one: every show event must have a Location, and a missing or
+wrong Location is a defect on the same footing as a missing calendar event (see
+`EMAIL_WORKFLOWS.md` Routine 1 Step 8).
+
+**Pre-save Location check (mandatory on every create and every update of a show event).**
+Before calling `create_event` or `update_event`, and again on the read-back afterwards:
+
+- Write down the venue's Parking cell, which case (1–4) it falls under, and the Location that
+  case gives.
+- Compare it with the Location you are about to save. For a case 2 venue, the Location must
+  **not** contain the venue's street Address or start with the venue's name; if it does, it
+  is wrong, so fix it before saving. Watch for the `Venue: [Name], [street address]`
+  description line: that line is the one place the venue address belongs, and it is easy to
+  copy into Location by mistake.
+- After the call, read the event back and confirm the saved Location matches. A mismatch on
+  read-back gets fixed immediately, the same as a wrong start time.
+
+Whenever an upcoming event is opened for any reason, run the same check and fix a wrong
+Location then, as with the Venue line below.
 
 **Description must carry the venue address whenever Location isn't the venue door — REINFORCED.**
 This is the other half of the same rule, and it is the half that has actually drifted in
@@ -237,7 +271,8 @@ multi-ticket orders.
 ### Updating a show event (Routine 2 — post-show)
 
 Append spending and setlist info to the existing event. Upcoming or same-day events only —
-never past shows.
+never past shows. Run the pre-save Location check above on every update, and fix the Location
+and the Venue line if either has drifted.
 
 ---
 
@@ -297,7 +332,8 @@ ticketing-platform event URL and present it to Dan for confirmation before commi
 ## Cross-References
 
 - `EMAIL_WORKFLOWS.md` — when each event is created/updated within the five inbox routines.
-- `venues.tsv` — Parking column (4) drives the Location rule for show events; `Artist
+- `venues.tsv` — Parking column (4) is the source for the Location of every show event
+  (Address, column 2, only when Parking says on site); `Artist
   Interaction Likelihood` column (13) gates the Show-Goals Check (#156).
 - `data/show_goals/hat_eligibility.tsv` + `data/show_goals/hat_signatures.tsv` — hat half of the
   Show-Goals Check.
