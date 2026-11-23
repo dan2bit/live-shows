@@ -1,6 +1,6 @@
 ---
-name: live-shows-inbox
-description: Triage and process the live-shows project inbox (redhat.bootlegs@gmail.com). Use whenever Dan mentions a ticket receipt, a Ticketmaster/AXS/Eventbrite order or confirmation email, forwarding a receipt, show notes from a recent concert, ticket alerts or venue newsletters, artist follow/signup emails, a resold ticket, "process the inbox", "run Routine N", "what's in the inbox", or asks whether anything in the concert inbox needs attention. Also use when Dan mentions buying concert tickets and the purchase needs to be recorded. Do NOT use for site/repo development, YouTube playlist tooling, or general conversation about shows and artists.
+name: "live-shows-inbox"
+description: "Triage and process the live-shows project inbox (redhat.bootlegs@gmail.com). Use whenever Dan mentions a ticket receipt, a Ticketmaster/AXS/Eventbrite order or confirmation email, forwarding a receipt, show notes from a recent concert, ticket alerts or venue newsletters, artist follow/signup emails, a resold ticket, Bandcamp mail, HFTB diffs, show reminders, page-watch alerts, \"process the inbox\", \"run Routine N\", \"what's in the inbox\", or asks whether anything in the concert inbox needs attention. Also use when Dan mentions buying concert tickets and the purchase needs to be recorded. Do NOT use for site/repo development, YouTube playlist tooling, or general conversation about shows and artists."
 ---
 
 # Live-Shows Inbox — Triage and Routines
@@ -27,7 +27,8 @@ duplicate suppression below depend on them.
 
 ### 2a — Queue depth
 
-Run the six searches and count unprocessed threads per routine:
+Run the searches and count unprocessed threads per routine (the label table in the
+playbook's *Gmail Label System* section is authoritative if it has changed):
 
 | Routine | Query |
 |---|---|
@@ -37,8 +38,13 @@ Run the six searches and count unprocessed threads per routine:
 | 4 Artist mail | `label:artist-mail -label:processed` |
 | 5 Artist follow | `label:artist-follow -label:processed` |
 | 6 Ticket sold | `label:ticket-sold -label:processed` |
+| 4 Releases digest | `label:releases-digest -label:processed` |
+| 7 HFTB diff | `label:hftb-diff -label:processed` |
+| 8 Show reminders | `label:show-reminders -label:processed` |
+| 9 Page watch alert | `label:watch-alert -label:processed` |
+| 10 Bandcamp mail | `label:bandcamp -label:processed` |
 
-Then establish **per-routine last-run dates** — Dan rarely runs all six at once,
+Then establish **per-routine last-run dates** — Dan rarely runs every routine at once,
 so a single "last inbox run" date hides which queues are actually stale. Every
 routine invocation ends with a draft whose subject is
 `[LOG] Routine N — ... — YYYY-MM-DD`, so the drafts folder is the run ledger:
@@ -48,7 +54,9 @@ to the queue table. Flag any routine 7+ days stale *that also has unprocessed
 threads* — a stale-but-empty queue needs no attention. Two caveats: Routine 5
 pure reminders are labeled `processed` without a log draft, so its date can
 understate recency; and Routine 6 may legitimately show months since last run
-(resales are rare).
+(resales are rare). Routine 10 (Bandcamp, added 2026-11) has no history yet; its
+mail-type rules are provisional until the first real forwarded Bandcamp mail is
+processed, so confirm formats with Dan on that first run.
 
 ### 2b — Missing show-notes nudge
 
@@ -82,7 +90,8 @@ only if Dan asks why something was missed.
 
 Present one compact summary: queue table, days-since-last-run, and any nudges
 from 2b/2c. Recommend a run order — Routines 1 and 2 first (rare,
-high-stakes writes), then the bulk sift of 3/4/5, then 6 — and let Dan pick.
+high-stakes writes), then the bulk sift of 3/4/5, then 6, then the automated
+digests 7/8/9 and Bandcamp mail 10 — and let Dan pick.
 Do not start processing threads until Dan chooses.
 
 ## Step 3 — Execute routines from the live playbook
@@ -102,6 +111,12 @@ tell Dan rather than improvising):
   Public fields and private fields are two commits to two repos. A path like
   `live-shows-private/<file>` inside the public repo is a data leak, not a
   shortcut.
+- **Hat signers (Routine 2).** The playbook's hat step covers attribution
+  (`of <band>` for a band member vs `w/ <act>` for a touring player or opener),
+  the support-act `artists.tsv` row on first appearance, the eligibility flip
+  (only for `of` signers; a male bandleader's act stays `No`), and the Red Hat
+  Signers playlist upkeep on Spotify and Bandcamp (#501). Follow it fresh; don't
+  shortcut it.
 - **Ticketmaster quantity.** TM confirmation emails omit quantity and
   per-ticket price. Never default quantity to 1; a pasted order-detail block
   may appear anywhere in the forwarded message (often above the forwarded
