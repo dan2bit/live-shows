@@ -1,6 +1,6 @@
 ---
-name: item-log
-description: Add or update items in the live-shows items ledger (data/items.tsv and data/show_goals/item_signatures.tsv) - signed merch, picks, posters, setlists, mail-order and crowdfunded releases, and show mementos. Use whenever Dan mentions getting, finding, receiving, or photographing an item ("I got a pick at last night's show", "Jackie Venson signed my t-shirt", "the CD arrived", "here's the photo link for the set list"), asks to add to the item log or items ledger, or when Routine 2 show-notes processing surfaces a signed item or memento. Do NOT use for hat signings or autograph-book signatures - those have their own event logs - or for Bandcamp purchases, which are imported from the Bandcamp export.
+name: "item-log"
+description: "Add or update items in the live-shows items ledger (data/items.tsv and data/show_goals/item_signatures.tsv) - signed merch, picks, posters, setlists, mail-order and crowdfunded releases, and show mementos. Use whenever Dan mentions getting, finding, receiving, or photographing an item (\"I got a pick at last night's show\", \"Jackie Venson signed my t-shirt\", \"the CD arrived\", \"here's the photo link for the set list\"), asks to add to the item log or items ledger, or when Routine 2 show-notes processing surfaces a signed item or memento. Do NOT use for hat signings or autograph-book signatures - those have their own event logs - or for Bandcamp purchases, which are imported from the Bandcamp export."
 ---
 
 # Items Ledger - Additions and Updates
@@ -65,7 +65,8 @@ item_id | artist | title | kind | acquired | paid | acquired_date | venue | stat
 - **status** - `received`, or `pending` for an order not yet arrived.
 - **photo_ref** - share link to the item's photo (see Step 3).
 - **source_key** - `-` for everything this skill adds.
-- **notes** - ASCII punctuation only.
+- **notes** - provenance and context (VIP bundle, pick branding, farewell-tour
+  context, verification reminders). ASCII punctuation only.
 
 `item_signatures.tsv` (9 columns):
 
@@ -75,8 +76,8 @@ item_id | signer | attribution | show_date | venue | photo_ref | legible | confi
 
 - One row per signer. An item signed by three band members is ONE item row
   and three signature rows carrying its `item_id`, kept together in the file.
-- **attribution** - `of <band>` for a band member, `-` for a solo or headline
-  artist under their own name.
+- **attribution** - GOALS_SPEC binding vocabulary: `of <band>` for a band
+  member, `-` for a solo or headline artist under their own name.
 - **show_date / venue** - where it was signed, which may be a later show than
   the one where the item was acquired.
 - **photo_ref** - optional close-up of the signature; usually `-`.
@@ -129,7 +130,8 @@ explicitly surfaced, not assumed.
   item then shows up in `python3 tools/items/ledger.py needs-photo`, and Dan
   can file the photo later from a `Photos:` issue comment with `item=N`.
 - **Duplicate-URL check:** if the supplied photo URL already appears on a
-  DIFFERENT item, flag it as a probable paste error and re-confirm.
+  DIFFERENT item, flag it as a probable paste error and re-confirm before
+  proceeding.
 
 ## Step 4 - Preview before committing
 
@@ -154,9 +156,9 @@ Wait for explicit approval of the preview. No approval, no commit.
   change. No renumbering, no re-sorting.
 - When a checkout is available, run `python3 tools/items/ledger.py check`
   before pushing. The data-hygiene run applies the same check after the push.
-- Verify the pushed files against the intended content and confirm
-  auto-promote carried them to `main`.
+- Verify the pushed files byte-for-byte against the intended content and
+  confirm auto-promote carried them to `main`.
 - Report the item number(s) so follow-ups and photo comments can use them.
 
 `DATA_WRITE_PROTOCOLS.md` in the repo remains authoritative for all write
-mechanics.
+mechanics; if this skill and that file ever disagree, the playbook wins.
