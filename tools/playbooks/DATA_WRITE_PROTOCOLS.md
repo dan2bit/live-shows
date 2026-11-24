@@ -32,6 +32,76 @@ The MCP token can write to **both** `dan2bit/live-shows` (public) and
 
 ---
 
+## When the private repo is unreachable — retry, then re-route
+
+Not every session can reach `dan2bit/live-shows-private`. A session linked to Dan's Mac
+uses the GitHub server there, whose token covers both repos. A cloud-only session
+(a scheduled run, a phone-started task, another Claude app) reaches GitHub through the
+account-level connection, which may cover the public repo alone. This applies to every
+routine and every conversational task that owes a private write: `current_private.tsv`,
+`potential_private.tsv`, `fast_track_caps.tsv`, `spending.tsv`, `history_private/`.
+
+**Never, whatever else fails:**
+
+- Put a private field anywhere in the public repo to "park" it: not a file, a commit
+  message, an issue, a PR, a comment or a script's output. CI logs are public too.
+- Drop the private write silently, or report the routine as complete without saying it
+  is owed.
+- Guess a value you could not read. A decision that depends on private data waits.
+
+**Step 1 — Confirm it is really unreachable, and retry once.**
+A failed read is not proof. An unauthenticated request to a private repo returns 404
+even when the repo exists. Check which GitHub tools the session has; if there is a
+second route (the Mac's GitHub tools as well as the workspace's own git), try the other
+one. For an error that looks transient (timeout, 5xx, a stale blob SHA), re-fetch and
+retry the same write once. Do not loop.
+
+**Step 2 — Do the public half anyway.**
+The public commit never depends on the private one succeeding. Write the public fields
+to `staging` as usual. The exception is any step that must **read** private data to
+decide what to do: a resale offset (Routine 6), the `in-page purchase` marker check
+(Routine 1), a budget or spending total. Hold those steps and list them as owed; do not
+substitute an estimate.
+
+**Step 3 — Hand the private half off in the activity log draft.**
+The Gmail draft lives in Dan's mailbox, so it is the one safe place to carry private
+values. Add `[PRIVATE-PENDING]` to the draft's subject and a block in its body with one
+entry per owed write:
+
+- target: `dan2bit/live-shows-private → <file>`
+- operation: append a row, replace a row, or delete a row
+- key: copied verbatim from the public row just written (`Show Date` + `Artist` for
+  `current_private.tsv`, `Artist` + `Date` for `potential_private.tsv`)
+- the full row, every column in file order, or the exact cells to change
+- source: the Gmail thread id of the receipt or note the values came from
+- any held step from Step 2, and what it is waiting to read
+
+If the draft cannot be created either, give the same block to Dan in the conversation.
+Apply `processed` to the source thread as usual: the pending draft is now the tracker,
+and reprocessing the email would duplicate the public half. Say plainly in the closing
+message that private writes are owed and where they are recorded.
+
+**Step 4 — Apply from a session that can reach the private repo.**
+Any session with private access checks for owed work at start:
+`subject:PRIVATE-PENDING` in drafts. For each entry:
+
+1. Fetch the private file fresh and check the write is not already there (match on the
+   key). An entry already applied is skipped, not written twice.
+2. Check the key still matches the public row byte for byte; if the public row has
+   changed since, use its current key and note the difference.
+3. Apply it as its own commit to the private repo's `main`, then verify the pushed blob
+   against the intended content.
+4. Finish any held step from Step 2 now that the data can be read.
+5. Change the draft's subject from `[PRIVATE-PENDING]` to `[PRIVATE-APPLIED]` and add
+   the commit ids, so the search comes back empty when nothing is owed.
+
+**If no pending draft exists** but a public commit clearly has no private twin (a
+Routine 1 purchase with no `current_private.tsv` row, an attended show with no
+`spending.tsv` row), rebuild the entry from the source email and the public commit, and
+tell Dan it was reconstructed rather than handed off.
+
+---
+
 ## Character set — ASCII punctuation only
 
 **Never write curly/typographic punctuation into any data file.** TSV rows, JSON

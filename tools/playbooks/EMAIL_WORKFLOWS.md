@@ -137,6 +137,12 @@ Search all logs: `subject:[LOG]`
 Body includes: which email(s) processed, every action taken (TSV rows added/removed,
 calendar events, recommendations), skipped items and why, manual follow-up items.
 
+**Private repo unreachable?** The public half still goes ahead and the owed private
+writes are carried in this draft, with `[PRIVATE-PENDING]` added to the subject. A
+session that can reach the private repo searches drafts for `subject:PRIVATE-PENDING`
+at start and applies them. Full procedure:
+**`DATA_WRITE_PROTOCOLS.md` → When the private repo is unreachable**.
+
 One draft per routine invocation. If draft creation fails, the summary stays in
 conversation. Pure reminder emails (Routine 5) require no log draft.
 
