@@ -47,6 +47,7 @@ Follow tier model:
 Commit rules (for any file writes in this session):
 - TSVs and data files → **staging** branch in dan2bit/live-shows; auto-promote.yml fast-forwards main after guard passes
 - Private sidecar TSVs → dan2bit/live-shows-private main directly
+- If the private repo cannot be reached this session (the taste profile fetch fails, or a private write is refused), say so before starting research that depends on it, and hand any owed private write off as `DATA_WRITE_PROTOCOLS.md` → "When the private repo is unreachable" describes. Never park private values in the public repo.
 - Scripts and code → PR branch; Dan merges
 - `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
 - Auto-promote trigger: both the **Contents API** (`create_or_update_file`) and the **Git Data API** (`push_files`) fire the `push` event on staging — single writes and batches promote to main with no follow-up commit (verified 2026-08-24).

@@ -15,6 +15,7 @@ Start every session by:
 Commit rules:
 - TSVs and non-executable data files → **staging** branch (not main); auto-promote.yml fast-forwards main after the guard passes
 - Private sidecar TSVs (dan2bit/live-shows-private → current_private.tsv etc.) → commit to that repo's main directly; the private repo does not use the staging pipeline
+- If the private repo cannot be reached this session, say so, do the public half, and hand the private half off as `DATA_WRITE_PROTOCOLS.md` → "When the private repo is unreachable" describes. Never park private values in the public repo. If it can be reached and Gmail is available, check drafts for `subject:PRIVATE-PENDING` and apply what is owed.
 - app.js → get confirmation on whether Dan should commit or directly via MCP (to staging)
 - other JS, Python, shell scripts → PR branch; Dan merges
 - index.html → staging directly via MCP (Unicode handled correctly by official binary)

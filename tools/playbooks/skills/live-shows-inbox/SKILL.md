@@ -20,8 +20,17 @@ execute a routine from memory of the playbook; fetch it fresh (Step 3).
    - `data/live_shows_current.tsv`
    - `data/live_shows_potential.tsv`
 
-If the clock or either fetch fails, stop and tell Dan — the gap checks and
-duplicate suppression below depend on them.
+3. Read `current_private.tsv` from the **repo** `dan2bit/live-shows-private`
+   once, to learn whether the private repo is reachable this session.
+   - Reachable: search Gmail drafts for `subject:PRIVATE-PENDING`. Each one
+     lists private writes an earlier session could not make. Report them in
+     the triage snapshot and apply them before new routines.
+   - Not reachable: say so in the triage snapshot. Routines still run (see the
+     invariant in Step 3).
+
+If the clock or either public fetch fails, stop and tell Dan — the gap checks and
+duplicate suppression below depend on them. An unreachable private repo is not
+a reason to stop.
 
 ## Step 2 — Triage snapshot (read-only; always runs first)
 
@@ -111,6 +120,14 @@ tell Dan rather than improvising):
   Public fields and private fields are two commits to two repos. A path like
   `live-shows-private/<file>` inside the public repo is a data leak, not a
   shortcut.
+- **Private repo unreachable.** Retry once, then do the public half and carry
+  the private half in the activity log draft: add `[PRIVATE-PENDING]` to the
+  subject and list each owed write (target file, operation, key copied from
+  the public row, the full row, source thread). Hold any step that must read
+  private data to decide; never estimate it. Never park private values in the
+  public repo, and never report the routine complete without saying what is
+  owed. Full procedure: `DATA_WRITE_PROTOCOLS.md` → When the private repo is
+  unreachable.
 - **Hat signers (Routine 2).** The playbook's hat step covers attribution
   (`of <band>` for a band member vs `w/ <act>` for a touring player or opener),
   the support-act `artists.tsv` row on first appearance, the eligibility flip

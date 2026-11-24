@@ -13,6 +13,10 @@ Start every session by:
 2. **The `time` MCP connector (`mcp__time__get_current_time`) is no longer supported — do not call it and do not look for it in the tool preflight.** Establish today's date via the **`current-date` skill** (`/mnt/skills/user/current-date/SKILL.md`) instead: it reads a real clock (shell `TZ=America/New_York date`, or the skill's other supported methods) and falls back to asking Dan directly if no clock is reachable. Use its result for the days-since-last-run figure in step 3 and everywhere else a current date is needed this session.
 3. Noting how many days since the last inbox run (flag if 7+).
 4. Fetching live_shows_current.tsv and live_shows_potential.tsv before any routine that touches them.
+5. **Private repo check.** Read `dan2bit/live-shows-private → current_private.tsv` once and say whether the private repo is reachable this session.
+   - Reachable: search Gmail drafts for `subject:PRIVATE-PENDING` and apply any owed private writes before starting new routines.
+   - Not reachable: say so up front. Routines still run; the public half is committed and the private half is handed off in the activity log draft. Never park private values in the public repo.
+   - Procedure for both cases: **`DATA_WRITE_PROTOCOLS.md` → When the private repo is unreachable**.
 
 Available routines:
 - Routine 1: ticket receipts (label:ticket-receipt) — public fields (artist, date, venue, seat type, VIP/Group flags) to data/live_shows_current.tsv; private fields (cost, seat info, ticket qty, purchasing/fee notes) to **dan2bit/live-shows-private → current_private.tsv**, keyed on Show Date + Artist. Two separate commits to two separate repos, never one.
@@ -36,6 +40,7 @@ Key rules in effect:
 - Potentials sort: Buy → Choose → Sell → Pass, date asc within groups; re-sort on every change
 - Prev/Next brackets: purchased upcoming shows only; never potentials or attended
 - Fetch fresh SHA immediately before every create_or_update_file call
+- A private write that cannot be made is never dropped and never written to the public repo: retry once, then record it in the activity log draft with `[PRIVATE-PENDING]` in the subject (`DATA_WRITE_PROTOCOLS.md` → When the private repo is unreachable)
 - TSVs and data files commit to **staging** (not main); private sidecar TSVs commit to dan2bit/live-shows-private main; JS/Python scripts go to PR branch
 - `.github/workflows/*.yml` cannot be written by the agent — the MCP PAT was narrowed to drop Workflows write (2026-07-28) and GitHub reports the refusal as **404, not 403**. Patch locally, present the full file, hand the push to Dan.
 - Auto-promote trigger: both the **Contents API** (`create_or_update_file`) and the **Git Data API** (`push_files`) fire the `push` event on staging — single writes and batches promote to main with no follow-up commit (verified 2026-08-24).
