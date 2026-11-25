@@ -3360,9 +3360,11 @@
     {
       "id": 269,
       "canonical": "Marc Broussard",
-      "status": "follow",
+      "status": "potential",
+      "decision": "Choose",
       "tier": "Medium",
       "sources": [
+        "potential",
         "follow"
       ]
     },
@@ -3812,6 +3814,7 @@
       "id": 304,
       "canonical": "Oliver Wood",
       "status": "seen",
+      "decision": "Pass",
       "tier": "Strong",
       "times_seen": "3",
       "first_seen": "2021-07-11",
@@ -3820,6 +3823,7 @@
       "youtube": "https://www.youtube.com/@OliverWoodMusic",
       "sources": [
         "seen",
+        "potential",
         "follow",
         "seen-support"
       ]
