@@ -1,8 +1,8 @@
 {
-  "generated": "2026-11-24",
+  "generated": "2026-11-25",
   "counts": {
-    "records": 441,
-    "variants": 488
+    "records": 442,
+    "variants": 489
   },
   "records": [
     {
@@ -355,9 +355,9 @@
       "id": 27,
       "canonical": "Anna Moss",
       "status": "seen",
-      "times_seen": "1",
+      "times_seen": "2",
       "first_seen": "2026-08-08",
-      "most_recent_seen": "2026-08-08",
+      "most_recent_seen": "2026-11-21",
       "spotify": "https://open.spotify.com/artist/79EqLrXbrtaK3sNgSQYoRE",
       "youtube": "https://www.youtube.com/@annamossmusic",
       "sources": [
@@ -1848,10 +1848,17 @@
     {
       "id": 149,
       "canonical": "Fruition",
-      "status": "follow",
+      "status": "seen",
       "tier": "Medium",
+      "times_seen": "1",
+      "first_seen": "2026-11-21",
+      "most_recent_seen": "2026",
+      "spotify": "https://open.spotify.com/artist/4dDqxbEKfPN3RZYrGr36y8",
+      "youtube": "https://www.youtube.com/@FruitionPDX",
       "sources": [
-        "follow"
+        "seen",
+        "follow",
+        "seen-support"
       ]
     },
     {
@@ -2097,6 +2104,18 @@
     },
     {
       "id": 169,
+      "canonical": "Handmade Moments",
+      "status": "seen-support",
+      "first_seen": "2026",
+      "most_recent_seen": "2026",
+      "appearances": "1",
+      "bill": "Fruition",
+      "sources": [
+        "seen-support"
+      ]
+    },
+    {
+      "id": 170,
       "canonical": "Hannah Honeycutt",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2108,7 +2127,7 @@
       ]
     },
     {
-      "id": 170,
+      "id": 171,
       "canonical": "Hayes Carll",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2120,7 +2139,7 @@
       ]
     },
     {
-      "id": 171,
+      "id": 172,
       "canonical": "The Heavy Heavy",
       "status": "seen",
       "tier": "Strong",
@@ -2136,7 +2155,7 @@
       ]
     },
     {
-      "id": 172,
+      "id": 173,
       "canonical": "Henri Brown",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2148,7 +2167,7 @@
       ]
     },
     {
-      "id": 173,
+      "id": 174,
       "canonical": "The Hip Snacks",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2160,7 +2179,7 @@
       ]
     },
     {
-      "id": 174,
+      "id": 175,
       "canonical": "Honeyfunk",
       "status": "seen",
       "times_seen": "1",
@@ -2174,7 +2193,7 @@
       ]
     },
     {
-      "id": 175,
+      "id": 176,
       "canonical": "Hot Tuna",
       "status": "follow",
       "tier": "Strong",
@@ -2183,7 +2202,7 @@
       ]
     },
     {
-      "id": 176,
+      "id": 177,
       "canonical": "Houndmouth",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -2192,7 +2211,7 @@
       ]
     },
     {
-      "id": 177,
+      "id": 178,
       "canonical": "House of Hamill",
       "status": "follow",
       "tier": "Medium",
@@ -2201,7 +2220,7 @@
       ]
     },
     {
-      "id": 178,
+      "id": 179,
       "canonical": "The House You Grew Up In (THYGUI)",
       "status": "seen-support",
       "first_seen": "2023",
@@ -2213,7 +2232,7 @@
       ]
     },
     {
-      "id": 179,
+      "id": 180,
       "canonical": "Hozier",
       "status": "seen",
       "tier": "Strong",
@@ -2229,7 +2248,7 @@
       ]
     },
     {
-      "id": 180,
+      "id": 181,
       "canonical": "I'm With Her",
       "status": "follow",
       "tier": "Medium",
@@ -2241,7 +2260,7 @@
       ]
     },
     {
-      "id": 181,
+      "id": 182,
       "canonical": "The Iguanas",
       "status": "follow",
       "tier": "Medium",
@@ -2253,7 +2272,7 @@
       ]
     },
     {
-      "id": 182,
+      "id": 183,
       "canonical": "Indigo Girls",
       "status": "seen",
       "times_seen": "1",
@@ -2267,7 +2286,7 @@
       ]
     },
     {
-      "id": 183,
+      "id": 184,
       "canonical": "Ivan Neville",
       "status": "follow",
       "tier": "Lower",
@@ -2276,7 +2295,7 @@
       ]
     },
     {
-      "id": 184,
+      "id": 185,
       "canonical": "J. P. Soars",
       "status": "seen",
       "times_seen": "1",
@@ -2290,7 +2309,7 @@
       ]
     },
     {
-      "id": 185,
+      "id": 186,
       "canonical": "J & The Causeways",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2302,7 +2321,7 @@
       ]
     },
     {
-      "id": 186,
+      "id": 187,
       "canonical": "Jack White",
       "status": "follow",
       "tier": "Strong",
@@ -2311,7 +2330,7 @@
       ]
     },
     {
-      "id": 187,
+      "id": 188,
       "canonical": "Jackie Venson",
       "status": "seen",
       "tier": "Strong",
@@ -2327,7 +2346,7 @@
       ]
     },
     {
-      "id": 188,
+      "id": 189,
       "canonical": "Jah Works",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2339,7 +2358,7 @@
       ]
     },
     {
-      "id": 189,
+      "id": 190,
       "canonical": "Jaime Wyatt",
       "status": "follow",
       "tier": "Medium",
@@ -2351,7 +2370,7 @@
       ]
     },
     {
-      "id": 190,
+      "id": 191,
       "canonical": "Jake Blount",
       "status": "seen",
       "tier": "Strong",
@@ -2367,7 +2386,7 @@
       ]
     },
     {
-      "id": 191,
+      "id": 192,
       "canonical": "Jake Xerxes Fussell",
       "status": "seen",
       "decision": "Buy",
@@ -2385,7 +2404,7 @@
       ]
     },
     {
-      "id": 192,
+      "id": 193,
       "canonical": "The James Hunter Six",
       "status": "follow",
       "tier": "Medium",
@@ -2397,7 +2416,7 @@
       ]
     },
     {
-      "id": 193,
+      "id": 194,
       "canonical": "Jared James Nichols",
       "status": "follow",
       "tier": "Medium",
@@ -2406,7 +2425,7 @@
       ]
     },
     {
-      "id": 194,
+      "id": 195,
       "canonical": "Jasper Hobbs",
       "status": "seen-support",
       "first_seen": "2024",
@@ -2418,7 +2437,7 @@
       ]
     },
     {
-      "id": 195,
+      "id": 196,
       "canonical": "Jax Hollow",
       "status": "seen",
       "tier": "Strong",
@@ -2434,7 +2453,7 @@
       ]
     },
     {
-      "id": 196,
+      "id": 197,
       "canonical": "Jess Williamson",
       "status": "potential",
       "decision": "Choose",
@@ -2444,7 +2463,7 @@
       ]
     },
     {
-      "id": 197,
+      "id": 198,
       "canonical": "Jesse Dayton",
       "status": "follow",
       "tier": "Medium",
@@ -2456,7 +2475,7 @@
       ]
     },
     {
-      "id": 198,
+      "id": 199,
       "canonical": "The Jesse Williams Band",
       "status": "seen",
       "times_seen": "1",
@@ -2470,7 +2489,7 @@
       ]
     },
     {
-      "id": 199,
+      "id": 200,
       "canonical": "Jessie Baylin",
       "status": "seen-support",
       "first_seen": "2024",
@@ -2482,7 +2501,7 @@
       ]
     },
     {
-      "id": 200,
+      "id": 201,
       "canonical": "Jessie's Girl",
       "status": "seen",
       "times_seen": "1",
@@ -2496,7 +2515,7 @@
       ]
     },
     {
-      "id": 201,
+      "id": 202,
       "canonical": "Jimmie Vaughan",
       "status": "seen",
       "tier": "Strong",
@@ -2512,7 +2531,7 @@
       ]
     },
     {
-      "id": 202,
+      "id": 203,
       "canonical": "Jimmy Hall",
       "status": "seen-support",
       "first_seen": "2023",
@@ -2524,7 +2543,7 @@
       ]
     },
     {
-      "id": 203,
+      "id": 204,
       "canonical": "JJ Grey & Mofro",
       "status": "seen",
       "tier": "Strong",
@@ -2540,7 +2559,7 @@
       ]
     },
     {
-      "id": 204,
+      "id": 205,
       "canonical": "Joan Jett & The Blackhearts",
       "status": "seen",
       "times_seen": "1",
@@ -2554,7 +2573,7 @@
       ]
     },
     {
-      "id": 205,
+      "id": 206,
       "canonical": "Joanna Connor",
       "status": "follow",
       "tier": "Strong",
@@ -2563,7 +2582,7 @@
       ]
     },
     {
-      "id": 206,
+      "id": 207,
       "canonical": "Joanne Shaw Taylor",
       "status": "seen",
       "tier": "Strong",
@@ -2579,7 +2598,7 @@
       ]
     },
     {
-      "id": 207,
+      "id": 208,
       "canonical": "Jobi Riccio",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2591,7 +2610,7 @@
       ]
     },
     {
-      "id": 208,
+      "id": 209,
       "canonical": "Joe Bonamassa",
       "status": "seen",
       "tier": "Strong",
@@ -2607,7 +2626,7 @@
       ]
     },
     {
-      "id": 209,
+      "id": 210,
       "canonical": "Joe Satriani",
       "status": "seen",
       "times_seen": "1",
@@ -2619,7 +2638,7 @@
       ]
     },
     {
-      "id": 210,
+      "id": 211,
       "canonical": "Joey Landreth",
       "status": "follow",
       "tier": "Medium",
@@ -2628,7 +2647,7 @@
       ]
     },
     {
-      "id": 211,
+      "id": 212,
       "canonical": "John Hiatt",
       "status": "seen",
       "times_seen": "1",
@@ -2642,7 +2661,7 @@
       ]
     },
     {
-      "id": 212,
+      "id": 213,
       "canonical": "John Nemeth",
       "status": "follow",
       "tier": "Medium",
@@ -2651,7 +2670,7 @@
       ]
     },
     {
-      "id": 213,
+      "id": 214,
       "canonical": "John Primer",
       "status": "seen",
       "tier": "Medium-Strong",
@@ -2667,7 +2686,7 @@
       ]
     },
     {
-      "id": 214,
+      "id": 215,
       "canonical": "John Prine Celebration",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2678,7 +2697,7 @@
       ]
     },
     {
-      "id": 215,
+      "id": 216,
       "canonical": "Jon Batiste",
       "status": "seen",
       "tier": "Strong",
@@ -2694,7 +2713,7 @@
       ]
     },
     {
-      "id": 216,
+      "id": 217,
       "canonical": "Jon Muq",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2706,7 +2725,7 @@
       ]
     },
     {
-      "id": 217,
+      "id": 218,
       "canonical": "Jon Spencer",
       "status": "seen-support",
       "first_seen": "2023",
@@ -2718,7 +2737,7 @@
       ]
     },
     {
-      "id": 218,
+      "id": 219,
       "canonical": "Jontavious Willis",
       "status": "follow",
       "tier": "Medium",
@@ -2727,7 +2746,7 @@
       ]
     },
     {
-      "id": 219,
+      "id": 220,
       "canonical": "Josh Hoyer & Soul Colossal",
       "status": "follow",
       "tier": "Medium",
@@ -2736,7 +2755,7 @@
       ]
     },
     {
-      "id": 220,
+      "id": 221,
       "canonical": "Josh Ritter",
       "status": "follow",
       "decision": "Pass",
@@ -2747,7 +2766,7 @@
       ]
     },
     {
-      "id": 221,
+      "id": 222,
       "canonical": "Joy Oladokun",
       "status": "follow",
       "tier": "Medium",
@@ -2756,7 +2775,7 @@
       ]
     },
     {
-      "id": 222,
+      "id": 223,
       "canonical": "Judith Hill",
       "status": "seen",
       "decision": "Pass",
@@ -2774,7 +2793,7 @@
       ]
     },
     {
-      "id": 223,
+      "id": 224,
       "canonical": "Judy Blank",
       "status": "seen",
       "times_seen": "1",
@@ -2788,7 +2807,7 @@
       ]
     },
     {
-      "id": 224,
+      "id": 225,
       "canonical": "Juels Bland",
       "status": "seen-support",
       "first_seen": "2024",
@@ -2800,7 +2819,7 @@
       ]
     },
     {
-      "id": 225,
+      "id": 226,
       "canonical": "Kaia Kater",
       "status": "follow",
       "tier": "Medium",
@@ -2809,7 +2828,7 @@
       ]
     },
     {
-      "id": 226,
+      "id": 227,
       "canonical": "Kara Jackson",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2821,7 +2840,7 @@
       ]
     },
     {
-      "id": 227,
+      "id": 228,
       "canonical": "Kashus Culpepper",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -2830,7 +2849,7 @@
       ]
     },
     {
-      "id": 228,
+      "id": 229,
       "canonical": "Kat Riggins",
       "status": "fast_track",
       "tier": "Strong",
@@ -2841,7 +2860,7 @@
       ]
     },
     {
-      "id": 229,
+      "id": 230,
       "canonical": "Kate Davis",
       "status": "seen",
       "tier": "Strong",
@@ -2857,7 +2876,7 @@
       ]
     },
     {
-      "id": 230,
+      "id": 231,
       "canonical": "Keb' Mo'",
       "status": "seen",
       "tier": "Strong",
@@ -2873,7 +2892,7 @@
       ]
     },
     {
-      "id": 231,
+      "id": 232,
       "canonical": "Keller Williams",
       "status": "potential",
       "decision": "Pass",
@@ -2883,7 +2902,7 @@
       ]
     },
     {
-      "id": 232,
+      "id": 233,
       "canonical": "Kelli Baker Band",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2895,7 +2914,7 @@
       ]
     },
     {
-      "id": 233,
+      "id": 234,
       "canonical": "Kenny Wayne Shepherd",
       "status": "seen",
       "decision": "Pass",
@@ -2913,7 +2932,7 @@
       ]
     },
     {
-      "id": 234,
+      "id": 235,
       "canonical": "Kent Burnside",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2925,7 +2944,7 @@
       ]
     },
     {
-      "id": 235,
+      "id": 236,
       "canonical": "Kim Wilson",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -2934,7 +2953,7 @@
       ]
     },
     {
-      "id": 236,
+      "id": 237,
       "canonical": "King Solomon Hicks",
       "status": "follow",
       "tier": "Medium",
@@ -2946,7 +2965,7 @@
       ]
     },
     {
-      "id": 237,
+      "id": 238,
       "canonical": "Kingsley Flood",
       "status": "seen",
       "tier": "Strong",
@@ -2962,7 +2981,7 @@
       ]
     },
     {
-      "id": 238,
+      "id": 239,
       "canonical": "Kirk Fletcher",
       "status": "follow",
       "tier": "Medium",
@@ -2971,7 +2990,7 @@
       ]
     },
     {
-      "id": 239,
+      "id": 240,
       "canonical": "kitchen",
       "status": "seen-support",
       "first_seen": "2026",
@@ -2983,7 +3002,7 @@
       ]
     },
     {
-      "id": 240,
+      "id": 241,
       "canonical": "La Unica",
       "status": "seen-support",
       "first_seen": "2025",
@@ -2995,7 +3014,7 @@
       ]
     },
     {
-      "id": 241,
+      "id": 242,
       "canonical": "Lake Street Dive",
       "status": "seen",
       "tier": "Medium",
@@ -3011,7 +3030,7 @@
       ]
     },
     {
-      "id": 242,
+      "id": 243,
       "canonical": "Langhorne Slim",
       "status": "seen",
       "tier": "Strong",
@@ -3027,7 +3046,7 @@
       ]
     },
     {
-      "id": 243,
+      "id": 244,
       "canonical": "Larkin Poe",
       "status": "seen",
       "tier": "Strong",
@@ -3043,7 +3062,7 @@
       ]
     },
     {
-      "id": 244,
+      "id": 245,
       "canonical": "Larry Campbell & Teresa Williams",
       "status": "potential",
       "decision": "Pass",
@@ -3053,7 +3072,7 @@
       ]
     },
     {
-      "id": 245,
+      "id": 246,
       "canonical": "Larry McCray",
       "status": "follow",
       "decision": "Pass",
@@ -3064,7 +3083,7 @@
       ]
     },
     {
-      "id": 246,
+      "id": 247,
       "canonical": "Last Train Home",
       "status": "potential",
       "decision": "Pass",
@@ -3074,7 +3093,7 @@
       ]
     },
     {
-      "id": 247,
+      "id": 248,
       "canonical": "Leyla McCalla",
       "status": "follow",
       "tier": "Medium",
@@ -3083,7 +3102,7 @@
       ]
     },
     {
-      "id": 248,
+      "id": 249,
       "canonical": "Liam St. John",
       "status": "seen-support",
       "first_seen": "2025",
@@ -3095,7 +3114,7 @@
       ]
     },
     {
-      "id": 249,
+      "id": 250,
       "canonical": "Lightnin' Malcolm",
       "status": "follow",
       "tier": "Medium",
@@ -3107,7 +3126,7 @@
       ]
     },
     {
-      "id": 250,
+      "id": 251,
       "canonical": "Lilly Hiatt",
       "status": "follow",
       "tier": "Strong",
@@ -3116,7 +3135,7 @@
       ]
     },
     {
-      "id": 251,
+      "id": 252,
       "canonical": "Lindsay Lou",
       "status": "seen",
       "times_seen": "2",
@@ -3130,7 +3149,7 @@
       ]
     },
     {
-      "id": 252,
+      "id": 253,
       "canonical": "Līve",
       "status": "seen",
       "times_seen": "1",
@@ -3143,7 +3162,7 @@
       ]
     },
     {
-      "id": 253,
+      "id": 254,
       "canonical": "Liz Phair",
       "status": "seen",
       "times_seen": "1",
@@ -3157,7 +3176,7 @@
       ]
     },
     {
-      "id": 254,
+      "id": 255,
       "canonical": "LL Cool J",
       "status": "seen",
       "times_seen": "1",
@@ -3171,7 +3190,7 @@
       ]
     },
     {
-      "id": 255,
+      "id": 256,
       "canonical": "The Lone Bellow",
       "status": "seen",
       "tier": "Strong",
@@ -3187,7 +3206,7 @@
       ]
     },
     {
-      "id": 256,
+      "id": 257,
       "canonical": "Los Lobos",
       "status": "seen",
       "times_seen": "1",
@@ -3201,7 +3220,7 @@
       ]
     },
     {
-      "id": 257,
+      "id": 258,
       "canonical": "Lou Black",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3213,7 +3232,7 @@
       ]
     },
     {
-      "id": 258,
+      "id": 259,
       "canonical": "Lucinda Williams",
       "status": "follow",
       "tier": "Strong",
@@ -3222,7 +3241,7 @@
       ]
     },
     {
-      "id": 259,
+      "id": 260,
       "canonical": "Lucius",
       "status": "follow",
       "tier": "Strong",
@@ -3234,7 +3253,7 @@
       ]
     },
     {
-      "id": 260,
+      "id": 261,
       "canonical": "Lucky Chops",
       "status": "seen",
       "times_seen": "1",
@@ -3248,7 +3267,7 @@
       ]
     },
     {
-      "id": 261,
+      "id": 262,
       "canonical": "Lucy Dacus",
       "status": "follow",
       "tier": "Medium",
@@ -3257,7 +3276,7 @@
       ]
     },
     {
-      "id": 262,
+      "id": 263,
       "canonical": "Lukas Nelson",
       "status": "potential",
       "decision": "Pass",
@@ -3267,7 +3286,7 @@
       ]
     },
     {
-      "id": 263,
+      "id": 264,
       "canonical": "Lyle Lovett",
       "status": "seen",
       "decision": "Pass",
@@ -3285,7 +3304,7 @@
       ]
     },
     {
-      "id": 264,
+      "id": 265,
       "canonical": "Lynn Hollyfield",
       "status": "seen",
       "times_seen": "1",
@@ -3299,7 +3318,7 @@
       ]
     },
     {
-      "id": 265,
+      "id": 266,
       "canonical": "Maggie Rose",
       "status": "seen",
       "tier": "Strong",
@@ -3315,7 +3334,7 @@
       ]
     },
     {
-      "id": 266,
+      "id": 267,
       "canonical": "Mali Obomsawin",
       "status": "seen",
       "times_seen": "1",
@@ -3327,7 +3346,7 @@
       ]
     },
     {
-      "id": 267,
+      "id": 268,
       "canonical": "Mallow Hill",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3339,7 +3358,7 @@
       ]
     },
     {
-      "id": 268,
+      "id": 269,
       "canonical": "Marc Broussard",
       "status": "follow",
       "tier": "Medium",
@@ -3348,7 +3367,7 @@
       ]
     },
     {
-      "id": 269,
+      "id": 270,
       "canonical": "Marcus King",
       "status": "seen",
       "tier": "Strong",
@@ -3364,7 +3383,7 @@
       ]
     },
     {
-      "id": 270,
+      "id": 271,
       "canonical": "Margaret Glaspy",
       "status": "seen",
       "times_seen": "1",
@@ -3378,7 +3397,7 @@
       ]
     },
     {
-      "id": 271,
+      "id": 272,
       "canonical": "Margo Price",
       "status": "follow",
       "tier": "Strong",
@@ -3390,7 +3409,7 @@
       ]
     },
     {
-      "id": 272,
+      "id": 273,
       "canonical": "Mark Knopfler",
       "status": "follow",
       "tier": "Strong",
@@ -3399,7 +3418,7 @@
       ]
     },
     {
-      "id": 273,
+      "id": 274,
       "canonical": "Martin Sexton",
       "status": "potential",
       "decision": "Choose",
@@ -3409,7 +3428,7 @@
       ]
     },
     {
-      "id": 274,
+      "id": 275,
       "canonical": "Mathias Lattin",
       "status": "follow",
       "tier": "Medium",
@@ -3421,7 +3440,7 @@
       ]
     },
     {
-      "id": 275,
+      "id": 276,
       "canonical": "Mato Nanji",
       "status": "seen-support",
       "first_seen": "2025",
@@ -3433,7 +3452,7 @@
       ]
     },
     {
-      "id": 276,
+      "id": 277,
       "canonical": "Matteo Mancuso",
       "status": "seen",
       "tier": "Strong",
@@ -3449,7 +3468,7 @@
       ]
     },
     {
-      "id": 277,
+      "id": 278,
       "canonical": "Mavis Staples",
       "status": "seen",
       "tier": "Strong",
@@ -3465,7 +3484,7 @@
       ]
     },
     {
-      "id": 278,
+      "id": 279,
       "canonical": "members of The Bridge, Smooth Kentucky & others",
       "status": "potential",
       "decision": "Pass",
@@ -3475,7 +3494,7 @@
       ]
     },
     {
-      "id": 279,
+      "id": 280,
       "canonical": "Mikaela Davis",
       "status": "seen",
       "tier": "Strong",
@@ -3491,7 +3510,7 @@
       ]
     },
     {
-      "id": 280,
+      "id": 281,
       "canonical": "Mike Campbell & The Dirty Knobs",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -3500,7 +3519,7 @@
       ]
     },
     {
-      "id": 281,
+      "id": 282,
       "canonical": "Mike Zito",
       "status": "seen",
       "decision": "Choose",
@@ -3518,7 +3537,7 @@
       ]
     },
     {
-      "id": 282,
+      "id": 283,
       "canonical": "Miko Marks",
       "status": "fast_track",
       "tier": "Strong",
@@ -3529,7 +3548,7 @@
       ]
     },
     {
-      "id": 283,
+      "id": 284,
       "canonical": "Mitch Ryder",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3541,7 +3560,7 @@
       ]
     },
     {
-      "id": 284,
+      "id": 285,
       "canonical": "Modest Mouse",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3553,7 +3572,7 @@
       ]
     },
     {
-      "id": 285,
+      "id": 286,
       "canonical": "Mohini Dey",
       "status": "seen",
       "tier": "Strong",
@@ -3569,7 +3588,7 @@
       ]
     },
     {
-      "id": 286,
+      "id": 287,
       "canonical": "Molly Tuttle",
       "status": "seen",
       "tier": "Lower",
@@ -3585,7 +3604,7 @@
       ]
     },
     {
-      "id": 287,
+      "id": 288,
       "canonical": "MonoNeon",
       "status": "seen-support",
       "first_seen": "2022",
@@ -3597,7 +3616,7 @@
       ]
     },
     {
-      "id": 288,
+      "id": 289,
       "canonical": "Morgan Wade",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3609,7 +3628,7 @@
       ]
     },
     {
-      "id": 289,
+      "id": 290,
       "canonical": "Mr. Sipp",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -3618,7 +3637,7 @@
       ]
     },
     {
-      "id": 290,
+      "id": 291,
       "canonical": "Muireann Bradley",
       "status": "seen",
       "tier": "Strong",
@@ -3634,7 +3653,7 @@
       ]
     },
     {
-      "id": 291,
+      "id": 292,
       "canonical": "Mx. Mundy",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3646,7 +3665,7 @@
       ]
     },
     {
-      "id": 292,
+      "id": 293,
       "canonical": "Mystery Friends",
       "status": "seen-support",
       "first_seen": "2023",
@@ -3658,7 +3677,7 @@
       ]
     },
     {
-      "id": 293,
+      "id": 294,
       "canonical": "Nas",
       "status": "seen",
       "times_seen": "1",
@@ -3672,7 +3691,7 @@
       ]
     },
     {
-      "id": 294,
+      "id": 295,
       "canonical": "Nat Myers",
       "status": "follow",
       "tier": "Medium",
@@ -3681,7 +3700,7 @@
       ]
     },
     {
-      "id": 295,
+      "id": 296,
       "canonical": "National Symphony Orchestra",
       "status": "seen-support",
       "first_seen": "2026",
@@ -3693,7 +3712,7 @@
       ]
     },
     {
-      "id": 296,
+      "id": 297,
       "canonical": "Nick Lowe & Los Straitjackets",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -3705,7 +3724,7 @@
       ]
     },
     {
-      "id": 297,
+      "id": 298,
       "canonical": "Nicole Atkins",
       "status": "follow",
       "decision": "Pass",
@@ -3719,7 +3738,7 @@
       ]
     },
     {
-      "id": 298,
+      "id": 299,
       "canonical": "Nikki Hill",
       "status": "fast_track",
       "tier": "Strong",
@@ -3730,7 +3749,7 @@
       ]
     },
     {
-      "id": 299,
+      "id": 300,
       "canonical": "Nina Goodman",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3742,7 +3761,7 @@
       ]
     },
     {
-      "id": 300,
+      "id": 301,
       "canonical": "The North Country",
       "status": "seen-support",
       "first_seen": "2024",
@@ -3754,7 +3773,7 @@
       ]
     },
     {
-      "id": 301,
+      "id": 302,
       "canonical": "North Mississippi Allstars",
       "status": "seen",
       "decision": "Pass",
@@ -3772,7 +3791,7 @@
       ]
     },
     {
-      "id": 302,
+      "id": 303,
       "canonical": "Oh He Dead",
       "status": "seen",
       "decision": "Pass",
@@ -3790,7 +3809,7 @@
       ]
     },
     {
-      "id": 303,
+      "id": 304,
       "canonical": "Oliver Wood",
       "status": "seen",
       "tier": "Strong",
@@ -3806,7 +3825,7 @@
       ]
     },
     {
-      "id": 304,
+      "id": 305,
       "canonical": "On A Winter's Night",
       "status": "potential",
       "decision": "Pass",
@@ -3816,7 +3835,7 @@
       ]
     },
     {
-      "id": 305,
+      "id": 306,
       "canonical": "Orianthi",
       "status": "seen",
       "tier": "Strong",
@@ -3832,7 +3851,7 @@
       ]
     },
     {
-      "id": 306,
+      "id": 307,
       "canonical": "P!nk",
       "status": "follow",
       "tier": "Medium",
@@ -3841,7 +3860,7 @@
       ]
     },
     {
-      "id": 307,
+      "id": 308,
       "canonical": "Patty Griffin",
       "status": "seen-support",
       "first_seen": "2026",
@@ -3853,7 +3872,7 @@
       ]
     },
     {
-      "id": 308,
+      "id": 309,
       "canonical": "Peter Case",
       "status": "seen-support",
       "first_seen": "2023",
@@ -3865,7 +3884,7 @@
       ]
     },
     {
-      "id": 309,
+      "id": 310,
       "canonical": "Peter Gabriel",
       "status": "follow",
       "tier": "Strong",
@@ -3874,7 +3893,7 @@
       ]
     },
     {
-      "id": 310,
+      "id": 311,
       "canonical": "Phoenix",
       "status": "seen-support",
       "first_seen": "2023",
@@ -3886,7 +3905,7 @@
       ]
     },
     {
-      "id": 311,
+      "id": 312,
       "canonical": "The Pietasters",
       "status": "seen",
       "decision": "Choose",
@@ -3904,7 +3923,7 @@
       ]
     },
     {
-      "id": 312,
+      "id": 313,
       "canonical": "The Pinkerton Raid",
       "status": "seen-support",
       "first_seen": "2025",
@@ -3916,7 +3935,7 @@
       ]
     },
     {
-      "id": 313,
+      "id": 314,
       "canonical": "Piper & The Hard Times",
       "status": "follow",
       "tier": "Medium",
@@ -3925,7 +3944,7 @@
       ]
     },
     {
-      "id": 314,
+      "id": 315,
       "canonical": "Pixies",
       "status": "seen",
       "times_seen": "1",
@@ -3939,7 +3958,7 @@
       ]
     },
     {
-      "id": 315,
+      "id": 316,
       "canonical": "Pokey LaFarge",
       "status": "follow",
       "tier": "Strong",
@@ -3948,7 +3967,7 @@
       ]
     },
     {
-      "id": 316,
+      "id": 317,
       "canonical": "Pretenders",
       "status": "seen",
       "times_seen": "1",
@@ -3962,7 +3981,7 @@
       ]
     },
     {
-      "id": 317,
+      "id": 318,
       "canonical": "Queen Latifah",
       "status": "seen-support",
       "first_seen": "2023",
@@ -3974,7 +3993,7 @@
       ]
     },
     {
-      "id": 318,
+      "id": 319,
       "canonical": "Rachael & Vilray",
       "status": "potential",
       "decision": "Pass",
@@ -3984,7 +4003,7 @@
       ]
     },
     {
-      "id": 319,
+      "id": 320,
       "canonical": "The Raging Nathans",
       "status": "potential",
       "decision": "Choose",
@@ -3994,7 +4013,7 @@
       ]
     },
     {
-      "id": 320,
+      "id": 321,
       "canonical": "Rasputina",
       "status": "potential",
       "decision": "Choose",
@@ -4004,7 +4023,7 @@
       ]
     },
     {
-      "id": 321,
+      "id": 322,
       "canonical": "Rebecca Berlin",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4016,7 +4035,7 @@
       ]
     },
     {
-      "id": 322,
+      "id": 323,
       "canonical": "Rebecca Porter",
       "status": "seen",
       "times_seen": "1",
@@ -4030,7 +4049,7 @@
       ]
     },
     {
-      "id": 323,
+      "id": 324,
       "canonical": "Rebirth Brass Band",
       "status": "follow",
       "decision": "Pass",
@@ -4044,7 +4063,7 @@
       ]
     },
     {
-      "id": 324,
+      "id": 325,
       "canonical": "The Record Company",
       "status": "follow",
       "tier": "Medium",
@@ -4053,7 +4072,7 @@
       ]
     },
     {
-      "id": 325,
+      "id": 326,
       "canonical": "Rhiannon Giddens",
       "status": "seen",
       "tier": "Strong",
@@ -4069,7 +4088,7 @@
       ]
     },
     {
-      "id": 326,
+      "id": 327,
       "canonical": "Rich Ruth",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4081,7 +4100,7 @@
       ]
     },
     {
-      "id": 327,
+      "id": 328,
       "canonical": "Riley Downing",
       "status": "potential",
       "decision": "Choose",
@@ -4091,7 +4110,7 @@
       ]
     },
     {
-      "id": 328,
+      "id": 329,
       "canonical": "Rival Sons",
       "status": "seen",
       "times_seen": "1",
@@ -4105,7 +4124,7 @@
       ]
     },
     {
-      "id": 329,
+      "id": 330,
       "canonical": "Robben Ford",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -4114,7 +4133,7 @@
       ]
     },
     {
-      "id": 330,
+      "id": 331,
       "canonical": "Robert Cray Band",
       "status": "seen",
       "times_seen": "1",
@@ -4128,7 +4147,7 @@
       ]
     },
     {
-      "id": 331,
+      "id": 332,
       "canonical": "Robert Jon & The Wreck",
       "status": "seen",
       "tier": "Strong",
@@ -4144,7 +4163,7 @@
       ]
     },
     {
-      "id": 332,
+      "id": 333,
       "canonical": "Robert Randolph",
       "status": "seen",
       "decision": "Pass",
@@ -4162,7 +4181,7 @@
       ]
     },
     {
-      "id": 333,
+      "id": 334,
       "canonical": "Robzie Trulove",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4174,7 +4193,7 @@
       ]
     },
     {
-      "id": 334,
+      "id": 335,
       "canonical": "Roger Waters",
       "status": "seen",
       "times_seen": "1",
@@ -4188,7 +4207,7 @@
       ]
     },
     {
-      "id": 335,
+      "id": 336,
       "canonical": "The Roots",
       "status": "seen-support",
       "first_seen": "2023",
@@ -4200,7 +4219,7 @@
       ]
     },
     {
-      "id": 336,
+      "id": 337,
       "canonical": "Ruthie Foster",
       "status": "seen",
       "tier": "Strong",
@@ -4216,7 +4235,7 @@
       ]
     },
     {
-      "id": 337,
+      "id": 338,
       "canonical": "Sabine McCalla",
       "status": "seen",
       "tier": "Medium",
@@ -4232,7 +4251,7 @@
       ]
     },
     {
-      "id": 338,
+      "id": 339,
       "canonical": "Sadia Bangura",
       "status": "seen",
       "times_seen": "1",
@@ -4245,7 +4264,7 @@
       ]
     },
     {
-      "id": 339,
+      "id": 340,
       "canonical": "Sadurn",
       "status": "seen",
       "times_seen": "3",
@@ -4259,7 +4278,7 @@
       ]
     },
     {
-      "id": 340,
+      "id": 341,
       "canonical": "Safety Bear",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4271,7 +4290,7 @@
       ]
     },
     {
-      "id": 341,
+      "id": 342,
       "canonical": "Sam Amidon",
       "status": "seen-support",
       "first_seen": "2026",
@@ -4283,7 +4302,7 @@
       ]
     },
     {
-      "id": 342,
+      "id": 343,
       "canonical": "Samantha Fish",
       "status": "seen",
       "tier": "Strong",
@@ -4299,7 +4318,7 @@
       ]
     },
     {
-      "id": 343,
+      "id": 344,
       "canonical": "Samantha Fish & Jesse Dayton",
       "status": "seen",
       "times_seen": "2",
@@ -4313,7 +4332,7 @@
       ]
     },
     {
-      "id": 344,
+      "id": 345,
       "canonical": "Sanjay Arora",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4325,7 +4344,7 @@
       ]
     },
     {
-      "id": 345,
+      "id": 346,
       "canonical": "Sarah McLachlan",
       "status": "seen",
       "times_seen": "1",
@@ -4339,7 +4358,7 @@
       ]
     },
     {
-      "id": 346,
+      "id": 347,
       "canonical": "SatchVai Band",
       "status": "seen-support",
       "first_seen": "2026",
@@ -4350,7 +4369,7 @@
       ]
     },
     {
-      "id": 347,
+      "id": 348,
       "canonical": "Scott Tournet",
       "status": "seen-support",
       "first_seen": "2026",
@@ -4362,7 +4381,7 @@
       ]
     },
     {
-      "id": 348,
+      "id": 349,
       "canonical": "Sea Griffin",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4374,7 +4393,7 @@
       ]
     },
     {
-      "id": 349,
+      "id": 350,
       "canonical": "The Secret Sisters",
       "status": "seen",
       "times_seen": "1",
@@ -4388,7 +4407,7 @@
       ]
     },
     {
-      "id": 350,
+      "id": 351,
       "canonical": "Selwyn Birchwood",
       "status": "seen",
       "decision": "Buy",
@@ -4406,7 +4425,7 @@
       ]
     },
     {
-      "id": 351,
+      "id": 352,
       "canonical": "Sgt. Splendor",
       "status": "seen-support",
       "first_seen": "2026",
@@ -4418,7 +4437,7 @@
       ]
     },
     {
-      "id": 352,
+      "id": 353,
       "canonical": "Shakey Graves",
       "status": "seen",
       "decision": "Pass",
@@ -4436,7 +4455,7 @@
       ]
     },
     {
-      "id": 353,
+      "id": 354,
       "canonical": "Shaw Davis & The Black Ties",
       "status": "seen",
       "tier": "Strong",
@@ -4452,7 +4471,7 @@
       ]
     },
     {
-      "id": 354,
+      "id": 355,
       "canonical": "Shawn James",
       "status": "seen",
       "tier": "Strong",
@@ -4468,7 +4487,7 @@
       ]
     },
     {
-      "id": 355,
+      "id": 356,
       "canonical": "Shawn Pittman",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -4477,7 +4496,7 @@
       ]
     },
     {
-      "id": 356,
+      "id": 357,
       "canonical": "Shemekia Copeland",
       "status": "seen",
       "decision": "Pass",
@@ -4495,7 +4514,7 @@
       ]
     },
     {
-      "id": 357,
+      "id": 358,
       "canonical": "Shovels & Rope",
       "status": "seen",
       "tier": "Strong",
@@ -4511,7 +4530,7 @@
       ]
     },
     {
-      "id": 358,
+      "id": 359,
       "canonical": "The Side Cars Band",
       "status": "seen-support",
       "first_seen": "2026",
@@ -4523,7 +4542,7 @@
       ]
     },
     {
-      "id": 359,
+      "id": 360,
       "canonical": "Sierra Hull",
       "status": "seen",
       "tier": "Medium",
@@ -4538,7 +4557,7 @@
       ]
     },
     {
-      "id": 360,
+      "id": 361,
       "canonical": "Sir Chloe",
       "status": "seen-support",
       "first_seen": "2023",
@@ -4550,7 +4569,7 @@
       ]
     },
     {
-      "id": 361,
+      "id": 362,
       "canonical": "Skribe",
       "status": "seen-support",
       "first_seen": "2023",
@@ -4562,7 +4581,7 @@
       ]
     },
     {
-      "id": 362,
+      "id": 363,
       "canonical": "Slash",
       "status": "seen",
       "times_seen": "1",
@@ -4576,7 +4595,7 @@
       ]
     },
     {
-      "id": 363,
+      "id": 364,
       "canonical": "Sona Jobarteh",
       "status": "seen",
       "times_seen": "1",
@@ -4590,7 +4609,7 @@
       ]
     },
     {
-      "id": 364,
+      "id": 365,
       "canonical": "Sonny Landreth",
       "status": "seen",
       "tier": "Strong",
@@ -4606,7 +4625,7 @@
       ]
     },
     {
-      "id": 365,
+      "id": 366,
       "canonical": "Soul Coughing",
       "status": "seen",
       "times_seen": "1",
@@ -4620,7 +4639,7 @@
       ]
     },
     {
-      "id": 366,
+      "id": 367,
       "canonical": "Soul Miners Union",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4632,7 +4651,7 @@
       ]
     },
     {
-      "id": 367,
+      "id": 368,
       "canonical": "The Soul Rebels",
       "status": "follow",
       "tier": "Medium",
@@ -4644,7 +4663,7 @@
       ]
     },
     {
-      "id": 368,
+      "id": 369,
       "canonical": "Southern Avenue",
       "status": "seen",
       "tier": "Strong",
@@ -4660,7 +4679,7 @@
       ]
     },
     {
-      "id": 369,
+      "id": 370,
       "canonical": "Sparkbird",
       "status": "seen",
       "tier": "Strong",
@@ -4676,7 +4695,7 @@
       ]
     },
     {
-      "id": 370,
+      "id": 371,
       "canonical": "Spartan Jet-Plex",
       "status": "seen-support",
       "first_seen": "2025",
@@ -4688,7 +4707,7 @@
       ]
     },
     {
-      "id": 371,
+      "id": 372,
       "canonical": "Spring Heeled Jack",
       "status": "seen-support",
       "first_seen": "2022",
@@ -4700,7 +4719,7 @@
       ]
     },
     {
-      "id": 372,
+      "id": 373,
       "canonical": "Squirrel Nut Zippers",
       "status": "potential",
       "decision": "Pass",
@@ -4710,7 +4729,7 @@
       ]
     },
     {
-      "id": 373,
+      "id": 374,
       "canonical": "St. Paul & The Broken Bones",
       "status": "follow",
       "tier": "Medium",
@@ -4719,7 +4738,7 @@
       ]
     },
     {
-      "id": 374,
+      "id": 375,
       "canonical": "The Steepwater Band",
       "status": "seen",
       "times_seen": "1",
@@ -4733,7 +4752,7 @@
       ]
     },
     {
-      "id": 375,
+      "id": 376,
       "canonical": "Stephen Wilson Jr",
       "status": "seen-support",
       "first_seen": "2023",
@@ -4745,7 +4764,7 @@
       ]
     },
     {
-      "id": 376,
+      "id": 377,
       "canonical": "Steve Earle",
       "status": "seen",
       "times_seen": "1",
@@ -4759,7 +4778,7 @@
       ]
     },
     {
-      "id": 377,
+      "id": 378,
       "canonical": "Steve Miller Band",
       "status": "seen",
       "times_seen": "1",
@@ -4773,7 +4792,7 @@
       ]
     },
     {
-      "id": 378,
+      "id": 379,
       "canonical": "Steve Vai",
       "status": "seen",
       "tier": "Strong",
@@ -4787,7 +4806,7 @@
       ]
     },
     {
-      "id": 379,
+      "id": 380,
       "canonical": "Stevie Nicks",
       "status": "seen",
       "times_seen": "1",
@@ -4801,7 +4820,7 @@
       ]
     },
     {
-      "id": 380,
+      "id": 381,
       "canonical": "Sue Foley",
       "status": "seen",
       "tier": "Strong",
@@ -4817,7 +4836,7 @@
       ]
     },
     {
-      "id": 381,
+      "id": 382,
       "canonical": "Sugar Ray",
       "status": "seen-support",
       "first_seen": "2025",
@@ -4829,7 +4848,7 @@
       ]
     },
     {
-      "id": 382,
+      "id": 383,
       "canonical": "Sugaray Rayford",
       "status": "fast_track",
       "tier": "Strong",
@@ -4840,7 +4859,7 @@
       ]
     },
     {
-      "id": 383,
+      "id": 384,
       "canonical": "Sunny War",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -4849,7 +4868,7 @@
       ]
     },
     {
-      "id": 384,
+      "id": 385,
       "canonical": "Super City",
       "status": "potential",
       "decision": "Pass",
@@ -4859,7 +4878,7 @@
       ]
     },
     {
-      "id": 385,
+      "id": 386,
       "canonical": "Sushi Soucy",
       "status": "seen-support",
       "first_seen": "2025",
@@ -4871,7 +4890,7 @@
       ]
     },
     {
-      "id": 386,
+      "id": 387,
       "canonical": "Suzanne Vega",
       "status": "seen",
       "decision": "Pass",
@@ -4889,7 +4908,7 @@
       ]
     },
     {
-      "id": 387,
+      "id": 388,
       "canonical": "Sweet Leda",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4901,7 +4920,7 @@
       ]
     },
     {
-      "id": 388,
+      "id": 389,
       "canonical": "Tab Benoit",
       "status": "seen",
       "decision": "Sell",
@@ -4919,7 +4938,7 @@
       ]
     },
     {
-      "id": 389,
+      "id": 390,
       "canonical": "Tab Benoit & Anders Osborne",
       "status": "seen-support",
       "first_seen": "2024",
@@ -4930,7 +4949,7 @@
       ]
     },
     {
-      "id": 390,
+      "id": 391,
       "canonical": "Taj Farrant",
       "status": "seen",
       "tier": "Strong",
@@ -4946,7 +4965,7 @@
       ]
     },
     {
-      "id": 391,
+      "id": 392,
       "canonical": "Taj Mahal",
       "status": "seen",
       "tier": "Strong",
@@ -4962,7 +4981,7 @@
       ]
     },
     {
-      "id": 392,
+      "id": 393,
       "canonical": "TajMo: The Taj Mahal & Keb' Mo' Band",
       "status": "seen",
       "times_seen": "1",
@@ -4976,7 +4995,7 @@
       ]
     },
     {
-      "id": 393,
+      "id": 394,
       "canonical": "Tal Wilkenfeld",
       "status": "follow",
       "tier": "Lower",
@@ -4988,7 +5007,7 @@
       ]
     },
     {
-      "id": 394,
+      "id": 395,
       "canonical": "Talia Segal",
       "status": "seen",
       "times_seen": "1",
@@ -5002,7 +5021,7 @@
       ]
     },
     {
-      "id": 395,
+      "id": 396,
       "canonical": "Tall Heights",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5014,7 +5033,7 @@
       ]
     },
     {
-      "id": 396,
+      "id": 397,
       "canonical": "Taylor Ashton",
       "status": "follow",
       "decision": "Pass",
@@ -5028,7 +5047,7 @@
       ]
     },
     {
-      "id": 397,
+      "id": 398,
       "canonical": "Tedeschi Trucks Band",
       "status": "seen",
       "tier": "Strong",
@@ -5044,7 +5063,7 @@
       ]
     },
     {
-      "id": 398,
+      "id": 399,
       "canonical": "The Teskey Brothers",
       "status": "follow",
       "tier": "Medium",
@@ -5053,12 +5072,12 @@
       ]
     },
     {
-      "id": 399,
+      "id": 400,
       "canonical": "They Might Be Giants",
       "status": "seen",
-      "times_seen": "1",
+      "times_seen": "2",
       "first_seen": "2022-12-16",
-      "most_recent_seen": "2022",
+      "most_recent_seen": "2026-11-22",
       "spotify": "https://open.spotify.com/artist/6zB02lwP6L6ZH32nggQiJT",
       "youtube": "https://www.youtube.com/@theymightbegiants",
       "sources": [
@@ -5067,7 +5086,7 @@
       ]
     },
     {
-      "id": 400,
+      "id": 401,
       "canonical": "Tiera Kennedy",
       "status": "seen-support",
       "first_seen": "2025",
@@ -5079,7 +5098,7 @@
       ]
     },
     {
-      "id": 401,
+      "id": 402,
       "canonical": "Tinsley Ellis",
       "status": "follow",
       "tier": "Medium-Strong",
@@ -5088,7 +5107,7 @@
       ]
     },
     {
-      "id": 402,
+      "id": 403,
       "canonical": "Tom Rush",
       "status": "potential",
       "decision": "Pass",
@@ -5098,7 +5117,7 @@
       ]
     },
     {
-      "id": 403,
+      "id": 404,
       "canonical": "Tommy Castro & the Painkillers",
       "status": "seen",
       "times_seen": "1",
@@ -5112,7 +5131,7 @@
       ]
     },
     {
-      "id": 404,
+      "id": 405,
       "canonical": "Tommy Emmanuel",
       "status": "seen",
       "tier": "Strong",
@@ -5128,7 +5147,7 @@
       ]
     },
     {
-      "id": 405,
+      "id": 406,
       "canonical": "Tommy Prine",
       "status": "seen-support",
       "first_seen": "2026",
@@ -5140,7 +5159,7 @@
       ]
     },
     {
-      "id": 406,
+      "id": 407,
       "canonical": "Tori Amos",
       "status": "seen",
       "times_seen": "1",
@@ -5154,7 +5173,7 @@
       ]
     },
     {
-      "id": 407,
+      "id": 408,
       "canonical": "Tracy Chapman",
       "status": "follow",
       "tier": "Medium",
@@ -5163,7 +5182,7 @@
       ]
     },
     {
-      "id": 408,
+      "id": 409,
       "canonical": "Trappers Pass",
       "status": "seen",
       "times_seen": "1",
@@ -5177,7 +5196,7 @@
       ]
     },
     {
-      "id": 409,
+      "id": 410,
       "canonical": "Trombone Shorty & Orleans Avenue",
       "status": "seen",
       "tier": "Strong",
@@ -5193,7 +5212,7 @@
       ]
     },
     {
-      "id": 410,
+      "id": 411,
       "canonical": "Valerie June",
       "status": "seen",
       "tier": "Strong",
@@ -5209,7 +5228,7 @@
       ]
     },
     {
-      "id": 411,
+      "id": 412,
       "canonical": "Valley",
       "status": "seen-support",
       "first_seen": "2025",
@@ -5221,7 +5240,7 @@
       ]
     },
     {
-      "id": 412,
+      "id": 413,
       "canonical": "Vanessa Collier",
       "status": "seen",
       "tier": "Strong",
@@ -5237,7 +5256,7 @@
       ]
     },
     {
-      "id": 413,
+      "id": 414,
       "canonical": "Venna",
       "status": "potential",
       "decision": "Pass",
@@ -5247,7 +5266,7 @@
       ]
     },
     {
-      "id": 414,
+      "id": 415,
       "canonical": "Victor Wooten",
       "status": "seen",
       "times_seen": "1",
@@ -5261,7 +5280,7 @@
       ]
     },
     {
-      "id": 415,
+      "id": 416,
       "canonical": "Violent Femmes",
       "status": "seen",
       "times_seen": "1",
@@ -5275,7 +5294,7 @@
       ]
     },
     {
-      "id": 416,
+      "id": 417,
       "canonical": "ViRG",
       "status": "seen-support",
       "first_seen": "2024",
@@ -5287,7 +5306,7 @@
       ]
     },
     {
-      "id": 417,
+      "id": 418,
       "canonical": "The Wailin' Jennys",
       "status": "follow",
       "tier": "Strong",
@@ -5296,7 +5315,7 @@
       ]
     },
     {
-      "id": 418,
+      "id": 419,
       "canonical": "Walter Trout",
       "status": "seen",
       "tier": "Strong",
@@ -5312,7 +5331,7 @@
       ]
     },
     {
-      "id": 419,
+      "id": 420,
       "canonical": "The War and Treaty",
       "status": "seen",
       "tier": "Strong",
@@ -5328,7 +5347,7 @@
       ]
     },
     {
-      "id": 420,
+      "id": 421,
       "canonical": "Warren Haynes",
       "status": "follow",
       "tier": "Medium",
@@ -5337,7 +5356,7 @@
       ]
     },
     {
-      "id": 421,
+      "id": 422,
       "canonical": "Waxahatchee",
       "status": "follow",
       "tier": "Medium",
@@ -5346,7 +5365,7 @@
       ]
     },
     {
-      "id": 422,
+      "id": 423,
       "canonical": "Weyes Blood",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5358,7 +5377,7 @@
       ]
     },
     {
-      "id": 423,
+      "id": 424,
       "canonical": "Whitney Mongé",
       "status": "seen",
       "tier": "Medium",
@@ -5374,7 +5393,7 @@
       ]
     },
     {
-      "id": 424,
+      "id": 425,
       "canonical": "The Wildmans",
       "status": "seen",
       "tier": "Medium",
@@ -5390,7 +5409,7 @@
       ]
     },
     {
-      "id": 425,
+      "id": 426,
       "canonical": "Willie Nelson",
       "status": "seen",
       "times_seen": "1",
@@ -5404,7 +5423,7 @@
       ]
     },
     {
-      "id": 426,
+      "id": 427,
       "canonical": "The Wood Brothers",
       "status": "seen",
       "decision": "Pass",
@@ -5422,7 +5441,7 @@
       ]
     },
     {
-      "id": 427,
+      "id": 428,
       "canonical": "Wu-Tang Clan",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5433,7 +5452,7 @@
       ]
     },
     {
-      "id": 428,
+      "id": 429,
       "canonical": "Wytold",
       "status": "seen-support",
       "first_seen": "2024",
@@ -5445,7 +5464,7 @@
       ]
     },
     {
-      "id": 429,
+      "id": 430,
       "canonical": "Yasmin Williams",
       "status": "seen",
       "decision": "Choose",
@@ -5463,7 +5482,7 @@
       ]
     },
     {
-      "id": 430,
+      "id": 431,
       "canonical": "Yola (DJ)",
       "status": "seen-support",
       "first_seen": "2026",
@@ -5475,7 +5494,7 @@
       ]
     },
     {
-      "id": 431,
+      "id": 432,
       "canonical": "Young Dubliners",
       "status": "seen",
       "decision": "Pass",
@@ -5493,7 +5512,7 @@
       ]
     },
     {
-      "id": 432,
+      "id": 433,
       "canonical": "Yutzi",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5505,7 +5524,7 @@
       ]
     },
     {
-      "id": 433,
+      "id": 434,
       "canonical": "Z-Trip",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5517,7 +5536,7 @@
       ]
     },
     {
-      "id": 434,
+      "id": 435,
       "canonical": "Zach Bryan",
       "status": "seen-support",
       "first_seen": "2022",
@@ -5529,7 +5548,7 @@
       ]
     },
     {
-      "id": 435,
+      "id": 436,
       "canonical": "Zach Person",
       "status": "seen",
       "times_seen": "1",
@@ -5542,7 +5561,7 @@
       ]
     },
     {
-      "id": 436,
+      "id": 437,
       "canonical": "Zakk Wylde",
       "status": "seen-support",
       "first_seen": "2025",
@@ -5554,7 +5573,7 @@
       ]
     },
     {
-      "id": 437,
+      "id": 438,
       "canonical": "Zedicus & Abyssinia Roots",
       "status": "seen-support",
       "first_seen": "2023",
@@ -5566,7 +5585,7 @@
       ]
     },
     {
-      "id": 438,
+      "id": 439,
       "canonical": "Ziggy Marley",
       "status": "seen",
       "times_seen": "2",
@@ -5578,7 +5597,7 @@
       ]
     },
     {
-      "id": 439,
+      "id": 440,
       "canonical": "ZZ Top",
       "status": "seen",
       "times_seen": "1",
@@ -5592,7 +5611,7 @@
       ]
     },
     {
-      "id": 440,
+      "id": 441,
       "canonical": "ZZ Ward",
       "status": "seen",
       "tier": "Strong",
@@ -5766,7 +5785,7 @@
     "erin frisby": 139,
     "evan nicole bell": 140,
     "every breath you take": 141,
-    "experience hendrix kenny wayne shepherd": 233,
+    "experience hendrix kenny wayne shepherd": 234,
     "fabulous thunderbirds": 142,
     "family crest": 143,
     "fancy hagood": 144,
@@ -5795,307 +5814,308 @@
     "grace bowers the hodge podge": 166,
     "greensky bluegrass": 167,
     "haggis x 1": 168,
-    "hannah honeycutt": 169,
-    "hayes carll": 170,
-    "heavy heavy": 171,
-    "heavy heavy the": 171,
-    "henri brown": 172,
-    "hip snacks": 173,
-    "honeyfunk": 174,
-    "hot tuna": 175,
-    "houndmouth": 176,
-    "house of hamill": 177,
-    "house you grew up in thygui": 178,
-    "hozier": 179,
-    "i m with her": 180,
-    "iguanas": 181,
-    "indigo girls": 182,
-    "ivan neville": 183,
-    "j p soars": 184,
-    "j the causeways": 185,
-    "jack white": 186,
-    "jackie venson": 187,
-    "jah works": 188,
-    "jaime wyatt": 189,
-    "jake blount": 190,
-    "jake xerxes fussell": 191,
-    "james hunter six": 192,
-    "jared james nichols": 193,
-    "jasper hobbs": 194,
-    "jax hollow": 195,
-    "jess williamson": 196,
-    "jesse dayton": 197,
-    "jesse williams": 198,
-    "jesse williams band": 198,
-    "jessie baylin": 199,
-    "jessie s girl": 200,
-    "jimmie vaughan": 201,
-    "jimmy hall": 202,
-    "jj grey mofro": 203,
-    "joan jett the blackhearts": 204,
-    "joanna connor": 205,
-    "joanne shaw taylor": 206,
-    "jobi riccio": 207,
-    "joe bonamassa": 208,
-    "joe satriani": 209,
-    "joey landreth": 210,
-    "john hiatt": 211,
-    "john nemeth": 212,
-    "john primer": 213,
-    "john primer the real deal blues band": 213,
-    "john prine celebration": 214,
-    "jon batiste": 215,
-    "jon muq": 216,
-    "jon spencer": 217,
-    "jontavious willis": 218,
-    "josh hoyer": 219,
-    "josh hoyer s colossal 4": 219,
-    "josh hoyer soul colossal": 219,
-    "josh ritter": 220,
-    "joy oladokun": 221,
-    "judith hill": 222,
-    "judy blank": 223,
-    "juels bland": 224,
-    "kaia kater": 225,
-    "kara jackson": 226,
-    "kashus culpepper": 227,
-    "kat riggins": 228,
-    "kate davis": 229,
-    "keb mo": 230,
-    "keller williams": 231,
-    "kelli baker": 232,
-    "kelli baker band": 232,
-    "kenny wayne shepherd": 233,
-    "kent burnside": 234,
-    "kim wilson": 235,
-    "king solomon hicks": 236,
+    "handmade moments": 169,
+    "hannah honeycutt": 170,
+    "hayes carll": 171,
+    "heavy heavy": 172,
+    "heavy heavy the": 172,
+    "henri brown": 173,
+    "hip snacks": 174,
+    "honeyfunk": 175,
+    "hot tuna": 176,
+    "houndmouth": 177,
+    "house of hamill": 178,
+    "house you grew up in thygui": 179,
+    "hozier": 180,
+    "i m with her": 181,
+    "iguanas": 182,
+    "indigo girls": 183,
+    "ivan neville": 184,
+    "j p soars": 185,
+    "j the causeways": 186,
+    "jack white": 187,
+    "jackie venson": 188,
+    "jah works": 189,
+    "jaime wyatt": 190,
+    "jake blount": 191,
+    "jake xerxes fussell": 192,
+    "james hunter six": 193,
+    "jared james nichols": 194,
+    "jasper hobbs": 195,
+    "jax hollow": 196,
+    "jess williamson": 197,
+    "jesse dayton": 198,
+    "jesse williams": 199,
+    "jesse williams band": 199,
+    "jessie baylin": 200,
+    "jessie s girl": 201,
+    "jimmie vaughan": 202,
+    "jimmy hall": 203,
+    "jj grey mofro": 204,
+    "joan jett the blackhearts": 205,
+    "joanna connor": 206,
+    "joanne shaw taylor": 207,
+    "jobi riccio": 208,
+    "joe bonamassa": 209,
+    "joe satriani": 210,
+    "joey landreth": 211,
+    "john hiatt": 212,
+    "john nemeth": 213,
+    "john primer": 214,
+    "john primer the real deal blues band": 214,
+    "john prine celebration": 215,
+    "jon batiste": 216,
+    "jon muq": 217,
+    "jon spencer": 218,
+    "jontavious willis": 219,
+    "josh hoyer": 220,
+    "josh hoyer s colossal 4": 220,
+    "josh hoyer soul colossal": 220,
+    "josh ritter": 221,
+    "joy oladokun": 222,
+    "judith hill": 223,
+    "judy blank": 224,
+    "juels bland": 225,
+    "kaia kater": 226,
+    "kara jackson": 227,
+    "kashus culpepper": 228,
+    "kat riggins": 229,
+    "kate davis": 230,
+    "keb mo": 231,
+    "keller williams": 232,
+    "kelli baker": 233,
+    "kelli baker band": 233,
+    "kenny wayne shepherd": 234,
+    "kent burnside": 235,
+    "kim wilson": 236,
+    "king solomon hicks": 237,
     "kingfish": 92,
-    "kingsley flood": 237,
-    "kirk fletcher": 238,
-    "kitchen": 239,
-    "la unica": 240,
-    "lake street dive": 241,
-    "langhorne slim": 242,
-    "larkin poe": 243,
-    "larry campbell teresa williams": 244,
-    "larry mccray": 245,
-    "last train home": 246,
-    "leyla mccalla": 247,
-    "liam st john": 248,
-    "lightnin malcolm": 249,
-    "lilly hiatt": 250,
-    "lindsay lou": 251,
-    "live": 252,
-    "liz phair": 253,
-    "ll cool j": 254,
-    "lone bellow": 255,
-    "lone bellow the": 255,
-    "los lobos": 256,
-    "lou black": 257,
-    "lucinda williams": 258,
-    "lucius": 259,
-    "lucky chops": 260,
-    "lucy dacus": 261,
-    "lukas nelson": 262,
-    "lyle lovett": 263,
-    "lynn hollyfield": 264,
-    "maggie rose": 265,
-    "mali obomsawin": 266,
-    "mallow hill": 267,
-    "marc broussard": 268,
-    "marcus king": 269,
-    "margaret glaspy": 270,
-    "margo price": 271,
-    "mark knopfler": 272,
-    "martin sexton": 273,
-    "mathias lattin": 274,
-    "mato nanji": 275,
-    "matteo mancuso": 276,
-    "mavis staples": 277,
-    "members of the bridge smooth kentucky others": 278,
-    "mikaela davis": 279,
-    "mike campbell the dirty knobs": 280,
-    "mike zito": 281,
-    "miko marks": 282,
-    "mitch ryder": 283,
-    "modest mouse": 284,
-    "mohini dey": 285,
-    "molly tuttle": 286,
-    "mononeon": 287,
-    "morgan wade": 288,
-    "mr sipp": 289,
-    "mr sipp the mississippi blues child": 289,
-    "muireann bradley": 290,
-    "mx mundy": 291,
-    "mystery friends": 292,
-    "nas": 293,
-    "nat myers": 294,
-    "national symphony orchestra": 295,
+    "kingsley flood": 238,
+    "kirk fletcher": 239,
+    "kitchen": 240,
+    "la unica": 241,
+    "lake street dive": 242,
+    "langhorne slim": 243,
+    "larkin poe": 244,
+    "larry campbell teresa williams": 245,
+    "larry mccray": 246,
+    "last train home": 247,
+    "leyla mccalla": 248,
+    "liam st john": 249,
+    "lightnin malcolm": 250,
+    "lilly hiatt": 251,
+    "lindsay lou": 252,
+    "live": 253,
+    "liz phair": 254,
+    "ll cool j": 255,
+    "lone bellow": 256,
+    "lone bellow the": 256,
+    "los lobos": 257,
+    "lou black": 258,
+    "lucinda williams": 259,
+    "lucius": 260,
+    "lucky chops": 261,
+    "lucy dacus": 262,
+    "lukas nelson": 263,
+    "lyle lovett": 264,
+    "lynn hollyfield": 265,
+    "maggie rose": 266,
+    "mali obomsawin": 267,
+    "mallow hill": 268,
+    "marc broussard": 269,
+    "marcus king": 270,
+    "margaret glaspy": 271,
+    "margo price": 272,
+    "mark knopfler": 273,
+    "martin sexton": 274,
+    "mathias lattin": 275,
+    "mato nanji": 276,
+    "matteo mancuso": 277,
+    "mavis staples": 278,
+    "members of the bridge smooth kentucky others": 279,
+    "mikaela davis": 280,
+    "mike campbell the dirty knobs": 281,
+    "mike zito": 282,
+    "miko marks": 283,
+    "mitch ryder": 284,
+    "modest mouse": 285,
+    "mohini dey": 286,
+    "molly tuttle": 287,
+    "mononeon": 288,
+    "morgan wade": 289,
+    "mr sipp": 290,
+    "mr sipp the mississippi blues child": 290,
+    "muireann bradley": 291,
+    "mx mundy": 292,
+    "mystery friends": 293,
+    "nas": 294,
+    "nat myers": 295,
+    "national symphony orchestra": 296,
     "new york s finest": 141,
-    "nick lowe los straitjackets": 296,
-    "nicole atkins": 297,
-    "nikki hill": 298,
-    "nina goodman": 299,
-    "north country": 300,
-    "north mississippi allstars": 301,
-    "oh he dead": 302,
-    "oliver wood": 303,
-    "on a winter s night": 304,
-    "orianthi": 305,
-    "p nk": 306,
-    "patty griffin": 307,
-    "peter case": 308,
-    "peter gabriel": 309,
-    "phoenix": 310,
-    "pietasters": 311,
-    "pietasters the": 311,
-    "pinkerton raid": 312,
-    "piper the hard times": 313,
-    "pixies": 314,
-    "pokey lafarge": 315,
-    "pretenders": 316,
-    "queen latifah": 317,
-    "rachael vilray": 318,
-    "raging nathans": 319,
-    "rasputina": 320,
-    "rebecca berlin": 321,
-    "rebecca porter": 322,
-    "rebirth brass": 323,
-    "rebirth brass band": 323,
-    "record company": 324,
-    "rhiannon giddens": 325,
-    "rich ruth": 326,
-    "riley downing": 327,
-    "rival sons": 328,
-    "robben ford": 329,
-    "robert cray": 330,
-    "robert cray band": 330,
-    "robert jon the wreck": 331,
-    "robert randolph": 332,
-    "robert randolph the family band": 332,
-    "robzie trulove": 333,
-    "roger waters": 334,
-    "roots": 335,
-    "ruthie foster": 336,
-    "sabine mccalla": 337,
-    "sadia bangura": 338,
-    "sadurn": 339,
-    "safety bear": 340,
-    "sam amidon": 341,
-    "samantha fish": 342,
-    "samantha fish jesse dayton": 343,
-    "sanjay arora": 344,
-    "sarah mclachlan": 345,
-    "satchvai": 346,
-    "satchvai band": 346,
-    "scott tournet": 347,
-    "sea griffin": 348,
-    "secret sisters": 349,
-    "secret sisters the": 349,
-    "selwyn birchwood": 350,
-    "sgt splendor": 351,
-    "shakey graves": 352,
-    "shaw davis": 353,
-    "shaw davis the black ties": 353,
-    "shawn james": 354,
-    "shawn pittman": 355,
-    "shemekia copeland": 356,
-    "shovels rope": 357,
-    "side cars": 358,
-    "side cars band": 358,
-    "sierra hull": 359,
-    "sir chloe": 360,
-    "skribe": 361,
-    "slash": 362,
-    "sona jobarteh": 363,
-    "sonny landreth": 364,
-    "soul coughing": 365,
-    "soul miners union": 366,
-    "soul rebels": 367,
-    "southern avenue": 368,
-    "sparkbird": 369,
-    "spartan jet plex": 370,
-    "spring heeled jack": 371,
-    "squirrel nut zippers": 372,
-    "st paul the broken bones": 373,
-    "steepwater": 374,
-    "steepwater band": 374,
-    "stephen wilson jr": 375,
-    "steve earle": 376,
-    "steve miller": 377,
-    "steve miller band": 377,
-    "steve vai": 378,
-    "stevie nicks": 379,
-    "sue foley": 380,
-    "sugar ray": 381,
-    "sugaray rayford": 382,
-    "sunny war": 383,
-    "super city": 384,
-    "sushi soucy": 385,
-    "suzanne vega": 386,
-    "sweet leda": 387,
-    "tab benoit": 388,
-    "tab benoit anders osborne": 389,
-    "taj farrant": 390,
-    "taj mahal": 391,
-    "taj mahal and the phantom blues band": 391,
-    "tajmo the taj mahal keb mo": 392,
-    "tajmo the taj mahal keb mo band": 392,
-    "tal wilkenfeld": 393,
-    "talia segal": 394,
-    "tall heights": 395,
-    "taylor ashton": 396,
-    "tedeschi trucks": 397,
-    "tedeschi trucks band": 397,
-    "teskey brothers": 398,
-    "they might be giants": 399,
-    "tiera kennedy": 400,
-    "tinsley ellis": 401,
-    "tom rush": 402,
-    "tommy castro": 403,
-    "tommy castro the painkillers": 403,
-    "tommy emmanuel": 404,
-    "tommy emmanuel cgp": 404,
-    "tommy prine": 405,
-    "tori amos": 406,
-    "tracy chapman": 407,
-    "trappers pass": 408,
-    "trombone shorty": 409,
-    "trombone shorty and orleans avenue": 409,
-    "trombone shorty orleans avenue": 409,
-    "valerie june": 410,
-    "valley": 411,
-    "vanessa collier": 412,
-    "venna": 413,
-    "victor wooten": 414,
-    "victor wooten the wooten brothers": 414,
-    "violent femmes": 415,
-    "virg": 416,
-    "wailin jennys": 417,
-    "walter trout": 418,
-    "war and treaty": 419,
-    "war and treaty the": 419,
-    "warren haynes": 420,
-    "waxahatchee": 421,
-    "weyes blood": 422,
-    "whitney monge": 423,
-    "wildmans": 424,
-    "willie nelson": 425,
-    "wood brothers": 426,
-    "wood brothers the": 426,
-    "wu tang clan": 427,
-    "wytold": 428,
-    "yasmin williams": 429,
-    "yola dj": 430,
-    "young dubliners": 431,
-    "yutzi": 432,
-    "z trip": 433,
-    "zach bryan": 434,
-    "zach person": 435,
-    "zakk wylde": 436,
-    "zedicus abyssinia roots": 437,
-    "ziggy marley": 438,
-    "zz top": 439,
-    "zz ward": 440
+    "nick lowe los straitjackets": 297,
+    "nicole atkins": 298,
+    "nikki hill": 299,
+    "nina goodman": 300,
+    "north country": 301,
+    "north mississippi allstars": 302,
+    "oh he dead": 303,
+    "oliver wood": 304,
+    "on a winter s night": 305,
+    "orianthi": 306,
+    "p nk": 307,
+    "patty griffin": 308,
+    "peter case": 309,
+    "peter gabriel": 310,
+    "phoenix": 311,
+    "pietasters": 312,
+    "pietasters the": 312,
+    "pinkerton raid": 313,
+    "piper the hard times": 314,
+    "pixies": 315,
+    "pokey lafarge": 316,
+    "pretenders": 317,
+    "queen latifah": 318,
+    "rachael vilray": 319,
+    "raging nathans": 320,
+    "rasputina": 321,
+    "rebecca berlin": 322,
+    "rebecca porter": 323,
+    "rebirth brass": 324,
+    "rebirth brass band": 324,
+    "record company": 325,
+    "rhiannon giddens": 326,
+    "rich ruth": 327,
+    "riley downing": 328,
+    "rival sons": 329,
+    "robben ford": 330,
+    "robert cray": 331,
+    "robert cray band": 331,
+    "robert jon the wreck": 332,
+    "robert randolph": 333,
+    "robert randolph the family band": 333,
+    "robzie trulove": 334,
+    "roger waters": 335,
+    "roots": 336,
+    "ruthie foster": 337,
+    "sabine mccalla": 338,
+    "sadia bangura": 339,
+    "sadurn": 340,
+    "safety bear": 341,
+    "sam amidon": 342,
+    "samantha fish": 343,
+    "samantha fish jesse dayton": 344,
+    "sanjay arora": 345,
+    "sarah mclachlan": 346,
+    "satchvai": 347,
+    "satchvai band": 347,
+    "scott tournet": 348,
+    "sea griffin": 349,
+    "secret sisters": 350,
+    "secret sisters the": 350,
+    "selwyn birchwood": 351,
+    "sgt splendor": 352,
+    "shakey graves": 353,
+    "shaw davis": 354,
+    "shaw davis the black ties": 354,
+    "shawn james": 355,
+    "shawn pittman": 356,
+    "shemekia copeland": 357,
+    "shovels rope": 358,
+    "side cars": 359,
+    "side cars band": 359,
+    "sierra hull": 360,
+    "sir chloe": 361,
+    "skribe": 362,
+    "slash": 363,
+    "sona jobarteh": 364,
+    "sonny landreth": 365,
+    "soul coughing": 366,
+    "soul miners union": 367,
+    "soul rebels": 368,
+    "southern avenue": 369,
+    "sparkbird": 370,
+    "spartan jet plex": 371,
+    "spring heeled jack": 372,
+    "squirrel nut zippers": 373,
+    "st paul the broken bones": 374,
+    "steepwater": 375,
+    "steepwater band": 375,
+    "stephen wilson jr": 376,
+    "steve earle": 377,
+    "steve miller": 378,
+    "steve miller band": 378,
+    "steve vai": 379,
+    "stevie nicks": 380,
+    "sue foley": 381,
+    "sugar ray": 382,
+    "sugaray rayford": 383,
+    "sunny war": 384,
+    "super city": 385,
+    "sushi soucy": 386,
+    "suzanne vega": 387,
+    "sweet leda": 388,
+    "tab benoit": 389,
+    "tab benoit anders osborne": 390,
+    "taj farrant": 391,
+    "taj mahal": 392,
+    "taj mahal and the phantom blues band": 392,
+    "tajmo the taj mahal keb mo": 393,
+    "tajmo the taj mahal keb mo band": 393,
+    "tal wilkenfeld": 394,
+    "talia segal": 395,
+    "tall heights": 396,
+    "taylor ashton": 397,
+    "tedeschi trucks": 398,
+    "tedeschi trucks band": 398,
+    "teskey brothers": 399,
+    "they might be giants": 400,
+    "tiera kennedy": 401,
+    "tinsley ellis": 402,
+    "tom rush": 403,
+    "tommy castro": 404,
+    "tommy castro the painkillers": 404,
+    "tommy emmanuel": 405,
+    "tommy emmanuel cgp": 405,
+    "tommy prine": 406,
+    "tori amos": 407,
+    "tracy chapman": 408,
+    "trappers pass": 409,
+    "trombone shorty": 410,
+    "trombone shorty and orleans avenue": 410,
+    "trombone shorty orleans avenue": 410,
+    "valerie june": 411,
+    "valley": 412,
+    "vanessa collier": 413,
+    "venna": 414,
+    "victor wooten": 415,
+    "victor wooten the wooten brothers": 415,
+    "violent femmes": 416,
+    "virg": 417,
+    "wailin jennys": 418,
+    "walter trout": 419,
+    "war and treaty": 420,
+    "war and treaty the": 420,
+    "warren haynes": 421,
+    "waxahatchee": 422,
+    "weyes blood": 423,
+    "whitney monge": 424,
+    "wildmans": 425,
+    "willie nelson": 426,
+    "wood brothers": 427,
+    "wood brothers the": 427,
+    "wu tang clan": 428,
+    "wytold": 429,
+    "yasmin williams": 430,
+    "yola dj": 431,
+    "young dubliners": 432,
+    "yutzi": 433,
+    "z trip": 434,
+    "zach bryan": 435,
+    "zach person": 436,
+    "zakk wylde": 437,
+    "zedicus abyssinia roots": 438,
+    "ziggy marley": 439,
+    "zz top": 440,
+    "zz ward": 441
   }
 }
