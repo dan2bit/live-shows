@@ -1,6 +1,6 @@
 {
 "schema_version":1,
-"generated_at":"2026-11-24T19:16:56Z",
+"generated_at":"2026-11-25T01:38:50Z",
 "aliases":{
 "albert castiglia tour schedule page":"albert castiglia",
 "allman betts family revival a decade of revival":"allman betts band",
@@ -3753,10 +3753,18 @@
 },
 "tier":null,
 "seen":{
-"count":1,
+"count":2,
 "first":"2026-08-08",
-"recent":null,
+"recent":"2026-11-21",
 "show_log":[
+{
+"date":"2026-11-21",
+"venue":null,
+"via":"Fruition",
+"photo_url":null,
+"role":"seen_with",
+"goals":[]
+},
 {
 "date":"2026-08-08",
 "venue":"Jammin' Java",
@@ -3771,7 +3779,7 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.457,
+"score":0.53,
 "band":"medium"
 },
 "purchases":{
@@ -22883,19 +22891,30 @@
 "rank":2
 },
 "seen":{
-"count":0,
-"first":null,
+"count":1,
+"first":"2026-11-21",
 "recent":null,
-"show_log":[]
+"show_log":[
+{
+"date":"2026-11-21",
+"venue":"Pearl Street Warehouse",
+"via":null,
+"photo_url":null,
+"role":"headliner",
+"goals":[
+"hat"
+]
+}
+]
 },
 "fast_track":false,
 "affinity":{
-"score":0.158,
-"band":"low"
+"score":0.439,
+"band":"medium"
 },
 "purchases":null,
 "badges":{
-"hat":"not_yet",
+"hat":"completed",
 "book":"absent",
 "book_detail":{
 "aps":{
@@ -22921,8 +22940,8 @@
 },
 "links":{
 "spotify":"https://open.spotify.com/artist/4dDqxbEKfPN3RZYrGr36y8",
-"youtube":null,
-"bandcamp":null,
+"youtube":"@FruitionPDX",
+"bandcamp":"https://fruition.bandcamp.com",
 "lastfm":"https://www.last.fm/music/Fruition",
 "musicbrainz":"https://musicbrainz.org/artist/c02617f9-2408-4434-8588-d06a123b73c0",
 "bandsintown":"https://www.bandsintown.com/Fruition",
@@ -25453,6 +25472,72 @@
 "slug":"enter-the-haggis"
 }
 ]
+},
+"handmade moments":{
+"name":"Handmade Moments",
+"slug":"handmade-moments",
+"spotify_id":null,
+"mbid":null,
+"image_url":null,
+"banner_url":null,
+"genres":[],
+"listener":null,
+"tier":null,
+"seen":{
+"count":1,
+"first":"2026-11-21",
+"recent":null,
+"show_log":[
+{
+"date":"2026-11-21",
+"venue":"Pearl Street Warehouse",
+"via":"Fruition",
+"photo_url":null,
+"role":"support",
+"goals":[]
+}
+]
+},
+"fast_track":false,
+"affinity":{
+"score":0.291,
+"band":"low"
+},
+"purchases":{
+"count":1,
+"signed":1
+},
+"badges":{
+"hat":"absent",
+"book":"absent",
+"book_detail":{
+"aps":{
+"in":false,
+"signed":false,
+"page":null
+},
+"rhbs":{
+"in":false,
+"signed":false
+}
+},
+"vip":0,
+"photo":0,
+"photo_album":null
+},
+"latest_release":null,
+"links":{
+"spotify":null,
+"youtube":null,
+"bandcamp":null,
+"lastfm":null,
+"musicbrainz":null,
+"bandsintown":"https://www.bandsintown.com/Handmade%20Moments",
+"seated":null,
+"qobuz":"https://www.qobuz.com/us-en/interpreter/handmade-moments/download-streaming-albums",
+"setlistfm":"https://www.setlist.fm/search?query=Handmade+Moments"
+},
+"similar":[]
 },
 "hannah cohen":{
 "name":"Hannah Cohen",
@@ -63520,10 +63605,18 @@
 },
 "tier":null,
 "seen":{
-"count":1,
+"count":2,
 "first":"2022-12-16",
-"recent":null,
+"recent":"2026-11-22",
 "show_log":[
+{
+"date":"2026-11-22",
+"venue":"9:30 Club",
+"via":null,
+"photo_url":null,
+"role":"headliner",
+"goals":[]
+},
 {
 "date":"2022-12-16",
 "venue":"Lincoln Theatre, Washington, DC, USA",
@@ -63536,7 +63629,7 @@
 },
 "fast_track":false,
 "affinity":{
-"score":0.132,
+"score":0.22,
 "band":"low"
 },
 "purchases":null,
