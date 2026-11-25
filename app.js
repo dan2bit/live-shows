@@ -332,6 +332,7 @@ async function _savePrivateSidecar(path,keyFields,keyVals,field,newVal){
 // TSV -> row objects keyed by the line-1 header; short rows are padded with ''.
 // '-' is the TSV empty sentinel; never treat it as a URL.
 function _url(v){var s=(v||'').trim();return(s===''||s==='-')?'':s;}
+function _sup(row){return _url(row['Supporting Artist']||row['Supporting Acts']||row['Support']);}
 function parseTsv(text){
   var lines=text.trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
   var headers=lines[0].split('\t').map(function(h){return h.trim();});
@@ -596,7 +597,7 @@ function normalizeRow(row){
   function cleanUrl(v){var s=(v||'').trim();return(s===''||s==='-')?'':s;}
   return{
     artist:row['Artist']||'',
-    support:row['Supporting Artist']||row['Supporting Acts']||'',
+    support:_sup(row),
     venueName:row['Venue Name']||(row['Venue']||'').split(',')[0].trim(),
     showDate:row['Show Date']||'',
     notes:row['Notes / Memories']||'',
@@ -760,7 +761,7 @@ function renderUpcomingRowBystander(row,idx){
   var sb=seatTypeBadge(row['Seat Type']||'');
   var mv=row['Venue Name']?'<div class="cell-venue-mobile">'+esc(shortVenueName(row['Venue Name']))+(sb?' '+sb:'')+'</div>':'';
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+'</div>'+(row['Supporting Artist']?'<div class="cell-support">w/ '+supportGoalNames(row['Supporting Artist'],row['Show Date'],true)+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +'<td><div class="cell-artist">'+artistLink(row['Artist'])+'</div>'+(_sup(row)?'<div class="cell-support">w/ '+supportGoalNames(_sup(row),row['Show Date'],true)+'</div>':'')+mv+publicBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+sb+'</td>'
     +'<td class="cell-notes">'+(pn?'<div class="notes-text">'+pn+'</div>':'')+'</td></tr>';
 }
@@ -778,7 +779,7 @@ function renderUpcomingRowAuthed(row,idx,origIdx){
   var editBtn=makeEditBtn(cellId,'current',(origIdx!==undefined?origIdx:idx),'Notes / Memories','notes');
   return'<tr class="'+cls+'"><td class="cell-date"><span class="date-text">'+formatShowDate(row['Show Date'])+'</span><span class="day-of-week">'+dayOfWeek(row['Show Date'])+'</span></td>'
     +'<td><div class="cell-artist">'+artistLink(row['Artist'])+(showCount?' <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">('+row['Ticket Quantity']+')</span>':'')+cal+'</div>'
-    +(row['Supporting Artist']?'<div class="cell-support">w/ '+supportGoalNames(row['Supporting Artist'],row['Show Date'],true)+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
+    +(_sup(row)?'<div class="cell-support">w/ '+supportGoalNames(_sup(row),row['Show Date'],true)+'</div>':'')+mv+buildBadges(row)+rowGoalBadges(row['Artist'],row['Show Date'],true)+'</td>'
     +'<td class="cell-venue col-support">'+vh+'</td><td class="cell-seat col-seat">'+seat+'</td>'
     +'<td class="cell-notes" id="'+cellId+'">'+editBtn+nh+'</td></tr>';
 }
@@ -1271,7 +1272,7 @@ function renderPotentialRowBystander(r,gi){
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+cls+'"><td style="white-space:nowrap"><span class="cell-decision-ro '+cls+'">'+esc(dec)+'</span></td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+supportGoalNames(r['Support'],r['Date'],true)+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(_sup(r)?'<div class="cell-support">w/ '+supportGoalNames(_sup(r),r['Date'],true)+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
@@ -1298,7 +1299,7 @@ function renderPotentialRowAuthed(r,gi){
   var an=artistLink(r['Artist']);
   return'<tr class="row-'+dec.toLowerCase()+'"><td style="white-space:nowrap">'+dh+'</td>'
     +'<td class="cell-date"><span class="date-text">'+formatShowDate(r['Date'])+'</span><span class="day-of-week">'+dayOfWeek(r['Date'])+'</span></td>'
-    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(r['Support']?'<div class="cell-support">w/ '+supportGoalNames(r['Support'],r['Date'],true)+'</div>':'')+'</td>'
+    +'<td><div class="cell-artist">'+an+_goalBadgeSpans(r['Artist'],r['Date'],true)+'</div>'+(_sup(r)?'<div class="cell-support">w/ '+supportGoalNames(_sup(r),r['Date'],true)+'</div>':'')+'</td>'
     +'<td>'+vh+'<div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+esc(r['Venue City']||'')+'</div></td>'
     +'<td class="col-tier">'+tierHtml(r['Tier']||'')+'</td><td class="col-price cell-price">'+ph+'</td>'
     +'<td class="col-watching">'+(r['Watching For']?'<span class="cell-watching"><span class="watch-icon">&#9888;</span> '+esc(r['Watching For'])+'</span>':'')+'</td>'
