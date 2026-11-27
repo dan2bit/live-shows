@@ -152,3 +152,12 @@ Four boxes in two rows, all on by default:
 
 The boxes are display preferences only: they set `style.display` on a layer and
 never change the data, the settlement count, or what the editor saves.
+
+## Passed shows
+
+A Pass row on the potentials list does not create settlements. An act whose only
+source is the potentials list, whose row is a Pass, and who is on no Buy, Choose
+or Sell bill is left off the map; that includes the support acts of a followed
+headliner. The build log names them, and the data file lists them under
+`meta.passed`. With `--prune-overrides` the builder also removes their pins and
+overrides, since there is no settlement left for those to apply to.
