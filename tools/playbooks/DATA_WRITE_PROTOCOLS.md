@@ -137,7 +137,7 @@ data or code paths, plus manual `workflow_dispatch`:
 - `scripts/check_ascii_punctuation.py` — the ASCII rule above
 - `scripts/check_name_drift.py` — artist-name near-collisions, near-miss drift,
   alias coverage (via `name_forms.py` + `recommend_aliases.tsv`)
-- `scripts/check_evergreen.py` — issue refs / leading changelog dates creeping back
+- `scripts/check_evergreen.py` — issue refs / leading changelog dates creeping back, and the owner named in any `.py` file
   into forker-facing code comments
 
 **Commits are never blocked.** All three always exit 0; findings are GitHub Actions
@@ -230,6 +230,18 @@ load-bearing, add the design's row to `docs/ISSUE_LOG.md` in the same commit and
 point there. This applies at WRITE time to every new comment a session adds. A
 warn-only CI check (#204) backstops drift. `tools/` playbooks (including this
 file) and the private repo are exempt — issue refs there are working shorthand.
+
+**No named owner in script code.** Every `.py` file in the repo, wherever it lives
+(`scripts/`, `tools/`, anywhere else), must not name the site's owner in a comment,
+a docstring or a string literal - including the "per <name>" form. A fork has a
+different owner, so the name is as stale there as an issue number. Write it
+impersonally ("a passed show does not...", "hand pins are law"); where a person has
+to be mentioned, say "the owner". Do not add the name to code without the owner's
+confirmation. `check_evergreen.py` enforces this from `site.owner_name` in
+`config.yaml` (blank turns the rule off) and fails a push that adds one. Where the
+name is the data a script matches, read it with `hygiene_report.owner_names()`; as
+a last resort end the line with `# evergreen: owner-name-is-data`. Playbooks,
+skills and other prose are out of scope.
 
 **PR branches base on `staging` and merge back into `staging` — never `main`
 (2026-08-17).** Squash+merge then lands on the guarded branch: the push fires

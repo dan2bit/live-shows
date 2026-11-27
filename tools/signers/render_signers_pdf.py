@@ -5,7 +5,7 @@ Reads signers/index.html (built by render_signers.py) and writes
 signers/<print_pdf> - the file the web page links as "Print" - with
 WeasyPrint, applying the page's own @media print rules. It is the same
 layout a browser prints, but built in one place with known fonts, so the
-sheet Dan carries to a show does not depend on whose browser made it.
+sheet carried to a show does not depend on whose browser made it.
 
 Two guarantees, both learned by testing rather than assumed:
 

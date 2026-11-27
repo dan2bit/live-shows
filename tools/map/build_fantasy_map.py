@@ -229,7 +229,7 @@ MAP_EXCLUDE = {
     # support. Neither is an act the map should know about.
     "Linwood Taylor & Guy Bouchie", "Still Standing",
 }
-# Dan's viewer overrides (tools/map/edits/map_overrides.json): {name: {region?, size?,
+# The owner's viewer overrides (tools/map/edits/map_overrides.json): {name: {region?, size?,
 # exclude?}}. Read once, here, because "exclude": true has to act before anything
 # is built - it removes the name exactly as MAP_EXCLUDE does. The in-page editor
 # and the map page's staleness banner both write it, so a Pass row's acts can be
@@ -635,7 +635,7 @@ LEGENDS = {
 
 TIER_SCORE = {"Strong": 3, "Medium-Strong": 2, "Medium": 1, "Lower": 0.5, "Legacy": 2}
 
-# Purchases: music Dan owns grows a settlement, so a collected-but-rarely-seen
+# Purchases: owned music grows a settlement, so a collected-but-rarely-seen
 # act is not sized on attendance alone. The count comes from scripts/purchases.py - the
 # same reading, de-duplication, signed bonus and share() curve the affinity score uses.
 # The share answers "did I buy from this artist?" first: one purchase, track or album,
@@ -645,7 +645,7 @@ TIER_SCORE = {"Strong": 3, "Medium-Strong": 2, "Medium": 1, "Lower": 0.5, "Legac
 # and never lifts an unseen act out of waystation - size_tier checks times_seen first.
 # It never makes a city or a capital either: those two ranks are decided on
 # shows_score(), the score without purchases, so a town stays a town however much of
-# its music Dan owns. A city is earned at shows or decreed in map_overrides.json.
+# its music is owned. A city is earned at shows or decreed in map_overrides.json.
 OWN_MAX = 3.0
 sys.path.insert(0, str(ROOT / "scripts"))
 from purchases import load_purchases, share, weigh  # noqa: E402
@@ -815,7 +815,7 @@ for reg, spec in REGIONS.items():
             xy[m] = clamp_to_land(cxd + rr * math.cos(ang), cyd + rr * math.sin(ang), (cxd, cyd))
     continue
 
-# ---- canonical pins and Dan's hand pins (tools/map/edits/pins.json wins last) ----
+# ---- canonical pins and hand pins (tools/map/edits/pins.json wins last) ----
 CANON_PINS = {                                # first pin moves the whole district
     "Larkin Poe": (608, 373),                 # east shore of the source lake
     "The Lone Bellow": (562, 366),            # west shore of the source lake
@@ -1023,7 +1023,7 @@ DECREE_MOVES = {
 }
 DECREE_ASHORE = {}   # Mavis Staples used to be held ashore in Secondline here; she lives on the Delta shore now, by override and pin
 
-# Dan's pins are law: name -> [x, y], applied verbatim, never clamped
+# Hand pins are law: name -> [x, y], applied verbatim, never clamped
 pins_path = SCRIPT_DIR / "edits" / "pins.json"
 if pins_path.exists():
     for nm, p_ in json.loads(pins_path.read_text()).items():
@@ -1147,8 +1147,8 @@ def move_to_region(nm, reg_, stage=True):
 move_to_region("George Clinton & Parliament-Funkadelic", "river_port")
 move_to_region("DuPont Brass", "river_port")
 move_to_region("Queen Latifah", "river_port")
-move_to_region("L\u012bve", "amplified_range", stage=False)   # Dan's pin already mainlands him
-# Brassie and Sadurn join the Outer Isles roster (final placement is Dan's)
+move_to_region("L\u012bve", "amplified_range", stage=False)   # a hand pin already mainlands him
+# Brassie and Sadurn join the Outer Isles roster (final placement is by hand pin)
 for m in ("Brassie", "Sadurn"):
     if m in records and region_of.get(m) != "outer_isles":
         old_d = district_of.get(m)
@@ -1171,7 +1171,7 @@ if _OV:
                 districts[old_d]["members"].remove(nm)
             region_of[nm] = ov["region"]
             district_of[nm] = f"{ov['region']}:override"
-            # A pinned settlement's position is Dan's, not the auto-layout's --
+            # A pinned settlement's position is the owner's, not the auto-layout's --
             # restaging it here would silently discard the pin the moment its
             # region changed underneath it (found via 10 Outer Isles/River Port
             # settlements that had a correct pins.json entry but kept showing
@@ -1331,7 +1331,7 @@ def point_in_poly(x, y, poly):
 # Without this, region comes from FORCED_REGION, Last.fm tags or neighbor votes,
 # and the tags and the graph change under a settlement from one rebuild to the
 # next while its pin stays put - a pinned Quiet Woods hamlet would wake up in the
-# Outer Isles. Moving a pin across a border is how Dan rehomes a settlement, so a
+# Outer Isles. Moving a pin across a border is how a settlement is rehomed, so a
 # pin inside a polygon beats every other source of region: FORCED_REGION, the
 # moves above and map_overrides.json. A pin outside every polygon (an islet, the
 # unclaimed desert or fretboard) keeps the region those gave it.

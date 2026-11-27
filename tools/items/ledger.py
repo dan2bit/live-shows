@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The items ledger: everything Dan owns from artists, and who signed it.
+"""The items ledger: everything owned from artists, and who signed it.
 
 Two hand-kept files, both plain tab-joined TSV with `-` for an empty cell:
 
@@ -17,8 +17,8 @@ items.tsv columns
     kind           cd, vinyl, digital-album, digital-track, poster, shirt,
                    setlist, pick, print, other
     acquired       show, vip, mail, crowdfund, bandcamp, download, raffle,
-                   gift, own (Dan's own photo, printed), or `-` if unknown
-    paid           Y, N or ? - whether Dan paid for it (a VIP bundle item is Y)
+                   gift, own (the owner's own photo, printed), or `-` if unknown
+    paid           Y, N or ? - whether it was paid for (a VIP bundle item is Y)
     acquired_date  YYYY, YYYY-MM or YYYY-MM-DD, as precisely as is known
     venue          where it was acquired, when that was a show
     status         received, or pending for an order not yet arrived
