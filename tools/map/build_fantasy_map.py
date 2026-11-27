@@ -242,7 +242,7 @@ for _nm, _o in _OV.items():
         sys.exit(f"map_overrides.json: {_nm} is a decreed capital and excluded - pick one")
 EXCLUDED = MAP_EXCLUDE | {nm for nm, ov in _OV.items() if isinstance(ov, dict) and ov.get("exclude")}
 
-# A show Dan passed on does not put its acts on the map. An act is left off when
+# A passed show does not put its acts on the map. An act is left off when
 # the potentials list is its only source, the index records its row as a Pass,
 # and no Buy / Choose / Sell row bills it - as headliner or anywhere in a Support
 # cell. That holds for the support acts of a followed headliner too: the
