@@ -579,15 +579,22 @@
   "seed": 2026,
   "excluded": [
    "A Musical Celebration of John Prine",
+   "A.J. Croce",
    "Alexia Gabriella",
+   "Allman Betts Family Revival: A Decade of Revival",
    "Antoñio Villaronga",
    "Bev Stanton",
+   "Big Meadow",
    "Christian Crowley",
    "Cliff Eberhardt, John Gorka, Lucy Kaplansky, Patty Larkin",
+   "Colin Hay",
+   "Cory Wong",
    "Damien Bethel",
    "Daryl Davis Presents a 100th Birthday Tribute to Chuck Berry",
    "Daryl Davis; guest guitarists incl. Guy Bouchie",
    "David Jacobs-Strain",
+   "Drivin N Cryin",
+   "Elizabeth Cook",
    "Erin Frisby",
    "Fred Eaglesmith & The Full Band",
    "Hiss Golden Messenger",
@@ -596,12 +603,17 @@
    "John Prine Celebration",
    "John R. Miller",
    "Juels Bland",
+   "Keller Williams",
+   "Larry Campbell & Teresa Williams",
+   "Last Train Home",
    "Linwood Taylor & Guy Bouchie",
    "Lou Black",
+   "Lukas Nelson",
    "Mx. Mundy",
    "National Symphony Orchestra",
    "Nina Goodman",
    "On A Winter's Night",
+   "Rachael & Vilray",
    "Rebecca Berlin",
    "Robzie Trulove",
    "Safety Bear",
@@ -609,10 +621,32 @@
    "Sea Griffin",
    "Squirrel Nut Zippers",
    "Still Standing",
+   "Super City",
    "The Nighthawks w",
+   "Tom Rush",
+   "Venna",
    "William Matheny",
    "Wytold",
+   "feat. dodie; special guest PREP",
    "members of The Bridge, Smooth Kentucky & others"
+  ],
+  "passed": [
+   "A.J. Croce",
+   "Allman Betts Family Revival: A Decade of Revival",
+   "Big Meadow",
+   "Colin Hay",
+   "Cory Wong",
+   "Drivin N Cryin",
+   "Elizabeth Cook",
+   "Keller Williams",
+   "Larry Campbell & Teresa Williams",
+   "Last Train Home",
+   "Lukas Nelson",
+   "Rachael & Vilray",
+   "Super City",
+   "Tom Rush",
+   "Venna",
+   "feat. dodie; special guest PREP"
   ],
   "merged": {
    "Allman Betts Family Revival: A Decade of Revival": "The Allman Betts Band",
@@ -629,7 +663,7 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "089d772617",
+  "pins_hash": "05cf85973d",
   "overrides_hash": "a88b948dcb",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
@@ -1335,9 +1369,9 @@
    "unchanged": 47
   },
   "counts": {
-   "settlements": 421,
-   "graph_edges": 521,
-   "districts": 68
+   "settlements": 406,
+   "graph_edges": 515,
+   "districts": 66
   }
  },
  "canvas": {
@@ -2689,7 +2723,6 @@
     "Billy Sheehan",
     "Broke Royals",
     "Cage the Elephant",
-    "Drivin N Cryin",
     "Garret T. Willie",
     "Jared James Nichols",
     "Joan Jett & The Blackhearts",
@@ -2921,11 +2954,8 @@
     "Alison Krauss",
     "Anthony D'Amato",
     "Cris Jacobs",
-    "Elizabeth Cook",
     "Jah Works",
     "Kashus Culpepper",
-    "Last Train Home",
-    "Lukas Nelson",
     "Morgan Wade",
     "Riley Downing",
     "The Devil Makes Three",
@@ -2992,18 +3022,15 @@
    "id": "outer_isles:outskirts",
    "region": "outer_isles",
    "members": [
-    "Big Meadow",
     "DJ Selah",
     "Danny Burns",
     "Hozier",
     "Jessie's Girl",
-    "Super City",
     "Talia Segal",
     "The Dream Quartet",
     "The Goons",
     "The Raging Nathans",
     "ViRG",
-    "feat. dodie; special guest PREP",
     "kitchen"
    ],
    "seat": null,
@@ -3057,21 +3084,11 @@
    "id": "quiet_woods:d13",
    "region": "quiet_woods",
    "members": [
-    "Colin Hay",
-    "Martin Sexton"
-   ],
-   "seat": "Martin Sexton",
-   "suggested_name": "Sexton Grove"
-  },
-  {
-   "id": "quiet_woods:d14",
-   "region": "quiet_woods",
-   "members": [
     "Lucy Dacus",
     "boygenius"
    ],
    "seat": "Lucy Dacus",
-   "suggested_name": "Dacus Vale"
+   "suggested_name": "Dacus Grove"
   },
   {
    "id": "quiet_woods:d2",
@@ -3183,6 +3200,7 @@
     "Kaia Kater",
     "Lucius",
     "Marc Broussard",
+    "Martin Sexton",
     "Mikaela Davis",
     "Oliver Wood",
     "Phoenix",
@@ -3190,7 +3208,6 @@
     "Sam Amidon",
     "The Family Crest",
     "The North Country",
-    "Tom Rush",
     "Weyes Blood"
    ],
    "seat": null,
@@ -3201,9 +3218,11 @@
    "region": "river_port",
    "members": [
     "Danielle Ponder",
+    "Diana Silvers",
     "Dumpstaphunk",
     "Galactic",
     "Ivan Neville",
+    "Jon Batiste",
     "The Soul Rebels",
     "Trombone Shorty & Orleans Avenue",
     "Ziggy Marley"
@@ -3271,27 +3290,15 @@
    "id": "river_port:d7",
    "region": "river_port",
    "members": [
-    "Cory Wong",
-    "Diana Silvers",
-    "Jon Batiste"
-   ],
-   "seat": "Jon Batiste",
-   "suggested_name": "Batiste Parade"
-  },
-  {
-   "id": "river_port:d8",
-   "region": "river_port",
-   "members": [
     "ZZ Ward"
    ],
    "seat": "ZZ Ward",
-   "suggested_name": "Ward Bend"
+   "suggested_name": "Ward Parade"
   },
   {
    "id": "river_port:outskirts",
    "region": "river_port",
    "members": [
-    "A.J. Croce",
     "Anders Osborne",
     "Angelique Francis",
     "Bobby Rush",
@@ -3307,13 +3314,11 @@
     "Matteo Mancuso",
     "Mohini Dey",
     "Nikki Hill",
-    "Rachael & Vilray",
     "Rich Ruth",
     "Sona Jobarteh",
     "Sugaray Rayford",
     "Sweet Leda",
-    "The Budos Band",
-    "Venna"
+    "The Budos Band"
    ],
    "seat": null,
    "suggested_name": "Secondline<br/>Riverlands Outskirts"
@@ -3363,30 +3368,6 @@
   }
  ],
  "settlements": [
-  {
-   "id": 0,
-   "name": "A.J. Croce",
-   "region": "river_port",
-   "district": "river_port:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    542.5,
-    555.8
-   ],
-   "region_uv": [
-    0.278,
-    0.5692
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
   {
    "id": 3,
    "name": "AJR",
@@ -4288,30 +4269,6 @@
    "flags": {},
    "src": "seen as support for Trombone Shorty & Orleans Avenue (2024-06-15)",
    "times_seen": 1,
-   "vip": 0,
-   "tier": null
-  },
-  {
-   "id": 48,
-   "name": "Big Meadow",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -5255,54 +5212,6 @@
    "tier": null
   },
   {
-   "id": 96,
-   "name": "Colin Hay",
-   "region": "quiet_woods",
-   "district": "quiet_woods:d13",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    423.0,
-    365.0
-   ],
-   "region_uv": [
-    0.3343,
-    0.7098
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: The Barns at Wolf Trap 2027-02-04",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
-  },
-  {
-   "id": 97,
-   "name": "Cory Wong",
-   "region": "river_port",
-   "district": "river_port:d7",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    524.7,
-    566.1
-   ],
-   "region_uv": [
-    0.2068,
-    0.6353
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: 9:30 Club 2027-02-25",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
-  },
-  {
    "id": 448,
    "name": "Counting Crows",
    "region": "amplified_range",
@@ -5696,7 +5605,7 @@
    "id": 114,
    "name": "Diana Silvers",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d1",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3.0,
@@ -5760,30 +5669,6 @@
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
-  },
-  {
-   "id": 122,
-   "name": "Drivin N Cryin",
-   "region": "amplified_range",
-   "district": "amplified_range:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    706.0,
-    338.0
-   ],
-   "region_uv": [
-    0.26,
-    1.032
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Elkton Music Hall 2027-02-26",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
   },
   {
    "id": 124,
@@ -5918,30 +5803,6 @@
    "times_seen": 1,
    "vip": 0,
    "tier": null
-  },
-  {
-   "id": 129,
-   "name": "Elizabeth Cook",
-   "region": "heartland",
-   "district": "heartland:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    305.5,
-    465.0
-   ],
-   "region_uv": [
-    0.1987,
-    0.4364
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Hamilton Live 2026-12-05",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
   },
   {
    "id": 130,
@@ -7700,7 +7561,7 @@
    "id": 215,
    "name": "Jon Batiste",
    "region": "river_port",
-   "district": "river_port:d7",
+   "district": "river_port:d1",
    "size": "city",
    "auto_size": "city",
    "score": 16.4,
@@ -8045,30 +7906,6 @@
    "tier": "Strong"
   },
   {
-   "id": 231,
-   "name": "Keller Williams",
-   "region": "heartland",
-   "district": "heartland:pinned",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    400.8,
-    504.6
-   ],
-   "region_uv": [
-    0.4495,
-    0.6042
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: The Barns at Wolf Trap 2027-03-06",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
-  },
-  {
    "id": 232,
    "name": "Kelli Baker Band",
    "label": "Baker",
@@ -8340,30 +8177,6 @@
    "tier": "Strong"
   },
   {
-   "id": 244,
-   "name": "Larry Campbell & Teresa Williams",
-   "region": "heartland",
-   "district": "heartland:pinned",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    321.3,
-    464.8
-   ],
-   "region_uv": [
-    0.2403,
-    0.4356
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Jammin' Java 2027-02-17",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
-  },
-  {
    "id": 245,
    "name": "Larry McCray",
    "region": "amplified_range",
@@ -8386,30 +8199,6 @@
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium-Strong"
-  },
-  {
-   "id": 246,
-   "name": "Last Train Home",
-   "region": "heartland",
-   "district": "heartland:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 1.0,
-   "xy": [
-    363.6,
-    516.2
-   ],
-   "region_uv": [
-    0.3516,
-    0.6534
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Rams Head On Stage 2027-01-01",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Medium"
   },
   {
    "id": 247,
@@ -8643,7 +8432,7 @@
    "id": 261,
    "name": "Lucy Dacus",
    "region": "quiet_woods",
-   "district": "quiet_woods:d14",
+   "district": "quiet_woods:d13",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 1.0,
@@ -8662,30 +8451,6 @@
    "times_seen": 0,
    "vip": 0,
    "tier": "Medium"
-  },
-  {
-   "id": 262,
-   "name": "Lukas Nelson",
-   "region": "heartland",
-   "district": "heartland:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    364.9,
-    499.3
-   ],
-   "region_uv": [
-    0.355,
-    0.5818
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: The Atlantis 2026-12-02",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
   },
   {
    "id": 263,
@@ -8939,7 +8704,7 @@
    "id": 273,
    "name": "Martin Sexton",
    "region": "quiet_woods",
-   "district": "quiet_woods:d13",
+   "district": "quiet_woods:outskirts",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0.0,
@@ -9831,30 +9596,6 @@
    "times_seen": 1,
    "vip": 0,
    "tier": null
-  },
-  {
-   "id": 317,
-   "name": "Rachael & Vilray",
-   "region": "river_port",
-   "district": "river_port:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 1.0,
-   "xy": [
-    511.2,
-    565.5
-   ],
-   "region_uv": [
-    0.1528,
-    0.6314
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Rams Head On Stage 2026-12-10",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Medium"
   },
   {
    "id": 319,
@@ -11012,30 +10753,6 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 383,
-   "name": "Super City",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    889.9,
-    104.8
-   ],
-   "region_uv": [
-    0.4423,
-    0.9463
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 384,
    "name": "Sushi Soucy",
    "region": "quiet_woods",
@@ -11594,12 +11311,12 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    900.0,
-    62.0
+    889.9,
+    104.8
    ],
    "region_uv": [
-    0.5,
-    0.5
+    0.4423,
+    0.9463
    ],
    "flags": {
     "unvisited": true
@@ -12191,30 +11908,6 @@
    "tier": "Medium-Strong"
   },
   {
-   "id": 401,
-   "name": "Tom Rush",
-   "region": "quiet_woods",
-   "district": "quiet_woods:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    381.8,
-    306.1
-   ],
-   "region_uv": [
-    0.2145,
-    0.4469
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Elkton Music Hall 2027-03-19",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "-"
-  },
-  {
    "id": 402,
    "name": "Tommy Castro & the Painkillers",
    "label": "Tommy Castro",
@@ -12443,30 +12136,6 @@
    "times_seen": 7,
    "vip": 0,
    "tier": "Strong"
-  },
-  {
-   "id": 412,
-   "name": "Venna",
-   "region": "river_port",
-   "district": "river_port:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    584.6,
-    608.7
-   ],
-   "region_uv": [
-    0.4464,
-    0.9083
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "potential: Howard Theatre 2026-12-04",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": "Low"
   },
   {
    "id": 415,
@@ -12808,7 +12477,7 @@
    "id": 439,
    "name": "ZZ Ward",
    "region": "river_port",
-   "district": "river_port:d8",
+   "district": "river_port:d7",
    "size": "city",
    "auto_size": "city",
    "score": 21.4,
@@ -12943,7 +12612,7 @@
    "id": 62,
    "name": "boygenius",
    "region": "quiet_woods",
-   "district": "quiet_woods:d14",
+   "district": "quiet_woods:d13",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3.0,
@@ -12962,30 +12631,6 @@
    "times_seen": 0,
    "vip": 0,
    "tier": "Strong"
-  },
-  {
-   "id": 146,
-   "name": "feat. dodie; special guest PREP",
-   "region": "outer_isles",
-   "district": "outer_isles:outskirts",
-   "size": "waystation",
-   "auto_size": "waystation",
-   "score": 0.0,
-   "xy": [
-    900.0,
-    62.0
-   ],
-   "region_uv": [
-    0.5,
-    0.5
-   ],
-   "flags": {
-    "unvisited": true
-   },
-   "src": "on the potentials list",
-   "times_seen": 0,
-   "vip": 0,
-   "tier": null
   },
   {
    "id": 239,
@@ -13011,30 +12656,6 @@
   }
  ],
  "graph_edges": [
-  {
-   "a": "A.J. Croce",
-   "b": "Bonnie Raitt",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "A.J. Croce",
-   "b": "Robben Ford",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "A.J. Croce",
-   "b": "Southern Avenue",
-   "cls": "trail",
-   "crossRegion": true
-  },
-  {
-   "a": "A.J. Croce",
-   "b": "Taj Mahal",
-   "cls": "trail",
-   "crossRegion": true
-  },
   {
    "a": "AJR",
    "b": "Benjamin Steer",
@@ -14137,18 +13758,6 @@
    "a": "Cole Larravide",
    "b": "Ruthie Foster",
    "cls": "river",
-   "crossRegion": false
-  },
-  {
-   "a": "Colin Hay",
-   "b": "Martin Sexton",
-   "cls": "trail",
-   "crossRegion": false
-  },
-  {
-   "a": "Cory Wong",
-   "b": "Jon Batiste",
-   "cls": "trail",
    "crossRegion": false
   },
   {
