@@ -241,11 +241,32 @@ for _nm, _o in _OV.items():
     if isinstance(_o, dict) and _o.get("exclude") and _o.get("size") == "capital":
         sys.exit(f"map_overrides.json: {_nm} is a decreed capital and excluded - pick one")
 EXCLUDED = MAP_EXCLUDE | {nm for nm, ov in _OV.items() if isinstance(ov, dict) and ov.get("exclude")}
-records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in EXCLUDED}
+
+# A passed show does not put its acts on the map. An act is left off when
+# the potentials list is its only source, the index records its row as a Pass,
+# and no Buy / Choose / Sell row bills it - as headliner or anywhere in a Support
+# cell. That holds for the support acts of a followed headliner too: the
+# headliner stays on its own account, the acts billed with it need a reason of
+# their own. Anything seen, followed, fast-tracked or in the legacy ledger has
+# another source and is untouched.
+_pot_live = [r for r in tsv_rows(DATA / "live_shows_potential.tsv")
+             if (r.get("Decision") or "").strip() != "Pass"] \
+            if (DATA / "live_shows_potential.tsv").exists() else []
+def _on_live_bill(nm):
+    low = nm.lower()
+    return any((r.get("Artist") or "").strip().lower() == low
+               or low in (r.get("Support") or "").lower() for r in _pot_live)
+PASSED = {r["canonical"] for r in idx["records"]
+          if r.get("sources") == ["potential"] and r.get("decision") == "Pass"
+          and r["canonical"] not in EXCLUDED and not _on_live_bill(r["canonical"])}
+if PASSED:
+    print(f"passed shows: {len(PASSED)} act(s) left off the map: " + ", ".join(sorted(PASSED)))
+OFF_MAP = EXCLUDED | PASSED
+records = {r["canonical"]: r for r in idx["records"] if r["canonical"] not in OFF_MAP}
 variants = {k: idx["records"][v]["canonical"] if isinstance(v, int) else v
             for k, v in idx["variants"].items()}
 # variants maps lower-name -> record id; normalize to canonical
-id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in EXCLUDED}
+id2canon = {r["id"]: r["canonical"] for r in idx["records"] if r["canonical"] not in OFF_MAP}
 variants = {k: id2canon[v] for k, v in idx["variants"].items() if v in id2canon}
 
 # data/recommend_aliases.tsv feeds the index's variants when CI regenerates it; reading it
@@ -940,7 +961,7 @@ if disc_path.exists():
     by_reg = defaultdict(list)
     for a_ in adds:
         nm, reg_, sz = a_["name"], a_["region"], a_["size"]
-        if nm in records or nm in EXCLUDED:   # an exclusion beats a discovered add
+        if nm in records or nm in OFF_MAP:   # an exclusion or a passed show beats a discovered add
             continue
         records[nm] = {"id": next_id, "canonical": nm, "status": "seen-support",
                        "tier": None, "sources": ["seen-support"]}
@@ -1443,9 +1464,12 @@ if args.prune_overrides and _OV:
             # An orphan that carries a region is kept: the act is only off the
             # roster for now (a pruned potentials row, a lapsed follow), and its
             # home should not snap back to an automatic one when it returns.
-            if ov.get("region"):
+            # An act left off for a passed show is the exception: its override
+            # goes, region and all.
+            if ov.get("region") and r["name"] not in PASSED:
                 continue
-            del _OV[r["name"]]; changed.append(f"dropped {r['name']} (orphan)")
+            del _OV[r["name"]]
+            changed.append(f"dropped {r['name']} ({'passed show' if r['name'] in PASSED else 'orphan'})")
         elif r["class"] == "redundant":
             for k in ("size", "basis", "why"):
                 ov.pop(k, None)
@@ -1461,6 +1485,17 @@ if args.prune_overrides and _OV:
         print(f"pruned map_overrides.json ({len(changed)} changes):")
         for ch in changed:
             print("  " + ch)
+
+# Pins for acts left off by a passed show go the same way, under the same flag.
+_PINS_PATH = SCRIPT_DIR / "edits" / "pins.json"
+if args.prune_overrides and PASSED and _PINS_PATH.exists():
+    _pins_all = json.loads(_PINS_PATH.read_text())
+    _dead = sorted(nm for nm in _pins_all if nm in PASSED)
+    if _dead:
+        for nm in _dead:
+            del _pins_all[nm]
+        _PINS_PATH.write_text(json.dumps(_pins_all, indent=1, ensure_ascii=False) + "\n")
+        print(f"pruned pins.json ({len(_dead)} passed-show pins): " + ", ".join(_dead))
 
 # A capital stranded in an outskirts district renames it as its own seat.
 cap_by_reg = {st["region"]: st["name"] for st in settlements if st["size"] == "capital"}
@@ -1534,7 +1569,10 @@ out = {
     "meta": {"generated_from": idx.get("generated"), "seed": RNG_SEED,
              # roster names that are NOT settlements on purpose: the map page's
              # staleness banner subtracts these before calling the map "behind"
-             "excluded": sorted(EXCLUDED),
+             # passed-show acts are listed with the exclusions for that banner,
+             # and on their own under "passed" so the two can be told apart
+             "excluded": sorted(OFF_MAP),
+             "passed": sorted(PASSED),
              "merged": dict(sorted(MERGES.items())),
              "suppressed": sorted(SUPPRESSED_CREDIT),
              "pins_hash": hashlib.md5((SCRIPT_DIR / "edits" / "pins.json").read_bytes()).hexdigest()[:10]

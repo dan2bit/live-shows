@@ -105,7 +105,7 @@ jobs:
         env:
           HEIGHTMAP: ${{ steps.hm.outputs.heightmap }}
         run: |
-          git add tools/map/build/fantasy_map_data.json tools/map/edits/map_overrides.json
+          git add tools/map/build/fantasy_map_data.json tools/map/edits/map_overrides.json tools/map/edits/pins.json
           if [ "$HEIGHTMAP" = "true" ]; then git add tools/map/build/heightmap.png; fi
           if git diff --cached --quiet; then
             echo "map artifacts unchanged - nothing to commit."
