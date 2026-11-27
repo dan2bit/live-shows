@@ -587,6 +587,7 @@
    "Damien Bethel",
    "Daryl Davis Presents a 100th Birthday Tribute to Chuck Berry",
    "Daryl Davis; guest guitarists incl. Guy Bouchie",
+   "David Jacobs-Strain",
    "Erin Frisby",
    "Fred Eaglesmith & The Full Band",
    "Hiss Golden Messenger",
@@ -628,8 +629,8 @@
    "SatchVai Band",
    "Tab Benoit & Anders Osborne"
   ],
-  "pins_hash": "8d8e92c1b7",
-  "overrides_hash": "b40604b867",
+  "pins_hash": "089d772617",
+  "overrides_hash": "a88b948dcb",
   "decreed_capitals": {
    "delta_coast": "Shemekia Copeland",
    "outer_isles": "AJR",
@@ -1334,9 +1335,9 @@
    "unchanged": 47
   },
   "counts": {
-   "settlements": 423,
-   "graph_edges": 522,
-   "districts": 69
+   "settlements": 422,
+   "graph_edges": 521,
+   "districts": 68
   }
  },
  "canvas": {
@@ -2566,21 +2567,11 @@
    "id": "amplified_range:d14",
    "region": "amplified_range",
    "members": [
-    "David Jacobs-Strain",
-    "David Jacobs-Strain and Bob Beach"
-   ],
-   "seat": "David Jacobs-Strain and Bob Beach",
-   "suggested_name": "Beach Ridge"
-  },
-  {
-   "id": "amplified_range:d15",
-   "region": "amplified_range",
-   "members": [
     "Beck",
     "Sir Chloe"
    ],
    "seat": "Beck",
-   "suggested_name": "Beck Crag"
+   "suggested_name": "Beck Ridge"
   },
   {
    "id": "amplified_range:d2",
@@ -2612,8 +2603,7 @@
     "Bernard Allison",
     "Caitlin Krisko & The Broadcast",
     "Canned Heat",
-    "Mitch Ryder",
-    "Sgt. Splendor"
+    "Mitch Ryder"
    ],
    "seat": "Samantha Fish",
    "suggested_name": "Fish Overdrive"
@@ -2707,7 +2697,6 @@
     "Jontavious Willis",
     "Mike Campbell & The Dirty Knobs",
     "Pretenders",
-    "Rasputina",
     "Rival Sons",
     "Shawn Pittman",
     "Slash",
@@ -2932,7 +2921,6 @@
    "members": [
     "Alison Krauss",
     "Anthony D'Amato",
-    "Cindy Cashdollar",
     "Cris Jacobs",
     "Elizabeth Cook",
     "Jah Works",
@@ -3315,10 +3303,8 @@
     "Free Nationals",
     "Josh Hoyer & Soul Colossal",
     "Judith Hill",
-    "Keller Williams",
     "Kent Burnside",
     "King Solomon Hicks",
-    "Mali Obomsawin",
     "Matteo Mancuso",
     "Mohini Dey",
     "Nikki Hill",
@@ -4115,16 +4101,14 @@
    "auto_size": "hamlet",
    "score": 3.0,
    "xy": [
-    483.0,
-    269.2
+    481.3,
+    226.5
    ],
    "region_uv": [
-    0.5088,
-    0.2821
+    0.5038,
+    0.0915
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -4178,7 +4162,7 @@
    "id": 41,
    "name": "Beck",
    "region": "amplified_range",
-   "district": "amplified_range:d15",
+   "district": "amplified_range:d14",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3.0,
@@ -5228,22 +5212,21 @@
   {
    "id": 93,
    "name": "Cindy Cashdollar",
-   "region": "heartland",
-   "district": "heartland:outskirts",
+   "region": "slide_foothills",
+   "district": "slide_foothills:pinned",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 2.0,
    "xy": [
-    346.4,
-    527.2
+    632.1,
+    429.6
    ],
    "region_uv": [
-    0.3064,
-    0.7
+    0.3629,
+    0.6339
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "follow (Medium-Strong): steel guitar / dobro / lap steel; 5x Grammy…",
    "times_seen": 0,
@@ -5281,16 +5264,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    413.6,
-    362.8
+    423.0,
+    365.0
    ],
    "region_uv": [
-    0.3071,
-    0.7
+    0.3343,
+    0.7098
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: The Barns at Wolf Trap 2027-02-04",
    "times_seen": 0,
@@ -5556,22 +5538,23 @@
    "name": "Dave Hill",
    "region": "amplified_range",
    "district": "amplified_range:outskirts",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3.0,
+   "size": "waystation",
+   "auto_size": "waystation",
+   "score": 0.0,
    "xy": [
-    712.4,
-    245.6
+    723.6,
+    255.0
    ],
    "region_uv": [
-    0.2783,
-    0.6625
+    0.3104,
+    0.7
    ],
    "flags": {
-    "unpinned": true
+    "unvisited": true,
+    "unplaced": true
    },
-   "src": "seen as support for Bill Murray and His Blood Brothers (2026-11-18)",
-   "times_seen": 1,
+   "src": "history pass: seen as support",
+   "times_seen": 0,
    "vip": 0,
    "tier": null
   },
@@ -5601,48 +5584,22 @@
    "legacy_shows": 1
   },
   {
-   "id": 107,
-   "name": "David Jacobs-Strain",
-   "region": "amplified_range",
-   "district": "amplified_range:d14",
-   "size": "hamlet",
-   "auto_size": "hamlet",
-   "score": 3.0,
-   "xy": [
-    792.7,
-    255.9
-   ],
-   "region_uv": [
-    0.5076,
-    0.7037
-   ],
-   "flags": {
-    "unpinned": true
-   },
-   "src": "",
-   "times_seen": 1,
-   "vip": 0,
-   "tier": null
-  },
-  {
    "id": 108,
    "name": "David Jacobs-Strain and Bob Beach",
-   "region": "amplified_range",
-   "district": "amplified_range:d14",
+   "region": "delta_coast",
+   "district": "delta_coast:pinned",
    "size": "village",
    "auto_size": "village",
    "score": 5.2,
    "xy": [
-    781.3,
-    261.2
+    230.3,
+    486.0
    ],
    "region_uv": [
-    0.4751,
-    0.7248
+    0.2741,
+    -0.5769
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "history pass: seen as support",
    "times_seen": 1,
    "vip": 0,
@@ -5839,16 +5796,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    722.8,
-    255.0
+    706.0,
+    338.0
    ],
    "region_uv": [
-    0.308,
-    0.7
+    0.26,
+    1.032
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: Elkton Music Hall 2027-02-26",
    "times_seen": 0,
@@ -6832,16 +6788,14 @@
    "auto_size": "village",
    "score": 5.2,
    "xy": [
-    426.6,
-    340.7
+    547.7,
+    399.7
    ],
    "region_uv": [
-    0.3449,
-    0.6014
+    0.6968,
+    0.8647
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support for Fruition (2026-11-21)",
    "times_seen": 1,
    "vip": 0,
@@ -8119,22 +8073,21 @@
   {
    "id": 232,
    "name": "Keller Williams",
-   "region": "river_port",
-   "district": "river_port:outskirts",
+   "region": "heartland",
+   "district": "heartland:pinned",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    551.6,
-    576.2
+    400.8,
+    504.6
    ],
    "region_uv": [
-    0.3146,
-    0.7
+    0.4495,
+    0.6042
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: The Barns at Wolf Trap 2027-03-06",
    "times_seen": 0,
@@ -8745,16 +8698,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    340.9,
-    530.1
+    364.9,
+    499.3
    ],
    "region_uv": [
-    0.2918,
-    0.7121
+    0.355,
+    0.5818
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: The Atlantis 2026-12-02",
    "times_seen": 0,
@@ -8855,22 +8807,20 @@
   {
    "id": 267,
    "name": "Mali Obomsawin",
-   "region": "river_port",
-   "district": "river_port:outskirts",
+   "region": "quiet_woods",
+   "district": "quiet_woods:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3.0,
    "xy": [
-    667.2,
-    488.4
+    435.4,
+    256.2
    ],
    "region_uv": [
-    0.7767,
-    0.1375
+    0.3703,
+    0.2241
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "",
    "times_seen": 1,
    "vip": 0,
@@ -9020,16 +8970,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    408.1,
-    365.7
+    521.2,
+    362.7
    ],
    "region_uv": [
-    0.2909,
-    0.7128
+    0.6198,
+    0.6996
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: Rams Head On Stage 2027-03-05",
    "times_seen": 0,
@@ -9936,22 +9885,21 @@
   {
    "id": 320,
    "name": "Rasputina",
-   "region": "amplified_range",
-   "district": "amplified_range:outskirts",
+   "region": "outer_isles",
+   "district": "outer_isles:override",
    "size": "waystation",
    "auto_size": "waystation",
    "score": 3.0,
    "xy": [
-    716.4,
-    258.3
+    933.0,
+    280.0
    ],
    "region_uv": [
-    0.2897,
-    0.7132
+    0.6875,
+    2.7708
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: Union Stage 2027-04-15",
    "times_seen": 0,
@@ -10056,16 +10004,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    344.5,
-    521.8
+    258.7,
+    435.9
    ],
    "region_uv": [
-    0.3013,
-    0.6769
+    0.0755,
+    0.3131
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "on the potentials list",
    "times_seen": 0,
@@ -10414,22 +10361,20 @@
   {
    "id": 351,
    "name": "Sgt. Splendor",
-   "region": "amplified_range",
-   "district": "amplified_range:d3",
+   "region": "slide_foothills",
+   "district": "slide_foothills:pinned",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3.0,
    "xy": [
-    730.2,
-    270.5
+    718.6,
+    447.5
    ],
    "region_uv": [
-    0.3291,
-    0.7619
+    1.1086,
+    0.7097
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support for Samantha Fish (2026-11-17)",
    "times_seen": 1,
    "vip": 0,
@@ -10596,7 +10541,7 @@
    "id": 360,
    "name": "Sir Chloe",
    "region": "amplified_range",
-   "district": "amplified_range:d15",
+   "district": "amplified_range:d14",
    "size": "hamlet",
    "auto_size": "hamlet",
    "score": 3.0,
@@ -11101,12 +11046,12 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    900.0,
-    62.0
+    889.9,
+    104.8
    ],
    "region_uv": [
-    0.5,
-    0.5
+    0.4423,
+    0.9463
    ],
    "flags": {
     "unvisited": true
@@ -12280,16 +12225,15 @@
    "auto_size": "waystation",
    "score": 0.0,
    "xy": [
-    411.7,
-    357.4
+    381.8,
+    306.1
    ],
    "region_uv": [
-    0.3014,
-    0.6757
+    0.2145,
+    0.4469
    ],
    "flags": {
-    "unvisited": true,
-    "unplaced": true
+    "unvisited": true
    },
    "src": "potential: Elkton Music Hall 2027-03-19",
    "times_seen": 0,
@@ -12785,16 +12729,14 @@
    "auto_size": "hamlet",
    "score": 3.0,
    "xy": [
-    419.4,
-    433.3
+    417.7,
+    443.1
    ],
    "region_uv": [
-    0.4985,
-    0.3019
+    0.4939,
+    0.3436
    ],
-   "flags": {
-    "unpinned": true
-   },
+   "flags": {},
    "src": "seen as support for Gov't Mule (2026-09-27)",
    "times_seen": 1,
    "vip": 0,
@@ -14338,12 +14280,6 @@
    "crossRegion": true
   },
   {
-   "a": "David Jacobs-Strain",
-   "b": "David Jacobs-Strain and Bob Beach",
-   "cls": "road",
-   "crossRegion": false
-  },
-  {
    "a": "David Moore",
    "b": "Jake Xerxes Fussell",
    "cls": "river",
@@ -15883,7 +15819,7 @@
    "a": "Samantha Fish",
    "b": "Sgt. Splendor",
    "cls": "river",
-   "crossRegion": true
+   "crossRegion": false
   },
   {
    "a": "Samantha Fish",
