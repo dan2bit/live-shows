@@ -24,6 +24,7 @@ features:
 site:
   title: live-shows            # also in index.html: <title>, og:title, og:site_name, twitter:title
   owner: dan2bit               # CHANGE TO YOUR OWN GITHUB HANDLE
+  owner_name: Dan              # CHANGE TO YOUR OWN NAME, or delete. check_evergreen keeps this name out of .py files; blank = rule off
   repo: live-shows
   private_owner: dan2bit       # CHANGE TO YOUR OWN GITHUB HANDLE. skipped unless features.private_data is true
   private_repo: live-shows-private # skipped unless features.private_data is true

@@ -4,7 +4,7 @@
 Decisions on `data/live_shows_potential.tsv` rows are often made on the web - the
 in-page editor, or off-site while buying a ticket - and the row's `Decision` column
 changes without anyone touching `Notes`. Any prose that states what a row's decision
-is or was ("upgraded to Choose per Dan", "see Choose entry above", "already
+is or was ("upgraded to Choose per <owner>", "see Choose entry above", "already
 purchased") then contradicts the row it sits on, and nothing re-validates it.
 
 The convention this check serves (`DATA_WRITE_PROTOCOLS.md` → potentials write
@@ -40,7 +40,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from hygiene_report import Report  # noqa: E402
+from hygiene_report import Report, owner_names  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 POTENTIAL = ROOT / "data" / "live_shows_potential.tsv"
@@ -55,14 +55,27 @@ STATUS_PATTERNS = [
     (re.compile(r"\b(?:up|down)graded to\b", re.I), "decision change recorded in prose"),
     (re.compile(r"\badded as " + _D + r"\b", re.I), "row's own decision recorded in prose"),
     (re.compile(r"\bleft as " + _D + r"\b", re.I), "row's own decision recorded in prose"),
-    (re.compile(r"\b" + _D + r" per Dan\b", re.I), "row's own decision recorded in prose"),
-    (re.compile(r"\bper Dan\b", re.I), "decision attribution ('per Dan') - the Decision column already says so"),
     (re.compile(r"\b(?:once|already|now|not yet) purchased\b", re.I), "purchase state of this or another row"),
     (re.compile(r"\bpurchased the\b", re.I), "purchase state of another row"),
     (re.compile(r"\(" + _D + r"\)", re.I), "another row's decision cited in parentheses"),
     (re.compile(r"\b" + _D + r" (?:entry|row)\b", re.I), "another row's decision cited by name"),
     (re.compile(r"\bsee " + _D + r"\b", re.I), "another row's decision cited by name"),
 ]
+
+# "Choose per <owner>" and a bare "per <owner>": decision attribution. The name
+# is the configured site.owner_name; with none configured these two are skipped.
+ATTRIBUTION_REASON = "decision attribution ('per <owner>') - the Decision column already says so"
+def attribution_patterns(names):
+    if not names:
+        return []
+    who = "(?:" + "|".join(re.escape(n) for n in names) + ")"
+    return [
+        (re.compile(r"\b" + _D + r" per " + who + r"\b", re.I), "row's own decision recorded in prose"),
+        (re.compile(r"\bper " + who + r"\b", re.I), ATTRIBUTION_REASON),
+    ]
+
+
+OWNER_NAMES = owner_names(ROOT)
 
 # "(Choose)" or "Choose entry/row" with a nearby artist name: the cross-row form.
 CROSS_RE = re.compile(
@@ -71,11 +84,15 @@ CROSS_RE = re.compile(
     re.I)
 
 
-def find_status(text):
+def find_status(text, names=None):
     """Status phrases in one prose cell, deduplicated by reason.
 
-    >>> [r for _, r in find_status("Upgraded to Choose per Dan; see the Pass entry below")]
-    ['decision change recorded in prose', "row's own decision recorded in prose", "another row's decision cited by name"]
+    `names` is who "per <name>" refers to; the configured owner when omitted.
+
+    >>> [r for _, r in find_status("Upgraded to Choose per Robin; see the Pass entry below", ["Robin"])]
+    ['decision change recorded in prose', "another row's decision cited by name", "row's own decision recorded in prose"]
+    >>> [r for _, r in find_status("Sits well in the week, per Robin", ["Robin"])]
+    ["decision attribution ('per <owner>') - the Decision column already says so"]
     >>> find_status("Same band as the Oct 9 Hamilton Live show")
     []
     >>> [m for m, _ in find_status("Already purchased the Oct 9 show")]
@@ -83,13 +100,14 @@ def find_status(text):
     """
     out, seen = [], set()
     text = text or ""
-    for pat, reason in STATUS_PATTERNS:
+    extra = attribution_patterns(OWNER_NAMES if names is None else names)
+    for pat, reason in STATUS_PATTERNS + extra:
         m = pat.search(text)
         if not m or reason in seen:
             continue
-        # "Choose per Dan" is already the stronger decision-form hit; the bare
+        # "Choose per <owner>" is already the stronger decision-form hit; the bare
         # attribution only adds information when no decision word is attached.
-        if reason.startswith("decision attribution") and re.search(r"\b" + _D + r" per Dan\b", text, re.I):
+        if reason == ATTRIBUTION_REASON and extra and extra[0][0].search(text):
             continue
         seen.add(reason)
         out.append((m.group(0), reason))

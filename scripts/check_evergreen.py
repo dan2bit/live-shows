@@ -20,12 +20,22 @@ script's next-steps block survived exactly that blind spot. Literals are checked
 for #NNN and NOT for leading dates, because a date in a string is usually data
 (a default, a cutoff, a format example) rather than a changelog artifact.
 
+OWNER NAME. A fork has a different owner, so a script that explains itself in
+terms of one named person is as stale for a forker as an issue number. Every
+.py file in the repo is scanned - comments, docstrings and string literals - for
+the name in config.yaml's site.owner_name, as a whole word, possessive included.
+The name is read from the config so it never has to appear in this script, and
+with none configured the rule is off. Prefer an impersonal rewrite; say "the
+owner" where a person has to be mentioned. Where the name is the data being
+matched, end that line with the comment  # evergreen: owner-name-is-data
+
 Modes:
   (default)  warn only, exit 0 — annotations plus a job-summary section.
   --strict   exit 1 if anything is found. Scoped form, --strict FILE..., counts
              only findings in those files: a new reference in a file the push
              touched is unambiguous, while demanding the whole repo be evergreen
              before anything can promote turns unrelated work into a hunt.
+  --self-test  run the owner-name rule against built-in samples and exit.
 """
 
 import argparse
@@ -33,12 +43,13 @@ import ast
 import glob
 import io
 import re
+import subprocess
 import sys
 import tokenize
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from hygiene_report import Report, scope_from_args  # noqa: E402
+from hygiene_report import Report, owner_names, scope_from_args  # noqa: E402
 
 REF = re.compile(r"#\d{2,3}\b")
 # A date at the START of a comment is the changelog signature ("2026-06-27:
@@ -53,7 +64,105 @@ YML_GLOB = ".github/workflows/*.yml"
 PY_GLOB = "scripts/*.py"
 YAML_FILES = ["config.yaml"]
 
+OWNER_ALLOW = "evergreen: owner-name-is-data"
+SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv"}
+
 report = Report("check_evergreen")
+
+
+def owner_pattern(names):
+    """Whole-word match for any of `names`, possessive included; None when empty."""
+    names = [n for n in names if n]
+    if not names:
+        return None
+    return re.compile(r"(?<![\w])(?:" + "|".join(re.escape(n) for n in names) + r")(?:'s)?(?![\w])")
+
+
+def owner_findings(src, pattern):
+    """(line, where, text) for each line of Python source that names the owner.
+
+    Comments, docstrings and string literals are all read. A line carrying the
+    OWNER_ALLOW marker is skipped, as is a string literal that starts on one.
+    """
+    if pattern is None:
+        return []
+    lines = src.split("\n")
+    allowed = {i + 1 for i, ln in enumerate(lines) if OWNER_ALLOW in ln}
+    out = []
+    for tok in tokenize.generate_tokens(io.StringIO(src).readline):
+        if tok.type == tokenize.COMMENT and tok.start[0] not in allowed and pattern.search(tok.string):
+            out.append((tok.start[0], "comment", tok.string))
+    tree = ast.parse(src)
+    docstrings = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and \
+               isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
+                docstrings.add(id(body[0].value))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+            continue
+        where = "docstring" if id(node) in docstrings else "string literal"
+        start = node.lineno or 0
+        if start in allowed:
+            continue
+        for k, part in enumerate(node.value.split("\n")):
+            if start + k not in allowed and pattern.search(part):
+                out.append((start + k, where, part))
+    return sorted(set(out))
+
+
+def python_files():
+    """Every tracked .py file; a plain walk when git is not available."""
+    try:
+        got = subprocess.run(["git", "ls-files", "*.py"], capture_output=True, text=True, check=True)
+        files = [f for f in got.stdout.splitlines() if f]
+        if files:
+            return sorted(files)
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return sorted(str(p) for p in Path(".").rglob("*.py")
+                  if not SKIP_DIRS & set(p.parts))
+
+
+def scan_owner(pattern):
+    for f in python_files():
+        try:
+            src = Path(f).read_text(encoding="utf-8")
+            found = owner_findings(src, pattern)
+        except (SyntaxError, UnicodeDecodeError, tokenize.TokenError):
+            continue
+        for line, where, text in found:
+            warn(f, line, "owner named", text, where=where)
+
+
+def self_test():
+    """The owner-name rule against samples, with an invented name."""
+    pat = owner_pattern(["Robin"])
+    cases = [
+        ("# Robin picks the seat\n", 1, "comment"),
+        ("# Robin's pins win\n", 1, "possessive"),
+        ('def f():\n    """What Robin owns."""\n', 1, "docstring"),
+        ('x = "sold by Robin"\n', 1, "string literal"),
+        ('x = f"per Robin: {1}"\n', 1, "f-string"),
+        ("# Robinson Crusoe\n", 0, "longer word"),
+        ("# robin the bird\n", 0, "lower case"),
+        ('x = "per Robin"  # ' + OWNER_ALLOW + "\n", 0, "allow marker on a string"),
+        ("# matches Robin in data  # " + OWNER_ALLOW + "\n", 0, "allow marker on a comment"),
+        ("robin = 1\n", 0, "identifier"),
+    ]
+    bad = 0
+    for src, want, label in cases:
+        got = len(owner_findings(src, pat))
+        ok = got == want
+        bad += not ok
+        print(f"  {'ok  ' if ok else 'FAIL'} {label}: {got} finding(s), expected {want}")
+    off = owner_findings("# Robin\n", owner_pattern([]))
+    print(f"  {'ok  ' if not off else 'FAIL'} no name configured: rule off")
+    bad += bool(off)
+    print("self-test: " + ("all passed" if not bad else f"{bad} FAILED"))
+    return 1 if bad else 0
 
 
 def warn(path, line, kind, text, where="comment"):
@@ -167,7 +276,11 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--strict", nargs="*", metavar="FILE", default=None,
                     help="exit 1 on findings; with FILEs, only those files block")
+    ap.add_argument("--self-test", action="store_true",
+                    help="run the owner-name rule against built-in samples")
     args = ap.parse_args(argv)
+    if args.self_test:
+        return self_test()
 
     for f in JS_FILES + CSS_FILES:
         if Path(f).exists():
@@ -182,6 +295,11 @@ def main(argv=None) -> int:
         scan_yaml(f)
     for f in sorted(glob.glob(PY_GLOB)):
         scan_python(f)
+    pattern = owner_pattern(owner_names())
+    if pattern is None:
+        print("check_evergreen: owner-name rule is off (no site.owner_name in config.yaml)")
+    else:
+        scan_owner(pattern)
     return report.finish(strict=args.strict is not None,
                          scope=scope_from_args(args.strict))
 

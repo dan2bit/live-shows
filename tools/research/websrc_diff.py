@@ -82,7 +82,7 @@ TRACKING = {
 # Label rosters. Alligator and Ruf come from the labels' own sites; the rest
 # are read from each label's Bandcamp artists page (or its music grid when the
 # label has no artists page), refreshed by hand per web-src/scraping_tasks.md.
-# Only labels in Dan's lane are listed: a mostly-indie roster (Fat Possum,
+# Only labels that fit the taste profile are listed: a mostly-indie roster (Fat Possum,
 # Nettwerk) would turn this section into noise.
 ROSTERS = {
     "Alligator":            WEBSRC / "alligator_records_artists.tsv",

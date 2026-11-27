@@ -1072,7 +1072,7 @@ def item_defaults(item_id, asset_id, kind=None):
     plan = ledger.photo_plan(item_id)
     actual = kind or asset_kind(asset_id)
     if actual != MEMORABILIA_KIND:
-        raise SystemExit(f"item {item_id} is a thing Dan owns, so its photo belongs in "
+        raise SystemExit(f"item {item_id} is an owned item, so its photo belongs in "
                          f"the Concert memorabilia album; this one is filed as "
                          f"{actual or 'no upload album'}")
     return plan

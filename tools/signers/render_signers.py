@@ -293,7 +293,7 @@ def build_entries_html(rows, venue_short, artists, aliases, group_by_year=True):
 
     The `notes` column is deliberately
     NOT rendered here - it carries internal photo-panel-tracking shorthand
-    ("panel anchor (Dan)", raw PXL_ filenames) that was never meant for a
+    ("panel anchor (owner)", raw PXL_ filenames) that was never meant for a
     public page. See #412, open decision 3, for the one case (Talia Segal's
     "RIP") this leaves out - it needs an explicit, documented representation
     before it belongs here, not a public page maintainer parsing free text.

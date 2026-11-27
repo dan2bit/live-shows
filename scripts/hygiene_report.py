@@ -30,6 +30,30 @@ def _norm(path):
     return str(Path(path)) if path else None
 
 
+def owner_names(root=None):
+    """The names in config.yaml's site.owner_name, as a list (empty when unset).
+
+    One name or a list of names. Checks that keep a person's name out of code
+    read it from here so the name itself never has to appear in a script.
+    """
+    import re
+    cfg = Path(root or Path(__file__).resolve().parent.parent) / "config.yaml"
+    if not cfg.exists():
+        return []
+    text = cfg.read_text(encoding="utf-8")
+    try:
+        import yaml
+        val = ((yaml.safe_load(text) or {}).get("site") or {}).get("owner_name")
+    except ImportError:
+        m = re.search(r"^\s+owner_name:\s*([^#\n]*)", text, re.M)
+        val = m.group(1).strip().strip("\"'[]") if m else None
+        if val and "," in val:
+            val = [v.strip().strip("\"'") for v in val.split(",")]
+    if isinstance(val, str):
+        val = [val]
+    return [str(v).strip() for v in (val or []) if str(v).strip()]
+
+
 class Report:
     """Collects findings for one check and decides how they are delivered."""
 

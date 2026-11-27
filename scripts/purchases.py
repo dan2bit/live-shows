@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-purchases.py - the one place that knows what music Dan has bought.
+purchases.py - the one place that knows what music has been bought.
 
 A purchase is the strongest attachment the tracking data can show: money changed
 hands. Two surfaces weigh it - the affinity score in build_artist_index.py (which
@@ -8,12 +8,12 @@ sizes the artist-graph nodes) and the settlement score in
 tools/map/build_fantasy_map.py - and both must count the same purchases the same
 way, so the reading, the de-duplication and the weighting live here and nowhere else.
 
-ONE SOURCE. data/items.tsv is the ledger of things Dan owns, one row per item,
+ONE SOURCE. data/items.tsv is the ledger of things owned, one row per item,
 and data/show_goals/item_signatures.tsv records who signed which item. A row is a
 purchase when its `paid` column is Y - a CD, a download, a poster or a shirt alike.
 A release received as a gift counts too - a signed CD a friend brought back is
 music owned, the same as one that was bought. Mementos (a setlist, a thrown pick),
-raffle prizes and prints of Dan's own photos are in the ledger but are not purchases. Something that came inside a VIP
+raffle prizes and prints of the owner's own photos are in the ledger but are not purchases. Something that came inside a VIP
 package was paid for and counts. Status = pending counts: the money is committed.
 
 An item is credited to its `artist`. A signed item is also credited to every signer
@@ -113,7 +113,7 @@ def load_purchases(root="."):
     out = []
     for r in _rows(os.path.join(root, ITEMS_TSV)):
         item_id, artist, kind = _cell(r, "item_id"), _cell(r, "artist"), _cell(r, "kind").lower()
-        # A release Dan was given counts like one he bought: what the signal
+        # A release received as a gift counts like one that was bought: what the signal
         # measures is owning the artist's music, and a signed CD handed over by a
         # friend is that. Other unpaid things (mementos, raffle prizes) are not.
         gifted_release = _cell(r, "acquired") == "gift" and kind in _MUSIC_KINDS
