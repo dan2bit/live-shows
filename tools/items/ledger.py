@@ -204,8 +204,12 @@ def _save(items, sigs):
     problems = validate(items, sigs)
     if problems:
         sys.exit("not saved:\n" + "\n".join(problems))
-    ITEMS.write_text(_render(items, ITEM_COLS), encoding="utf-8", newline="")
-    SIGNATURES.write_text(_render(sigs, SIG_COLS), encoding="utf-8", newline="")
+    for path, text in ((ITEMS, _render(items, ITEM_COLS)),
+                       (SIGNATURES, _render(sigs, SIG_COLS))):
+        # open() rather than Path.write_text(): its newline argument needs
+        # Python 3.10, and a local checkout may run an older interpreter
+        with open(path, "w", encoding="utf-8", newline="") as fh:
+            fh.write(text)
 
 
 def _all():
